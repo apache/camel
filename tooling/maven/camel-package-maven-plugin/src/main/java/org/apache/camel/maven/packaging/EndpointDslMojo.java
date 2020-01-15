@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -122,10 +123,28 @@ public class EndpointDslMojo extends AbstractMojo {
     protected File outputDir;
 
     /**
-     * The package name
+     * The package where to generate component Endpoint factories
      */
-    @Parameter
-    protected String packageName = "org.apache.camel.builder.endpoint.dsl";
+    @Parameter(defaultValue = "org.apache.camel.builder.endpoint")
+    protected String endpointFactoriesPackageName;
+
+    /**
+     * The package where to generate component specific Endpoint factories
+     */
+    @Parameter(defaultValue = "org.apache.camel.builder.endpoint.dsl")
+    protected String componentsFactoriesPackageName;
+
+    /**
+     * Generate or not the EndpointBuilderFactory interface.
+     */
+    @Parameter(defaultValue = "true")
+    protected Boolean generateEndpointBuilderFactory;
+
+    /**
+     * Generate or not the EndpointBuilders interface.
+     */
+    @Parameter(defaultValue = "true")
+    protected Boolean generateEndpointBuilders;
 
     DynamicClassLoader projectClassLoader;
 
@@ -147,11 +166,22 @@ public class EndpointDslMojo extends AbstractMojo {
         // generate component endpoint DSL files and write them
         executeComponent(files);
 
-        // make sure EndpointBuilderFactory is synced
-        synchronizeEndpointBuilderFactoryInterface();
-        // make sure EndpointBuilders is synced
-        synchronizeEndpointBuildersInterface();
+        if (generateEndpointBuilderFactory || generateEndpointBuilders) {
+            getLog().info("Load components EndpointFactories");
+            List<CompilationUnit> units = loadAllComponentsDslEndpointFactoriesAsCompilationUnit();
 
+            if (generateEndpointBuilderFactory) {
+                getLog().info("Regenerate EndpointBuilderFactory");
+                // make sure EndpointBuilderFactory is synced
+                synchronizeEndpointBuilderFactoryInterface(units);
+            }
+
+            if (generateEndpointBuilders) {
+                getLog().info("Regenerate EndpointBuilders");
+                // make sure EndpointBuilders is synced
+                synchronizeEndpointBuildersInterface(units);
+            }
+        }
     }
 
     private static String loadJson(File file) {
@@ -208,7 +238,7 @@ public class EndpointDslMojo extends AbstractMojo {
                     overrideComponentName = model.getArtifactId().replace("camel-", "");
                 }
 
-                createEndpointDsl(packageName, model, compModels, overrideComponentName);
+                createEndpointDsl(componentsFactoriesPackageName, model, compModels, overrideComponentName);
             }
         }
     }
@@ -482,16 +512,12 @@ public class EndpointDslMojo extends AbstractMojo {
             method.getJavaDoc().setText(desc);
         }
 
-        String fileName = packageName.replace('.', '/') + "/" + builderName + "Factory.java";
-        writeSourceIfChanged(javaClass, fileName, false);
+        writeSourceIfChanged(javaClass, packageName.replace('.', '/'), builderName + "Factory.java", false);
     }
 
-    private void synchronizeEndpointBuilderFactoryInterface() throws MojoFailureException {
-        final String interfaceFactoryPath = packageName.replace('.', '/').replace("dsl", "") + "EndpointBuilderFactory.java";
-        final List<File> allComponentsDslEndpointFactories = loadAllComponentsDslEndpointFactoriesAsFile();
-
+    private void synchronizeEndpointBuilderFactoryInterface(List<CompilationUnit> units) throws MojoFailureException {
         CompilationUnit endpointBuilderUnit = new CompilationUnit();
-        endpointBuilderUnit.setPackageDeclaration(Strings.before(packageName, ".dsl"));
+        endpointBuilderUnit.setPackageDeclaration(endpointFactoriesPackageName);
         endpointBuilderUnit.addImport("java.util.List");
         endpointBuilderUnit.addImport("java.util.stream.Collectors");
         endpointBuilderUnit.addImport("java.util.stream.Stream");
@@ -509,59 +535,71 @@ public class EndpointDslMojo extends AbstractMojo {
         MethodDeclaration endpoints = endpointBuilderClass.addMethod("endpoints");
         endpoints.setDefault(true);
         endpoints.addAndGetParameter("org.apache.camel.builder.EndpointProducerBuilder", "endpoints").setVarArgs(true);
-        endpoints.setBody(block("return new org.apache.camel.support.ExpressionAdapter() {", "    List<org.apache.camel.Expression> expressions = Stream.of(endpoints)",
-                                "        .map(org.apache.camel.builder.EndpointProducerBuilder::expr)", "        .collect(Collectors.toList());", "", "    @Override",
-                                "    public Object evaluate(org.apache.camel.Exchange exchange) {",
-                                "        return expressions.stream().map(e -> e.evaluate(exchange, Object.class)).collect(Collectors.toList());", "    }", "};"));
+        endpoints.setBody(block(
+            "return new org.apache.camel.support.ExpressionAdapter() {",
+            "    List<org.apache.camel.Expression> expressions = Stream.of(endpoints)",
+            "        .map(org.apache.camel.builder.EndpointProducerBuilder::expr)",
+            "        .collect(Collectors.toList());",
+            "",
+            "    @Override",
+            "    public Object evaluate(org.apache.camel.Exchange exchange) {",
+            "        return expressions.stream().map(e -> e.evaluate(exchange, Object.class)).collect(Collectors.toList());",
+            "    }",
+            "};")
+        );
 
         endpoints.setType("org.apache.camel.Expression");
 
         // Copy entry points from builder factories
-        for (File file : allComponentsDslEndpointFactories) {
-            try {
-                CompilationUnit unit = StaticJavaParser.parse(file);
-                Optional<PackageDeclaration> packageDeclaration = unit.getPackageDeclaration();
-                Optional<TypeDeclaration<?>> typeDeclaration = unit.getPrimaryType();
+        for (CompilationUnit unit: units) {
+            Optional<PackageDeclaration> packageDeclaration = unit.getPackageDeclaration();
+            Optional<TypeDeclaration<?>> typeDeclaration = unit.getPrimaryType();
 
-                if (!packageDeclaration.isPresent() || !typeDeclaration.isPresent()) {
-                    getLog().debug("Skip " + file + " as it is invalid");
-                    continue;
+            if (!packageDeclaration.isPresent() || !typeDeclaration.isPresent()) {
+                continue;
+            }
+
+            ClassOrInterfaceDeclaration type = typeDeclaration.get().asClassOrInterfaceDeclaration();
+
+            for (MethodDeclaration declaration: type.getMethods()) {
+                if (declaration.isStatic()) {
+                    MethodDeclaration method = endpointBuilderClass.addMethod(declaration.getNameAsString());
+                    method.setDefault(true);
+                    method.setParameters(declaration.getParameters());
+
+                    // copy annotations from the source method
+                    declaration.getAnnotations().forEach(method::addAnnotation);
+
+                    method.setBody(
+                        new BlockStmt().addStatement(
+                            String.format("return %s.%s.%s(%s);",
+                                packageDeclaration.get().getNameAsString(),
+                                type.getNameAsString(),
+                                declaration.getNameAsString(),
+                                declaration.getParameters().stream().map(p -> p.getNameAsString()).collect(Collectors.joining(", "))
+                            )
+                        )
+                    );
+                    method.setType(
+                        String.format("%s.%s.%s",
+                            packageDeclaration.get().getNameAsString(),
+                            type.getNameAsString(),
+                            declaration.getType()
+                        )
+                    );
+
+                    declaration.getJavadoc().ifPresent(method::setJavadocComment);
                 }
-
-                ClassOrInterfaceDeclaration type = typeDeclaration.get().asClassOrInterfaceDeclaration();
-
-                for (MethodDeclaration declaration : type.getMethods()) {
-                    if (declaration.isStatic()) {
-                        MethodDeclaration method = endpointBuilderClass.addMethod(declaration.getNameAsString());
-                        method.setDefault(true);
-                        method.setParameters(declaration.getParameters());
-
-                        // copy annotations from the source method
-                        declaration.getAnnotations().forEach(method::addAnnotation);
-
-                        method.setBody(new BlockStmt()
-                            .addStatement(String.format("return %s.%s.%s(%s);", packageDeclaration.get().getNameAsString(), type.getNameAsString(), declaration.getNameAsString(),
-                                                        declaration.getParameters().stream().map(p -> p.getNameAsString()).collect(Collectors.joining(", ")))));
-                        method.setType(String.format("%s.%s.%s", packageDeclaration.get().getNameAsString(), type.getNameAsString(), declaration.getType()));
-
-                        declaration.getJavadoc().ifPresent(method::setJavadocComment);
-                    }
-                }
-            } catch (FileNotFoundException e) {
-                throw new MojoFailureException(e.getMessage());
             }
         }
 
         endpointBuilderUnit.addOrphanComment(new LineComment("CHECKSTYLE:ON"));
-        writeSourceIfChanged(endpointBuilderUnit.toString(), interfaceFactoryPath);
+        writeSourceIfChanged(endpointBuilderUnit.toString(), endpointFactoriesPackageName.replace('.', '/'), "EndpointBuilderFactory.java");
     }
 
-    private void synchronizeEndpointBuildersInterface() throws MojoFailureException {
-        final String interfaceFactoryPath = packageName.replace('.', '/').replace("dsl", "") + "EndpointBuilders.java";
-        final List<File> allComponentsDslEndpointFactories = loadAllComponentsDslEndpointFactoriesAsFile();
-
+    private void synchronizeEndpointBuildersInterface(List<CompilationUnit> units) throws MojoFailureException {
         CompilationUnit endpointBuilderUnit = new CompilationUnit();
-        endpointBuilderUnit.setPackageDeclaration(Strings.before(packageName, ".dsl"));
+        endpointBuilderUnit.setPackageDeclaration(endpointFactoriesPackageName);
 
         endpointBuilderUnit.addOrphanComment(new LineComment("CHECKSTYLE:OFF"));
 
@@ -573,54 +611,84 @@ public class EndpointDslMojo extends AbstractMojo {
         endpointBuilderClass.addSingleMemberAnnotation("javax.annotation.Generated", "\"" + EndpointDslMojo.class.getName() + "\"");
 
         // Copy entry points from builder factories
-        for (File file : allComponentsDslEndpointFactories) {
-            try {
-                CompilationUnit unit = StaticJavaParser.parse(file);
-                Optional<PackageDeclaration> packageDeclaration = unit.getPackageDeclaration();
-                Optional<TypeDeclaration<?>> typeDeclaration = unit.getPrimaryType();
+        for (CompilationUnit unit: units) {
+            Optional<PackageDeclaration> packageDeclaration = unit.getPackageDeclaration();
+            Optional<TypeDeclaration<?>> typeDeclaration = unit.getPrimaryType();
 
-                if (!packageDeclaration.isPresent() || !typeDeclaration.isPresent()) {
-                    getLog().debug("Skip " + file + " as it is invalid");
-                    continue;
+            if (!packageDeclaration.isPresent() || !typeDeclaration.isPresent()) {
+                continue;
+            }
+
+            ClassOrInterfaceDeclaration type = typeDeclaration.get().asClassOrInterfaceDeclaration();
+
+            for (MethodDeclaration declaration: type.getMethods()) {
+                if (declaration.isStatic()) {
+                    MethodDeclaration method = endpointBuilderClass.addMethod(declaration.getNameAsString());
+                    method.setStatic(true);
+                    method.setParameters(declaration.getParameters());
+
+                    // copy annotations from the source method
+                    declaration.getAnnotations().forEach(method::addAnnotation);
+
+                    method.setBody(
+                        new BlockStmt().addStatement(
+                            String.format("return %s.%s.%s(%s);",
+                                packageDeclaration.get().getNameAsString(),
+                                type.getNameAsString(),
+                                declaration.getNameAsString(),
+                                declaration.getParameters().stream().map(p -> p.getNameAsString()).collect(Collectors.joining(", "))
+                            )
+                        )
+                    );
+                    method.setType(
+                        String.format("%s.%s.%s",
+                            packageDeclaration.get().getNameAsString(),
+                            type.getNameAsString(),
+                            declaration.getType()
+                        )
+                    );
+
+                    declaration.getJavadoc().ifPresent(method::setJavadocComment);
                 }
-
-                ClassOrInterfaceDeclaration type = typeDeclaration.get().asClassOrInterfaceDeclaration();
-
-                for (MethodDeclaration declaration : type.getMethods()) {
-                    if (declaration.isStatic()) {
-                        MethodDeclaration method = endpointBuilderClass.addMethod(declaration.getNameAsString());
-                        method.setStatic(true);
-                        method.setParameters(declaration.getParameters());
-
-                        // copy annotations from the source method
-                        declaration.getAnnotations().forEach(method::addAnnotation);
-
-                        method.setBody(new BlockStmt()
-                            .addStatement(String.format("return %s.%s.%s(%s);", packageDeclaration.get().getNameAsString(), type.getNameAsString(), declaration.getNameAsString(),
-                                                        declaration.getParameters().stream().map(p -> p.getNameAsString()).collect(Collectors.joining(", ")))));
-                        method.setType(String.format("%s.%s.%s", packageDeclaration.get().getNameAsString(), type.getNameAsString(), declaration.getType()));
-
-                        declaration.getJavadoc().ifPresent(method::setJavadocComment);
-                    }
-                }
-            } catch (FileNotFoundException e) {
-                throw new MojoFailureException(e.getMessage());
             }
         }
 
         endpointBuilderUnit.addOrphanComment(new LineComment("CHECKSTYLE:ON"));
 
-        writeSourceIfChanged(endpointBuilderUnit.toString(), interfaceFactoryPath);
+        writeSourceIfChanged(endpointBuilderUnit.toString(),  endpointFactoriesPackageName.replace(".", "/"), "EndpointBuilders.java");
     }
 
     private List<File> loadAllComponentsDslEndpointFactoriesAsFile() {
-        final File allComponentsDslEndpointFactory = new File(outputDir, packageName.replace('.', '/'));
+        final File allComponentsDslEndpointFactory = new File(outputDir, componentsFactoriesPackageName.replace('.', '/'));
 
         // load components
-        return Arrays.asList(allComponentsDslEndpointFactory.listFiles()).stream().filter(file -> file.isFile() && file.getName().endsWith(".java") && file.exists()).sorted()
+        return Arrays.asList(allComponentsDslEndpointFactory.listFiles()).stream()
+            .filter(file -> file.isFile() && file.getName().endsWith(".java") && file.exists())
+            .sorted()
             .collect(Collectors.toList());
     }
 
+    private List<CompilationUnit> loadAllComponentsDslEndpointFactoriesAsCompilationUnit() throws MojoFailureException {
+        final List<File> allFactories = loadAllComponentsDslEndpointFactoriesAsFile();
+        final List<CompilationUnit> allCompilationUnit = new ArrayList<>(allFactories.size());
+
+        try {
+            for (File file: allFactories) {
+                CompilationUnit unit = StaticJavaParser.parse(file);
+
+                if (!unit.getPackageDeclaration().isPresent() || !unit.getPrimaryType().isPresent()) {
+                    getLog().debug("Skip " + file + " as it is invalid");
+                    continue;
+                }
+
+                allCompilationUnit.add(StaticJavaParser.parse(file));
+            }
+        } catch (FileNotFoundException e) {
+            throw new MojoFailureException(e.getMessage());
+        }
+
+        return allCompilationUnit;
+    }
     private static String camelCaseLower(String s) {
         int i;
         while (s != null && (i = s.indexOf('-')) > 0) {
@@ -989,12 +1057,12 @@ public class EndpointDslMojo extends AbstractMojo {
         }
     }
 
-    private void writeSourceIfChanged(JavaClass source, String fileName, boolean innerClassesLast) throws MojoFailureException {
-        writeSourceIfChanged(source.printClass(innerClassesLast), fileName);
+    private void writeSourceIfChanged(JavaClass source, String filePath, String fileName, boolean innerClassesLast) throws MojoFailureException {
+        writeSourceIfChanged(source.printClass(innerClassesLast), filePath, fileName);
     }
 
-    private void writeSourceIfChanged(String source, String fileName) throws MojoFailureException {
-        File target = new File(outputDir, fileName);
+    private void writeSourceIfChanged(String source, String filePath, String fileName) throws MojoFailureException {
+        Path target = outputDir.toPath().resolve(filePath).resolve(fileName);
 
         try {
             String header;
@@ -1004,7 +1072,7 @@ public class EndpointDslMojo extends AbstractMojo {
             String code = header + source;
             getLog().debug("Source code generated:\n" + code);
 
-            updateResource(null, target.toPath(), code);
+            updateResource(null, target, code);
         } catch (Exception e) {
             throw new MojoFailureException("IOError with file " + target, e);
         }
