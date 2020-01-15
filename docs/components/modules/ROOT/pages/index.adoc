@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 308 in 246 JAR artifacts (1 deprecated)
+Number of Components: 308 in 245 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -22,7 +22,7 @@ Number of Components: 308 in 246 JAR artifacts (1 deprecated)
 
 | xref:apns-component.adoc[APNS] (camel-apns) | 2.8 | For sending notifications to Apple iOS devices.
 
-| xref:as2-component.adoc[AS2] (camel-as2) | 2.22 | Component used for transferring data secure and reliable over the internet using the AS2 protocol.
+| xref:as2-component.adoc[AS2] (@@@ARTIFACTID@@@) | 2.22 | Component used for transferring data secure and reliable over the internet using the AS2 protocol.
 
 | xref:asterisk-component.adoc[Asterisk] (camel-asterisk) | 2.18 | The asterisk component is used to interact with Asterisk PBX Server.
 
@@ -500,7 +500,7 @@ Number of Components: 308 in 246 JAR artifacts (1 deprecated)
 
 | xref:saga-component.adoc[Saga] (camel-saga) | 2.21 | The saga component provides access to advanced options for managing the flow in the Saga EIP.
 
-| xref:salesforce-component.adoc[Salesforce] (camel-salesforce) | 2.12 | The salesforce component is used for integrating Camel with the massive Salesforce API.
+| xref:salesforce-component.adoc[Salesforce] (@@@ARTIFACTID@@@) | 2.12 | The salesforce component is used for integrating Camel with the massive Salesforce API.
 
 | xref:sap-netweaver-component.adoc[SAP NetWeaver] (camel-sap-netweaver) | 2.12 | The sap-netweaver component integrates with the SAP NetWeaver Gateway using HTTP transports.
 

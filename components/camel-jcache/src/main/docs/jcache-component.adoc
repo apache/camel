@@ -122,8 +122,8 @@ The JCache component supports 8 options, which are listed below.
 | Name | Description | Default | Type
 | *cachingProvider* (common) | The fully qualified class name of the javax.cache.spi.CachingProvider |  | String
 | *cacheConfiguration* (common) | A Configuration for the Cache |  | Configuration
-| *cacheConfiguration Properties* (common) | Properties to configure jcache |  | Map
-| *cacheConfiguration PropertiesRef* (common) | References to an existing Properties or Map to lookup in the registry to use for configuring jcache. |  | String
+| *cacheConfigurationProperties* (common) | Properties to configure jcache |  | Map
+| *cacheConfigurationProperties Ref* (common) | References to an existing Properties or Map to lookup in the registry to use for configuring jcache. |  | String
 | *configurationUri* (common) | An implementation specific URI for the CacheManager |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean

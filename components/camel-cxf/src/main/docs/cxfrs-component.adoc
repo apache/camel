@@ -59,7 +59,7 @@ The CXF-RS component supports 5 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
@@ -116,7 +116,7 @@ with the following path and query parameters:
 | *sslContextParameters* (producer) | The Camel SSL setting reference. Use the # notation to reference the SSL Context. |  | SSLContextParameters
 | *throwExceptionOnFailure* (producer) | This option tells the CxfRsProducer to inspect return codes and will generate an Exception if the return code is larger than 207. | true | boolean
 | *httpClientAPI* (producer) | If it is true, the CxfRsProducer will use the HttpClientAPI to invoke the service. If it is false, the CxfRsProducer will use the ProxyClientAPI to invoke the service | true | boolean
-| *ignoreDeleteMethodMessage Body* (producer) | This option is used to tell CxfRsProducer to ignore the message body of the DELETE method when using HTTP API. | false | boolean
+| *ignoreDeleteMethodMessageBody* (producer) | This option is used to tell CxfRsProducer to ignore the message body of the DELETE method when using HTTP API. | false | boolean
 | *maxClientCacheSize* (producer) | This option allows you to configure the maximum size of the cache. The implementation caches CXF clients or ClientFactoryBean in CxfProvider and CxfRsProvider. | 10 | int
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *binding* (advanced) | To use a custom CxfBinding to control the binding between Camel Message and CXF Message. |  | CxfRsBinding

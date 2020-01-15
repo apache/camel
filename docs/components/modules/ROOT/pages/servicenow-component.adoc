@@ -55,7 +55,7 @@ The ServiceNow component supports 15 options, which are listed below.
 | *proxyPort* (advanced) | The proxy port number |  | Integer
 | *proxyUserName* (security) | Username for proxy authentication |  | String
 | *proxyPassword* (security) | Password for proxy authentication |  | String
-| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 |===
@@ -119,7 +119,7 @@ with the following path and query parameters:
 | *httpClientPolicy* (advanced) | To configure http-client |  | HTTPClientPolicy
 | *mapper* (advanced) | Sets Jackson's ObjectMapper to use for request/reply |  | ObjectMapper
 | *proxyAuthorizationPolicy* (advanced) | To configure proxy authentication |  | ProxyAuthorizationPolicy
-| *retrieveTargetRecordOn Import* (advanced) | Set this parameter to true to retrieve the target record when using import set api. The import set result is then replaced by the target record | false | Boolean
+| *retrieveTargetRecordOnImport* (advanced) | Set this parameter to true to retrieve the target record when using import set api. The import set result is then replaced by the target record | false | Boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *timeFormat* (advanced) | The time format used for Json serialization/deserialization | HH:mm:ss | String
 | *proxyHost* (proxy) | The proxy host name |  | String
