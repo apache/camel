@@ -6,8 +6,11 @@
 The Constant Expression Language is really just a way to specify
 constant strings as a type of expression.
 
-NOTE: This is a fixed constant value that is only set once during starting up the route,
-      do not use this if you want dynamic values during routing.
+[NOTE]
+====
+This is a fixed constant value that is only set once during starting up the route,
+do not use this if you want dynamic values during routing.
+====
 
 == Constant Options
 
