@@ -18,7 +18,6 @@ package org.apache.camel.impl.engine;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -27,19 +26,17 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.MessageHistory;
-import org.apache.camel.NamedNode;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.support.service.ServiceSupport;
 
 public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements AsyncProcessorAwaitManager, StaticService {
-
-    // TODO: Can make this work without message history
 
     private final AsyncProcessorAwaitManager.Statistics statistics = new UtilizationStatistics();
     private final AtomicLong blockedCounter = new AtomicLong();
@@ -294,44 +291,22 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
 
         @Override
         public String getRouteId() {
-            MessageHistory lastMessageHistory = getLastMessageHistory();
-            if (lastMessageHistory == null) {
-                return null;
+            // compute route id
+            UnitOfWork uow = exchange.getUnitOfWork();
+            RouteContext rc = uow != null ? uow.getRouteContext() : null;
+            if (rc != null) {
+                return rc.getRouteId();
             }
-            return lastMessageHistory.getRouteId();
+            return null;
         }
 
         @Override
         public String getNodeId() {
-            NamedNode node = getNode();
-            if (node == null) {
-                return null;
-            }
-            return node.getId();
+            return exchange.getProperty(Exchange.NODE_ID, String.class);
         }
 
         public CountDownLatch getLatch() {
             return latch;
-        }
-
-        private NamedNode getNode() {
-            MessageHistory lastMessageHistory = getLastMessageHistory();
-            if (lastMessageHistory == null) {
-                return null;
-            }
-            return lastMessageHistory.getNode();
-        }
-
-        private MessageHistory getLastMessageHistory() {
-            LinkedList<MessageHistory> list = getMessageHistories();
-            if (list == null || list.isEmpty()) {
-                return null;
-            }
-            return list.getLast();
-        }
-
-        private LinkedList<MessageHistory> getMessageHistories() {
-            return exchange.getProperty(Exchange.MESSAGE_HISTORY, LinkedList.class);
         }
 
         @Override

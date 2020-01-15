@@ -16,16 +16,11 @@
  */
 package org.apache.camel.impl;
 
-import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.MessageHistory;
-import org.apache.camel.NamedNode;
 import org.apache.camel.impl.engine.DefaultAsyncProcessorAwaitManager;
-import org.apache.camel.impl.engine.DefaultMessageHistoryFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
-import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Test;
 
@@ -35,7 +30,6 @@ import static org.junit.Assert.assertThat;
 
 public class DefaultAsyncProcessorAwaitManagerTest {
 
-    private static final MessageHistoryFactory MESSAGE_HISTORY_FACTORY = new DefaultMessageHistoryFactory();
     private DefaultAsyncProcessorAwaitManager defaultAsyncProcessorAwaitManager;
     private DefaultExchange exchange;
     private CountDownLatch latch;
@@ -53,7 +47,6 @@ public class DefaultAsyncProcessorAwaitManagerTest {
     @Test
     public void testMessageHistoryWithEmptyList() throws Exception {
         startAsyncProcess();
-        exchange.setProperty(Exchange.MESSAGE_HISTORY, new LinkedList<MessageHistory>());
         AsyncProcessorAwaitManager.AwaitThread awaitThread = defaultAsyncProcessorAwaitManager.browse().iterator().next();
         assertThat(awaitThread.getRouteId(), is(nullValue()));
         assertThat(awaitThread.getNodeId(), is(nullValue()));
@@ -63,9 +56,6 @@ public class DefaultAsyncProcessorAwaitManagerTest {
     @Test
     public void testMessageHistoryWithNullMessageHistory() throws Exception {
         startAsyncProcess();
-        LinkedList<MessageHistory> messageHistories = new LinkedList<>();
-        messageHistories.add(null);
-        exchange.setProperty(Exchange.MESSAGE_HISTORY, messageHistories);
         AsyncProcessorAwaitManager.AwaitThread awaitThread = defaultAsyncProcessorAwaitManager.browse().iterator().next();
         assertThat(awaitThread.getRouteId(), is(nullValue()));
         assertThat(awaitThread.getNodeId(), is(nullValue()));
@@ -75,9 +65,6 @@ public class DefaultAsyncProcessorAwaitManagerTest {
     @Test
     public void testMessageHistoryWithNullElements() throws Exception {
         startAsyncProcess();
-        LinkedList<MessageHistory> messageHistories = new LinkedList<>();
-        messageHistories.add(MESSAGE_HISTORY_FACTORY.newMessageHistory(null, new MockNamedNode().withId(null), 0, null));
-        exchange.setProperty(Exchange.MESSAGE_HISTORY, messageHistories);
         AsyncProcessorAwaitManager.AwaitThread awaitThread = defaultAsyncProcessorAwaitManager.browse().iterator().next();
         assertThat(awaitThread.getRouteId(), is(nullValue()));
         assertThat(awaitThread.getNodeId(), is(nullValue()));
@@ -87,11 +74,8 @@ public class DefaultAsyncProcessorAwaitManagerTest {
     @Test
     public void testMessageHistoryWithNotNullElements() throws Exception {
         startAsyncProcess();
-        LinkedList<MessageHistory> messageHistories = new LinkedList<>();
-        messageHistories.add(MESSAGE_HISTORY_FACTORY.newMessageHistory("routeId", new MockNamedNode().withId("nodeId"), 0, null));
-        exchange.setProperty(Exchange.MESSAGE_HISTORY, messageHistories);
+        exchange.setProperty(Exchange.NODE_ID, "nodeId");
         AsyncProcessorAwaitManager.AwaitThread awaitThread = defaultAsyncProcessorAwaitManager.browse().iterator().next();
-        assertThat(awaitThread.getRouteId(), is("routeId"));
         assertThat(awaitThread.getNodeId(), is("nodeId"));
         waitForEndOfAsyncProcess();
     }
@@ -120,38 +104,4 @@ public class DefaultAsyncProcessorAwaitManagerTest {
         }
     }
 
-    private static class MockNamedNode implements NamedNode {
-
-        private String id;
-
-        @Override
-        public String getId() {
-            return id;
-        }
-
-        @Override
-        public String getShortName() {
-            return this.getClass().getSimpleName();
-        }
-
-        @Override
-        public String getLabel() {
-            return this.getClass().getName();
-        }
-
-        @Override
-        public String getDescriptionText() {
-            return this.getClass().getCanonicalName();
-        }
-
-        @Override
-        public NamedNode getParent() {
-            return null;
-        }
-
-        public MockNamedNode withId(String id) {
-            this.id = id;
-            return this;
-        }
-    }
 }
