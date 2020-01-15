@@ -38,6 +38,11 @@ public interface MessageHistoryFactory extends StaticService, CamelContextAware 
      */
     MessageHistory newMessageHistory(String routeId, NamedNode node, long timestamp, Exchange exchange);
 
+    /**
+     * Whether to make a copy of the message in the {@link MessageHistory}.
+     * By default this is turned off. Beware that you should not mutate or change the content
+     * on the copied message, as its purpose is as a read-only view of the message.
+     */
     boolean isCopyMessage();
 
     /**
@@ -47,6 +52,11 @@ public interface MessageHistoryFactory extends StaticService, CamelContextAware 
      */
     void setCopyMessage(boolean copyMessage);
 
+    /**
+     * An optional pattern to filter which nodes to trace in this message history. By default all nodes are included.
+     * To only include nodes that are Step EIPs then use the EIP shortname, eg step.
+     * You can also include multiple nodes separated by comma, eg step,wiretap,to
+     */
     String getNodePattern();
 
     /**
