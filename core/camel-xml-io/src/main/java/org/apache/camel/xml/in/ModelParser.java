@@ -184,6 +184,7 @@ public class ModelParser extends BaseParser {
                 case "cache": def.setCache(val); break;
                 case "method": def.setMethod(val); break;
                 case "ref": def.setRef(val); break;
+                case "scope": def.setScope(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
