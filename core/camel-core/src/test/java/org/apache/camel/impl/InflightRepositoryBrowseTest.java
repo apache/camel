@@ -41,9 +41,6 @@ public class InflightRepositoryBrowseTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // turn on message history to browse inflight details
-                context.setMessageHistory(true);
-
                 from("direct:start").routeId("foo").to("mock:a").process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {

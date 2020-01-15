@@ -31,6 +31,8 @@ import java.util.stream.Stream;
 import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
@@ -209,6 +211,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @Override
         @SuppressWarnings("unchecked")
         public long getElapsed() {
+            // this can only be calculate if message history is enabled
             LinkedList<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, LinkedList.class);
             if (list == null || list.isEmpty()) {
                 return 0;
@@ -231,18 +234,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @Override
         @SuppressWarnings("unchecked")
         public String getNodeId() {
-            LinkedList<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, LinkedList.class);
-            if (list == null || list.isEmpty()) {
-                return null;
-            }
-
-            // get latest entry
-            MessageHistory history = list.getLast();
-            if (history != null) {
-                return history.getNode().getId();
-            } else {
-                return null;
-            }
+            return exchange.getProperty(Exchange.NODE_ID, String.class);
         }
 
         @Override
@@ -253,18 +245,13 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @Override
         @SuppressWarnings("unchecked")
         public String getAtRouteId() {
-            LinkedList<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, LinkedList.class);
-            if (list == null || list.isEmpty()) {
-                return null;
+            // compute route id
+            UnitOfWork uow = exchange.getUnitOfWork();
+            RouteContext rc = uow != null ? uow.getRouteContext() : null;
+            if (rc != null) {
+                return rc.getRouteId();
             }
-
-            // get latest entry
-            MessageHistory history = list.getLast();
-            if (history != null) {
-                return history.getRouteId();
-            } else {
-                return null;
-            }
+            return null;
         }
 
         @Override
