@@ -76,7 +76,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public void addRoute(String routeId) {
-        routeCount.putIfAbsent(routeId, new AtomicInteger(0));
+        routeCount.putIfAbsent(routeId, new AtomicInteger());
     }
 
     @Override
