@@ -17,9 +17,12 @@ When a new Bot is created, the https://telegram.me/botfather[BotFather] provides
 **authorization token** corresponding to the Bot. The authorization token is a mandatory parameter
 for the camel-telegram endpoint.
 
-NOTE: In order to allow the Bot to receive all messages exchanged within a group or channel (not just
+[NOTE]
+====
+In order to allow the Bot to receive all messages exchanged within a group or channel (not just
 the ones starting with a '/' character), ask the BotFather to *disable the privacy mode*, using the
 */setprivacy* command.
+====
 
 
 Maven users will need to add the following dependency to their `pom.xml`
