@@ -88,19 +88,20 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
 
     @Override
     public ClassInfo cacheClass(Class<?> clazz) {
+        invoked.incrementAndGet();
         if (logger.shouldLog()) {
             log("cacheClass", clazz);
         }
-        invoked.incrementAndGet();
         return IntrospectionSupport.cacheClass(clazz);
     }
 
     @Override
     public void clearCache() {
-        if (logger.shouldLog()) {
-            log("clearCache", null);
-        }
         if (invoked.get() > 0) {
+            invoked.incrementAndGet();
+            if (logger.shouldLog()) {
+                log("clearCache", null);
+            }
             IntrospectionSupport.clearCache();
         }
     }
