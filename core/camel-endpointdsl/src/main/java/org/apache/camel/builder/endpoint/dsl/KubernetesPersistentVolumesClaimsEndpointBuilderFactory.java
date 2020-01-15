@@ -437,7 +437,7 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
      * Path parameter: masterUrl (required)
      * Kubernetes Master url
      */
-    static KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesPersistentVolumesClaims(
+    KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesPersistentVolumesClaims(
             String path) {
         class KubernetesPersistentVolumesClaimsEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesPersistentVolumesClaimsEndpointBuilder, AdvancedKubernetesPersistentVolumesClaimsEndpointBuilder {
             public KubernetesPersistentVolumesClaimsEndpointBuilderImpl(String path) {
