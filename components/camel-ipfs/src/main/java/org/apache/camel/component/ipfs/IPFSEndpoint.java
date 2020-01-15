@@ -16,35 +16,20 @@
  */
 package org.apache.camel.component.ipfs;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
-
-import io.ipfs.multihash.Multihash;
-import io.nessus.ipfs.client.DefaultIPFSClient;
-import io.nessus.ipfs.client.IPFSClient;
-import io.nessus.ipfs.client.IPFSException;
-import org.apache.camel.Consumer;
+    import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.ipfs.IPFSConfiguration.IPFSCommand;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import io.nessus.ipfs.client.IPFSClient;
 
 /**
  * The camel-ipfs component provides access to the Interplanetary File System (IPFS).
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "ipfs", title = "IPFS",
-        syntax = "ipfs:ipfsHost:ipfsPort/ipfsCmd", producerOnly = true, label = "file,ipfs")
+        syntax = "ipfs:ipfsCmd", producerOnly = true, label = "file,ipfs")
 public class IPFSEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -74,4 +59,7 @@ public class IPFSEndpoint extends DefaultEndpoint {
         return configuration;
     }
 
+    public IPFSClient getIPFSClient() {
+        return getComponent().getIPFSClient();
+    }
 }
