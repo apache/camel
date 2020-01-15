@@ -16,6 +16,10 @@
  */
 package org.apache.camel;
 
+/**
+ * An interface to represent an object that can be resolved as a consumer {@link Endpoint}
+ */
+@FunctionalInterface
 public interface EndpointConsumerResolver {
     /**
      * Resolves this object as an endpoint.

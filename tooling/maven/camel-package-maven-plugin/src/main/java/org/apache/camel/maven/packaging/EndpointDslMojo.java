@@ -36,6 +36,7 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Generated;
 
@@ -486,6 +487,13 @@ public class EndpointDslMojo extends AbstractMojo {
 
         CompilationUnit endpointBuilderUnit = new CompilationUnit();
         endpointBuilderUnit.setPackageDeclaration(StringHelper.before(packageName, ".dsl"));
+        endpointBuilderUnit.addImport("java.util.List");
+        endpointBuilderUnit.addImport("java.util.stream.Collectors");
+        endpointBuilderUnit.addImport("java.util.stream.Stream");
+        endpointBuilderUnit.addImport("org.apache.camel.Exchange");
+        endpointBuilderUnit.addImport("org.apache.camel.Expression");
+        endpointBuilderUnit.addImport("org.apache.camel.builder.EndpointProducerBuilder");
+        endpointBuilderUnit.addImport("org.apache.camel.support.ExpressionAdapter");
 
         // EndpointBuilderFactory
         ClassOrInterfaceDeclaration endpointBuilderClass = endpointBuilderUnit.addClass("EndpointBuilderFactory");
@@ -498,7 +506,16 @@ public class EndpointDslMojo extends AbstractMojo {
         MethodDeclaration endpoints = endpointBuilderClass.addMethod("endpoints");
         endpoints.setDefault(true);
         endpoints.addAndGetParameter("org.apache.camel.builder.EndpointProducerBuilder", "endpoints").setVarArgs(true);
-        endpoints.setBody(new BlockStmt().addStatement("return EndpointBuilderSupport.endpoints(endpoints);"));
+        endpoints.setBody(block(
+            "return new ExpressionAdapter() {",
+            "    List<Expression> expressions = Stream.of(endpoints).map(EndpointProducerBuilder::expr).collect(Collectors.toList());",
+            "    @Override",
+            "    public Object evaluate(Exchange exchange) {",
+            "        return expressions.stream().map(e -> e.evaluate(exchange, Object.class)).collect(Collectors.toList());",
+            "    }",
+            "};")
+        );
+
         endpoints.setType("org.apache.camel.Expression");
 
         // Copy entry points from builder factories
@@ -520,6 +537,9 @@ public class EndpointDslMojo extends AbstractMojo {
                         MethodDeclaration method = endpointBuilderClass.addMethod(declaration.getNameAsString());
                         method.setDefault(true);
                         method.setParameters(declaration.getParameters());
+
+                        // copy annotations from the source method
+                        declaration.getAnnotations().forEach(method::addAnnotation);
 
                         method.setBody(
                             new BlockStmt().addStatement(
@@ -583,6 +603,9 @@ public class EndpointDslMojo extends AbstractMojo {
                         MethodDeclaration method = endpointBuilderClass.addMethod(declaration.getNameAsString());
                         method.setStatic(true);
                         method.setParameters(declaration.getParameters());
+
+                        // copy annotations from the source method
+                        declaration.getAnnotations().forEach(method::addAnnotation);
 
                         method.setBody(
                             new BlockStmt().addStatement(
@@ -1016,4 +1039,9 @@ public class EndpointDslMojo extends AbstractMojo {
         }
     }
 
+    private static BlockStmt block(String... statements) {
+        return StaticJavaParser.parseBlock(
+            "{" + Stream.of(statements).collect(Collectors.joining("\n")) + "}"
+        );
+    }
 }
