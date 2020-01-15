@@ -114,7 +114,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
     private CamelContext camelContext;
     private ExecutorService executor;
-    private long timeout = 5 * 60;
+    private long timeout = 30;
     private TimeUnit timeUnit = TimeUnit.SECONDS;
     private boolean shutdownNowOnTimeout = true;
     private boolean shutdownRoutesInReverseOrder = true;
