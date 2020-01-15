@@ -170,8 +170,8 @@
     <curator-version>2.12.0</curator-version>
     <cxf-version>3.3.5</cxf-version>
     <cxf-version-range>[3.1,4.0)</cxf-version-range>
-    <cxf-xjc-plugin-version>3.2.0</cxf-xjc-plugin-version>
-    <cxf-xjc-utils-version>3.2.0</cxf-xjc-utils-version>
+    <cxf-xjc-plugin-version>3.3.1</cxf-xjc-plugin-version>
+    <cxf-xjc-utils-version>3.3.1</cxf-xjc-utils-version>
     <deltaspike-version>1.9.0</deltaspike-version>
     <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
     <derby-version>10.14.2.0</derby-version>
