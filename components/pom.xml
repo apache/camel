@@ -229,6 +229,7 @@
         <module>camel-jooq</module>
         <module>camel-jpa</module>
         <module>camel-jsch</module>
+        <module>camel-jslt</module>
         <module>camel-json-validator</module>
         <module>camel-jsonapi</module>
         <module>camel-jsonpath</module>
