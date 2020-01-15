@@ -8,8 +8,11 @@ Camel allows
 https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#expressions[Spring Expression Language (SpEL)]
 to be used as an Expression or Predicate in the DSL or XML Configuration.
 
-NOTE: It is recommended to use SpEL in Spring runtimes. However, you can
+[NOTE]
+====
+It is recommended to use SpEL in Spring runtimes. However, you can
 use SpEL in other runtimes (there may be functionality SpEL cannot do when not running in a Spring runtime)
+====
 
 == Variables
 
