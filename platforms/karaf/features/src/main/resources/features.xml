@@ -1561,6 +1561,14 @@
     <feature version='${project.version}'>camel-ftp</feature>
     <bundle>mvn:org.apache.camel/camel-jsch/${project.version}</bundle>
   </feature>
+  <feature name='camel-jslt' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.schibsted.spt.data/jslt/${jslt-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-jslt/${project.version}</bundle>
+  </feature>
   <feature name='camel-json-validator' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:com.networknt/json-schema-validator/${networknt-json-schema-validator-version}</bundle>
