@@ -59,7 +59,8 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     private String id;
     private final CamelContext context;
-    private final Deque<RouteContext> routeContextStack = new ArrayDeque<>();
+    // reduce the default size of the stack with the number of nested routes deep (8 level down)
+    private final Deque<RouteContext> routeContextStack = new ArrayDeque<>(8);
     private final transient Logger log;
     private List<Synchronization> synchronizations;
     private Message originalInMessage;
@@ -160,7 +161,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     @Override
     public synchronized void addSynchronization(Synchronization synchronization) {
         if (synchronizations == null) {
-            synchronizations = new ArrayList<>();
+            synchronizations = new ArrayList<>(8);
         }
         log.trace("Adding synchronization {}", synchronization);
         synchronizations.add(synchronization);
