@@ -1,6 +1,8 @@
+[[aws2-translate-component]]
 = AWS 2 Translate Component
 
 *Since Camel 3.1*
+
 *Since Camel 3.1*
 
 
