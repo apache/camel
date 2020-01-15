@@ -206,6 +206,7 @@
         <include>org.apache.camel:camel-jooq</include>
         <include>org.apache.camel:camel-jpa</include>
         <include>org.apache.camel:camel-jsch</include>
+        <include>org.apache.camel:camel-jslt</include>
         <include>org.apache.camel:camel-json-validator</include>
         <include>org.apache.camel:camel-jsonapi</include>
         <include>org.apache.camel:camel-jsonpath</include>

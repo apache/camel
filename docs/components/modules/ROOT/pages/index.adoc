@@ -6,7 +6,8 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 309 in 247 JAR artifacts (1 deprecated)
+=======
+Number of Components: 310 in 248 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -341,6 +342,8 @@ Number of Components: 309 in 247 JAR artifacts (1 deprecated)
 | xref:jooq-component.adoc[JOOQ] (camel-jooq) | 3.0 | The jooq component enables you to store and retrieve entities from databases using JOOQ
 
 | xref:jpa-component.adoc[JPA] (camel-jpa) | 1.0 | The jpa component enables you to store and retrieve Java objects from databases using JPA.
+
+| xref:jslt-component.adoc[JSLT] (camel-jslt) | 3.1 | The jslt component allows you to process a JSON messages using an JSLT transformations.
 
 | xref:json-validator-component.adoc[JSON Schema Validator] (camel-json-validator) | 2.20 | Validates the payload of a message using NetworkNT JSON Schema library.
 
