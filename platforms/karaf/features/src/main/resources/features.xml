@@ -275,6 +275,9 @@
      <feature version='${project.version}'>camel-aws-swf</feature>
      <feature version='${project.version}'>camel-aws-translate</feature>
   </feature>
+  <feature name='camel-aws2' version='${project.version}' start-level='50'>
+     <feature version='${project.version}'>camel-aws2-translate</feature>
+  </feature>
   <feature name='camel-aws-s3' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
@@ -544,6 +547,17 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-cbor/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aws-java-sdk/${aws-java-sdk-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-aws-translate/${project.version}</bundle>
+  </feature>
+  <feature name='camel-aws2-translate' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:software.amazon.awssdk/translate/${aws-java-sdk2-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:software.amazon.awssdk/auth/${aws-java-sdk2-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:software.amazon.awssdk/aws-core/${aws-java-sdk2-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:software.amazon.awssdk/sdk-core/${aws-java-sdk2-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:software.amazon.awssdk/apache-client/${aws-java-sdk2-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:software.amazon.awssdk/http-client-spi/${aws-java-sdk2-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:software.amazon.awssdk/regions/${aws-java-sdk2-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-aws2-translate/${project.version}</bundle>
   </feature>
   <feature name='camel-aws-xray' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
