@@ -55,16 +55,16 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     //   to its name. Maybe this implementation should be named ExchangeContext and we can
     //   introduce a simpler UnitOfWork concept. This would also allow us to refactor the
     //   SubUnitOfWork into a general parent/child unit of work concept. However this
-    //   requires API changes and thus is best kept for Camel 3.0
+    //   requires API changes and thus is best kept for future Camel work
 
     private String id;
     private final CamelContext context;
+    private final Deque<RouteContext> routeContextStack = new ArrayDeque<>();
+    private final transient Logger log;
     private List<Synchronization> synchronizations;
     private Message originalInMessage;
     private Set<Object> transactedBy;
-    private final Deque<RouteContext> routeContextStack = new ArrayDeque<>();
-    private final transient Logger log;
-    
+
     public DefaultUnitOfWork(Exchange exchange) {
         this(exchange, LOG);
     }
@@ -149,21 +149,12 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     @Override
     public void start() {
-        id = null;
+        // noop
     }
 
     @Override
     public void stop() {
-        // need to clean up when we are stopping to not leak memory
-        if (synchronizations != null) {
-            synchronizations.clear();
-        }
-        if (transactedBy != null) {
-            transactedBy.clear();
-        }
-        routeContextStack.clear();
-        originalInMessage = null;
-        id = null;
+        // noop
     }
 
     @Override
@@ -221,7 +212,9 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     @Override
     public void done(Exchange exchange) {
-        log.trace("UnitOfWork done for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
+        if (log.isTraceEnabled()) {
+            log.trace("UnitOfWork done for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
+        }
 
         boolean failed = exchange.isFailed();
 
