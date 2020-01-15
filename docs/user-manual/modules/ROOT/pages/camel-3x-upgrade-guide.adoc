@@ -11,11 +11,6 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.0 to 3.1
 
-=== API changes
-
-Cookies from `camel-http-common` has been moved into a new `camel-http-base` JAR.
-The package `org.apache.camel.http.common.cookie` is renamed to `org.apache.camel.http.base.cookie`.
-
 === camel-ahc, camel-netty-http, camel-undertow
 
 These Camel components now no longer have dependency on Javax Servlet.
@@ -79,8 +74,19 @@ nsq:myTopic?servers=myserver:4161
 This change is motivated by allowing to configure servers on component level,
 and also for Spring Boot auto-configuration etc.
 
+=== Message History
 
-=== Java DSL
+The message history is now default disabled (due to optimize core for lower footprint out of the box).
+See the xref:message-history.adoc[Message History] documentation for how to enabled message history.
+
+=== API changes
+
+==== Cookies
+
+Cookies from `camel-http-common` has been moved into a new `camel-http-base` JAR.
+The package `org.apache.camel.http.common.cookie` is renamed to `org.apache.camel.http.base.cookie`.
+
+==== Java DSL
 
 The Java DSL has been revisited and the following methods have been removed:
 
@@ -95,7 +101,7 @@ The Java DSL has been revisited and the following methods have been removed:
 
 This change is motivated by the need to remove method ambiguity for untyped languages such as Groovy and JavaScript, for more info see https://issues.apache.org/jira/browse/CAMEL-14300
 
-=== CamelContext 
+==== CamelContext
 
 Some unused methods have been removed from `CamelContext` which were not part of the public API. The following methods have been removed:
 
