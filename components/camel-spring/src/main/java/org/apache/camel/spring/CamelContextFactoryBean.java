@@ -110,7 +110,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String tracePattern;
     @XmlAttribute
     private String debug;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute @Metadata(defaultValue = "false")
     private String messageHistory;
     @XmlAttribute @Metadata(defaultValue = "false")
     private String logMask;
