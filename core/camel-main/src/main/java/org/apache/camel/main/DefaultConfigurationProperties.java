@@ -29,7 +29,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private int durationMaxSeconds;
     private int durationMaxIdleSeconds;
     private int durationMaxMessages;
-    private int shutdownTimeout = 300;
+    private int shutdownTimeout = 45;
     private boolean shutdownSuppressLoggingOnTimeout;
     private boolean shutdownNowOnTimeout = true;
     private boolean shutdownRoutesInReverseOrder = true;

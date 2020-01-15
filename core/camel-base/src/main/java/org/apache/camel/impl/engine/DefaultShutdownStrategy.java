@@ -75,13 +75,13 @@ import org.apache.camel.util.StopWatch;
  * The idea by the <tt>forced</tt> shutdown strategy, is to stop continue processing messages.
  * And force routes and its services to shutdown now. There is a risk when shutting down now,
  * that some resources is not properly shutdown, which can cause side effects. The timeout value
- * is by default 300 seconds, but can be customized.
+ * is by default 45 seconds, but can be customized.
  * <p/>
  * As this strategy will politely wait until all exchanges has been completed it can potential wait
  * for a long time, and hence why a timeout value can be set. When the timeout triggers you can also
  * specify whether the remainder consumers should be shutdown now or ignore.
  * <p/>
- * Will by default use a timeout of 300 seconds (5 minutes) by which it will shutdown now the remaining consumers.
+ * Will by default use a timeout of 45 seconds by which it will shutdown now the remaining consumers.
  * This ensures that when shutting down Camel it at some point eventually will shutdown.
  * This behavior can of course be configured using the {@link #setTimeout(long)} and
  * {@link #setShutdownNowOnTimeout(boolean)} methods.
@@ -114,7 +114,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
     private CamelContext camelContext;
     private ExecutorService executor;
-    private long timeout = 30;
+    private long timeout = 45;
     private TimeUnit timeUnit = TimeUnit.SECONDS;
     private boolean shutdownNowOnTimeout = true;
     private boolean shutdownRoutesInReverseOrder = true;

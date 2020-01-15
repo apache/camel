@@ -74,6 +74,12 @@ nsq:myTopic?servers=myserver:4161
 This change is motivated by allowing to configure servers on component level,
 and also for Spring Boot auto-configuration etc.
 
+=== Graceful Shutdown Timeout
+
+When shutting down Camel, then the default timeout has changed from 300 seconds (5 minutes) to 45 seconds.
+The 45 seconds was chosen as 30 seconds is a common timeout to use for remote protocols, so we wanted to give
+Camel a bit more time, and hence added 15 seconds so the default is 45 seconds.
+
 === Message History
 
 The message history is now default disabled (due to optimize core for lower footprint out of the box).
