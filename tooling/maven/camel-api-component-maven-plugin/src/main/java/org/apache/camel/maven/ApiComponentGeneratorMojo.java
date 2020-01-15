@@ -216,7 +216,7 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
 
     private StringBuilder getFileBuilder() {
         final StringBuilder fileName = new StringBuilder();
-        fileName.append(outPackage.replaceAll("\\.", Matcher.quoteReplacement(File.separator))).append(File.separator);
+        fileName.append(outPackage.replace(".", Matcher.quoteReplacement(File.separator))).append(File.separator);
         return fileName;
     }
 

@@ -84,7 +84,7 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
              aClass = aClass.getSuperclass()) {
 
             log.debug("Processing " + aClass.getName());
-            final String javaDocPath = aClass.getName().replaceAll("\\.", "/").replace('$', '.') + ".html";
+            final String javaDocPath = aClass.getName().replace('.', '/').replace('$', '.') + ".html";
 
             // read javadoc html text for class
 

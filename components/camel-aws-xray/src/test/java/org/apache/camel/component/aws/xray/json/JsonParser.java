@@ -29,7 +29,7 @@ public final class JsonParser {
     }
 
     public static JsonStructure parse(final String jsonString) {
-        String json = jsonString.replaceAll("\n", "");
+        String json = jsonString.replace("\n", "");
 
         Stack<JsonStructure> stack = new Stack<>();
 
