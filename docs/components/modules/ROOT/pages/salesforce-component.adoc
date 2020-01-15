@@ -672,22 +672,22 @@ The Salesforce component supports 33 options, which are listed below.
 | *lazyLogin* (security) | If set to true prevents the component from authenticating to Salesforce with the start of the component. You would generally set this to the (default) false and authenticate early and be immediately aware of any authentication issues. | false | boolean
 | *config* (common) | Global endpoint configuration - use to set values that are common to all endpoints |  | SalesforceEndpointConfig
 | *httpClientProperties* (common) | Used to set any properties that can be configured on the underlying HTTP client. Have a look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options. |  | Map
-| *longPollingTransport Properties* (common) | Used to set any properties that can be configured on the LongPollingTransport used by the BayeuxClient (CometD) used by the streaming api |  | Map
+| *longPollingTransportProperties* (common) | Used to set any properties that can be configured on the LongPollingTransport used by the BayeuxClient (CometD) used by the streaming api |  | Map
 | *sslContextParameters* (security) | SSL parameters to use, see SSLContextParameters class for all available options. |  | SSLContextParameters
-| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters | false | boolean
+| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters | false | boolean
 | *httpClientIdleTimeout* (common) | Timeout used by the HttpClient when waiting for response from the Salesforce server. | 10000 | long
-| *httpClientConnection Timeout* (common) | Connection timeout used by the HttpClient when connecting to the Salesforce server. | 60000 | long
+| *httpClientConnectionTimeout* (common) | Connection timeout used by the HttpClient when connecting to the Salesforce server. | 60000 | long
 | *httpProxyHost* (proxy) | Hostname of the HTTP proxy server to use. |  | String
 | *httpProxyPort* (proxy) | Port number of the HTTP proxy server to use. |  | Integer
 | *httpProxyUsername* (security) | Username to use to authenticate against the HTTP proxy server. |  | String
 | *httpProxyPassword* (security) | Password to use to authenticate against the HTTP proxy server. |  | String
 | *isHttpProxySocks4* (proxy) | If set to true the configures the HTTP proxy to use as a SOCKS4 proxy. | false | boolean
 | *isHttpProxySecure* (security) | If set to false disables the use of TLS when accessing the HTTP proxy. | true | boolean
-| *httpProxyIncluded Addresses* (proxy) | A list of addresses for which HTTP proxy server should be used. |  | Set
-| *httpProxyExcluded Addresses* (proxy) | A list of addresses for which HTTP proxy server should not be used. |  | Set
+| *httpProxyIncludedAddresses* (proxy) | A list of addresses for which HTTP proxy server should be used. |  | Set
+| *httpProxyExcludedAddresses* (proxy) | A list of addresses for which HTTP proxy server should not be used. |  | Set
 | *httpProxyAuthUri* (security) | Used in authentication against the HTTP proxy server, needs to match the URI of the proxy server in order for the httpProxyUsername and httpProxyPassword to be used for authentication. |  | String
 | *httpProxyRealm* (security) | Realm of the proxy server, used in preemptive Basic/Digest authentication methods against the HTTP proxy server. |  | String
-| *httpProxyUseDigest Auth* (security) | If set to true Digest authentication will be used when authenticating to the HTTP proxy, otherwise Basic authorization method will be used | false | boolean
+| *httpProxyUseDigestAuth* (security) | If set to true Digest authentication will be used when authenticating to the HTTP proxy, otherwise Basic authorization method will be used | false | boolean
 | *packages* (common) | In what packages are the generated DTO classes. Typically the classes would be generated using camel-salesforce-maven-plugin. Set it if using the generated DTOs to gain the benefit of using short SObject names in parameters/header values. |  | String[]
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean

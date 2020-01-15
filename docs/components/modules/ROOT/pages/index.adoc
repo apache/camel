@@ -22,7 +22,7 @@ Number of Components: 309 in 247 JAR artifacts (1 deprecated)
 
 | xref:apns-component.adoc[APNS] (camel-apns) | 2.8 | For sending notifications to Apple iOS devices.
 
-| xref:as2-component.adoc[AS2] (@@@ARTIFACTID@@@) | 2.22 | Component used for transferring data secure and reliable over the internet using the AS2 protocol.
+| xref:as2-component.adoc[AS2] (camel-as2) | 2.22 | Component used for transferring data secure and reliable over the internet using the AS2 protocol.
 
 | xref:asterisk-component.adoc[Asterisk] (camel-asterisk) | 2.18 | The asterisk component is used to interact with Asterisk PBX Server.
 
@@ -45,6 +45,8 @@ Number of Components: 309 in 247 JAR artifacts (1 deprecated)
 | xref:atomix-value-component.adoc[Atomix Value] (camel-atomix) | 2.20 | The atomix-value component is used to access Atomix's distributed value.
 
 | xref:avro-component.adoc[Avro] (camel-avro) | 2.10 | Working with Apache Avro for data serialization.
+
+| xref:aws2-translate-component.adoc[AWS 2 Translate] (camel-aws2-translate) | 3.1 | The aws2-translate component is used for managing Amazon Translate
 
 | xref:aws-cw-component.adoc[AWS CloudWatch] (camel-aws-cw) | 2.11 | The aws-cw component is used for sending metrics to an Amazon CloudWatch.
 
@@ -85,8 +87,6 @@ Number of Components: 309 in 247 JAR artifacts (1 deprecated)
 | xref:aws-sdb-component.adoc[AWS SimpleDB] (camel-aws-sdb) | 2.9 | The aws-sdb component is for storing and retrieving data from/to Amazon's SDB service.
 
 | xref:aws-translate-component.adoc[AWS Translate] (camel-aws-translate) | 3.0 | The aws-translate component is used for managing Amazon Translate
-
-| xref:aws2-translate-component.adoc[AWS Translate] (camel-aws2-translate) | 3.1 | The aws2-translate component is used for managing Amazon Translate
 
 | xref:azure-blob-component.adoc[Azure Storage Blob Service] (camel-azure) | 2.19 | The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.
 
@@ -502,7 +502,7 @@ Number of Components: 309 in 247 JAR artifacts (1 deprecated)
 
 | xref:saga-component.adoc[Saga] (camel-saga) | 2.21 | The saga component provides access to advanced options for managing the flow in the Saga EIP.
 
-| xref:salesforce-component.adoc[Salesforce] (@@@ARTIFACTID@@@) | 2.12 | The salesforce component is used for integrating Camel with the massive Salesforce API.
+| xref:salesforce-component.adoc[Salesforce] (camel-salesforce) | 2.12 | The salesforce component is used for integrating Camel with the massive Salesforce API.
 
 | xref:sap-netweaver-component.adoc[SAP NetWeaver] (camel-sap-netweaver) | 2.12 | The sap-netweaver component integrates with the SAP NetWeaver Gateway using HTTP transports.
 
