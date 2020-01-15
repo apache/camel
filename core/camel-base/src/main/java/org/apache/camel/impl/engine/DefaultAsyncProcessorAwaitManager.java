@@ -39,6 +39,8 @@ import org.apache.camel.support.service.ServiceSupport;
 
 public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements AsyncProcessorAwaitManager, StaticService {
 
+    // TODO: Can make this work without message history
+
     private final AsyncProcessorAwaitManager.Statistics statistics = new UtilizationStatistics();
     private final AtomicLong blockedCounter = new AtomicLong();
     private final AtomicLong interruptedCounter = new AtomicLong();

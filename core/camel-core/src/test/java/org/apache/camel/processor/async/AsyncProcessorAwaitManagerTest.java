@@ -53,6 +53,9 @@ public class AsyncProcessorAwaitManagerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // turn on message history to browse details
+                context.setMessageHistory(true);
+
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start").routeId("myRoute").to("mock:before").to("async:bye:camel").id("myAsync").to("mock:after").process(new Processor() {

@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,8 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -540,13 +543,15 @@ public final class MessageHelper {
     @SuppressWarnings("unchecked")
     private static String doDumpMessageHistoryStacktrace(Exchange exchange, ExchangeFormatter exchangeFormatter, boolean logStackTrace) {
         List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
-        if (list == null || list.isEmpty()) {
-            return null;
-        }
+        boolean enabled = list != null;
 
         StringBuilder sb = new StringBuilder();
         sb.append("\n");
-        sb.append("Message History\n");
+        sb.append("Message History");
+        if (!enabled) {
+            sb.append(" (complete message history is disabled)");
+        }
+        sb.append("\n");
         sb.append("---------------------------------------------------------------------------------------------------------------------------------------\n");
         String goMessageHistoryHeader = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_HEADER_FORMAT);
         sb.append(String.format(
@@ -572,8 +577,30 @@ public final class MessageHelper {
         sb.append(String.format(goMessageHistoryOutput, routeId, id, label, elapsed));
         sb.append("\n");
 
-        // and then each history
-        for (MessageHistory history : list) {
+        if (list == null || list.isEmpty()) {
+            // message history is not enabled but we can show the last processed instead
+            id = exchange.getProperty(Exchange.NODE_ID, String.class);
+            if (id != null) {
+                // compute route id
+                UnitOfWork uow = exchange.getUnitOfWork();
+                RouteContext rc = uow != null ? uow.getRouteContext() : null;
+                if (rc != null) {
+                    routeId = rc.getRouteId();
+                }
+                label = exchange.getProperty(Exchange.NODE_LABEL, String.class);;
+                // we need to avoid leak the sensible information here
+                // the sanitizeUri takes a very long time for very long string and the format cuts this to
+                // 78 characters, anyway. Cut this to 100 characters. This will give enough space for removing
+                // characters in the sanitizeUri method and will be reasonably fast
+                label =  URISupport.sanitizeUri(StringHelper.limitLength(label, 100));
+                // we do not have elapsed time
+                elapsed = 0;
+                sb.append("\t...\n");
+                sb.append(String.format(goMessageHistoryOutput, routeId, id, label, elapsed));
+                sb.append("\n");
+            }
+        } else for (MessageHistory history : list) {
+            // and then each history
             routeId = history.getRouteId() != null ? history.getRouteId() : "";
             id = history.getNode().getId();
             // we need to avoid leak the sensible information here
