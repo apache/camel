@@ -27,7 +27,7 @@ import org.apache.camel.support.DefaultComponent;
 import software.amazon.awssdk.services.translate.TranslateClient;
 
 /**
- * For working with Amazon Translate.
+ * For working with Amazon Translate SDK v2.
  */
 @Component("aws2-translate")
 public class Translate2Component extends DefaultComponent {
