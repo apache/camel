@@ -37,7 +37,7 @@ import software.amazon.awssdk.services.translate.TranslateClientBuilder;
 /**
  * The aws2-translate component is used for managing Amazon Translate
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-translate", title = "AWS Translate", syntax = "aws2-translate:label", producerOnly = true, label = "cloud,management")
+@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-translate", title = "AWS 2 Translate", syntax = "aws2-translate:label", producerOnly = true, label = "cloud,management")
 public class Translate2Endpoint extends ScheduledPollEndpoint {
 
     private TranslateClient translateClient;

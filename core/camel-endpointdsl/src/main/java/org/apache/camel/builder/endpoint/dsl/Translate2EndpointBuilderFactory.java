@@ -31,7 +31,7 @@ public interface Translate2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS Translate component.
+     * Builder for endpoint for the AWS 2 Translate component.
      */
     public interface Translate2EndpointBuilder
             extends
@@ -279,7 +279,7 @@ public interface Translate2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS Translate component.
+     * Advanced builder for endpoint for the AWS 2 Translate component.
      */
     public interface AdvancedTranslate2EndpointBuilder
             extends
@@ -360,7 +360,7 @@ public interface Translate2EndpointBuilderFactory {
         https;
     }
     /**
-     * AWS Translate (camel-aws2-translate)
+     * AWS 2 Translate (camel-aws2-translate)
      * The aws2-translate component is used for managing Amazon Translate
      * 
      * Category: cloud,management

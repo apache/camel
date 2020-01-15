@@ -31,7 +31,7 @@ import software.amazon.awssdk.services.translate.model.TranslateTextRequest.Buil
 import software.amazon.awssdk.services.translate.model.TranslateTextResponse;
 
 /**
- * A Producer which sends messages to the Amazon Translate Service
+ * A Producer which sends messages to the Amazon Translate Service SDK v2
  * <a href="http://aws.amazon.com/translate/">AWS Translate</a>
  */
 public class Translate2Producer extends DefaultProducer {

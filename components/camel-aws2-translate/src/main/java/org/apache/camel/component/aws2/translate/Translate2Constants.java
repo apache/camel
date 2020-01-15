@@ -17,7 +17,7 @@
 package org.apache.camel.component.aws2.translate;
 
 /**
- * Constants used in Camel AWS Translate module
+ * Constants used in Camel AWS2 Translate module
  */
 public interface Translate2Constants {
     String SOURCE_LANGUAGE = "CamelAwsTranslateSourceLanguage";
