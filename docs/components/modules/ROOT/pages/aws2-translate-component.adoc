@@ -1,8 +1,9 @@
-[[aws2-translate-component]]
-= AWS Translate Component
+= AWS 2 Translate Component
 :page-source: components/camel-aws2-translate/src/main/docs/aws2-translate-component.adoc
 
 *Since Camel 3.1*
+*Since Camel 3.1*
+
 
 *Since Camel 3.1*
 
@@ -34,7 +35,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS Translate component supports 6 options, which are listed below.
+The AWS 2 Translate component supports 6 options, which are listed below.
 
 
 
@@ -54,7 +55,7 @@ The AWS Translate component supports 6 options, which are listed below.
 
 
 // endpoint options: START
-The AWS Translate endpoint is configured using URI syntax:
+The AWS 2 Translate endpoint is configured using URI syntax:
 
 ----
 aws2-translate:label
