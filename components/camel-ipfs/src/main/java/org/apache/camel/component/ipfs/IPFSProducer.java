@@ -28,18 +28,21 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
-import io.ipfs.multihash.Multihash;
-import io.nessus.ipfs.client.DefaultIPFSClient;
-import io.nessus.ipfs.client.IPFSClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.ipfs.IPFSConfiguration.IPFSCommand;
 import org.apache.camel.support.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.ipfs.multihash.Multihash;
+import io.nessus.ipfs.client.IPFSClient;
+import io.nessus.ipfs.client.IPFSException;
 
 public class IPFSProducer extends DefaultProducer {
 
-    private static final long DEFAULT_TIMEOUT = 10000L;
+    private static final Logger LOG = LoggerFactory.getLogger(IPFSComponent.class);
 
-    private IPFSClient client;
+    private static final long DEFAULT_TIMEOUT = 10000L;
 
     public IPFSProducer(IPFSEndpoint endpoint) {
         super(endpoint);
@@ -53,8 +56,11 @@ public class IPFSProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (this.client == null) {
-            this.client = createClient(getEndpoint().getConfiguration());
+        IPFSClient client = getEndpoint().getIPFSClient();
+        try {
+            client.connect();
+        } catch (IPFSException ex) {
+            LOG.warn(ex.getMessage());
         }
     }
 
@@ -109,11 +115,6 @@ public class IPFSProducer extends DefaultProducer {
     }
 
 
-    private IPFSClient createClient(IPFSConfiguration config) {
-        IPFSClient ipfsClient = new DefaultIPFSClient(config.getIpfsHost(), config.getIpfsPort());
-        return ipfsClient;
-    }
-
     public IPFSCommand getCommand() {
         String cmd = getEndpoint().getConfiguration().getIpfsCmd();
         try {
@@ -153,6 +154,7 @@ public class IPFSProducer extends DefaultProducer {
     }
 
     private IPFSClient ipfs() {
+        IPFSClient client = getEndpoint().getIPFSClient();
         if (!client.hasConnection()) {
             client.connect();
         }
