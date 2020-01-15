@@ -45,7 +45,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "loadBalance")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefinition> implements OutputNode {
+public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinition> {
     @XmlElements({@XmlElement(required = false, name = "failover", type = FailoverLoadBalancerDefinition.class),
                   @XmlElement(required = false, name = "random", type = RandomLoadBalancerDefinition.class),
                   @XmlElement(required = false, name = "customLoadBalancer", type = CustomLoadBalancerDefinition.class),
@@ -54,8 +54,6 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
                   @XmlElement(required = false, name = "topic", type = TopicLoadBalancerDefinition.class),
                   @XmlElement(required = false, name = "weighted", type = WeightedLoadBalancerDefinition.class)})
     private LoadBalancerDefinition loadBalancerType;
-    @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public LoadBalanceDefinition() {
     }
@@ -65,13 +63,10 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
         return outputs;
     }
 
+    @XmlElementRef
+    @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
-        this.outputs = outputs;
-        if (outputs != null) {
-            for (ProcessorDefinition<?> output : outputs) {
-                configureChild(output);
-            }
-        }
+        super.setOutputs(outputs);
     }
 
     public LoadBalancerDefinition getLoadBalancerType() {

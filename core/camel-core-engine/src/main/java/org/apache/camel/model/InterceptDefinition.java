@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -65,6 +66,17 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
     @Override
     public boolean isTopLevelOnly() {
         return true;
+    }
+
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
+    @XmlElementRef
+    @Override
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
+        super.setOutputs(outputs);
     }
 
     /**
