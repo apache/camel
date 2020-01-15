@@ -11,6 +11,11 @@ image::eip/MessageHistory.gif[image]
 
 Attaching a Message History to the message will provide a list of all applications that the message passed through since its origination.
 
+The message history is disabled by default (to optimize for lower footprint out of the box). You should only enable message history
+if needed, such as during development, where Camel can report route stack-traces when a message failed with an exception.
+But for production usage, then message history should only be enabled if you have monitoring systems that rely on gather these
+fine grained details.
+
 == Enabling or disabling Message History
 
 The Message History can be enabled or disabled per CamelContext or per route (disabled by default).
