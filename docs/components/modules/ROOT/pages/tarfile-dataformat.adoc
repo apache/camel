@@ -144,8 +144,11 @@ like this
 
 == Aggregate
 
-NOTE: Please note that this aggregation strategy requires eager completion
+[NOTE]
+====
+Please note that this aggregation strategy requires eager completion
 check to work properly.
+====
 
 In this example we aggregate all text files found in the input directory
 into a single Tar File that is stored in the output directory. 
