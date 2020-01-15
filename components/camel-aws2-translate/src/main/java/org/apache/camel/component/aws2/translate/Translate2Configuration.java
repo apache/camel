@@ -26,7 +26,7 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class TranslateConfiguration implements Cloneable {
+public class Translate2Configuration implements Cloneable {
 
     @UriPath(description = "Logical name")
     @Metadata(required = true)
@@ -39,7 +39,7 @@ public class TranslateConfiguration implements Cloneable {
     private String secretKey;
     @UriParam(label = "producer")
     @Metadata(required = true, defaultValue = "translateText")
-    private TranslateOperations operation = TranslateOperations.translateText;
+    private Translate2Operations operation = Translate2Operations.translateText;
     @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam(label = "producer")
@@ -88,14 +88,14 @@ public class TranslateConfiguration implements Cloneable {
         this.secretKey = secretKey;
     }
 
-    public TranslateOperations getOperation() {
+    public Translate2Operations getOperation() {
         return operation;
     }
 
     /**
      * The operation to perform
      */
-    public void setOperation(TranslateOperations operation) {
+    public void setOperation(Translate2Operations operation) {
         this.operation = operation;
     }
 
@@ -183,9 +183,9 @@ public class TranslateConfiguration implements Cloneable {
     //
     // *************************************************
 
-    public TranslateConfiguration copy() {
+    public Translate2Configuration copy() {
         try {
-            return (TranslateConfiguration)super.clone();
+            return (Translate2Configuration)super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

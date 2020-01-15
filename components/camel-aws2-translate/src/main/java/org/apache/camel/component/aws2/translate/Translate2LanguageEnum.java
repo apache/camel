@@ -16,12 +16,21 @@
  */
 package org.apache.camel.component.aws2.translate;
 
-/**
- * Constants used in Camel AWS Translate module
- */
-public interface TranslateConstants {
-    String SOURCE_LANGUAGE = "CamelAwsTranslateSourceLanguage";
-    String TARGET_LANGUAGE = "CamelAwsTranslateTargetLanguage";
-    String TERMINOLOGY_NAMES = "CamelAwsTranslateTerminologyNames";
-    String OPERATION = "CamelAwsTranslateOperation";
+public enum Translate2LanguageEnum {
+
+    ARABIC("ar"), CHINESE_SIMPLIFIED("zh"), CHINESE_TRADITIONAL("zh-TW"), CZECH("cs"), DANISH("da"), DUTCH("nl"), ENGLISH("en"), FINNISH("fi"), FRENCH("fr"), GERMAN("de"), HEBREW(
+        "he"), HINDI("hi"), INDONESIAN("id"), ITALIAN("it"), JAPANESE(
+            "ja"), KOREAN("ko"), MALAY("ms"), NORWEGIAN("no"), PERSIAN("fa"), POLISH("pl"), PORTUGUESE("pt"), RUSSIAN("ru"), SPANISH("es"), SWEDISH("sv"), TURKISH("tr");
+
+    private final String language;
+
+    Translate2LanguageEnum(final String language) {
+        this.language = language;
+    }
+
+    @Override
+    public String toString() {
+        return language;
+    }
+
 }

@@ -33,7 +33,7 @@ import software.amazon.awssdk.services.translate.TranslateClient;
  * For working with Amazon Translate.
  */
 @Component("aws2-translate")
-public class TranslateComponent extends DefaultComponent {
+public class Translate2Component extends DefaultComponent {
 
     @Metadata
     private String accessKey;
@@ -42,23 +42,23 @@ public class TranslateComponent extends DefaultComponent {
     @Metadata
     private String region;
     @Metadata(label = "advanced")
-    private TranslateConfiguration configuration;
+    private Translate2Configuration configuration;
 
-    public TranslateComponent() {
+    public Translate2Component() {
         this(null);
     }
 
-    public TranslateComponent(CamelContext context) {
+    public Translate2Component(CamelContext context) {
         super(context);
 
-        registerExtension(new TranslateComponentVerifierExtension());
+        registerExtension(new Translate2ComponentVerifierExtension());
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        TranslateConfiguration configuration = this.configuration != null ? this.configuration.copy() : new TranslateConfiguration();
+        Translate2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Translate2Configuration();
 
-        TranslateEndpoint endpoint = new TranslateEndpoint(uri, this, configuration);
+        Translate2Endpoint endpoint = new Translate2Endpoint(uri, this, configuration);
         endpoint.getConfiguration().setAccessKey(accessKey);
         endpoint.getConfiguration().setSecretKey(secretKey);
         endpoint.getConfiguration().setRegion(region);
@@ -70,14 +70,14 @@ public class TranslateComponent extends DefaultComponent {
         return endpoint;
     }
 
-    public TranslateConfiguration getConfiguration() {
+    public Translate2Configuration getConfiguration() {
         return configuration;
     }
 
     /**
      * The AWS Translate default configuration
      */
-    public void setConfiguration(TranslateConfiguration configuration) {
+    public void setConfiguration(Translate2Configuration configuration) {
         this.configuration = configuration;
     }
 
@@ -114,7 +114,7 @@ public class TranslateComponent extends DefaultComponent {
         this.region = region;
     }
 
-    private void checkAndSetRegistryClient(TranslateConfiguration configuration) {
+    private void checkAndSetRegistryClient(Translate2Configuration configuration) {
         Set<TranslateClient> clients = getCamelContext().getRegistry().findByType(TranslateClient.class);
         if (clients.size() == 1) {
             configuration.setTranslateClient(clients.stream().findFirst().get());
