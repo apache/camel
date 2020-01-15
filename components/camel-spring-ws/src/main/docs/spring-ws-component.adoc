@@ -307,9 +307,12 @@ exchange.getOut().getHeaders().put("myCustom","myHeaderValue")
 exchange.getIn().addAttachment("myAttachment", new DataHandler(...))
 --------------------------------------------------------------------
 
-Note: If the exchange header in the pipeline contains text, it generates
+[NOTE]
+====
+If the exchange header in the pipeline contains text, it generates
 Qname(key)=value attribute in the soap header. Recommended is to create
 a QName class directly and put into any key into header.
+====
 
 == How to transform the soap header using a stylesheet
 The header transformation filter (HeaderTransformationMessageFilter.java)
@@ -577,7 +580,9 @@ Camel endpoint and an existing
 http://static.springsource.org/spring-ws/sites/1.5/reference/html/server.html#server-endpoint-mapping[endpoint
 mapping] like `PayloadRootQNameEndpointMapping`.
 
-NOTE:The use of the `beanname` mapping-type is primarily meant for (legacy)
+[NOTE]
+====
+The use of the `beanname` mapping-type is primarily meant for (legacy)
 situations where you're already using Spring-WS and have endpoint
 mappings defined in a Spring XML file. The `beanname` mapping-type
 allows you to wire your Camel route into an existing endpoint mapping.
@@ -586,6 +591,7 @@ endpoint mappings as Camel URI's (as illustrated above with
 `endpointMapping`) since it requires less configuration and is more
 expressive. Alternatively you could use vanilla Spring-WS with the help
 of annotations.
+====
 
 An example of a route using `beanname`:
 
