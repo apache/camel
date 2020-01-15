@@ -1,7 +1,9 @@
+[[aws2-translate-component]]
 = AWS 2 Translate Component
 :page-source: components/camel-aws2-translate/src/main/docs/aws2-translate-component.adoc
 
 *Since Camel 3.1*
+
 *Since Camel 3.1*
 
 
