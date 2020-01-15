@@ -249,8 +249,7 @@
 			"name":"camel.main.message-history",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
-			"description":"Sets whether message history is enabled or not. Default is true.",
-			"defaultValue":true
+			"description":"Sets whether message history is enabled or not. Default is false."
 		},
 		{
 			"name":"camel.main.name",

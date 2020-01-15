@@ -85,7 +85,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertEquals("Started", status);
 
         Boolean messageHistory = (Boolean) mbeanServer.getAttribute(on, "MessageHistory");
-        assertEquals(Boolean.TRUE, messageHistory);
+        assertEquals(Boolean.FALSE, messageHistory);
 
         Boolean logMask = (Boolean) mbeanServer.getAttribute(on, "LogMask");
         assertEquals(Boolean.FALSE, logMask);

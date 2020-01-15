@@ -197,7 +197,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private Boolean trace = Boolean.FALSE;
     private String tracePattern;
     private Boolean debug = Boolean.FALSE;
-    private Boolean messageHistory = Boolean.TRUE;
+    private Boolean messageHistory = Boolean.FALSE;
     private Boolean logMask = Boolean.FALSE;
     private Boolean logExhaustedMessageBody = Boolean.FALSE;
     private Boolean streamCache = Boolean.FALSE;

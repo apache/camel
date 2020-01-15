@@ -52,6 +52,7 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultMessageHistory;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -710,6 +711,38 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             if (history != null) {
                 history.nodeProcessingDone();
             }
+        }
+    }
+
+    /**
+     * Advice that stores the node id and label of the processor that is processing the exchange.
+     */
+    public static class NodeHistoryAdvice implements CamelInternalProcessorAdvice {
+
+        private final String id;
+        private final String label;
+
+        public NodeHistoryAdvice(NamedNode definition) {
+            this.id = definition.getId();
+            this.label = definition.getLabel();
+        }
+
+        @Override
+        public String before(Exchange exchange) throws Exception {
+            exchange.setProperty(Exchange.NODE_ID, id);
+            exchange.setProperty(Exchange.NODE_LABEL, label);
+            return null;
+        }
+
+        @Override
+        public void after(Exchange exchange, Object data) throws Exception {
+            exchange.removeProperty(Exchange.NODE_ID);
+            exchange.removeProperty(Exchange.NODE_LABEL);
+        }
+
+        @Override
+        public boolean hasState() {
+            return false;
         }
     }
 
