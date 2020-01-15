@@ -12,8 +12,6 @@ The Spark-rest component allows to define REST endpoints using the
 http://sparkjava.com/[Spark REST Java library] using the
 Rest DSL.
 
-NOTE: Spark Java requires Java 8 runtime.
-
 Maven users will need to add the following dependency to their pom.xml
 for this component:
 

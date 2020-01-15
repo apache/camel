@@ -17,9 +17,12 @@ Camel provides a producer for executing commands, consumer for
 subscribing to pub/sub messages an idempotent repository for filtering
 out duplicate messages.
 
-NOTE: *Prerequisites:*
-In order to use this component, you must have a Redis server running.
+[NOTE]
+====
+*Prerequisites*
 
+In order to use this component, you must have a Redis server running.
+====
 
 == URI Format
 

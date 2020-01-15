@@ -191,8 +191,11 @@ When you send a message to this endpoint it opens a connection to Soroush Server
 for downloading the files and store `InputStream` of that connection in
 `SoroushMessage.file` and `SoroushMessage.thumbnail` and then you can read contents of the files.
 
-*NOTE:* If you delay reading from these streams, the Soroush server may close the connection.
+[NOTE]
+====
+If you delay reading from these streams, the Soroush server may close the connection.
 You are responsible for storing attachment files on your disc if needed.
+====
 
 Please refer to  Query Parameters table for more information.
 
