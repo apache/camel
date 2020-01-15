@@ -16,6 +16,13 @@
  */
 package org.apache.camel.builder.endpoint;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.builder.EndpointProducerBuilder;
+import org.apache.camel.support.ExpressionAdapter;
 import javax.annotation.Generated;
 
 /**
@@ -25,7 +32,15 @@ import javax.annotation.Generated;
 public interface EndpointBuilderFactory {
 
     default org.apache.camel.Expression endpoints(org.apache.camel.builder.EndpointProducerBuilder... endpoints) {
-        return EndpointBuilderSupport.endpoints(endpoints);
+        return new ExpressionAdapter() {
+
+            List<Expression> expressions = Stream.of(endpoints).map(EndpointProducerBuilder::expr).collect(Collectors.toList());
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return expressions.stream().map(e -> e.evaluate(exchange, Object.class)).collect(Collectors.toList());
+            }
+        };
     }
 
     /**
@@ -989,6 +1004,7 @@ public interface EndpointBuilderFactory {
      * different signer/verifier/encryptor/decryptor endpoints within the camel
      * context.
      */
+    @Deprecated
     default org.apache.camel.builder.endpoint.dsl.CryptoCmsEndpointBuilderFactory.CryptoCmsEndpointBuilder cryptoCms(String path) {
         return org.apache.camel.builder.endpoint.dsl.CryptoCmsEndpointBuilderFactory.cryptoCms(path);
     }

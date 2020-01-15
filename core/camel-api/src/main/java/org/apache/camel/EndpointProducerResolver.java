@@ -16,6 +16,10 @@
  */
 package org.apache.camel;
 
+/**
+ * An interface to represent an object that can be resolved as a producer {@link Endpoint}
+ */
+@FunctionalInterface
 public interface EndpointProducerResolver {
     /**
      * Resolves this object as an endpoint.
