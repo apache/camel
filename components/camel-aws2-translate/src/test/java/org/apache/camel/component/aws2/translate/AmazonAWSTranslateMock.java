@@ -24,19 +24,19 @@ public class AmazonAWSTranslateMock implements TranslateClient {
 
     @Override
     public TranslateTextResponse translateText(TranslateTextRequest request) {
-    	TranslateTextResponse result = TranslateTextResponse.builder().translatedText("Hello").build();
+        TranslateTextResponse result = TranslateTextResponse.builder().translatedText("Hello").build();
         return result;
     }
 
-	@Override
-	public String serviceName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String serviceName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public void close() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
+
+    }
 }
