@@ -2423,6 +2423,24 @@ public interface EndpointBuilderFactory {
     }
 
     /**
+     * Hazelcast Replicated Map (camel-hazelcast)
+     * The hazelcast-replicatedmap component is used to access Hazelcast
+     * replicated map.
+     *
+     * Category: cache,datagrid
+     * Since: 2.16
+     * Maven coordinates: org.apache.camel:camel-hazelcast
+     *
+     * Syntax: <code>hazelcast-replicatedmap:cacheName</code>
+     *
+     * Path parameter: cacheName (required)
+     * The name of the cache
+     */
+    default org.apache.camel.builder.endpoint.dsl.HazelcastReplicatedmapEndpointBuilderFactory.HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(String path) {
+        return org.apache.camel.builder.endpoint.dsl.HazelcastReplicatedmapEndpointBuilderFactory.hazelcastReplicatedmap(path);
+    }
+
+    /**
      * Hazelcast Ringbuffer (camel-hazelcast)
      * The hazelcast-ringbuffer component is used to access Hazelcast
      * distributed ringbuffer.
@@ -3322,6 +3340,24 @@ public interface EndpointBuilderFactory {
     }
 
     /**
+     * Kubernetes Deployments (camel-kubernetes)
+     * The Kubernetes Nodes component provides a producer to execute kubernetes
+     * node operations and a consumer to consume node events.
+     *
+     * Category: container,cloud,paas
+     * Since: 2.20
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     *
+     * Syntax: <code>kubernetes-deployments:masterUrl</code>
+     *
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
+     */
+    default org.apache.camel.builder.endpoint.dsl.KubernetesDeploymentsEndpointBuilderFactory.KubernetesDeploymentsEndpointBuilder kubernetesDeployments(String path) {
+        return org.apache.camel.builder.endpoint.dsl.KubernetesDeploymentsEndpointBuilderFactory.kubernetesDeployments(path);
+    }
+
+    /**
      * Kubernetes HPA (camel-kubernetes)
      * The Kubernetes HPA component provides a producer to execute kubernetes
      * hpa operations and a consumer to consume HPA events.
@@ -3395,6 +3431,42 @@ public interface EndpointBuilderFactory {
     }
 
     /**
+     * Kubernetes Persistent Volume Claim (camel-kubernetes)
+     * The Kubernetes Persistent Volumes Claims component provides a producer to
+     * execute kubernetes persistent volume claim operations.
+     *
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     *
+     * Syntax: <code>kubernetes-persistent-volumes-claims:masterUrl</code>
+     *
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
+     */
+    default org.apache.camel.builder.endpoint.dsl.KubernetesPersistentVolumesClaimsEndpointBuilderFactory.KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesPersistentVolumesClaims(String path) {
+        return org.apache.camel.builder.endpoint.dsl.KubernetesPersistentVolumesClaimsEndpointBuilderFactory.kubernetesPersistentVolumesClaims(path);
+    }
+
+    /**
+     * Kubernetes Persistent Volume (camel-kubernetes)
+     * The Kubernetes Persistent Volumes component provides a producer to
+     * execute kubernetes persistent volume operations.
+     *
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     *
+     * Syntax: <code>kubernetes-persistent-volumes:masterUrl</code>
+     *
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
+     */
+    default org.apache.camel.builder.endpoint.dsl.KubernetesPersistentVolumesEndpointBuilderFactory.KubernetesPersistentVolumesEndpointBuilder kubernetesPersistentVolumes(String path) {
+        return org.apache.camel.builder.endpoint.dsl.KubernetesPersistentVolumesEndpointBuilderFactory.kubernetesPersistentVolumes(path);
+    }
+
+    /**
      * Kubernetes Pods (camel-kubernetes)
      * The Kubernetes Pods component provides a producer to execute kubernetes
      * pod operations and a consumer to consume pod events.
@@ -3413,6 +3485,43 @@ public interface EndpointBuilderFactory {
     }
 
     /**
+     * Kubernetes Replication Controller (camel-kubernetes)
+     * The Kubernetes Replication Controllers component provides a producer to
+     * execute kubernetes replication controller operations and a consumer to
+     * consume replication controller events.
+     *
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     *
+     * Syntax: <code>kubernetes-replication-controllers:masterUrl</code>
+     *
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
+     */
+    default org.apache.camel.builder.endpoint.dsl.KubernetesReplicationControllersEndpointBuilderFactory.KubernetesReplicationControllersEndpointBuilder kubernetesReplicationControllers(String path) {
+        return org.apache.camel.builder.endpoint.dsl.KubernetesReplicationControllersEndpointBuilderFactory.kubernetesReplicationControllers(path);
+    }
+
+    /**
+     * Kubernetes Resources Quota (camel-kubernetes)
+     * The Kubernetes Resources Quota component provides a producer to execute
+     * kubernetes resources quota operations.
+     *
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     *
+     * Syntax: <code>kubernetes-resources-quota:masterUrl</code>
+     *
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
+     */
+    default org.apache.camel.builder.endpoint.dsl.KubernetesResourcesQuotaEndpointBuilderFactory.KubernetesResourcesQuotaEndpointBuilder kubernetesResourcesQuota(String path) {
+        return org.apache.camel.builder.endpoint.dsl.KubernetesResourcesQuotaEndpointBuilderFactory.kubernetesResourcesQuota(path);
+    }
+
+    /**
      * Kubernetes Secrets (camel-kubernetes)
      * The Kubernetes Secrets component provides a producer to execute
      * kubernetes secret operations.
@@ -3428,6 +3537,24 @@ public interface EndpointBuilderFactory {
      */
     default org.apache.camel.builder.endpoint.dsl.KubernetesSecretsEndpointBuilderFactory.KubernetesSecretsEndpointBuilder kubernetesSecrets(String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesSecretsEndpointBuilderFactory.kubernetesSecrets(path);
+    }
+
+    /**
+     * Kubernetes Service Account (camel-kubernetes)
+     * The Kubernetes Service Accounts component provides a producer to execute
+     * service account operations.
+     *
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     *
+     * Syntax: <code>kubernetes-service-accounts:masterUrl</code>
+     *
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
+     */
+    default org.apache.camel.builder.endpoint.dsl.KubernetesServiceAccountsEndpointBuilderFactory.KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(String path) {
+        return org.apache.camel.builder.endpoint.dsl.KubernetesServiceAccountsEndpointBuilderFactory.kubernetesServiceAccounts(path);
     }
 
     /**
@@ -4315,6 +4442,24 @@ public interface EndpointBuilderFactory {
      */
     default org.apache.camel.builder.endpoint.dsl.Olingo4EndpointBuilderFactory.Olingo4EndpointBuilder olingo4(String path) {
         return org.apache.camel.builder.endpoint.dsl.Olingo4EndpointBuilderFactory.olingo4(path);
+    }
+
+    /**
+     * Openshift Build Config (camel-kubernetes)
+     * The Kubernetes Build Config component provides a producer to execute
+     * kubernetes build config operations.
+     *
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     *
+     * Syntax: <code>openshift-build-configs:masterUrl</code>
+     *
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
+     */
+    default org.apache.camel.builder.endpoint.dsl.OpenshiftBuildConfigsEndpointBuilderFactory.OpenshiftBuildConfigsEndpointBuilder openshiftBuildConfigs(String path) {
+        return org.apache.camel.builder.endpoint.dsl.OpenshiftBuildConfigsEndpointBuilderFactory.openshiftBuildConfigs(path);
     }
 
     /**

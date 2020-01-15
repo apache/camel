@@ -436,7 +436,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
      * Path parameter: masterUrl (required)
      * Kubernetes Master url
      */
-    KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
+    static KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
             String path) {
         class KubernetesServiceAccountsEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesServiceAccountsEndpointBuilder, AdvancedKubernetesServiceAccountsEndpointBuilder {
             public KubernetesServiceAccountsEndpointBuilderImpl(String path) {
