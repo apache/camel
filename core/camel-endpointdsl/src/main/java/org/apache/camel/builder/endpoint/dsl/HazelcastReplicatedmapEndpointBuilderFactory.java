@@ -681,7 +681,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
      * Path parameter: cacheName (required)
      * The name of the cache
      */
-    static HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(
+    HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(
             String path) {
         class HazelcastReplicatedmapEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastReplicatedmapEndpointBuilder, AdvancedHazelcastReplicatedmapEndpointBuilder {
             public HazelcastReplicatedmapEndpointBuilderImpl(String path) {
