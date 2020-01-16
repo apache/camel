@@ -444,27 +444,27 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
             }
             if (hasDerived) {
                 if (!attributeMembers.isEmpty()) {
-                    parser.addMethod().setSignature("    protected <T extends " + qname + "> AttributeHandler<T> " + lowercase(name) + "AttributeHandler()")
+                    parser.addMethod().setSignature("protected <T extends " + qname + "> AttributeHandler<T> " + lowercase(name) + "AttributeHandler()")
                         .setBody("return" + attributes + ";");
                 }
                 if (!elementMembers.isEmpty()) {
-                    parser.addMethod().setSignature("    protected <T extends " + qname + "> ElementHandler<T> " + lowercase(name) + "ElementHandler()")
+                    parser.addMethod().setSignature("protected <T extends " + qname + "> ElementHandler<T> " + lowercase(name) + "ElementHandler()")
                         .setBody("return" + elements + ";");
                 }
                 if (!Modifier.isAbstract(clazz.getModifiers())) {
-                    parser.addMethod().setSignature("    protected " + qname + " doParse" + name + "() throws IOException, XmlPullParserException")
+                    parser.addMethod().setSignature("protected " + qname + " doParse" + name + "() throws IOException, XmlPullParserException")
                         .setBody("return doParse(new " + qname + "(), " + (attributeMembers.isEmpty() ? attributes : lowercase(name) + "AttributeHandler()") + ", "
                                  + (elementMembers.isEmpty() ? elements : lowercase(name) + "ElementHandler()") + "," + value + ");\n");
                 }
             } else {
-                parser.addMethod().setSignature("    protected " + qname + " doParse" + name + "() throws IOException, XmlPullParserException")
+                parser.addMethod().setSignature("protected " + qname + " doParse" + name + "() throws IOException, XmlPullParserException")
                     .setBody("return doParse(new " + qname + "()," + attributes + "," + elements + "," + value + ");\n");
             }
         }
 
         for (Class<?> root : elementRefs) {
             parser.addMethod()
-                .setSignature("    protected " + root.getSimpleName() + " doParse" + root.getSimpleName() + "Ref(String key) throws IOException, XmlPullParserException")
+                .setSignature("protected " + root.getSimpleName() + " doParse" + root.getSimpleName() + "Ref(String key) throws IOException, XmlPullParserException")
                 .setBody("switch (key) {\n" + model.stream().filter(root::isAssignableFrom).filter(cl -> cl.getAnnotation(XmlRootElement.class) != null).map(cl -> {
                     String en = cl.getAnnotation(XmlRootElement.class).name();
                     if ("##default".equals(en)) {
