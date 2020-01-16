@@ -559,6 +559,7 @@ public interface Exchange {
      *
      * @param fromEndpoint the endpoint which is originating this message exchange
      */
+    // TODO: Move to ExtendedExchange
     void setFromEndpoint(Endpoint fromEndpoint);
     
     /**
@@ -573,6 +574,7 @@ public interface Exchange {
      *
      * @param fromRouteId the from route id
      */
+    // TODO: Move to ExtendedExchange
     void setFromRouteId(String fromRouteId);
 
     /**
@@ -585,6 +587,7 @@ public interface Exchange {
      * Sets the unit of work that this exchange belongs to; which may map to
      * zero, one or more physical transactions
      */
+    // TODO: Move to ExtendedExchange
     void setUnitOfWork(UnitOfWork unitOfWork);
 
     /**
@@ -603,6 +606,7 @@ public interface Exchange {
      *
      * @param onCompletion  the callback to invoke on completion of this exchange
      */
+    // TODO: Move to ExtendedExchange
     void addOnCompletion(Synchronization onCompletion);
 
     /**
@@ -612,6 +616,7 @@ public interface Exchange {
      * @param onCompletion  the callback instance that is being checked for
      * @return <tt>true</tt>, if callback instance is already contained on this exchange, else <tt>false</tt>
      */
+    // TODO: Move to ExtendedExchange
     boolean containsOnCompletion(Synchronization onCompletion);
 
     /**
@@ -619,6 +624,7 @@ public interface Exchange {
      *
      * @param target the target exchange
      */
+    // TODO: Move to ExtendedExchange
     void handoverCompletions(Exchange target);
 
     /**
@@ -626,6 +632,7 @@ public interface Exchange {
      *
      * @return the on completions
      */
+    // TODO: Move to ExtendedExchange
     List<Synchronization> handoverCompletions();
 
     /**
