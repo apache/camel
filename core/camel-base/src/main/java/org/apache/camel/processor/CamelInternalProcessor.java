@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -27,6 +26,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
@@ -52,7 +52,6 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.DefaultMessageHistory;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -457,7 +456,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         @Override
         public Object before(Exchange exchange) throws Exception {
             if (backlogTracer.shouldTrace(processorDefinition, exchange)) {
-                Date timestamp = new Date();
+                long timestamp = System.currentTimeMillis();
                 String toNode = processorDefinition.getId();
                 String exchangeId = exchange.getExchangeId();
                 String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), true, 4,
@@ -466,7 +465,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 // if first we should add a pseudo trace message as well, so we have a starting message (eg from the route)
                 String routeId = routeDefinition != null ? routeDefinition.getRouteId() : null;
                 if (first) {
-                    Date created = exchange.getProperty(Exchange.CREATED_TIMESTAMP, timestamp, Date.class);
+                    long created = exchange.getCreated();
                     DefaultBacklogTracerEventMessage pseudo = new DefaultBacklogTracerEventMessage(backlogTracer.incrementTraceCounter(), created, routeId, null, exchangeId, messageAsXml);
                     backlogTracer.traceEvent(pseudo);
                 }
@@ -729,15 +728,17 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         @Override
         public String before(Exchange exchange) throws Exception {
-            exchange.setProperty(Exchange.NODE_ID, id);
-            exchange.setProperty(Exchange.NODE_LABEL, label);
+            ExtendedExchange ee = exchange.adapt(ExtendedExchange.class);
+            ee.setHistoryNodeId(id);
+            ee.setHistoryNodeLabel(label);
             return null;
         }
 
         @Override
         public void after(Exchange exchange, Object data) throws Exception {
-            exchange.removeProperty(Exchange.NODE_ID);
-            exchange.removeProperty(Exchange.NODE_LABEL);
+            ExtendedExchange ee = exchange.adapt(ExtendedExchange.class);
+            ee.setHistoryNodeId(null);
+            ee.setHistoryNodeLabel(null);
         }
 
         @Override

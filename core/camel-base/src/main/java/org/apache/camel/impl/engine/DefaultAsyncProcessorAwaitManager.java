@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -302,7 +303,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
 
         @Override
         public String getNodeId() {
-            return exchange.getProperty(Exchange.NODE_ID, String.class);
+            return exchange.adapt(ExtendedExchange.class).getHistoryNodeId();
         }
 
         public CountDownLatch getLatch() {
