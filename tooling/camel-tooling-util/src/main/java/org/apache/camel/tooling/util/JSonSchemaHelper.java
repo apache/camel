@@ -387,9 +387,9 @@ public final class JSonSchemaHelper {
         // need to safe encode \n as \\n so its escaped
         // need to safe encode \t as \\t so its escaped
         return value
-            .replaceAll("\\\\r", "\\\\\\r")
-            .replaceAll("\\\\n", "\\\\\\n")
-            .replaceAll("\\\\t", "\\\\\\t");
+            .replace("\\r", "\\\\r")
+            .replace("\\n", "\\\\n")
+            .replace("\\t", "\\\\t");
     }
 
     /**

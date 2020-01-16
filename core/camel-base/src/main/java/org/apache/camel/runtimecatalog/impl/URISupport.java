@@ -288,7 +288,7 @@ public final class URISupport {
         name = URLDecoder.decode(name, CHARSET);
         if (!isRaw) {
             // need to replace % with %25
-            value = URLDecoder.decode(value.replaceAll("%", "%25"), CHARSET);
+            value = URLDecoder.decode(value.replace("%", "%25"), CHARSET);
         }
 
         // does the key already exist?

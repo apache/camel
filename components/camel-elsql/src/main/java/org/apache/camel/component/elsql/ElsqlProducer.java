@@ -99,7 +99,7 @@ public class ElsqlProducer extends DefaultProducer {
                     final int expected = ps.getParameterMetaData().getParameterCount();
                      
                     if (expected > 0 && batch) {
-                        final String sqlForDefaultPreparedStamentStrategy =  sql.replaceAll(":", ":\\?");
+                        final String sqlForDefaultPreparedStamentStrategy = sql.replace(":", ":?");
                         final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(sqlForDefaultPreparedStamentStrategy, getEndpoint().isAllowNamedParameters(), exchange);
                         final Iterator<?> iterator = exchange.getIn().getBody(Iterator.class);
                         while (iterator != null && iterator.hasNext()) {

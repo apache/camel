@@ -102,7 +102,7 @@ public final class PackageHelper {
                     String key = line.substring(0, idx);
                     String value = line.substring(idx + 1);
                     // remove ending line break for the values
-                    value = value.trim().replaceAll("\n", "");
+                    value = value.trim().replace("\n", "");
                     answer.put(key.trim(), value);
                 }
             }
@@ -140,7 +140,7 @@ public final class PackageHelper {
                 // skip files in root dirs as Camel does not store information there but others may do
                 boolean jsonFile = file.isFile() && file.getName().endsWith(JSON_SUFIX);
                 if (jsonFile) {
-                    result.put(file.getName().replaceAll("\\" + JSON_SUFIX, ""), file);
+                    result.put(file.getName().replace(JSON_SUFIX, ""), file);
                 } else if (file.isDirectory()) {
                     findJsonFiles0(file, result, filter);
                 }

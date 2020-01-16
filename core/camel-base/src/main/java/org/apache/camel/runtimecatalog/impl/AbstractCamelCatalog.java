@@ -906,16 +906,16 @@ public abstract class AbstractCamelCatalog {
 
             // need to preserve {{ and }} from the syntax
             // (we need to use words only as its provisional placeholders)
-            syntax = syntax.replaceAll("\\{\\{", "BEGINCAMELPLACEHOLDER");
-            syntax = syntax.replaceAll("\\}\\}", "ENDCAMELPLACEHOLDER");
+            syntax = syntax.replace("{{", "BEGINCAMELPLACEHOLDER");
+            syntax = syntax.replace("}}", "ENDCAMELPLACEHOLDER");
 
             // parse the syntax into each options
             Matcher matcher2 = SYNTAX_DASH_PATTERN.matcher(syntax);
             List<String> options2 = new ArrayList<>();
             while (matcher2.find()) {
                 String s = matcher2.group(1);
-                s = s.replaceAll("BEGINCAMELPLACEHOLDER", "\\{\\{");
-                s = s.replaceAll("ENDCAMELPLACEHOLDER", "\\}\\}");
+                s = s.replace("BEGINCAMELPLACEHOLDER", "{{");
+                s = s.replace("ENDCAMELPLACEHOLDER", "}}");
                 options2.add(s);
             }
 
@@ -1069,7 +1069,7 @@ public abstract class AbstractCamelCatalog {
                 List<Map<String, String>> rows = parseJsonSchema(group, json, true);
 
                 // lower case option and remove dash
-                String nOption = option.replaceAll("-", "").toLowerCase(Locale.US);
+                String nOption = option.replace("-", "").toLowerCase(Locale.US);
                 String suffix = null;
                 int posDot = nOption.indexOf('.');
                 int posBracket = nOption.indexOf('[');
@@ -1100,7 +1100,7 @@ public abstract class AbstractCamelCatalog {
                 List<Map<String, String>> rows = parseMainJsonSchema(json);
 
                 // lower case option and remove dash
-                String nOption = longKey.replaceAll("-", "").toLowerCase(Locale.US);
+                String nOption = longKey.replace("-", "").toLowerCase(Locale.US);
 
                 // look for suffix or array index after 2nd dot
                 int secondDot = nOption.indexOf('.');

@@ -388,7 +388,7 @@ public class EndpointDslMojo extends AbstractMojo {
                         desc += ".";
                     }
                     desc += "\n";
-                    desc += "\nThe option is a: <code>" + ogtype.toString().replaceAll("<", "&lt;").replaceAll(">", "&gt;") + "</code> type.";
+                    desc += "\nThe option is a: <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;") + "</code> type.";
                     desc += "\n";
                     // the Endpoint DSL currently requires to provide the entire context-path and not as individual options
                     // so lets only mark query parameters that are required as required
@@ -416,7 +416,7 @@ public class EndpointDslMojo extends AbstractMojo {
                             desc += ".";
                         }
                         desc += "\n";
-                        desc += "\nThe option will be converted to a <code>" + ogtype.toString().replaceAll("<", "&lt;").replaceAll(">", "&gt;") + "</code> type.";
+                        desc += "\nThe option will be converted to a <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;") + "</code> type.";
                         desc += "\n";
                         // the Endpoint DSL currently requires to provide the entire context-path and not as individual options
                         // so lets only mark query parameters that are required as required
@@ -480,12 +480,12 @@ public class EndpointDslMojo extends AbstractMojo {
             method.getJavaDoc().setText(desc);
         }
 
-        String fileName = packageName.replaceAll("\\.", "\\/") + "/" + builderName + "Factory.java";
+        String fileName = packageName.replace('.', '/') + "/" + builderName + "Factory.java";
         writeSourceIfChanged(javaClass, fileName, false);
     }
 
     private void synchronizeEndpointBuilderFactoryInterface() throws MojoFailureException {
-        final String interfaceFactoryPath = packageName.replaceAll("\\.", "\\/").replace("dsl", "") + "EndpointBuilderFactory.java";
+        final String interfaceFactoryPath = packageName.replace('.', '/').replace("dsl", "") + "EndpointBuilderFactory.java";
         final List<File> allComponentsDslEndpointFactories = loadAllComponentsDslEndpointFactoriesAsFile();
 
         CompilationUnit endpointBuilderUnit = new CompilationUnit();
@@ -577,7 +577,7 @@ public class EndpointDslMojo extends AbstractMojo {
     }
 
     private void synchronizeEndpointBuildersInterface() throws MojoFailureException {
-        final String interfaceFactoryPath = packageName.replaceAll("\\.", "\\/").replace("dsl", "") + "EndpointBuilders.java";
+        final String interfaceFactoryPath = packageName.replace('.', '/').replace("dsl", "") + "EndpointBuilders.java";
         final List<File> allComponentsDslEndpointFactories = loadAllComponentsDslEndpointFactoriesAsFile();
 
         CompilationUnit endpointBuilderUnit = new CompilationUnit();
@@ -647,7 +647,7 @@ public class EndpointDslMojo extends AbstractMojo {
     }
 
     private List<File> loadAllComponentsDslEndpointFactoriesAsFile() {
-        final File allComponentsDslEndpointFactory = new File(outputDir, packageName.replaceAll("\\.", "\\/"));
+        final File allComponentsDslEndpointFactory = new File(outputDir, packageName.replace('.', '/'));
 
         // load components
         return Arrays.asList(allComponentsDslEndpointFactory.listFiles()).stream()
@@ -718,7 +718,7 @@ public class EndpointDslMojo extends AbstractMojo {
 
     private String wrapEnumValues(String enumValues) {
         // comma to space so we can wrap words (which uses space)
-        return enumValues.replaceAll(",",", ");
+        return enumValues.replace(",", ", ");
     }
 
     private String getEndpointName(String type) {
