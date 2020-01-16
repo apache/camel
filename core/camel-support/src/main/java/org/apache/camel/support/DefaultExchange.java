@@ -30,6 +30,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.spi.Synchronization;
@@ -39,9 +40,10 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A default implementation of {@link Exchange}
  */
-public final class DefaultExchange implements Exchange {
+public final class DefaultExchange implements ExtendedExchange {
 
     protected final CamelContext context;
+    private final long created;
     private Map<String, Object> properties;
     private Message in;
     private Message out;
@@ -52,6 +54,8 @@ public final class DefaultExchange implements Exchange {
     private Endpoint fromEndpoint;
     private String fromRouteId;
     private List<Synchronization> onCompletions;
+    private String historyNodeId;
+    private String historyNodeLabel;
 
     public DefaultExchange(CamelContext context) {
         this(context, ExchangePattern.InOnly);
@@ -60,10 +64,13 @@ public final class DefaultExchange implements Exchange {
     public DefaultExchange(CamelContext context, ExchangePattern pattern) {
         this.context = context;
         this.pattern = pattern;
+        this.created = System.currentTimeMillis();
     }
 
     public DefaultExchange(Exchange parent) {
-        this(parent.getContext(), parent.getPattern());
+        this.context = parent.getContext();
+        this.pattern = parent.getPattern();
+        this.created = parent.getCreated();
         this.fromEndpoint = parent.getFromEndpoint();
         this.fromRouteId = parent.getFromRouteId();
         this.unitOfWork = parent.getUnitOfWork();
@@ -81,16 +88,16 @@ public final class DefaultExchange implements Exchange {
     @Override
     public String toString() {
         // do not output information about the message as it may contain sensitive information
-        return String.format("Exchange[%s]", exchangeId == null ? "" : exchangeId);
+        if (exchangeId != null) {
+            return "Exchange[" + exchangeId + "]";
+        } else {
+            return "Exchange[]";
+        }
     }
 
     @Override
-    public Date getCreated() {
-        if (hasProperties()) {
-            return getProperty(Exchange.CREATED_TIMESTAMP, Date.class);
-        } else {
-            return null;
-        }
+    public long getCreated() {
+        return created;
     }
 
     @Override
@@ -396,6 +403,11 @@ public final class DefaultExchange implements Exchange {
     }
 
     @Override
+    public <T extends Exchange> T adapt(Class<T> type) {
+        return type.cast(this);
+    }
+
+    @Override
     public ExchangePattern getPattern() {
         return pattern;
     }
@@ -554,6 +566,26 @@ public final class DefaultExchange implements Exchange {
             onCompletions = null;
         }
         return answer;
+    }
+
+    @Override
+    public String getHistoryNodeId() {
+        return historyNodeId;
+    }
+
+    @Override
+    public void setHistoryNodeId(String historyNodeId) {
+        this.historyNodeId = historyNodeId;
+    }
+
+    @Override
+    public String getHistoryNodeLabel() {
+        return historyNodeLabel;
+    }
+
+    @Override
+    public void setHistoryNodeLabel(String historyNodeLabel) {
+        this.historyNodeLabel = historyNodeLabel;
     }
 
     /**
