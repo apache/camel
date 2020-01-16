@@ -114,15 +114,17 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.pulsar.allow-manual-acknowledgement* | Whether to allow manual message acknowledgements. If this option is enabled, then messages are not immediately acknowledged after being consumed. Instead, an instance of PulsarMessageReceipt is stored as a header on the org.apache.camel.Exchange. Messages can then be acknowledged using PulsarMessageReceipt at any time before the ackTimeout occurs. | false | Boolean
 | *camel.component.pulsar.enabled* | Whether to enable auto configuration of the pulsar component. This is enabled by default. |  | Boolean
 | *camel.component.pulsar.pulsar-client* | The pulsar client. The option is a org.apache.pulsar.client.api.PulsarClient type. |  | String
+| *camel.component.pulsar.pulsar-message-receipt-factory* | Provide a factory to create an alternate implementation of PulsarMessageReceipt. The option is a org.apache.camel.component.pulsar.PulsarMessageReceiptFactory type. |  | String
 | *camel.component.pulsar.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END

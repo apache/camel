@@ -30,7 +30,7 @@ pulsar:[persistent|non-persistent]://tenant/namespace/topic
 
 
 // component options: START
-The Apache Pulsar component supports 3 options, which are listed below.
+The Apache Pulsar component supports 5 options, which are listed below.
 
 
 
@@ -39,6 +39,8 @@ The Apache Pulsar component supports 3 options, which are listed below.
 | Name | Description | Default | Type
 | *autoConfiguration* (common) | The pulsar autoconfiguration |  | AutoConfiguration
 | *pulsarClient* (common) | The pulsar client |  | PulsarClient
+| *allowManual Acknowledgement* (consumer) | Whether to allow manual message acknowledgements. If this option is enabled, then messages are not immediately acknowledged after being consumed. Instead, an instance of PulsarMessageReceipt is stored as a header on the org.apache.camel.Exchange. Messages can then be acknowledged using PulsarMessageReceipt at any time before the ackTimeout occurs. | false | boolean
+| *pulsarMessageReceipt Factory* (consumer) | Provide a factory to create an alternate implementation of PulsarMessageReceipt. |  | PulsarMessageReceipt Factory
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
@@ -66,12 +68,15 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (20 parameters):
+=== Query Parameters (23 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *ackGroupTimeMillis* (consumer) | Group the consumer acknowledgments for the specified time in milliseconds - defaults to 100 | 100 | long
+| *ackTimeoutMillis* (consumer) | Timeout for unacknowledged messages in milliseconds - defaults to 10000 | 10000 | long
+| *allowManualAcknowledgement* (consumer) | Whether to allow manual message acknowledgements. If this option is enabled, then messages are not immediately acknowledged after being consumed. Instead, an instance of PulsarMessageReceipt is stored as a header on the org.apache.camel.Exchange. Messages can then be acknowledged using PulsarMessageReceipt at any time before the ackTimeout occurs. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *consumerName* (consumer) | Name of the consumer when subscription is EXCLUSIVE | sole-consumer | String
 | *consumerNamePrefix* (consumer) | Prefix to add to consumer names when a SHARED or FAILOVER subscription is used | cons | String
@@ -110,15 +115,48 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.pulsar.allow-manual-acknowledgement* | Whether to allow manual message acknowledgements. If this option is enabled, then messages are not immediately acknowledged after being consumed. Instead, an instance of PulsarMessageReceipt is stored as a header on the org.apache.camel.Exchange. Messages can then be acknowledged using PulsarMessageReceipt at any time before the ackTimeout occurs. | false | Boolean
 | *camel.component.pulsar.enabled* | Whether to enable auto configuration of the pulsar component. This is enabled by default. |  | Boolean
 | *camel.component.pulsar.pulsar-client* | The pulsar client. The option is a org.apache.pulsar.client.api.PulsarClient type. |  | String
+| *camel.component.pulsar.pulsar-message-receipt-factory* | Provide a factory to create an alternate implementation of PulsarMessageReceipt. The option is a org.apache.camel.component.pulsar.PulsarMessageReceiptFactory type. |  | String
 | *camel.component.pulsar.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
+
+// message-headers options: START
+=== Message headers evaluated by the Pulsar producer
+
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| `CamelPulsarProducerMessageKey` | `String` | Sets the key on the message for the Pulsar routing policy
+| `CamelPulsarProducerMessageProperties` | `Map<String,String>` | The properties to set on the Pulsar message
+| `CamelPulsarProducerEventTime` | `long` | Sets the event time on the message
+|===
+
+=== Message headers set by the Pulsar consumer
+
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| `properties` | `Map<String,String>` | The properties from the Pulsar message or the empty Map if unset on the Pulsar message
+| `producer_name` | `String` | The name of the producer that created the message
+| `sequence_id` | `long` | Sequence identifier of the Pulsar message
+| `publish_time` | `long` | Time the Pulsar message was published to the topic
+| `message_id` | `MessageId` | Unique identifier of the message
+| `event_time` | `long` | The event time associated with the message or 0 if unset on the Pulsar message
+| `key` | `String` | The key of the Pulsar message in String form or the empty string if unset on the Pulsar message
+| `key_bytes` | `byte[]` | The bytes in the key. If the key has been base64 encoded, it is decoded before being returned. Otherwise, if the key is a plain string, the UTF-8 encoded bytes of the string.
+| `topic_name` | `String` | The topic to which the message was published
+| `manual_acknowledgement` | `PulsarManualAcknowledgement` | If allowManualAcknowledgement is set, this will contain the object for manually acknowledging the Pulsar message; otherwise it is unset
+|===
+// message-headers options: END
