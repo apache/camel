@@ -594,7 +594,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 if (routeId == null) {
                     this.routeId = routeContext.getRouteId();
                 }
-                exchange.setFromRouteId(routeId);
+                exchange.adapt(ExtendedExchange.class).setFromRouteId(routeId);
             }
 
             // only return UnitOfWork if we created a new as then its us that handle the lifecycle to done the created UoW
@@ -604,7 +604,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 // If there is no existing UoW, then we should start one and
                 // terminate it once processing is completed for the exchange.
                 created = createUnitOfWork(exchange);
-                exchange.setUnitOfWork(created);
+                exchange.adapt(ExtendedExchange.class).setUnitOfWork(created);
                 created.start();
             }
 
@@ -856,7 +856,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 if (!contains) {
                     added = true;
                     tracer.traceBeforeRoute(routeDefinition, exchange);
-                    exchange.addOnCompletion(tracingAfterRoute);
+                    exchange.adapt(ExtendedExchange.class).addOnCompletion(tracingAfterRoute);
                 }
             }
 

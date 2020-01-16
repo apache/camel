@@ -32,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Predicate;
@@ -217,7 +218,7 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${header.foo}", "abc");
         assertExpression("${headers.foo}", "abc");
         assertExpression("${routeId}", exchange.getFromRouteId());
-        exchange.setFromRouteId("myRouteId");
+        exchange.adapt(ExtendedExchange.class).setFromRouteId("myRouteId");
         assertExpression("${routeId}", "myRouteId");
     }
 
