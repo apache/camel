@@ -54,9 +54,7 @@ public abstract class AbstractComponentBuilder {
 
     private void configureComponentProperties(final Component component, final GeneratedPropertyConfigurer propertyConfigurer) {
         final CamelContext context = component.getCamelContext();
-        properties.forEach((key, value) -> {
-            propertyConfigurer.configure(context, component, key, resolvePropertyValue(value, context), false);
-        });
+        properties.forEach((key, value) -> propertyConfigurer.configure(context, component, key, resolvePropertyValue(value, context), false));
     }
 
     private Object resolvePropertyValue(final Object value, final CamelContext context) {

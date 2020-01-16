@@ -7,7 +7,7 @@ import org.apache.camel.component.debezium.DebeziumMySqlComponent;
 import org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration;
 
 public class DebeziumMySqlComponentBuilderFactory {
-    interface DebeziumMySqlComponentBuilder extends ComponentBuilder {
+    public interface DebeziumMySqlComponentBuilder extends ComponentBuilder {
         default DebeziumMySqlComponentBuilder withComponentName(String name) {
             doSetComponentName(name);
             return this;
