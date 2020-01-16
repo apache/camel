@@ -928,7 +928,8 @@ public interface KubernetesNodesEndpointBuilderFactory {
      */
     public interface KubernetesNodesEndpointBuilder
             extends
-                KubernetesNodesEndpointConsumerBuilder, KubernetesNodesEndpointProducerBuilder {
+                KubernetesNodesEndpointConsumerBuilder,
+                KubernetesNodesEndpointProducerBuilder {
         default AdvancedKubernetesNodesEndpointBuilder advanced() {
             return (AdvancedKubernetesNodesEndpointBuilder) this;
         }
@@ -1160,7 +1161,8 @@ public interface KubernetesNodesEndpointBuilderFactory {
      */
     public interface AdvancedKubernetesNodesEndpointBuilder
             extends
-                AdvancedKubernetesNodesEndpointConsumerBuilder, AdvancedKubernetesNodesEndpointProducerBuilder {
+                AdvancedKubernetesNodesEndpointConsumerBuilder,
+                AdvancedKubernetesNodesEndpointProducerBuilder {
         default KubernetesNodesEndpointBuilder basic() {
             return (KubernetesNodesEndpointBuilder) this;
         }
@@ -1246,6 +1248,26 @@ public interface KubernetesNodesEndpointBuilderFactory {
                 String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface KubernetesNodesBuilders {
+        /**
+         * Kubernetes Nodes (camel-kubernetes)
+         * The Kubernetes Nodes component provides a producer to execute
+         * kubernetes node operations and a consumer to consume node events.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-nodes:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         */
+        default KubernetesNodesEndpointBuilder kubernetesNodes(String path) {
+            return KubernetesNodesEndpointBuilderFactory.kubernetesNodes(path);
         }
     }
     /**

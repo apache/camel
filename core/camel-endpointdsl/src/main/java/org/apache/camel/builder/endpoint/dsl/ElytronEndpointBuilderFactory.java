@@ -1143,7 +1143,8 @@ public interface ElytronEndpointBuilderFactory {
      */
     public interface ElytronEndpointBuilder
             extends
-                ElytronEndpointConsumerBuilder, ElytronEndpointProducerBuilder {
+                ElytronEndpointConsumerBuilder,
+                ElytronEndpointProducerBuilder {
         default AdvancedElytronEndpointBuilder advanced() {
             return (AdvancedElytronEndpointBuilder) this;
         }
@@ -1227,7 +1228,8 @@ public interface ElytronEndpointBuilderFactory {
      */
     public interface AdvancedElytronEndpointBuilder
             extends
-                AdvancedElytronEndpointConsumerBuilder, AdvancedElytronEndpointProducerBuilder {
+                AdvancedElytronEndpointConsumerBuilder,
+                AdvancedElytronEndpointProducerBuilder {
         default ElytronEndpointBuilder basic() {
             return (ElytronEndpointBuilder) this;
         }
@@ -1372,6 +1374,25 @@ public interface ElytronEndpointBuilderFactory {
                 String undertowHttpBinding) {
             doSetProperty("undertowHttpBinding", undertowHttpBinding);
             return this;
+        }
+    }
+
+    public interface ElytronBuilders {
+        /**
+         * Elytron (camel-elytron)
+         * Endpoint
+         * 
+         * Category: http
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-elytron
+         * 
+         * Syntax: <code>elytron:httpURI</code>
+         * 
+         * Path parameter: httpURI (required)
+         * The url of the HTTP endpoint to use.
+         */
+        default ElytronEndpointBuilder elytron(String path) {
+            return ElytronEndpointBuilderFactory.elytron(path);
         }
     }
     /**

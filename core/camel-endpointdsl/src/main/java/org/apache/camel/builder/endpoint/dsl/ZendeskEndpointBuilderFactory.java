@@ -903,7 +903,8 @@ public interface ZendeskEndpointBuilderFactory {
      */
     public interface ZendeskEndpointBuilder
             extends
-                ZendeskEndpointConsumerBuilder, ZendeskEndpointProducerBuilder {
+                ZendeskEndpointConsumerBuilder,
+                ZendeskEndpointProducerBuilder {
         default AdvancedZendeskEndpointBuilder advanced() {
             return (AdvancedZendeskEndpointBuilder) this;
         }
@@ -980,7 +981,8 @@ public interface ZendeskEndpointBuilderFactory {
      */
     public interface AdvancedZendeskEndpointBuilder
             extends
-                AdvancedZendeskEndpointConsumerBuilder, AdvancedZendeskEndpointProducerBuilder {
+                AdvancedZendeskEndpointConsumerBuilder,
+                AdvancedZendeskEndpointProducerBuilder {
         default ZendeskEndpointBuilder basic() {
             return (ZendeskEndpointBuilder) this;
         }
@@ -1037,6 +1039,26 @@ public interface ZendeskEndpointBuilderFactory {
         default AdvancedZendeskEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface ZendeskBuilders {
+        /**
+         * Zendesk (camel-zendesk)
+         * Allows producing messages to manage Zendesk ticket, user,
+         * organization, etc.
+         * 
+         * Category: api,support,cloud
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-zendesk
+         * 
+         * Syntax: <code>zendesk:methodName</code>
+         * 
+         * Path parameter: methodName (required)
+         * What operation to use
+         */
+        default ZendeskEndpointBuilder zendesk(String path) {
+            return ZendeskEndpointBuilderFactory.zendesk(path);
         }
     }
     /**

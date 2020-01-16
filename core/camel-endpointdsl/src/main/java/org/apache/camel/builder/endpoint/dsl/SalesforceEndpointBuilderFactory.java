@@ -1846,7 +1846,8 @@ public interface SalesforceEndpointBuilderFactory {
      */
     public interface SalesforceEndpointBuilder
             extends
-                SalesforceEndpointConsumerBuilder, SalesforceEndpointProducerBuilder {
+                SalesforceEndpointConsumerBuilder,
+                SalesforceEndpointProducerBuilder {
         default AdvancedSalesforceEndpointBuilder advanced() {
             return (AdvancedSalesforceEndpointBuilder) this;
         }
@@ -2584,7 +2585,8 @@ public interface SalesforceEndpointBuilderFactory {
      */
     public interface AdvancedSalesforceEndpointBuilder
             extends
-                AdvancedSalesforceEndpointConsumerBuilder, AdvancedSalesforceEndpointProducerBuilder {
+                AdvancedSalesforceEndpointConsumerBuilder,
+                AdvancedSalesforceEndpointProducerBuilder {
         default SalesforceEndpointBuilder basic() {
             return (SalesforceEndpointBuilder) this;
         }
@@ -2698,6 +2700,39 @@ public interface SalesforceEndpointBuilderFactory {
         CREATE,
         EXTENDED,
         UPDATE;
+    }
+
+    public interface SalesforceBuilders {
+        /**
+         * Salesforce (camel-salesforce)
+         * The salesforce component is used for integrating Camel with the
+         * massive Salesforce API.
+         * 
+         * Category: api,cloud,crm
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-salesforce
+         * 
+         * Syntax: <code>salesforce:operationName:topicName</code>
+         * 
+         * Path parameter: operationName
+         * The operation to use
+         * The value can be one of: getVersions, getResources, getGlobalObjects,
+         * getBasicInfo, getDescription, getSObject, createSObject,
+         * updateSObject, deleteSObject, getSObjectWithId, upsertSObject,
+         * deleteSObjectWithId, getBlobField, query, queryMore, queryAll,
+         * search, apexCall, recent, createJob, getJob, closeJob, abortJob,
+         * createBatch, getBatch, getAllBatches, getRequest, getResults,
+         * createBatchQuery, getQueryResultIds, getQueryResult,
+         * getRecentReports, getReportDescription, executeSyncReport,
+         * executeAsyncReport, getReportInstances, getReportResults, limits,
+         * approval, approvals, composite-tree, composite-batch, composite
+         * 
+         * Path parameter: topicName
+         * The name of the topic/channel to use
+         */
+        default SalesforceEndpointBuilder salesforce(String path) {
+            return SalesforceEndpointBuilderFactory.salesforce(path);
+        }
     }
     /**
      * Salesforce (camel-salesforce)

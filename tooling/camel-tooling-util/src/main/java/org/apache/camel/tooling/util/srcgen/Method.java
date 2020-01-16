@@ -20,10 +20,13 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Method {
     String name;
     GenericType returnType;
+    String returnTypeLiteral;
     boolean isDefault;
     boolean isPublic;
     boolean isProtected;
@@ -66,11 +69,13 @@ public class Method {
 
     public Method setStatic() {
         isStatic = true;
+        isDefault = false;
         return this;
     }
 
     public Method setDefault() {
         isDefault = true;
+        isStatic = false;
         return this;
     }
 
@@ -87,6 +92,10 @@ public class Method {
         return this;
     }
 
+    public String getReturnTypeLiteral() {
+        return returnTypeLiteral;
+    }
+
     public GenericType getReturnType() {
         return returnType;
     }
@@ -97,13 +106,40 @@ public class Method {
         this.returnType = returnType;
         return this;
     }
+    public Method setReturnType(String returnType) {
+        this.returnType = null;
+        this.returnTypeLiteral = returnType;
+        return this;
+    }
 
+
+    public Method addParameter(String type, String name) {
+        return addParameter(type, name, false);
+    }
+    public Method addParameter(String type, String name, boolean vararg) {
+        this.parameters.add(new Param(type, name, vararg));
+        return this;
+    }
     public Method addParameter(Class<?> type, String name) {
         return addParameter(new GenericType(type), name);
+    }
+    public Method addParameter(Class<?> type, String name, boolean vararg) {
+        return addParameter(new GenericType(type), name, vararg);
     }
     public Method addParameter(GenericType type, String name) {
         this.parameters.add(new Param(type, name));
         return this;
+    }
+    public Method addParameter(GenericType type, String name, boolean vararg) {
+        this.parameters.add(new Param(type, name, vararg));
+        return this;
+    }
+
+    public List<Param> getParameters() {
+        return this.parameters;
+    }
+    public List<String> getParametersNames() {
+        return this.parameters.stream().map(Param::getName).collect(Collectors.toList());
     }
 
     public String getBody() {
@@ -111,6 +147,15 @@ public class Method {
     }
     public Method setBody(String body) {
         this.body = body;
+        return this;
+    }
+    public Method setBodyF(String format, Object... args) {
+        this.body = String.format(format, args);
+        return this;
+    }
+
+    public Method setBody(String... statements) {
+        this.body = Stream.of(statements).collect(Collectors.joining("\n"));
         return this;
     }
 
@@ -148,5 +193,26 @@ public class Method {
 
     public boolean hasJavaDoc() {
         return javadoc.text != null;
+    }
+
+    public Method copy() {
+        Method m = new Method();
+        m.name = this.name;
+        m.returnType = this.returnType;
+        m.isDefault = this.isDefault;
+        m.isPublic = this.isPublic;
+        m.isProtected = this.isProtected;
+        m.isPrivate = this.isPrivate;
+        m.isStatic = this.isStatic;
+        m.isConstructor = this.isConstructor;
+        m.isAbstract = this.isAbstract;
+        m.signature = this.signature;
+        m.body = this.body;
+        m.javadoc = this.javadoc;
+        m.parameters = new ArrayList<>(this.parameters);
+        m.exceptions = new ArrayList<>(this.exceptions);
+        m.annotations = new ArrayList<>(this.annotations);
+
+        return m;
     }
 }

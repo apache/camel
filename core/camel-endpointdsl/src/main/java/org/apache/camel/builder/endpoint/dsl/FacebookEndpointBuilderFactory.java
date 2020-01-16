@@ -3675,7 +3675,8 @@ public interface FacebookEndpointBuilderFactory {
      */
     public interface FacebookEndpointBuilder
             extends
-                FacebookEndpointConsumerBuilder, FacebookEndpointProducerBuilder {
+                FacebookEndpointConsumerBuilder,
+                FacebookEndpointProducerBuilder {
         default AdvancedFacebookEndpointBuilder advanced() {
             return (AdvancedFacebookEndpointBuilder) this;
         }
@@ -5328,7 +5329,8 @@ public interface FacebookEndpointBuilderFactory {
      */
     public interface AdvancedFacebookEndpointBuilder
             extends
-                AdvancedFacebookEndpointConsumerBuilder, AdvancedFacebookEndpointProducerBuilder {
+                AdvancedFacebookEndpointConsumerBuilder,
+                AdvancedFacebookEndpointProducerBuilder {
         default FacebookEndpointBuilder basic() {
             return (FacebookEndpointBuilder) this;
         }
@@ -5398,6 +5400,26 @@ public interface FacebookEndpointBuilderFactory {
         large,
         thumbnail,
         album;
+    }
+
+    public interface FacebookBuilders {
+        /**
+         * Facebook (camel-facebook)
+         * The Facebook component provides access to all of the Facebook APIs
+         * accessible using Facebook4J.
+         * 
+         * Category: social
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-facebook
+         * 
+         * Syntax: <code>facebook:methodName</code>
+         * 
+         * Path parameter: methodName (required)
+         * What operation to perform
+         */
+        default FacebookEndpointBuilder facebook(String path) {
+            return FacebookEndpointBuilderFactory.facebook(path);
+        }
     }
     /**
      * Facebook (camel-facebook)

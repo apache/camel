@@ -985,7 +985,8 @@ public interface GrpcEndpointBuilderFactory {
      */
     public interface GrpcEndpointBuilder
             extends
-                GrpcEndpointConsumerBuilder, GrpcEndpointProducerBuilder {
+                GrpcEndpointConsumerBuilder,
+                GrpcEndpointProducerBuilder {
         default AdvancedGrpcEndpointBuilder advanced() {
             return (AdvancedGrpcEndpointBuilder) this;
         }
@@ -1220,7 +1221,8 @@ public interface GrpcEndpointBuilderFactory {
      */
     public interface AdvancedGrpcEndpointBuilder
             extends
-                AdvancedGrpcEndpointConsumerBuilder, AdvancedGrpcEndpointProducerBuilder {
+                AdvancedGrpcEndpointConsumerBuilder,
+                AdvancedGrpcEndpointProducerBuilder {
         default GrpcEndpointBuilder basic() {
             return (GrpcEndpointBuilder) this;
         }
@@ -1325,6 +1327,34 @@ public interface GrpcEndpointBuilderFactory {
         TLS,
         PLAINTEXT_UPGRADE,
         PLAINTEXT;
+    }
+
+    public interface GrpcBuilders {
+        /**
+         * gRPC (camel-grpc)
+         * The gRPC component allows to call and expose remote procedures via
+         * HTTP/2 with protobuf dataformat
+         * 
+         * Category: rpc
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-grpc
+         * 
+         * Syntax: <code>grpc:host:port/service</code>
+         * 
+         * Path parameter: host (required)
+         * The gRPC server host name. This is localhost or 0.0.0.0 when being a
+         * consumer or remote server host name when using producer.
+         * 
+         * Path parameter: port (required)
+         * The gRPC local or remote server port
+         * 
+         * Path parameter: service (required)
+         * Fully qualified service name from the protocol buffer descriptor file
+         * (package dot service definition name)
+         */
+        default GrpcEndpointBuilder grpc(String path) {
+            return GrpcEndpointBuilderFactory.grpc(path);
+        }
     }
     /**
      * gRPC (camel-grpc)

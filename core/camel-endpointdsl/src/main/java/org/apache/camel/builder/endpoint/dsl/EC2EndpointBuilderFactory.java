@@ -320,6 +320,25 @@ public interface EC2EndpointBuilderFactory {
         http,
         https;
     }
+
+    public interface EC2Builders {
+        /**
+         * AWS EC2 (camel-aws-ec2)
+         * The aws-ec2 is used for managing Amazon EC2 instances.
+         * 
+         * Category: cloud,management
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-aws-ec2
+         * 
+         * Syntax: <code>aws-ec2:label</code>
+         * 
+         * Path parameter: label (required)
+         * Logical name
+         */
+        default EC2EndpointBuilder awsEc2(String path) {
+            return EC2EndpointBuilderFactory.awsEc2(path);
+        }
+    }
     /**
      * AWS EC2 (camel-aws-ec2)
      * The aws-ec2 is used for managing Amazon EC2 instances.

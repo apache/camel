@@ -1886,7 +1886,8 @@ public interface PahoEndpointBuilderFactory {
      */
     public interface PahoEndpointBuilder
             extends
-                PahoEndpointConsumerBuilder, PahoEndpointProducerBuilder {
+                PahoEndpointConsumerBuilder,
+                PahoEndpointProducerBuilder {
         default AdvancedPahoEndpointBuilder advanced() {
             return (AdvancedPahoEndpointBuilder) this;
         }
@@ -2586,7 +2587,8 @@ public interface PahoEndpointBuilderFactory {
      */
     public interface AdvancedPahoEndpointBuilder
             extends
-                AdvancedPahoEndpointConsumerBuilder, AdvancedPahoEndpointProducerBuilder {
+                AdvancedPahoEndpointConsumerBuilder,
+                AdvancedPahoEndpointProducerBuilder {
         default PahoEndpointBuilder basic() {
             return (PahoEndpointBuilder) this;
         }
@@ -2732,6 +2734,26 @@ public interface PahoEndpointBuilderFactory {
     enum PahoPersistence {
         FILE,
         MEMORY;
+    }
+
+    public interface PahoBuilders {
+        /**
+         * Paho (camel-paho)
+         * Component for communicating with MQTT message brokers using Eclipse
+         * Paho MQTT Client.
+         * 
+         * Category: messaging,iot
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-paho
+         * 
+         * Syntax: <code>paho:topic</code>
+         * 
+         * Path parameter: topic (required)
+         * Name of the topic
+         */
+        default PahoEndpointBuilder paho(String path) {
+            return PahoEndpointBuilderFactory.paho(path);
+        }
     }
     /**
      * Paho (camel-paho)

@@ -1598,7 +1598,8 @@ public interface CouchbaseEndpointBuilderFactory {
      */
     public interface CouchbaseEndpointBuilder
             extends
-                CouchbaseEndpointConsumerBuilder, CouchbaseEndpointProducerBuilder {
+                CouchbaseEndpointConsumerBuilder,
+                CouchbaseEndpointProducerBuilder {
         default AdvancedCouchbaseEndpointBuilder advanced() {
             return (AdvancedCouchbaseEndpointBuilder) this;
         }
@@ -1653,7 +1654,8 @@ public interface CouchbaseEndpointBuilderFactory {
      */
     public interface AdvancedCouchbaseEndpointBuilder
             extends
-                AdvancedCouchbaseEndpointConsumerBuilder, AdvancedCouchbaseEndpointProducerBuilder {
+                AdvancedCouchbaseEndpointConsumerBuilder,
+                AdvancedCouchbaseEndpointProducerBuilder {
         default CouchbaseEndpointBuilder basic() {
             return (CouchbaseEndpointBuilder) this;
         }
@@ -1926,6 +1928,33 @@ public interface CouchbaseEndpointBuilderFactory {
                 String timeoutExceptionThreshold) {
             doSetProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
             return this;
+        }
+    }
+
+    public interface CouchbaseBuilders {
+        /**
+         * Couchbase (camel-couchbase)
+         * Represents a Couchbase endpoint that can query Views with a Poll
+         * strategy and/or produce various type of operations.
+         * 
+         * Category: database,nosql
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-couchbase
+         * 
+         * Syntax: <code>couchbase:protocol:hostname:port</code>
+         * 
+         * Path parameter: protocol (required)
+         * The protocol to use
+         * 
+         * Path parameter: hostname (required)
+         * The hostname to use
+         * 
+         * Path parameter: port
+         * The port number to use
+         * Default value: 8091
+         */
+        default CouchbaseEndpointBuilder couchbase(String path) {
+            return CouchbaseEndpointBuilderFactory.couchbase(path);
         }
     }
     /**

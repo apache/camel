@@ -243,6 +243,26 @@ public interface DozerEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface DozerBuilders {
+        /**
+         * Dozer (camel-dozer)
+         * The dozer component provides the ability to map between Java beans
+         * using the Dozer mapping library.
+         * 
+         * Category: transformation
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-dozer
+         * 
+         * Syntax: <code>dozer:name</code>
+         * 
+         * Path parameter: name (required)
+         * A human readable name of the mapping.
+         */
+        default DozerEndpointBuilder dozer(String path) {
+            return DozerEndpointBuilderFactory.dozer(path);
+        }
+    }
     /**
      * Dozer (camel-dozer)
      * The dozer component provides the ability to map between Java beans using

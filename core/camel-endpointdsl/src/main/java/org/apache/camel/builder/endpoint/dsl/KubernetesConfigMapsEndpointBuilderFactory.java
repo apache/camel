@@ -411,6 +411,27 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface KubernetesConfigMapsBuilders {
+        /**
+         * Kubernetes ConfigMap (camel-kubernetes)
+         * The Kubernetes Configmaps component provides a producer to execute
+         * kubernetes configmap operations.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-config-maps:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         */
+        default KubernetesConfigMapsEndpointBuilder kubernetesConfigMaps(
+                String path) {
+            return KubernetesConfigMapsEndpointBuilderFactory.kubernetesConfigMaps(path);
+        }
+    }
     /**
      * Kubernetes ConfigMap (camel-kubernetes)
      * The Kubernetes Configmaps component provides a producer to execute

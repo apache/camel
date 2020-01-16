@@ -477,7 +477,8 @@ public interface HazelcastMultimapEndpointBuilderFactory {
      */
     public interface HazelcastMultimapEndpointBuilder
             extends
-                HazelcastMultimapEndpointConsumerBuilder, HazelcastMultimapEndpointProducerBuilder {
+                HazelcastMultimapEndpointConsumerBuilder,
+                HazelcastMultimapEndpointProducerBuilder {
         default AdvancedHazelcastMultimapEndpointBuilder advanced() {
             return (AdvancedHazelcastMultimapEndpointBuilder) this;
         }
@@ -560,7 +561,8 @@ public interface HazelcastMultimapEndpointBuilderFactory {
      */
     public interface AdvancedHazelcastMultimapEndpointBuilder
             extends
-                AdvancedHazelcastMultimapEndpointConsumerBuilder, AdvancedHazelcastMultimapEndpointProducerBuilder {
+                AdvancedHazelcastMultimapEndpointConsumerBuilder,
+                AdvancedHazelcastMultimapEndpointProducerBuilder {
         default HazelcastMultimapEndpointBuilder basic() {
             return (HazelcastMultimapEndpointBuilder) this;
         }
@@ -664,6 +666,26 @@ public interface HazelcastMultimapEndpointBuilderFactory {
         readOnceHeal,
         readOnceTail,
         capacity;
+    }
+
+    public interface HazelcastMultimapBuilders {
+        /**
+         * Hazelcast Multimap (camel-hazelcast)
+         * The hazelcast-multimap component is used to to access Hazelcast
+         * distributed multimap.
+         * 
+         * Category: cache,datagrid
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
+         * Syntax: <code>hazelcast-multimap:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache
+         */
+        default HazelcastMultimapEndpointBuilder hazelcastMultimap(String path) {
+            return HazelcastMultimapEndpointBuilderFactory.hazelcastMultimap(path);
+        }
     }
     /**
      * Hazelcast Multimap (camel-hazelcast)

@@ -1314,7 +1314,8 @@ public interface SplunkEndpointBuilderFactory {
      */
     public interface SplunkEndpointBuilder
             extends
-                SplunkEndpointConsumerBuilder, SplunkEndpointProducerBuilder {
+                SplunkEndpointConsumerBuilder,
+                SplunkEndpointProducerBuilder {
         default AdvancedSplunkEndpointBuilder advanced() {
             return (AdvancedSplunkEndpointBuilder) this;
         }
@@ -1497,7 +1498,8 @@ public interface SplunkEndpointBuilderFactory {
      */
     public interface AdvancedSplunkEndpointBuilder
             extends
-                AdvancedSplunkEndpointConsumerBuilder, AdvancedSplunkEndpointProducerBuilder {
+                AdvancedSplunkEndpointConsumerBuilder,
+                AdvancedSplunkEndpointProducerBuilder {
         default SplunkEndpointBuilder basic() {
             return (SplunkEndpointBuilder) this;
         }
@@ -1565,6 +1567,26 @@ public interface SplunkEndpointBuilderFactory {
         TLSv1_1,
         TLSv1,
         SSLv3;
+    }
+
+    public interface SplunkBuilders {
+        /**
+         * Splunk (camel-splunk)
+         * The splunk component allows to publish or search for events in
+         * Splunk.
+         * 
+         * Category: log,monitoring
+         * Since: 2.13
+         * Maven coordinates: org.apache.camel:camel-splunk
+         * 
+         * Syntax: <code>splunk:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name has no purpose
+         */
+        default SplunkEndpointBuilder splunk(String path) {
+            return SplunkEndpointBuilderFactory.splunk(path);
+        }
     }
     /**
      * Splunk (camel-splunk)

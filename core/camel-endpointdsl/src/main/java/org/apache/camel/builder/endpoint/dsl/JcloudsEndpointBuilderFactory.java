@@ -467,7 +467,8 @@ public interface JcloudsEndpointBuilderFactory {
      */
     public interface JcloudsEndpointBuilder
             extends
-                JcloudsEndpointConsumerBuilder, JcloudsEndpointProducerBuilder {
+                JcloudsEndpointConsumerBuilder,
+                JcloudsEndpointProducerBuilder {
         default AdvancedJcloudsEndpointBuilder advanced() {
             return (AdvancedJcloudsEndpointBuilder) this;
         }
@@ -489,7 +490,8 @@ public interface JcloudsEndpointBuilderFactory {
      */
     public interface AdvancedJcloudsEndpointBuilder
             extends
-                AdvancedJcloudsEndpointConsumerBuilder, AdvancedJcloudsEndpointProducerBuilder {
+                AdvancedJcloudsEndpointConsumerBuilder,
+                AdvancedJcloudsEndpointProducerBuilder {
         default JcloudsEndpointBuilder basic() {
             return (JcloudsEndpointBuilder) this;
         }
@@ -546,6 +548,30 @@ public interface JcloudsEndpointBuilderFactory {
         default AdvancedJcloudsEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface JcloudsBuilders {
+        /**
+         * JClouds (camel-jclouds)
+         * For interacting with cloud compute & blobstore service via jclouds.
+         * 
+         * Category: api,cloud
+         * Since: 2.9
+         * Maven coordinates: org.apache.camel:camel-jclouds
+         * 
+         * Syntax: <code>jclouds:command:providerId</code>
+         * 
+         * Path parameter: command (required)
+         * What command to execute such as blobstore or compute.
+         * The value can be one of: blobstore, compute
+         * 
+         * Path parameter: providerId (required)
+         * The name of the cloud provider that provides the target service (e.g.
+         * aws-s3 or aws_ec2).
+         */
+        default JcloudsEndpointBuilder jclouds(String path) {
+            return JcloudsEndpointBuilderFactory.jclouds(path);
         }
     }
     /**

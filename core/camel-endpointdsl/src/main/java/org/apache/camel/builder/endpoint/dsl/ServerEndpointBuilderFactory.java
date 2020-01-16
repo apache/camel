@@ -1127,7 +1127,8 @@ public interface ServerEndpointBuilderFactory {
      */
     public interface ServerEndpointBuilder
             extends
-                ServerEndpointConsumerBuilder, ServerEndpointProducerBuilder {
+                ServerEndpointConsumerBuilder,
+                ServerEndpointProducerBuilder {
         default AdvancedServerEndpointBuilder advanced() {
             return (AdvancedServerEndpointBuilder) this;
         }
@@ -1522,7 +1523,8 @@ public interface ServerEndpointBuilderFactory {
      */
     public interface AdvancedServerEndpointBuilder
             extends
-                AdvancedServerEndpointConsumerBuilder, AdvancedServerEndpointProducerBuilder {
+                AdvancedServerEndpointConsumerBuilder,
+                AdvancedServerEndpointProducerBuilder {
         default ServerEndpointBuilder basic() {
             return (ServerEndpointBuilder) this;
         }
@@ -1608,6 +1610,27 @@ public interface ServerEndpointBuilderFactory {
         SIZE_1,
         SIZE_2,
         SIZE_3;
+    }
+
+    public interface ServerBuilders {
+        /**
+         * IEC 60870 Server (camel-iec60870)
+         * IEC 60870 component used for telecontrol (supervisory control and
+         * data acquisition) such as controlling electric power transmission
+         * grids and other geographically widespread control systems.
+         * 
+         * Category: iot
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-iec60870
+         * 
+         * Syntax: <code>iec60870-server:uriPath</code>
+         * 
+         * Path parameter: uriPath (required)
+         * The object information address
+         */
+        default ServerEndpointBuilder iec60870Server(String path) {
+            return ServerEndpointBuilderFactory.iec60870Server(path);
+        }
     }
     /**
      * IEC 60870 Server (camel-iec60870)

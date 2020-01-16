@@ -811,6 +811,27 @@ public interface SjmsBatchEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface SjmsBatchBuilders {
+        /**
+         * Simple JMS Batch (camel-sjms)
+         * The sjms-batch component is a specialized for highly performant,
+         * transactional batch consumption from a JMS queue.
+         * 
+         * Category: messaging
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-sjms
+         * 
+         * Syntax: <code>sjms-batch:destinationName</code>
+         * 
+         * Path parameter: destinationName (required)
+         * The destination name. Only queues are supported, names may be
+         * prefixed by 'queue:'.
+         */
+        default SjmsBatchEndpointBuilder sjmsBatch(String path) {
+            return SjmsBatchEndpointBuilderFactory.sjmsBatch(path);
+        }
+    }
     /**
      * Simple JMS Batch (camel-sjms)
      * The sjms-batch component is a specialized for highly performant,

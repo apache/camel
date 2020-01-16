@@ -414,7 +414,8 @@ public interface SpringIntegrationEndpointBuilderFactory {
      */
     public interface SpringIntegrationEndpointBuilder
             extends
-                SpringIntegrationEndpointConsumerBuilder, SpringIntegrationEndpointProducerBuilder {
+                SpringIntegrationEndpointConsumerBuilder,
+                SpringIntegrationEndpointProducerBuilder {
         default AdvancedSpringIntegrationEndpointBuilder advanced() {
             return (AdvancedSpringIntegrationEndpointBuilder) this;
         }
@@ -453,7 +454,8 @@ public interface SpringIntegrationEndpointBuilderFactory {
      */
     public interface AdvancedSpringIntegrationEndpointBuilder
             extends
-                AdvancedSpringIntegrationEndpointConsumerBuilder, AdvancedSpringIntegrationEndpointProducerBuilder {
+                AdvancedSpringIntegrationEndpointConsumerBuilder,
+                AdvancedSpringIntegrationEndpointProducerBuilder {
         default SpringIntegrationEndpointBuilder basic() {
             return (SpringIntegrationEndpointBuilder) this;
         }
@@ -512,6 +514,28 @@ public interface SpringIntegrationEndpointBuilderFactory {
                 String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface SpringIntegrationBuilders {
+        /**
+         * Spring Integration (camel-spring-integration)
+         * Bridges Camel with Spring Integration.
+         * 
+         * Category: spring,eventbus
+         * Since: 1.4
+         * Maven coordinates: org.apache.camel:camel-spring-integration
+         * 
+         * Syntax: <code>spring-integration:defaultChannel</code>
+         * 
+         * Path parameter: defaultChannel (required)
+         * The default channel name which is used by the Spring Integration
+         * Spring context. It will equal to the inputChannel name for the Spring
+         * Integration consumer and the outputChannel name for the Spring
+         * Integration provider.
+         */
+        default SpringIntegrationEndpointBuilder springIntegration(String path) {
+            return SpringIntegrationEndpointBuilderFactory.springIntegration(path);
         }
     }
     /**

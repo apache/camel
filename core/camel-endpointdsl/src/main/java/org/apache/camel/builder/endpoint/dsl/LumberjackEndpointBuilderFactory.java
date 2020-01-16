@@ -230,6 +230,30 @@ public interface LumberjackEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface LumberjackBuilders {
+        /**
+         * Lumberjack (camel-lumberjack)
+         * The lumberjack retrieves logs sent over the network using the
+         * Lumberjack protocol.
+         * 
+         * Category: log
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-lumberjack
+         * 
+         * Syntax: <code>lumberjack:host:port</code>
+         * 
+         * Path parameter: host (required)
+         * Network interface on which to listen for Lumberjack
+         * 
+         * Path parameter: port
+         * Network port on which to listen for Lumberjack
+         * Default value: 5044
+         */
+        default LumberjackEndpointBuilder lumberjack(String path) {
+            return LumberjackEndpointBuilderFactory.lumberjack(path);
+        }
+    }
     /**
      * Lumberjack (camel-lumberjack)
      * The lumberjack retrieves logs sent over the network using the Lumberjack

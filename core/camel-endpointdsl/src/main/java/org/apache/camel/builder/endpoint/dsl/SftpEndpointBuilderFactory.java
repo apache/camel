@@ -4345,7 +4345,8 @@ public interface SftpEndpointBuilderFactory {
      */
     public interface SftpEndpointBuilder
             extends
-                SftpEndpointConsumerBuilder, SftpEndpointProducerBuilder {
+                SftpEndpointConsumerBuilder,
+                SftpEndpointProducerBuilder {
         default AdvancedSftpEndpointBuilder advanced() {
             return (AdvancedSftpEndpointBuilder) this;
         }
@@ -4762,7 +4763,8 @@ public interface SftpEndpointBuilderFactory {
      */
     public interface AdvancedSftpEndpointBuilder
             extends
-                AdvancedSftpEndpointConsumerBuilder, AdvancedSftpEndpointProducerBuilder {
+                AdvancedSftpEndpointConsumerBuilder,
+                AdvancedSftpEndpointProducerBuilder {
         default SftpEndpointBuilder basic() {
             return (SftpEndpointBuilder) this;
         }
@@ -5261,6 +5263,32 @@ public interface SftpEndpointBuilderFactory {
         Ignore,
         Move,
         TryRename;
+    }
+
+    public interface SftpBuilders {
+        /**
+         * SFTP (camel-ftp)
+         * The sftp (FTP over SSH) component is used for uploading or
+         * downloading files from SFTP servers.
+         * 
+         * Category: file
+         * Since: 1.1
+         * Maven coordinates: org.apache.camel:camel-ftp
+         * 
+         * Syntax: <code>sftp:host:port/directoryName</code>
+         * 
+         * Path parameter: host (required)
+         * Hostname of the FTP server
+         * 
+         * Path parameter: port
+         * Port of the FTP server
+         * 
+         * Path parameter: directoryName
+         * The starting directory
+         */
+        default SftpEndpointBuilder sftp(String path) {
+            return SftpEndpointBuilderFactory.sftp(path);
+        }
     }
     /**
      * SFTP (camel-ftp)

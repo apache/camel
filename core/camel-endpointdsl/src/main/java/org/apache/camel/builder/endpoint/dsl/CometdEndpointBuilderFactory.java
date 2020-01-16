@@ -837,7 +837,8 @@ public interface CometdEndpointBuilderFactory {
      */
     public interface CometdEndpointBuilder
             extends
-                CometdEndpointConsumerBuilder, CometdEndpointProducerBuilder {
+                CometdEndpointConsumerBuilder,
+                CometdEndpointProducerBuilder {
         default AdvancedCometdEndpointBuilder advanced() {
             return (AdvancedCometdEndpointBuilder) this;
         }
@@ -1069,7 +1070,8 @@ public interface CometdEndpointBuilderFactory {
      */
     public interface AdvancedCometdEndpointBuilder
             extends
-                AdvancedCometdEndpointConsumerBuilder, AdvancedCometdEndpointProducerBuilder {
+                AdvancedCometdEndpointConsumerBuilder,
+                AdvancedCometdEndpointProducerBuilder {
         default CometdEndpointBuilder basic() {
             return (CometdEndpointBuilder) this;
         }
@@ -1126,6 +1128,69 @@ public interface CometdEndpointBuilderFactory {
         default AdvancedCometdEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface CometdBuilders {
+        /**
+         * CometD (camel-cometd)
+         * The cometd component is a transport for working with the Jetty
+         * implementation of the cometd/bayeux protocol.
+         * 
+         * Category: websocket
+         * Since: 2.0
+         * Maven coordinates: org.apache.camel:camel-cometd
+         * 
+         * Syntax: <code>cometd:host:port/channelName</code>
+         * 
+         * Path parameter: host (required)
+         * Hostname
+         * 
+         * Path parameter: port (required)
+         * Host port number
+         * 
+         * Path parameter: channelName (required)
+         * The channelName represents a topic that can be subscribed to by the
+         * Camel endpoints.
+         */
+        default CometdEndpointBuilder cometd(String path) {
+            return CometdEndpointBuilderFactory.cometd(path);
+        }
+        /**
+         * CometD (Secure) (camel-cometd)
+         * The cometd component is a transport for working with the Jetty
+         * implementation of the cometd/bayeux protocol.
+         * 
+         * Category: websocket
+         * Since: 2.0
+         * Maven coordinates: org.apache.camel:camel-cometd
+         * 
+         * Syntax: <code>cometds:host:port/channelName</code>
+         * 
+         * Path parameter: host (required)
+         * Hostname
+         * 
+         * Path parameter: port (required)
+         * Host port number
+         * 
+         * Path parameter: channelName (required)
+         * The channelName represents a topic that can be subscribed to by the
+         * Camel endpoints.
+         */
+        default CometdEndpointBuilder cometds(String path) {
+            return CometdEndpointBuilderFactory.cometds(path);
+        }
+        /**
+         * CometD (camel-cometd)
+         * The cometd component is a transport for working with the Jetty
+         * implementation of the cometd/bayeux protocol.
+         * 
+         * Category: websocket
+         * Since: 2.0
+         * Maven coordinates: org.apache.camel:camel-cometd
+         */
+        default CometdEndpointBuilder cometd(String scheme, String path) {
+            return CometdEndpointBuilderFactory.cometd(scheme,path);
         }
     }
     /**

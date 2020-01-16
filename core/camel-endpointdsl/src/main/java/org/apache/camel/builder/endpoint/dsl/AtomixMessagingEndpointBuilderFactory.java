@@ -983,7 +983,8 @@ public interface AtomixMessagingEndpointBuilderFactory {
      */
     public interface AtomixMessagingEndpointBuilder
             extends
-                AtomixMessagingEndpointConsumerBuilder, AtomixMessagingEndpointProducerBuilder {
+                AtomixMessagingEndpointConsumerBuilder,
+                AtomixMessagingEndpointProducerBuilder {
         default AdvancedAtomixMessagingEndpointBuilder advanced() {
             return (AdvancedAtomixMessagingEndpointBuilder) this;
         }
@@ -1155,7 +1156,8 @@ public interface AtomixMessagingEndpointBuilderFactory {
      */
     public interface AdvancedAtomixMessagingEndpointBuilder
             extends
-                AdvancedAtomixMessagingEndpointConsumerBuilder, AdvancedAtomixMessagingEndpointProducerBuilder {
+                AdvancedAtomixMessagingEndpointConsumerBuilder,
+                AdvancedAtomixMessagingEndpointProducerBuilder {
         default AtomixMessagingEndpointBuilder basic() {
             return (AtomixMessagingEndpointBuilder) this;
         }
@@ -1403,6 +1405,26 @@ public interface AtomixMessagingEndpointBuilderFactory {
         ATOMIC_LEASE,
         SEQUENTIAL,
         LOCAL;
+    }
+
+    public interface AtomixMessagingBuilders {
+        /**
+         * Atomix Messaging (camel-atomix)
+         * The atomix-messaging component is used to access Atomix's group
+         * messaging.
+         * 
+         * Category: clustering
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-atomix
+         * 
+         * Syntax: <code>atomix-messaging:resourceName</code>
+         * 
+         * Path parameter: resourceName (required)
+         * The distributed resource name
+         */
+        default AtomixMessagingEndpointBuilder atomixMessaging(String path) {
+            return AtomixMessagingEndpointBuilderFactory.atomixMessaging(path);
+        }
     }
     /**
      * Atomix Messaging (camel-atomix)

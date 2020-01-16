@@ -749,7 +749,8 @@ public interface DataSetEndpointBuilderFactory {
      */
     public interface DataSetEndpointBuilder
             extends
-                DataSetEndpointConsumerBuilder, DataSetEndpointProducerBuilder {
+                DataSetEndpointConsumerBuilder,
+                DataSetEndpointProducerBuilder {
         default AdvancedDataSetEndpointBuilder advanced() {
             return (AdvancedDataSetEndpointBuilder) this;
         }
@@ -778,7 +779,8 @@ public interface DataSetEndpointBuilderFactory {
      */
     public interface AdvancedDataSetEndpointBuilder
             extends
-                AdvancedDataSetEndpointConsumerBuilder, AdvancedDataSetEndpointProducerBuilder {
+                AdvancedDataSetEndpointConsumerBuilder,
+                AdvancedDataSetEndpointProducerBuilder {
         default DataSetEndpointBuilder basic() {
             return (DataSetEndpointBuilder) this;
         }
@@ -835,6 +837,26 @@ public interface DataSetEndpointBuilderFactory {
         default AdvancedDataSetEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface DataSetBuilders {
+        /**
+         * Dataset (camel-dataset)
+         * The dataset component provides a mechanism to easily perform load &
+         * soak testing of your system.
+         * 
+         * Category: core,testing
+         * Since: 1.3
+         * Maven coordinates: org.apache.camel:camel-dataset
+         * 
+         * Syntax: <code>dataset:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name of DataSet to lookup in the registry
+         */
+        default DataSetEndpointBuilder dataset(String path) {
+            return DataSetEndpointBuilderFactory.dataset(path);
         }
     }
     /**

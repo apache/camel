@@ -646,6 +646,31 @@ public interface ScpEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface ScpBuilders {
+        /**
+         * SCP (camel-jsch)
+         * To copy files using the secure copy protocol (SCP).
+         * 
+         * Category: file
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-jsch
+         * 
+         * Syntax: <code>scp:host:port/directoryName</code>
+         * 
+         * Path parameter: host (required)
+         * Hostname of the FTP server
+         * 
+         * Path parameter: port
+         * Port of the FTP server
+         * 
+         * Path parameter: directoryName
+         * The starting directory
+         */
+        default ScpEndpointBuilder scp(String path) {
+            return ScpEndpointBuilderFactory.scp(path);
+        }
+    }
     /**
      * SCP (camel-jsch)
      * To copy files using the secure copy protocol (SCP).

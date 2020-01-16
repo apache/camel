@@ -385,7 +385,8 @@ public interface EventAdminEndpointBuilderFactory {
      */
     public interface EventAdminEndpointBuilder
             extends
-                EventAdminEndpointConsumerBuilder, EventAdminEndpointProducerBuilder {
+                EventAdminEndpointConsumerBuilder,
+                EventAdminEndpointProducerBuilder {
         default AdvancedEventAdminEndpointBuilder advanced() {
             return (AdvancedEventAdminEndpointBuilder) this;
         }
@@ -422,7 +423,8 @@ public interface EventAdminEndpointBuilderFactory {
      */
     public interface AdvancedEventAdminEndpointBuilder
             extends
-                AdvancedEventAdminEndpointConsumerBuilder, AdvancedEventAdminEndpointProducerBuilder {
+                AdvancedEventAdminEndpointConsumerBuilder,
+                AdvancedEventAdminEndpointProducerBuilder {
         default EventAdminEndpointBuilder basic() {
             return (EventAdminEndpointBuilder) this;
         }
@@ -480,6 +482,26 @@ public interface EventAdminEndpointBuilderFactory {
         default AdvancedEventAdminEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface EventAdminBuilders {
+        /**
+         * OSGi EventAdmin (camel-eventadmin)
+         * The eventadmin component can be used in an OSGi environment to
+         * receive OSGi EventAdmin events and process them.
+         * 
+         * Category: eventbus
+         * Since: 2.6
+         * Maven coordinates: org.apache.camel:camel-eventadmin
+         * 
+         * Syntax: <code>eventadmin:topic</code>
+         * 
+         * Path parameter: topic
+         * Name of topic to listen or send to
+         */
+        default EventAdminEndpointBuilder eventadmin(String path) {
+            return EventAdminEndpointBuilderFactory.eventadmin(path);
         }
     }
     /**

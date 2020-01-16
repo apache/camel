@@ -1936,7 +1936,8 @@ public interface S3EndpointBuilderFactory {
      */
     public interface S3EndpointBuilder
             extends
-                S3EndpointConsumerBuilder, S3EndpointProducerBuilder {
+                S3EndpointConsumerBuilder,
+                S3EndpointProducerBuilder {
         default AdvancedS3EndpointBuilder advanced() {
             return (AdvancedS3EndpointBuilder) this;
         }
@@ -2152,7 +2153,8 @@ public interface S3EndpointBuilderFactory {
      */
     public interface AdvancedS3EndpointBuilder
             extends
-                AdvancedS3EndpointConsumerBuilder, AdvancedS3EndpointProducerBuilder {
+                AdvancedS3EndpointConsumerBuilder,
+                AdvancedS3EndpointProducerBuilder {
         default S3EndpointBuilder basic() {
             return (S3EndpointBuilder) this;
         }
@@ -2417,6 +2419,26 @@ public interface S3EndpointBuilderFactory {
         downloadLink,
         getObject,
         getObjectRange;
+    }
+
+    public interface S3Builders {
+        /**
+         * AWS S3 Storage Service (camel-aws-s3)
+         * The aws-s3 component is used for storing and retrieving object from
+         * Amazon S3 Storage Service.
+         * 
+         * Category: cloud,file
+         * Since: 2.8
+         * Maven coordinates: org.apache.camel:camel-aws-s3
+         * 
+         * Syntax: <code>aws-s3://bucketNameOrArn</code>
+         * 
+         * Path parameter: bucketNameOrArn (required)
+         * Bucket name or ARN
+         */
+        default S3EndpointBuilder awsS3(String path) {
+            return S3EndpointBuilderFactory.awsS3(path);
+        }
     }
     /**
      * AWS S3 Storage Service (camel-aws-s3)

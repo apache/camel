@@ -16,6 +16,9 @@
  */
 package org.apache.camel.tooling.util.srcgen;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class Javadoc {
 
     String text;
@@ -26,6 +29,10 @@ public class Javadoc {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public void setText(String... lines) {
+        this.text = Stream.of(lines).collect(Collectors.joining("\n"));
     }
 
     public void setFullText(String text) {

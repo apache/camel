@@ -330,7 +330,8 @@ public interface EventEndpointBuilderFactory {
      */
     public interface EventEndpointBuilder
             extends
-                EventEndpointConsumerBuilder, EventEndpointProducerBuilder {
+                EventEndpointConsumerBuilder,
+                EventEndpointProducerBuilder {
         default AdvancedEventEndpointBuilder advanced() {
             return (AdvancedEventEndpointBuilder) this;
         }
@@ -341,7 +342,8 @@ public interface EventEndpointBuilderFactory {
      */
     public interface AdvancedEventEndpointBuilder
             extends
-                AdvancedEventEndpointConsumerBuilder, AdvancedEventEndpointProducerBuilder {
+                AdvancedEventEndpointConsumerBuilder,
+                AdvancedEventEndpointProducerBuilder {
         default EventEndpointBuilder basic() {
             return (EventEndpointBuilder) this;
         }
@@ -398,6 +400,26 @@ public interface EventEndpointBuilderFactory {
         default AdvancedEventEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface EventBuilders {
+        /**
+         * Spring Event (camel-spring)
+         * The spring-event component allows to listen for Spring Application
+         * Events.
+         * 
+         * Category: spring,eventbus
+         * Since: 1.4
+         * Maven coordinates: org.apache.camel:camel-spring
+         * 
+         * Syntax: <code>spring-event:name</code>
+         * 
+         * Path parameter: name
+         * Name of endpoint
+         */
+        default EventEndpointBuilder springEvent(String path) {
+            return EventEndpointBuilderFactory.springEvent(path);
         }
     }
     /**

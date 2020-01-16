@@ -940,7 +940,8 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
      */
     public interface KubernetesReplicationControllersEndpointBuilder
             extends
-                KubernetesReplicationControllersEndpointConsumerBuilder, KubernetesReplicationControllersEndpointProducerBuilder {
+                KubernetesReplicationControllersEndpointConsumerBuilder,
+                KubernetesReplicationControllersEndpointProducerBuilder {
         default AdvancedKubernetesReplicationControllersEndpointBuilder advanced() {
             return (AdvancedKubernetesReplicationControllersEndpointBuilder) this;
         }
@@ -1184,7 +1185,8 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
      */
     public interface AdvancedKubernetesReplicationControllersEndpointBuilder
             extends
-                AdvancedKubernetesReplicationControllersEndpointConsumerBuilder, AdvancedKubernetesReplicationControllersEndpointProducerBuilder {
+                AdvancedKubernetesReplicationControllersEndpointConsumerBuilder,
+                AdvancedKubernetesReplicationControllersEndpointProducerBuilder {
         default KubernetesReplicationControllersEndpointBuilder basic() {
             return (KubernetesReplicationControllersEndpointBuilder) this;
         }
@@ -1270,6 +1272,28 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
                 String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface KubernetesReplicationControllersBuilders {
+        /**
+         * Kubernetes Replication Controller (camel-kubernetes)
+         * The Kubernetes Replication Controllers component provides a producer
+         * to execute kubernetes replication controller operations and a
+         * consumer to consume replication controller events.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-replication-controllers:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         */
+        default KubernetesReplicationControllersEndpointBuilder kubernetesReplicationControllers(
+                String path) {
+            return KubernetesReplicationControllersEndpointBuilderFactory.kubernetesReplicationControllers(path);
         }
     }
     /**

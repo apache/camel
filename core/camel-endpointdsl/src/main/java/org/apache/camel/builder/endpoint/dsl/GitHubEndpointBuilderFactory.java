@@ -477,7 +477,8 @@ public interface GitHubEndpointBuilderFactory {
      */
     public interface GitHubEndpointBuilder
             extends
-                GitHubEndpointConsumerBuilder, GitHubEndpointProducerBuilder {
+                GitHubEndpointConsumerBuilder,
+                GitHubEndpointProducerBuilder {
         default AdvancedGitHubEndpointBuilder advanced() {
             return (AdvancedGitHubEndpointBuilder) this;
         }
@@ -545,7 +546,8 @@ public interface GitHubEndpointBuilderFactory {
      */
     public interface AdvancedGitHubEndpointBuilder
             extends
-                AdvancedGitHubEndpointConsumerBuilder, AdvancedGitHubEndpointProducerBuilder {
+                AdvancedGitHubEndpointConsumerBuilder,
+                AdvancedGitHubEndpointProducerBuilder {
         default GitHubEndpointBuilder basic() {
             return (GitHubEndpointBuilder) this;
         }
@@ -602,6 +604,31 @@ public interface GitHubEndpointBuilderFactory {
         default AdvancedGitHubEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface GitHubBuilders {
+        /**
+         * GitHub (camel-github)
+         * The github component is used for integrating Camel with github.
+         * 
+         * Category: api,file
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-github
+         * 
+         * Syntax: <code>github:type/branchName</code>
+         * 
+         * Path parameter: type (required)
+         * What git operation to execute
+         * The value can be one of: CLOSEPULLREQUEST, PULLREQUESTCOMMENT,
+         * COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE, PULLREQUESTFILES,
+         * GETCOMMITFILE, CREATEISSUE
+         * 
+         * Path parameter: branchName
+         * Name of branch
+         */
+        default GitHubEndpointBuilder github(String path) {
+            return GitHubEndpointBuilderFactory.github(path);
         }
     }
     /**

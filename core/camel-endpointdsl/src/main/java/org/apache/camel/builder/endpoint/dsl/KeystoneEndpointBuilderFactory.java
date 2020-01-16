@@ -241,6 +241,26 @@ public interface KeystoneEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface KeystoneBuilders {
+        /**
+         * OpenStack Keystone (camel-openstack)
+         * The openstack-keystone component allows messages to be sent to an
+         * OpenStack identity services.
+         * 
+         * Category: cloud,paas
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-openstack
+         * 
+         * Syntax: <code>openstack-keystone:host</code>
+         * 
+         * Path parameter: host (required)
+         * OpenStack host url
+         */
+        default KeystoneEndpointBuilder openstackKeystone(String path) {
+            return KeystoneEndpointBuilderFactory.openstackKeystone(path);
+        }
+    }
     /**
      * OpenStack Keystone (camel-openstack)
      * The openstack-keystone component allows messages to be sent to an

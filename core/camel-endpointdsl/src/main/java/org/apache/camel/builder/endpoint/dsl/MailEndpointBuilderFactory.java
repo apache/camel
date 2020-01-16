@@ -2207,7 +2207,8 @@ public interface MailEndpointBuilderFactory {
      */
     public interface MailEndpointBuilder
             extends
-                MailEndpointConsumerBuilder, MailEndpointProducerBuilder {
+                MailEndpointConsumerBuilder,
+                MailEndpointProducerBuilder {
         default AdvancedMailEndpointBuilder advanced() {
             return (AdvancedMailEndpointBuilder) this;
         }
@@ -2266,7 +2267,8 @@ public interface MailEndpointBuilderFactory {
      */
     public interface AdvancedMailEndpointBuilder
             extends
-                AdvancedMailEndpointConsumerBuilder, AdvancedMailEndpointProducerBuilder {
+                AdvancedMailEndpointConsumerBuilder,
+                AdvancedMailEndpointProducerBuilder {
         default MailEndpointBuilder basic() {
             return (MailEndpointBuilder) this;
         }
@@ -2666,6 +2668,134 @@ public interface MailEndpointBuilderFactory {
                 String useInlineAttachments) {
             doSetProperty("useInlineAttachments", useInlineAttachments);
             return this;
+        }
+    }
+
+    public interface MailBuilders {
+        /**
+         * IMAP (camel-mail)
+         * To send or receive emails using imap/pop3 or smtp protocols.
+         * 
+         * Category: mail
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-mail
+         * 
+         * Syntax: <code>imap:host:port</code>
+         * 
+         * Path parameter: host (required)
+         * The mail server host name
+         * 
+         * Path parameter: port
+         * The port number of the mail server
+         */
+        default MailEndpointBuilder imap(String path) {
+            return MailEndpointBuilderFactory.imap(path);
+        }
+        /**
+         * IMAPS (Secure) (camel-mail)
+         * To send or receive emails using imap/pop3 or smtp protocols.
+         * 
+         * Category: mail
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-mail
+         * 
+         * Syntax: <code>imaps:host:port</code>
+         * 
+         * Path parameter: host (required)
+         * The mail server host name
+         * 
+         * Path parameter: port
+         * The port number of the mail server
+         */
+        default MailEndpointBuilder imaps(String path) {
+            return MailEndpointBuilderFactory.imaps(path);
+        }
+        /**
+         * POP3 (camel-mail)
+         * To send or receive emails using imap/pop3 or smtp protocols.
+         * 
+         * Category: mail
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-mail
+         * 
+         * Syntax: <code>pop3:host:port</code>
+         * 
+         * Path parameter: host (required)
+         * The mail server host name
+         * 
+         * Path parameter: port
+         * The port number of the mail server
+         */
+        default MailEndpointBuilder pop3(String path) {
+            return MailEndpointBuilderFactory.pop3(path);
+        }
+        /**
+         * POP3S (camel-mail)
+         * To send or receive emails using imap/pop3 or smtp protocols.
+         * 
+         * Category: mail
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-mail
+         * 
+         * Syntax: <code>pop3s:host:port</code>
+         * 
+         * Path parameter: host (required)
+         * The mail server host name
+         * 
+         * Path parameter: port
+         * The port number of the mail server
+         */
+        default MailEndpointBuilder pop3s(String path) {
+            return MailEndpointBuilderFactory.pop3s(path);
+        }
+        /**
+         * SMTP (camel-mail)
+         * To send or receive emails using imap/pop3 or smtp protocols.
+         * 
+         * Category: mail
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-mail
+         * 
+         * Syntax: <code>smtp:host:port</code>
+         * 
+         * Path parameter: host (required)
+         * The mail server host name
+         * 
+         * Path parameter: port
+         * The port number of the mail server
+         */
+        default MailEndpointBuilder smtp(String path) {
+            return MailEndpointBuilderFactory.smtp(path);
+        }
+        /**
+         * SMTPS (camel-mail)
+         * To send or receive emails using imap/pop3 or smtp protocols.
+         * 
+         * Category: mail
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-mail
+         * 
+         * Syntax: <code>smtps:host:port</code>
+         * 
+         * Path parameter: host (required)
+         * The mail server host name
+         * 
+         * Path parameter: port
+         * The port number of the mail server
+         */
+        default MailEndpointBuilder smtps(String path) {
+            return MailEndpointBuilderFactory.smtps(path);
+        }
+        /**
+         * IMAP (camel-mail)
+         * To send or receive emails using imap/pop3 or smtp protocols.
+         * 
+         * Category: mail
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-mail
+         */
+        default MailEndpointBuilder imap(String scheme, String path) {
+            return MailEndpointBuilderFactory.imap(scheme,path);
         }
     }
     /**

@@ -1059,7 +1059,8 @@ public interface ConsulEndpointBuilderFactory {
      */
     public interface ConsulEndpointBuilder
             extends
-                ConsulEndpointConsumerBuilder, ConsulEndpointProducerBuilder {
+                ConsulEndpointConsumerBuilder,
+                ConsulEndpointProducerBuilder {
         default AdvancedConsulEndpointBuilder advanced() {
             return (AdvancedConsulEndpointBuilder) this;
         }
@@ -1295,7 +1296,8 @@ public interface ConsulEndpointBuilderFactory {
      */
     public interface AdvancedConsulEndpointBuilder
             extends
-                AdvancedConsulEndpointConsumerBuilder, AdvancedConsulEndpointProducerBuilder {
+                AdvancedConsulEndpointConsumerBuilder,
+                AdvancedConsulEndpointProducerBuilder {
         default ConsulEndpointBuilder basic() {
             return (ConsulEndpointBuilder) this;
         }
@@ -1439,6 +1441,27 @@ public interface ConsulEndpointBuilderFactory {
         DEFAULT,
         STALE,
         CONSISTENT;
+    }
+
+    public interface ConsulBuilders {
+        /**
+         * Consul (camel-consul)
+         * The camel consul component allows you to work with Consul, a
+         * distributed, highly available, datacenter-aware, service discovery
+         * and configuration system.
+         * 
+         * Category: api,cloud
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-consul
+         * 
+         * Syntax: <code>consul:apiEndpoint</code>
+         * 
+         * Path parameter: apiEndpoint (required)
+         * The API endpoint
+         */
+        default ConsulEndpointBuilder consul(String path) {
+            return ConsulEndpointBuilderFactory.consul(path);
+        }
     }
     /**
      * Consul (camel-consul)

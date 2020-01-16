@@ -795,7 +795,8 @@ public interface HBaseEndpointBuilderFactory {
      */
     public interface HBaseEndpointBuilder
             extends
-                HBaseEndpointConsumerBuilder, HBaseEndpointProducerBuilder {
+                HBaseEndpointConsumerBuilder,
+                HBaseEndpointProducerBuilder {
         default AdvancedHBaseEndpointBuilder advanced() {
             return (AdvancedHBaseEndpointBuilder) this;
         }
@@ -978,7 +979,8 @@ public interface HBaseEndpointBuilderFactory {
      */
     public interface AdvancedHBaseEndpointBuilder
             extends
-                AdvancedHBaseEndpointConsumerBuilder, AdvancedHBaseEndpointProducerBuilder {
+                AdvancedHBaseEndpointConsumerBuilder,
+                AdvancedHBaseEndpointProducerBuilder {
         default HBaseEndpointBuilder basic() {
             return (HBaseEndpointBuilder) this;
         }
@@ -1035,6 +1037,25 @@ public interface HBaseEndpointBuilderFactory {
         default AdvancedHBaseEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface HBaseBuilders {
+        /**
+         * HBase (camel-hbase)
+         * For reading/writing from/to an HBase store (Hadoop database).
+         * 
+         * Category: hadoop
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-hbase
+         * 
+         * Syntax: <code>hbase:tableName</code>
+         * 
+         * Path parameter: tableName (required)
+         * The name of the table
+         */
+        default HBaseEndpointBuilder hbase(String path) {
+            return HBaseEndpointBuilderFactory.hbase(path);
         }
     }
     /**

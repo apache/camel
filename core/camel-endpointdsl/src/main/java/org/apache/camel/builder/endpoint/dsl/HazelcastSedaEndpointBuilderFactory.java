@@ -760,7 +760,8 @@ public interface HazelcastSedaEndpointBuilderFactory {
      */
     public interface HazelcastSedaEndpointBuilder
             extends
-                HazelcastSedaEndpointConsumerBuilder, HazelcastSedaEndpointProducerBuilder {
+                HazelcastSedaEndpointConsumerBuilder,
+                HazelcastSedaEndpointProducerBuilder {
         default AdvancedHazelcastSedaEndpointBuilder advanced() {
             return (AdvancedHazelcastSedaEndpointBuilder) this;
         }
@@ -981,7 +982,8 @@ public interface HazelcastSedaEndpointBuilderFactory {
      */
     public interface AdvancedHazelcastSedaEndpointBuilder
             extends
-                AdvancedHazelcastSedaEndpointConsumerBuilder, AdvancedHazelcastSedaEndpointProducerBuilder {
+                AdvancedHazelcastSedaEndpointConsumerBuilder,
+                AdvancedHazelcastSedaEndpointProducerBuilder {
         default HazelcastSedaEndpointBuilder basic() {
             return (HazelcastSedaEndpointBuilder) this;
         }
@@ -1085,6 +1087,26 @@ public interface HazelcastSedaEndpointBuilderFactory {
         readOnceHeal,
         readOnceTail,
         capacity;
+    }
+
+    public interface HazelcastSedaBuilders {
+        /**
+         * Hazelcast SEDA (camel-hazelcast)
+         * The hazelcast-seda component is used to access Hazelcast
+         * BlockingQueue.
+         * 
+         * Category: cache,datagrid
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
+         * Syntax: <code>hazelcast-seda:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache
+         */
+        default HazelcastSedaEndpointBuilder hazelcastSeda(String path) {
+            return HazelcastSedaEndpointBuilderFactory.hazelcastSeda(path);
+        }
     }
     /**
      * Hazelcast SEDA (camel-hazelcast)

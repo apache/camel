@@ -3125,7 +3125,8 @@ public interface FileEndpointBuilderFactory {
      */
     public interface FileEndpointBuilder
             extends
-                FileEndpointConsumerBuilder, FileEndpointProducerBuilder {
+                FileEndpointConsumerBuilder,
+                FileEndpointProducerBuilder {
         default AdvancedFileEndpointBuilder advanced() {
             return (AdvancedFileEndpointBuilder) this;
         }
@@ -3229,7 +3230,8 @@ public interface FileEndpointBuilderFactory {
      */
     public interface AdvancedFileEndpointBuilder
             extends
-                AdvancedFileEndpointConsumerBuilder, AdvancedFileEndpointProducerBuilder {
+                AdvancedFileEndpointConsumerBuilder,
+                AdvancedFileEndpointProducerBuilder {
         default FileEndpointBuilder basic() {
             return (FileEndpointBuilder) this;
         }
@@ -3422,6 +3424,25 @@ public interface FileEndpointBuilderFactory {
         Ignore,
         Move,
         TryRename;
+    }
+
+    public interface FileBuilders {
+        /**
+         * File (camel-file)
+         * The file component is used for reading or writing files.
+         * 
+         * Category: core,file
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-file
+         * 
+         * Syntax: <code>file:directoryName</code>
+         * 
+         * Path parameter: directoryName (required)
+         * The starting directory
+         */
+        default FileEndpointBuilder file(String path) {
+            return FileEndpointBuilderFactory.file(path);
+        }
     }
     /**
      * File (camel-file)

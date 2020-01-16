@@ -1109,7 +1109,8 @@ public interface IronMQEndpointBuilderFactory {
      */
     public interface IronMQEndpointBuilder
             extends
-                IronMQEndpointConsumerBuilder, IronMQEndpointProducerBuilder {
+                IronMQEndpointConsumerBuilder,
+                IronMQEndpointProducerBuilder {
         default AdvancedIronMQEndpointBuilder advanced() {
             return (AdvancedIronMQEndpointBuilder) this;
         }
@@ -1209,7 +1210,8 @@ public interface IronMQEndpointBuilderFactory {
      */
     public interface AdvancedIronMQEndpointBuilder
             extends
-                AdvancedIronMQEndpointConsumerBuilder, AdvancedIronMQEndpointProducerBuilder {
+                AdvancedIronMQEndpointConsumerBuilder,
+                AdvancedIronMQEndpointProducerBuilder {
         default IronMQEndpointBuilder basic() {
             return (IronMQEndpointBuilder) this;
         }
@@ -1266,6 +1268,26 @@ public interface IronMQEndpointBuilderFactory {
         default AdvancedIronMQEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface IronMQBuilders {
+        /**
+         * IronMQ (camel-ironmq)
+         * The ironmq provides integration with IronMQ an elastic and durable
+         * hosted message queue as a service.
+         * 
+         * Category: cloud,messaging
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ironmq
+         * 
+         * Syntax: <code>ironmq:queueName</code>
+         * 
+         * Path parameter: queueName (required)
+         * The name of the IronMQ queue
+         */
+        default IronMQEndpointBuilder ironmq(String path) {
+            return IronMQEndpointBuilderFactory.ironmq(path);
         }
     }
     /**

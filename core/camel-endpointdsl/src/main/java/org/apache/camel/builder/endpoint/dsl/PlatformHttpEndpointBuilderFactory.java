@@ -313,6 +313,25 @@ public interface PlatformHttpEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface PlatformHttpBuilders {
+        /**
+         * Platform HTTP (camel-platform-http)
+         * HTTP service leveraging existing runtime platform HTTP server
+         * 
+         * Category: http
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-platform-http
+         * 
+         * Syntax: <code>platform-http:path</code>
+         * 
+         * Path parameter: path (required)
+         * The path under which this endpoint serves the HTTP requests
+         */
+        default PlatformHttpEndpointBuilder platformHttp(String path) {
+            return PlatformHttpEndpointBuilderFactory.platformHttp(path);
+        }
+    }
     /**
      * Platform HTTP (camel-platform-http)
      * HTTP service leveraging existing runtime platform HTTP server

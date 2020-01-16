@@ -1437,7 +1437,8 @@ public interface MinaEndpointBuilderFactory {
      */
     public interface MinaEndpointBuilder
             extends
-                MinaEndpointConsumerBuilder, MinaEndpointProducerBuilder {
+                MinaEndpointConsumerBuilder,
+                MinaEndpointProducerBuilder {
         default AdvancedMinaEndpointBuilder advanced() {
             return (AdvancedMinaEndpointBuilder) this;
         }
@@ -1838,7 +1839,8 @@ public interface MinaEndpointBuilderFactory {
      */
     public interface AdvancedMinaEndpointBuilder
             extends
-                AdvancedMinaEndpointConsumerBuilder, AdvancedMinaEndpointProducerBuilder {
+                AdvancedMinaEndpointConsumerBuilder,
+                AdvancedMinaEndpointProducerBuilder {
         default MinaEndpointBuilder basic() {
             return (MinaEndpointBuilder) this;
         }
@@ -1997,6 +1999,34 @@ public interface MinaEndpointBuilderFactory {
         UNIX,
         WINDOWS,
         MAC;
+    }
+
+    public interface MinaBuilders {
+        /**
+         * Mina (camel-mina)
+         * Socket level networking using TCP or UDP with the Apache Mina 2.x
+         * library.
+         * 
+         * Category: networking,tcp,udp
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-mina
+         * 
+         * Syntax: <code>mina:protocol:host:port</code>
+         * 
+         * Path parameter: protocol (required)
+         * Protocol to use
+         * 
+         * Path parameter: host (required)
+         * Hostname to use. Use localhost or 0.0.0.0 for local server as
+         * consumer. For producer use the hostname or ip address of the remote
+         * server.
+         * 
+         * Path parameter: port (required)
+         * Port number
+         */
+        default MinaEndpointBuilder mina(String path) {
+            return MinaEndpointBuilderFactory.mina(path);
+        }
     }
     /**
      * Mina (camel-mina)
