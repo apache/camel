@@ -466,7 +466,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             answer.append(" oldestInflightExchangeId=\"").append(oldest.getExchange().getExchangeId()).append("\"");
             answer.append(" oldestInflightDuration=\"").append(oldest.getDuration()).append("\"");
         }
-        answer.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
+        answer.append(" ").append(stat, 7, stat.length() - 2).append(">\n");
 
         if (includeProcessors) {
             answer.append(sb);
@@ -524,7 +524,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             answer.append(" oldestInflightExchangeId=\"").append(oldest.getExchange().getExchangeId()).append("\"");
             answer.append(" oldestInflightDuration=\"").append(oldest.getDuration()).append("\"");
         }
-        answer.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
+        answer.append(" ").append(stat, 7, stat.length() - 2).append(">\n");
 
         answer.append(sb);
 

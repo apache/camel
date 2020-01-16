@@ -628,7 +628,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         int pos = 0;
         final StringBuilder resolved = new StringBuilder(uriTemplate.length() * 2);
         while (start != -1) {
-            resolved.append(uriTemplate.substring(pos, start));
+            resolved.append(uriTemplate, pos, start);
 
             final int end = uriTemplate.indexOf('}', start);
 
@@ -647,7 +647,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         }
 
         if (pos < uriTemplate.length()) {
-            resolved.append(uriTemplate.substring(pos));
+            resolved.append(uriTemplate, pos, uriTemplate.length());
         }
 
         return resolved.toString();

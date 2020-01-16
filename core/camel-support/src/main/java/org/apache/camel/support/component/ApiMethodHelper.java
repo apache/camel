@@ -106,7 +106,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                     final char firstChar = alias.charAt(0);
                     if (!Character.isLowerCase(firstChar)) {
                         final StringBuilder builder = new StringBuilder();
-                        builder.append(Character.toLowerCase(firstChar)).append(alias.substring(1));
+                        builder.append(Character.toLowerCase(firstChar)).append(alias, 1, alias.length());
                         alias = builder.toString();
                     }
                     Set<String> names = tmpAliasesMap.get(alias);
