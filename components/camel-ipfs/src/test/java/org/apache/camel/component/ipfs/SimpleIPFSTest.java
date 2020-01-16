@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import io.nessus.utils.StreamUtils;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,9 +32,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
-
-import io.nessus.utils.StreamUtils;
-
 /*
 
 > ipfs config Addresses.Gateway /ip4/127.0.0.1/tcp/8088
