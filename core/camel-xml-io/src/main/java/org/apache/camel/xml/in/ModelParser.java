@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.xml.in;
-// CHECKSTYLE:OFF
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -3032,4 +3031,3 @@ public class ModelParser extends BaseParser {
         }
     }
 }
-// CHECKSTYLE:ON

@@ -59,17 +59,24 @@ public class PackageLegalMojo extends AbstractGeneratorMojo {
             return;
         }
 
-        try (InputStream isLicense = getClass().getResourceAsStream("/camel-LICENSE.txt")) {
-            String license = IOUtils.toString(isLicense, StandardCharsets.UTF_8);
-            updateResource(legalOutDir.resolve("META-INF").resolve("LICENSE.txt"), license);
-        } catch (IOException e) {
-            throw new MojoExecutionException("Failed to write legal files. Reason: " + e, e);
+        boolean exists = new File("src/main/resources/META-INF/LICENSE.txt").exists();
+        if (!exists) {
+            try (InputStream isLicense = getClass().getResourceAsStream("/camel-LICENSE.txt")) {
+                String license = IOUtils.toString(isLicense, StandardCharsets.UTF_8);
+                updateResource(legalOutDir.resolve("META-INF").resolve("LICENSE.txt"), license);
+            } catch (IOException e) {
+                throw new MojoExecutionException("Failed to write legal files. Reason: " + e, e);
+            }
         }
-        try (InputStream isNotice = getClass().getResourceAsStream("/camel-NOTICE.txt")) {
-            String notice = IOUtils.toString(isNotice, StandardCharsets.UTF_8);
-            updateResource(legalOutDir.resolve("META-INF").resolve("NOTICE.txt"), notice);
-        } catch (IOException e) {
-            throw new MojoExecutionException("Failed to write legal files. Reason: " + e, e);
+
+        exists = new File("src/main/resources/META-INF/NOTICE.txt").exists();
+        if (!exists) {
+            try (InputStream isNotice = getClass().getResourceAsStream("/camel-NOTICE.txt")) {
+                String notice = IOUtils.toString(isNotice, StandardCharsets.UTF_8);
+                updateResource(legalOutDir.resolve("META-INF").resolve("NOTICE.txt"), notice);
+            } catch (IOException e) {
+                throw new MojoExecutionException("Failed to write legal files. Reason: " + e, e);
+            }
         }
     }
 
