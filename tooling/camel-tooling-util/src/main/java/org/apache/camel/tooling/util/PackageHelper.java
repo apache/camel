@@ -128,9 +128,9 @@ public final class PackageHelper {
     public static Map<String, File> findJsonFiles(File rootDir, FileFilter filter) {
         Set<File> results = new HashSet<>();
         findJsonFiles0(rootDir, results, filter);
-        return results.stream().collect(Collectors.toMap(
-                file -> file.getName().replace(JSON_SUFIX, ""),
-                file -> file));
+        Map<String, File> files = new HashMap<>();
+        results.forEach(file -> files.put(file.getName().replace(JSON_SUFIX, ""), file));
+        return files;
     }
 
     private static void findJsonFiles0(File dir, Set<File> result, FileFilter filter) {
