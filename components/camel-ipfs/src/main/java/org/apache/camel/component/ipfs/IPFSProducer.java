@@ -28,15 +28,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
+import io.ipfs.multihash.Multihash;
+import io.nessus.ipfs.client.IPFSClient;
+import io.nessus.ipfs.client.IPFSException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.ipfs.IPFSConfiguration.IPFSCommand;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.ipfs.multihash.Multihash;
-import io.nessus.ipfs.client.IPFSClient;
-import io.nessus.ipfs.client.IPFSException;
 
 public class IPFSProducer extends DefaultProducer {
 
