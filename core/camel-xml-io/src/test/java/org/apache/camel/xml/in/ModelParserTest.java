@@ -33,7 +33,7 @@ import static org.junit.Assert.assertNotNull;
 public class ModelParserTest {
 
     public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
-    private static List<String> REST_XMLS = Arrays.asList("barRest.xml", "simpleRest.xml", "simpleRestToD.xml");
+    private static final List<String> REST_XMLS = Arrays.asList("barRest.xml", "simpleRest.xml", "simpleRestToD.xml");
 
     @Test
     public void testFiles() throws Exception {
@@ -55,12 +55,12 @@ public class ModelParserTest {
     @Test
     public void testSimpleString() throws Exception {
         RoutesDefinition routes = new ModelParser(new StringReader(
-                "<routes>" +
-                        "<route id='foo'>" +
-                            "<from uri='my:bar'/>" +
-                            "<to uri='mock:res'/>" +
-                        "</route>" +
-                "</routes>"
+                "<routes>"
+                    + "  <route id='foo'>"
+                    + "    <from uri='my:bar'/>"
+                    + "    <to uri='mock:res'/>"
+                    + "  </route>"
+                    + "</routes>"
         )).parseRoutesDefinition();
         assertNotNull(routes);
     }
