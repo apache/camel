@@ -14,6 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+//CHECKSTYLE:OFF
+
 package org.apache.camel.xml.in;
 
 import java.io.IOException;
@@ -3031,3 +3034,4 @@ public class ModelParser extends BaseParser {
         }
     }
 }
+//CHECKSTYLE:ON
