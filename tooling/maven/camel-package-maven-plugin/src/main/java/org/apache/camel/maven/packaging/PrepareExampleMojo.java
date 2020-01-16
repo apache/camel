@@ -47,7 +47,8 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
 import static org.apache.camel.tooling.util.PackageHelper.writeText;
 
 /**
- * Prepares the readme.md files content up to date with all the examples that Apache Camel ships.
+ * Prepares the readme.md files content up to date with all the examples that
+ * Apache Camel ships.
  */
 @Mojo(name = "prepare-example", threadSafe = true)
 public class PrepareExampleMojo extends AbstractMojo {
@@ -68,8 +69,8 @@ public class PrepareExampleMojo extends AbstractMojo {
      * Execute goal.
      *
      * @throws MojoExecutionException execution of the main class or one of the
-     *                                                        threads it generated failed.
-     * @throws MojoFailureException   something bad happened...
+     *             threads it generated failed.
+     * @throws MojoFailureException something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -79,7 +80,8 @@ public class PrepareExampleMojo extends AbstractMojo {
     protected void executeExamplesReadme() throws MojoExecutionException, MojoFailureException {
         Set<File> examples = new TreeSet<>();
 
-        // only run in examples directory where the main readme.adoc file is located
+        // only run in examples directory where the main readme.adoc file is
+        // located
         String currentDir = Paths.get(".").normalize().toAbsolutePath().toString();
         if (!currentDir.endsWith("examples")) {
             return;
@@ -142,9 +144,7 @@ public class PrepareExampleMojo extends AbstractMojo {
             models.sort(new ExampleComparator());
 
             // how many deprecated
-            long deprecated = models.stream()
-                .filter(m -> "true".equals(m.getDeprecated()))
-                .count();
+            long deprecated = models.stream().filter(m -> "true".equals(m.getDeprecated())).count();
 
             // update the big readme file in the examples dir
             File file = new File(".", "README.adoc");
@@ -173,7 +173,7 @@ public class PrepareExampleMojo extends AbstractMojo {
             Map<String, Object> map = new HashMap<>();
             map.put("examples", models);
             map.put("numberOfDeprecated", deprecated);
-            String out = (String) TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
+            String out = (String)TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
             return out;
         } catch (Exception e) {
             throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);

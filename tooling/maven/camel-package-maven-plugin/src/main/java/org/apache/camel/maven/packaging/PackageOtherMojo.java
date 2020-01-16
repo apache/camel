@@ -32,7 +32,8 @@ import org.sonatype.plexus.build.incremental.BuildContext;
 import static org.apache.camel.tooling.util.Strings.camelDashToTitle;
 
 /**
- * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
+ * Analyses the Camel plugins in a project and generates extra descriptor
+ * information for easier auto-discovery in Camel.
  */
 @Mojo(name = "generate-others-list", threadSafe = true)
 public class PackageOtherMojo extends AbstractGeneratorMojo {
@@ -53,7 +54,7 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
      * Execute goal.
      *
      * @throws MojoExecutionException execution of the main class or one of the
-     *                 threads it generated failed.
+     *             threads it generated failed.
      * @throws MojoFailureException something bad happened...
      */
     @Override
@@ -75,11 +76,12 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
         prepareOthers(getLog(), project, projectHelper, otherOutDir, schemaOutDir, buildContext);
     }
 
-    public static void prepareOthers(Log log, MavenProject project, MavenProjectHelper projectHelper, File otherOutDir,
-                                     File schemaOutDir, BuildContext buildContext) throws MojoExecutionException {
+    public static void prepareOthers(Log log, MavenProject project, MavenProjectHelper projectHelper, File otherOutDir, File schemaOutDir, BuildContext buildContext)
+        throws MojoExecutionException {
 
         // first we need to setup the output directory because the next check
-        // can stop the build before the end and eclipse always needs to know about that directory
+        // can stop the build before the end and eclipse always needs to know
+        // about that directory
         if (projectHelper != null) {
             projectHelper.addResource(project, otherOutDir.getPath(), Collections.singletonList("**/other.properties"), Collections.emptyList());
         }
@@ -118,8 +120,7 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
             String schema = createJsonSchema(otherModel);
 
             // write this to the directory
-            Path out = schemaOutDir.toPath()
-                    .resolve(name + ".json");
+            Path out = schemaOutDir.toPath().resolve(name + ".json");
             updateResource(buildContext, out, schema);
 
             if (log.isDebugEnabled()) {
@@ -259,15 +260,8 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
 
         @Override
         public String toString() {
-            return "OtherModel["
-                + "name='" + name + '\''
-                + ", title='" + title + '\''
-                + ", description='" + description + '\''
-                + ", label='" + label + '\''
-                + ", groupId='" + groupId + '\''
-                + ", artifactId='" + artifactId + '\''
-                + ", version='" + version + '\''
-                + ']';
+            return "OtherModel[" + "name='" + name + '\'' + ", title='" + title + '\'' + ", description='" + description + '\'' + ", label='" + label + '\'' + ", groupId='"
+                   + groupId + '\'' + ", artifactId='" + artifactId + '\'' + ", version='" + version + '\'' + ']';
         }
     }
 

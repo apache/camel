@@ -36,12 +36,13 @@ import static org.apache.camel.maven.packaging.PackageOtherMojo.prepareOthers;
 /**
  * Prepares a Camel component analyzing if the maven module contains Camel
  * <ul>
- *     <li>components</li>
- *     <li>dataformats</li>
- *     <li>languages</li>
- *     <li>others</li>
+ * <li>components</li>
+ * <li>dataformats</li>
+ * <li>languages</li>
+ * <li>others</li>
  * </ul>
- * And for each of those generates extra descriptors and schema files for easier auto-discovery in Camel and tooling.
+ * And for each of those generates extra descriptors and schema files for easier
+ * auto-discovery in Camel and tooling.
  */
 @Mojo(name = "prepare-components", threadSafe = true)
 public class PrepareComponentMojo extends AbstractMojo {
@@ -54,42 +55,36 @@ public class PrepareComponentMojo extends AbstractMojo {
 
     /**
      * The output directory for generated components file
-     *
      */
     @Parameter(defaultValue = "${project.build.directory}/generated/camel/components")
     protected File componentOutDir;
 
     /**
      * The output directory for generated dataformats file
-     *
      */
     @Parameter(defaultValue = "${project.build.directory}/generated/camel/dataformats")
     protected File dataFormatOutDir;
 
     /**
      * The output directory for generated languages file
-     *
      */
     @Parameter(defaultValue = "${project.build.directory}/generated/camel/languages")
     protected File languageOutDir;
 
     /**
      * The output directory for generated others file
-     *
      */
     @Parameter(defaultValue = "${project.build.directory}/generated/camel/others")
     protected File otherOutDir;
 
     /**
      * The output directory for generated schema file
-     *
      */
     @Parameter(defaultValue = "${project.build.directory}/classes")
     protected File schemaOutDir;
 
     /**
      * The project build directory
-     *
      */
     @Parameter(defaultValue = "${project.build.directory}")
     protected File buildDir;
@@ -101,8 +96,8 @@ public class PrepareComponentMojo extends AbstractMojo {
     private MavenProjectHelper projectHelper;
 
     /**
-     * build context to check changed files and mark them for refresh
-     * (used for m2e compatibility)
+     * build context to check changed files and mark them for refresh (used for
+     * m2e compatibility)
      */
     @Component
     private BuildContext buildContext;
@@ -110,9 +105,10 @@ public class PrepareComponentMojo extends AbstractMojo {
     /**
      * Execute goal.
      *
-     * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the
-     *                                                        threads it generated failed.
-     * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
+     * @throws org.apache.maven.plugin.MojoExecutionException execution of the
+     *             main class or one of the threads it generated failed.
+     * @throws org.apache.maven.plugin.MojoFailureException something bad
+     *             happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

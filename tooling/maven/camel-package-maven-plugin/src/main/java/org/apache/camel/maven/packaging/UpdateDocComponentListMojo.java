@@ -50,7 +50,8 @@ import static org.apache.camel.tooling.util.JSonSchemaHelper.getSafeValue;
 import static org.apache.camel.tooling.util.JSonSchemaHelper.parseJsonSchema;
 
 /**
- * Updates the website docs with the component list to be up to date with all the artifacts that Apache Camel ships.
+ * Updates the website docs with the component list to be up to date with all
+ * the artifacts that Apache Camel ships.
  */
 @Mojo(name = "update-doc-component-list", threadSafe = true)
 public class UpdateDocComponentListMojo extends AbstractMojo {
@@ -101,8 +102,8 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
      * Execute goal.
      *
      * @throws MojoExecutionException execution of the main class or one of the
-     *                                threads it generated failed.
-     * @throws MojoFailureException   something bad happened...
+     *             threads it generated failed.
+     * @throws MojoFailureException something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -139,7 +140,8 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
                 if (add) {
                     models.add(model);
 
-                    // special for camel-mail where we want to refer its imap scheme to mail so its mail.adoc in the doc link
+                    // special for camel-mail where we want to refer its imap
+                    // scheme to mail so its mail.adoc in the doc link
                     if ("imap".equals(model.getScheme())) {
                         model.setScheme("mail");
                         model.setTitle("Mail");
@@ -151,15 +153,10 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             models.sort(new ComponentComparator());
 
             // how many different artifacts
-            long count = models.stream()
-                    .map(ComponentModel::getArtifactId)
-                    .distinct()
-                    .count();
+            long count = models.stream().map(ComponentModel::getArtifactId).distinct().count();
 
             // how many deprecated
-            long deprecated = models.stream()
-                    .filter(c -> "true".equals(c.getDeprecated()))
-                    .count();
+            long deprecated = models.stream().filter(c -> "true".equals(c.getDeprecated())).count();
 
             // update doc in the website dir
             File file = websiteDocFile;
@@ -200,15 +197,10 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             others.sort(new OtherComparator());
 
             // how many different artifacts
-            long count = others.stream()
-                    .map(OtherModel::getArtifactId)
-                    .distinct()
-                    .count();
+            long count = others.stream().map(OtherModel::getArtifactId).distinct().count();
 
             // how many deprecated
-            long deprecated = others.stream()
-                    .filter(o -> "true".equals(o.getDeprecated()))
-                    .count();
+            long deprecated = others.stream().filter(o -> "true".equals(o.getDeprecated())).count();
 
             // update doc in the website dir
             File file = websiteDocFile;
@@ -256,15 +248,10 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             models.sort(new DataFormatComparator());
 
             // how many different artifacts
-            long count = models.stream()
-                    .map(DataFormatModel::getArtifactId)
-                    .distinct()
-                    .count();
+            long count = models.stream().map(DataFormatModel::getArtifactId).distinct().count();
 
             // how many deprecated
-            long deprecated = models.stream()
-                    .filter(m -> "true".equals(m.getDeprecated()))
-                    .count();
+            long deprecated = models.stream().filter(m -> "true".equals(m.getDeprecated())).count();
 
             // update doc in the website dir
             File file = websiteDocFile;
@@ -306,15 +293,10 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             models.sort(new LanguageComparator());
 
             // how many different artifacts
-            long count = models.stream()
-                    .map(LanguageModel::getArtifactId)
-                    .distinct()
-                    .count();
+            long count = models.stream().map(LanguageModel::getArtifactId).distinct().count();
 
             // how many deprecated
-            long deprecated = models.stream()
-                    .filter(l -> "true".equals(l.getDeprecated()))
-                    .count();
+            long deprecated = models.stream().filter(l -> "true".equals(l.getDeprecated())).count();
 
             // update doc in the website dir
             File file = websiteDocFile;
@@ -341,7 +323,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             map.put("components", models);
             map.put("numberOfArtifacts", artifacts);
             map.put("numberOfDeprecated", deprecated);
-            String out = (String) TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
+            String out = (String)TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
             return out;
         } catch (Exception e) {
             throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
@@ -355,7 +337,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             map.put("others", models);
             map.put("numberOfArtifacts", artifacts);
             map.put("numberOfDeprecated", deprecated);
-            String out = (String) TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
+            String out = (String)TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
             return out;
         } catch (Exception e) {
             throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
@@ -369,7 +351,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             map.put("dataformats", models);
             map.put("numberOfArtifacts", artifacts);
             map.put("numberOfDeprecated", deprecated);
-            String out = (String) TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
+            String out = (String)TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
             return out;
         } catch (Exception e) {
             throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
@@ -383,7 +365,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             map.put("languages", models);
             map.put("numberOfArtifacts", artifacts);
             map.put("numberOfDeprecated", deprecated);
-            String out = (String) TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
+            String out = (String)TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
             return out;
         } catch (Exception e) {
             throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);

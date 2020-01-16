@@ -41,7 +41,8 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
 import static org.apache.camel.tooling.util.PackageHelper.parseAsMap;
 
 /**
- * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
+ * Analyses the Camel plugins in a project and generates extra descriptor
+ * information for easier auto-discovery in Camel.
  */
 @Mojo(name = "generate-languages-list", threadSafe = true)
 public class PackageLanguageMojo extends AbstractGeneratorMojo {
@@ -67,22 +68,25 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
     /**
      * Execute goal.
      *
-     * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the
-     *                                                        threads it generated failed.
-     * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
+     * @throws org.apache.maven.plugin.MojoExecutionException execution of the
+     *             main class or one of the threads it generated failed.
+     * @throws org.apache.maven.plugin.MojoFailureException something bad
+     *             happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         prepareLanguage(getLog(), project, projectHelper, buildDir, languageOutDir, schemaOutDir, buildContext);
     }
 
-    public static int prepareLanguage(Log log, MavenProject project, MavenProjectHelper projectHelper, File buildDir, File languageOutDir,
-                                      File schemaOutDir, BuildContext buildContext) throws MojoExecutionException {
+    public static int prepareLanguage(Log log, MavenProject project, MavenProjectHelper projectHelper, File buildDir, File languageOutDir, File schemaOutDir,
+                                      BuildContext buildContext)
+        throws MojoExecutionException {
 
         File camelMetaDir = new File(languageOutDir, "META-INF/services/org/apache/camel/");
 
         // first we need to setup the output directory because the next check
-        // can stop the build before the end and eclipse always needs to know about that directory 
+        // can stop the build before the end and eclipse always needs to know
+        // about that directory
         if (projectHelper != null) {
             projectHelper.addResource(project, languageOutDir.getPath(), Collections.singletonList("**/language.properties"), Collections.emptyList());
         }
@@ -183,9 +187,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         }
 
                         // write this to the directory
-                        Path out = schemaOutDir.toPath()
-                                .resolve(schemaSubDirectory(languageModel.getJavaType()))
-                                .resolve(name + ".json");
+                        Path out = schemaOutDir.toPath().resolve(schemaSubDirectory(languageModel.getJavaType())).resolve(name + ".json");
                         updateResource(buildContext, out, schema);
 
                         if (log.isDebugEnabled()) {
@@ -193,7 +195,8 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         }
                     }
                 } else {
-                    throw new MojoExecutionException("Error finding core/camel-core/target/camel-core-engine-" + project.getVersion() + ".jar file. Make sure camel-core has been built first.");
+                    throw new MojoExecutionException("Error finding core/camel-core/target/camel-core-engine-" + project.getVersion()
+                                                     + ".jar file. Make sure camel-core has been built first.");
                 }
             }
         } catch (Exception e) {
@@ -214,7 +217,8 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
     }
 
     private static String readClassFromCamelResource(File file, StringBuilder buffer, BuildContext buildContext) throws MojoExecutionException {
-        // skip directories as there may be a sub .resolver directory such as in camel-script
+        // skip directories as there may be a sub .resolver directory such as in
+        // camel-script
         if (file.isDirectory()) {
             return null;
         }
@@ -430,18 +434,9 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
 
         @Override
         public String toString() {
-            return "LanguageModel["
-                + "name='" + name + '\''
-                + ", modelName='" + modelName + '\''
-                + ", title='" + title + '\''
-                + ", description='" + description + '\''
-                + ", label='" + label + '\''
-                + ", javaType='" + javaType + '\''
-                + ", modelJavaType='" + modelJavaType + '\''
-                + ", groupId='" + groupId + '\''
-                + ", artifactId='" + artifactId + '\''
-                + ", version='" + version + '\''
-                + ']';
+            return "LanguageModel[" + "name='" + name + '\'' + ", modelName='" + modelName + '\'' + ", title='" + title + '\'' + ", description='" + description + '\''
+                   + ", label='" + label + '\'' + ", javaType='" + javaType + '\'' + ", modelJavaType='" + modelJavaType + '\'' + ", groupId='" + groupId + '\'' + ", artifactId='"
+                   + artifactId + '\'' + ", version='" + version + '\'' + ']';
         }
     }
 
