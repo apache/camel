@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -440,7 +441,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
             // register on completion callback that does the completion strategies
             // (for instance to move the file after we have processed it)
-            exchange.addOnCompletion(new GenericFileOnCompletion<>(endpoint, operations, processStrategy, target, absoluteFileName));
+            exchange.adapt(ExtendedExchange.class).addOnCompletion(new GenericFileOnCompletion<>(endpoint, operations, processStrategy, target, absoluteFileName));
 
             log.debug("About to process file: {} using exchange: {}", target, exchange);
 

@@ -46,6 +46,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.ReferenceCountUtil;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
@@ -103,7 +104,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             // for proxy use case pass the request body buffer directly to the response to avoid additional processing
             // we need to retain it so that the request can be released and we can keep the content
             answer.setBody(request.content().retain());
-            exchange.addOnCompletion(new SynchronizationAdapter() {
+            exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onDone(Exchange exchange) {
                     ReferenceCountUtil.release(request.content());
@@ -113,7 +114,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             // turn the body into stream cached (on the client/consumer side we can facade the netty stream instead of converting to byte array)
             NettyChannelBufferStreamCache cache = new NettyChannelBufferStreamCache(request.content());
             // add on completion to the cache which is needed for Camel to keep track of the lifecycle of the cache
-            exchange.addOnCompletion(new NettyChannelBufferStreamCacheOnCompletion(cache));
+            exchange.adapt(ExtendedExchange.class).addOnCompletion(new NettyChannelBufferStreamCacheOnCompletion(cache));
             answer.setBody(cache);
         }
         return answer;
