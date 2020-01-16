@@ -207,9 +207,9 @@ public interface Translate2EndpointBuilderFactory {
         }
         /**
          * The region in which Translate client needs to work. When using this
-         * parameter, the configuration will expect the capitalized name of the
-         * region (for example AP_EAST_1) You'll need to use the name
-         * Regions.EU_WEST_1.name().
+         * parameter, the configuration will expect the lowercase name of the
+         * region (for example ap-east-1) You'll need to use the name
+         * Region.EU_WEST_1.id().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

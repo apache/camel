@@ -3,11 +3,6 @@
 
 *Since Camel 3.1*
 
-*Since Camel 3.1*
-
-
-*Since Camel 3.1*
-
 
 // HEADER START
 *Only producer is supported*
@@ -87,7 +82,7 @@ with the following path and query parameters:
 | *proxyHost* (producer) | To define a proxy host when instantiating the Translate client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the Translate client |  | Integer
 | *proxyProtocol* (producer) | To define a proxy protocol when instantiating the Translate client | HTTPS | Protocol
-| *region* (producer) | The region in which Translate client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
+| *region* (producer) | The region in which Translate client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *sourceLanguage* (producer) | Source language to use |  | String
 | *targetLanguage* (producer) | Target language to use |  | String
@@ -131,9 +126,9 @@ Camel-AWS Translate component provides the following operation on the producer s
 
 - translateText
 
-== Automatic detection of AmazonTranslate client in registry
+== Automatic detection of TranslateClient client in registry
 
-The component is capable of detecting the presence of an AmazonTranslate bean into the registry.
+The component is capable of detecting the presence of an TranslateClient bean into the registry.
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
 This may be really useful for smarter configuration of the endpoint.
 
@@ -144,7 +139,7 @@ from("direct:start")
   .setHeader(TranslateConstants.SOURCE_LANGUAGE, TranslateLanguageEnum.ITALIAN)
   .setHeader(TranslateConstants.TARGET_LANGUAGE, TranslateLanguageEnum.GERMAN)
   .setBody("Ciao")
-  .to("aws-translate://test?translateClient=#amazonTranslateClient&operation=translateText");
+  .to("aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText");
 ------------------------------------------------------------------------------------------------------
 
 As result you'll get an exchange containing the translated text.

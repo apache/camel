@@ -175,8 +175,10 @@ from("direct:buy")
 *That's it*. The buy action will not change for the rest of the examples. We'll just see different options that can be used to model the "New Order" and "Reserve Credit" actions in the following.
 
 [NOTE]
+====
 We have used a _direct_ endpoint to model the two actions since this example can be used with both implementations of the Saga service,
 but we could have used *http* or other kinds of endpoint with the LRA Saga service.
+====
 
 Both services called by the _direct:buy_ route can *participate to the Saga* and declare their compensating actions.
 
@@ -332,7 +334,10 @@ Since the _direct:creditReservation_ endpoint can be now called also from outsid
 Sagas are long running actions, but this does not mean that they should not have a bounded timeframe to execute.
 *Setting timeouts on Sagas is always a good practice* as it guarantees that a Saga does not remain stuck forever in the case of machine failure.
 
-NOTE: The Saga EIP implementation may have a default timeout set on all Sagas that don't specify it explicitly
+[NOTE]
+====
+The Saga EIP implementation may have a default timeout set on all Sagas that don't specify it explicitly
+====
 
 When the timeout expires, the Saga EIP will decide to *cancel the Saga* (and compensate all participants), unless a different decision has been taken before.
 
