@@ -54,6 +54,7 @@ public final class DefaultExchange implements ExtendedExchange {
     private Endpoint fromEndpoint;
     private String fromRouteId;
     private List<Synchronization> onCompletions;
+    private Boolean externalRedelivered;
     private String historyNodeId;
     private String historyNodeLabel;
 
@@ -466,29 +467,21 @@ public final class DefaultExchange implements ExtendedExchange {
     }
 
     @Override
-    public Boolean isExternalRedelivered() {
-        Boolean answer = null;
-
-        // check property first, as the implementation details to know if the message
-        // was externally redelivered is message specific, and thus the message implementation
-        // could potentially change during routing, and therefore later we may not know if the
-        // original message was externally redelivered or not, therefore we store this detail
-        // as a exchange property to keep it around for the lifecycle of the exchange
-        if (hasProperties()) {
-            answer = getProperty(Exchange.EXTERNAL_REDELIVERED, null, Boolean.class);
-        }
-        
-        if (answer == null) {
+    public boolean isExternalRedelivered() {
+        if (externalRedelivered == null) {
             // lets avoid adding methods to the Message API, so we use the
             // DefaultMessage to allow component specific messages to extend
             // and implement the isExternalRedelivered method.
             Message msg = getIn();
             if (msg instanceof DefaultMessage) {
-                answer = ((DefaultMessage) msg).isTransactedRedelivered();
+                externalRedelivered = ((DefaultMessage) msg).isTransactedRedelivered();
+            }
+            // not from a transactional resource so mark it as false by default
+            if (externalRedelivered == null) {
+                externalRedelivered = false;
             }
         }
-
-        return answer;
+        return externalRedelivered;
     }
 
     @Override

@@ -18,7 +18,6 @@ package org.apache.camel.impl.engine;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -104,17 +103,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             }
         }
         
-        // setup whether the exchange is externally redelivered or not (if not initialized before)
-        // store as property so we know that the origin exchange was redelivered
-        if (exchange.getProperty(Exchange.EXTERNAL_REDELIVERED) == null) {
-            Boolean redelivered = exchange.isExternalRedelivered();
-            if (redelivered == null) {
-                // not from a transactional resource so mark it as false by default
-                redelivered = false;
-            }
-            exchange.setProperty(Exchange.EXTERNAL_REDELIVERED, redelivered);
-        }
-
         // fire event
         try {
             EventHelper.notifyExchangeCreated(context, exchange);
