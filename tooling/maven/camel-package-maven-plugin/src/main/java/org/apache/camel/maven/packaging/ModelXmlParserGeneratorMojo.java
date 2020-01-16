@@ -79,9 +79,8 @@ import org.jboss.jandex.IndexReader;
 @Mojo(name = "generate-xml-parser", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
 
-    private static final String XML_PARSER_PACKAGE = "org.apache.camel.xml.io";
+    public static final String XML_PARSER_PACKAGE = "org.apache.camel.xml.io";
     public static final String XML_PULL_PARSER_EXCEPTION = XML_PARSER_PACKAGE + ".XmlPullParserException";
-
     public static final String PARSER_PACKAGE = "org.apache.camel.xml.in";
     public static final String MODEL_PACKAGE = "org.apache.camel.model";
 
@@ -105,7 +104,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         try {
             classLoader = DynamicClassLoader.createDynamicClassLoader(project.getCompileClasspathElements());
         } catch (DependencyResolutionRequiredException e) {
-            throw new MojoExecutionException( "DependencyResolutionRequiredException: " + e.getMessage(), e );
+            throw new MojoExecutionException("DependencyResolutionRequiredException: " + e.getMessage(), e);
         }
 
         outputDefinitionClass = loadClass(classLoader, MODEL_PACKAGE + ".OutputDefinition");
@@ -122,7 +121,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         try (InputStream is = new URL(url).openStream()) {
             index = new IndexReader(is).read();
         } catch (IOException e) {
-            throw new MojoExecutionException( "IOException: " + e.getMessage(), e );
+            throw new MojoExecutionException("IOException: " + e.getMessage(), e);
         }
         List<Class<?>> model = Stream.of(XmlRootElement.class, XmlEnum.class, XmlType.class)
                 .map(Class::getName)
@@ -204,6 +203,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         );
     }
 
+    // CHECKSTYLE:OFF
     private JavaClass generateParser(List<Class<?>> model, ClassLoader classLoader) {
         JavaClass parser = new JavaClass(classLoader);
         parser.setMaxImportPerPackage(4);
@@ -624,6 +624,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
 
         return parser;
     }
+    // CHECKSTYLE:ON
 
     private String conversion(JavaClass parser, GenericType type, String val) {
         Class<?> rawClass = type.getRawClass();
