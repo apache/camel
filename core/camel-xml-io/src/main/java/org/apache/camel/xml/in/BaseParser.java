@@ -67,11 +67,8 @@ public class BaseParser {
         this.namespace = namespace != null ? namespace : "";
     }
 
-    protected <T> T doParse(T definition,
-                            AttributeHandler<T> attributeHandler,
-                            ElementHandler<T> elementHandler,
-                            ValueHandler<T> valueHandler)
-            throws IOException, XmlPullParserException {
+    protected <T> T doParse(T definition, AttributeHandler<T> attributeHandler, ElementHandler<T> elementHandler, ValueHandler<T> valueHandler)
+        throws IOException, XmlPullParserException {
         for (int i = 0; i < parser.getAttributeCount(); i++) {
             String name = parser.getAttributeName(i);
             String ns = parser.getAttributeNamespace(i);
@@ -103,8 +100,7 @@ public class BaseParser {
             } else if (event == XmlPullParser.END_TAG) {
                 return definition;
             } else {
-                throw new XmlPullParserException("expected START_TAG or END_TAG not "
-                        + XmlPullParser.TYPES[ event ], parser, null);
+                throw new XmlPullParserException("expected START_TAG or END_TAG not " + XmlPullParser.TYPES[event], parser, null);
             }
         }
     }
@@ -157,7 +153,7 @@ public class BaseParser {
     @SuppressWarnings("unchecked")
     protected <T> void doAdd(T element, T[] existing, Consumer<T[]> setter) {
         int len = existing != null ? existing.length : 0;
-        T[] newArray = (T[]) Array.newInstance(element.getClass(), len + 1);
+        T[] newArray = (T[])Array.newInstance(element.getClass(), len + 1);
         if (len > 0) {
             System.arraycopy(existing, 0, newArray, 0, len);
         }
@@ -192,22 +188,21 @@ public class BaseParser {
 
     protected void expectTag(String name) throws XmlPullParserException, IOException {
         if (parser.nextTag() != XmlPullParser.START_TAG) {
-            throw new XmlPullParserException("Expected starting tag '{" + namespace + "}" + name + "', read ending tag '{"
-                    + parser.getNamespace() + "}" + parser.getName() + "' instead");
+            throw new XmlPullParserException("Expected starting tag '{" + namespace + "}" + name + "', read ending tag '{" + parser.getNamespace() + "}" + parser.getName()
+                                             + "' instead");
         }
-        if (!Objects.equals(name, parser.getName())
-                || !Objects.equals(namespace, parser.getNamespace())) {
-            throw new XmlPullParserException("Expected starting tag '{" + namespace + "}" + name + "', read starting tag '{"
-                    + parser.getNamespace() + "}" + parser.getName() + "' instead");
+        if (!Objects.equals(name, parser.getName()) || !Objects.equals(namespace, parser.getNamespace())) {
+            throw new XmlPullParserException("Expected starting tag '{" + namespace + "}" + name + "', read starting tag '{" + parser.getNamespace() + "}" + parser.getName()
+                                             + "' instead");
         }
     }
 
     protected void handleOtherAttribute(Object definition, String name, String ns, String val) throws XmlPullParserException {
         if (definition instanceof OtherAttributesAware) {
-            Map<QName, Object> others = ((OtherAttributesAware) definition).getOtherAttributes();
+            Map<QName, Object> others = ((OtherAttributesAware)definition).getOtherAttributes();
             if (others == null) {
                 others = new LinkedHashMap<>();
-                ((OtherAttributesAware) definition).setOtherAttributes(others);
+                ((OtherAttributesAware)definition).setOtherAttributes(others);
             }
             others.put(new QName(ns, name), val);
         } else {
