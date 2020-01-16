@@ -157,7 +157,9 @@ And in XML its an attribute on the recipient list tag.
 ----
 
 [NOTE]
+====
 You can combine parallelProcessing and stopOnException and have them both true.
+====
 
 == Ignore invalid endpoints
 The Recipient List now supports `ignoreInvalidEndpoints` (like the Routing Slip).
@@ -214,10 +216,13 @@ And in XML it is again an attribute on the recipient list tag.
 <bean id="myStrategy" class="com.mycompany.MyOwnAggregationStrategy"/>
 ----
 
-NOTE: The Multicast, Recipient List, and Splitter EIPs have special support for using `AggregationStrategy` with
+[NOTE]
+====
+The Multicast, Recipient List, and Splitter EIPs have special support for using `AggregationStrategy` with
 access to the original input exchange. You may want to use this when you aggregate messages and
 there has been a failure in one of the messages, which you then want to enrich on the original
 input message and return as response; its the aggregate method with 3 exchange parameters.
+====
 
 == Knowing which endpoint when using custom AggregationStrategy
 
@@ -317,8 +322,9 @@ from("direct:c").to("mock:C").setBody(constant("C"));
 ----
 
 [NOTE]
-.Timeout in other EIPs
 ===
+*Timeout in other EIPs*
+
 This timeout feature is also supported by Splitter and both multicast and recipientList.
 ===
 
@@ -326,8 +332,9 @@ By default if a timeout occurs the `AggregationStrategy` is not invoked. However
 This allows you to deal with the timeout in the `AggregationStrategy` if you really need to.
 
 [NOTE]
-.Timeout is total
 ===
+*Timeout is total*
+
 The timeout is total, which means that after X time, Camel will aggregate the messages which have completed within the timeframe.
 The remainders will be cancelled. Camel will also only invoke the `timeout` method in the `TimeoutAwareAggregationStrategy` once, for the first index which caused the timeout.
 ===
