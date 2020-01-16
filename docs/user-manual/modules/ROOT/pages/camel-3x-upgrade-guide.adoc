@@ -108,10 +108,25 @@ See the xref:message-history.adoc[Message History] documentation for how to enab
 
 The `Exchange` API has been modified slightly as part of an optimization effort.
 The returned value of `getCreated` is changed from `java.util.Date` to `long` which is the time millis.
-
 The `Exchange.CREATED_TIMESTAMP` is no longer stored as exchange property, but you should use the `getCreated` method on `Exchange`.
-
 The returned value of `isExternalRedelivered` is changed from `Boolean` to `boolean`.
+
+Some of the advanced and API for component developers on `Exchange` has been moved to an extended interface `ExtendedExchange`.
+The following methods has been moved:
+
+- setFromEndpoint
+- setFromRouteId
+- setUnitOfWork
+- addOnCompletion
+- containsOnCompletion
+- handoverCompletions
+
+You can use these methods by adapting to the extended exchange as shown below:
+
+[source,java]
+----
+exchange.adapt(ExtendedExchange.class).addOnCompletion(...);
+----
 
 ==== Cookies
 
