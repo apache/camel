@@ -29,9 +29,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * Utility class to find, read json files.
@@ -116,31 +118,29 @@ public final class PackageHelper {
     }
 
     public static Map<String, File> findJsonFiles(File rootDir) {
-        Map<String, File> results = new HashMap<>();
-        findJsonFiles0(rootDir, results, new CamelComponentsModelFilter());
-        return results;
+        return findJsonFiles(rootDir, new CamelComponentsModelFilter());
     }
 
     public static void findJsonFiles(File rootDir, Set<File> files, FileFilter filter) {
-        Map<String, File> results = new HashMap<>();
-        findJsonFiles0(rootDir, results, new CamelComponentsModelFilter());
-        files.addAll(results.values());
+        findJsonFiles0(rootDir, files, filter);
     }
 
     public static Map<String, File> findJsonFiles(File rootDir, FileFilter filter) {
-        Map<String, File> results = new HashMap<>();
+        Set<File> results = new HashSet<>();
         findJsonFiles0(rootDir, results, filter);
-        return results;
+        return results.stream().collect(Collectors.toMap(
+                file -> file.getName().replace(JSON_SUFIX, ""),
+                file -> file));
     }
 
-    private static void findJsonFiles0(File dir, Map<String, File> result, FileFilter filter) {
+    private static void findJsonFiles0(File dir, Set<File> result, FileFilter filter) {
         File[] files = dir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
                 // skip files in root dirs as Camel does not store information there but others may do
                 boolean jsonFile = file.isFile() && file.getName().endsWith(JSON_SUFIX);
                 if (jsonFile) {
-                    result.put(file.getName().replace(JSON_SUFIX, ""), file);
+                    result.add(file);
                 } else if (file.isDirectory()) {
                     findJsonFiles0(file, result, filter);
                 }
