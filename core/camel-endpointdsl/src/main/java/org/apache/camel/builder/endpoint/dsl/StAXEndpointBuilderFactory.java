@@ -144,6 +144,26 @@ public interface StAXEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface StAXBuilders {
+        /**
+         * StAX (camel-stax)
+         * The stax component allows messages to be process through a SAX
+         * ContentHandler.
+         * 
+         * Category: transformation
+         * Since: 2.9
+         * Maven coordinates: org.apache.camel:camel-stax
+         * 
+         * Syntax: <code>stax:contentHandlerClass</code>
+         * 
+         * Path parameter: contentHandlerClass (required)
+         * The FQN class name for the ContentHandler implementation to use.
+         */
+        default StAXEndpointBuilder stax(String path) {
+            return StAXEndpointBuilderFactory.stax(path);
+        }
+    }
     /**
      * StAX (camel-stax)
      * The stax component allows messages to be process through a SAX

@@ -264,6 +264,27 @@ public interface SparkEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface SparkBuilders {
+        /**
+         * Spark (camel-spark)
+         * The spark component can be used to send RDD or DataFrame jobs to
+         * Apache Spark cluster.
+         * 
+         * Category: bigdata,iot
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-spark
+         * 
+         * Syntax: <code>spark:endpointType</code>
+         * 
+         * Path parameter: endpointType (required)
+         * Type of the endpoint (rdd, dataframe, hive).
+         * The value can be one of: rdd, dataframe, hive
+         */
+        default SparkEndpointBuilder spark(String path) {
+            return SparkEndpointBuilderFactory.spark(path);
+        }
+    }
     /**
      * Spark (camel-spark)
      * The spark component can be used to send RDD or DataFrame jobs to Apache

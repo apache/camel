@@ -2014,7 +2014,8 @@ public interface SipEndpointBuilderFactory {
      */
     public interface SipEndpointBuilder
             extends
-                SipEndpointConsumerBuilder, SipEndpointProducerBuilder {
+                SipEndpointConsumerBuilder,
+                SipEndpointProducerBuilder {
         default AdvancedSipEndpointBuilder advanced() {
             return (AdvancedSipEndpointBuilder) this;
         }
@@ -2362,7 +2363,8 @@ public interface SipEndpointBuilderFactory {
      */
     public interface AdvancedSipEndpointBuilder
             extends
-                AdvancedSipEndpointConsumerBuilder, AdvancedSipEndpointProducerBuilder {
+                AdvancedSipEndpointConsumerBuilder,
+                AdvancedSipEndpointProducerBuilder {
         default SipEndpointBuilder basic() {
             return (SipEndpointBuilder) this;
         }
@@ -2873,6 +2875,57 @@ public interface SipEndpointBuilderFactory {
         default AdvancedSipEndpointBuilder viaHeaders(String viaHeaders) {
             doSetProperty("viaHeaders", viaHeaders);
             return this;
+        }
+    }
+
+    public interface SipBuilders {
+        /**
+         * SIP (camel-sip)
+         * To send and receive messages using the SIP protocol (used in telco
+         * and mobile).
+         * 
+         * Category: mobile
+         * Since: 2.5
+         * Maven coordinates: org.apache.camel:camel-sip
+         * 
+         * Syntax: <code>sip:uri</code>
+         * 
+         * Path parameter: uri (required)
+         * URI of the SIP server to connect to (the username and password can be
+         * included such as: john:secretmyserver:9999)
+         */
+        default SipEndpointBuilder sip(String path) {
+            return SipEndpointBuilderFactory.sip(path);
+        }
+        /**
+         * SIP (Secure) (camel-sip)
+         * To send and receive messages using the SIP protocol (used in telco
+         * and mobile).
+         * 
+         * Category: mobile
+         * Since: 2.5
+         * Maven coordinates: org.apache.camel:camel-sip
+         * 
+         * Syntax: <code>sips:uri</code>
+         * 
+         * Path parameter: uri (required)
+         * URI of the SIP server to connect to (the username and password can be
+         * included such as: john:secretmyserver:9999)
+         */
+        default SipEndpointBuilder sips(String path) {
+            return SipEndpointBuilderFactory.sips(path);
+        }
+        /**
+         * SIP (camel-sip)
+         * To send and receive messages using the SIP protocol (used in telco
+         * and mobile).
+         * 
+         * Category: mobile
+         * Since: 2.5
+         * Maven coordinates: org.apache.camel:camel-sip
+         */
+        default SipEndpointBuilder sip(String scheme, String path) {
+            return SipEndpointBuilderFactory.sip(scheme,path);
         }
     }
     /**

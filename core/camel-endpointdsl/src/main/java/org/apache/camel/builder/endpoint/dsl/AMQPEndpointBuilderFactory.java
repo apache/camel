@@ -4098,7 +4098,8 @@ public interface AMQPEndpointBuilderFactory {
      */
     public interface AMQPEndpointBuilder
             extends
-                AMQPEndpointConsumerBuilder, AMQPEndpointProducerBuilder {
+                AMQPEndpointConsumerBuilder,
+                AMQPEndpointProducerBuilder {
         default AdvancedAMQPEndpointBuilder advanced() {
             return (AdvancedAMQPEndpointBuilder) this;
         }
@@ -4318,7 +4319,8 @@ public interface AMQPEndpointBuilderFactory {
      */
     public interface AdvancedAMQPEndpointBuilder
             extends
-                AdvancedAMQPEndpointConsumerBuilder, AdvancedAMQPEndpointProducerBuilder {
+                AdvancedAMQPEndpointConsumerBuilder,
+                AdvancedAMQPEndpointProducerBuilder {
         default AMQPEndpointBuilder basic() {
             return (AMQPEndpointBuilder) this;
         }
@@ -5399,6 +5401,30 @@ public interface AMQPEndpointBuilderFactory {
         Temporary,
         Shared,
         Exclusive;
+    }
+
+    public interface AMQPBuilders {
+        /**
+         * AMQP (camel-amqp)
+         * Messaging with AMQP protocol using Apache QPid Client.
+         * 
+         * Category: messaging
+         * Since: 1.2
+         * Maven coordinates: org.apache.camel:camel-amqp
+         * 
+         * Syntax: <code>amqp:destinationType:destinationName</code>
+         * 
+         * Path parameter: destinationType
+         * The kind of destination to use
+         * Default value: queue
+         * The value can be one of: queue, topic, temp-queue, temp-topic
+         * 
+         * Path parameter: destinationName (required)
+         * Name of the queue or topic to use as destination
+         */
+        default AMQPEndpointBuilder amqp(String path) {
+            return AMQPEndpointBuilderFactory.amqp(path);
+        }
     }
     /**
      * AMQP (camel-amqp)

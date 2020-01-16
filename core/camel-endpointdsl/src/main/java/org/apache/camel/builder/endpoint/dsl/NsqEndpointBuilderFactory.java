@@ -660,7 +660,8 @@ public interface NsqEndpointBuilderFactory {
      */
     public interface NsqEndpointBuilder
             extends
-                NsqEndpointConsumerBuilder, NsqEndpointProducerBuilder {
+                NsqEndpointConsumerBuilder,
+                NsqEndpointProducerBuilder {
         default AdvancedNsqEndpointBuilder advanced() {
             return (AdvancedNsqEndpointBuilder) this;
         }
@@ -744,7 +745,8 @@ public interface NsqEndpointBuilderFactory {
      */
     public interface AdvancedNsqEndpointBuilder
             extends
-                AdvancedNsqEndpointConsumerBuilder, AdvancedNsqEndpointProducerBuilder {
+                AdvancedNsqEndpointConsumerBuilder,
+                AdvancedNsqEndpointProducerBuilder {
         default NsqEndpointBuilder basic() {
             return (NsqEndpointBuilder) this;
         }
@@ -801,6 +803,25 @@ public interface NsqEndpointBuilderFactory {
         default AdvancedNsqEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface NsqBuilders {
+        /**
+         * NSQ (camel-nsq)
+         * Represents a nsq endpoint.
+         * 
+         * Category: messaging
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-nsq
+         * 
+         * Syntax: <code>nsq:topic</code>
+         * 
+         * Path parameter: topic (required)
+         * The name of topic we want to use
+         */
+        default NsqEndpointBuilder nsq(String path) {
+            return NsqEndpointBuilderFactory.nsq(path);
         }
     }
     /**

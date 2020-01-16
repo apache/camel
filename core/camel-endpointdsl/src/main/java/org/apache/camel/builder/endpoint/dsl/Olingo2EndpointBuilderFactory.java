@@ -1321,7 +1321,8 @@ public interface Olingo2EndpointBuilderFactory {
      */
     public interface Olingo2EndpointBuilder
             extends
-                Olingo2EndpointConsumerBuilder, Olingo2EndpointProducerBuilder {
+                Olingo2EndpointConsumerBuilder,
+                Olingo2EndpointProducerBuilder {
         default AdvancedOlingo2EndpointBuilder advanced() {
             return (AdvancedOlingo2EndpointBuilder) this;
         }
@@ -1591,7 +1592,8 @@ public interface Olingo2EndpointBuilderFactory {
      */
     public interface AdvancedOlingo2EndpointBuilder
             extends
-                AdvancedOlingo2EndpointConsumerBuilder, AdvancedOlingo2EndpointProducerBuilder {
+                AdvancedOlingo2EndpointConsumerBuilder,
+                AdvancedOlingo2EndpointProducerBuilder {
         default Olingo2EndpointBuilder basic() {
             return (Olingo2EndpointBuilder) this;
         }
@@ -1648,6 +1650,29 @@ public interface Olingo2EndpointBuilderFactory {
         default AdvancedOlingo2EndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface Olingo2Builders {
+        /**
+         * Olingo2 (camel-olingo2)
+         * Communicates with OData 2.0 services using Apache Olingo.
+         * 
+         * Category: cloud
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-olingo2
+         * 
+         * Syntax: <code>olingo2:apiName/methodName</code>
+         * 
+         * Path parameter: apiName (required)
+         * What kind of operation to perform
+         * The value can be one of: DEFAULT
+         * 
+         * Path parameter: methodName (required)
+         * What sub operation to use for the selected operation
+         */
+        default Olingo2EndpointBuilder olingo2(String path) {
+            return Olingo2EndpointBuilderFactory.olingo2(path);
         }
     }
     /**

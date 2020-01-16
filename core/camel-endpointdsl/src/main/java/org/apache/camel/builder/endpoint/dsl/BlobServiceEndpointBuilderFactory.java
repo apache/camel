@@ -907,7 +907,8 @@ public interface BlobServiceEndpointBuilderFactory {
      */
     public interface BlobServiceEndpointBuilder
             extends
-                BlobServiceEndpointConsumerBuilder, BlobServiceEndpointProducerBuilder {
+                BlobServiceEndpointConsumerBuilder,
+                BlobServiceEndpointProducerBuilder {
         default AdvancedBlobServiceEndpointBuilder advanced() {
             return (AdvancedBlobServiceEndpointBuilder) this;
         }
@@ -1128,7 +1129,8 @@ public interface BlobServiceEndpointBuilderFactory {
      */
     public interface AdvancedBlobServiceEndpointBuilder
             extends
-                AdvancedBlobServiceEndpointConsumerBuilder, AdvancedBlobServiceEndpointProducerBuilder {
+                AdvancedBlobServiceEndpointConsumerBuilder,
+                AdvancedBlobServiceEndpointProducerBuilder {
         default BlobServiceEndpointBuilder basic() {
             return (BlobServiceEndpointBuilder) this;
         }
@@ -1220,6 +1222,26 @@ public interface BlobServiceEndpointBuilderFactory {
         resizePageBlob,
         clearPageBlob,
         getPageBlobRanges;
+    }
+
+    public interface BlobServiceBuilders {
+        /**
+         * Azure Storage Blob Service (camel-azure)
+         * The azure-blob component is used for storing and retrieving blobs
+         * from Azure Storage Blob Service.
+         * 
+         * Category: cloud,database,nosql
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-azure
+         * 
+         * Syntax: <code>azure-blob:containerOrBlobUri</code>
+         * 
+         * Path parameter: containerOrBlobUri (required)
+         * Container or Blob compact Uri
+         */
+        default BlobServiceEndpointBuilder azureBlob(String path) {
+            return BlobServiceEndpointBuilderFactory.azureBlob(path);
+        }
     }
     /**
      * Azure Storage Blob Service (camel-azure)

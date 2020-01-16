@@ -1112,7 +1112,8 @@ public interface MiloClientEndpointBuilderFactory {
      */
     public interface MiloClientEndpointBuilder
             extends
-                MiloClientEndpointConsumerBuilder, MiloClientEndpointProducerBuilder {
+                MiloClientEndpointConsumerBuilder,
+                MiloClientEndpointProducerBuilder {
         default AdvancedMiloClientEndpointBuilder advanced() {
             return (AdvancedMiloClientEndpointBuilder) this;
         }
@@ -1502,7 +1503,8 @@ public interface MiloClientEndpointBuilderFactory {
      */
     public interface AdvancedMiloClientEndpointBuilder
             extends
-                AdvancedMiloClientEndpointConsumerBuilder, AdvancedMiloClientEndpointProducerBuilder {
+                AdvancedMiloClientEndpointConsumerBuilder,
+                AdvancedMiloClientEndpointProducerBuilder {
         default MiloClientEndpointBuilder basic() {
             return (MiloClientEndpointBuilder) this;
         }
@@ -1560,6 +1562,26 @@ public interface MiloClientEndpointBuilderFactory {
         default AdvancedMiloClientEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface MiloClientBuilders {
+        /**
+         * OPC UA Client (camel-milo)
+         * Connect to OPC UA servers using the binary protocol for acquiring
+         * telemetry data
+         * 
+         * Category: iot
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-milo
+         * 
+         * Syntax: <code>milo-client:endpointUri</code>
+         * 
+         * Path parameter: endpointUri (required)
+         * The OPC UA server endpoint
+         */
+        default MiloClientEndpointBuilder miloClient(String path) {
+            return MiloClientEndpointBuilderFactory.miloClient(path);
         }
     }
     /**

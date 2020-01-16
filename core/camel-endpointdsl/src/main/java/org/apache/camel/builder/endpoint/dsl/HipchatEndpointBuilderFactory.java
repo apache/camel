@@ -870,7 +870,8 @@ public interface HipchatEndpointBuilderFactory {
      */
     public interface HipchatEndpointBuilder
             extends
-                HipchatEndpointConsumerBuilder, HipchatEndpointProducerBuilder {
+                HipchatEndpointConsumerBuilder,
+                HipchatEndpointProducerBuilder {
         default AdvancedHipchatEndpointBuilder advanced() {
             return (AdvancedHipchatEndpointBuilder) this;
         }
@@ -932,7 +933,8 @@ public interface HipchatEndpointBuilderFactory {
      */
     public interface AdvancedHipchatEndpointBuilder
             extends
-                AdvancedHipchatEndpointConsumerBuilder, AdvancedHipchatEndpointProducerBuilder {
+                AdvancedHipchatEndpointConsumerBuilder,
+                AdvancedHipchatEndpointProducerBuilder {
         default HipchatEndpointBuilder basic() {
             return (HipchatEndpointBuilder) this;
         }
@@ -989,6 +991,33 @@ public interface HipchatEndpointBuilderFactory {
         default AdvancedHipchatEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface HipchatBuilders {
+        /**
+         * Hipchat (camel-hipchat)
+         * The hipchat component supports producing and consuming messages
+         * from/to Hipchat service.
+         * 
+         * Category: api,cloud
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-hipchat
+         * 
+         * Syntax: <code>hipchat:protocol:host:port</code>
+         * 
+         * Path parameter: protocol (required)
+         * The protocol for the hipchat server, such as http.
+         * 
+         * Path parameter: host (required)
+         * The host for the hipchat server, such as api.hipchat.com
+         * 
+         * Path parameter: port
+         * The port for the hipchat server. Is by default 80.
+         * Default value: 80
+         */
+        default HipchatEndpointBuilder hipchat(String path) {
+            return HipchatEndpointBuilderFactory.hipchat(path);
         }
     }
     /**

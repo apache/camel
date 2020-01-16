@@ -921,7 +921,8 @@ public interface AtomixSetEndpointBuilderFactory {
      */
     public interface AtomixSetEndpointBuilder
             extends
-                AtomixSetEndpointConsumerBuilder, AtomixSetEndpointProducerBuilder {
+                AtomixSetEndpointConsumerBuilder,
+                AtomixSetEndpointProducerBuilder {
         default AdvancedAtomixSetEndpointBuilder advanced() {
             return (AdvancedAtomixSetEndpointBuilder) this;
         }
@@ -1063,7 +1064,8 @@ public interface AtomixSetEndpointBuilderFactory {
      */
     public interface AdvancedAtomixSetEndpointBuilder
             extends
-                AdvancedAtomixSetEndpointConsumerBuilder, AdvancedAtomixSetEndpointProducerBuilder {
+                AdvancedAtomixSetEndpointConsumerBuilder,
+                AdvancedAtomixSetEndpointProducerBuilder {
         default AtomixSetEndpointBuilder basic() {
             return (AtomixSetEndpointBuilder) this;
         }
@@ -1302,6 +1304,25 @@ public interface AtomixSetEndpointBuilderFactory {
         ATOMIC_LEASE,
         SEQUENTIAL,
         LOCAL;
+    }
+
+    public interface AtomixSetBuilders {
+        /**
+         * Atomix Set (camel-atomix)
+         * The atomix-set component is used to access Atomix's distributed set.
+         * 
+         * Category: clustering
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-atomix
+         * 
+         * Syntax: <code>atomix-set:resourceName</code>
+         * 
+         * Path parameter: resourceName (required)
+         * The distributed resource name
+         */
+        default AtomixSetEndpointBuilder atomixSet(String path) {
+            return AtomixSetEndpointBuilderFactory.atomixSet(path);
+        }
     }
     /**
      * Atomix Set (camel-atomix)

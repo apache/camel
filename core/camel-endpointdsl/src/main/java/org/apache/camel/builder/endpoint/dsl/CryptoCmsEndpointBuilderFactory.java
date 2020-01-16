@@ -550,6 +550,36 @@ public interface CryptoCmsEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface CryptoCmsBuilders {
+        /**
+         * Crypto CMS (camel-crypto-cms)
+         * The crypto cms component is used for encrypting data in CMS Enveloped
+         * Data format, decrypting CMS Enveloped Data, signing data in CMS
+         * Signed Data format, and verifying CMS Signed Data.
+         * 
+         * Category: security,transformation
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-crypto-cms
+         * 
+         * Syntax: <code>crypto-cms:cryptoOperation:name</code>
+         * 
+         * Path parameter: cryptoOperation (required)
+         * Set the Crypto operation from that supplied after the crypto scheme
+         * in the endpoint uri e.g. crypto-cms:sign sets sign as the operation.
+         * Possible values: sign, verify, encrypt, or decrypt.
+         * The value can be one of: sign, verify, encrypt, decrypt
+         * 
+         * Path parameter: name (required)
+         * The name part in the URI can be chosen by the user to distinguish
+         * between different signer/verifier/encryptor/decryptor endpoints
+         * within the camel context.
+         */
+        @Deprecated
+        default CryptoCmsEndpointBuilder cryptoCms(String path) {
+            return CryptoCmsEndpointBuilderFactory.cryptoCms(path);
+        }
+    }
     /**
      * Crypto CMS (camel-crypto-cms)
      * The crypto cms component is used for encrypting data in CMS Enveloped

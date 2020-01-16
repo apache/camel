@@ -613,7 +613,8 @@ public interface PubNubEndpointBuilderFactory {
      */
     public interface PubNubEndpointBuilder
             extends
-                PubNubEndpointConsumerBuilder, PubNubEndpointProducerBuilder {
+                PubNubEndpointConsumerBuilder,
+                PubNubEndpointProducerBuilder {
         default AdvancedPubNubEndpointBuilder advanced() {
             return (AdvancedPubNubEndpointBuilder) this;
         }
@@ -719,7 +720,8 @@ public interface PubNubEndpointBuilderFactory {
      */
     public interface AdvancedPubNubEndpointBuilder
             extends
-                AdvancedPubNubEndpointConsumerBuilder, AdvancedPubNubEndpointProducerBuilder {
+                AdvancedPubNubEndpointConsumerBuilder,
+                AdvancedPubNubEndpointProducerBuilder {
         default PubNubEndpointBuilder basic() {
             return (PubNubEndpointBuilder) this;
         }
@@ -799,6 +801,26 @@ public interface PubNubEndpointBuilderFactory {
         default AdvancedPubNubEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface PubNubBuilders {
+        /**
+         * PubNub (camel-pubnub)
+         * To send and receive messages to PubNub data stream network for
+         * connected devices.
+         * 
+         * Category: cloud,iot,messaging
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-pubnub
+         * 
+         * Syntax: <code>pubnub:channel</code>
+         * 
+         * Path parameter: channel (required)
+         * The channel used for subscribing/publishing events
+         */
+        default PubNubEndpointBuilder pubnub(String path) {
+            return PubNubEndpointBuilderFactory.pubnub(path);
         }
     }
     /**

@@ -291,6 +291,30 @@ public interface MetricsEndpointBuilderFactory {
         start,
         stop;
     }
+
+    public interface MetricsBuilders {
+        /**
+         * Metrics (camel-metrics)
+         * To collect various metrics directly from Camel routes using the
+         * DropWizard metrics library.
+         * 
+         * Category: monitoring
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-metrics
+         * 
+         * Syntax: <code>metrics:metricsType:metricsName</code>
+         * 
+         * Path parameter: metricsType (required)
+         * Type of metrics
+         * The value can be one of: GAUGE, COUNTER, HISTOGRAM, METER, TIMER
+         * 
+         * Path parameter: metricsName (required)
+         * Name of metrics
+         */
+        default MetricsEndpointBuilder metrics(String path) {
+            return MetricsEndpointBuilderFactory.metrics(path);
+        }
+    }
     /**
      * Metrics (camel-metrics)
      * To collect various metrics directly from Camel routes using the

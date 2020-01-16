@@ -404,7 +404,8 @@ public interface OptaPlannerEndpointBuilderFactory {
      */
     public interface OptaPlannerEndpointBuilder
             extends
-                OptaPlannerEndpointConsumerBuilder, OptaPlannerEndpointProducerBuilder {
+                OptaPlannerEndpointConsumerBuilder,
+                OptaPlannerEndpointProducerBuilder {
         default AdvancedOptaPlannerEndpointBuilder advanced() {
             return (AdvancedOptaPlannerEndpointBuilder) this;
         }
@@ -427,7 +428,8 @@ public interface OptaPlannerEndpointBuilderFactory {
      */
     public interface AdvancedOptaPlannerEndpointBuilder
             extends
-                AdvancedOptaPlannerEndpointConsumerBuilder, AdvancedOptaPlannerEndpointProducerBuilder {
+                AdvancedOptaPlannerEndpointConsumerBuilder,
+                AdvancedOptaPlannerEndpointProducerBuilder {
         default OptaPlannerEndpointBuilder basic() {
             return (OptaPlannerEndpointBuilder) this;
         }
@@ -486,6 +488,25 @@ public interface OptaPlannerEndpointBuilderFactory {
                 String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface OptaPlannerBuilders {
+        /**
+         * OptaPlanner (camel-optaplanner)
+         * Solves the planning problem contained in a message with OptaPlanner.
+         * 
+         * Category: engine,planning
+         * Since: 2.13
+         * Maven coordinates: org.apache.camel:camel-optaplanner
+         * 
+         * Syntax: <code>optaplanner:configFile</code>
+         * 
+         * Path parameter: configFile (required)
+         * Specifies the location to the solver file
+         */
+        default OptaPlannerEndpointBuilder optaplanner(String path) {
+            return OptaPlannerEndpointBuilderFactory.optaplanner(path);
         }
     }
     /**

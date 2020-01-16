@@ -576,7 +576,8 @@ public interface GooglePubsubEndpointBuilderFactory {
      */
     public interface GooglePubsubEndpointBuilder
             extends
-                GooglePubsubEndpointConsumerBuilder, GooglePubsubEndpointProducerBuilder {
+                GooglePubsubEndpointConsumerBuilder,
+                GooglePubsubEndpointProducerBuilder {
         default AdvancedGooglePubsubEndpointBuilder advanced() {
             return (AdvancedGooglePubsubEndpointBuilder) this;
         }
@@ -710,7 +711,8 @@ public interface GooglePubsubEndpointBuilderFactory {
      */
     public interface AdvancedGooglePubsubEndpointBuilder
             extends
-                AdvancedGooglePubsubEndpointConsumerBuilder, AdvancedGooglePubsubEndpointProducerBuilder {
+                AdvancedGooglePubsubEndpointConsumerBuilder,
+                AdvancedGooglePubsubEndpointProducerBuilder {
         default GooglePubsubEndpointBuilder basic() {
             return (GooglePubsubEndpointBuilder) this;
         }
@@ -779,6 +781,28 @@ public interface GooglePubsubEndpointBuilderFactory {
     enum AckMode {
         AUTO,
         NONE;
+    }
+
+    public interface GooglePubsubBuilders {
+        /**
+         * Google Pubsub (camel-google-pubsub)
+         * Messaging client for Google Cloud Platform PubSub Service
+         * 
+         * Category: messaging
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-google-pubsub
+         * 
+         * Syntax: <code>google-pubsub:projectId:destinationName</code>
+         * 
+         * Path parameter: projectId (required)
+         * Project Id
+         * 
+         * Path parameter: destinationName (required)
+         * Destination Name
+         */
+        default GooglePubsubEndpointBuilder googlePubsub(String path) {
+            return GooglePubsubEndpointBuilderFactory.googlePubsub(path);
+        }
     }
     /**
      * Google Pubsub (camel-google-pubsub)

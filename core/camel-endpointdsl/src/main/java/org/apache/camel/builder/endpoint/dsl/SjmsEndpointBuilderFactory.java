@@ -1575,7 +1575,8 @@ public interface SjmsEndpointBuilderFactory {
      */
     public interface SjmsEndpointBuilder
             extends
-                SjmsEndpointConsumerBuilder, SjmsEndpointProducerBuilder {
+                SjmsEndpointConsumerBuilder,
+                SjmsEndpointProducerBuilder {
         default AdvancedSjmsEndpointBuilder advanced() {
             return (AdvancedSjmsEndpointBuilder) this;
         }
@@ -1642,7 +1643,8 @@ public interface SjmsEndpointBuilderFactory {
      */
     public interface AdvancedSjmsEndpointBuilder
             extends
-                AdvancedSjmsEndpointConsumerBuilder, AdvancedSjmsEndpointProducerBuilder {
+                AdvancedSjmsEndpointConsumerBuilder,
+                AdvancedSjmsEndpointProducerBuilder {
         default SjmsEndpointBuilder basic() {
             return (SjmsEndpointBuilder) this;
         }
@@ -2086,6 +2088,32 @@ public interface SjmsEndpointBuilderFactory {
         CLIENT_ACKNOWLEDGE,
         DUPS_OK_ACKNOWLEDGE,
         SESSION_TRANSACTED;
+    }
+
+    public interface SjmsBuilders {
+        /**
+         * Simple JMS (camel-sjms)
+         * The sjms component (simple jms) allows messages to be sent to (or
+         * consumed from) a JMS Queue or Topic (uses JMS 1.x API).
+         * 
+         * Category: messaging
+         * Since: 2.11
+         * Maven coordinates: org.apache.camel:camel-sjms
+         * 
+         * Syntax: <code>sjms:destinationType:destinationName</code>
+         * 
+         * Path parameter: destinationType
+         * The kind of destination to use
+         * Default value: queue
+         * The value can be one of: queue, topic
+         * 
+         * Path parameter: destinationName (required)
+         * DestinationName is a JMS queue or topic name. By default, the
+         * destinationName is interpreted as a queue name.
+         */
+        default SjmsEndpointBuilder sjms(String path) {
+            return SjmsEndpointBuilderFactory.sjms(path);
+        }
     }
     /**
      * Simple JMS (camel-sjms)

@@ -1047,6 +1047,28 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface DebeziumSqlserverBuilders {
+        /**
+         * Debezium SQL Server Connector (camel-debezium-sqlserver)
+         * Represents a Debezium SQL Server endpoint which is used to capture
+         * changes in SQL Server database so that that applications can see
+         * those changes and respond to them.
+         * 
+         * Category: database,sql,sqlserver
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-debezium-sqlserver
+         * 
+         * Syntax: <code>debezium-sqlserver:name</code>
+         * 
+         * Path parameter: name (required)
+         * Unique name for the connector. Attempting to register again with the
+         * same name will fail.
+         */
+        default DebeziumSqlserverEndpointBuilder debeziumSqlserver(String path) {
+            return DebeziumSqlserverEndpointBuilderFactory.debeziumSqlserver(path);
+        }
+    }
     /**
      * Debezium SQL Server Connector (camel-debezium-sqlserver)
      * Represents a Debezium SQL Server endpoint which is used to capture

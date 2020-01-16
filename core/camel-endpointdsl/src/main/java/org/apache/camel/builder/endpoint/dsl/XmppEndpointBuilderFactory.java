@@ -911,7 +911,8 @@ public interface XmppEndpointBuilderFactory {
      */
     public interface XmppEndpointBuilder
             extends
-                XmppEndpointConsumerBuilder, XmppEndpointProducerBuilder {
+                XmppEndpointConsumerBuilder,
+                XmppEndpointProducerBuilder {
         default AdvancedXmppEndpointBuilder advanced() {
             return (AdvancedXmppEndpointBuilder) this;
         }
@@ -1112,7 +1113,8 @@ public interface XmppEndpointBuilderFactory {
      */
     public interface AdvancedXmppEndpointBuilder
             extends
-                AdvancedXmppEndpointConsumerBuilder, AdvancedXmppEndpointProducerBuilder {
+                AdvancedXmppEndpointConsumerBuilder,
+                AdvancedXmppEndpointProducerBuilder {
         default XmppEndpointBuilder basic() {
             return (XmppEndpointBuilder) this;
         }
@@ -1237,6 +1239,32 @@ public interface XmppEndpointBuilderFactory {
         default AdvancedXmppEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface XmppBuilders {
+        /**
+         * XMPP (camel-xmpp)
+         * To send and receive messages from a XMPP (chat) server.
+         * 
+         * Category: chat,messaging
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-xmpp
+         * 
+         * Syntax: <code>xmpp:host:port/participant</code>
+         * 
+         * Path parameter: host (required)
+         * Hostname for the chat server
+         * 
+         * Path parameter: port (required)
+         * Port number for the chat server
+         * 
+         * Path parameter: participant
+         * JID (Jabber ID) of person to receive messages. room parameter has
+         * precedence over participant.
+         */
+        default XmppEndpointBuilder xmpp(String path) {
+            return XmppEndpointBuilderFactory.xmpp(path);
         }
     }
     /**

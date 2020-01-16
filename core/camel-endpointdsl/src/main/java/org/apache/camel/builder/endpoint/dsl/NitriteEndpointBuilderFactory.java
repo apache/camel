@@ -484,7 +484,8 @@ public interface NitriteEndpointBuilderFactory {
      */
     public interface NitriteEndpointBuilder
             extends
-                NitriteEndpointConsumerBuilder, NitriteEndpointProducerBuilder {
+                NitriteEndpointConsumerBuilder,
+                NitriteEndpointProducerBuilder {
         default AdvancedNitriteEndpointBuilder advanced() {
             return (AdvancedNitriteEndpointBuilder) this;
         }
@@ -570,7 +571,8 @@ public interface NitriteEndpointBuilderFactory {
      */
     public interface AdvancedNitriteEndpointBuilder
             extends
-                AdvancedNitriteEndpointConsumerBuilder, AdvancedNitriteEndpointProducerBuilder {
+                AdvancedNitriteEndpointConsumerBuilder,
+                AdvancedNitriteEndpointProducerBuilder {
         default NitriteEndpointBuilder basic() {
             return (NitriteEndpointBuilder) this;
         }
@@ -627,6 +629,25 @@ public interface NitriteEndpointBuilderFactory {
         default AdvancedNitriteEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface NitriteBuilders {
+        /**
+         * Nitrite (camel-nitrite)
+         * Used for integrating Camel with Nitrite databases.
+         * 
+         * Category: database,nosql
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-nitrite
+         * 
+         * Syntax: <code>nitrite:database</code>
+         * 
+         * Path parameter: database (required)
+         * Path to database file. Will be created if not exists.
+         */
+        default NitriteEndpointBuilder nitrite(String path) {
+            return NitriteEndpointBuilderFactory.nitrite(path);
         }
     }
     /**

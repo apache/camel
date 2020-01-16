@@ -744,7 +744,8 @@ public interface GoraEndpointBuilderFactory {
      */
     public interface GoraEndpointBuilder
             extends
-                GoraEndpointConsumerBuilder, GoraEndpointProducerBuilder {
+                GoraEndpointConsumerBuilder,
+                GoraEndpointProducerBuilder {
         default AdvancedGoraEndpointBuilder advanced() {
             return (AdvancedGoraEndpointBuilder) this;
         }
@@ -788,7 +789,8 @@ public interface GoraEndpointBuilderFactory {
      */
     public interface AdvancedGoraEndpointBuilder
             extends
-                AdvancedGoraEndpointConsumerBuilder, AdvancedGoraEndpointProducerBuilder {
+                AdvancedGoraEndpointConsumerBuilder,
+                AdvancedGoraEndpointProducerBuilder {
         default GoraEndpointBuilder basic() {
             return (GoraEndpointBuilder) this;
         }
@@ -871,6 +873,26 @@ public interface GoraEndpointBuilderFactory {
         default AdvancedGoraEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface GoraBuilders {
+        /**
+         * Gora (camel-gora)
+         * The gora component allows you to work with NoSQL databases using the
+         * Apache Gora framework.
+         * 
+         * Category: database,hadoop,nosql
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-gora
+         * 
+         * Syntax: <code>gora:name</code>
+         * 
+         * Path parameter: name (required)
+         * Instance name
+         */
+        default GoraEndpointBuilder gora(String path) {
+            return GoraEndpointBuilderFactory.gora(path);
         }
     }
     /**

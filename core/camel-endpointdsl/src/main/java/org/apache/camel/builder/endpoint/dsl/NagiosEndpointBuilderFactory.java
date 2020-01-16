@@ -269,6 +269,28 @@ public interface NagiosEndpointBuilderFactory {
         RIJNDAEL256,
         BLOWFISH;
     }
+
+    public interface NagiosBuilders {
+        /**
+         * Nagios (camel-nagios)
+         * To send passive checks to Nagios using JSendNSCA.
+         * 
+         * Category: monitoring
+         * Since: 2.3
+         * Maven coordinates: org.apache.camel:camel-nagios
+         * 
+         * Syntax: <code>nagios:host:port</code>
+         * 
+         * Path parameter: host (required)
+         * This is the address of the Nagios host where checks should be send.
+         * 
+         * Path parameter: port (required)
+         * The port number of the host.
+         */
+        default NagiosEndpointBuilder nagios(String path) {
+            return NagiosEndpointBuilderFactory.nagios(path);
+        }
+    }
     /**
      * Nagios (camel-nagios)
      * To send passive checks to Nagios using JSendNSCA.

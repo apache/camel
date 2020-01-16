@@ -1207,7 +1207,8 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
      */
     public interface AtmosphereWebsocketEndpointBuilder
             extends
-                AtmosphereWebsocketEndpointConsumerBuilder, AtmosphereWebsocketEndpointProducerBuilder {
+                AtmosphereWebsocketEndpointConsumerBuilder,
+                AtmosphereWebsocketEndpointProducerBuilder {
         default AdvancedAtmosphereWebsocketEndpointBuilder advanced() {
             return (AdvancedAtmosphereWebsocketEndpointBuilder) this;
         }
@@ -1420,7 +1421,8 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
      */
     public interface AdvancedAtmosphereWebsocketEndpointBuilder
             extends
-                AdvancedAtmosphereWebsocketEndpointConsumerBuilder, AdvancedAtmosphereWebsocketEndpointProducerBuilder {
+                AdvancedAtmosphereWebsocketEndpointConsumerBuilder,
+                AdvancedAtmosphereWebsocketEndpointProducerBuilder {
         default AtmosphereWebsocketEndpointBuilder basic() {
             return (AtmosphereWebsocketEndpointBuilder) this;
         }
@@ -1597,6 +1599,26 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
                 String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface AtmosphereWebsocketBuilders {
+        /**
+         * Atmosphere Websocket (camel-atmosphere-websocket)
+         * To exchange data with external Websocket clients using Atmosphere.
+         * 
+         * Category: websocket
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-atmosphere-websocket
+         * 
+         * Syntax: <code>atmosphere-websocket:servicePath</code>
+         * 
+         * Path parameter: servicePath (required)
+         * Name of websocket endpoint
+         */
+        default AtmosphereWebsocketEndpointBuilder atmosphereWebsocket(
+                String path) {
+            return AtmosphereWebsocketEndpointBuilderFactory.atmosphereWebsocket(path);
         }
     }
     /**

@@ -4111,7 +4111,8 @@ public interface ActiveMQEndpointBuilderFactory {
      */
     public interface ActiveMQEndpointBuilder
             extends
-                ActiveMQEndpointConsumerBuilder, ActiveMQEndpointProducerBuilder {
+                ActiveMQEndpointConsumerBuilder,
+                ActiveMQEndpointProducerBuilder {
         default AdvancedActiveMQEndpointBuilder advanced() {
             return (AdvancedActiveMQEndpointBuilder) this;
         }
@@ -4334,7 +4335,8 @@ public interface ActiveMQEndpointBuilderFactory {
      */
     public interface AdvancedActiveMQEndpointBuilder
             extends
-                AdvancedActiveMQEndpointConsumerBuilder, AdvancedActiveMQEndpointProducerBuilder {
+                AdvancedActiveMQEndpointConsumerBuilder,
+                AdvancedActiveMQEndpointProducerBuilder {
         default ActiveMQEndpointBuilder basic() {
             return (ActiveMQEndpointBuilder) this;
         }
@@ -5421,6 +5423,32 @@ public interface ActiveMQEndpointBuilderFactory {
         Temporary,
         Shared,
         Exclusive;
+    }
+
+    public interface ActiveMQBuilders {
+        /**
+         * ActiveMQ (camel-activemq)
+         * The activemq component allows messages to be sent to (or consumed
+         * from) Apache ActiveMQ. This component extends the Camel JMS
+         * component.
+         * 
+         * Category: messaging
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-activemq
+         * 
+         * Syntax: <code>activemq:destinationType:destinationName</code>
+         * 
+         * Path parameter: destinationType
+         * The kind of destination to use
+         * Default value: queue
+         * The value can be one of: queue, topic, temp-queue, temp-topic
+         * 
+         * Path parameter: destinationName (required)
+         * Name of the queue or topic to use as destination
+         */
+        default ActiveMQEndpointBuilder activemq(String path) {
+            return ActiveMQEndpointBuilderFactory.activemq(path);
+        }
     }
     /**
      * ActiveMQ (camel-activemq)

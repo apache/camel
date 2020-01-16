@@ -457,7 +457,8 @@ public interface QuickfixjEndpointBuilderFactory {
      */
     public interface QuickfixjEndpointBuilder
             extends
-                QuickfixjEndpointConsumerBuilder, QuickfixjEndpointProducerBuilder {
+                QuickfixjEndpointConsumerBuilder,
+                QuickfixjEndpointProducerBuilder {
         default AdvancedQuickfixjEndpointBuilder advanced() {
             return (AdvancedQuickfixjEndpointBuilder) this;
         }
@@ -531,7 +532,8 @@ public interface QuickfixjEndpointBuilderFactory {
      */
     public interface AdvancedQuickfixjEndpointBuilder
             extends
-                AdvancedQuickfixjEndpointConsumerBuilder, AdvancedQuickfixjEndpointProducerBuilder {
+                AdvancedQuickfixjEndpointConsumerBuilder,
+                AdvancedQuickfixjEndpointProducerBuilder {
         default QuickfixjEndpointBuilder basic() {
             return (QuickfixjEndpointBuilder) this;
         }
@@ -588,6 +590,27 @@ public interface QuickfixjEndpointBuilderFactory {
         default AdvancedQuickfixjEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface QuickfixjBuilders {
+        /**
+         * QuickFix (camel-quickfix)
+         * The quickfix component allows to send Financial Interchange (FIX)
+         * messages to the QuickFix engine.
+         * 
+         * Category: messaging
+         * Since: 2.1
+         * Maven coordinates: org.apache.camel:camel-quickfix
+         * 
+         * Syntax: <code>quickfix:configurationName</code>
+         * 
+         * Path parameter: configurationName (required)
+         * The configFile is the name of the QuickFIX/J configuration to use for
+         * the FIX engine (located as a resource found in your classpath).
+         */
+        default QuickfixjEndpointBuilder quickfix(String path) {
+            return QuickfixjEndpointBuilderFactory.quickfix(path);
         }
     }
     /**

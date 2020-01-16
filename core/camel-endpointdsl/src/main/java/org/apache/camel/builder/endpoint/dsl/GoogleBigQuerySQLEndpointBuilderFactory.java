@@ -178,6 +178,28 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface GoogleBigQuerySQLBuilders {
+        /**
+         * Google BigQuery Standard SQL (camel-google-bigquery)
+         * Google BigQuery data warehouse for analytics (using SQL queries).
+         * 
+         * Category: cloud,messaging
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-google-bigquery
+         * 
+         * Syntax: <code>google-bigquery-sql:projectId:query</code>
+         * 
+         * Path parameter: query (required)
+         * BigQuery standard SQL query
+         * 
+         * Path parameter: projectId (required)
+         * Google Cloud Project Id
+         */
+        default GoogleBigQuerySQLEndpointBuilder googleBigquerySql(String path) {
+            return GoogleBigQuerySQLEndpointBuilderFactory.googleBigquerySql(path);
+        }
+    }
     /**
      * Google BigQuery Standard SQL (camel-google-bigquery)
      * Google BigQuery data warehouse for analytics (using SQL queries).

@@ -2302,7 +2302,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
      */
     public interface RobotFrameworkEndpointBuilder
             extends
-                RobotFrameworkEndpointConsumerBuilder, RobotFrameworkEndpointProducerBuilder {
+                RobotFrameworkEndpointConsumerBuilder,
+                RobotFrameworkEndpointProducerBuilder {
         default AdvancedRobotFrameworkEndpointBuilder advanced() {
             return (AdvancedRobotFrameworkEndpointBuilder) this;
         }
@@ -3061,7 +3062,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
      */
     public interface AdvancedRobotFrameworkEndpointBuilder
             extends
-                AdvancedRobotFrameworkEndpointConsumerBuilder, AdvancedRobotFrameworkEndpointProducerBuilder {
+                AdvancedRobotFrameworkEndpointConsumerBuilder,
+                AdvancedRobotFrameworkEndpointProducerBuilder {
         default RobotFrameworkEndpointBuilder basic() {
             return (RobotFrameworkEndpointBuilder) this;
         }
@@ -3120,6 +3122,30 @@ public interface RobotFrameworkEndpointBuilderFactory {
                 String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface RobotFrameworkBuilders {
+        /**
+         * Robot Framework (camel-robotframework)
+         * Represents a RobotFramework endpoint.
+         * 
+         * Category: testing
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-robotframework
+         * 
+         * Syntax: <code>robotframework:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * Path to the resource. You can prefix with: classpath, file, http,
+         * ref, or bean. classpath, file and http loads the resource using these
+         * protocols (classpath is default). ref will lookup the resource in the
+         * registry. bean will call a method on a bean to be used as the
+         * resource. For bean you can specify the method name after dot, eg
+         * bean:myBean.myMethod.
+         */
+        default RobotFrameworkEndpointBuilder robotframework(String path) {
+            return RobotFrameworkEndpointBuilderFactory.robotframework(path);
         }
     }
     /**

@@ -877,7 +877,8 @@ public interface AtomixQueueEndpointBuilderFactory {
      */
     public interface AtomixQueueEndpointBuilder
             extends
-                AtomixQueueEndpointConsumerBuilder, AtomixQueueEndpointProducerBuilder {
+                AtomixQueueEndpointConsumerBuilder,
+                AtomixQueueEndpointProducerBuilder {
         default AdvancedAtomixQueueEndpointBuilder advanced() {
             return (AdvancedAtomixQueueEndpointBuilder) this;
         }
@@ -997,7 +998,8 @@ public interface AtomixQueueEndpointBuilderFactory {
      */
     public interface AdvancedAtomixQueueEndpointBuilder
             extends
-                AdvancedAtomixQueueEndpointConsumerBuilder, AdvancedAtomixQueueEndpointProducerBuilder {
+                AdvancedAtomixQueueEndpointConsumerBuilder,
+                AdvancedAtomixQueueEndpointProducerBuilder {
         default AtomixQueueEndpointBuilder basic() {
             return (AtomixQueueEndpointBuilder) this;
         }
@@ -1241,6 +1243,26 @@ public interface AtomixQueueEndpointBuilderFactory {
         ATOMIC_LEASE,
         SEQUENTIAL,
         LOCAL;
+    }
+
+    public interface AtomixQueueBuilders {
+        /**
+         * Atomix Queue (camel-atomix)
+         * The atomix-queue component is used to access Atomix's distributed
+         * queue.
+         * 
+         * Category: clustering
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-atomix
+         * 
+         * Syntax: <code>atomix-queue:resourceName</code>
+         * 
+         * Path parameter: resourceName (required)
+         * The distributed resource name
+         */
+        default AtomixQueueEndpointBuilder atomixQueue(String path) {
+            return AtomixQueueEndpointBuilderFactory.atomixQueue(path);
+        }
     }
     /**
      * Atomix Queue (camel-atomix)

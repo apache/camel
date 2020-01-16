@@ -936,7 +936,8 @@ public interface KubernetesServicesEndpointBuilderFactory {
      */
     public interface KubernetesServicesEndpointBuilder
             extends
-                KubernetesServicesEndpointConsumerBuilder, KubernetesServicesEndpointProducerBuilder {
+                KubernetesServicesEndpointConsumerBuilder,
+                KubernetesServicesEndpointProducerBuilder {
         default AdvancedKubernetesServicesEndpointBuilder advanced() {
             return (AdvancedKubernetesServicesEndpointBuilder) this;
         }
@@ -1169,7 +1170,8 @@ public interface KubernetesServicesEndpointBuilderFactory {
      */
     public interface AdvancedKubernetesServicesEndpointBuilder
             extends
-                AdvancedKubernetesServicesEndpointConsumerBuilder, AdvancedKubernetesServicesEndpointProducerBuilder {
+                AdvancedKubernetesServicesEndpointConsumerBuilder,
+                AdvancedKubernetesServicesEndpointProducerBuilder {
         default KubernetesServicesEndpointBuilder basic() {
             return (KubernetesServicesEndpointBuilder) this;
         }
@@ -1255,6 +1257,26 @@ public interface KubernetesServicesEndpointBuilderFactory {
                 String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface KubernetesServicesBuilders {
+        /**
+         * Kubernetes Services (camel-kubernetes)
+         * The Kubernetes Services component provides a producer to execute
+         * service operations and a consumer to consume service events.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-services:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         */
+        default KubernetesServicesEndpointBuilder kubernetesServices(String path) {
+            return KubernetesServicesEndpointBuilderFactory.kubernetesServices(path);
         }
     }
     /**

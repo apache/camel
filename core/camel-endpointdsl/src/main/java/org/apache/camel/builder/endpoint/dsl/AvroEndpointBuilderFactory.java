@@ -562,7 +562,8 @@ public interface AvroEndpointBuilderFactory {
      */
     public interface AvroEndpointBuilder
             extends
-                AvroEndpointConsumerBuilder, AvroEndpointProducerBuilder {
+                AvroEndpointConsumerBuilder,
+                AvroEndpointProducerBuilder {
         default AdvancedAvroEndpointBuilder advanced() {
             return (AdvancedAvroEndpointBuilder) this;
         }
@@ -684,7 +685,8 @@ public interface AvroEndpointBuilderFactory {
      */
     public interface AdvancedAvroEndpointBuilder
             extends
-                AdvancedAvroEndpointConsumerBuilder, AdvancedAvroEndpointProducerBuilder {
+                AdvancedAvroEndpointConsumerBuilder,
+                AdvancedAvroEndpointProducerBuilder {
         default AvroEndpointBuilder basic() {
             return (AvroEndpointBuilder) this;
         }
@@ -741,6 +743,35 @@ public interface AvroEndpointBuilderFactory {
         default AdvancedAvroEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface AvroBuilders {
+        /**
+         * Avro (camel-avro)
+         * Working with Apache Avro for data serialization.
+         * 
+         * Category: messaging,transformation
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-avro
+         * 
+         * Syntax: <code>avro:transport:host:port/messageName</code>
+         * 
+         * Path parameter: transport (required)
+         * Transport to use, can be either http or netty
+         * The value can be one of: http, netty
+         * 
+         * Path parameter: port (required)
+         * Port number to use
+         * 
+         * Path parameter: host (required)
+         * Hostname to use
+         * 
+         * Path parameter: messageName
+         * The name of the message to send.
+         */
+        default AvroEndpointBuilder avro(String path) {
+            return AvroEndpointBuilderFactory.avro(path);
         }
     }
     /**

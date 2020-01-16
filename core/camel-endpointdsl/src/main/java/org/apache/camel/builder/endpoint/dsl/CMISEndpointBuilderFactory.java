@@ -642,7 +642,8 @@ public interface CMISEndpointBuilderFactory {
      */
     public interface CMISEndpointBuilder
             extends
-                CMISEndpointConsumerBuilder, CMISEndpointProducerBuilder {
+                CMISEndpointConsumerBuilder,
+                CMISEndpointProducerBuilder {
         default AdvancedCMISEndpointBuilder advanced() {
             return (AdvancedCMISEndpointBuilder) this;
         }
@@ -759,7 +760,8 @@ public interface CMISEndpointBuilderFactory {
      */
     public interface AdvancedCMISEndpointBuilder
             extends
-                AdvancedCMISEndpointConsumerBuilder, AdvancedCMISEndpointProducerBuilder {
+                AdvancedCMISEndpointConsumerBuilder,
+                AdvancedCMISEndpointProducerBuilder {
         default CMISEndpointBuilder basic() {
             return (CMISEndpointBuilder) this;
         }
@@ -846,6 +848,26 @@ public interface CMISEndpointBuilderFactory {
         default AdvancedCMISEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface CMISBuilders {
+        /**
+         * CMIS (camel-cmis)
+         * The cmis component uses the Apache Chemistry client API and allows
+         * you to add/read nodes to/from a CMIS compliant content repositories.
+         * 
+         * Category: cms,database
+         * Since: 2.11
+         * Maven coordinates: org.apache.camel:camel-cmis
+         * 
+         * Syntax: <code>cmis:cmsUrl</code>
+         * 
+         * Path parameter: cmsUrl (required)
+         * URL to the cmis repository
+         */
+        default CMISEndpointBuilder cmis(String path) {
+            return CMISEndpointBuilderFactory.cmis(path);
         }
     }
     /**

@@ -1342,7 +1342,8 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
      */
     public interface TwitterDirectMessageEndpointBuilder
             extends
-                TwitterDirectMessageEndpointConsumerBuilder, TwitterDirectMessageEndpointProducerBuilder {
+                TwitterDirectMessageEndpointConsumerBuilder,
+                TwitterDirectMessageEndpointProducerBuilder {
         default AdvancedTwitterDirectMessageEndpointBuilder advanced() {
             return (AdvancedTwitterDirectMessageEndpointBuilder) this;
         }
@@ -1471,7 +1472,8 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
      */
     public interface AdvancedTwitterDirectMessageEndpointBuilder
             extends
-                AdvancedTwitterDirectMessageEndpointConsumerBuilder, AdvancedTwitterDirectMessageEndpointProducerBuilder {
+                AdvancedTwitterDirectMessageEndpointConsumerBuilder,
+                AdvancedTwitterDirectMessageEndpointProducerBuilder {
         default TwitterDirectMessageEndpointBuilder basic() {
             return (TwitterDirectMessageEndpointBuilder) this;
         }
@@ -1540,6 +1542,28 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
     enum EndpointType {
         POLLING,
         DIRECT;
+    }
+
+    public interface TwitterDirectMessageBuilders {
+        /**
+         * Twitter Direct Message (camel-twitter)
+         * The Twitter Direct Message Component consumes/produces user's direct
+         * messages.
+         * 
+         * Category: api,social
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-twitter
+         * 
+         * Syntax: <code>twitter-directmessage:user</code>
+         * 
+         * Path parameter: user (required)
+         * The user name to send a direct message. This will be ignored for
+         * consumer.
+         */
+        default TwitterDirectMessageEndpointBuilder twitterDirectmessage(
+                String path) {
+            return TwitterDirectMessageEndpointBuilderFactory.twitterDirectmessage(path);
+        }
     }
     /**
      * Twitter Direct Message (camel-twitter)

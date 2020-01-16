@@ -1389,6 +1389,28 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface DebeziumPostgresBuilders {
+        /**
+         * Debezium PostgresSQL Connector (camel-debezium-postgres)
+         * Represents a Debezium PostgresSQL endpoint which is used to capture
+         * changes in PostgresSQL database so that that applications can see
+         * those changes and respond to them.
+         * 
+         * Category: database,sql,postgres
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-debezium-postgres
+         * 
+         * Syntax: <code>debezium-postgres:name</code>
+         * 
+         * Path parameter: name (required)
+         * Unique name for the connector. Attempting to register again with the
+         * same name will fail.
+         */
+        default DebeziumPostgresEndpointBuilder debeziumPostgres(String path) {
+            return DebeziumPostgresEndpointBuilderFactory.debeziumPostgres(path);
+        }
+    }
     /**
      * Debezium PostgresSQL Connector (camel-debezium-postgres)
      * Represents a Debezium PostgresSQL endpoint which is used to capture

@@ -217,6 +217,26 @@ public interface InfluxDbEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface InfluxDbBuilders {
+        /**
+         * InfluxDB (camel-influxdb)
+         * The influxdb component allows you to interact with InfluxDB, a time
+         * series database.
+         * 
+         * Category: database
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-influxdb
+         * 
+         * Syntax: <code>influxdb:connectionBean</code>
+         * 
+         * Path parameter: connectionBean (required)
+         * Connection to the influx database, of class InfluxDB.class
+         */
+        default InfluxDbEndpointBuilder influxdb(String path) {
+            return InfluxDbEndpointBuilderFactory.influxdb(path);
+        }
+    }
     /**
      * InfluxDB (camel-influxdb)
      * The influxdb component allows you to interact with InfluxDB, a time
