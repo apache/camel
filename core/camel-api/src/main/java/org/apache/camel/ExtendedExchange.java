@@ -6,12 +6,24 @@ package org.apache.camel;
  */
 public interface ExtendedExchange extends Exchange {
 
-    // TODO: javadoc these
-
+    /**
+     * Sets the history node id (the current processor that will process the exchange)
+     */
     void setHistoryNodeId(String historyNodeId);
+
+    /**
+     * Gets the history node id (the current processor that will process the exchange)
+     */
     String getHistoryNodeId();
 
+    /**
+     * Sets the history node label (the current processor that will process the exchange)
+     */
     void setHistoryNodeLabel(String historyNodeLabel);
+
+    /**
+     * Gets the history node label (the current processor that will process the exchange)
+     */
     String getHistoryNodeLabel();
 
 }
