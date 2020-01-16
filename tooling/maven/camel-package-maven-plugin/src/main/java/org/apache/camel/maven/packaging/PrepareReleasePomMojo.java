@@ -39,7 +39,8 @@ import static org.apache.camel.tooling.util.PackageHelper.writeText;
 import static org.apache.camel.tooling.util.Strings.between;
 
 /**
- * Prepares the apache-camel/pom.xml and common-bin to keep the Camel artifacts up-to-date.
+ * Prepares the apache-camel/pom.xml and common-bin to keep the Camel artifacts
+ * up-to-date.
  */
 @Mojo(name = "prepare-release-pom", threadSafe = true)
 public class PrepareReleasePomMojo extends AbstractMojo {
@@ -78,8 +79,8 @@ public class PrepareReleasePomMojo extends AbstractMojo {
      * Execute goal.
      *
      * @throws MojoExecutionException execution of the main class or one of the
-     *                                                        threads it generated failed.
-     * @throws MojoFailureException   something bad happened...
+     *             threads it generated failed.
+     * @throws MojoFailureException something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

@@ -37,7 +37,7 @@ public final class ValidateHelper {
     /**
      * Validates the component json file
      *
-     * @param file        the json file
+     * @param file the json file
      * @param errorDetail details to add errors
      */
     public static void validate(File file, ErrorDetail errorDetail) {
@@ -79,11 +79,11 @@ public final class ValidateHelper {
                     syntax = true;
                 }
             }
-            
+
             if (!label) {
                 errorDetail.setMissingLabel(true);
             }
-            
+
             if (!description) {
                 errorDetail.setMissingDescription(true);
             }
@@ -129,7 +129,8 @@ public final class ValidateHelper {
     }
 
     /**
-     * Returns the name of the component, data format or language from the given json file
+     * Returns the name of the component, data format or language from the given
+     * json file
      */
     public static String asName(File file) {
         String name = file.getName();

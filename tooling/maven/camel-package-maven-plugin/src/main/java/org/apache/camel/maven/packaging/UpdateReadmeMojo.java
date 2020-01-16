@@ -56,7 +56,8 @@ import static org.apache.camel.tooling.util.PackageHelper.writeText;
 import static org.apache.camel.tooling.util.Strings.isEmpty;
 
 /**
- * Generate or updates the component/dataformat/language/eip readme.md and .adoc files in the project root directory.
+ * Generate or updates the component/dataformat/language/eip readme.md and .adoc
+ * files in the project root directory.
  */
 @Mojo(name = "update-readme", threadSafe = true)
 public class UpdateReadmeMojo extends AbstractMojo {
@@ -128,7 +129,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     String title = asComponentTitle(model.getScheme(), model.getTitle());
                     model.setTitle(title);
 
-                    // we only want the first scheme as the alternatives do not have their own readme file
+                    // we only want the first scheme as the alternatives do not
+                    // have their own readme file
                     if (!isEmpty(model.getAlternativeSchemes())) {
                         String first = model.getAlternativeSchemes().split(",")[0];
                         if (!model.getScheme().equals(first)) {
@@ -149,7 +151,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     updated |= updateAvailableFrom(file, model.getFirstVersion());
                     updated |= updateComponentHeader(file, model);
 
-                    // resolvePropertyPlaceholders is an option which only make sense to use if the component has other options
+                    // resolvePropertyPlaceholders is an option which only make
+                    // sense to use if the component has other options
                     boolean hasOptions = model.getComponentOptions().stream().anyMatch(o -> !o.getName().equals("resolvePropertyPlaceholders"));
                     if (!hasOptions) {
                         model.getComponentOptions().clear();
@@ -432,14 +435,16 @@ public class UpdateReadmeMojo extends AbstractMojo {
                 String line = lines[i];
 
                 if (i == 1) {
-                    // first line is the title to make the text less noisy we use level 2
+                    // first line is the title to make the text less noisy we
+                    // use level 2
                     String newLine = "= " + title;
                     newLines.add(newLine);
                     updated = !line.equals(newLine);
                     continue;
                 }
 
-                // use single line headers with # as level instead of the cumbersome adoc weird style
+                // use single line headers with # as level instead of the
+                // cumbersome adoc weird style
                 if (line.startsWith("^^^") || line.startsWith("~~~") || line.startsWith("+++")) {
                     String level = line.startsWith("+++") ? "===" : "==";
 
@@ -449,7 +454,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
                     newLines.set(idx, level + " " + prev);
 
-                    // okay if 2nd-prev line is a [[title]] we need to remove that too
+                    // okay if 2nd-prev line is a [[title]] we need to remove
+                    // that too
                     // so we have nice clean sub titles
                     idx = newLines.size() - 2;
                     if (idx >= 0) {
@@ -466,7 +472,6 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     newLines.add(line);
                 }
             }
-
 
             if (updated) {
                 // build the new updated text
@@ -509,7 +514,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
                 writeText(file, updatedHeaderText);
                 return true;
             } else {
-                // so we don't have the marker, so we add it somewhere after the camel version
+                // so we don't have the marker, so we add it somewhere after the
+                // camel version
                 final String sinceVersion = "*Since Camel " + shortenVersion(model.getFirstVersion()) + "*";
                 final String before = Strings.before(loadedText, sinceVersion);
                 final String after = Strings.after(loadedText, sinceVersion);
@@ -557,7 +563,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
             // copy over to all new lines
             newLines.addAll(Arrays.asList(lines));
 
-            // check first if it is a standard documentation file, we expect at least five lines
+            // check first if it is a standard documentation file, we expect at
+            // least five lines
             if (lines.length < 5) {
                 return false;
             }
@@ -624,7 +631,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     return false;
                 }
 
-                String before = Strings.before(text, "// " + kind  + " options: START");
+                String before = Strings.before(text, "// " + kind + " options: START");
                 String after = Strings.after(text, "// " + kind + " options: END");
                 text = before + "// " + kind + " options: START\n" + updated + "\n// " + kind + " options: END" + after;
                 writeText(file, text);
@@ -718,7 +725,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
                 String desc = "*Required* " + option.getDescription();
                 option.setDescription(desc);
             }
-            // is the option deprecated then include that as well in the description
+            // is the option deprecated then include that as well in the
+            // description
             if ("true".equals(option.getDeprecated())) {
                 String desc = "*Deprecated* " + option.getDescription();
                 option.setDescription(desc);
@@ -765,7 +773,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
                 String desc = "*Required* " + option.getDescription();
                 option.setDescription(desc);
             }
-            // is the option deprecated then include that as well in the description
+            // is the option deprecated then include that as well in the
+            // description
             if ("true".equals(option.getDeprecated())) {
                 String desc = "*Deprecated* " + option.getDescription();
                 option.setDescription(desc);
@@ -779,7 +788,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     option.setDescription(desc);
                 }
             }
-            // separate the options in path vs parameter so we can generate two different tables
+            // separate the options in path vs parameter so we can generate two
+            // different tables
             if ("path".equals(option.getKind())) {
                 component.addEndpointPathOption(option);
             } else {
@@ -834,7 +844,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
                 option.setDescription(doc);
             }
             // lets put required in the description
-            // is the option deprecated then include that as well in the description
+            // is the option deprecated then include that as well in the
+            // description
             if ("true".equals(option.getDeprecated())) {
                 String desc = "*Deprecated* " + option.getDescription();
                 option.setDescription(desc);
@@ -891,7 +902,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
             option.setDefaultValue(getSafeValue("defaultValue", row));
             option.setDescription(getSafeValue("description", row));
 
-            // is the option deprecated then include that as well in the description
+            // is the option deprecated then include that as well in the
+            // description
             if ("true".equals(option.getDeprecated())) {
                 String desc = "*Deprecated* " + option.getDescription();
                 option.setDescription(desc);
@@ -951,7 +963,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
                 String desc = "*Required* " + option.getDescription();
                 option.setDescription(desc);
             }
-            // is the option deprecated then include that as well in the description
+            // is the option deprecated then include that as well in the
+            // description
             if (option.isDeprecated()) {
                 String desc = "*Deprecated* " + option.getDescription();
                 option.setDescription(desc);
@@ -967,8 +980,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
             }
 
             // skip option named id/description/expression/outputs
-            if ("id".equals(option.getName()) || "description".equals(option.getName())
-                || "expression".equals(option.getName()) || "outputs".equals(option.getName())) {
+            if ("id".equals(option.getName()) || "description".equals(option.getName()) || "expression".equals(option.getName()) || "outputs".equals(option.getName())) {
                 getLog().debug("Skipping option: " + option.getName());
             } else {
                 eip.addEipOptionModel(option);
@@ -981,7 +993,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
     private static String evaluateTemplate(final String templateName, final Object model) throws MojoExecutionException {
         try (InputStream templateStream = UpdateReadmeMojo.class.getClassLoader().getResourceAsStream(templateName)) {
             String template = loadText(templateStream);
-            return (String) TemplateRuntime.eval(template, model, Collections.singletonMap("util", MvelHelper.INSTANCE));
+            return (String)TemplateRuntime.eval(template, model, Collections.singletonMap("util", MvelHelper.INSTANCE));
         } catch (IOException e) {
             throw new MojoExecutionException("Error processing mvel template `" + templateName + "`", e);
         }
@@ -996,7 +1008,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
             File[] files = f.listFiles();
             if (files != null) {
                 for (File file : files) {
-                    // skip directories as there may be a sub .resolver directory
+                    // skip directories as there may be a sub .resolver
+                    // directory
                     if (file.isDirectory()) {
                         continue;
                     }

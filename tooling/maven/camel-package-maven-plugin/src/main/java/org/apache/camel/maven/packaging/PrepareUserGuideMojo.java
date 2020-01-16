@@ -48,7 +48,8 @@ import static org.apache.camel.tooling.util.JSonSchemaHelper.getSafeValue;
 import static org.apache.camel.tooling.util.JSonSchemaHelper.parseJsonSchema;
 
 /**
- * Prepares the user guide to keep the table of content up to date with the components, data formats, and languages.
+ * Prepares the user guide to keep the table of content up to date with the
+ * components, data formats, and languages.
  */
 @Mojo(name = "prepare-user-guide", threadSafe = true)
 public class PrepareUserGuideMojo extends AbstractMojo {
@@ -99,8 +100,8 @@ public class PrepareUserGuideMojo extends AbstractMojo {
      * Execute goal.
      *
      * @throws MojoExecutionException execution of the main class or one of the
-     *                                                        threads it generated failed.
-     * @throws MojoFailureException   something bad happened...
+     *             threads it generated failed.
+     * @throws MojoFailureException something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

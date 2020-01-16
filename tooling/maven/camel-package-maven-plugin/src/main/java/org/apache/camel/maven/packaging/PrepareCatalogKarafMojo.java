@@ -118,8 +118,8 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
      * Execute goal.
      *
      * @throws MojoExecutionException execution of the main class or one of the
-     *                                                        threads it generated failed.
-     * @throws MojoFailureException   something bad happened...
+     *             threads it generated failed.
+     * @throws MojoFailureException something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -244,10 +244,9 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
             File[] languages = componentsDir.listFiles();
             if (languages != null) {
                 for (File dir : languages) {
-                    // the directory must be in the list of known features (or known languages)
-                    if (!features.contains(dir.getName())
-                            && !dir.getName().equals("camel-bean")
-                            && !dir.getName().equals("camel-xpath")) {
+                    // the directory must be in the list of known features (or
+                    // known languages)
+                    if (!features.contains(dir.getName()) && !dir.getName().equals("camel-bean") && !dir.getName().equals("camel-xpath")) {
                         continue;
                     }
 
@@ -300,17 +299,10 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                     }
 
                     // skip these special cases
-                    boolean special = "camel-core-osgi".equals(dir.getName())
-                        || "camel-core-xml".equals(dir.getName())
-                        || "camel-http-base".equals(dir.getName())
-                        || "camel-http-common".equals(dir.getName())
-                        || "camel-jetty-common".equals(dir.getName());
-                    boolean special2 = "camel-as2".equals(dir.getName())
-                        || "camel-box".equals(dir.getName())
-                        || "camel-olingo2".equals(dir.getName())
-                        || "camel-olingo4".equals(dir.getName())
-                        || "camel-servicenow".equals(dir.getName())
-                        || "camel-salesforce".equals(dir.getName());
+                    boolean special = "camel-core-osgi".equals(dir.getName()) || "camel-core-xml".equals(dir.getName()) || "camel-http-base".equals(dir.getName())
+                                      || "camel-http-common".equals(dir.getName()) || "camel-jetty-common".equals(dir.getName());
+                    boolean special2 = "camel-as2".equals(dir.getName()) || "camel-box".equals(dir.getName()) || "camel-olingo2".equals(dir.getName())
+                                       || "camel-olingo4".equals(dir.getName()) || "camel-servicenow".equals(dir.getName()) || "camel-salesforce".equals(dir.getName());
                     boolean special3 = "camel-debezium-common".equals(dir.getName());
                     if (special || special2 || special3) {
                         continue;
@@ -343,7 +335,8 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         File[] files = dir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
-                // skip files in root dirs as Camel does not store information there but others may do
+                // skip files in root dirs as Camel does not store information
+                // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
                 boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(".json");
                 boolean componentFile = !rootDir && file.isFile() && file.getName().equals("component.properties");
@@ -362,7 +355,8 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         File[] files = dir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
-                // skip files in root dirs as Camel does not store information there but others may do
+                // skip files in root dirs as Camel does not store information
+                // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
                 boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(".json");
                 boolean dataFormatFile = !rootDir && file.isFile() && file.getName().equals("dataformat.properties");
@@ -381,7 +375,8 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         File[] files = dir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
-                // skip files in root dirs as Camel does not store information there but others may do
+                // skip files in root dirs as Camel does not store information
+                // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
                 boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(".json");
                 boolean languageFile = !rootDir && file.isFile() && file.getName().equals("language.properties");
@@ -400,7 +395,8 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         File[] files = dir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
-                // skip files in root dirs as Camel does not store information there but others may do
+                // skip files in root dirs as Camel does not store information
+                // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
                 boolean jsonFile = rootDir && file.isFile() && file.getName().endsWith(".json");
                 boolean otherFile = !rootDir && file.isFile() && file.getName().equals("other.properties");
@@ -420,7 +416,8 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         @Override
         public boolean accept(File pathname) {
             if (pathname.isDirectory() && pathname.getName().equals("model")) {
-                // do not check the camel-core model packages as there is no components there
+                // do not check the camel-core model packages as there is no
+                // components there
                 return false;
             }
             if (pathname.isFile() && pathname.getName().endsWith(".json")) {
@@ -432,8 +429,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                     // ignore
                 }
             }
-            return pathname.isDirectory()
-                    || (pathname.isFile() && pathname.getName().equals("component.properties"));
+            return pathname.isDirectory() || (pathname.isFile() && pathname.getName().equals("component.properties"));
         }
     }
 
@@ -442,7 +438,8 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         @Override
         public boolean accept(File pathname) {
             if (pathname.isDirectory() && pathname.getName().equals("model")) {
-                // do not check the camel-core model packages as there is no components there
+                // do not check the camel-core model packages as there is no
+                // components there
                 return false;
             }
             if (pathname.isFile() && pathname.getName().endsWith(".json")) {
@@ -454,8 +451,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                     // ignore
                 }
             }
-            return pathname.isDirectory()
-                    || (pathname.isFile() && pathname.getName().equals("dataformat.properties"));
+            return pathname.isDirectory() || (pathname.isFile() && pathname.getName().equals("dataformat.properties"));
         }
     }
 
@@ -464,7 +460,8 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         @Override
         public boolean accept(File pathname) {
             if (pathname.isDirectory() && pathname.getName().equals("model")) {
-                // do not check the camel-core model packages as there is no components there
+                // do not check the camel-core model packages as there is no
+                // components there
                 return false;
             }
             if (pathname.isFile() && pathname.getName().endsWith(".json")) {
@@ -476,8 +473,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                     // ignore
                 }
             }
-            return pathname.isDirectory()
-                    || (pathname.isFile() && pathname.getName().equals("language.properties"));
+            return pathname.isDirectory() || (pathname.isFile() && pathname.getName().equals("language.properties"));
         }
     }
 
@@ -494,8 +490,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                     // ignore
                 }
             }
-            return pathname.isDirectory()
-                    || (pathname.isFile() && pathname.getName().equals("other.properties"));
+            return pathname.isDirectory() || (pathname.isFile() && pathname.getName().equals("other.properties"));
         }
     }
 
@@ -513,13 +508,9 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
     public static Set<String> generateJsonList(Path outDir, String outFile) throws MojoFailureException {
         Path all = outDir.resolve(outFile);
         try {
-            Set<String> answer = Files.list(outDir)
-                    .filter(p -> p.getFileName().toString().endsWith(".json"))
-                    .map(p -> p.getFileName().toString())
-                    // strip out .json from the name
-                    .map(n -> n.substring(0, n.length() - ".json".length()))
-                    .sorted()
-                    .collect(LinkedHashSet::new, LinkedHashSet::add, LinkedHashSet::addAll);
+            Set<String> answer = Files.list(outDir).filter(p -> p.getFileName().toString().endsWith(".json")).map(p -> p.getFileName().toString())
+                // strip out .json from the name
+                .map(n -> n.substring(0, n.length() - ".json".length())).sorted().collect(LinkedHashSet::new, LinkedHashSet::add, LinkedHashSet::addAll);
             String data = String.join("\n", answer) + "\n";
             FileUtil.updateFile(all, data);
             return answer;

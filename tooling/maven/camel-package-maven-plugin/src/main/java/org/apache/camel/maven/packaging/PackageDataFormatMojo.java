@@ -40,7 +40,8 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
 import static org.apache.camel.tooling.util.PackageHelper.parseAsMap;
 
 /**
- * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
+ * Analyses the Camel plugins in a project and generates extra descriptor
+ * information for easier auto-discovery in Camel.
  */
 @Mojo(name = "generate-dataformats-list", threadSafe = true)
 public class PackageDataFormatMojo extends AbstractGeneratorMojo {
@@ -60,22 +61,24 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
     /**
      * Execute goal.
      *
-     * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the
-     *                                                        threads it generated failed.
-     * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
+     * @throws org.apache.maven.plugin.MojoExecutionException execution of the
+     *             main class or one of the threads it generated failed.
+     * @throws org.apache.maven.plugin.MojoFailureException something bad
+     *             happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, schemaOutDir, buildContext);
     }
 
-    public static int prepareDataFormat(Log log, MavenProject project, MavenProjectHelper projectHelper, File dataFormatOutDir,
-                                        File schemaOutDir, BuildContext buildContext) throws MojoExecutionException {
+    public static int prepareDataFormat(Log log, MavenProject project, MavenProjectHelper projectHelper, File dataFormatOutDir, File schemaOutDir, BuildContext buildContext)
+        throws MojoExecutionException {
 
         File camelMetaDir = new File(dataFormatOutDir, "META-INF/services/org/apache/camel/");
 
         // first we need to setup the output directory because the next check
-        // can stop the build before the end and eclipse always needs to know about that directory 
+        // can stop the build before the end and eclipse always needs to know
+        // about that directory
         if (projectHelper != null) {
             projectHelper.addResource(project, dataFormatOutDir.getPath(), Collections.singletonList("**/dataformat.properties"), Collections.emptyList());
         }
@@ -106,7 +109,8 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             }
         }
 
-        // is this from Apache Camel then the data format is out of the box and we should enrich the json schema with more details
+        // is this from Apache Camel then the data format is out of the box and
+        // we should enrich the json schema with more details
         boolean apacheCamel = "org.apache.camel".equals(project.getGroupId());
 
         // find camel-core and grab the data format model from there, and enrich
@@ -141,9 +145,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                         }
 
                         // write this to the directory
-                        Path out = schemaOutDir.toPath()
-                                .resolve(schemaSubDirectory(dataFormatModel.getJavaType()))
-                                .resolve(name + ".json");
+                        Path out = schemaOutDir.toPath().resolve(schemaSubDirectory(dataFormatModel.getJavaType())).resolve(name + ".json");
                         updateResource(buildContext, out, schema);
 
                         if (log.isDebugEnabled()) {
@@ -151,7 +153,8 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                         }
                     }
                 } else {
-                    throw new MojoExecutionException("Error finding core/camel-core/target/camel-core-engine-" + project.getVersion() + ".jar file. Make sure camel-core has been built first.");
+                    throw new MojoExecutionException("Error finding core/camel-core/target/camel-core-engine-" + project.getVersion()
+                                                     + ".jar file. Make sure camel-core has been built first.");
                 }
             }
         } catch (Exception e) {
@@ -499,19 +502,9 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
         @Override
         public String toString() {
-            return "DataFormatModel["
-                + "name='" + name + '\''
-                + ", title='" + title + '\''
-                + ", modelName='" + modelName + '\''
-                + ", description='" + description + '\''
-                + ", label='" + label + '\''
-                + ", deprecated='" + deprecated + '\''
-                + ", javaType='" + javaType + '\''
-                + ", modelJavaType='" + modelJavaType + '\''
-                + ", groupId='" + groupId + '\''
-                + ", artifactId='" + artifactId + '\''
-                + ", version='" + version + '\''
-                + ']';
+            return "DataFormatModel[" + "name='" + name + '\'' + ", title='" + title + '\'' + ", modelName='" + modelName + '\'' + ", description='" + description + '\''
+                   + ", label='" + label + '\'' + ", deprecated='" + deprecated + '\'' + ", javaType='" + javaType + '\'' + ", modelJavaType='" + modelJavaType + '\''
+                   + ", groupId='" + groupId + '\'' + ", artifactId='" + artifactId + '\'' + ", version='" + version + '\'' + ']';
         }
     }
 

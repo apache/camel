@@ -37,13 +37,13 @@ import java.util.Set;
  * Utility classes for generic type operations.
  */
 public final class GenericsUtil {
-    
+
     /*
      * Private constructor
      */
     private GenericsUtil() {
     }
-    
+
     public static boolean satisfiesDependency(boolean isDelegateOrEvent, boolean isProducer, Type injectionPointType, Type beanType) {
         if (beanType instanceof TypeVariable || beanType instanceof WildcardType || beanType instanceof GenericArrayType) {
             return isAssignableFrom(isDelegateOrEvent, isProducer, injectionPointType, beanType);
@@ -509,7 +509,7 @@ public final class GenericsUtil {
         for (int i = 0; i < types.length; i++) {
             final Type type = resolveType(types[i], actualType, seen);
             if (type != null) { // means a stackoverflow was avoided, just keep
-                              // what we have 
+                                // what we have
                 resolvedTypeArguments[i] = type;
             }
         }
