@@ -836,7 +836,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             } else {
                 log.trace("Processing aggregated exchange: {} complete.", exchange);
             }
-        }), "sending aggregated exchange"));
+        })));
     }
 
     /**
