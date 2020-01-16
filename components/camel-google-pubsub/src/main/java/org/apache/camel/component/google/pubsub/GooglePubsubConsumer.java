@@ -27,6 +27,7 @@ import com.google.api.services.pubsub.model.PullRequest;
 import com.google.api.services.pubsub.model.PullResponse;
 import com.google.api.services.pubsub.model.ReceivedMessage;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.google.pubsub.consumer.ExchangeAckTransaction;
 import org.apache.camel.spi.Synchronization;
@@ -147,7 +148,7 @@ class GooglePubsubConsumer extends DefaultConsumer {
                         }
 
                         if (endpoint.getAckMode() != GooglePubsubConstants.AckMode.NONE) {
-                            exchange.addOnCompletion(GooglePubsubConsumer.this.ackStrategy);
+                            exchange.adapt(ExtendedExchange.class).addOnCompletion(GooglePubsubConsumer.this.ackStrategy);
                         }
 
                         try {

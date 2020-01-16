@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.csv.CSVFormat;
@@ -129,7 +130,7 @@ abstract class CsvUnmarshaller {
                 CSVParser parser = new CSVParser(reader, format);
                 CsvIterator answer = new CsvIterator(parser, converter);
                 // add to UoW so we can close the iterator so it can release any resources
-                exchange.addOnCompletion(new CsvUnmarshalOnCompletion(answer));
+                exchange.adapt(ExtendedExchange.class).addOnCompletion(new CsvUnmarshalOnCompletion(answer));
                 return answer;
             } catch (Exception e) {
                 IOHelper.close(reader);

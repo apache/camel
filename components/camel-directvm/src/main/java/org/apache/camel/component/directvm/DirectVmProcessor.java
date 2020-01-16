@@ -18,6 +18,7 @@ package org.apache.camel.component.directvm;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
@@ -87,7 +88,7 @@ public final class DirectVmProcessor extends DelegateAsyncProcessor {
         // send a new copied exchange with new camel context (do not handover completions)
         Exchange newExchange = ExchangeHelper.copyExchangeAndSetCamelContext(exchange, endpoint.getCamelContext(), false);
         // set the from endpoint
-        newExchange.setFromEndpoint(endpoint);
+        newExchange.adapt(ExtendedExchange.class).setFromEndpoint(endpoint);
         // The StreamCache created by the child routes must not be 
         // closed by the unit of work of the child route, but by the unit of 
         // work of the parent route or grand parent route or grand grand parent route ...(in case of nesting).

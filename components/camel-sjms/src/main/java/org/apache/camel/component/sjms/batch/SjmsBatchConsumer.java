@@ -38,6 +38,7 @@ import javax.jms.Session;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -564,7 +565,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
             aggregationStrategy.onCompletion(exchange);
 
             SessionCompletion sessionCompletion = new SessionCompletion(session);
-            exchange.addOnCompletion(sessionCompletion);
+            exchange.adapt(ExtendedExchange.class).addOnCompletion(sessionCompletion);
             try {
                 getProcessor().process(exchange);
                 long total = MESSAGE_PROCESSED.addAndGet(batchSize);
