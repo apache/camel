@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 234 in 203 JAR artifacts (1 deprecated)
+Number of Components: 309 in 247 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -26,6 +26,8 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 
 | xref:asterisk-component.adoc[Asterisk] (camel-asterisk) | 2.18 | The asterisk component is used to interact with Asterisk PBX Server.
 
+| xref:atmos-component.adoc[Atmos] (camel-atmos) | 2.15 | The atmos component is used for integrating with EMC's Atomos Storage.
+
 | xref:atmosphere-websocket-component.adoc[Atmosphere Websocket] (camel-atmosphere-websocket) | 2.14 | To exchange data with external Websocket clients using Atmosphere.
 
 | xref:atom-component.adoc[Atom] (camel-atom) | 1.2 | The atom component is used for consuming Atom RSS feeds.
@@ -42,15 +44,31 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 
 | xref:atomix-value-component.adoc[Atomix Value] (camel-atomix) | 2.20 | The atomix-value component is used to access Atomix's distributed value.
 
+| xref:avro-component.adoc[Avro] (camel-avro) | 2.10 | Working with Apache Avro for data serialization.
+
+| xref:aws2-translate-component.adoc[AWS 2 Translate] (camel-aws2-translate) | 3.1 | The aws2-translate component is used for managing Amazon Translate
+
+| xref:aws-cw-component.adoc[AWS CloudWatch] (camel-aws-cw) | 2.11 | The aws-cw component is used for sending metrics to an Amazon CloudWatch.
+
 | xref:aws-ddb-component.adoc[AWS DynamoDB] (camel-aws-ddb) | 2.10 | The aws-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.
 
 | xref:aws-ddbstream-component.adoc[AWS DynamoDB Streams] (camel-aws-ddb) | 2.17 | The aws-ddbstream component is used for working with Amazon DynamoDB Streams.
+
+| xref:aws-ec2-component.adoc[AWS EC2] (camel-aws-ec2) | 2.16 | The aws-ec2 is used for managing Amazon EC2 instances.
 
 | xref:aws-ecs-component.adoc[AWS ECS] (camel-aws-ecs) | 3.0 | The aws-ecs is used for managing Amazon ECS
 
 | xref:aws-eks-component.adoc[AWS EKS] (camel-aws-eks) | 3.0 | The aws-eks is used for managing Amazon EKS
 
+| xref:aws-iam-component.adoc[AWS IAM] (camel-aws-iam) | 2.23 | The aws-iam is used for managing Amazon IAM
+
+| xref:aws-kinesis-component.adoc[AWS Kinesis] (camel-aws-kinesis) | 2.17 | The aws-kinesis component is for consuming and producing records from Amazon Kinesis Streams.
+
+| xref:aws-kinesis-firehose-component.adoc[AWS Kinesis Firehose] (camel-aws-kinesis) | 2.19 | The aws-kinesis-firehose component is used for producing Amazon's Kinesis Firehose streams.
+
 | xref:aws-kms-component.adoc[AWS KMS] (camel-aws-kms) | 2.21 | The aws-kms is used for managing Amazon KMS
+
+| xref:aws-lambda-component.adoc[AWS Lambda] (camel-aws-lambda) | 2.20 | The aws-lambda is used for managing and invoking functions from Amazon Lambda.
 
 | xref:aws-mq-component.adoc[AWS MQ] (camel-aws-mq) | 2.21 | The aws-mq is used for managing Amazon MQ instances.
 
@@ -62,7 +80,13 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 
 | xref:aws-sns-component.adoc[AWS Simple Notification System] (camel-aws-sns) | 2.8 | The aws-sns component is used for sending messages to an Amazon Simple Notification Topic.
 
+| xref:aws-sqs-component.adoc[AWS Simple Queue Service] (camel-aws-sqs) | 2.6 | The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.
+
 | xref:aws-swf-component.adoc[AWS Simple Workflow] (camel-aws-swf) | 2.13 | The aws-swf component is used for managing workflows from Amazon Simple Workflow.
+
+| xref:aws-sdb-component.adoc[AWS SimpleDB] (camel-aws-sdb) | 2.9 | The aws-sdb component is for storing and retrieving data from/to Amazon's SDB service.
+
+| xref:aws-translate-component.adoc[AWS Translate] (camel-aws-translate) | 3.0 | The aws-translate component is used for managing Amazon Translate
 
 | xref:azure-blob-component.adoc[Azure Storage Blob Service] (camel-azure) | 2.19 | The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.
 
@@ -86,13 +110,23 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 
 | xref:caffeine-loadcache-component.adoc[Caffeine LoadCache] (camel-caffeine) | 2.20 | The caffeine-loadcache component is used for integration with Caffeine Load Cache.
 
+| xref:cql-component.adoc[Cassandra CQL] (camel-cassandraql) | 2.15 | The cql component aims at integrating Cassandra 2.0 using the CQL3 API (not the Thrift API). It's based on Cassandra Java Driver provided by DataStax.
+
 | xref:chatscript-component.adoc[ChatScript] (camel-chatscript) | 3.0 | Represents a ChatScript endpoint.
 
 | xref:chunk-component.adoc[Chunk] (camel-chunk) | 2.15 | Transforms the message using a Chunk template.
 
 | xref:class-component.adoc[Class] (camel-bean) | 2.4 | The Class component is for invoking Java classes (Java beans) from Camel.
 
+| xref:cm-sms-component.adoc[CM SMS Gateway] (camel-cm-sms) | 2.18 | The cm-sms component allows to integrate with CM SMS Gateway.
+
+| xref:cmis-component.adoc[CMIS] (camel-cmis) | 2.11 | The cmis component uses the Apache Chemistry client API and allows you to add/read nodes to/from a CMIS compliant content repositories.
+
+| xref:coap-component.adoc[CoAP] (camel-coap) | 2.16 | The coap component is used for sending and receiving messages from COAP capable devices.
+
 | xref:cometd-component.adoc[CometD] (camel-cometd) | 2.0 | The cometd component is a transport for working with the Jetty implementation of the cometd/bayeux protocol.
+
+| xref:consul-component.adoc[Consul] (camel-consul) | 2.18 | The camel consul component allows you to work with Consul, a distributed, highly available, datacenter-aware, service discovery and configuration system.
 
 | xref:controlbus-component.adoc[Control Bus] (camel-controlbus) | 2.11 | The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.
 
@@ -142,6 +176,8 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 
 | xref:drill-component.adoc[Drill] (camel-drill) | 2.19 | The drill component gives you the ability to quering into apache drill cluster.
 
+| xref:dropbox-component.adoc[Dropbox] (camel-dropbox) | 2.14 | For uploading, downloading and managing files, folders, groups, collaborations, etc on dropbox DOT com.
+
 | xref:ehcache-component.adoc[Ehcache] (camel-ehcache) | 2.18 | The ehcache component enables you to perform caching operations using Ehcache as cache implementation.
 
 | xref:elasticsearch-rest-component.adoc[Elastichsearch Rest] (camel-elasticsearch-rest) | 2.21 | The elasticsearch component is used for interfacing with ElasticSearch server using REST API.
@@ -149,6 +185,10 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 | xref:elsql-component.adoc[ElSQL] (camel-elsql) | 2.16 | The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.
 
 | xref:elytron-component.adoc[Elytron] (camel-elytron) | 3.1 | Endpoint
+
+| xref:etcd-component.adoc[Etcd] (camel-etcd) | 2.18 | The camel etcd component allows you to work with Etcd, a distributed reliable key-value store.
+
+| xref:exec-component.adoc[Exec] (camel-exec) | 2.3 | The exec component can be used to execute OS system commands.
 
 | xref:facebook-component.adoc[Facebook] (camel-facebook) | 2.14 | The Facebook component provides access to all of the Facebook APIs accessible using Facebook4J.
 
@@ -182,7 +222,23 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 
 | xref:google-bigquery-sql-component.adoc[Google BigQuery Standard SQL] (camel-google-bigquery) | 2.23 | Google BigQuery data warehouse for analytics (using SQL queries).
 
+| xref:google-calendar-component.adoc[Google Calendar] (camel-google-calendar) | 2.15 | The google-calendar component provides access to Google Calendar.
+
+| xref:google-calendar-stream-component.adoc[Google Calendar Stream] (camel-google-calendar) | 2.23 | The google-calendar component provides access to Google Calendar in a streaming mode.
+
 | xref:google-drive-component.adoc[Google Drive] (camel-google-drive) | 2.14 | The google-drive component provides access to Google Drive file storage service.
+
+| xref:google-mail-component.adoc[Google Mail] (camel-google-mail) | 2.15 | The google-mail component provides access to Google Mail.
+
+| xref:google-mail-stream-component.adoc[Google Mail Stream] (camel-google-mail) | 2.22 | The google-mail component provides access to Google Mail.
+
+| xref:google-pubsub-component.adoc[Google Pubsub] (camel-google-pubsub) | 2.19 | Messaging client for Google Cloud Platform PubSub Service
+
+| xref:google-sheets-component.adoc[Google Sheets] (camel-google-sheets) | 2.23 | The google-sheets component provides access to Google Sheets.
+
+| xref:google-sheets-stream-component.adoc[Google Sheets Stream] (camel-google-sheets) | 2.23 | The google-sheets component provides access to Google Sheets.
+
+| xref:gora-component.adoc[Gora] (camel-gora) | 2.14 | The gora component allows you to work with NoSQL databases using the Apache Gora framework.
 
 | xref:grape-component.adoc[Grape] (camel-grape) | 2.16 | The grape component allows you to fetch, load and manage additional jars when CamelContext is running.
 
@@ -191,6 +247,28 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 | xref:grpc-component.adoc[gRPC] (camel-grpc) | 2.19 | The gRPC component allows to call and expose remote procedures via HTTP/2 with protobuf dataformat
 
 | xref:guava-eventbus-component.adoc[Guava EventBus] (camel-guava-eventbus) | 2.10 | The guava-eventbus component provides integration bridge between Camel and Google Guava EventBus.
+
+| xref:hazelcast-atomicvalue-component.adoc[Hazelcast Atomic Number] (camel-hazelcast) | 2.7 | The hazelcast-atomicvalue component is used to access Hazelcast atomic number, which is an object that simply provides a grid wide number (long).
+
+| xref:hazelcast-instance-component.adoc[Hazelcast Instance] (camel-hazelcast) | 2.7 | The hazelcast-instance component is used to consume join/leave events of the cache instance in the cluster.
+
+| xref:hazelcast-list-component.adoc[Hazelcast List] (camel-hazelcast) | 2.7 | The hazelcast-list component is used to access Hazelcast distributed list.
+
+| xref:hazelcast-map-component.adoc[Hazelcast Map] (camel-hazelcast) | 2.7 | The hazelcast-map component is used to access Hazelcast distributed map.
+
+| xref:hazelcast-multimap-component.adoc[Hazelcast Multimap] (camel-hazelcast) | 2.7 | The hazelcast-multimap component is used to to access Hazelcast distributed multimap.
+
+| xref:hazelcast-queue-component.adoc[Hazelcast Queue] (camel-hazelcast) | 2.7 | The hazelcast-queue component is used to access Hazelcast distributed queue.
+
+| xref:hazelcast-replicatedmap-component.adoc[Hazelcast Replicated Map] (camel-hazelcast) | 2.16 | The hazelcast-replicatedmap component is used to access Hazelcast replicated map.
+
+| xref:hazelcast-ringbuffer-component.adoc[Hazelcast Ringbuffer] (camel-hazelcast) | 2.16 | The hazelcast-ringbuffer component is used to access Hazelcast distributed ringbuffer.
+
+| xref:hazelcast-seda-component.adoc[Hazelcast SEDA] (camel-hazelcast) | 2.7 | The hazelcast-seda component is used to access Hazelcast BlockingQueue.
+
+| xref:hazelcast-set-component.adoc[Hazelcast Set] (camel-hazelcast) | 2.7 | The hazelcast-set component is used to access Hazelcast distributed set.
+
+| xref:hazelcast-topic-component.adoc[Hazelcast Topic] (camel-hazelcast) | 2.15 | The hazelcast-topic component is used to access Hazelcast distributed topic.
 
 | xref:hbase-component.adoc[HBase] (camel-hbase) | 2.10 | For reading/writing from/to an HBase store (Hadoop database).
 
@@ -218,6 +296,8 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 
 | xref:ignite-set-component.adoc[Ignite Sets] (camel-ignite) | 2.17 | The Ignite Sets endpoint is one of camel-ignite endpoints which allows you to interact with Ignite Set data structures.
 
+| xref:infinispan-component.adoc[Infinispan] (camel-infinispan) | 2.13 | For reading/writing from/to Infinispan distributed key/value store and data grid.
+
 | xref:influxdb-component.adoc[InfluxDB] (camel-influxdb) | 2.18 | The influxdb component allows you to interact with InfluxDB, a time series database.
 
 | xref:iota-component.adoc[IOTA] (camel-iota) | 2.23 | Component for integrate IOTA DLT
@@ -234,7 +314,11 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 
 | xref:jcache-component.adoc[JCache] (camel-jcache) | 2.17 | The jcache component enables you to perform caching operations using JSR107/JCache as cache implementation.
 
+| xref:jclouds-component.adoc[JClouds] (camel-jclouds) | 2.9 | For interacting with cloud compute & blobstore service via jclouds.
+
 | xref:jcr-component.adoc[JCR] (camel-jcr) | 1.3 | The jcr component allows you to add/read nodes to/from a JCR compliant content repository.
+
+| xref:jdbc-component.adoc[JDBC] (camel-jdbc) | 1.2 | The jdbc component enables you to access databases through JDBC, where SQL queries are sent in the message body.
 
 | xref:jetty-component.adoc[Jetty] (camel-jetty) | 1.2 | To use Jetty as a HTTP server as consumer for Camel routes.
 
@@ -245,6 +329,8 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 | xref:jgroups-raft-component.adoc[JGroups raft] (camel-jgroups-raft) | 2.24 | The jgroups component provides exchange of messages between Camel and JGroups clusters.
 
 | xref:jing-component.adoc[Jing] (camel-jing) | 1.1 | Validates the payload of a message using RelaxNG Syntax using Jing library.
+
+| xref:jira-component.adoc[Jira] (camel-jira) | 3.0 | The jira component interacts with the JIRA issue tracker.
 
 | xref:jms-component.adoc[JMS] (camel-jms) | 1.0 | The jms component allows messages to be sent to (or consumed from) a JMS Queue or Topic.
 
@@ -259,6 +345,36 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 | xref:json-validator-component.adoc[JSON Schema Validator] (camel-json-validator) | 2.20 | Validates the payload of a message using NetworkNT JSON Schema library.
 
 | xref:jt400-component.adoc[JT400] (camel-jt400) | 1.5 | The jt400 component allows you to exchanges messages with an AS/400 system using data queues or program call.
+
+| xref:kafka-component.adoc[Kafka] (camel-kafka) | 2.13 | The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.
+
+| xref:kubernetes-config-maps-component.adoc[Kubernetes ConfigMap] (camel-kubernetes) | 2.17 | The Kubernetes Configmaps component provides a producer to execute kubernetes configmap operations.
+
+| xref:kubernetes-deployments-component.adoc[Kubernetes Deployments] (camel-kubernetes) | 2.20 | The Kubernetes Nodes component provides a producer to execute kubernetes node operations and a consumer to consume node events.
+
+| xref:kubernetes-hpa-component.adoc[Kubernetes HPA] (camel-kubernetes) | 2.23 | The Kubernetes HPA component provides a producer to execute kubernetes hpa operations and a consumer to consume HPA events.
+
+| xref:kubernetes-job-component.adoc[Kubernetes Job] (camel-kubernetes) | 2.23 | The Kubernetes Jobs component provides a producer to execute kubernetes job operations
+
+| xref:kubernetes-namespaces-component.adoc[Kubernetes Namespaces] (camel-kubernetes) | 2.17 | The Kubernetes Namespaces component provides a producer to execute kubernetes namespace operations and a consumer to consume namespace events.
+
+| xref:kubernetes-nodes-component.adoc[Kubernetes Nodes] (camel-kubernetes) | 2.17 | The Kubernetes Nodes component provides a producer to execute kubernetes node operations and a consumer to consume node events.
+
+| xref:kubernetes-persistent-volumes-component.adoc[Kubernetes Persistent Volume] (camel-kubernetes) | 2.17 | The Kubernetes Persistent Volumes component provides a producer to execute kubernetes persistent volume operations.
+
+| xref:kubernetes-persistent-volumes-claims-component.adoc[Kubernetes Persistent Volume Claim] (camel-kubernetes) | 2.17 | The Kubernetes Persistent Volumes Claims component provides a producer to execute kubernetes persistent volume claim operations.
+
+| xref:kubernetes-pods-component.adoc[Kubernetes Pods] (camel-kubernetes) | 2.17 | The Kubernetes Pods component provides a producer to execute kubernetes pod operations and a consumer to consume pod events.
+
+| xref:kubernetes-replication-controllers-component.adoc[Kubernetes Replication Controller] (camel-kubernetes) | 2.17 | The Kubernetes Replication Controllers component provides a producer to execute kubernetes replication controller operations and a consumer to consume replication controller events.
+
+| xref:kubernetes-resources-quota-component.adoc[Kubernetes Resources Quota] (camel-kubernetes) | 2.17 | The Kubernetes Resources Quota component provides a producer to execute kubernetes resources quota operations.
+
+| xref:kubernetes-secrets-component.adoc[Kubernetes Secrets] (camel-kubernetes) | 2.17 | The Kubernetes Secrets component provides a producer to execute kubernetes secret operations.
+
+| xref:kubernetes-service-accounts-component.adoc[Kubernetes Service Account] (camel-kubernetes) | 2.17 | The Kubernetes Service Accounts component provides a producer to execute service account operations.
+
+| xref:kubernetes-services-component.adoc[Kubernetes Services] (camel-kubernetes) | 2.17 | The Kubernetes Services component provides a producer to execute service operations and a consumer to consume service events.
 
 | xref:kudu-component.adoc[Kudu] (camel-kudu) | 3.0 | Represents a Kudu endpoint. A kudu endpoint allows you to interact with Apache Kudu, a free and open source column-oriented data store of the Apache Hadoop ecosystem.
 
@@ -306,7 +422,11 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 
 | xref:nagios-component.adoc[Nagios] (camel-nagios) | 2.3 | To send passive checks to Nagios using JSendNSCA.
 
+| xref:nats-component.adoc[Nats] (camel-nats) | 2.17 | The nats component allows you produce and consume messages from NATS.
+
 | xref:netty-component.adoc[Netty] (camel-netty) | 2.14 | Socket level networking using TCP or UDP with the Netty 4.x library.
+
+| xref:netty-http-component.adoc[Netty HTTP] (camel-netty-http) | 2.14 | Netty HTTP server and client using the Netty 4.x library.
 
 | xref:nitrite-component.adoc[Nitrite] (camel-nitrite) | 3.0 | Used for integrating Camel with Nitrite databases.
 
@@ -315,6 +435,14 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 | xref:olingo2-component.adoc[Olingo2] (camel-olingo2) | 2.14 | Communicates with OData 2.0 services using Apache Olingo.
 
 | xref:olingo4-component.adoc[Olingo4] (camel-olingo4) | 2.19 | Communicates with OData 4.0 services using Apache Olingo OData API.
+
+| xref:milo-client-component.adoc[OPC UA Client] (camel-milo) | 2.19 | Connect to OPC UA servers using the binary protocol for acquiring telemetry data
+
+| xref:milo-server-component.adoc[OPC UA Server] (camel-milo) | 2.19 | Make telemetry data available as an OPC UA server
+
+| xref:openshift-build-configs-component.adoc[Openshift Build Config] (camel-kubernetes) | 2.17 | The Kubernetes Build Config component provides a producer to execute kubernetes build config operations.
+
+| xref:openshift-builds-component.adoc[Openshift Builds] (camel-kubernetes) | 2.17 | The Openshift Builds component provides a producer to execute openshift build operations.
 
 | xref:openstack-cinder-component.adoc[OpenStack Cinder] (camel-openstack) | 2.19 | The openstack-cinder component allows messages to be sent to an OpenStack block storage services.
 
@@ -328,9 +456,13 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 
 | xref:openstack-swift-component.adoc[OpenStack Swift] (camel-openstack) | 2.19 | The openstack-swift component allows messages to be sent to an OpenStack object storage services.
 
+| xref:optaplanner-component.adoc[OptaPlanner] (camel-optaplanner) | 2.13 | Solves the planning problem contained in a message with OptaPlanner.
+
 | xref:eventadmin-component.adoc[OSGi EventAdmin] (camel-eventadmin) | 2.6 | The eventadmin component can be used in an OSGi environment to receive OSGi EventAdmin events and process them.
 
 | xref:paxlogging-component.adoc[OSGi PAX Logging] (camel-paxlogging) | 2.6 | The paxlogging component can be used in an OSGi environment to receive PaxLogging events and process them.
+
+| xref:paho-component.adoc[Paho] (camel-paho) | 2.16 | Component for communicating with MQTT message brokers using Eclipse Paho MQTT Client.
 
 | xref:pdf-component.adoc[PDF] (camel-pdf) | 2.16 | The pdf components provides the ability to create, modify or extract content from PDF documents.
 
@@ -343,6 +475,8 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 | xref:lpr-component.adoc[Printer] (camel-printer) | 2.1 | The printer component is used for sending messages to printers as print jobs.
 
 | xref:pubnub-component.adoc[PubNub] (camel-pubnub) | 2.19 | To send and receive messages to PubNub data stream network for connected devices.
+
+| xref:pulsar-component.adoc[Pulsar] (camel-pulsar) | 2.24 | Camel Apache Pulsar Component
 
 | xref:quartz-component.adoc[Quartz] (camel-quartz) | 2.12 | Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
 
@@ -382,6 +516,8 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 
 | xref:service-component.adoc[Service] (camel-service) | 2.22 | Represents an endpoint which is registered to a Service Registry such as Consul, Etcd.
 
+| xref:servicenow-component.adoc[ServiceNow] (camel-servicenow) | 2.18 | The servicenow component is used to integrate Camel with ServiceNow cloud services.
+
 | xref:servlet-component.adoc[Servlet] (camel-servlet) | 2.0 | To use a HTTP Servlet as entry for Camel routes when running in a servlet container.
 
 | xref:sftp-component.adoc[SFTP] (camel-ftp) | 1.1 | The \sftp (FTP over SSH) component is used for uploading or downloading files from SFTP servers.
@@ -394,6 +530,10 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 
 | xref:sip-component.adoc[SIP] (camel-sip) | 2.5 | To send and receive messages using the SIP protocol (used in telco and mobile).
 
+| xref:slack-component.adoc[Slack] (camel-slack) | 2.16 | The slack component allows you to send messages to Slack.
+
+| xref:smpp-component.adoc[SMPP] (camel-smpp) | 2.2 | To send and receive SMS using a SMSC (Short Message Service Center).
+
 | xref:snmp-component.adoc[SNMP] (camel-snmp) | 2.1 | The snmp component gives you the ability to poll SNMP capable devices or receiving traps.
 
 | xref:solr-component.adoc[Solr] (camel-solr) | 2.9 | The solr component allows you to interface with an Apache Lucene Solr server.
@@ -401,6 +541,10 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 | xref:soroush-component.adoc[Soroush] (camel-soroush) | 3.0 | To integrate with the Soroush chat bot.
 
 | xref:spark-component.adoc[Spark] (camel-spark) | 2.17 | The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
+
+| xref:spark-rest-component.adoc[Spark Rest] (camel-spark-rest) | 2.14 | The spark-rest component is used for hosting REST services which has been defined using Camel rest-dsl.
+
+| xref:splunk-component.adoc[Splunk] (camel-splunk) | 2.13 | The splunk component allows to publish or search for events in Splunk.
 
 | xref:spring-batch-component.adoc[Spring Batch] (camel-spring-batch) | 2.10 | The spring-batch component allows to send messages to Spring Batch for further processing.
 
@@ -410,7 +554,13 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 
 | xref:spring-ldap-component.adoc[Spring LDAP] (camel-spring-ldap) | 2.11 | The spring-ldap component allows you to perform searches in LDAP servers using filters as the message payload.
 
+| xref:spring-redis-component.adoc[Spring Redis] (camel-spring-redis) | 2.11 | The spring-redis component allows sending and receiving messages from Redis.
+
 | xref:spring-ws-component.adoc[Spring WebService] (camel-spring-ws) | 2.6 | The spring-ws component is used for SOAP WebServices using Spring WebServices.
+
+| xref:sql-component.adoc[SQL] (camel-sql) | 1.4 | The sql component allows you to work with databases using JDBC SQL queries.
+
+| xref:sql-stored-component.adoc[SQL Stored Procedure] (camel-sql) | 2.17 | The sql component allows you to work with databases using JDBC Stored Procedure queries.
 
 | xref:ssh-component.adoc[SSH] (camel-ssh) | 2.10 | The ssh component enables access to SSH servers such that you can send an SSH command, and process the response.
 
@@ -486,7 +636,7 @@ Number of Components: 234 in 203 JAR artifacts (1 deprecated)
 == Data Formats
 
 // dataformats: START
-Number of Data Formats: 44 in 36 JAR artifacts (0 deprecated)
+Number of Data Formats: 45 in 37 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -495,6 +645,8 @@ Number of Data Formats: 44 in 36 JAR artifacts (0 deprecated)
 | xref:any23-dataformat.adoc[Any23] (camel-any23) | 3.0 | Any23 data format is used for parsing data to RDF.
 
 | xref:asn1-dataformat.adoc[ASN.1 File] (camel-asn1) | 2.20 | The ASN.1 data format is used for file transfer with telecommunications protocols.
+
+| xref:avro-dataformat.adoc[Avro] (camel-avro) | 2.14 | The Avro data format is used for serialization and deserialization of messages using Apache Avro binary dataformat.
 
 | xref:barcode-dataformat.adoc[Barcode] (camel-barcode) | 2.14 | The Barcode data format is used for creating barccode images (such as QR-Code)
 
