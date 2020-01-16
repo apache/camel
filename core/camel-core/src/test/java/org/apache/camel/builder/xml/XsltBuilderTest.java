@@ -26,6 +26,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.sax.SAXSource;
 
+import org.apache.camel.ExtendedExchange;
 import org.w3c.dom.Document;
 
 import org.xml.sax.InputSource;
@@ -257,7 +258,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         assertTrue(body.endsWith("<goodbye>world!</goodbye>"));
 
         // now done the exchange
-        List<Synchronization> onCompletions = exchange.handoverCompletions();
+        List<Synchronization> onCompletions = exchange.adapt(ExtendedExchange.class).handoverCompletions();
         UnitOfWorkHelper.doneSynchronizations(exchange, onCompletions, log);
 
         // the file should be deleted

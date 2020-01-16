@@ -35,6 +35,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NoSuchBeanException;
@@ -254,7 +255,7 @@ public final class ExchangeHelper {
             copy.getIn().setMessageId(null);
         }
         // do not share the unit of work
-        copy.setUnitOfWork(null);
+        copy.adapt(ExtendedExchange.class).setUnitOfWork(null);
         // do not reuse the message id
         // hand over on completion to the copy if we got any
         UnitOfWork uow = exchange.getUnitOfWork();
@@ -814,7 +815,7 @@ public final class ExchangeHelper {
         }
         if (handover) {
             // Need to hand over the completion for async invocation
-            exchange.handoverCompletions(answer);
+            exchange.adapt(ExtendedExchange.class).handoverCompletions(answer);
         }
         answer.setIn(exchange.getIn().copy());
         if (exchange.hasOut()) {

@@ -17,7 +17,6 @@
 package org.apache.camel.support;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -539,7 +538,7 @@ public final class DefaultExchange implements ExtendedExchange {
     public void handoverCompletions(Exchange target) {
         if (onCompletions != null) {
             for (Synchronization onCompletion : onCompletions) {
-                target.addOnCompletion(onCompletion);
+                target.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
             }
             // cleanup the temporary on completion list as they have been handed over
             onCompletions.clear();

@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Route;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationRouteAware;
@@ -64,7 +65,7 @@ public final class UnitOfWorkHelper {
         }
 
         // remove uow from exchange as its done
-        exchange.setUnitOfWork(null);
+        exchange.adapt(ExtendedExchange.class).setUnitOfWork(null);
     }
 
     public static void doneSynchronizations(Exchange exchange, List<Synchronization> synchronizations, Logger log) {

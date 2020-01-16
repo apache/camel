@@ -27,6 +27,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.impl.engine.DefaultProducerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
@@ -326,7 +327,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         if (isShareUnitOfWork()) {
             target.setProperty(Exchange.PARENT_UNIT_OF_WORK, source.getUnitOfWork());
             // and then share the unit of work
-            target.setUnitOfWork(source.getUnitOfWork());
+            target.adapt(ExtendedExchange.class).setUnitOfWork(source.getUnitOfWork());
         }
         return target;
     }

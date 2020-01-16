@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.CamelContextHelper;
@@ -224,7 +225,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
             }
             if (exchange.getUnitOfWork() == null) {
                 // handover completions and done them manually to ensure they are being executed
-                List<Synchronization> synchronizations = exchange.handoverCompletions();
+                List<Synchronization> synchronizations = exchange.adapt(ExtendedExchange.class).handoverCompletions();
                 UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations, log);
             } else {
                 // done the unit of work

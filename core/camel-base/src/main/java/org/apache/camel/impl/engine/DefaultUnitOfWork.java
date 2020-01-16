@@ -28,6 +28,7 @@ import java.util.function.Predicate;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -185,7 +186,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
             if (handover && (filter == null || filter.test(synchronization))) {
                 log.trace("Handover synchronization {} to: {}", synchronization, target);
-                target.addOnCompletion(synchronization);
+                target.adapt(ExtendedExchange.class).addOnCompletion(synchronization);
                 // remove it if its handed over
                 it.remove();
             } else {
