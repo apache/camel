@@ -231,7 +231,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     }
 
     private String truncateTypeNamespace(String baseType) {
-        return baseType.replaceAll("tns:", "");
+        return baseType.replace("tns:", "");
     }
 
     private void saveToFile(Document document, File outputFile, Transformer transformer) throws FileNotFoundException, TransformerException {

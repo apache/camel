@@ -591,7 +591,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                 throw new IllegalArgumentException("Missing APEX URL template header " + parameterName);
             }
             try {
-                result.append(URLEncoder.encode(String.valueOf(value), "UTF-8").replaceAll("\\+", "%20"));
+                result.append(URLEncoder.encode(String.valueOf(value), "UTF-8").replace("+", "%20"));
             } catch (UnsupportedEncodingException e) {
                 throw new SalesforceException("Unexpected error: " + e.getMessage(), e);
             }

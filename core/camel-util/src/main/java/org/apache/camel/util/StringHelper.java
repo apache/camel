@@ -61,8 +61,8 @@ public final class StringHelper {
      */
     public static String removeCRLF(String s) {
         return s
-            .replaceAll("\r", "")
-            .replaceAll("\n", "");
+            .replace("\r", "")
+            .replace("\n", "");
     }
 
     /**
