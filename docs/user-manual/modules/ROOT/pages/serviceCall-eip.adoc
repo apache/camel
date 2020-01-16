@@ -131,7 +131,10 @@ This service discovery implementation does not query any external services to fi
 The ``service`` part is used to discriminate against the services but if not provided it acts like a wildcard so each non named service will be returned whatever the service name is. This is useful if you have a single service so the service name is redundant.
 ====
 
-NOTE: this implementation is provided by ``camel-core`` artifact.
+[NOTE]
+====
+This implementation is provided by ``camel-core`` artifact.
+====
 
 Available options:
 
@@ -385,7 +388,9 @@ Each service should be provided in the following form:
 ----
 
 [NOTE]
+====
 The services are removed if they fully match
+====
 
 Available options:
 
