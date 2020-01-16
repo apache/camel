@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Helper for easily sending event notifications in a single line of code
- *
  */
 public final class EventHelper {
 
