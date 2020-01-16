@@ -557,6 +557,7 @@
     <bundle dependency='true'>wrap:mvn:software.amazon.awssdk/apache-client/${aws-java-sdk2-version}</bundle>
     <bundle dependency='true'>wrap:mvn:software.amazon.awssdk/http-client-spi/${aws-java-sdk2-version}</bundle>
     <bundle dependency='true'>wrap:mvn:software.amazon.awssdk/regions/${aws-java-sdk2-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:software.amazon.awssdk/utils/${aws-java-sdk2-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-aws2-translate/${project.version}</bundle>
   </feature>
   <feature name='camel-aws-xray' version='${project.version}' start-level='50'>
