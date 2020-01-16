@@ -23,7 +23,7 @@ import org.apache.camel.EndpointConsumerResolver;
  *
  * @see EndpointProducerBuilder
  */
-public interface EndpointConsumerBuilder extends EndpointConsumerResolver{
+public interface EndpointConsumerBuilder extends EndpointConsumerResolver {
     /**
      * Builds the url of this endpoint. This API is only intended for Camel
      * internally.
