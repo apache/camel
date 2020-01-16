@@ -54,14 +54,8 @@ public class ModelParserTest {
 
     @Test
     public void testSimpleString() throws Exception {
-        RoutesDefinition routes = new ModelParser(new StringReader(
-                "<routes>"
-                    + "  <route id='foo'>"
-                    + "    <from uri='my:bar'/>"
-                    + "    <to uri='mock:res'/>"
-                    + "  </route>"
-                    + "</routes>"
-        )).parseRoutesDefinition();
+        RoutesDefinition routes = new ModelParser(new StringReader("<routes>" + "  <route id='foo'>" + "    <from uri='my:bar'/>" + "    <to uri='mock:res'/>" + "  </route>"
+                                                                   + "</routes>")).parseRoutesDefinition();
         assertNotNull(routes);
     }
 
