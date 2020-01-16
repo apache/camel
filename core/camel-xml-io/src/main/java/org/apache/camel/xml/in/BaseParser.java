@@ -146,7 +146,7 @@ public class BaseParser {
         existing.add(element);
     }
 
-    protected <V, B> B unmarshal(XmlAdapter<V,B> adapter, V value) throws XmlPullParserException {
+    protected <V, B> B unmarshal(XmlAdapter<V, B> adapter, V value) throws XmlPullParserException {
         try {
             return adapter.unmarshal(value);
         } catch (Exception e) {
@@ -192,13 +192,13 @@ public class BaseParser {
 
     protected void expectTag(String name) throws XmlPullParserException, IOException {
         if (parser.nextTag() != XmlPullParser.START_TAG) {
-            throw new XmlPullParserException("Expected starting tag '{" + namespace + "}" + name + "', read ending tag '{" +
-                    parser.getNamespace() + "}" + parser.getName() + "' instead");
+            throw new XmlPullParserException("Expected starting tag '{" + namespace + "}" + name + "', read ending tag '{"
+                    + parser.getNamespace() + "}" + parser.getName() + "' instead");
         }
         if (!Objects.equals(name, parser.getName())
                 || !Objects.equals(namespace, parser.getNamespace())) {
-            throw new XmlPullParserException("Expected starting tag '{" + namespace + "}" + name + "', read starting tag '{" +
-                    parser.getNamespace() + "}" + parser.getName() + "' instead");
+            throw new XmlPullParserException("Expected starting tag '{" + namespace + "}" + name + "', read starting tag '{"
+                    + parser.getNamespace() + "}" + parser.getName() + "' instead");
         }
     }
 
