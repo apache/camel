@@ -16,7 +16,6 @@
  */
 package org.apache.camel.tooling.util;
 
-import org.apache.camel.tooling.util.JSonSchemaHelper;
 import org.junit.Assert;
 import org.junit.Test;
 

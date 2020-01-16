@@ -19,7 +19,6 @@ package org.apache.camel.tooling.util;
 import java.io.File;
 import java.util.Map;
 
-import org.apache.camel.tooling.util.PackageHelper;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
