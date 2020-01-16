@@ -768,6 +768,26 @@ public interface LogEndpointBuilderFactory {
         Tab,
         Fixed;
     }
+
+    public interface LogBuilders {
+        /**
+         * Log (camel-log)
+         * The log component logs message exchanges to the underlying logging
+         * mechanism.
+         * 
+         * Category: core,monitoring
+         * Since: 1.1
+         * Maven coordinates: org.apache.camel:camel-log
+         * 
+         * Syntax: <code>log:loggerName</code>
+         * 
+         * Path parameter: loggerName (required)
+         * The logger name to use
+         */
+        default LogEndpointBuilder log(String path) {
+            return LogEndpointBuilderFactory.log(path);
+        }
+    }
     /**
      * Log (camel-log)
      * The log component logs message exchanges to the underlying logging

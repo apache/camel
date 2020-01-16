@@ -830,7 +830,8 @@ public interface JooqEndpointBuilderFactory {
      */
     public interface JooqEndpointBuilder
             extends
-                JooqEndpointConsumerBuilder, JooqEndpointProducerBuilder {
+                JooqEndpointConsumerBuilder,
+                JooqEndpointProducerBuilder {
         default AdvancedJooqEndpointBuilder advanced() {
             return (AdvancedJooqEndpointBuilder) this;
         }
@@ -841,7 +842,8 @@ public interface JooqEndpointBuilderFactory {
      */
     public interface AdvancedJooqEndpointBuilder
             extends
-                AdvancedJooqEndpointConsumerBuilder, AdvancedJooqEndpointProducerBuilder {
+                AdvancedJooqEndpointConsumerBuilder,
+                AdvancedJooqEndpointProducerBuilder {
         default JooqEndpointBuilder basic() {
             return (JooqEndpointBuilder) this;
         }
@@ -909,6 +911,26 @@ public interface JooqEndpointBuilderFactory {
         EXECUTE,
         FETCH,
         NONE;
+    }
+
+    public interface JooqBuilders {
+        /**
+         * JOOQ (camel-jooq)
+         * The jooq component enables you to store and retrieve entities from
+         * databases using JOOQ
+         * 
+         * Category: database
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-jooq
+         * 
+         * Syntax: <code>jooq:entityType</code>
+         * 
+         * Path parameter: entityType
+         * JOOQ entity class
+         */
+        default JooqEndpointBuilder jooq(String path) {
+            return JooqEndpointBuilderFactory.jooq(path);
+        }
     }
     /**
      * JOOQ (camel-jooq)

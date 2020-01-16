@@ -211,6 +211,25 @@ public interface CronEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface CronBuilders {
+        /**
+         * Cron (camel-cron)
+         * Camel Cron Component
+         * 
+         * Category: scheduling
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-cron
+         * 
+         * Syntax: <code>cron:name</code>
+         * 
+         * Path parameter: name (required)
+         * The name of the cron trigger
+         */
+        default CronEndpointBuilder cron(String path) {
+            return CronEndpointBuilderFactory.cron(path);
+        }
+    }
     /**
      * Cron (camel-cron)
      * Camel Cron Component

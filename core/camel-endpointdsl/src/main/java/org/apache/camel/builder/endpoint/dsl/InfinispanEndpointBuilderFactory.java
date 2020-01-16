@@ -933,7 +933,8 @@ public interface InfinispanEndpointBuilderFactory {
      */
     public interface InfinispanEndpointBuilder
             extends
-                InfinispanEndpointConsumerBuilder, InfinispanEndpointProducerBuilder {
+                InfinispanEndpointConsumerBuilder,
+                InfinispanEndpointProducerBuilder {
         default AdvancedInfinispanEndpointBuilder advanced() {
             return (AdvancedInfinispanEndpointBuilder) this;
         }
@@ -979,7 +980,8 @@ public interface InfinispanEndpointBuilderFactory {
      */
     public interface AdvancedInfinispanEndpointBuilder
             extends
-                AdvancedInfinispanEndpointConsumerBuilder, AdvancedInfinispanEndpointProducerBuilder {
+                AdvancedInfinispanEndpointConsumerBuilder,
+                AdvancedInfinispanEndpointProducerBuilder {
         default InfinispanEndpointBuilder basic() {
             return (InfinispanEndpointBuilder) this;
         }
@@ -1286,6 +1288,26 @@ public interface InfinispanEndpointBuilderFactory {
         ROLLING_UPGRADE,
         REMOTE_ITERATION,
         SKIP_SIZE_OPTIMIZATION;
+    }
+
+    public interface InfinispanBuilders {
+        /**
+         * Infinispan (camel-infinispan)
+         * For reading/writing from/to Infinispan distributed key/value store
+         * and data grid.
+         * 
+         * Category: cache,datagrid,clustering
+         * Since: 2.13
+         * Maven coordinates: org.apache.camel:camel-infinispan
+         * 
+         * Syntax: <code>infinispan:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The cache to use
+         */
+        default InfinispanEndpointBuilder infinispan(String path) {
+            return InfinispanEndpointBuilderFactory.infinispan(path);
+        }
     }
     /**
      * Infinispan (camel-infinispan)

@@ -521,7 +521,8 @@ public interface GitEndpointBuilderFactory {
      */
     public interface GitEndpointBuilder
             extends
-                GitEndpointConsumerBuilder, GitEndpointProducerBuilder {
+                GitEndpointConsumerBuilder,
+                GitEndpointProducerBuilder {
         default AdvancedGitEndpointBuilder advanced() {
             return (AdvancedGitEndpointBuilder) this;
         }
@@ -598,7 +599,8 @@ public interface GitEndpointBuilderFactory {
      */
     public interface AdvancedGitEndpointBuilder
             extends
-                AdvancedGitEndpointConsumerBuilder, AdvancedGitEndpointProducerBuilder {
+                AdvancedGitEndpointConsumerBuilder,
+                AdvancedGitEndpointProducerBuilder {
         default GitEndpointBuilder basic() {
             return (GitEndpointBuilder) this;
         }
@@ -666,6 +668,25 @@ public interface GitEndpointBuilderFactory {
         COMMIT,
         TAG,
         BRANCH;
+    }
+
+    public interface GitBuilders {
+        /**
+         * Git (camel-git)
+         * The git component is used for working with git repositories.
+         * 
+         * Category: file
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-git
+         * 
+         * Syntax: <code>git:localPath</code>
+         * 
+         * Path parameter: localPath (required)
+         * Local repository path
+         */
+        default GitEndpointBuilder git(String path) {
+            return GitEndpointBuilderFactory.git(path);
+        }
     }
     /**
      * Git (camel-git)

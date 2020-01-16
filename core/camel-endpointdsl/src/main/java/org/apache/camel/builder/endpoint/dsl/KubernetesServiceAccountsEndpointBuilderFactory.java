@@ -422,6 +422,27 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface KubernetesServiceAccountsBuilders {
+        /**
+         * Kubernetes Service Account (camel-kubernetes)
+         * The Kubernetes Service Accounts component provides a producer to
+         * execute service account operations.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-service-accounts:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         */
+        default KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
+                String path) {
+            return KubernetesServiceAccountsEndpointBuilderFactory.kubernetesServiceAccounts(path);
+        }
+    }
     /**
      * Kubernetes Service Account (camel-kubernetes)
      * The Kubernetes Service Accounts component provides a producer to execute

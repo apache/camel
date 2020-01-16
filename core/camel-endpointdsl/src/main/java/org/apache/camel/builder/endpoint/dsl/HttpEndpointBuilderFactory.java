@@ -1321,6 +1321,55 @@ public interface HttpEndpointBuilderFactory {
         TRACE,
         PATCH;
     }
+
+    public interface HttpBuilders {
+        /**
+         * HTTP (camel-http)
+         * For calling out to external HTTP servers using Apache HTTP Client
+         * 4.x.
+         * 
+         * Category: http
+         * Since: 2.3
+         * Maven coordinates: org.apache.camel:camel-http
+         * 
+         * Syntax: <code>http:httpUri</code>
+         * 
+         * Path parameter: httpUri (required)
+         * The url of the HTTP endpoint to call.
+         */
+        default HttpEndpointBuilder http(String path) {
+            return HttpEndpointBuilderFactory.http(path);
+        }
+        /**
+         * HTTPS (Secure) (camel-http)
+         * For calling out to external HTTP servers using Apache HTTP Client
+         * 4.x.
+         * 
+         * Category: http
+         * Since: 2.3
+         * Maven coordinates: org.apache.camel:camel-http
+         * 
+         * Syntax: <code>https:httpUri</code>
+         * 
+         * Path parameter: httpUri (required)
+         * The url of the HTTP endpoint to call.
+         */
+        default HttpEndpointBuilder https(String path) {
+            return HttpEndpointBuilderFactory.https(path);
+        }
+        /**
+         * HTTP (camel-http)
+         * For calling out to external HTTP servers using Apache HTTP Client
+         * 4.x.
+         * 
+         * Category: http
+         * Since: 2.3
+         * Maven coordinates: org.apache.camel:camel-http
+         */
+        default HttpEndpointBuilder http(String scheme, String path) {
+            return HttpEndpointBuilderFactory.http(scheme,path);
+        }
+    }
     /**
      * HTTP (camel-http)
      * For calling out to external HTTP servers using Apache HTTP Client 4.x.

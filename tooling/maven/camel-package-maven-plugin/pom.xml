@@ -165,12 +165,6 @@
             <version>7.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.github.javaparser</groupId>
-            <artifactId>javaparser-core</artifactId>
-            <version>3.15.9</version>
-        </dependency>
-
         <!-- logging -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>

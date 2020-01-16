@@ -204,6 +204,30 @@ public interface MustacheEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface MustacheBuilders {
+        /**
+         * Mustache (camel-mustache)
+         * Transforms the message using a Mustache template.
+         * 
+         * Category: transformation
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-mustache
+         * 
+         * Syntax: <code>mustache:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * Path to the resource. You can prefix with: classpath, file, http,
+         * ref, or bean. classpath, file and http loads the resource using these
+         * protocols (classpath is default). ref will lookup the resource in the
+         * registry. bean will call a method on a bean to be used as the
+         * resource. For bean you can specify the method name after dot, eg
+         * bean:myBean.myMethod.
+         */
+        default MustacheEndpointBuilder mustache(String path) {
+            return MustacheEndpointBuilderFactory.mustache(path);
+        }
+    }
     /**
      * Mustache (camel-mustache)
      * Transforms the message using a Mustache template.

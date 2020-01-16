@@ -1369,7 +1369,8 @@ public interface XQueryEndpointBuilderFactory {
      */
     public interface XQueryEndpointBuilder
             extends
-                XQueryEndpointConsumerBuilder, XQueryEndpointProducerBuilder {
+                XQueryEndpointConsumerBuilder,
+                XQueryEndpointProducerBuilder {
         default AdvancedXQueryEndpointBuilder advanced() {
             return (AdvancedXQueryEndpointBuilder) this;
         }
@@ -1520,7 +1521,8 @@ public interface XQueryEndpointBuilderFactory {
      */
     public interface AdvancedXQueryEndpointBuilder
             extends
-                AdvancedXQueryEndpointConsumerBuilder, AdvancedXQueryEndpointProducerBuilder {
+                AdvancedXQueryEndpointConsumerBuilder,
+                AdvancedXQueryEndpointProducerBuilder {
         default XQueryEndpointBuilder basic() {
             return (XQueryEndpointBuilder) this;
         }
@@ -1743,6 +1745,25 @@ public interface XQueryEndpointBuilderFactory {
         List,
         String,
         StringSource;
+    }
+
+    public interface XQueryBuilders {
+        /**
+         * XQuery (camel-saxon)
+         * Transforms the message using a XQuery template using Saxon.
+         * 
+         * Category: transformation
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-saxon
+         * 
+         * Syntax: <code>xquery:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * The name of the template to load from classpath or file system
+         */
+        default XQueryEndpointBuilder xquery(String path) {
+            return XQueryEndpointBuilderFactory.xquery(path);
+        }
     }
     /**
      * XQuery (camel-saxon)

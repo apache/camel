@@ -229,6 +229,27 @@ public interface DrillEndpointBuilderFactory {
         ZK,
         DRILLBIT;
     }
+
+    public interface DrillBuilders {
+        /**
+         * Drill (camel-drill)
+         * The drill component gives you the ability to quering into apache
+         * drill cluster.
+         * 
+         * Category: database,sql
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-drill
+         * 
+         * Syntax: <code>drill:host</code>
+         * 
+         * Path parameter: host (required)
+         * ZooKeeper host name or IP address. Use local instead of a host name
+         * or IP address to connect to the local Drillbit
+         */
+        default DrillEndpointBuilder drill(String path) {
+            return DrillEndpointBuilderFactory.drill(path);
+        }
+    }
     /**
      * Drill (camel-drill)
      * The drill component gives you the ability to quering into apache drill

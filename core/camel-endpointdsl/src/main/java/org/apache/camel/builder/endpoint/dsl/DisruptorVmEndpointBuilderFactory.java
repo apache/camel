@@ -624,7 +624,8 @@ public interface DisruptorVmEndpointBuilderFactory {
      */
     public interface DisruptorVmEndpointBuilder
             extends
-                DisruptorVmEndpointConsumerBuilder, DisruptorVmEndpointProducerBuilder {
+                DisruptorVmEndpointConsumerBuilder,
+                DisruptorVmEndpointProducerBuilder {
         default AdvancedDisruptorVmEndpointBuilder advanced() {
             return (AdvancedDisruptorVmEndpointBuilder) this;
         }
@@ -669,7 +670,8 @@ public interface DisruptorVmEndpointBuilderFactory {
      */
     public interface AdvancedDisruptorVmEndpointBuilder
             extends
-                AdvancedDisruptorVmEndpointConsumerBuilder, AdvancedDisruptorVmEndpointProducerBuilder {
+                AdvancedDisruptorVmEndpointConsumerBuilder,
+                AdvancedDisruptorVmEndpointProducerBuilder {
         default DisruptorVmEndpointBuilder basic() {
             return (DisruptorVmEndpointBuilder) this;
         }
@@ -751,6 +753,26 @@ public interface DisruptorVmEndpointBuilderFactory {
     enum DisruptorProducerType {
         Single,
         Multi;
+    }
+
+    public interface DisruptorVmBuilders {
+        /**
+         * Disruptor VM (camel-disruptor)
+         * The disruptor component provides asynchronous SEDA behavior using
+         * LMAX Disruptor.
+         * 
+         * Category: endpoint
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-disruptor
+         * 
+         * Syntax: <code>disruptor-vm:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name of queue
+         */
+        default DisruptorVmEndpointBuilder disruptorVm(String path) {
+            return DisruptorVmEndpointBuilderFactory.disruptorVm(path);
+        }
     }
     /**
      * Disruptor VM (camel-disruptor)

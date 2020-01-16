@@ -311,6 +311,25 @@ public interface MQEndpointBuilderFactory {
         http,
         https;
     }
+
+    public interface MQBuilders {
+        /**
+         * AWS MQ (camel-aws-mq)
+         * The aws-mq is used for managing Amazon MQ instances.
+         * 
+         * Category: cloud,management
+         * Since: 2.21
+         * Maven coordinates: org.apache.camel:camel-aws-mq
+         * 
+         * Syntax: <code>aws-mq:label</code>
+         * 
+         * Path parameter: label (required)
+         * Logical name
+         */
+        default MQEndpointBuilder awsMq(String path) {
+            return MQEndpointBuilderFactory.awsMq(path);
+        }
+    }
     /**
      * AWS MQ (camel-aws-mq)
      * The aws-mq is used for managing Amazon MQ instances.

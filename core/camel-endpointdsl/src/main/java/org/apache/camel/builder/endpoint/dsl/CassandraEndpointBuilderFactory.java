@@ -1139,7 +1139,8 @@ public interface CassandraEndpointBuilderFactory {
      */
     public interface CassandraEndpointBuilder
             extends
-                CassandraEndpointConsumerBuilder, CassandraEndpointProducerBuilder {
+                CassandraEndpointConsumerBuilder,
+                CassandraEndpointProducerBuilder {
         default AdvancedCassandraEndpointBuilder advanced() {
             return (AdvancedCassandraEndpointBuilder) this;
         }
@@ -1333,7 +1334,8 @@ public interface CassandraEndpointBuilderFactory {
      */
     public interface AdvancedCassandraEndpointBuilder
             extends
-                AdvancedCassandraEndpointConsumerBuilder, AdvancedCassandraEndpointProducerBuilder {
+                AdvancedCassandraEndpointConsumerBuilder,
+                AdvancedCassandraEndpointProducerBuilder {
         default CassandraEndpointBuilder basic() {
             return (CassandraEndpointBuilder) this;
         }
@@ -1409,6 +1411,37 @@ public interface CassandraEndpointBuilderFactory {
         SERIAL,
         LOCAL_SERIAL,
         LOCAL_ONE;
+    }
+
+    public interface CassandraBuilders {
+        /**
+         * Cassandra CQL (camel-cassandraql)
+         * The cql component aims at integrating Cassandra 2.0 using the CQL3
+         * API (not the Thrift API). It's based on Cassandra Java Driver
+         * provided by DataStax.
+         * 
+         * Category: database,nosql
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-cassandraql
+         * 
+         * Syntax: <code>cql:beanRef:hosts:port/keyspace</code>
+         * 
+         * Path parameter: beanRef
+         * beanRef is defined using bean:id
+         * 
+         * Path parameter: hosts
+         * Hostname(s) cassansdra server(s). Multiple hosts can be separated by
+         * comma.
+         * 
+         * Path parameter: port
+         * Port number of cassansdra server(s)
+         * 
+         * Path parameter: keyspace
+         * Keyspace to use
+         */
+        default CassandraEndpointBuilder cql(String path) {
+            return CassandraEndpointBuilderFactory.cql(path);
+        }
     }
     /**
      * Cassandra CQL (camel-cassandraql)

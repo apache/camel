@@ -1078,7 +1078,8 @@ public interface BeanstalkEndpointBuilderFactory {
      */
     public interface BeanstalkEndpointBuilder
             extends
-                BeanstalkEndpointConsumerBuilder, BeanstalkEndpointProducerBuilder {
+                BeanstalkEndpointConsumerBuilder,
+                BeanstalkEndpointProducerBuilder {
         default AdvancedBeanstalkEndpointBuilder advanced() {
             return (AdvancedBeanstalkEndpointBuilder) this;
         }
@@ -1201,7 +1202,8 @@ public interface BeanstalkEndpointBuilderFactory {
      */
     public interface AdvancedBeanstalkEndpointBuilder
             extends
-                AdvancedBeanstalkEndpointConsumerBuilder, AdvancedBeanstalkEndpointProducerBuilder {
+                AdvancedBeanstalkEndpointConsumerBuilder,
+                AdvancedBeanstalkEndpointProducerBuilder {
         default BeanstalkEndpointBuilder basic() {
             return (BeanstalkEndpointBuilder) this;
         }
@@ -1272,6 +1274,26 @@ public interface BeanstalkEndpointBuilderFactory {
         touch,
         delete,
         kick;
+    }
+
+    public interface BeanstalkBuilders {
+        /**
+         * Beanstalk (camel-beanstalk)
+         * The beanstalk component is used for job retrieval and post-processing
+         * of Beanstalk jobs.
+         * 
+         * Category: messaging
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-beanstalk
+         * 
+         * Syntax: <code>beanstalk:connectionSettings</code>
+         * 
+         * Path parameter: connectionSettings
+         * Connection settings host:port/tube
+         */
+        default BeanstalkEndpointBuilder beanstalk(String path) {
+            return BeanstalkEndpointBuilderFactory.beanstalk(path);
+        }
     }
     /**
      * Beanstalk (camel-beanstalk)

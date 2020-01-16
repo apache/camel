@@ -193,6 +193,32 @@ public interface MicrometerEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface MicrometerBuilders {
+        /**
+         * Micrometer (camel-micrometer)
+         * To collect various metrics directly from Camel routes using the
+         * Micrometer library.
+         * 
+         * Category: monitoring
+         * Since: 2.22
+         * Maven coordinates: org.apache.camel:camel-micrometer
+         * 
+         * Syntax: <code>micrometer:metricsType:metricsName</code>
+         * 
+         * Path parameter: metricsType (required)
+         * Type of metrics
+         * 
+         * Path parameter: metricsName (required)
+         * Name of metrics
+         * 
+         * Path parameter: tags
+         * Tags of metrics
+         */
+        default MicrometerEndpointBuilder micrometer(String path) {
+            return MicrometerEndpointBuilderFactory.micrometer(path);
+        }
+    }
     /**
      * Micrometer (camel-micrometer)
      * To collect various metrics directly from Camel routes using the

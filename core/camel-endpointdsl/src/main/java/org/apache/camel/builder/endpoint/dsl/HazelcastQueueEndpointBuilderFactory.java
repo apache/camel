@@ -554,7 +554,8 @@ public interface HazelcastQueueEndpointBuilderFactory {
      */
     public interface HazelcastQueueEndpointBuilder
             extends
-                HazelcastQueueEndpointConsumerBuilder, HazelcastQueueEndpointProducerBuilder {
+                HazelcastQueueEndpointConsumerBuilder,
+                HazelcastQueueEndpointProducerBuilder {
         default AdvancedHazelcastQueueEndpointBuilder advanced() {
             return (AdvancedHazelcastQueueEndpointBuilder) this;
         }
@@ -637,7 +638,8 @@ public interface HazelcastQueueEndpointBuilderFactory {
      */
     public interface AdvancedHazelcastQueueEndpointBuilder
             extends
-                AdvancedHazelcastQueueEndpointConsumerBuilder, AdvancedHazelcastQueueEndpointProducerBuilder {
+                AdvancedHazelcastQueueEndpointConsumerBuilder,
+                AdvancedHazelcastQueueEndpointProducerBuilder {
         default HazelcastQueueEndpointBuilder basic() {
             return (HazelcastQueueEndpointBuilder) this;
         }
@@ -750,6 +752,26 @@ public interface HazelcastQueueEndpointBuilderFactory {
     enum HazelcastQueueConsumerMode {
         listen,
         poll;
+    }
+
+    public interface HazelcastQueueBuilders {
+        /**
+         * Hazelcast Queue (camel-hazelcast)
+         * The hazelcast-queue component is used to access Hazelcast distributed
+         * queue.
+         * 
+         * Category: cache,datagrid
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
+         * Syntax: <code>hazelcast-queue:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache
+         */
+        default HazelcastQueueEndpointBuilder hazelcastQueue(String path) {
+            return HazelcastQueueEndpointBuilderFactory.hazelcastQueue(path);
+        }
     }
     /**
      * Hazelcast Queue (camel-hazelcast)

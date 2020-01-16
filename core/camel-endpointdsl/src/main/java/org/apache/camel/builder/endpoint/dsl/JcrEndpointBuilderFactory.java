@@ -723,7 +723,8 @@ public interface JcrEndpointBuilderFactory {
      */
     public interface JcrEndpointBuilder
             extends
-                JcrEndpointConsumerBuilder, JcrEndpointProducerBuilder {
+                JcrEndpointConsumerBuilder,
+                JcrEndpointProducerBuilder {
         default AdvancedJcrEndpointBuilder advanced() {
             return (AdvancedJcrEndpointBuilder) this;
         }
@@ -930,7 +931,8 @@ public interface JcrEndpointBuilderFactory {
      */
     public interface AdvancedJcrEndpointBuilder
             extends
-                AdvancedJcrEndpointConsumerBuilder, AdvancedJcrEndpointProducerBuilder {
+                AdvancedJcrEndpointConsumerBuilder,
+                AdvancedJcrEndpointProducerBuilder {
         default JcrEndpointBuilder basic() {
             return (JcrEndpointBuilder) this;
         }
@@ -987,6 +989,30 @@ public interface JcrEndpointBuilderFactory {
         default AdvancedJcrEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface JcrBuilders {
+        /**
+         * JCR (camel-jcr)
+         * The jcr component allows you to add/read nodes to/from a JCR
+         * compliant content repository.
+         * 
+         * Category: cms,database
+         * Since: 1.3
+         * Maven coordinates: org.apache.camel:camel-jcr
+         * 
+         * Syntax: <code>jcr:host/base</code>
+         * 
+         * Path parameter: host (required)
+         * Name of the javax.jcr.Repository to lookup from the Camel registry to
+         * be used.
+         * 
+         * Path parameter: base
+         * Get the base node when accessing the repository
+         */
+        default JcrEndpointBuilder jcr(String path) {
+            return JcrEndpointBuilderFactory.jcr(path);
         }
     }
     /**

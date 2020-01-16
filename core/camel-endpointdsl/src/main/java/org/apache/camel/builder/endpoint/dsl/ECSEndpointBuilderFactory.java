@@ -307,6 +307,25 @@ public interface ECSEndpointBuilderFactory {
         http,
         https;
     }
+
+    public interface ECSBuilders {
+        /**
+         * AWS ECS (camel-aws-ecs)
+         * The aws-ecs is used for managing Amazon ECS
+         * 
+         * Category: cloud,management
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-aws-ecs
+         * 
+         * Syntax: <code>aws-ecs:label</code>
+         * 
+         * Path parameter: label (required)
+         * Logical name
+         */
+        default ECSEndpointBuilder awsEcs(String path) {
+            return ECSEndpointBuilderFactory.awsEcs(path);
+        }
+    }
     /**
      * AWS ECS (camel-aws-ecs)
      * The aws-ecs is used for managing Amazon ECS

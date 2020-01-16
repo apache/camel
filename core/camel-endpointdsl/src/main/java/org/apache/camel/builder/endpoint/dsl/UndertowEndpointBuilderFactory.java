@@ -1124,7 +1124,8 @@ public interface UndertowEndpointBuilderFactory {
      */
     public interface UndertowEndpointBuilder
             extends
-                UndertowEndpointConsumerBuilder, UndertowEndpointProducerBuilder {
+                UndertowEndpointConsumerBuilder,
+                UndertowEndpointProducerBuilder {
         default AdvancedUndertowEndpointBuilder advanced() {
             return (AdvancedUndertowEndpointBuilder) this;
         }
@@ -1197,7 +1198,8 @@ public interface UndertowEndpointBuilderFactory {
      */
     public interface AdvancedUndertowEndpointBuilder
             extends
-                AdvancedUndertowEndpointConsumerBuilder, AdvancedUndertowEndpointProducerBuilder {
+                AdvancedUndertowEndpointConsumerBuilder,
+                AdvancedUndertowEndpointProducerBuilder {
         default UndertowEndpointBuilder basic() {
             return (UndertowEndpointBuilder) this;
         }
@@ -1342,6 +1344,26 @@ public interface UndertowEndpointBuilderFactory {
                 String undertowHttpBinding) {
             doSetProperty("undertowHttpBinding", undertowHttpBinding);
             return this;
+        }
+    }
+
+    public interface UndertowBuilders {
+        /**
+         * Undertow (camel-undertow)
+         * The undertow component provides HTTP and WebSocket based endpoints
+         * for consuming and producing HTTP/WebSocket requests.
+         * 
+         * Category: http,websocket
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-undertow
+         * 
+         * Syntax: <code>undertow:httpURI</code>
+         * 
+         * Path parameter: httpURI (required)
+         * The url of the HTTP endpoint to use.
+         */
+        default UndertowEndpointBuilder undertow(String path) {
+            return UndertowEndpointBuilderFactory.undertow(path);
         }
     }
     /**

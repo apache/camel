@@ -1208,7 +1208,8 @@ public interface SshEndpointBuilderFactory {
      */
     public interface SshEndpointBuilder
             extends
-                SshEndpointConsumerBuilder, SshEndpointProducerBuilder {
+                SshEndpointConsumerBuilder,
+                SshEndpointProducerBuilder {
         default AdvancedSshEndpointBuilder advanced() {
             return (AdvancedSshEndpointBuilder) this;
         }
@@ -1372,7 +1373,8 @@ public interface SshEndpointBuilderFactory {
      */
     public interface AdvancedSshEndpointBuilder
             extends
-                AdvancedSshEndpointConsumerBuilder, AdvancedSshEndpointProducerBuilder {
+                AdvancedSshEndpointConsumerBuilder,
+                AdvancedSshEndpointProducerBuilder {
         default SshEndpointBuilder basic() {
             return (SshEndpointBuilder) this;
         }
@@ -1482,6 +1484,30 @@ public interface SshEndpointBuilderFactory {
         default AdvancedSshEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface SshBuilders {
+        /**
+         * SSH (camel-ssh)
+         * The ssh component enables access to SSH servers such that you can
+         * send an SSH command, and process the response.
+         * 
+         * Category: file
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-ssh
+         * 
+         * Syntax: <code>ssh:host:port</code>
+         * 
+         * Path parameter: host (required)
+         * Sets the hostname of the remote SSH server.
+         * 
+         * Path parameter: port
+         * Sets the port number for the remote SSH server.
+         * Default value: 22
+         */
+        default SshEndpointBuilder ssh(String path) {
+            return SshEndpointBuilderFactory.ssh(path);
         }
     }
     /**

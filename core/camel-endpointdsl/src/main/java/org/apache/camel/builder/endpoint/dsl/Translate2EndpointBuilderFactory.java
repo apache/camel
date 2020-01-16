@@ -359,6 +359,25 @@ public interface Translate2EndpointBuilderFactory {
         http,
         https;
     }
+
+    public interface Translate2Builders {
+        /**
+         * AWS 2 Translate (camel-aws2-translate)
+         * The aws2-translate component is used for managing Amazon Translate
+         * 
+         * Category: cloud,management
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-translate
+         * 
+         * Syntax: <code>aws2-translate:label</code>
+         * 
+         * Path parameter: label (required)
+         * Logical name
+         */
+        default Translate2EndpointBuilder aws2Translate(String path) {
+            return Translate2EndpointBuilderFactory.aws2Translate(path);
+        }
+    }
     /**
      * AWS 2 Translate (camel-aws2-translate)
      * The aws2-translate component is used for managing Amazon Translate

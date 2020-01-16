@@ -867,7 +867,8 @@ public interface PulsarEndpointBuilderFactory {
      */
     public interface PulsarEndpointBuilder
             extends
-                PulsarEndpointConsumerBuilder, PulsarEndpointProducerBuilder {
+                PulsarEndpointConsumerBuilder,
+                PulsarEndpointProducerBuilder {
         default AdvancedPulsarEndpointBuilder advanced() {
             return (AdvancedPulsarEndpointBuilder) this;
         }
@@ -878,7 +879,8 @@ public interface PulsarEndpointBuilderFactory {
      */
     public interface AdvancedPulsarEndpointBuilder
             extends
-                AdvancedPulsarEndpointConsumerBuilder, AdvancedPulsarEndpointProducerBuilder {
+                AdvancedPulsarEndpointConsumerBuilder,
+                AdvancedPulsarEndpointProducerBuilder {
         default PulsarEndpointBuilder basic() {
             return (PulsarEndpointBuilder) this;
         }
@@ -968,6 +970,35 @@ public interface PulsarEndpointBuilderFactory {
         SinglePartition,
         RoundRobinPartition,
         CustomPartition;
+    }
+
+    public interface PulsarBuilders {
+        /**
+         * Pulsar (camel-pulsar)
+         * Camel Apache Pulsar Component
+         * 
+         * Category: messaging
+         * Since: 2.24
+         * Maven coordinates: org.apache.camel:camel-pulsar
+         * 
+         * Syntax: <code>pulsar:persistence://tenant/namespace/topic</code>
+         * 
+         * Path parameter: persistence (required)
+         * Whether the topic is persistent or non-persistent
+         * The value can be one of: persistent, non-persistent
+         * 
+         * Path parameter: tenant (required)
+         * The tenant
+         * 
+         * Path parameter: namespace (required)
+         * The namespace
+         * 
+         * Path parameter: topic (required)
+         * The topic
+         */
+        default PulsarEndpointBuilder pulsar(String path) {
+            return PulsarEndpointBuilderFactory.pulsar(path);
+        }
     }
     /**
      * Pulsar (camel-pulsar)

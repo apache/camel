@@ -712,7 +712,8 @@ public interface IgniteCacheEndpointBuilderFactory {
      */
     public interface IgniteCacheEndpointBuilder
             extends
-                IgniteCacheEndpointConsumerBuilder, IgniteCacheEndpointProducerBuilder {
+                IgniteCacheEndpointConsumerBuilder,
+                IgniteCacheEndpointProducerBuilder {
         default AdvancedIgniteCacheEndpointBuilder advanced() {
             return (AdvancedIgniteCacheEndpointBuilder) this;
         }
@@ -779,7 +780,8 @@ public interface IgniteCacheEndpointBuilderFactory {
      */
     public interface AdvancedIgniteCacheEndpointBuilder
             extends
-                AdvancedIgniteCacheEndpointConsumerBuilder, AdvancedIgniteCacheEndpointProducerBuilder {
+                AdvancedIgniteCacheEndpointConsumerBuilder,
+                AdvancedIgniteCacheEndpointProducerBuilder {
         default IgniteCacheEndpointBuilder basic() {
             return (IgniteCacheEndpointBuilder) this;
         }
@@ -866,6 +868,26 @@ public interface IgniteCacheEndpointBuilderFactory {
         REBALANCE,
         QUERY,
         CLEAR;
+    }
+
+    public interface IgniteCacheBuilders {
+        /**
+         * Ignite Cache (camel-ignite)
+         * The Ignite Cache endpoint is one of camel-ignite endpoints which
+         * allows you to interact with an Ignite Cache.
+         * 
+         * Category: nosql,cache,compute
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ignite
+         * 
+         * Syntax: <code>ignite-cache:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The cache name.
+         */
+        default IgniteCacheEndpointBuilder igniteCache(String path) {
+            return IgniteCacheEndpointBuilderFactory.igniteCache(path);
+        }
     }
     /**
      * Ignite Cache (camel-ignite)

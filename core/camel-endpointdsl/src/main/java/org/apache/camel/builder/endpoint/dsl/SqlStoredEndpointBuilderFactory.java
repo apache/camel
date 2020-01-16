@@ -289,6 +289,26 @@ public interface SqlStoredEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface SqlStoredBuilders {
+        /**
+         * SQL Stored Procedure (camel-sql)
+         * The sql component allows you to work with databases using JDBC Stored
+         * Procedure queries.
+         * 
+         * Category: database,sql
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-sql
+         * 
+         * Syntax: <code>sql-stored:template</code>
+         * 
+         * Path parameter: template (required)
+         * Sets the StoredProcedure template to perform
+         */
+        default SqlStoredEndpointBuilder sqlStored(String path) {
+            return SqlStoredEndpointBuilderFactory.sqlStored(path);
+        }
+    }
     /**
      * SQL Stored Procedure (camel-sql)
      * The sql component allows you to work with databases using JDBC Stored

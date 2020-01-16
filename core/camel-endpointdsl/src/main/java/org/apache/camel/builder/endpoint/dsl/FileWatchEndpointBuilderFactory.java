@@ -446,6 +446,26 @@ public interface FileWatchEndpointBuilderFactory {
         DELETE,
         MODIFY;
     }
+
+    public interface FileWatchBuilders {
+        /**
+         * file-watch (camel-file-watch)
+         * The file-watch is used to monitor file events in directory using
+         * java.nio.file.WatchService
+         * 
+         * Category: file
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-file-watch
+         * 
+         * Syntax: <code>file-watch:path</code>
+         * 
+         * Path parameter: path (required)
+         * Path of directory to consume events from.
+         */
+        default FileWatchEndpointBuilder fileWatch(String path) {
+            return FileWatchEndpointBuilderFactory.fileWatch(path);
+        }
+    }
     /**
      * file-watch (camel-file-watch)
      * The file-watch is used to monitor file events in directory using

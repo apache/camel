@@ -266,6 +266,28 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
         readOnceTail,
         capacity;
     }
+
+    public interface HazelcastAtomicnumberBuilders {
+        /**
+         * Hazelcast Atomic Number (camel-hazelcast)
+         * The hazelcast-atomicvalue component is used to access Hazelcast
+         * atomic number, which is an object that simply provides a grid wide
+         * number (long).
+         * 
+         * Category: cache,datagrid
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
+         * Syntax: <code>hazelcast-atomicvalue:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache
+         */
+        default HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(
+                String path) {
+            return HazelcastAtomicnumberEndpointBuilderFactory.hazelcastAtomicvalue(path);
+        }
+    }
     /**
      * Hazelcast Atomic Number (camel-hazelcast)
      * The hazelcast-atomicvalue component is used to access Hazelcast atomic

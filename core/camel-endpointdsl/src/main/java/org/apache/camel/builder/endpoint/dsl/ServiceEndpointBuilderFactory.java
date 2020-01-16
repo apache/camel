@@ -201,6 +201,26 @@ public interface ServiceEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface ServiceBuilders {
+        /**
+         * Service (camel-service)
+         * Represents an endpoint which is registered to a Service Registry such
+         * as Consul, Etcd.
+         * 
+         * Category: cloud
+         * Since: 2.22
+         * Maven coordinates: org.apache.camel:camel-service
+         * 
+         * Syntax: <code>service:delegateUri</code>
+         * 
+         * Path parameter: delegateUri (required)
+         * The endpoint uri to expose as service
+         */
+        default ServiceEndpointBuilder service(String path) {
+            return ServiceEndpointBuilderFactory.service(path);
+        }
+    }
     /**
      * Service (camel-service)
      * Represents an endpoint which is registered to a Service Registry such as

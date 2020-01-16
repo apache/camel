@@ -1764,7 +1764,8 @@ public interface AS2EndpointBuilderFactory {
      */
     public interface AS2EndpointBuilder
             extends
-                AS2EndpointConsumerBuilder, AS2EndpointProducerBuilder {
+                AS2EndpointConsumerBuilder,
+                AS2EndpointProducerBuilder {
         default AdvancedAS2EndpointBuilder advanced() {
             return (AdvancedAS2EndpointBuilder) this;
         }
@@ -2265,7 +2266,8 @@ public interface AS2EndpointBuilderFactory {
      */
     public interface AdvancedAS2EndpointBuilder
             extends
-                AdvancedAS2EndpointConsumerBuilder, AdvancedAS2EndpointProducerBuilder {
+                AdvancedAS2EndpointConsumerBuilder,
+                AdvancedAS2EndpointProducerBuilder {
         default AS2EndpointBuilder basic() {
             return (AS2EndpointBuilder) this;
         }
@@ -2430,6 +2432,30 @@ public interface AS2EndpointBuilderFactory {
         SHA3_256WITHRSAANDMGF1,
         SHA3_384WITHRSAANDMGF1,
         SHA3_512WITHRSAANDMGF1;
+    }
+
+    public interface AS2Builders {
+        /**
+         * AS2 (camel-as2)
+         * Component used for transferring data secure and reliable over the
+         * internet using the AS2 protocol.
+         * 
+         * Category: AS2
+         * Since: 2.22
+         * Maven coordinates: org.apache.camel:camel-as2
+         * 
+         * Syntax: <code>as2:apiName/methodName</code>
+         * 
+         * Path parameter: apiName (required)
+         * What kind of operation to perform
+         * The value can be one of: CLIENT, SERVER
+         * 
+         * Path parameter: methodName (required)
+         * What sub operation to use for the selected operation
+         */
+        default AS2EndpointBuilder as2(String path) {
+            return AS2EndpointBuilderFactory.as2(path);
+        }
     }
     /**
      * AS2 (camel-as2)

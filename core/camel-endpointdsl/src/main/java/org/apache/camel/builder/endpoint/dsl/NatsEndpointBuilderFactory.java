@@ -1256,7 +1256,8 @@ public interface NatsEndpointBuilderFactory {
      */
     public interface NatsEndpointBuilder
             extends
-                NatsEndpointConsumerBuilder, NatsEndpointProducerBuilder {
+                NatsEndpointConsumerBuilder,
+                NatsEndpointProducerBuilder {
         default AdvancedNatsEndpointBuilder advanced() {
             return (AdvancedNatsEndpointBuilder) this;
         }
@@ -1658,7 +1659,8 @@ public interface NatsEndpointBuilderFactory {
      */
     public interface AdvancedNatsEndpointBuilder
             extends
-                AdvancedNatsEndpointConsumerBuilder, AdvancedNatsEndpointProducerBuilder {
+                AdvancedNatsEndpointConsumerBuilder,
+                AdvancedNatsEndpointProducerBuilder {
         default NatsEndpointBuilder basic() {
             return (NatsEndpointBuilder) this;
         }
@@ -1738,6 +1740,25 @@ public interface NatsEndpointBuilderFactory {
         default AdvancedNatsEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface NatsBuilders {
+        /**
+         * Nats (camel-nats)
+         * The nats component allows you produce and consume messages from NATS.
+         * 
+         * Category: messaging
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-nats
+         * 
+         * Syntax: <code>nats:topic</code>
+         * 
+         * Path parameter: topic (required)
+         * The name of topic we want to use
+         */
+        default NatsEndpointBuilder nats(String path) {
+            return NatsEndpointBuilderFactory.nats(path);
         }
     }
     /**

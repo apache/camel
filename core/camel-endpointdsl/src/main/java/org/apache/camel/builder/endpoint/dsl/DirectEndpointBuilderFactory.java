@@ -411,7 +411,8 @@ public interface DirectEndpointBuilderFactory {
      */
     public interface DirectEndpointBuilder
             extends
-                DirectEndpointConsumerBuilder, DirectEndpointProducerBuilder {
+                DirectEndpointConsumerBuilder,
+                DirectEndpointProducerBuilder {
         default AdvancedDirectEndpointBuilder advanced() {
             return (AdvancedDirectEndpointBuilder) this;
         }
@@ -422,7 +423,8 @@ public interface DirectEndpointBuilderFactory {
      */
     public interface AdvancedDirectEndpointBuilder
             extends
-                AdvancedDirectEndpointConsumerBuilder, AdvancedDirectEndpointProducerBuilder {
+                AdvancedDirectEndpointConsumerBuilder,
+                AdvancedDirectEndpointProducerBuilder {
         default DirectEndpointBuilder basic() {
             return (DirectEndpointBuilder) this;
         }
@@ -479,6 +481,26 @@ public interface DirectEndpointBuilderFactory {
         default AdvancedDirectEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface DirectBuilders {
+        /**
+         * Direct (camel-direct)
+         * The direct component provides direct, synchronous call to another
+         * endpoint from the same CamelContext.
+         * 
+         * Category: core,endpoint
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-direct
+         * 
+         * Syntax: <code>direct:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name of direct endpoint
+         */
+        default DirectEndpointBuilder direct(String path) {
+            return DirectEndpointBuilderFactory.direct(path);
         }
     }
     /**

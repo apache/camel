@@ -385,7 +385,8 @@ public interface CordaEndpointBuilderFactory {
      */
     public interface CordaEndpointBuilder
             extends
-                CordaEndpointConsumerBuilder, CordaEndpointProducerBuilder {
+                CordaEndpointConsumerBuilder,
+                CordaEndpointProducerBuilder {
         default AdvancedCordaEndpointBuilder advanced() {
             return (AdvancedCordaEndpointBuilder) this;
         }
@@ -418,7 +419,8 @@ public interface CordaEndpointBuilderFactory {
      */
     public interface AdvancedCordaEndpointBuilder
             extends
-                AdvancedCordaEndpointConsumerBuilder, AdvancedCordaEndpointProducerBuilder {
+                AdvancedCordaEndpointConsumerBuilder,
+                AdvancedCordaEndpointProducerBuilder {
         default CordaEndpointBuilder basic() {
             return (CordaEndpointBuilder) this;
         }
@@ -475,6 +477,25 @@ public interface CordaEndpointBuilderFactory {
         default AdvancedCordaEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface CordaBuilders {
+        /**
+         * Corda (camel-corda)
+         * The corda component uses corda-rpc to interact with corda nodes.
+         * 
+         * Category: corda,blockchain
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-corda
+         * 
+         * Syntax: <code>corda:node</code>
+         * 
+         * Path parameter: node (required)
+         * The url for the corda node
+         */
+        default CordaEndpointBuilder corda(String path) {
+            return CordaEndpointBuilderFactory.corda(path);
         }
     }
     /**

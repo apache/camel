@@ -559,7 +559,8 @@ public interface RestEndpointBuilderFactory {
      */
     public interface RestEndpointBuilder
             extends
-                RestEndpointConsumerBuilder, RestEndpointProducerBuilder {
+                RestEndpointConsumerBuilder,
+                RestEndpointProducerBuilder {
         default AdvancedRestEndpointBuilder advanced() {
             return (AdvancedRestEndpointBuilder) this;
         }
@@ -627,7 +628,8 @@ public interface RestEndpointBuilderFactory {
      */
     public interface AdvancedRestEndpointBuilder
             extends
-                AdvancedRestEndpointConsumerBuilder, AdvancedRestEndpointProducerBuilder {
+                AdvancedRestEndpointConsumerBuilder,
+                AdvancedRestEndpointProducerBuilder {
         default RestEndpointBuilder basic() {
             return (RestEndpointBuilder) this;
         }
@@ -697,6 +699,34 @@ public interface RestEndpointBuilderFactory {
         json,
         xml,
         json_xml;
+    }
+
+    public interface RestBuilders {
+        /**
+         * REST (camel-rest)
+         * The rest component is used for either hosting REST services
+         * (consumer) or calling external REST services (producer).
+         * 
+         * Category: core,rest
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-rest
+         * 
+         * Syntax: <code>rest:method:path:uriTemplate</code>
+         * 
+         * Path parameter: method (required)
+         * HTTP method to use.
+         * The value can be one of: get, post, put, delete, patch, head, trace,
+         * connect, options
+         * 
+         * Path parameter: path (required)
+         * The base path
+         * 
+         * Path parameter: uriTemplate
+         * The uri template
+         */
+        default RestEndpointBuilder restEndpoint(String path) {
+            return RestEndpointBuilderFactory.restEndpoint(path);
+        }
     }
     /**
      * REST (camel-rest)

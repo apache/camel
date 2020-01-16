@@ -753,6 +753,40 @@ public interface PgReplicationSlotEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface PgReplicationSlotBuilders {
+        /**
+         * PostgresSQL Replication Slot (camel-pg-replication-slot)
+         * Consumer endpoint to receive from PostgreSQL Replication Slot.
+         * 
+         * Category: database,sql
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-pg-replication-slot
+         * 
+         * Syntax:
+         * <code>pg-replication-slot:host:port/database/slot:outputPlugin</code>
+         * 
+         * Path parameter: slot (required)
+         * Replication slot name.
+         * 
+         * Path parameter: host
+         * PostgreSQL server host
+         * Default value: localhost
+         * 
+         * Path parameter: port
+         * PostgreSQL server port
+         * Default value: 5432
+         * 
+         * Path parameter: database (required)
+         * PostgreSQL database name
+         * 
+         * Path parameter: outputPlugin (required)
+         * Output plugin name (e.g. test_decoding, wal2json)
+         */
+        default PgReplicationSlotEndpointBuilder pgReplicationSlot(String path) {
+            return PgReplicationSlotEndpointBuilderFactory.pgReplicationSlot(path);
+        }
+    }
     /**
      * PostgresSQL Replication Slot (camel-pg-replication-slot)
      * Consumer endpoint to receive from PostgreSQL Replication Slot.
