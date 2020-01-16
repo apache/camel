@@ -637,6 +637,22 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specify how INTERVAL columns should be represented in change events,
+         * including:'string' represents values as an exact ISO formatted
+         * string'numeric' (default) represents values using the inexact
+         * conversion into microseconds.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: numeric
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder intervalHandlingMode(
+                String intervalHandlingMode) {
+            doSetProperty("intervalHandlingMode", intervalHandlingMode);
+            return this;
+        }
+        /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
          * The option is a: <code>int</code> type.
