@@ -4,8 +4,11 @@
 
 This component supports the Circuit Breaker EIP with the Resilience4j library.
 
-NOTE: Camel provides the Circuit Breaker EIP in the route model, which allows to plugin different implementations.
+[NOTE]
+====
+Camel provides the Circuit Breaker EIP in the route model, which allows to plugin different implementations.
 Resilience4j is one such implementation.
+====
 
 Maven users will need to add the following dependency to their pom.xml to use this EIP:
 
