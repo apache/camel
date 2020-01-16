@@ -104,6 +104,15 @@ See the xref:message-history.adoc[Message History] documentation for how to enab
 
 === API changes
 
+==== Exchange
+
+The `Exchange` API has been modified slightly as part of an optimization effort.
+The returned value of `getCreated` is changed from `java.util.Date` to `long` which is the time millis.
+
+The `Exchange.CREATED_TIMESTAMP` is no longer stored as exchange property, but you should use the `getCreated` method on `Exchange`.
+
+The returned value of `isExternalRedelivered` is changed from `Boolean` to `boolean`.
+
 ==== Cookies
 
 Cookies from `camel-http-common` has been moved into a new `camel-http-base` JAR.

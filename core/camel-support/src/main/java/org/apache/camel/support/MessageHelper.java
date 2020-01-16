@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.StreamCache;
@@ -566,11 +567,7 @@ public final class MessageHelper {
         if (exchange.getFromEndpoint() != null) {
             label = "from[" + URISupport.sanitizeUri(exchange.getFromEndpoint().getEndpointUri() + "]");
         }
-        long elapsed = 0;
-        Date created = exchange.getCreated();
-        if (created != null) {
-            elapsed = new StopWatch(created).taken();
-        }
+        long elapsed = new StopWatch(exchange.getCreated()).taken();
 
         String goMessageHistoryOutput = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_OUTPUT_FORMAT);
         goMessageHistoryOutput = goMessageHistoryOutput == null ? MESSAGE_HISTORY_OUTPUT : goMessageHistoryOutput;
@@ -579,7 +576,7 @@ public final class MessageHelper {
 
         if (list == null || list.isEmpty()) {
             // message history is not enabled but we can show the last processed instead
-            id = exchange.getProperty(Exchange.NODE_ID, String.class);
+            id = exchange.adapt(ExtendedExchange.class).getHistoryNodeId();
             if (id != null) {
                 // compute route id
                 UnitOfWork uow = exchange.getUnitOfWork();
@@ -587,7 +584,7 @@ public final class MessageHelper {
                 if (rc != null) {
                     routeId = rc.getRouteId();
                 }
-                label = exchange.getProperty(Exchange.NODE_LABEL, String.class);;
+                label = exchange.adapt(ExtendedExchange.class).getHistoryNodeLabel();
                 // we need to avoid leak the sensible information here
                 // the sanitizeUri takes a very long time for very long string and the format cuts this to
                 // 78 characters, anyway. Cut this to 100 characters. This will give enough space for removing

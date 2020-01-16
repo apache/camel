@@ -18,7 +18,7 @@ package org.apache.camel.impl;
 
 import java.util.concurrent.CountDownLatch;
 
-import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.impl.engine.DefaultAsyncProcessorAwaitManager;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.support.DefaultExchange;
@@ -74,7 +74,7 @@ public class DefaultAsyncProcessorAwaitManagerTest {
     @Test
     public void testMessageHistoryWithNotNullElements() throws Exception {
         startAsyncProcess();
-        exchange.setProperty(Exchange.NODE_ID, "nodeId");
+        exchange.adapt(ExtendedExchange.class).setHistoryNodeId("nodeId");
         AsyncProcessorAwaitManager.AwaitThread awaitThread = defaultAsyncProcessorAwaitManager.browse().iterator().next();
         assertThat(awaitThread.getNodeId(), is("nodeId"));
         waitForEndOfAsyncProcess();

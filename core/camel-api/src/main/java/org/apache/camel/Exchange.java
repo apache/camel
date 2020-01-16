@@ -16,7 +16,6 @@
  */
 package org.apache.camel;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -98,6 +97,7 @@ public interface Exchange {
 
     String CHARSET_NAME           = "CamelCharsetName";
     String CIRCUIT_BREAKER_STATE  = "CamelCircuitBreakerState";
+    @Deprecated
     String CREATED_TIMESTAMP      = "CamelCreatedTimestamp";
     String CLAIM_CHECK_REPOSITORY = "CamelClaimCheckRepository";
     String CONTENT_ENCODING       = "Content-Encoding";
@@ -189,8 +189,6 @@ public interface Exchange {
     String MULTICAST_INDEX             = "CamelMulticastIndex";
     String MULTICAST_COMPLETE          = "CamelMulticastComplete";
 
-    String NODE_ID = "CamelNodeId";
-    String NODE_LABEL = "CamelNodeLabel";
     String NOTIFY_EVENT = "CamelNotifyEvent";
 
     String ON_COMPLETION      = "CamelOnCompletion";
@@ -255,6 +253,16 @@ public interface Exchange {
     String XSLT_ERROR       = "CamelXsltError";
     String XSLT_FATAL_ERROR = "CamelXsltFatalError";
     String XSLT_WARNING     = "CamelXsltWarning";
+
+    /**
+     * Adapts this {@link org.apache.camel.Exchange} to the specialized type.
+     * <p/>
+     * For example to adapt to <tt>ExtendedExchange</tt>.
+     *
+     * @param type the type to adapt to
+     * @return this {@link org.apache.camel.Exchange} adapted to the given type
+     */
+    <T extends Exchange> T adapt(Class<T> type);
 
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.
@@ -514,12 +522,12 @@ public interface Exchange {
      * Returns true if this exchange is an external initiated redelivered message (such as a JMS broker).
      * <p/>
      * <b>Important: </b> It is not always possible to determine if the message is a redelivery
-     * or not, and therefore <tt>null</tt> is returned. Such an example would be a JDBC message.
+     * or not, and therefore <tt>false</tt> is returned. Such an example would be a JDBC message.
      * However JMS brokers provides details if a message is redelivered.
      *
-     * @return <tt>true</tt> if redelivered, <tt>false</tt> if not, <tt>null</tt> if not able to determine
+     * @return <tt>true</tt> if redelivered, <tt>false</tt> if not or not able to determine
      */
-    Boolean isExternalRedelivered();
+    boolean isExternalRedelivered();
 
     /**
      * Returns true if this exchange is marked for rollback
@@ -621,8 +629,8 @@ public interface Exchange {
     List<Synchronization> handoverCompletions();
 
     /**
-     * Gets the timestamp when this exchange was created.
+     * Gets the timestamp in millis when this exchange was created.
      */
-    Date getCreated();
+    long getCreated();
 
 }

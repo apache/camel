@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor.interceptor;
 
-import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -498,7 +497,7 @@ public final class BacklogDebugger extends ServiceSupport {
         @Override
         public void beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
             // store a copy of the message so we can see that from the debugger
-            Date timestamp = new Date();
+            long timestamp = System.currentTimeMillis();
             String toNode = definition.getId();
             String routeId = CamelContextHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
@@ -558,7 +557,7 @@ public final class BacklogDebugger extends ServiceSupport {
         @Override
         public void beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
             // store a copy of the message so we can see that from the debugger
-            Date timestamp = new Date();
+            long timestamp = System.currentTimeMillis();
             String toNode = definition.getId();
             String routeId = CamelContextHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();

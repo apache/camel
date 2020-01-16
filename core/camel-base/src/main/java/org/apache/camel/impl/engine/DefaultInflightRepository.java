@@ -19,7 +19,6 @@ package org.apache.camel.impl.engine;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,6 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.RouteContext;
@@ -182,12 +182,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     }
 
     private static long getExchangeDuration(Exchange exchange) {
-        long duration = 0;
-        Date created = exchange.getCreated();
-        if (created != null) {
-            duration = System.currentTimeMillis() - created.getTime();
-        }
-        return duration;
+        return System.currentTimeMillis() - exchange.getCreated();
     }
 
     private static final class InflightExchangeEntry implements InflightExchange {
@@ -234,7 +229,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @Override
         @SuppressWarnings("unchecked")
         public String getNodeId() {
-            return exchange.getProperty(Exchange.NODE_ID, String.class);
+            return exchange.adapt(ExtendedExchange.class).getHistoryNodeId();
         }
 
         @Override
