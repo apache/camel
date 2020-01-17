@@ -198,6 +198,10 @@ public class BaseParser {
     }
 
     protected void handleOtherAttribute(Object definition, String name, String ns, String val) throws XmlPullParserException {
+        // Ignore
+        if ("http://www.w3.org/2001/XMLSchema-instance".equals(ns)) {
+            return;
+        }
         if (definition instanceof OtherAttributesAware) {
             Map<QName, Object> others = ((OtherAttributesAware)definition).getOtherAttributes();
             if (others == null) {
