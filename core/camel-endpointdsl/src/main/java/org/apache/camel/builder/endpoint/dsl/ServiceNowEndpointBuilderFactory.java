@@ -1034,7 +1034,7 @@ public interface ServiceNowEndpointBuilderFactory {
 
     public interface ServiceNowBuilders {
         /**
-         * ServiceNow (camel-servicenow)
+         * ServiceNow (@@@ARTIFACTID@@@)
          * The servicenow component is used to integrate Camel with ServiceNow
          * cloud services.
          * 
@@ -1052,7 +1052,7 @@ public interface ServiceNowEndpointBuilderFactory {
         }
     }
     /**
-     * ServiceNow (camel-servicenow)
+     * ServiceNow (@@@ARTIFACTID@@@)
      * The servicenow component is used to integrate Camel with ServiceNow cloud
      * services.
      * 

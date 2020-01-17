@@ -2440,7 +2440,7 @@ public interface AS2EndpointBuilderFactory {
          * Component used for transferring data secure and reliable over the
          * internet using the AS2 protocol.
          * 
-         * Category: AS2
+         * Category: file
          * Since: 2.22
          * Maven coordinates: org.apache.camel:camel-as2
          * 
@@ -2462,7 +2462,7 @@ public interface AS2EndpointBuilderFactory {
      * Component used for transferring data secure and reliable over the
      * internet using the AS2 protocol.
      * 
-     * Category: AS2
+     * Category: file
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-as2
      * 
