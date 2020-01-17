@@ -244,11 +244,11 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         final StringBuilder builder = new StringBuilder();
         final String name = model.getMethod().getName();
         builder.append(Character.toUpperCase(name.charAt(0)));
-        builder.append(name.substring(1));
+        builder.append(name, 1, name.length());
         // find overloaded method suffix from unique name
         final String uniqueName = model.getUniqueName();
         if (uniqueName.length() > name.length()) {
-            builder.append(uniqueName.substring(name.length()));
+            builder.append(uniqueName, name.length(), uniqueName.length());
         }
         return builder.toString();
     }
@@ -296,7 +296,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         // capitalize first character
         StringBuilder builder = new StringBuilder();
         builder.append(Character.toUpperCase(parameter.charAt(0)));
-        builder.append(parameter.substring(1));
+        builder.append(parameter, 1, parameter.length());
         return builder.toString();
     }
 
