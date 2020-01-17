@@ -49,7 +49,7 @@ public final class DockerHelper {
 
         if (nameSubstring.length() > 0) {
             formattedName.append(nameSubstring.substring(0, 1).toLowerCase());
-            formattedName.append(nameSubstring, 1, nameSubstring.length()));
+            formattedName.append(nameSubstring, 1, nameSubstring.length());
         }
 
         return formattedName.toString();
