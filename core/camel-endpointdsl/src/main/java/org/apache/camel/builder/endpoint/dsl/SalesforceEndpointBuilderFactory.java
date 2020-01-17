@@ -2704,7 +2704,7 @@ public interface SalesforceEndpointBuilderFactory {
 
     public interface SalesforceBuilders {
         /**
-         * Salesforce (@@@ARTIFACTID@@@)
+         * Salesforce (camel-salesforce)
          * The salesforce component is used for integrating Camel with the
          * massive Salesforce API.
          * 
@@ -2735,7 +2735,7 @@ public interface SalesforceEndpointBuilderFactory {
         }
     }
     /**
-     * Salesforce (@@@ARTIFACTID@@@)
+     * Salesforce (camel-salesforce)
      * The salesforce component is used for integrating Camel with the massive
      * Salesforce API.
      * 
