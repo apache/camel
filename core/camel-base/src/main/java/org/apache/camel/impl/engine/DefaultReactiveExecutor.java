@@ -16,12 +16,12 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.LinkedList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
@@ -136,8 +136,8 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
     private static class Worker {
 
         private final DefaultReactiveExecutor executor;
-        private volatile LinkedList<Runnable> queue = new LinkedList<>();
-        private volatile LinkedList<LinkedList<Runnable>> back;
+        private volatile Deque<Runnable> queue = new ArrayDeque<>();
+        private volatile Deque<Deque<Runnable>> back;
         private volatile boolean running;
 
         public Worker(DefaultReactiveExecutor executor) {
@@ -151,10 +151,10 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
             if (main) {
                 if (!queue.isEmpty()) {
                     if (back == null) {
-                        back = new LinkedList<>();
+                        back = new ArrayDeque<>();
                     }
                     back.push(queue);
-                    queue = new LinkedList<>();
+                    queue = new ArrayDeque<>();
                 }
             }
             if (first) {
