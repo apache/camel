@@ -152,4 +152,4 @@ the download page for the latest versions).
 -------------------------------------
 
 Otherwise, you'll also need
-http://repo2.maven.org/maven2/org/apache/servicemix/bundles/org.apache.servicemix.bundles.ognl/2.7.3_4/org.apache.servicemix.bundles.ognl-2.7.3_4.jar[OGNL]
+https://repo1.maven.org/maven2/org/apache/servicemix/bundles/org.apache.servicemix.bundles.ognl/2.7.3_4/org.apache.servicemix.bundles.ognl-2.7.3_4.jar[OGNL]
