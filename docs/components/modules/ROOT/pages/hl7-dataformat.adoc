@@ -1,1 +1,0 @@
-../../../../../components/camel-hl7/src/main/docs/hl7-dataformat.adoc
