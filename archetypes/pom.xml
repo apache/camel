@@ -50,7 +50,7 @@
     <build>
         <plugins>
 
-            <!-- skip flattern plugin as this breaks all the archetypes -->
+            <!-- skip flatten plugin as this breaks all the archetypes -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
