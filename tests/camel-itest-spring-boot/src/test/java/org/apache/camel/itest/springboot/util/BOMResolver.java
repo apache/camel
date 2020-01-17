@@ -137,7 +137,7 @@ public final class BOMResolver {
             system.deploy(session, deployRequest);
         }
 
-        RemoteRepository mavenCentral = new RemoteRepository.Builder("central", "default", "http://repo1.maven.org/maven2/").build();
+        RemoteRepository mavenCentral = new RemoteRepository.Builder("central", "default", "https://repo1.maven.org/maven2/").build();
         RemoteRepository apacheSnapshots = new RemoteRepository.Builder("apache-snapshots", "default", "http://repository.apache.org/snapshots/").build();
         RemoteRepository springMilestones = new RemoteRepository.Builder("spring-milestones", "default", "https://repo.spring.io/libs-milestone/").build();
 
