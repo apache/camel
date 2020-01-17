@@ -113,7 +113,7 @@ public class JavadocParser extends Parser {
                             final String title = (String) attributes.getAttribute(HTML.Attribute.TITLE);
                             if (title != null) {
                                 // append package name to type name text
-                                methodTextBuilder.append(title.substring(title.lastIndexOf(' '))).append('.');
+                                methodTextBuilder.append(title, title.lastIndexOf(' '), title.length()).append('.');
                             }
                         }
                     }
