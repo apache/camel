@@ -95,7 +95,7 @@ mvn archetype:generate \
 
 Notice that archetypes will now be downloaded from
 https://repository.apache.org/content/groups/snapshots-group[Apache's
-snapshot repo] instead of http://repo1.maven.org/maven2[Maven central].
+snapshot repo] instead of https://repo1.maven.org/maven2[Maven central].
 
 When the project is created, you may need to add another repository to
 the pom.xml file. This is to load a SNAPSHOT version of the
