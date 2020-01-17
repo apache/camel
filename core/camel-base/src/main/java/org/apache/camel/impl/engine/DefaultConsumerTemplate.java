@@ -110,14 +110,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
 
     @Override
     public Object receiveBody(String endpointUri) {
-        Object answer;
-        Exchange exchange = receive(endpointUri);
-        try {
-            answer = extractResultBody(exchange);
-        } finally {
-            doneUoW(exchange);
-        }
-        return answer;
+        return receiveBody(receive(endpointUri));
     }
 
     @Override
@@ -127,14 +120,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
 
     @Override
     public Object receiveBody(String endpointUri, long timeout) {
-        Object answer;
-        Exchange exchange = receive(endpointUri, timeout);
-        try {
-            answer = extractResultBody(exchange);
-        } finally {
-            doneUoW(exchange);
-        }
-        return answer;
+        return receiveBody(receive(endpointUri, timeout));
     }
 
     @Override
@@ -144,8 +130,11 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
 
     @Override
     public Object receiveBodyNoWait(String endpointUri) {
+        return receiveBody(receiveNoWait(endpointUri));
+    }
+
+    private Object receiveBody(Exchange exchange) {
         Object answer;
-        Exchange exchange = receiveNoWait(endpointUri);
         try {
             answer = extractResultBody(exchange);
         } finally {
@@ -153,6 +142,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         }
         return answer;
     }
+
 
     @Override
     public Object receiveBodyNoWait(Endpoint endpoint) {
