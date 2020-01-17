@@ -19,7 +19,6 @@ package org.apache.camel.impl.engine;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
 import org.apache.camel.StaticService;
@@ -49,7 +48,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
     // use for statistics so we have insights at runtime
     private final AtomicInteger createdWorkers = new AtomicInteger();
     private final AtomicInteger runningWorkers = new AtomicInteger();
-    private final AtomicLong pendingTasks = new AtomicLong();
+    private final AtomicInteger pendingTasks = new AtomicInteger();
 
     @Override
     public void schedule(Runnable runnable) {
@@ -64,30 +63,6 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
     @Override
     public void scheduleSync(Runnable runnable) {
         workers.get().schedule(runnable, false, true, true);
-    }
-
-    @Override
-    public void scheduleMain(Runnable runnable, String description) {
-        if (description != null) {
-            runnable = describe(runnable, description);
-        }
-        scheduleMain(runnable);
-    }
-
-    @Override
-    public void schedule(Runnable runnable, String description) {
-        if (description != null) {
-            runnable = describe(runnable, description);
-        }
-        schedule(runnable);
-    }
-
-    @Override
-    public void scheduleSync(Runnable runnable, String description) {
-        if (description != null) {
-            runnable = describe(runnable, description);
-        }
-        scheduleSync(runnable);
     }
 
     @Override
@@ -106,21 +81,8 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
     }
 
     @ManagedAttribute(description = "Number of pending tasks")
-    public long getPendingTasks() {
+    public int getPendingTasks() {
         return pendingTasks.get();
-    }
-
-    private static Runnable describe(Runnable runnable, String description) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                runnable.run();
-            }
-            @Override
-            public String toString() {
-                return description;
-            }
-        };
     }
 
     @Override
