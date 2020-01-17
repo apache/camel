@@ -26,13 +26,13 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
-@UriEndpoint(firstVersion = "2.23.0", scheme = "websocket-jsr356", title = "Javax Websocket", syntax = "websocket-jsr356:websocketPathOrUri", label = "jsr356")
+@UriEndpoint(firstVersion = "2.23.0", scheme = "websocket-jsr356", title = "Javax Websocket", syntax = "websocket-jsr356:uri", label = "http")
 public class JSR356Endpoint extends DefaultEndpoint {
     @UriPath(description = "If a schemeless URI path is provided, a ServerEndpoint is deployed under that path. "
             + "Else if the URI is prefixed with the 'ws://' scheme, then a connection is established to the corresponding server")
     private URI uri;
 
-    @UriParam(description = "Used when the endpoint is in client mode to populate a pool of sessions")
+    @UriParam(description = "Used when the endpoint is in client mode to populate a pool of sessions", defaultValue = "1")
     private int sessionCount = 1;
 
     public JSR356Endpoint(final JSR356WebSocketComponent component, final String uri) {
@@ -45,8 +45,10 @@ public class JSR356Endpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Consumer createConsumer(final Processor processor) {
-        return new JSR356Consumer(this, processor);
+    public Consumer createConsumer(final Processor processor) throws Exception {
+        Consumer consumer = new JSR356Consumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override
