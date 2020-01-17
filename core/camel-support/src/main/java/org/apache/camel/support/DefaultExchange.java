@@ -41,7 +41,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public final class DefaultExchange implements ExtendedExchange {
 
-    protected final CamelContext context;
+    private final CamelContext context;
     private final long created;
     private Map<String, Object> properties;
     private Message in;

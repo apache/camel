@@ -29,15 +29,6 @@ public interface ReactiveExecutor {
     void schedule(Runnable runnable);
 
     /**
-     * Schedules the task to be run
-     *
-     * @param runnable    the task
-     * @param description a human readable description for logging purpose
-     */
-    @Deprecated
-    void schedule(Runnable runnable, String description);
-
-    /**
      * Schedules the task to be prioritized and run asap
      *
      * @param runnable    the task
@@ -45,29 +36,11 @@ public interface ReactiveExecutor {
     void scheduleMain(Runnable runnable);
 
     /**
-     * Schedules the task to be prioritized and run asap
-     *
-     * @param runnable    the task
-     * @param description a human readable description for logging purpose
-     */
-    @Deprecated
-    void scheduleMain(Runnable runnable, String description);
-
-    /**
      * Schedules the task to run synchronously
      *
      * @param runnable    the task
      */
     void scheduleSync(Runnable runnable);
-
-    /**
-     * Schedules the task to run synchronously
-     *
-     * @param runnable    the task
-     * @param description a human readable description for logging purpose
-     */
-    @Deprecated
-    void scheduleSync(Runnable runnable, String description);
 
     /**
      * Executes the next task (if supported by the reactive executor implementation)
