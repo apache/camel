@@ -376,28 +376,28 @@ To use HL7 in your Camel routes you'll need to add a dependency on
 *camel-hl7* listed above, which implements this data format.
 
 The HAPI library is split into a
-http://repo1.maven.org/maven2/ca/uhn/hapi/hapi-base[base library] and
+https://repo1.maven.org/maven2/ca/uhn/hapi/hapi-base[base library] and
 several structure libraries, one for each HL7v2 message version:
 
-* http://repo1.maven.org/maven2/ca/uhn/hapi/hapi-structures-v21[v2.1
+* https://repo1.maven.org/maven2/ca/uhn/hapi/hapi-structures-v21[v2.1
 structures library]
-* http://repo1.maven.org/maven2/ca/uhn/hapi/hapi-structures-v22[v2.2
+* https://repo1.maven.org/maven2/ca/uhn/hapi/hapi-structures-v22[v2.2
 structures library]
-* http://repo1.maven.org/maven2/ca/uhn/hapi/hapi-structures-v23[v2.3
+* https://repo1.maven.org/maven2/ca/uhn/hapi/hapi-structures-v23[v2.3
 structures library]
-* http://repo1.maven.org/maven2/ca/uhn/hapi/hapi-structures-v231[v2.3.1
+* https://repo1.maven.org/maven2/ca/uhn/hapi/hapi-structures-v231[v2.3.1
 structures library]
-* http://repo1.maven.org/maven2/ca/uhn/hapi/hapi-structures-v24[v2.4
+* https://repo1.maven.org/maven2/ca/uhn/hapi/hapi-structures-v24[v2.4
 structures library]
-* http://repo1.maven.org/maven2/ca/uhn/hapi/hapi-structures-v25[v2.5
+* https://repo1.maven.org/maven2/ca/uhn/hapi/hapi-structures-v25[v2.5
 structures library]
-* http://repo1.maven.org/maven2/ca/uhn/hapi/hapi-structures-v251[v2.5.1
+* https://repo1.maven.org/maven2/ca/uhn/hapi/hapi-structures-v251[v2.5.1
 structures library]
-* http://repo1.maven.org/maven2/ca/uhn/hapi/hapi-structures-v26[v2.6
+* https://repo1.maven.org/maven2/ca/uhn/hapi/hapi-structures-v26[v2.6
 structures library]
 
 By default `camel-hl7` only references the HAPI
-http://repo1.maven.org/maven2/ca/uhn/hapi/hapi-base[base library].
+https://repo1.maven.org/maven2/ca/uhn/hapi/hapi-base[base library].
 Applications are responsible for including structure libraries
 themselves. For example, if an application works with HL7v2 message
 versions 2.4 and 2.5 then the following dependencies must be added:
@@ -421,7 +421,7 @@ versions 2.4 and 2.5 then the following dependencies must be added:
 Alternatively, an OSGi bundle containing the base library, all
 structures libraries and required dependencies (on the bundle classpath)
 can be downloaded from the
-http://repo1.maven.org/maven2/ca/uhn/hapi/hapi-osgi-base[central Maven
+https://repo1.maven.org/maven2/ca/uhn/hapi/hapi-osgi-base[central Maven
 repository].
 
 [source,xml]
