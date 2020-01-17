@@ -350,11 +350,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         Exchange original;
         Exchange exchange;
         AsyncCallback callback;
-        boolean sync = true;
         int redeliveryCounter;
         long redeliveryDelay;
         Predicate retryWhilePredicate;
-        boolean redeliverFromSync;
 
         // default behavior which can be overloaded on a per exception basis
         RedeliveryPolicy currentRedeliveryPolicy;
