@@ -36,7 +36,7 @@
   </properties>
 
   <!-- The validate plugin will export these provided dependencies bundles export packages first -->
-  <!-- some of the bundles is located at: http://repo1.maven.org/maven2/org/apache/servicemix/bundles/ -->
+  <!-- some of the bundles is located at: https://repo1.maven.org/maven2/org/apache/servicemix/bundles/ -->
   <dependencies>
     <dependency>
       <groupId>org.osgi</groupId>
