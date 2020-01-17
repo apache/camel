@@ -27,7 +27,10 @@ This means that the bean is created or looked up once and reused.
 
 The option `cache` has been deprecated in favour of the new `scope` option that by default is `Singleton`. You can set this to `Prototype` to use the old behaviour.
 
-NOTE: Setting this to Prototype will let Camel create/lookup a new bean instance, per use; which acts as prototype scoped. However beware that if you lookup the bean, then the registry that holds the bean, would return a bean accordingly to its configuration, which can be singleton or prototype scoped. For example if you use Spring, or CDI, which has their own settings for setting bean scopes.
+[NOTE]
+====
+Setting this to Prototype will let Camel create/lookup a new bean instance, per use; which acts as prototype scoped. However beware that if you lookup the bean, then the registry that holds the bean, would return a bean accordingly to its configuration, which can be singleton or prototype scoped. For example if you use Spring, or CDI, which has their own settings for setting bean scopes.
+====
 
 === camel-irc
 
