@@ -47,6 +47,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default JSR356WebSocketEndpointConsumerBuilder sessionCount(
@@ -60,6 +61,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default JSR356WebSocketEndpointConsumerBuilder sessionCount(
@@ -247,6 +249,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default JSR356WebSocketEndpointProducerBuilder sessionCount(
@@ -260,6 +263,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default JSR356WebSocketEndpointProducerBuilder sessionCount(
@@ -384,8 +388,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
      */
     public interface JSR356WebSocketEndpointBuilder
             extends
-                JSR356WebSocketEndpointConsumerBuilder,
-                JSR356WebSocketEndpointProducerBuilder {
+                JSR356WebSocketEndpointConsumerBuilder, JSR356WebSocketEndpointProducerBuilder {
         default AdvancedJSR356WebSocketEndpointBuilder advanced() {
             return (AdvancedJSR356WebSocketEndpointBuilder) this;
         }
@@ -395,6 +398,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default JSR356WebSocketEndpointBuilder sessionCount(int sessionCount) {
@@ -407,6 +411,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default JSR356WebSocketEndpointBuilder sessionCount(String sessionCount) {
@@ -420,8 +425,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
      */
     public interface AdvancedJSR356WebSocketEndpointBuilder
             extends
-                AdvancedJSR356WebSocketEndpointConsumerBuilder,
-                AdvancedJSR356WebSocketEndpointProducerBuilder {
+                AdvancedJSR356WebSocketEndpointConsumerBuilder, AdvancedJSR356WebSocketEndpointProducerBuilder {
         default JSR356WebSocketEndpointBuilder basic() {
             return (JSR356WebSocketEndpointBuilder) this;
         }
@@ -482,36 +486,15 @@ public interface JSR356WebSocketEndpointBuilderFactory {
             return this;
         }
     }
-
-    public interface JSR356WebSocketBuilders {
-        /**
-         * Javax Websocket (camel-websocket-jsr356)
-         * Camel WebSocket using JSR356 (javax)
-         * 
-         * Category: jsr356
-         * Since: 2.23
-         * Maven coordinates: org.apache.camel:camel-websocket-jsr356
-         * 
-         * Syntax: <code>websocket-jsr356:websocketPathOrUri</code>
-         * 
-         * Path parameter: uri
-         * If a schemeless URI path is provided, a ServerEndpoint is deployed
-         * under that path. Else if the URI is prefixed with the 'ws://' scheme,
-         * then a connection is established to the corresponding server
-         */
-        default JSR356WebSocketEndpointBuilder websocketJsr356(String path) {
-            return JSR356WebSocketEndpointBuilderFactory.websocketJsr356(path);
-        }
-    }
     /**
      * Javax Websocket (camel-websocket-jsr356)
      * Camel WebSocket using JSR356 (javax)
      * 
-     * Category: jsr356
+     * Category: http
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-websocket-jsr356
      * 
-     * Syntax: <code>websocket-jsr356:websocketPathOrUri</code>
+     * Syntax: <code>websocket-jsr356:uri</code>
      * 
      * Path parameter: uri
      * If a schemeless URI path is provided, a ServerEndpoint is deployed under
