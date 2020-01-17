@@ -808,6 +808,25 @@ public interface AtomEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface AtomBuilders {
+        /**
+         * Atom (camel-atom)
+         * The atom component is used for consuming Atom RSS feeds.
+         * 
+         * Category: rss
+         * Since: 1.2
+         * Maven coordinates: org.apache.camel:camel-atom
+         * 
+         * Syntax: <code>atom:feedUri</code>
+         * 
+         * Path parameter: feedUri (required)
+         * The URI to the feed to poll.
+         */
+        default AtomEndpointBuilder atom(String path) {
+            return AtomEndpointBuilderFactory.atom(path);
+        }
+    }
     /**
      * Atom (camel-atom)
      * The atom component is used for consuming Atom RSS feeds.

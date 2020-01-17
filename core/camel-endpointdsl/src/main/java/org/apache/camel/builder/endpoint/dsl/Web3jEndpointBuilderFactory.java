@@ -1125,7 +1125,8 @@ public interface Web3jEndpointBuilderFactory {
      */
     public interface Web3jEndpointBuilder
             extends
-                Web3jEndpointConsumerBuilder, Web3jEndpointProducerBuilder {
+                Web3jEndpointConsumerBuilder,
+                Web3jEndpointProducerBuilder {
         default AdvancedWeb3jEndpointBuilder advanced() {
             return (AdvancedWeb3jEndpointBuilder) this;
         }
@@ -1357,7 +1358,8 @@ public interface Web3jEndpointBuilderFactory {
      */
     public interface AdvancedWeb3jEndpointBuilder
             extends
-                AdvancedWeb3jEndpointConsumerBuilder, AdvancedWeb3jEndpointProducerBuilder {
+                AdvancedWeb3jEndpointConsumerBuilder,
+                AdvancedWeb3jEndpointProducerBuilder {
         default Web3jEndpointBuilder basic() {
             return (Web3jEndpointBuilder) this;
         }
@@ -1414,6 +1416,26 @@ public interface Web3jEndpointBuilderFactory {
         default AdvancedWeb3jEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface Web3jBuilders {
+        /**
+         * Web3j Ethereum Blockchain (camel-web3j)
+         * The web3j component uses the Web3j client API and allows you to
+         * add/read nodes to/from a web3j compliant content repositories.
+         * 
+         * Category: bitcoin,blockchain
+         * Since: 2.22
+         * Maven coordinates: org.apache.camel:camel-web3j
+         * 
+         * Syntax: <code>web3j:nodeAddress</code>
+         * 
+         * Path parameter: nodeAddress (required)
+         * Sets the node address used to communicate
+         */
+        default Web3jEndpointBuilder web3j(String path) {
+            return Web3jEndpointBuilderFactory.web3j(path);
         }
     }
     /**

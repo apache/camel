@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.CamelContextHelper;
@@ -109,14 +110,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
 
     @Override
     public Object receiveBody(String endpointUri) {
-        Object answer;
-        Exchange exchange = receive(endpointUri);
-        try {
-            answer = extractResultBody(exchange);
-        } finally {
-            doneUoW(exchange);
-        }
-        return answer;
+        return receiveBody(receive(endpointUri));
     }
 
     @Override
@@ -126,14 +120,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
 
     @Override
     public Object receiveBody(String endpointUri, long timeout) {
-        Object answer;
-        Exchange exchange = receive(endpointUri, timeout);
-        try {
-            answer = extractResultBody(exchange);
-        } finally {
-            doneUoW(exchange);
-        }
-        return answer;
+        return receiveBody(receive(endpointUri, timeout));
     }
 
     @Override
@@ -143,8 +130,11 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
 
     @Override
     public Object receiveBodyNoWait(String endpointUri) {
+        return receiveBody(receiveNoWait(endpointUri));
+    }
+
+    private Object receiveBody(Exchange exchange) {
         Object answer;
-        Exchange exchange = receiveNoWait(endpointUri);
         try {
             answer = extractResultBody(exchange);
         } finally {
@@ -152,6 +142,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         }
         return answer;
     }
+
 
     @Override
     public Object receiveBodyNoWait(Endpoint endpoint) {
@@ -224,7 +215,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
             }
             if (exchange.getUnitOfWork() == null) {
                 // handover completions and done them manually to ensure they are being executed
-                List<Synchronization> synchronizations = exchange.handoverCompletions();
+                List<Synchronization> synchronizations = exchange.adapt(ExtendedExchange.class).handoverCompletions();
                 UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations, log);
             } else {
                 // done the unit of work

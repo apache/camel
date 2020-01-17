@@ -1929,7 +1929,8 @@ public interface SqsEndpointBuilderFactory {
      */
     public interface SqsEndpointBuilder
             extends
-                SqsEndpointConsumerBuilder, SqsEndpointProducerBuilder {
+                SqsEndpointConsumerBuilder,
+                SqsEndpointProducerBuilder {
         default AdvancedSqsEndpointBuilder advanced() {
             return (AdvancedSqsEndpointBuilder) this;
         }
@@ -2251,7 +2252,8 @@ public interface SqsEndpointBuilderFactory {
      */
     public interface AdvancedSqsEndpointBuilder
             extends
-                AdvancedSqsEndpointConsumerBuilder, AdvancedSqsEndpointProducerBuilder {
+                AdvancedSqsEndpointConsumerBuilder,
+                AdvancedSqsEndpointProducerBuilder {
         default SqsEndpointBuilder basic() {
             return (SqsEndpointBuilder) this;
         }
@@ -2367,6 +2369,26 @@ public interface SqsEndpointBuilderFactory {
         sendBatchMessage,
         deleteMessage,
         listQueues;
+    }
+
+    public interface SqsBuilders {
+        /**
+         * AWS Simple Queue Service (camel-aws-sqs)
+         * The aws-sqs component is used for sending and receiving messages to
+         * Amazon's SQS service.
+         * 
+         * Category: cloud,messaging
+         * Since: 2.6
+         * Maven coordinates: org.apache.camel:camel-aws-sqs
+         * 
+         * Syntax: <code>aws-sqs:queueNameOrArn</code>
+         * 
+         * Path parameter: queueNameOrArn (required)
+         * Queue name or ARN
+         */
+        default SqsEndpointBuilder awsSqs(String path) {
+            return SqsEndpointBuilderFactory.awsSqs(path);
+        }
     }
     /**
      * AWS Simple Queue Service (camel-aws-sqs)

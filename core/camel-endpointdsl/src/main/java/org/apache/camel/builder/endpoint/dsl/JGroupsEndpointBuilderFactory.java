@@ -387,7 +387,8 @@ public interface JGroupsEndpointBuilderFactory {
      */
     public interface JGroupsEndpointBuilder
             extends
-                JGroupsEndpointConsumerBuilder, JGroupsEndpointProducerBuilder {
+                JGroupsEndpointConsumerBuilder,
+                JGroupsEndpointProducerBuilder {
         default AdvancedJGroupsEndpointBuilder advanced() {
             return (AdvancedJGroupsEndpointBuilder) this;
         }
@@ -411,7 +412,8 @@ public interface JGroupsEndpointBuilderFactory {
      */
     public interface AdvancedJGroupsEndpointBuilder
             extends
-                AdvancedJGroupsEndpointConsumerBuilder, AdvancedJGroupsEndpointProducerBuilder {
+                AdvancedJGroupsEndpointConsumerBuilder,
+                AdvancedJGroupsEndpointProducerBuilder {
         default JGroupsEndpointBuilder basic() {
             return (JGroupsEndpointBuilder) this;
         }
@@ -468,6 +470,26 @@ public interface JGroupsEndpointBuilderFactory {
         default AdvancedJGroupsEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface JGroupsBuilders {
+        /**
+         * JGroups (camel-jgroups)
+         * The jgroups component provides exchange of messages between Camel and
+         * JGroups clusters.
+         * 
+         * Category: clustering,messaging
+         * Since: 2.13
+         * Maven coordinates: org.apache.camel:camel-jgroups
+         * 
+         * Syntax: <code>jgroups:clusterName</code>
+         * 
+         * Path parameter: clusterName (required)
+         * The name of the JGroups cluster the component should connect to.
+         */
+        default JGroupsEndpointBuilder jgroups(String path) {
+            return JGroupsEndpointBuilderFactory.jgroups(path);
         }
     }
     /**

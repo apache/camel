@@ -650,7 +650,8 @@ public interface GridFsEndpointBuilderFactory {
      */
     public interface GridFsEndpointBuilder
             extends
-                GridFsEndpointConsumerBuilder, GridFsEndpointProducerBuilder {
+                GridFsEndpointConsumerBuilder,
+                GridFsEndpointProducerBuilder {
         default AdvancedGridFsEndpointBuilder advanced() {
             return (AdvancedGridFsEndpointBuilder) this;
         }
@@ -746,7 +747,8 @@ public interface GridFsEndpointBuilderFactory {
      */
     public interface AdvancedGridFsEndpointBuilder
             extends
-                AdvancedGridFsEndpointConsumerBuilder, AdvancedGridFsEndpointProducerBuilder {
+                AdvancedGridFsEndpointConsumerBuilder,
+                AdvancedGridFsEndpointProducerBuilder {
         default GridFsEndpointBuilder basic() {
             return (GridFsEndpointBuilder) this;
         }
@@ -817,6 +819,25 @@ public interface GridFsEndpointBuilderFactory {
         FileAttribute,
         TimeStampAndFileAttribute,
         PersistentTimestampAndFileAttribute;
+    }
+
+    public interface GridFsBuilders {
+        /**
+         * MongoDB GridFS (camel-mongodb-gridfs)
+         * Component for working with MongoDB GridFS.
+         * 
+         * Category: database,nosql
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-mongodb-gridfs
+         * 
+         * Syntax: <code>mongodb-gridfs:connectionBean</code>
+         * 
+         * Path parameter: connectionBean (required)
+         * Name of com.mongodb.MongoClient to use.
+         */
+        default GridFsEndpointBuilder mongodbGridfs(String path) {
+            return GridFsEndpointBuilderFactory.mongodbGridfs(path);
+        }
     }
     /**
      * MongoDB GridFS (camel-mongodb-gridfs)

@@ -1086,7 +1086,8 @@ public interface FlatpackEndpointBuilderFactory {
      */
     public interface FlatpackEndpointBuilder
             extends
-                FlatpackEndpointConsumerBuilder, FlatpackEndpointProducerBuilder {
+                FlatpackEndpointConsumerBuilder,
+                FlatpackEndpointProducerBuilder {
         default AdvancedFlatpackEndpointBuilder advanced() {
             return (AdvancedFlatpackEndpointBuilder) this;
         }
@@ -1251,7 +1252,8 @@ public interface FlatpackEndpointBuilderFactory {
      */
     public interface AdvancedFlatpackEndpointBuilder
             extends
-                AdvancedFlatpackEndpointConsumerBuilder, AdvancedFlatpackEndpointProducerBuilder {
+                AdvancedFlatpackEndpointConsumerBuilder,
+                AdvancedFlatpackEndpointProducerBuilder {
         default FlatpackEndpointBuilder basic() {
             return (FlatpackEndpointBuilder) this;
         }
@@ -1308,6 +1310,32 @@ public interface FlatpackEndpointBuilderFactory {
         default AdvancedFlatpackEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface FlatpackBuilders {
+        /**
+         * Flatpack (camel-flatpack)
+         * The flatpack component supports fixed width and delimited file
+         * parsing via the FlatPack library.
+         * 
+         * Category: transformation
+         * Since: 1.4
+         * Maven coordinates: org.apache.camel:camel-flatpack
+         * 
+         * Syntax: <code>flatpack:type:resourceUri</code>
+         * 
+         * Path parameter: type
+         * Whether to use fixed or delimiter
+         * Default value: delim
+         * The value can be one of: fixed, delim
+         * 
+         * Path parameter: resourceUri (required)
+         * URL for loading the flatpack mapping file from classpath or file
+         * system
+         */
+        default FlatpackEndpointBuilder flatpack(String path) {
+            return FlatpackEndpointBuilderFactory.flatpack(path);
         }
     }
     /**

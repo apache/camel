@@ -188,6 +188,31 @@ public interface GoogleBigQueryEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface GoogleBigQueryBuilders {
+        /**
+         * Google BigQuery (camel-google-bigquery)
+         * Google BigQuery data warehouse for analytics.
+         * 
+         * Category: cloud,messaging
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-google-bigquery
+         * 
+         * Syntax: <code>google-bigquery:projectId:datasetId:tableId</code>
+         * 
+         * Path parameter: projectId (required)
+         * Google Cloud Project Id
+         * 
+         * Path parameter: datasetId (required)
+         * BigQuery Dataset Id
+         * 
+         * Path parameter: tableId
+         * BigQuery table id
+         */
+        default GoogleBigQueryEndpointBuilder googleBigquery(String path) {
+            return GoogleBigQueryEndpointBuilderFactory.googleBigquery(path);
+        }
+    }
     /**
      * Google BigQuery (camel-google-bigquery)
      * Google BigQuery data warehouse for analytics.

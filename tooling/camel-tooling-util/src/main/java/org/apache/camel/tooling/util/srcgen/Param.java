@@ -19,11 +19,43 @@ package org.apache.camel.tooling.util.srcgen;
 public class Param {
 
     GenericType type;
+    String typeLiteral;
     String name;
+    boolean vararg;
 
     public Param(GenericType type, String name) {
-        this.type = type;
-        this.name = name;
+        this(type, name, false);
     }
 
+    public Param(String type, String name) {
+        this(type, name, false);
+    }
+
+    public Param(GenericType type, String name, boolean vararg) {
+        this.type = type;
+        this.name = name;
+        this.vararg = vararg;
+    }
+
+    public Param(String type, String name, boolean vararg) {
+        this.typeLiteral = type;
+        this.name = name;
+        this.vararg = vararg;
+    }
+
+    public GenericType getType() {
+        return type;
+    }
+
+    public String getTypeLiteral() {
+        return typeLiteral;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isVararg() {
+        return vararg;
+    }
 }

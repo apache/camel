@@ -131,6 +131,10 @@ public class EndpointOptionModel {
         this.multiValue = multiValue;
     }
 
+    public boolean isDeprecated() {
+        return "true".equals(deprecated);
+    }
+
     public String getDeprecated() {
         return deprecated;
     }

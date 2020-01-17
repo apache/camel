@@ -28,6 +28,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Synchronization;
@@ -136,7 +137,7 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
             }
         }, delay, delay, TimeUnit.SECONDS);
 
-        exchange.addOnCompletion(new Synchronization() {
+        exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
             @Override
             public void onComplete(Exchange exchange) {
                 processCommit(exchange);

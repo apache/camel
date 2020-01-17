@@ -37,6 +37,7 @@ import javax.xml.transform.URIResolver;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.camel.ExtendedExchange;
 import org.xml.sax.EntityResolver;
 
 import org.apache.camel.Exchange;
@@ -95,7 +96,7 @@ public class XsltBuilder implements Processor {
         if (isDeleteOutputFile()) {
             // add on completion so we can delete the file when the Exchange is done
             String fileName = ExchangeHelper.getMandatoryHeader(exchange, Exchange.XSLT_FILE_NAME, String.class);
-            exchange.addOnCompletion(new XsltBuilderOnCompletion(fileName));
+            exchange.adapt(ExtendedExchange.class).addOnCompletion(new XsltBuilderOnCompletion(fileName));
         }
 
         Transformer transformer = getTransformer();

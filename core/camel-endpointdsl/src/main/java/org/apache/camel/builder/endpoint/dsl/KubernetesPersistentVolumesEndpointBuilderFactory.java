@@ -422,6 +422,27 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface KubernetesPersistentVolumesBuilders {
+        /**
+         * Kubernetes Persistent Volume (camel-kubernetes)
+         * The Kubernetes Persistent Volumes component provides a producer to
+         * execute kubernetes persistent volume operations.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-persistent-volumes:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         */
+        default KubernetesPersistentVolumesEndpointBuilder kubernetesPersistentVolumes(
+                String path) {
+            return KubernetesPersistentVolumesEndpointBuilderFactory.kubernetesPersistentVolumes(path);
+        }
+    }
     /**
      * Kubernetes Persistent Volume (camel-kubernetes)
      * The Kubernetes Persistent Volumes component provides a producer to

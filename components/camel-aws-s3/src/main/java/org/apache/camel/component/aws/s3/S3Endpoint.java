@@ -26,6 +26,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -189,7 +190,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
             IOHelper.close(s3Object);
         } else {
             if (configuration.isAutocloseBody()) {
-                exchange.addOnCompletion(new SynchronizationAdapter() {
+                exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                     @Override
                     public void onDone(Exchange exchange) {
                         IOHelper.close(s3Object);

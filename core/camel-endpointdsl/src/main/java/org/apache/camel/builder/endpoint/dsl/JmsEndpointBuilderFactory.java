@@ -4097,7 +4097,8 @@ public interface JmsEndpointBuilderFactory {
      */
     public interface JmsEndpointBuilder
             extends
-                JmsEndpointConsumerBuilder, JmsEndpointProducerBuilder {
+                JmsEndpointConsumerBuilder,
+                JmsEndpointProducerBuilder {
         default AdvancedJmsEndpointBuilder advanced() {
             return (AdvancedJmsEndpointBuilder) this;
         }
@@ -4317,7 +4318,8 @@ public interface JmsEndpointBuilderFactory {
      */
     public interface AdvancedJmsEndpointBuilder
             extends
-                AdvancedJmsEndpointConsumerBuilder, AdvancedJmsEndpointProducerBuilder {
+                AdvancedJmsEndpointConsumerBuilder,
+                AdvancedJmsEndpointProducerBuilder {
         default JmsEndpointBuilder basic() {
             return (JmsEndpointBuilder) this;
         }
@@ -5398,6 +5400,31 @@ public interface JmsEndpointBuilderFactory {
         Temporary,
         Shared,
         Exclusive;
+    }
+
+    public interface JmsBuilders {
+        /**
+         * JMS (camel-jms)
+         * The jms component allows messages to be sent to (or consumed from) a
+         * JMS Queue or Topic.
+         * 
+         * Category: messaging
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-jms
+         * 
+         * Syntax: <code>jms:destinationType:destinationName</code>
+         * 
+         * Path parameter: destinationType
+         * The kind of destination to use
+         * Default value: queue
+         * The value can be one of: queue, topic, temp-queue, temp-topic
+         * 
+         * Path parameter: destinationName (required)
+         * Name of the queue or topic to use as destination
+         */
+        default JmsEndpointBuilder jms(String path) {
+            return JmsEndpointBuilderFactory.jms(path);
+        }
     }
     /**
      * JMS (camel-jms)

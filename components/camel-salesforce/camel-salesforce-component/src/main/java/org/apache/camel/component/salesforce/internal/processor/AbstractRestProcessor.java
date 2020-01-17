@@ -581,7 +581,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         int start = 0;
         while (matcher.find()) {
             // append part before parameter template
-            result.append(apexUrl.substring(start, matcher.start()));
+            result.append(apexUrl, start, matcher.start());
             start = matcher.end();
 
             // append template value from exchange header
@@ -598,7 +598,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         }
         if (start != 0) {
             // append remaining URL
-            result.append(apexUrl.substring(start));
+            result.append(apexUrl, start, apexUrl.length());
             final String resolvedUrl = result.toString();
             log.debug("Resolved APEX URL {} to {}", apexUrl, resolvedUrl);
             return resolvedUrl;

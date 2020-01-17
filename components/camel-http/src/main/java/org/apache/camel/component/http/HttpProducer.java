@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.http.helper.HttpMethodHelper;
@@ -213,7 +214,7 @@ public class HttpProducer extends DefaultProducer {
             final HttpResponse response = httpResponse;
             if (httpResponse != null && getEndpoint().isDisableStreamCache()) {
                 // close the stream at the end of the exchange to ensure it gets eventually closed later
-                exchange.addOnCompletion(new SynchronizationAdapter() {
+                exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                     @Override
                     public void onDone(Exchange exchange) {
                         try {

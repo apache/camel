@@ -331,7 +331,8 @@ public interface BrowseEndpointBuilderFactory {
      */
     public interface BrowseEndpointBuilder
             extends
-                BrowseEndpointConsumerBuilder, BrowseEndpointProducerBuilder {
+                BrowseEndpointConsumerBuilder,
+                BrowseEndpointProducerBuilder {
         default AdvancedBrowseEndpointBuilder advanced() {
             return (AdvancedBrowseEndpointBuilder) this;
         }
@@ -342,7 +343,8 @@ public interface BrowseEndpointBuilderFactory {
      */
     public interface AdvancedBrowseEndpointBuilder
             extends
-                AdvancedBrowseEndpointConsumerBuilder, AdvancedBrowseEndpointProducerBuilder {
+                AdvancedBrowseEndpointConsumerBuilder,
+                AdvancedBrowseEndpointProducerBuilder {
         default BrowseEndpointBuilder basic() {
             return (BrowseEndpointBuilder) this;
         }
@@ -399,6 +401,26 @@ public interface BrowseEndpointBuilderFactory {
         default AdvancedBrowseEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface BrowseBuilders {
+        /**
+         * Browse (camel-browse)
+         * The browse component is used for viewing the messages received on
+         * endpoints that supports BrowsableEndpoint.
+         * 
+         * Category: core,monitoring
+         * Since: 1.3
+         * Maven coordinates: org.apache.camel:camel-browse
+         * 
+         * Syntax: <code>browse:name</code>
+         * 
+         * Path parameter: name (required)
+         * A name which can be any string to uniquely identify the endpoint
+         */
+        default BrowseEndpointBuilder browse(String path) {
+            return BrowseEndpointBuilderFactory.browse(path);
         }
     }
     /**

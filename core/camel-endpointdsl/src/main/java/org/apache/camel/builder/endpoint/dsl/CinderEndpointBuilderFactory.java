@@ -252,6 +252,26 @@ public interface CinderEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface CinderBuilders {
+        /**
+         * OpenStack Cinder (camel-openstack)
+         * The openstack-cinder component allows messages to be sent to an
+         * OpenStack block storage services.
+         * 
+         * Category: cloud,paas
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-openstack
+         * 
+         * Syntax: <code>openstack-cinder:host</code>
+         * 
+         * Path parameter: host (required)
+         * OpenStack host url
+         */
+        default CinderEndpointBuilder openstackCinder(String path) {
+            return CinderEndpointBuilderFactory.openstackCinder(path);
+        }
+    }
     /**
      * OpenStack Cinder (camel-openstack)
      * The openstack-cinder component allows messages to be sent to an OpenStack

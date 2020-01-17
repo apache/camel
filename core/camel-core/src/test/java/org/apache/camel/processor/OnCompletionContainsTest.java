@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -65,26 +66,26 @@ public class OnCompletionContainsTest extends ContextTestSupport {
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         SynchronizationAdapter adapter = new SimpleSynchronizationAdapter("mock:sync", "A");
-                        exchange.addOnCompletion(adapter);
+                        exchange.adapt(ExtendedExchange.class).addOnCompletion(adapter);
 
                         // should not add the adapter again as we already have
                         // it
-                        if (!exchange.containsOnCompletion(adapter)) {
-                            exchange.addOnCompletion(adapter);
+                        if (!exchange.adapt(ExtendedExchange.class).containsOnCompletion(adapter)) {
+                            exchange.adapt(ExtendedExchange.class).addOnCompletion(adapter);
                         }
 
                         adapter = new SimpleSynchronizationAdapter("mock:sync", "B");
-                        exchange.addOnCompletion(adapter);
+                        exchange.adapt(ExtendedExchange.class).addOnCompletion(adapter);
 
                         // now add the B again as we want to test that this also
                         // work
-                        if (exchange.containsOnCompletion(adapter)) {
-                            exchange.addOnCompletion(adapter);
+                        if (exchange.adapt(ExtendedExchange.class).containsOnCompletion(adapter)) {
+                            exchange.adapt(ExtendedExchange.class).addOnCompletion(adapter);
                         }
 
                         // add a C that is no a SimpleSynchronizationAdapter
                         // class
-                        exchange.addOnCompletion(new SynchronizationAdapter() {
+                        exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                             @Override
                             public void onDone(Exchange exchange) {
                                 template.sendBody("mock:sync", "C");

@@ -554,38 +554,16 @@ public interface Exchange {
     Endpoint getFromEndpoint();
 
     /**
-     * Sets the endpoint which originated this message exchange. This method
-     * should typically only be called by {@link org.apache.camel.Endpoint} implementations
-     *
-     * @param fromEndpoint the endpoint which is originating this message exchange
-     */
-    void setFromEndpoint(Endpoint fromEndpoint);
-    
-    /**
      * Returns the route id which originated this message exchange if a route consumer on an endpoint
      * created the message exchange, otherwise this property will be <tt>null</tt>
      */
     String getFromRouteId();
 
     /**
-     * Sets the route id which originated this message exchange. This method
-     * should typically only be called by the internal framework.
-     *
-     * @param fromRouteId the from route id
-     */
-    void setFromRouteId(String fromRouteId);
-
-    /**
      * Returns the unit of work that this exchange belongs to; which may map to
      * zero, one or more physical transactions
      */
     UnitOfWork getUnitOfWork();
-
-    /**
-     * Sets the unit of work that this exchange belongs to; which may map to
-     * zero, one or more physical transactions
-     */
-    void setUnitOfWork(UnitOfWork unitOfWork);
 
     /**
      * Returns the exchange id (unique)
@@ -596,37 +574,6 @@ public interface Exchange {
      * Set the exchange id
      */
     void setExchangeId(String id);
-
-    /**
-     * Adds a {@link org.apache.camel.spi.Synchronization} to be invoked as callback when
-     * this exchange is completed.
-     *
-     * @param onCompletion  the callback to invoke on completion of this exchange
-     */
-    void addOnCompletion(Synchronization onCompletion);
-
-    /**
-     * Checks if the passed {@link org.apache.camel.spi.Synchronization} instance is
-     * already contained on this exchange.
-     *
-     * @param onCompletion  the callback instance that is being checked for
-     * @return <tt>true</tt>, if callback instance is already contained on this exchange, else <tt>false</tt>
-     */
-    boolean containsOnCompletion(Synchronization onCompletion);
-
-    /**
-     * Handover all the on completions from this exchange to the target exchange.
-     *
-     * @param target the target exchange
-     */
-    void handoverCompletions(Exchange target);
-
-    /**
-     * Handover all the on completions from this exchange
-     *
-     * @return the on completions
-     */
-    List<Synchronization> handoverCompletions();
 
     /**
      * Gets the timestamp in millis when this exchange was created.

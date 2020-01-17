@@ -28,6 +28,7 @@ import javax.sql.DataSource;
 import com.opengamma.elsql.ElSql;
 import com.opengamma.elsql.SpringSqlParams;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.component.sql.ResultSetIterator;
 import org.apache.camel.component.sql.ResultSetIteratorCompletion;
 import org.apache.camel.component.sql.SqlConstants;
@@ -219,7 +220,7 @@ public class ElsqlProducer extends DefaultProducer {
                 }
                 // we do not know the row count so we cannot set a ROW_COUNT header
                 // defer closing the iterator when the exchange is complete
-                exchange.addOnCompletion(new ResultSetIteratorCompletion(iterator));
+                exchange.adapt(ExtendedExchange.class).addOnCompletion(new ResultSetIteratorCompletion(iterator));
             }
         } catch (final Exception e) {
             // in case of exception then close all this before rethrow

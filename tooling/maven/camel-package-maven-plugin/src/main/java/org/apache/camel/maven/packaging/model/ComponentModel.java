@@ -118,6 +118,10 @@ public class ComponentModel {
         this.label = label;
     }
 
+    public boolean isDeprecated() {
+        return "true".equals(deprecated);
+    }
+
     public String getDeprecated() {
         return deprecated;
     }

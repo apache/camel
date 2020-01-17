@@ -937,7 +937,8 @@ public interface KubernetesDeploymentsEndpointBuilderFactory {
      */
     public interface KubernetesDeploymentsEndpointBuilder
             extends
-                KubernetesDeploymentsEndpointConsumerBuilder, KubernetesDeploymentsEndpointProducerBuilder {
+                KubernetesDeploymentsEndpointConsumerBuilder,
+                KubernetesDeploymentsEndpointProducerBuilder {
         default AdvancedKubernetesDeploymentsEndpointBuilder advanced() {
             return (AdvancedKubernetesDeploymentsEndpointBuilder) this;
         }
@@ -1176,7 +1177,8 @@ public interface KubernetesDeploymentsEndpointBuilderFactory {
      */
     public interface AdvancedKubernetesDeploymentsEndpointBuilder
             extends
-                AdvancedKubernetesDeploymentsEndpointConsumerBuilder, AdvancedKubernetesDeploymentsEndpointProducerBuilder {
+                AdvancedKubernetesDeploymentsEndpointConsumerBuilder,
+                AdvancedKubernetesDeploymentsEndpointProducerBuilder {
         default KubernetesDeploymentsEndpointBuilder basic() {
             return (KubernetesDeploymentsEndpointBuilder) this;
         }
@@ -1262,6 +1264,27 @@ public interface KubernetesDeploymentsEndpointBuilderFactory {
                 String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface KubernetesDeploymentsBuilders {
+        /**
+         * Kubernetes Deployments (camel-kubernetes)
+         * The Kubernetes Nodes component provides a producer to execute
+         * kubernetes node operations and a consumer to consume node events.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-deployments:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         */
+        default KubernetesDeploymentsEndpointBuilder kubernetesDeployments(
+                String path) {
+            return KubernetesDeploymentsEndpointBuilderFactory.kubernetesDeployments(path);
         }
     }
     /**

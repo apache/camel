@@ -1036,7 +1036,8 @@ public interface GoogleDriveEndpointBuilderFactory {
      */
     public interface GoogleDriveEndpointBuilder
             extends
-                GoogleDriveEndpointConsumerBuilder, GoogleDriveEndpointProducerBuilder {
+                GoogleDriveEndpointConsumerBuilder,
+                GoogleDriveEndpointProducerBuilder {
         default AdvancedGoogleDriveEndpointBuilder advanced() {
             return (AdvancedGoogleDriveEndpointBuilder) this;
         }
@@ -1172,7 +1173,8 @@ public interface GoogleDriveEndpointBuilderFactory {
      */
     public interface AdvancedGoogleDriveEndpointBuilder
             extends
-                AdvancedGoogleDriveEndpointConsumerBuilder, AdvancedGoogleDriveEndpointProducerBuilder {
+                AdvancedGoogleDriveEndpointConsumerBuilder,
+                AdvancedGoogleDriveEndpointProducerBuilder {
         default GoogleDriveEndpointBuilder basic() {
             return (GoogleDriveEndpointBuilder) this;
         }
@@ -1231,6 +1233,35 @@ public interface GoogleDriveEndpointBuilderFactory {
                 String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface GoogleDriveBuilders {
+        /**
+         * Google Drive (camel-google-drive)
+         * The google-drive component provides access to Google Drive file
+         * storage service.
+         * 
+         * Category: api,cloud,file
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-google-drive
+         * 
+         * Syntax: <code>google-drive:apiName/methodName</code>
+         * 
+         * Path parameter: apiName (required)
+         * What kind of operation to perform
+         * The value can be one of: drive-about, drive-apps, drive-changes,
+         * drive-channels, drive-children, drive-comments, drive-files,
+         * drive-parents, drive-permissions, drive-properties, drive-realtime,
+         * drive-replies, drive-revisions
+         * 
+         * Path parameter: methodName (required)
+         * What sub operation to use for the selected operation
+         * The value can be one of: copy, delete, get, getIdForEmail, insert,
+         * list, patch, stop, touch, trash, untrash, update, watch
+         */
+        default GoogleDriveEndpointBuilder googleDrive(String path) {
+            return GoogleDriveEndpointBuilderFactory.googleDrive(path);
         }
     }
     /**

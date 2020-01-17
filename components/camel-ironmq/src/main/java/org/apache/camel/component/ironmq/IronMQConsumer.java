@@ -24,6 +24,7 @@ import io.iron.ironmq.Message;
 import io.iron.ironmq.Messages;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ExchangeHelper;
@@ -96,7 +97,7 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
             // add on completion to handle after work when the exchange is done
             // if batchDelete is not enabled
             if (!getEndpoint().getConfiguration().isBatchDelete()) {
-                exchange.addOnCompletion(new Synchronization() {
+                exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
                     final String reservationId = ExchangeHelper.getMandatoryHeader(exchange, IronMQConstants.MESSAGE_RESERVATION_ID, String.class);
                     final String messageid = ExchangeHelper.getMandatoryHeader(exchange, IronMQConstants.MESSAGE_ID, String.class);
 

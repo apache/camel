@@ -1652,7 +1652,8 @@ public interface WeatherEndpointBuilderFactory {
      */
     public interface WeatherEndpointBuilder
             extends
-                WeatherEndpointConsumerBuilder, WeatherEndpointProducerBuilder {
+                WeatherEndpointConsumerBuilder,
+                WeatherEndpointProducerBuilder {
         default AdvancedWeatherEndpointBuilder advanced() {
             return (AdvancedWeatherEndpointBuilder) this;
         }
@@ -2072,7 +2073,8 @@ public interface WeatherEndpointBuilderFactory {
      */
     public interface AdvancedWeatherEndpointBuilder
             extends
-                AdvancedWeatherEndpointConsumerBuilder, AdvancedWeatherEndpointProducerBuilder {
+                AdvancedWeatherEndpointConsumerBuilder,
+                AdvancedWeatherEndpointProducerBuilder {
         default WeatherEndpointBuilder basic() {
             return (WeatherEndpointBuilder) this;
         }
@@ -2218,6 +2220,25 @@ public interface WeatherEndpointBuilderFactory {
         Station,
         Hourly,
         Daily;
+    }
+
+    public interface WeatherBuilders {
+        /**
+         * Weather (camel-weather)
+         * Polls the weather information from Open Weather Map.
+         * 
+         * Category: api
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-weather
+         * 
+         * Syntax: <code>weather:name</code>
+         * 
+         * Path parameter: name (required)
+         * The name value is not used.
+         */
+        default WeatherEndpointBuilder weather(String path) {
+            return WeatherEndpointBuilderFactory.weather(path);
+        }
     }
     /**
      * Weather (camel-weather)

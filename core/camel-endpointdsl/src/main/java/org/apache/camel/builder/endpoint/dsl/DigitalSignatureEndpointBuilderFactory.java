@@ -515,6 +515,32 @@ public interface DigitalSignatureEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface DigitalSignatureBuilders {
+        /**
+         * Crypto (JCE) (camel-crypto)
+         * The crypto component is used for signing and verifying exchanges
+         * using the Signature Service of the Java Cryptographic Extension
+         * (JCE).
+         * 
+         * Category: security,transformation
+         * Since: 2.3
+         * Maven coordinates: org.apache.camel:camel-crypto
+         * 
+         * Syntax: <code>crypto:cryptoOperation:name</code>
+         * 
+         * Path parameter: cryptoOperation (required)
+         * Set the Crypto operation from that supplied after the crypto scheme
+         * in the endpoint uri e.g. crypto:sign sets sign as the operation.
+         * The value can be one of: sign, verify
+         * 
+         * Path parameter: name (required)
+         * The logical name of this operation.
+         */
+        default DigitalSignatureEndpointBuilder crypto(String path) {
+            return DigitalSignatureEndpointBuilderFactory.crypto(path);
+        }
+    }
     /**
      * Crypto (JCE) (camel-crypto)
      * The crypto component is used for signing and verifying exchanges using

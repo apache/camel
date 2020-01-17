@@ -186,7 +186,10 @@ public class JavaClass {
     }
 
     public Method addMethod() {
-        Method method = new Method();
+        return addMethod(new Method());
+    }
+
+    public Method addMethod(Method method) {
         methods.add(method);
         return method;
     }
@@ -330,7 +333,7 @@ public class JavaClass {
             if (!implementNames.isEmpty()) {
                 sb.append("\n");
                 sb.append(indent).append(isClass ? "        implements\n" : "        extends\n");
-                sb.append(indent).append("            ").append(String.join(", ", implementNames));
+                sb.append(implementNames.stream().map(name -> indent + "            " + name).collect(Collectors.joining(",\n")));
             }
             sb.append(" {\n");
         }
@@ -435,6 +438,7 @@ public class JavaClass {
         printAnnotations(sb, indent, method.annotations);
 
         if (method.signature != null) {
+            sb.append(indent);
             sb.append(method.signature);
             if (!method.isAbstract) {
                 sb.append(" {");
@@ -456,13 +460,23 @@ public class JavaClass {
                 sb2.append("static ");
             }
             if (!method.isConstructor) {
-                sb2.append(method.returnType != null ? shortName(method.returnType) : "void");
+                if (method.returnTypeLiteral != null) {
+                    sb2.append(method.returnTypeLiteral);
+                } else if (method.returnType != null) {
+                    sb2.append(shortName(method.returnType));
+                } else {
+                    sb2.append("void");
+                }
                 sb2.append(" ");
             }
             sb2.append(method.name);
             sb2.append("(");
-            sb2.append(method.parameters.stream().map(p -> shortName(p.type) + " " + p.name)
-                    .collect(Collectors.joining(", ")));
+            sb2.append(method.parameters.stream()
+                .map(p -> p.vararg
+                        ? typeOf(p) + "... " + p.name
+                        : typeOf(p) + " " + p.name)
+                .collect(Collectors.joining(", ")));
+
             sb2.append(") ");
             if (!method.exceptions.isEmpty()) {
                 sb2.append("throws ");
@@ -489,14 +503,23 @@ public class JavaClass {
                     sb.append("default ");
                 }
                 if (!method.isConstructor) {
-                    sb.append(method.returnType != null ? shortName(method.returnType) : "void");
+                    if (method.returnTypeLiteral != null) {
+                        sb.append(method.returnTypeLiteral);
+                    } else if (method.returnType != null) {
+                        sb.append(shortName(method.returnType));
+                    } else {
+                        sb.append("void");
+                    }
                     sb.append(" ");
                 }
                 sb.append(method.name);
                 if (method.parameters.size() > 0) {
                     sb.append("(\n");
-                    sb.append(method.parameters.stream().map(p -> indent + "        " + shortName(p.type) + " " + p.name)
-                            .collect(Collectors.joining(",\n")));
+                    sb.append(method.parameters.stream()
+                        .map(p -> p.vararg
+                                ? indent + "        " + typeOf(p) + "... " + p.name
+                                : indent + "        " + typeOf(p) + " " + p.name)
+                        .collect(Collectors.joining(",\n")));
                     sb.append(")");
                 } else {
                     sb.append("()");
@@ -610,6 +633,10 @@ public class JavaClass {
                 sb.append("\n");
             }
         }
+    }
+
+    private String typeOf(Param p) {
+        return p.typeLiteral != null ? p.typeLiteral : shortName(p.type);
     }
 
     private String shortName(GenericType name) {

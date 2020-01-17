@@ -593,6 +593,28 @@ public interface DataSetTestEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface DataSetTestBuilders {
+        /**
+         * DataSet Test (camel-dataset)
+         * The dataset-test component extends the mock component by on startup
+         * to pull messages from another endpoint to set the expected message
+         * bodies.
+         * 
+         * Category: core,testing
+         * Since: 1.3
+         * Maven coordinates: org.apache.camel:camel-dataset
+         * 
+         * Syntax: <code>dataset-test:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name of endpoint to lookup in the registry to use for polling
+         * messages used for testing
+         */
+        default DataSetTestEndpointBuilder datasetTest(String path) {
+            return DataSetTestEndpointBuilderFactory.datasetTest(path);
+        }
+    }
     /**
      * DataSet Test (camel-dataset)
      * The dataset-test component extends the mock component by on startup to

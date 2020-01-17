@@ -2943,11 +2943,11 @@ public interface EndpointBuilders {
      * Javax Websocket (camel-websocket-jsr356)
      * Camel WebSocket using JSR356 (javax)
      *
-     * Category: jsr356
+     * Category: http
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-websocket-jsr356
      *
-     * Syntax: <code>websocket-jsr356:websocketPathOrUri</code>
+     * Syntax: <code>websocket-jsr356:uri</code>
      *
      * Path parameter: uri
      * If a schemeless URI path is provided, a ServerEndpoint is deployed under
@@ -3036,8 +3036,8 @@ public interface EndpointBuilders {
      * Path parameter: httpUri (required)
      * The url of the HTTP endpoint to call.
      */
-    static org.apache.camel.builder.endpoint.dsl.JettyHttpEndpointBuilder9Factory.JettyHttpEndpointBuilder9 jetty(String path) {
-        return org.apache.camel.builder.endpoint.dsl.JettyHttpEndpointBuilder9Factory.jetty(path);
+    static org.apache.camel.builder.endpoint.dsl.JettyHttpEndpointBuilderFactory.JettyHttpEndpointBuilder jetty(String path) {
+        return org.apache.camel.builder.endpoint.dsl.JettyHttpEndpointBuilderFactory.jetty(path);
     }
 
     /**

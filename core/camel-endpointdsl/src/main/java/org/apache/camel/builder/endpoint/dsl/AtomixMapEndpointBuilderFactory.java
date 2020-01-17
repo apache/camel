@@ -969,7 +969,8 @@ public interface AtomixMapEndpointBuilderFactory {
      */
     public interface AtomixMapEndpointBuilder
             extends
-                AtomixMapEndpointConsumerBuilder, AtomixMapEndpointProducerBuilder {
+                AtomixMapEndpointConsumerBuilder,
+                AtomixMapEndpointProducerBuilder {
         default AdvancedAtomixMapEndpointBuilder advanced() {
             return (AdvancedAtomixMapEndpointBuilder) this;
         }
@@ -1135,7 +1136,8 @@ public interface AtomixMapEndpointBuilderFactory {
      */
     public interface AdvancedAtomixMapEndpointBuilder
             extends
-                AdvancedAtomixMapEndpointConsumerBuilder, AdvancedAtomixMapEndpointProducerBuilder {
+                AdvancedAtomixMapEndpointConsumerBuilder,
+                AdvancedAtomixMapEndpointProducerBuilder {
         default AtomixMapEndpointBuilder basic() {
             return (AtomixMapEndpointBuilder) this;
         }
@@ -1380,6 +1382,25 @@ public interface AtomixMapEndpointBuilderFactory {
         ATOMIC_LEASE,
         SEQUENTIAL,
         LOCAL;
+    }
+
+    public interface AtomixMapBuilders {
+        /**
+         * Atomix Map (camel-atomix)
+         * The atomix-map component is used to access Atomix's distributed map.
+         * 
+         * Category: clustering
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-atomix
+         * 
+         * Syntax: <code>atomix-map:resourceName</code>
+         * 
+         * Path parameter: resourceName (required)
+         * The distributed resource name
+         */
+        default AtomixMapEndpointBuilder atomixMap(String path) {
+            return AtomixMapEndpointBuilderFactory.atomixMap(path);
+        }
     }
     /**
      * Atomix Map (camel-atomix)

@@ -768,7 +768,8 @@ public interface EhcacheEndpointBuilderFactory {
      */
     public interface EhcacheEndpointBuilder
             extends
-                EhcacheEndpointConsumerBuilder, EhcacheEndpointProducerBuilder {
+                EhcacheEndpointConsumerBuilder,
+                EhcacheEndpointProducerBuilder {
         default AdvancedEhcacheEndpointBuilder advanced() {
             return (AdvancedEhcacheEndpointBuilder) this;
         }
@@ -867,7 +868,8 @@ public interface EhcacheEndpointBuilderFactory {
      */
     public interface AdvancedEhcacheEndpointBuilder
             extends
-                AdvancedEhcacheEndpointConsumerBuilder, AdvancedEhcacheEndpointProducerBuilder {
+                AdvancedEhcacheEndpointConsumerBuilder,
+                AdvancedEhcacheEndpointProducerBuilder {
         default EhcacheEndpointBuilder basic() {
             return (EhcacheEndpointBuilder) this;
         }
@@ -1018,6 +1020,26 @@ public interface EhcacheEndpointBuilderFactory {
     enum EventOrdering {
         UNORDERED,
         ORDERED;
+    }
+
+    public interface EhcacheBuilders {
+        /**
+         * Ehcache (camel-ehcache)
+         * The ehcache component enables you to perform caching operations using
+         * Ehcache as cache implementation.
+         * 
+         * Category: cache,datagrid,clustering
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-ehcache
+         * 
+         * Syntax: <code>ehcache:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * the cache name
+         */
+        default EhcacheEndpointBuilder ehcache(String path) {
+            return EhcacheEndpointBuilderFactory.ehcache(path);
+        }
     }
     /**
      * Ehcache (camel-ehcache)

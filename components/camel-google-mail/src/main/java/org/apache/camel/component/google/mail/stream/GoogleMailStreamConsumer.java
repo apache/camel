@@ -29,6 +29,7 @@ import com.google.api.services.gmail.model.ModifyMessageRequest;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
@@ -108,7 +109,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
             pendingExchanges = total - index - 1;
 
             // add on completion to handle after work when the exchange is done
-            exchange.addOnCompletion(new Synchronization() {
+            exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
                 public void onComplete(Exchange exchange) {
                     processCommit(exchange, unreadLabelId);
                 }

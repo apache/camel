@@ -261,6 +261,25 @@ public interface IOTAEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface IOTABuilders {
+        /**
+         * IOTA (camel-iota)
+         * Component for integrate IOTA DLT
+         * 
+         * Category: ledger
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-iota
+         * 
+         * Syntax: <code>iota:name</code>
+         * 
+         * Path parameter: name (required)
+         * Component name
+         */
+        default IOTAEndpointBuilder iota(String path) {
+            return IOTAEndpointBuilderFactory.iota(path);
+        }
+    }
     /**
      * IOTA (camel-iota)
      * Component for integrate IOTA DLT

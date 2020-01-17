@@ -638,8 +638,11 @@ and is handling the thrown exception. The second clause is a for coarse
 gained selection to select the same exception being thrown but when the
 expression is evaluated to false.
 
-NOTE: this is not required, if the second clause is omitted, then the
+[NOTE]
+====
+This is not required, if the second clause is omitted, then the
 default error handler will kick in.
+====
 
 [[ExceptionClause-UsingonRedeliveryProcessor]]
 == Using `onRedelivery` Processor
@@ -700,9 +703,12 @@ later sine the exception was thrown. On the other hand
 the *`onExceptionOccurred`* processor is always invoked right after the
 exception was thrown, and also if redelivery has been disabled.
 
-NOTE: Any new exceptions thrown from the *`onExceptionOccurred`*
+[NOTE]
+====
+Any new exceptions thrown from the *`onExceptionOccurred`*
 processor is logged as *`WARN`* and ignored, to not override the
 existing exception. 
+====
 
 In the code below we want to do some custom logging when an exception
 happened. Therefore we configure an *`onExceptionOccurred`* to use our

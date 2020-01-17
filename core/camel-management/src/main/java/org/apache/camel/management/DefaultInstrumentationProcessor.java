@@ -17,7 +17,6 @@
 package org.apache.camel.management;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
@@ -45,7 +44,7 @@ public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
     }
 
     public DefaultInstrumentationProcessor(String type) {
-        super((AsyncProcessor) null);
+        super(null);
         this.type = type;
     }
 
@@ -67,20 +66,14 @@ public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        // only record time if stats is enabled
-        final StopWatch watch = (counter != null && counter.isStatisticsEnabled()) ? new StopWatch() : null;
-
-        // mark beginning to process the exchange
-        if (watch != null) {
-            beginTime(exchange);
-        }
+        final StopWatch watch = before(exchange);
 
         return processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 try {
                     // record end time
                     if (watch != null) {
-                        recordTime(exchange, watch.taken());
+                        after(exchange, watch);
                     }
                 } finally {
                     // and let the original callback know we are done as well
@@ -120,7 +113,7 @@ public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
     }
 
     @Override
-    public StopWatch before(Exchange exchange) throws Exception {
+    public StopWatch before(Exchange exchange) {
         // only record time if stats is enabled
         StopWatch answer = counter != null && counter.isStatisticsEnabled() ? new StopWatch() : null;
         if (answer != null) {
@@ -130,7 +123,7 @@ public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
     }
 
     @Override
-    public void after(Exchange exchange, StopWatch watch) throws Exception {
+    public void after(Exchange exchange, StopWatch watch) {
         // record end time
         if (watch != null) {
             recordTime(exchange, watch.taken());

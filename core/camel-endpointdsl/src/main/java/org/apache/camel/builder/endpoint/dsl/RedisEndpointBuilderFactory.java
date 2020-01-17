@@ -590,7 +590,8 @@ public interface RedisEndpointBuilderFactory {
      */
     public interface RedisEndpointBuilder
             extends
-                RedisEndpointConsumerBuilder, RedisEndpointProducerBuilder {
+                RedisEndpointConsumerBuilder,
+                RedisEndpointProducerBuilder {
         default AdvancedRedisEndpointBuilder advanced() {
             return (AdvancedRedisEndpointBuilder) this;
         }
@@ -715,7 +716,8 @@ public interface RedisEndpointBuilderFactory {
      */
     public interface AdvancedRedisEndpointBuilder
             extends
-                AdvancedRedisEndpointConsumerBuilder, AdvancedRedisEndpointProducerBuilder {
+                AdvancedRedisEndpointConsumerBuilder,
+                AdvancedRedisEndpointProducerBuilder {
         default RedisEndpointBuilder basic() {
             return (RedisEndpointBuilder) this;
         }
@@ -909,6 +911,29 @@ public interface RedisEndpointBuilderFactory {
         GEOPOS,
         GEORADIUS,
         GEORADIUSBYMEMBER;
+    }
+
+    public interface RedisBuilders {
+        /**
+         * Spring Redis (camel-spring-redis)
+         * The spring-redis component allows sending and receiving messages from
+         * Redis.
+         * 
+         * Category: spring,nosql
+         * Since: 2.11
+         * Maven coordinates: org.apache.camel:camel-spring-redis
+         * 
+         * Syntax: <code>spring-redis:host:port</code>
+         * 
+         * Path parameter: host (required)
+         * The host where Redis server is running.
+         * 
+         * Path parameter: port (required)
+         * Redis server port number
+         */
+        default RedisEndpointBuilder springRedis(String path) {
+            return RedisEndpointBuilderFactory.springRedis(path);
+        }
     }
     /**
      * Spring Redis (camel-spring-redis)

@@ -1592,7 +1592,8 @@ public interface SmppEndpointBuilderFactory {
      */
     public interface SmppEndpointBuilder
             extends
-                SmppEndpointConsumerBuilder, SmppEndpointProducerBuilder {
+                SmppEndpointConsumerBuilder,
+                SmppEndpointProducerBuilder {
         default AdvancedSmppEndpointBuilder advanced() {
             return (AdvancedSmppEndpointBuilder) this;
         }
@@ -1945,7 +1946,8 @@ public interface SmppEndpointBuilderFactory {
      */
     public interface AdvancedSmppEndpointBuilder
             extends
-                AdvancedSmppEndpointConsumerBuilder, AdvancedSmppEndpointProducerBuilder {
+                AdvancedSmppEndpointConsumerBuilder,
+                AdvancedSmppEndpointProducerBuilder {
         default SmppEndpointBuilder basic() {
             return (SmppEndpointBuilder) this;
         }
@@ -2105,6 +2107,62 @@ public interface SmppEndpointBuilderFactory {
         ALLOW,
         REJECT,
         TRUNCATE;
+    }
+
+    public interface SmppBuilders {
+        /**
+         * SMPP (camel-smpp)
+         * To send and receive SMS using a SMSC (Short Message Service Center).
+         * 
+         * Category: mobile
+         * Since: 2.2
+         * Maven coordinates: org.apache.camel:camel-smpp
+         * 
+         * Syntax: <code>smpp:host:port</code>
+         * 
+         * Path parameter: host
+         * Hostname for the SMSC server to use.
+         * Default value: localhost
+         * 
+         * Path parameter: port
+         * Port number for the SMSC server to use.
+         * Default value: 2775
+         */
+        default SmppEndpointBuilder smpp(String path) {
+            return SmppEndpointBuilderFactory.smpp(path);
+        }
+        /**
+         * SMPP (Secure) (camel-smpp)
+         * To send and receive SMS using a SMSC (Short Message Service Center).
+         * 
+         * Category: mobile
+         * Since: 2.2
+         * Maven coordinates: org.apache.camel:camel-smpp
+         * 
+         * Syntax: <code>smpps:host:port</code>
+         * 
+         * Path parameter: host
+         * Hostname for the SMSC server to use.
+         * Default value: localhost
+         * 
+         * Path parameter: port
+         * Port number for the SMSC server to use.
+         * Default value: 2775
+         */
+        default SmppEndpointBuilder smpps(String path) {
+            return SmppEndpointBuilderFactory.smpps(path);
+        }
+        /**
+         * SMPP (camel-smpp)
+         * To send and receive SMS using a SMSC (Short Message Service Center).
+         * 
+         * Category: mobile
+         * Since: 2.2
+         * Maven coordinates: org.apache.camel:camel-smpp
+         */
+        default SmppEndpointBuilder smpp(String scheme, String path) {
+            return SmppEndpointBuilderFactory.smpp(scheme,path);
+        }
     }
     /**
      * SMPP (camel-smpp)

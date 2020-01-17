@@ -47,6 +47,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default JSR356WebSocketEndpointConsumerBuilder sessionCount(
@@ -60,6 +61,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default JSR356WebSocketEndpointConsumerBuilder sessionCount(
@@ -247,6 +249,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default JSR356WebSocketEndpointProducerBuilder sessionCount(
@@ -260,6 +263,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default JSR356WebSocketEndpointProducerBuilder sessionCount(
@@ -394,6 +398,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default JSR356WebSocketEndpointBuilder sessionCount(int sessionCount) {
@@ -406,6 +411,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default JSR356WebSocketEndpointBuilder sessionCount(String sessionCount) {
@@ -484,11 +490,11 @@ public interface JSR356WebSocketEndpointBuilderFactory {
      * Javax Websocket (camel-websocket-jsr356)
      * Camel WebSocket using JSR356 (javax)
      * 
-     * Category: jsr356
+     * Category: http
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-websocket-jsr356
      * 
-     * Syntax: <code>websocket-jsr356:websocketPathOrUri</code>
+     * Syntax: <code>websocket-jsr356:uri</code>
      * 
      * Path parameter: uri
      * If a schemeless URI path is provided, a ServerEndpoint is deployed under

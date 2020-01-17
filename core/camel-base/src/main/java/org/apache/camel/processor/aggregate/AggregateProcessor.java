@@ -42,6 +42,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
@@ -823,7 +824,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         log.debug("Processing aggregated exchange: {}", exchange);
 
         // add on completion task so we remember to update the inProgressCompleteExchanges
-        exchange.addOnCompletion(new AggregateOnCompletion(exchange.getExchangeId()));
+        exchange.adapt(ExtendedExchange.class).addOnCompletion(new AggregateOnCompletion(exchange.getExchangeId()));
 
         // send this exchange
         // the call to schedule last if needed to ensure in-order processing of the aggregates
@@ -835,7 +836,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             } else {
                 log.trace("Processing aggregated exchange: {} complete.", exchange);
             }
-        }), "sending aggregated exchange"));
+        })));
     }
 
     /**

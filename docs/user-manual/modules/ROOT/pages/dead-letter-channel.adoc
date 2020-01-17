@@ -137,7 +137,10 @@ transformOrder or after? So to be sure we want to move the original
 input message we received from `jms:queue:order:input`. So we can do
 this by enabling the *useOriginalMessage* option as shown below:
 
-NOTE: There is also a *useOriginalBody* option.
+[NOTE]
+====
+There is also a *useOriginalBody* option.
+====
 
 [source,java]
 ----

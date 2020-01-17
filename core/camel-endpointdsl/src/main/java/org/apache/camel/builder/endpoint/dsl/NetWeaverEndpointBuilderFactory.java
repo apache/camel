@@ -246,6 +246,26 @@ public interface NetWeaverEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface NetWeaverBuilders {
+        /**
+         * SAP NetWeaver (camel-sap-netweaver)
+         * The sap-netweaver component integrates with the SAP NetWeaver Gateway
+         * using HTTP transports.
+         * 
+         * Category: sap
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-sap-netweaver
+         * 
+         * Syntax: <code>sap-netweaver:url</code>
+         * 
+         * Path parameter: url (required)
+         * Url to the SAP net-weaver gateway server.
+         */
+        default NetWeaverEndpointBuilder sapNetweaver(String path) {
+            return NetWeaverEndpointBuilderFactory.sapNetweaver(path);
+        }
+    }
     /**
      * SAP NetWeaver (camel-sap-netweaver)
      * The sap-netweaver component integrates with the SAP NetWeaver Gateway

@@ -15,8 +15,11 @@ module configures, without any additional setting.
 This is the code snippet to show to create a CXF bus with soap binding
 and http-jetty transport.
 
-NOTE: If you have other CXF configuration which want to be load, you
+[NOTE]
+====
+If you have other CXF configuration which want to be load, you
 need to make sure the thread context class loader can load it.
+====
 
 [source,java]
 ----

@@ -1357,7 +1357,8 @@ public interface TwitterTimelineEndpointBuilderFactory {
      */
     public interface TwitterTimelineEndpointBuilder
             extends
-                TwitterTimelineEndpointConsumerBuilder, TwitterTimelineEndpointProducerBuilder {
+                TwitterTimelineEndpointConsumerBuilder,
+                TwitterTimelineEndpointProducerBuilder {
         default AdvancedTwitterTimelineEndpointBuilder advanced() {
             return (AdvancedTwitterTimelineEndpointBuilder) this;
         }
@@ -1495,7 +1496,8 @@ public interface TwitterTimelineEndpointBuilderFactory {
      */
     public interface AdvancedTwitterTimelineEndpointBuilder
             extends
-                AdvancedTwitterTimelineEndpointConsumerBuilder, AdvancedTwitterTimelineEndpointProducerBuilder {
+                AdvancedTwitterTimelineEndpointConsumerBuilder,
+                AdvancedTwitterTimelineEndpointProducerBuilder {
         default TwitterTimelineEndpointBuilder basic() {
             return (TwitterTimelineEndpointBuilder) this;
         }
@@ -1564,6 +1566,28 @@ public interface TwitterTimelineEndpointBuilderFactory {
     enum EndpointType {
         POLLING,
         DIRECT;
+    }
+
+    public interface TwitterTimelineBuilders {
+        /**
+         * Twitter Timeline (camel-twitter)
+         * The Twitter Timeline component consumes twitter timeline or update
+         * the status of specific user.
+         * 
+         * Category: api,social
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-twitter
+         * 
+         * Syntax: <code>twitter-timeline:timelineType</code>
+         * 
+         * Path parameter: timelineType (required)
+         * The timeline type to produce/consume.
+         * The value can be one of: PUBLIC, HOME, USER, MENTIONS, RETWEETSOFME,
+         * UNKNOWN
+         */
+        default TwitterTimelineEndpointBuilder twitterTimeline(String path) {
+            return TwitterTimelineEndpointBuilderFactory.twitterTimeline(path);
+        }
     }
     /**
      * Twitter Timeline (camel-twitter)

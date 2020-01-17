@@ -471,7 +471,8 @@ public interface GuavaEventBusEndpointBuilderFactory {
      */
     public interface GuavaEventBusEndpointBuilder
             extends
-                GuavaEventBusEndpointConsumerBuilder, GuavaEventBusEndpointProducerBuilder {
+                GuavaEventBusEndpointConsumerBuilder,
+                GuavaEventBusEndpointProducerBuilder {
         default AdvancedGuavaEventBusEndpointBuilder advanced() {
             return (AdvancedGuavaEventBusEndpointBuilder) this;
         }
@@ -550,7 +551,8 @@ public interface GuavaEventBusEndpointBuilderFactory {
      */
     public interface AdvancedGuavaEventBusEndpointBuilder
             extends
-                AdvancedGuavaEventBusEndpointConsumerBuilder, AdvancedGuavaEventBusEndpointProducerBuilder {
+                AdvancedGuavaEventBusEndpointConsumerBuilder,
+                AdvancedGuavaEventBusEndpointProducerBuilder {
         default GuavaEventBusEndpointBuilder basic() {
             return (GuavaEventBusEndpointBuilder) this;
         }
@@ -609,6 +611,26 @@ public interface GuavaEventBusEndpointBuilderFactory {
                 String synchronous) {
             doSetProperty("synchronous", synchronous);
             return this;
+        }
+    }
+
+    public interface GuavaEventBusBuilders {
+        /**
+         * Guava EventBus (camel-guava-eventbus)
+         * The guava-eventbus component provides integration bridge between
+         * Camel and Google Guava EventBus.
+         * 
+         * Category: eventbus
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-guava-eventbus
+         * 
+         * Syntax: <code>guava-eventbus:eventBusRef</code>
+         * 
+         * Path parameter: eventBusRef
+         * To lookup the Guava EventBus from the registry with the given name
+         */
+        default GuavaEventBusEndpointBuilder guavaEventbus(String path) {
+            return GuavaEventBusEndpointBuilderFactory.guavaEventbus(path);
         }
     }
     /**
