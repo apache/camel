@@ -71,16 +71,25 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-
-        <!-- START: camel-debezium-mysql -->
+		<!-- START: camel components import -->
+		<!-- START: camel-debezium-mysql -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-debezium-mysql</artifactId>
             <scope>provided</scope>
+            <version>${project.version}</version>
         </dependency>
         <!-- END: camel-debezium-mysql -->
-
-        <!-- testing -->
+		<!-- START: camel-kafka -->
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-kafka</artifactId>
+			<scope>provided</scope>
+			<version>${project.version}</version>
+		</dependency>
+		<!-- END: camel-kafka -->
+		<!-- END: camel components import -->
+		<!-- testing -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

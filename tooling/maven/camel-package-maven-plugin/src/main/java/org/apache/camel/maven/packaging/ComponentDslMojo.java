@@ -17,6 +17,7 @@ import org.apache.camel.maven.packaging.model.ComponentOptionModel;
 import org.apache.camel.maven.packaging.model.EndpointOptionModel;
 import org.apache.camel.tooling.util.JSonSchemaHelper;
 import org.apache.camel.tooling.util.PackageHelper;
+import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -27,8 +28,8 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
 import static org.apache.camel.tooling.util.JSonSchemaHelper.getSafeValue;
-import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
-import static org.apache.camel.tooling.util.PackageHelper.loadText;
+import static org.apache.camel.tooling.util.PackageHelper.*;
+import static org.apache.camel.tooling.util.Strings.between;
 
 /**
  * Generate Endpoint DSL source files for Components.
@@ -63,20 +64,20 @@ public class ComponentDslMojo extends AbstractMojo {
     /**
      * Component DSL Pom file
      */
-    @Parameter(defaultValue = "core/camel-componentdsl/pom.xml")
+    @Parameter(defaultValue = "../../core/camel-componentdsl/pom.xml")
     protected File componentDslPom;
 
     /**
-     * The package where to generate component Endpoint factories
+     * The package where to generate component factories
      */
-    @Parameter(defaultValue = "org.apache.camel.builder.endpoint")
+    @Parameter(defaultValue = "org.apache.camel.builder.component")
     protected String endpointFactoriesPackageName;
 
     /**
-     * The package where to generate component specific Endpoint factories
+     * The package where to generate component DSL specific factories
      */
-    @Parameter(defaultValue = "org.apache.camel.builder.endpoint.dsl")
-    protected String componentsFactoriesPackageName;
+    @Parameter(defaultValue = "org.apache.camel.builder.component.dsl")
+    protected String componentsDslFactoriesPackageName;
 
     /**
      * Generate or not the EndpointBuilderFactory interface.
@@ -186,6 +187,13 @@ public class ComponentDslMojo extends AbstractMojo {
         }
     }
 
+    private void createComponentDsl(final String packageName, final ComponentModel model, final List<ComponentModel> aliases) {
+        String componentClassName = model.getJavaType();
+
+
+
+    }
+
     private void findComponentNames(File dir, Set<String> componentNames) {
         File f = new File(dir, "classes/META-INF/services/org/apache/camel/component");
 
@@ -268,22 +276,46 @@ public class ComponentDslMojo extends AbstractMojo {
         return component;
     }
 
-    private boolean updatePomFile(final File file, final ComponentModel componentModel) throws MojoExecutionException {
+
+
+    private void updatePomFile(final File file, final ComponentModel componentModel) throws MojoExecutionException {
         final String componentArtifactId = componentModel.getArtifactId();
-        final String before = "<!-- START: " + componentArtifactId + " -->";
-        final String after = "<!-- END: " + componentArtifactId + " -->";
+
+        final String startComponentImportMarker = "<!-- START: " + componentArtifactId + " -->";
+        final String endComponentImportMarker = "<!-- END: " + componentArtifactId + " -->";
+
+        final String startMainComponentImportMarker = "<!-- START: camel components import -->";
+        final String endMainComponentImportMarker = "<!-- END: camel components import -->";
 
         if (!file.exists()) {
-            return false;
+            throw new MojoExecutionException("Pom file " + file.getPath() + " does not exist");
         }
 
         try {
             final String pomText = loadText(file);
-            System.out.println(pomText);
+            final String existing = between(pomText, startComponentImportMarker, endComponentImportMarker);
+            if (existing == null) {
+                // we have no component import, let's add it then
+                final String before = Strings.before(pomText, startMainComponentImportMarker).trim();
+                final String after = Strings.after(pomText, endMainComponentImportMarker).trim();
+                final String existingImports = between(pomText, startMainComponentImportMarker, endMainComponentImportMarker).trim();
+
+                final String updatedPom = before + "\n\t\t" + startMainComponentImportMarker + "\n\t\t" + existingImports + "\n\t\t"
+                        + startComponentImportMarker + "\n" + generateDependencyModule(componentModel) + "\n\t\t" + endComponentImportMarker + "\n\t\t"
+                        + endMainComponentImportMarker + "\n\t\t" + after;
+                writeText(file, updatedPom);
+            }
         } catch (IOException e) {
             throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
         }
-        return true;
     }
 
+    private String generateDependencyModule(final ComponentModel model) {
+        return  "\t\t<dependency>\n" +
+                "\t\t\t<groupId>" + model.getGroupId() + "</groupId>\n" +
+                "\t\t\t<artifactId>" + model.getArtifactId() + "</artifactId>\n" +
+                "\t\t\t<scope>provided</scope>\n" +
+                "\t\t\t<version>${project.version}</version>\n" +
+                "\t\t</dependency>";
+    }
 }

@@ -4,7 +4,6 @@ import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.debezium.DebeziumMySqlComponent;
-import org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration;
 
 public class DebeziumMySqlComponentBuilderFactory {
     public interface DebeziumMySqlComponentBuilder extends ComponentBuilder {
@@ -12,7 +11,7 @@ public class DebeziumMySqlComponentBuilderFactory {
             doSetComponentName(name);
             return this;
         }
-        default DebeziumMySqlComponentBuilder setConfiguration(MySqlConnectorEmbeddedDebeziumConfiguration configuration) {
+        default DebeziumMySqlComponentBuilder setConfiguration(org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
