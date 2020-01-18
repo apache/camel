@@ -53,7 +53,7 @@ public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
             exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
             exchange.getIn().setHeader(HBaseAttribute.HBASE_VALUE.asHeader(), body[0][0][0]);
             Exchange resp = template.send(endpoint, exchange);
-            Message out = resp.getOut();
+            Message out = resp.getMessage();
             assertTrue(out.getHeaders().containsValue(body[0][0][0])
                        && out.getHeaders().containsValue(body[1][0][0])
                        && !out.getHeaders().containsValue(body[2][0][0]),
