@@ -71,7 +71,7 @@ public class HL7MLLPNettyCodecStandAndEndBytesTest extends HL7TestSupport {
                         assertEquals("0101701234", qrd.getWhoSubjectFilter(0).getIDNumber().getValue());
 
                         Message response = createHL7AsMessage();
-                        exchange.getOut().setBody(response);
+                        exchange.getMessage().setBody(response);
                     }
                 }).to("mock:result");
             }

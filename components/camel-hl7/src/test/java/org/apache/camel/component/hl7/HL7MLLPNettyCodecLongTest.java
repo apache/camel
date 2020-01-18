@@ -61,7 +61,7 @@ public class HL7MLLPNettyCodecLongTest extends HL7TestSupport {
                         assertEquals("2.5", input.getVersion());
                         MSH msh = input.getMSH();
                         assertEquals("20071129144629", msh.getDateTimeOfMessage().getTime().getValue());
-                        exchange.getOut().setBody("some response");
+                        exchange.getMessage().setBody("some response");
                     }
                 }).to("mock:result");
             }
