@@ -513,7 +513,7 @@ public class TelegramServiceTest extends TelegramTestSupport {
             .addRow(Collections.singletonList(buttonOptionOneI))
             .build();
 
-        EditMessageReplyMarkupMessage editMessageReplyMarkupMessage = new EditMessageReplyMarkupMessage.Builder()
+        EditMessageReplyMarkupMessage editMessageReplyMarkupMessage = EditMessageReplyMarkupMessage.builder()
             .messageId(messageId)
             .replyMarkup(replyMarkup)
             .build();
