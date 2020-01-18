@@ -80,16 +80,6 @@ public class MicroProfileMetricsExchangeRecorderTest extends MicroProfileMetrics
     }
 
     @Test
-    public void testMetricsRecorderExternalRedeliveries() {
-        Exchange exchange = ExchangeBuilder.anExchange(context)
-            .withProperty(Exchange.EXTERNAL_REDELIVERED, true)
-            .build();
-        recorder.recordExchangeComplete(exchange);
-        Counter externalRedeliveries = getCounter(CAMEL_METRIC_PREFIX + EXCHANGES_EXTERNAL_REDELIVERIES_METRIC_NAME, TAGS);
-        assertEquals(1, externalRedeliveries.getCount());
-    }
-
-    @Test
     public void testMetricsRecorderFailuresHandled() {
         Exchange exchange = ExchangeBuilder.anExchange(context)
             .withProperty(Exchange.FAILURE_HANDLED, true)

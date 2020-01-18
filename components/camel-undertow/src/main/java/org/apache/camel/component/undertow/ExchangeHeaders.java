@@ -64,6 +64,7 @@ public final class ExchangeHeaders {
     public static final HttpString EXCEPTION_HANDLED = new HttpString("CamelExceptionHandled");
     public static final HttpString EVALUATE_EXPRESSION_RESULT = new HttpString("CamelEvaluateExpressionResult");
     public static final HttpString ERRORHANDLER_HANDLED = new HttpString("CamelErrorHandlerHandled");
+    @Deprecated
     public static final HttpString EXTERNAL_REDELIVERED = new HttpString("CamelExternalRedelivered");
 
     public static final HttpString FAILURE_HANDLED = new HttpString("CamelFailureHandled");
