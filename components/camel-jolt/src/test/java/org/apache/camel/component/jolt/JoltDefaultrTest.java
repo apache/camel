@@ -32,19 +32,16 @@ public class JoltDefaultrTest extends CamelTestSupport {
 
     @Test
     public void testFirstSampleJolt() throws Exception {
-        Exchange exchange = template.request("direct://start", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                Map<String, String> body = new HashMap<>();
-                body.put("Hello", "World");
-                exchange.getIn().setBody(body);
-            }
+        Exchange exchange = template.request("direct://start", exchange1 -> {
+            Map<String, String> body = new HashMap<>();
+            body.put("Hello", "World");
+            exchange1.getIn().setBody(body);
         });
 
-        assertEquals(3, exchange.getOut().getBody(Map.class).size());
-        assertEquals("aa", exchange.getOut().getBody(Map.class).get("a"));
-        assertEquals("bb", exchange.getOut().getBody(Map.class).get("b"));
-        assertEquals("World", exchange.getOut().getBody(Map.class).get("Hello"));
+        assertEquals(3, exchange.getMessage().getBody(Map.class).size());
+        assertEquals("aa", exchange.getMessage().getBody(Map.class).get("a"));
+        assertEquals("bb", exchange.getMessage().getBody(Map.class).get("b"));
+        assertEquals("World", exchange.getMessage().getBody(Map.class).get("Hello"));
 
     }
 
