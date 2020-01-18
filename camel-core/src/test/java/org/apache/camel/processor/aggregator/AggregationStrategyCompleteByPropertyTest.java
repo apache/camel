@@ -35,6 +35,14 @@ public class AggregationStrategyCompleteByPropertyTest extends ContextTestSuppor
         result.message(0).exchangeProperty(Exchange.AGGREGATED_COMPLETED_BY).isEqualTo("strategy");
         result.message(1).exchangeProperty(Exchange.AGGREGATED_COMPLETED_BY).isEqualTo("strategy");
 
+        // org.apache.camel.builder.ExpressionBuilder.headerExpression(java.lang.String) is going to property fallback
+        // the test (without the fix) will fail into error:
+        // java.lang.AssertionError: Assertion error at index 0 on mock mock://aggregated with predicate:
+        // header(CamelAggregationCompleteCurrentGroup) is null evaluated as: true is null on Exchange[ID-MacBook-Pro-1578822701664-0-2]
+        getMockEndpoint("mock:aggregated").allMessages().header(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP).isNull();
+        // according to manual
+        getMockEndpoint("mock:aggregated").allMessages().exchangeProperty(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP).isNull();
+
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
         template.sendBodyAndHeader("direct:start", "C", "id", 123);

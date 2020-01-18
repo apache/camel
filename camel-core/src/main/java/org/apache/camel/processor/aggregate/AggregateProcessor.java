@@ -283,10 +283,10 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         }
 
         //check for the special header to force completion of all groups (and ignore the exchange otherwise)
-        boolean completeAllGroups = exchange.getIn().getHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, false, boolean.class);
+        boolean completeAllGroups = isCompleteAllGroups(exchange);
         if (completeAllGroups) {
             // remove the header so we do not complete again
-            exchange.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS);
+            removeFlagCompleteAllGroups(exchange);
             forceCompletionOfAllGroups();
             return;
         }
@@ -320,9 +320,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                 Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
 
                 // remove the complete all groups headers as it should not be on the copy
-                copy.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP);
-                copy.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS);
-                copy.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE);
+                removeFlagCompleteCurrentGroup(copy);
+                removeFlagCompleteAllGroups(copy);
+                removeFlagCompleteAllGroupsInclusive(copy);
 
                 try {
                     aggregated = doAggregation(key, copy);
@@ -350,9 +350,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
 
             // remove the complete all groups headers as it should not be on the copy
-            copy.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP);
-            copy.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS);
-            copy.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE);
+            removeFlagCompleteCurrentGroup(copy);
+            removeFlagCompleteAllGroups(copy);
+            removeFlagCompleteAllGroupsInclusive(copy);
 
             // when memory based then its fast using synchronized, but if the aggregation repository is IO
             // bound such as JPA etc then concurrent aggregation per correlation key could
@@ -372,13 +372,48 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             }
         }
 
-        // check for the special header to force completion of all groups (inclusive of the message)
-        boolean completeAllGroupsInclusive = exchange.getIn().getHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE, false, boolean.class);
+        // check for the special flag to force completion of all groups (inclusive of the message)
+        boolean completeAllGroupsInclusive = isCompleteAllGroupsInclusive(exchange);
         if (completeAllGroupsInclusive) {
-            // remove the header so we do not complete again
-            exchange.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE);
+            // remove the flag so we do not complete again
+            removeFlagCompleteAllGroupsInclusive(exchange);
             forceCompletionOfAllGroups();
         }
+    }
+
+    private Object removeFlagCompleteCurrentGroup(Exchange exchange) {
+        //before everywhere : return exchange.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP);
+        return exchange.removeProperty(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP);
+    }
+
+    private Boolean isCompleteCurrentGroup(Exchange exchange) {
+        return exchange.getProperty(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP, false, boolean.class);
+    }
+
+    private Object removeFlagCompleteAllGroups(Exchange exchange) {
+        Object removedHeader = exchange.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS);
+        Object removedProp = exchange.removeProperty(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS);
+
+        return removedHeader == null ? removedProp: removedHeader;
+    }
+
+    private Boolean isCompleteAllGroups(Exchange exchange) {
+        Boolean retVal;
+        retVal = exchange.getIn().getHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, false, boolean.class);
+        if(!Boolean.TRUE.equals(retVal)) {
+            // according to doc it is a property but it is sometimes read as header
+            // some test don't fail because they use the header expression which contains a fallback to properties
+            retVal = exchange.getProperty(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, false, boolean.class);
+        }
+        return retVal;
+    }
+
+    private Object removeFlagCompleteAllGroupsInclusive(Exchange exchange) {
+        return exchange.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE);
+    }
+
+    private Boolean isCompleteAllGroupsInclusive(Exchange exchange) {
+        return exchange.getIn().getHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE, false, boolean.class);
     }
 
     /**
@@ -473,10 +508,10 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         }
 
         // check for the special exchange property to force completion of all groups
-        boolean completeAllGroups = answer.getProperty(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, false, boolean.class);
+        boolean completeAllGroups = isCompleteAllGroups(answer);
         if (completeAllGroups) {
             // remove the exchange property so we do not complete again
-            answer.removeProperty(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS);
+            removeFlagCompleteAllGroups(answer);
             forceCompletionOfAllGroups();
         } else if (isCompletionOnNewCorrelationGroup() && originalExchange == null) {
             // its a new group so force complete of all existing groups
@@ -613,7 +648,8 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             }
         }
 
-        if (exchange.getProperty(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP, false, boolean.class)) {
+        if (isCompleteCurrentGroup(exchange)) {
+            removeFlagCompleteCurrentGroup(exchange);
             return "strategy";
         }
 
