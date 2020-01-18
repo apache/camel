@@ -37,7 +37,7 @@ public class JcrProducerSubNodeTest extends JcrRouteTestSupport {
                 .build();
             Exchange out1 = template.send("direct:a", exchange1);
             assertNotNull(out1);
-            String uuidNode = out1.getOut().getBody(String.class);
+            String uuidNode = out1.getMessage().getBody(String.class);
 
             Node node = session.getNodeByIdentifier(uuidNode);
             assertNotNull(node);
@@ -49,7 +49,7 @@ public class JcrProducerSubNodeTest extends JcrRouteTestSupport {
                 .build();
             Exchange out2 = template.send("direct:a", exchange2);
             assertNotNull(out2);
-            String uuidSubNode = out2.getOut().getBody(String.class);
+            String uuidSubNode = out2.getMessage().getBody(String.class);
             
             Node subNode = session.getNodeByIdentifier(uuidSubNode);
             assertNotNull(subNode);

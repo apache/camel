@@ -31,7 +31,7 @@ public class JcrAuthLoginTest extends JcrAuthTestBase {
         Exchange exchange = createExchangeWithBody("<message>hello!</message>");
         Exchange out = template.send("direct:a", exchange);
         assertNotNull(out);
-        String uuid = out.getOut().getBody(String.class);
+        String uuid = out.getMessage().getBody(String.class);
         assertNotNull("Out body was null; expected JCR node UUID", uuid);
         Session session = getRepository().login(
                 new SimpleCredentials("admin", "admin".toCharArray()));
