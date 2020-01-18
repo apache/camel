@@ -44,7 +44,7 @@ public abstract class InlineQueryResult {
         return type;
     }
 
-    protected void setType(String type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -52,7 +52,7 @@ public abstract class InlineQueryResult {
         return id;
     }
 
-    protected void setId(String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
