@@ -59,15 +59,13 @@ public class HL7MLLPCodecPlainStringTest extends HL7TestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e2
-                from("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        // use plain String as message format
-                        String body = exchange.getIn().getBody(String.class);
-                        assertEquals("Hello World", body);
+                from("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").process(exchange -> {
+                    // use plain String as message format
+                    String body = exchange.getIn().getBody(String.class);
+                    assertEquals("Hello World", body);
 
-                        // return the response as plain string
-                        exchange.getOut().setBody("Bye World");
-                    }
+                    // return the response as plain string
+                    exchange.getMessage().setBody("Bye World");
                 }).to("mock:result");
                 // END SNIPPET: e2
             }
