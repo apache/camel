@@ -21,7 +21,6 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -32,12 +31,10 @@ public class JmsDeadLetterChannelInOutTest extends CamelTestSupport {
 
     @Test
     public void testJmsDLCInOut() throws Exception {
-        Exchange out = template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                // use InOut
-                exchange.setPattern(ExchangePattern.InOut);
-                exchange.getIn().setBody("Hello World");
-            }
+        Exchange out = template.send("direct:start", exchange -> {
+            // use InOut
+            exchange.setPattern(ExchangePattern.InOut);
+            exchange.getIn().setBody("Hello World");
         });
         assertNotNull(out);
 

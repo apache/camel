@@ -23,7 +23,6 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -56,15 +55,10 @@ public class JmsInOutBeanReturnNullTest extends CamelTestSupport {
 
     @Test
     public void testReturnNullExchange() throws Exception {
-        Exchange reply = template.request("activemq:queue:foo", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("foo");
-            }
-        });
+        Exchange reply = template.request("activemq:queue:foo", exchange -> exchange.getIn().setBody("foo"));
         assertNotNull(reply);
         assertTrue(reply.hasOut());
-        Message out = reply.getOut();
+        Message out = reply.getMessage();
         assertNotNull(out);
         Object body = out.getBody();
         assertNull("Should be a null body", body);

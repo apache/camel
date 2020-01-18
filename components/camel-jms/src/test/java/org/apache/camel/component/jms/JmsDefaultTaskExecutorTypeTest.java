@@ -18,7 +18,6 @@ package org.apache.camel.component.jms;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -138,14 +137,12 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
         final CountDownLatch latch = new CountDownLatch(messages);
         for (int i = 0; i < messages; i++) {
             final int index = i;
-            executor.submit(new Callable<Object>() {
-                public Object call() throws Exception {
-                    String options = defaultTaskExecutorType == null ? "" : "?defaultTaskExecutorType=" 
-                            + defaultTaskExecutorType.toString();
-                    template.requestBody("activemq:queue:" + queueName + options, "Message " + index);
-                    latch.countDown();
-                    return null;
-                }
+            executor.submit(() -> {
+                String options = defaultTaskExecutorType == null ? "" : "?defaultTaskExecutorType="
+                        + defaultTaskExecutorType.toString();
+                template.requestBody("activemq:queue:" + queueName + options, "Message " + index);
+                latch.countDown();
+                return null;
             });
         }
         latch.await();

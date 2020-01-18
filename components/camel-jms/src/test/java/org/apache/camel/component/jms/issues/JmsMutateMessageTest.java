@@ -19,8 +19,6 @@ package org.apache.camel.component.jms.issues;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.JmsMessage;
@@ -60,27 +58,23 @@ public class JmsMutateMessageTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from(uri)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // do not mutate it
-                            JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
-                            assertNotNull("javax.jms.Message should not be null", msg.getJmsMessage());
+                    .process(exchange -> {
+                        // do not mutate it
+                        JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
+                        assertNotNull("javax.jms.Message should not be null", msg.getJmsMessage());
 
-                            // get header should not mutate it
-                            assertEquals("VALUE_1", exchange.getIn().getHeader("HEADER_1"));
-                        }
+                        // get header should not mutate it
+                        assertEquals("VALUE_1", exchange.getIn().getHeader("HEADER_1"));
                     })
                     // setting a new header should mutate it
                     .setHeader("HEADER_1", constant("VALUE_2"))
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // it should have been mutated
-                            JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
-                            assertNotNull("javax.jms.Message should not be null", msg.getJmsMessage());
+                    .process(exchange -> {
+                        // it should have been mutated
+                        JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
+                        assertNotNull("javax.jms.Message should not be null", msg.getJmsMessage());
 
-                            // get header should not mutate it
-                            assertEquals("VALUE_2", exchange.getIn().getHeader("HEADER_1"));
-                        }
+                        // get header should not mutate it
+                        assertEquals("VALUE_2", exchange.getIn().getHeader("HEADER_1"));
                     })
                     .to("mock:result");
             }

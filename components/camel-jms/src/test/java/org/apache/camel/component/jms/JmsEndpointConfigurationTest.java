@@ -18,13 +18,10 @@ package org.apache.camel.component.jms;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.DeliveryMode;
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -39,23 +36,14 @@ import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.listener.SimpleMessageListenerContainer;
 import org.springframework.jms.support.converter.SimpleMessageConverter;
-import org.springframework.util.ErrorHandler;
 
 public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
     @BindToRegistry("myConnectionFactory")
     private ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm:myBroker");
-    private final Processor failProcessor = new Processor() {
-        public void process(Exchange exchange) throws Exception {
-            fail("Should not be reached");
-        }
-    };
+    private final Processor failProcessor = exchange -> fail("Should not be reached");
 
-    private final Processor dummyProcessor = new Processor() {
-        public void process(Exchange exchange) throws Exception {
-            log.info("Received: " + exchange);
-        }
-    };
+    private final Processor dummyProcessor = exchange -> log.info("Received: " + exchange);
 
     @Test
     public void testDurableSubscriberConfiguredWithDoubleSlash() throws Exception {
@@ -77,11 +65,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals("isSubscriptionShared()", true, configuration.isSubscriptionShared());
         assertEquals("getSubscriptionName()", "James", configuration.getSubscriptionName());
 
-        JmsConsumer consumer = endpoint.createConsumer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                log.info("Received: " + exchange);
-            }
-        });
+        JmsConsumer consumer = endpoint.createConsumer(exchange -> log.info("Received: " + exchange));
         AbstractMessageListenerContainer listenerContainer = consumer.getListenerContainer();
         assertEquals("isSubscriptionDurable()", true, listenerContainer.isSubscriptionDurable());
         assertEquals("isSubscriptionShared()", true, listenerContainer.isSubscriptionShared());
@@ -96,11 +80,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals("isSubscriptionShared()", true, configuration.isSubscriptionShared());
         assertEquals("getSubscriptionName()", "James", configuration.getSubscriptionName());
 
-        JmsConsumer consumer = endpoint.createConsumer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                log.info("Received: " + exchange);
-            }
-        });
+        JmsConsumer consumer = endpoint.createConsumer(exchange -> log.info("Received: " + exchange));
         AbstractMessageListenerContainer listenerContainer = consumer.getListenerContainer();
         assertEquals("isSubscriptionDurable()", false, listenerContainer.isSubscriptionDurable());
         assertEquals("isSubscriptionShared()", true, listenerContainer.isSubscriptionShared());
@@ -432,15 +412,11 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         endpoint.setEagerLoadingOfProperties(true);
         assertTrue(endpoint.isEagerLoadingOfProperties());
 
-        endpoint.setExceptionListener(new ExceptionListener() {
-            public void onException(JMSException exception) {
-            }
+        endpoint.setExceptionListener(exception -> {
         });
         assertNotNull(endpoint.getExceptionListener());
 
-        endpoint.setErrorHandler(new ErrorHandler() {
-            public void handleError(Throwable t) {
-            }
+        endpoint.setErrorHandler(t -> {
         });
         assertNotNull(endpoint.getErrorHandler());
 
@@ -540,11 +516,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals("getClientId()", "ABC", configuration.getClientId());
         assertEquals("isDeliveryPersistent()", true, configuration.isDeliveryPersistent());
 
-        JmsConsumer consumer = endpoint.createConsumer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                log.info("Received: " + exchange);
-            }
-        });
+        JmsConsumer consumer = endpoint.createConsumer(exchange -> log.info("Received: " + exchange));
         AbstractMessageListenerContainer listenerContainer = consumer.getListenerContainer();
         assertEquals("getDurableSubscriptionName()", "James", listenerContainer.getDurableSubscriptionName());
         assertEquals("getClientId()", "ABC", listenerContainer.getClientId());

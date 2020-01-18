@@ -47,15 +47,12 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
         MockEndpoint errors = this.resolveMandatoryEndpoint(assertionReceiver, MockEndpoint.class);
         errors.expectedMessageCount(0);
 
-        template.send(testQueueEndpointA, ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader("org.apache.camel.jms", 10000);
-                exchange.getIn().setHeader("org.apache.camel.test.jms", 20000);
-                exchange.getIn().setHeader("testheader", 1020);
-                exchange.getIn().setHeader("anotherheader", 1030);
-                exchange.getIn().setHeader("JMSXAppID", "myApp");
-            }
-
+        template.send(testQueueEndpointA, ExchangePattern.InOnly, exchange -> {
+            exchange.getIn().setHeader("org.apache.camel.jms", 10000);
+            exchange.getIn().setHeader("org.apache.camel.test.jms", 20000);
+            exchange.getIn().setHeader("testheader", 1020);
+            exchange.getIn().setHeader("anotherheader", 1030);
+            exchange.getIn().setHeader("JMSXAppID", "myApp");
         });
 
         // make sure that the latch reached zero and that timeout did not elapse

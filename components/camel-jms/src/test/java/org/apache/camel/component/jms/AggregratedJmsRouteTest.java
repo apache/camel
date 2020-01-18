@@ -18,7 +18,6 @@ package org.apache.camel.component.jms;
 
 import javax.jms.ConnectionFactory;
 
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -87,16 +86,14 @@ public class AggregratedJmsRouteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from(timeOutEndpointUri).to("jms:queue:test.b");
 
-                from("jms:queue:test.b").aggregate(header("cheese"), new AggregationStrategy() {
-                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            LOG.error("aggregration delay sleep inturrepted", e);
-                            fail("aggregration delay sleep inturrepted");
-                        }
-                        return newExchange;
+                from("jms:queue:test.b").aggregate(header("cheese"), (oldExchange, newExchange) -> {
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        LOG.error("aggregration delay sleep inturrepted", e);
+                        fail("aggregration delay sleep inturrepted");
                     }
+                    return newExchange;
                 }).completionTimeout(2000L).to("mock:result");
 
                 from(multicastEndpointUri).to("jms:queue:point1", "jms:queue:point2", "jms:queue:point3");

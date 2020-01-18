@@ -22,8 +22,6 @@ import java.util.concurrent.TimeUnit;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -48,13 +46,11 @@ public class JmsConcurrentConsumersTest extends CamelTestSupport {
         executor.afterPropertiesSet();
         for (int i = 0; i < 5; i++) {
             final int count = i;
-            executor.execute(new Runnable() {
-                public void run() {
-                    // request body is InOut pattern and thus we expect a reply (JMSReply)
-                    Object response = template.requestBody("activemq:a", "World #" + count);
-                    assertEquals("Bye World #" + count, response);
-                    latch.countDown();
-                }
+            executor.execute(() -> {
+                // request body is InOut pattern and thus we expect a reply (JMSReply)
+                Object response = template.requestBody("activemq:a", "World #" + count);
+                assertEquals("Bye World #" + count, response);
+                latch.countDown();
             });
         }
 
@@ -85,13 +81,11 @@ public class JmsConcurrentConsumersTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("activemq:a?concurrentConsumers=3").to("activemq:b?concurrentConsumers=3");
 
-                from("activemq:b?concurrentConsumers=3").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
-                        // sleep a little to simulate heavy work and force concurrency processing
-                        Thread.sleep(3000);
-                        exchange.getOut().setBody("Bye " + body);
-                    }
+                from("activemq:b?concurrentConsumers=3").process(exchange -> {
+                    String body = exchange.getIn().getBody(String.class);
+                    // sleep a little to simulate heavy work and force concurrency processing
+                    Thread.sleep(3000);
+                    exchange.getMessage().setBody("Bye " + body);
                 });
             }
         };

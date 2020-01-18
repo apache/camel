@@ -21,9 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
 import javax.jms.TextMessage;
 
 import org.apache.activemq.command.ActiveMQQueue;
@@ -34,7 +31,6 @@ import org.apache.camel.Header;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -67,12 +63,10 @@ public class JmsRequestReplyManualReplyTest extends CamelTestSupport {
         context.start();
 
         // send using pure JMS API to set a custom JMSReplyTo
-        jms.send(new ActiveMQQueue("foo"), new MessageCreator() {
-            public Message createMessage(Session session) throws JMSException {
-                TextMessage msg = session.createTextMessage("Hello World");
-                msg.setJMSReplyTo(new ActiveMQQueue("bar"));
-                return msg;
-            }
+        jms.send(new ActiveMQQueue("foo"), session -> {
+            TextMessage msg = session.createTextMessage("Hello World");
+            msg.setJMSReplyTo(new ActiveMQQueue("bar"));
+            return msg;
         });
 
         assertTrue(latch.await(5, TimeUnit.SECONDS));

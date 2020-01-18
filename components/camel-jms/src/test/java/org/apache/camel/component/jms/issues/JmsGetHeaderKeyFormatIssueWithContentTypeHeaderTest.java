@@ -19,8 +19,6 @@ package org.apache.camel.component.jms.issues;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.JmsMessage;
@@ -70,14 +68,12 @@ public class JmsGetHeaderKeyFormatIssueWithContentTypeHeaderTest extends CamelTe
             @Override
             public void configure() throws Exception {
                 from(uri)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            assertEquals("text/plain", exchange.getIn().getHeader("Content-Type"));
+                    .process(exchange -> {
+                        assertEquals("text/plain", exchange.getIn().getHeader("Content-Type"));
 
-                            // do not mutate it
-                            JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
-                            assertNotNull("javax.jms.Message should not be null", msg.getJmsMessage());
-                        }
+                        // do not mutate it
+                        JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
+                        assertNotNull("javax.jms.Message should not be null", msg.getJmsMessage());
                     })
                     .to("activemq:queue:copy", "mock:result");
 
