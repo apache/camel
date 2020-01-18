@@ -32,20 +32,17 @@ public class JoltRemovrTest extends CamelTestSupport {
 
     @Test
     public void testFirstSampleJolt() throws Exception {
-        Exchange exchange = template.request("direct://start", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                Map<String, String> body = new HashMap<>();
-                body.put("keepMe", "This should still be in the result");
-                body.put("Hello", "World");
-                body.put("removeMe", "This should be gone");
-                exchange.getIn().setBody(body);
-            }
+        Exchange exchange = template.request("direct://start", exchange1 -> {
+            Map<String, String> body = new HashMap<>();
+            body.put("keepMe", "This should still be in the result");
+            body.put("Hello", "World");
+            body.put("removeMe", "This should be gone");
+            exchange1.getIn().setBody(body);
         });
 
-        assertEquals(2, exchange.getOut().getBody(Map.class).size());
-        assertEquals(null, exchange.getOut().getBody(Map.class).get("removeMe"));
-        assertEquals("World", exchange.getOut().getBody(Map.class).get("Hello"));
+        assertEquals(2, exchange.getMessage().getBody(Map.class).size());
+        assertEquals(null, exchange.getMessage().getBody(Map.class).get("removeMe"));
+        assertEquals("World", exchange.getMessage().getBody(Map.class).get("Hello"));
     }
 
     @Override
