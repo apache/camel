@@ -21,6 +21,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
@@ -93,11 +94,11 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
         // if the exchange doesn't have from route id set, then set it if it originated
         // from this unit of work
         if (route != null && exchange.getFromRouteId() == null) {
-            exchange.setFromRouteId(route.getId());
+            exchange.adapt(ExtendedExchange.class).setFromRouteId(route.getId());
         }
 
         UnitOfWork uow = endpoint.getCamelContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory().createUnitOfWork(exchange);
-        exchange.setUnitOfWork(uow);
+        exchange.adapt(ExtendedExchange.class).setUnitOfWork(uow);
         uow.start();
         return uow;
     }

@@ -40,16 +40,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.tools.apt.helper.JsonSchemaHelper;
-import org.apache.camel.tools.apt.helper.Strings;
+import org.apache.camel.tooling.util.JSonSchemaHelper;
+import org.apache.camel.tooling.util.Strings;
 
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findJavaDoc;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findTypeElement;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.processFile;
-import static org.apache.camel.tools.apt.helper.JsonSchemaHelper.sanitizeDescription;
-import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
-import static org.apache.camel.tools.apt.helper.Strings.isNullOrEmpty;
-import static org.apache.camel.tools.apt.helper.Strings.safeNull;
+import static org.apache.camel.tooling.util.JSonSchemaHelper.sanitizeDescription;
+import static org.apache.camel.tooling.util.Strings.canonicalClassName;
+import static org.apache.camel.tooling.util.Strings.isNullOrEmpty;
+import static org.apache.camel.tooling.util.Strings.safeNull;
 
 /**
  * Process camel-spring's <camelContext> and generate json schema documentation
@@ -137,7 +137,7 @@ public class SpringAnnotationProcessorHelper {
             String doc = entry.getDocumentation();
             doc = sanitizeDescription(doc, false);
 
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), entry.getKind(), entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc,
+            buffer.append(JSonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), entry.getKind(), entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc,
                                                   entry.isDeprecated(), entry.getDeprecationNote(), false, null, null, entry.isEnumType(), entry.getEnums(), entry.isOneOf(),
                                                   entry.getOneOfTypes(), entry.isAsPredicate(), null, null, false, null, null));
         }

@@ -117,9 +117,13 @@ from("direct:start")
   .to("jms:myQueue");
 -------------------------------------------------------------------------------------------------------------------------------------
 
-TIP: *See also*
+[TIP]
+====
+*See also*
+
 As the SOAP dataformat inherits from the xref:jaxb-dataformat.adoc[JAXB] dataformat
 most settings apply here as well
+====
 
 
 === Using SOAP 1.2

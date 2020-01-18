@@ -96,7 +96,7 @@ The Spring WebService component supports 4 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
@@ -308,9 +308,12 @@ exchange.getOut().getHeaders().put("myCustom","myHeaderValue")
 exchange.getIn().addAttachment("myAttachment", new DataHandler(...))
 --------------------------------------------------------------------
 
-Note: If the exchange header in the pipeline contains text, it generates
+[NOTE]
+====
+If the exchange header in the pipeline contains text, it generates
 Qname(key)=value attribute in the soap header. Recommended is to create
 a QName class directly and put into any key into header.
+====
 
 == How to transform the soap header using a stylesheet
 The header transformation filter (HeaderTransformationMessageFilter.java)
@@ -578,7 +581,9 @@ Camel endpoint and an existing
 http://static.springsource.org/spring-ws/sites/1.5/reference/html/server.html#server-endpoint-mapping[endpoint
 mapping] like `PayloadRootQNameEndpointMapping`.
 
-NOTE:The use of the `beanname` mapping-type is primarily meant for (legacy)
+[NOTE]
+====
+The use of the `beanname` mapping-type is primarily meant for (legacy)
 situations where you're already using Spring-WS and have endpoint
 mappings defined in a Spring XML file. The `beanname` mapping-type
 allows you to wire your Camel route into an existing endpoint mapping.
@@ -587,6 +592,7 @@ endpoint mappings as Camel URI's (as illustrated above with
 `endpointMapping`) since it requires less configuration and is more
 expressive. Alternatively you could use vanilla Spring-WS with the help
 of annotations.
+====
 
 An example of a route using `beanname`:
 

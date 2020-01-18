@@ -50,9 +50,9 @@ public class KafkaConsumerLastRecordHeaderTest extends BaseEmbeddedKafkaTest {
     }
 
     /**
-     * When consuming data with autoCommitEnable=false
-     * Then the LAST_RECORD_BEFORE_COMMIT header must be always defined
-     * And it should be true only for the last one
+     * When consuming data with autoCommitEnable=false Then the
+     * LAST_RECORD_BEFORE_COMMIT header must be always defined And it should be
+     * true only for the last one
      */
     @Test
     public void shouldStartFromBeginningWithEmptyOffsetRepository() throws InterruptedException {

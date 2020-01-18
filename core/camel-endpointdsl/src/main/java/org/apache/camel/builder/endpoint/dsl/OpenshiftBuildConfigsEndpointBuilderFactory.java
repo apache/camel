@@ -416,6 +416,27 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface OpenshiftBuildConfigsBuilders {
+        /**
+         * Openshift Build Config (camel-kubernetes)
+         * The Kubernetes Build Config component provides a producer to execute
+         * kubernetes build config operations.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>openshift-build-configs:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         */
+        default OpenshiftBuildConfigsEndpointBuilder openshiftBuildConfigs(
+                String path) {
+            return OpenshiftBuildConfigsEndpointBuilderFactory.openshiftBuildConfigs(path);
+        }
+    }
     /**
      * Openshift Build Config (camel-kubernetes)
      * The Kubernetes Build Config component provides a producer to execute
@@ -430,7 +451,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
      * Path parameter: masterUrl (required)
      * Kubernetes Master url
      */
-    default OpenshiftBuildConfigsEndpointBuilder openshiftBuildConfigs(
+    static OpenshiftBuildConfigsEndpointBuilder openshiftBuildConfigs(
             String path) {
         class OpenshiftBuildConfigsEndpointBuilderImpl extends AbstractEndpointBuilder implements OpenshiftBuildConfigsEndpointBuilder, AdvancedOpenshiftBuildConfigsEndpointBuilder {
             public OpenshiftBuildConfigsEndpointBuilderImpl(String path) {

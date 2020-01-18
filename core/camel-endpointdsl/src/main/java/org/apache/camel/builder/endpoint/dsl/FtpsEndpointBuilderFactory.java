@@ -4509,7 +4509,8 @@ public interface FtpsEndpointBuilderFactory {
      */
     public interface FtpsEndpointBuilder
             extends
-                FtpsEndpointConsumerBuilder, FtpsEndpointProducerBuilder {
+                FtpsEndpointConsumerBuilder,
+                FtpsEndpointProducerBuilder {
         default AdvancedFtpsEndpointBuilder advanced() {
             return (AdvancedFtpsEndpointBuilder) this;
         }
@@ -5033,7 +5034,8 @@ public interface FtpsEndpointBuilderFactory {
      */
     public interface AdvancedFtpsEndpointBuilder
             extends
-                AdvancedFtpsEndpointConsumerBuilder, AdvancedFtpsEndpointProducerBuilder {
+                AdvancedFtpsEndpointConsumerBuilder,
+                AdvancedFtpsEndpointProducerBuilder {
         default FtpsEndpointBuilder basic() {
             return (FtpsEndpointBuilder) this;
         }
@@ -5545,6 +5547,32 @@ public interface FtpsEndpointBuilderFactory {
         Move,
         TryRename;
     }
+
+    public interface FtpsBuilders {
+        /**
+         * FTPS (camel-ftp)
+         * The ftps (FTP secure SSL/TLS) component is used for uploading or
+         * downloading files from FTP servers.
+         * 
+         * Category: file
+         * Since: 2.2
+         * Maven coordinates: org.apache.camel:camel-ftp
+         * 
+         * Syntax: <code>ftps:host:port/directoryName</code>
+         * 
+         * Path parameter: host (required)
+         * Hostname of the FTP server
+         * 
+         * Path parameter: port
+         * Port of the FTP server
+         * 
+         * Path parameter: directoryName
+         * The starting directory
+         */
+        default FtpsEndpointBuilder ftps(String path) {
+            return FtpsEndpointBuilderFactory.ftps(path);
+        }
+    }
     /**
      * FTPS (camel-ftp)
      * The ftps (FTP secure SSL/TLS) component is used for uploading or
@@ -5565,7 +5593,7 @@ public interface FtpsEndpointBuilderFactory {
      * Path parameter: directoryName
      * The starting directory
      */
-    default FtpsEndpointBuilder ftps(String path) {
+    static FtpsEndpointBuilder ftps(String path) {
         class FtpsEndpointBuilderImpl extends AbstractEndpointBuilder implements FtpsEndpointBuilder, AdvancedFtpsEndpointBuilder {
             public FtpsEndpointBuilderImpl(String path) {
                 super("ftps", path);

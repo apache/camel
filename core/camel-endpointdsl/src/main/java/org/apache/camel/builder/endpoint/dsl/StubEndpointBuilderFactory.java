@@ -818,7 +818,8 @@ public interface StubEndpointBuilderFactory {
      */
     public interface StubEndpointBuilder
             extends
-                StubEndpointConsumerBuilder, StubEndpointProducerBuilder {
+                StubEndpointConsumerBuilder,
+                StubEndpointProducerBuilder {
         default AdvancedStubEndpointBuilder advanced() {
             return (AdvancedStubEndpointBuilder) this;
         }
@@ -857,7 +858,8 @@ public interface StubEndpointBuilderFactory {
      */
     public interface AdvancedStubEndpointBuilder
             extends
-                AdvancedStubEndpointConsumerBuilder, AdvancedStubEndpointProducerBuilder {
+                AdvancedStubEndpointConsumerBuilder,
+                AdvancedStubEndpointProducerBuilder {
         default StubEndpointBuilder basic() {
             return (StubEndpointBuilder) this;
         }
@@ -944,6 +946,26 @@ public interface StubEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface StubBuilders {
+        /**
+         * Stub (camel-stub)
+         * The stub component provides a simple way to stub out any physical
+         * endpoints while in development or testing.
+         * 
+         * Category: core,testing
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-stub
+         * 
+         * Syntax: <code>stub:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name of queue
+         */
+        default StubEndpointBuilder stub(String path) {
+            return StubEndpointBuilderFactory.stub(path);
+        }
+    }
     /**
      * Stub (camel-stub)
      * The stub component provides a simple way to stub out any physical
@@ -958,7 +980,7 @@ public interface StubEndpointBuilderFactory {
      * Path parameter: name (required)
      * Name of queue
      */
-    default StubEndpointBuilder stub(String path) {
+    static StubEndpointBuilder stub(String path) {
         class StubEndpointBuilderImpl extends AbstractEndpointBuilder implements StubEndpointBuilder, AdvancedStubEndpointBuilder {
             public StubEndpointBuilderImpl(String path) {
                 super("stub", path);

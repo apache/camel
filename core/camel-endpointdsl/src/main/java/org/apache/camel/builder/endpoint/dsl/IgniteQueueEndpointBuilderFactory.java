@@ -334,6 +334,26 @@ public interface IgniteQueueEndpointBuilderFactory {
         TAKE,
         PUT;
     }
+
+    public interface IgniteQueueBuilders {
+        /**
+         * Ignite Queues (camel-ignite)
+         * The Ignite Queue endpoint is one of camel-ignite endpoints which
+         * allows you to interact with Ignite Queue data structures.
+         * 
+         * Category: nosql,cache
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ignite
+         * 
+         * Syntax: <code>ignite-queue:name</code>
+         * 
+         * Path parameter: name (required)
+         * The queue name.
+         */
+        default IgniteQueueEndpointBuilder igniteQueue(String path) {
+            return IgniteQueueEndpointBuilderFactory.igniteQueue(path);
+        }
+    }
     /**
      * Ignite Queues (camel-ignite)
      * The Ignite Queue endpoint is one of camel-ignite endpoints which allows
@@ -348,7 +368,7 @@ public interface IgniteQueueEndpointBuilderFactory {
      * Path parameter: name (required)
      * The queue name.
      */
-    default IgniteQueueEndpointBuilder igniteQueue(String path) {
+    static IgniteQueueEndpointBuilder igniteQueue(String path) {
         class IgniteQueueEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteQueueEndpointBuilder, AdvancedIgniteQueueEndpointBuilder {
             public IgniteQueueEndpointBuilderImpl(String path) {
                 super("ignite-queue", path);

@@ -662,6 +662,26 @@ public interface SchedulerEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface SchedulerBuilders {
+        /**
+         * Scheduler (camel-scheduler)
+         * The scheduler component is used for generating message exchanges when
+         * a scheduler fires.
+         * 
+         * Category: core,scheduling
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-scheduler
+         * 
+         * Syntax: <code>scheduler:name</code>
+         * 
+         * Path parameter: name (required)
+         * The name of the scheduler
+         */
+        default SchedulerEndpointBuilder scheduler(String path) {
+            return SchedulerEndpointBuilderFactory.scheduler(path);
+        }
+    }
     /**
      * Scheduler (camel-scheduler)
      * The scheduler component is used for generating message exchanges when a
@@ -676,7 +696,7 @@ public interface SchedulerEndpointBuilderFactory {
      * Path parameter: name (required)
      * The name of the scheduler
      */
-    default SchedulerEndpointBuilder scheduler(String path) {
+    static SchedulerEndpointBuilder scheduler(String path) {
         class SchedulerEndpointBuilderImpl extends AbstractEndpointBuilder implements SchedulerEndpointBuilder, AdvancedSchedulerEndpointBuilder {
             public SchedulerEndpointBuilderImpl(String path) {
                 super("scheduler", path);

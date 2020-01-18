@@ -1075,7 +1075,8 @@ public interface ClientEndpointBuilderFactory {
      */
     public interface ClientEndpointBuilder
             extends
-                ClientEndpointConsumerBuilder, ClientEndpointProducerBuilder {
+                ClientEndpointConsumerBuilder,
+                ClientEndpointProducerBuilder {
         default AdvancedClientEndpointBuilder advanced() {
             return (AdvancedClientEndpointBuilder) this;
         }
@@ -1446,7 +1447,8 @@ public interface ClientEndpointBuilderFactory {
      */
     public interface AdvancedClientEndpointBuilder
             extends
-                AdvancedClientEndpointConsumerBuilder, AdvancedClientEndpointProducerBuilder {
+                AdvancedClientEndpointConsumerBuilder,
+                AdvancedClientEndpointProducerBuilder {
         default ClientEndpointBuilder basic() {
             return (ClientEndpointBuilder) this;
         }
@@ -1533,6 +1535,27 @@ public interface ClientEndpointBuilderFactory {
         SIZE_2,
         SIZE_3;
     }
+
+    public interface ClientBuilders {
+        /**
+         * IEC 60870 Client (camel-iec60870)
+         * IEC 60870 component used for telecontrol (supervisory control and
+         * data acquisition) such as controlling electric power transmission
+         * grids and other geographically widespread control systems.
+         * 
+         * Category: iot
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-iec60870
+         * 
+         * Syntax: <code>iec60870-client:uriPath</code>
+         * 
+         * Path parameter: uriPath (required)
+         * The object information address
+         */
+        default ClientEndpointBuilder iec60870Client(String path) {
+            return ClientEndpointBuilderFactory.iec60870Client(path);
+        }
+    }
     /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 component used for telecontrol (supervisory control and data
@@ -1548,7 +1571,7 @@ public interface ClientEndpointBuilderFactory {
      * Path parameter: uriPath (required)
      * The object information address
      */
-    default ClientEndpointBuilder iec60870Client(String path) {
+    static ClientEndpointBuilder iec60870Client(String path) {
         class ClientEndpointBuilderImpl extends AbstractEndpointBuilder implements ClientEndpointBuilder, AdvancedClientEndpointBuilder {
             public ClientEndpointBuilderImpl(String path) {
                 super("iec60870-client", path);

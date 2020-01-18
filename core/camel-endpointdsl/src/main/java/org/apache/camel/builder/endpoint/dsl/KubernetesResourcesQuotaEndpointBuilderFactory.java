@@ -419,6 +419,27 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface KubernetesResourcesQuotaBuilders {
+        /**
+         * Kubernetes Resources Quota (camel-kubernetes)
+         * The Kubernetes Resources Quota component provides a producer to
+         * execute kubernetes resources quota operations.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-resources-quota:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         */
+        default KubernetesResourcesQuotaEndpointBuilder kubernetesResourcesQuota(
+                String path) {
+            return KubernetesResourcesQuotaEndpointBuilderFactory.kubernetesResourcesQuota(path);
+        }
+    }
     /**
      * Kubernetes Resources Quota (camel-kubernetes)
      * The Kubernetes Resources Quota component provides a producer to execute
@@ -433,7 +454,7 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
      * Path parameter: masterUrl (required)
      * Kubernetes Master url
      */
-    default KubernetesResourcesQuotaEndpointBuilder kubernetesResourcesQuota(
+    static KubernetesResourcesQuotaEndpointBuilder kubernetesResourcesQuota(
             String path) {
         class KubernetesResourcesQuotaEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesResourcesQuotaEndpointBuilder, AdvancedKubernetesResourcesQuotaEndpointBuilder {
             public KubernetesResourcesQuotaEndpointBuilderImpl(String path) {

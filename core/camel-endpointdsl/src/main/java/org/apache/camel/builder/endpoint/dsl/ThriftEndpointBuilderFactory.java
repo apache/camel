@@ -640,7 +640,8 @@ public interface ThriftEndpointBuilderFactory {
      */
     public interface ThriftEndpointBuilder
             extends
-                ThriftEndpointConsumerBuilder, ThriftEndpointProducerBuilder {
+                ThriftEndpointConsumerBuilder,
+                ThriftEndpointProducerBuilder {
         default AdvancedThriftEndpointBuilder advanced() {
             return (AdvancedThriftEndpointBuilder) this;
         }
@@ -762,7 +763,8 @@ public interface ThriftEndpointBuilderFactory {
      */
     public interface AdvancedThriftEndpointBuilder
             extends
-                AdvancedThriftEndpointConsumerBuilder, AdvancedThriftEndpointProducerBuilder {
+                AdvancedThriftEndpointConsumerBuilder,
+                AdvancedThriftEndpointProducerBuilder {
         default ThriftEndpointBuilder basic() {
             return (ThriftEndpointBuilder) this;
         }
@@ -854,6 +856,35 @@ public interface ThriftEndpointBuilderFactory {
         SSL,
         SASL;
     }
+
+    public interface ThriftBuilders {
+        /**
+         * Thrift (camel-thrift)
+         * The Thrift component allows to call and expose remote procedures
+         * (RPC) with Apache Thrift data format and serialization mechanism
+         * 
+         * Category: rpc
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-thrift
+         * 
+         * Syntax: <code>thrift:host:port/service</code>
+         * 
+         * Path parameter: host
+         * The Thrift server host name. This is localhost or 0.0.0.0 (if not
+         * defined) when being a consumer or remote server host name when using
+         * producer.
+         * 
+         * Path parameter: port (required)
+         * The Thrift server port
+         * 
+         * Path parameter: service (required)
+         * Fully qualified service name from the thrift descriptor file (package
+         * dot service definition name)
+         */
+        default ThriftEndpointBuilder thrift(String path) {
+            return ThriftEndpointBuilderFactory.thrift(path);
+        }
+    }
     /**
      * Thrift (camel-thrift)
      * The Thrift component allows to call and expose remote procedures (RPC)
@@ -877,7 +908,7 @@ public interface ThriftEndpointBuilderFactory {
      * Fully qualified service name from the thrift descriptor file (package dot
      * service definition name)
      */
-    default ThriftEndpointBuilder thrift(String path) {
+    static ThriftEndpointBuilder thrift(String path) {
         class ThriftEndpointBuilderImpl extends AbstractEndpointBuilder implements ThriftEndpointBuilder, AdvancedThriftEndpointBuilder {
             public ThriftEndpointBuilderImpl(String path) {
                 super("thrift", path);

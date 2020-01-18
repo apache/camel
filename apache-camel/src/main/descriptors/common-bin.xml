@@ -78,6 +78,7 @@
         <include>org.apache.camel:camel-aws-swf</include>
         <include>org.apache.camel:camel-aws-translate</include>
         <include>org.apache.camel:camel-aws-xray</include>
+        <include>org.apache.camel:camel-aws2-translate</include>
         <include>org.apache.camel:camel-azure</include>
         <include>org.apache.camel:camel-barcode</include>
         <include>org.apache.camel:camel-base64</include>
@@ -107,6 +108,7 @@
         <include>org.apache.camel:camel-corda</include>
         <include>org.apache.camel:camel-couchbase</include>
         <include>org.apache.camel:camel-couchdb</include>
+        <include>org.apache.camel:camel-cron</include>
         <include>org.apache.camel:camel-crypto</include>
         <include>org.apache.camel:camel-crypto-cms</include>
         <include>org.apache.camel:camel-csv</include>

@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.support.DefaultProducer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
@@ -294,7 +295,7 @@ public class SqlProducer extends DefaultProducer {
                 }
                 // we do not know the row count so we cannot set a ROW_COUNT header
                 // defer closing the iterator when the exchange is complete
-                exchange.addOnCompletion(new ResultSetIteratorCompletion(iterator));
+                exchange.adapt(ExtendedExchange.class).addOnCompletion(new ResultSetIteratorCompletion(iterator));
             }
         } catch (Exception e) {
             // in case of exception then close all this before rethrow

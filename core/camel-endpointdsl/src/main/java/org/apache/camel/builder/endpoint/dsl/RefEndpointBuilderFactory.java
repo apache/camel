@@ -331,7 +331,8 @@ public interface RefEndpointBuilderFactory {
      */
     public interface RefEndpointBuilder
             extends
-                RefEndpointConsumerBuilder, RefEndpointProducerBuilder {
+                RefEndpointConsumerBuilder,
+                RefEndpointProducerBuilder {
         default AdvancedRefEndpointBuilder advanced() {
             return (AdvancedRefEndpointBuilder) this;
         }
@@ -342,7 +343,8 @@ public interface RefEndpointBuilderFactory {
      */
     public interface AdvancedRefEndpointBuilder
             extends
-                AdvancedRefEndpointConsumerBuilder, AdvancedRefEndpointProducerBuilder {
+                AdvancedRefEndpointConsumerBuilder,
+                AdvancedRefEndpointProducerBuilder {
         default RefEndpointBuilder basic() {
             return (RefEndpointBuilder) this;
         }
@@ -401,6 +403,26 @@ public interface RefEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface RefBuilders {
+        /**
+         * Ref (camel-ref)
+         * The ref component is used for lookup of existing endpoints bound in
+         * the Registry.
+         * 
+         * Category: core,endpoint
+         * Since: 1.2
+         * Maven coordinates: org.apache.camel:camel-ref
+         * 
+         * Syntax: <code>ref:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name of endpoint to lookup in the registry.
+         */
+        default RefEndpointBuilder ref(String path) {
+            return RefEndpointBuilderFactory.ref(path);
+        }
+    }
     /**
      * Ref (camel-ref)
      * The ref component is used for lookup of existing endpoints bound in the
@@ -415,7 +437,7 @@ public interface RefEndpointBuilderFactory {
      * Path parameter: name (required)
      * Name of endpoint to lookup in the registry.
      */
-    default RefEndpointBuilder ref(String path) {
+    static RefEndpointBuilder ref(String path) {
         class RefEndpointBuilderImpl extends AbstractEndpointBuilder implements RefEndpointBuilder, AdvancedRefEndpointBuilder {
             public RefEndpointBuilderImpl(String path) {
                 super("ref", path);

@@ -205,6 +205,29 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface ZooKeeperMasterBuilders {
+        /**
+         * ZooKeeper Master (camel-zookeeper-master)
+         * Represents an endpoint which only becomes active when it obtains the
+         * master lock
+         * 
+         * Category: clustering
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-zookeeper-master
+         * 
+         * Syntax: <code>zookeeper-master:groupName:consumerEndpointUri</code>
+         * 
+         * Path parameter: groupName (required)
+         * The name of the cluster group to use
+         * 
+         * Path parameter: consumerEndpointUri (required)
+         * The consumer endpoint to use in master/slave mode
+         */
+        default ZooKeeperMasterEndpointBuilder zookeeperMaster(String path) {
+            return ZooKeeperMasterEndpointBuilderFactory.zookeeperMaster(path);
+        }
+    }
     /**
      * ZooKeeper Master (camel-zookeeper-master)
      * Represents an endpoint which only becomes active when it obtains the
@@ -222,7 +245,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
      * Path parameter: consumerEndpointUri (required)
      * The consumer endpoint to use in master/slave mode
      */
-    default ZooKeeperMasterEndpointBuilder zookeeperMaster(String path) {
+    static ZooKeeperMasterEndpointBuilder zookeeperMaster(String path) {
         class ZooKeeperMasterEndpointBuilderImpl extends AbstractEndpointBuilder implements ZooKeeperMasterEndpointBuilder, AdvancedZooKeeperMasterEndpointBuilder {
             public ZooKeeperMasterEndpointBuilderImpl(String path) {
                 super("zookeeper-master", path);

@@ -29,7 +29,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private int durationMaxSeconds;
     private int durationMaxIdleSeconds;
     private int durationMaxMessages;
-    private int shutdownTimeout = 300;
+    private int shutdownTimeout = 45;
     private boolean shutdownSuppressLoggingOnTimeout;
     private boolean shutdownNowOnTimeout = true;
     private boolean shutdownRoutesInReverseOrder = true;
@@ -53,7 +53,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean backlogTracing;
     private boolean tracing;
     private String tracingPattern;
-    private boolean messageHistory = true;
+    private boolean messageHistory;
     private boolean logMask;
     private boolean logExhaustedMessageBody;
     private boolean autoStartup = true;
@@ -446,7 +446,7 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Sets whether message history is enabled or not.
      *
-     * Default is true.
+     * Default is false.
      */
     public void setMessageHistory(boolean messageHistory) {
         this.messageHistory = messageHistory;
@@ -1122,7 +1122,7 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Sets whether message history is enabled or not.
      *
-     * Default is true.
+     * Default is false.
      */
     public T withMessageHistory(boolean messageHistory) {
         this.messageHistory = messageHistory;

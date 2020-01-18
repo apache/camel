@@ -830,7 +830,8 @@ public interface JooqEndpointBuilderFactory {
      */
     public interface JooqEndpointBuilder
             extends
-                JooqEndpointConsumerBuilder, JooqEndpointProducerBuilder {
+                JooqEndpointConsumerBuilder,
+                JooqEndpointProducerBuilder {
         default AdvancedJooqEndpointBuilder advanced() {
             return (AdvancedJooqEndpointBuilder) this;
         }
@@ -841,7 +842,8 @@ public interface JooqEndpointBuilderFactory {
      */
     public interface AdvancedJooqEndpointBuilder
             extends
-                AdvancedJooqEndpointConsumerBuilder, AdvancedJooqEndpointProducerBuilder {
+                AdvancedJooqEndpointConsumerBuilder,
+                AdvancedJooqEndpointProducerBuilder {
         default JooqEndpointBuilder basic() {
             return (JooqEndpointBuilder) this;
         }
@@ -910,6 +912,26 @@ public interface JooqEndpointBuilderFactory {
         FETCH,
         NONE;
     }
+
+    public interface JooqBuilders {
+        /**
+         * JOOQ (camel-jooq)
+         * The jooq component enables you to store and retrieve entities from
+         * databases using JOOQ
+         * 
+         * Category: database
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-jooq
+         * 
+         * Syntax: <code>jooq:entityType</code>
+         * 
+         * Path parameter: entityType
+         * JOOQ entity class
+         */
+        default JooqEndpointBuilder jooq(String path) {
+            return JooqEndpointBuilderFactory.jooq(path);
+        }
+    }
     /**
      * JOOQ (camel-jooq)
      * The jooq component enables you to store and retrieve entities from
@@ -924,7 +946,7 @@ public interface JooqEndpointBuilderFactory {
      * Path parameter: entityType
      * JOOQ entity class
      */
-    default JooqEndpointBuilder jooq(String path) {
+    static JooqEndpointBuilder jooq(String path) {
         class JooqEndpointBuilderImpl extends AbstractEndpointBuilder implements JooqEndpointBuilder, AdvancedJooqEndpointBuilder {
             public JooqEndpointBuilderImpl(String path) {
                 super("jooq", path);

@@ -114,7 +114,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
 
     public File getApiMethodFile() throws MojoExecutionException {
         final StringBuilder fileName = new StringBuilder();
-        fileName.append(outPackage.replaceAll("\\.", Matcher.quoteReplacement(File.separator))).append(File.separator);
+        fileName.append(outPackage.replace(".", Matcher.quoteReplacement(File.separator))).append(File.separator);
         fileName.append(getEnumName()).append(".java");
         return new File(generatedSrcDir, fileName.toString());
     }
@@ -136,7 +136,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
 
     private String getTestFilePath() throws MojoExecutionException {
         final StringBuilder fileName = new StringBuilder();
-        fileName.append(componentPackage.replaceAll("\\.", Matcher.quoteReplacement(File.separator))).append(File.separator);
+        fileName.append(componentPackage.replace(".", Matcher.quoteReplacement(File.separator))).append(File.separator);
         fileName.append(getUnitTestName()).append(".java");
         return fileName.toString();
     }
@@ -172,7 +172,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         if (extraOptions != null && extraOptions.length > 0) {
             for (ExtraOption option : extraOptions) {
                 final String name = option.getName();
-                final String argWithTypes = option.getType().replaceAll(" ", "");
+                final String argWithTypes = option.getType().replace(" ", "");
                 final int rawEnd = argWithTypes.indexOf('<');
                 String typeArgs = null;
                 Class<?> argType;
@@ -198,7 +198,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     private File getConfigurationFile() throws MojoExecutionException {
         final StringBuilder fileName = new StringBuilder();
         // endpoint configuration goes in component package
-        fileName.append(componentPackage.replaceAll("\\.", Matcher.quoteReplacement(File.separator))).append(File.separator);
+        fileName.append(componentPackage.replace(".", Matcher.quoteReplacement(File.separator))).append(File.separator);
         fileName.append(getConfigName()).append(".java");
         return new File(generatedSrcDir, fileName.toString());
     }
@@ -244,11 +244,11 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         final StringBuilder builder = new StringBuilder();
         final String name = model.getMethod().getName();
         builder.append(Character.toUpperCase(name.charAt(0)));
-        builder.append(name.substring(1));
+        builder.append(name, 1, name.length());
         // find overloaded method suffix from unique name
         final String uniqueName = model.getUniqueName();
         if (uniqueName.length() > name.length()) {
-            builder.append(uniqueName.substring(name.length()));
+            builder.append(uniqueName, name.length(), uniqueName.length());
         }
         return builder.toString();
     }
@@ -296,7 +296,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         // capitalize first character
         StringBuilder builder = new StringBuilder();
         builder.append(Character.toUpperCase(parameter.charAt(0)));
-        builder.append(parameter.substring(1));
+        builder.append(parameter, 1, parameter.length());
         return builder.toString();
     }
 

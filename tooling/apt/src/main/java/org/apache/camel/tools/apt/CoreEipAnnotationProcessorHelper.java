@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlValue;
 
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.tools.apt.helper.JsonSchemaHelper;
-import org.apache.camel.tools.apt.helper.Strings;
+import org.apache.camel.tooling.util.JSonSchemaHelper;
+import org.apache.camel.tooling.util.Strings;
 
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findJavaDoc;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findTypeElement;
@@ -53,10 +53,10 @@ import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findTypeEleme
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.hasSuperClass;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.implementsInterface;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.processFile;
-import static org.apache.camel.tools.apt.helper.JsonSchemaHelper.sanitizeDescription;
-import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
-import static org.apache.camel.tools.apt.helper.Strings.isNullOrEmpty;
-import static org.apache.camel.tools.apt.helper.Strings.safeNull;
+import static org.apache.camel.tooling.util.JSonSchemaHelper.sanitizeDescription;
+import static org.apache.camel.tooling.util.Strings.canonicalClassName;
+import static org.apache.camel.tooling.util.Strings.isNullOrEmpty;
+import static org.apache.camel.tooling.util.Strings.safeNull;
 
 /**
  * Process all camel-core's model classes (EIPs and DSL) and generate json
@@ -236,7 +236,7 @@ public class CoreEipAnnotationProcessorHelper {
             // as its json we need to sanitize the docs
             String doc = entry.getDocumentation();
             doc = sanitizeDescription(doc, false);
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), entry.getKind(), entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc,
+            buffer.append(JSonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), entry.getKind(), entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc,
                                                   entry.isDeprecated(), entry.getDeprecationNote(), false, null, null, entry.isEnumType(), entry.getEnums(), entry.isOneOf(),
                                                   entry.getOneOfTypes(), entry.isAsPredicate(), null, null, false, null, null));
         }

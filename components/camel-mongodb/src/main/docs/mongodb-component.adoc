@@ -7,7 +7,10 @@
 *Both producer and consumer is supported*
 // HEADER END
 
-Note: MongoDB Camel component Use the Mongo Driver for Java 3.x.
+[NOTE]
+====
+MongoDB Camel component Use the Mongo Driver for Java 3.x.
+====
 
 According to Wikipedia: "NoSQL is a movement promoting a loosely defined
 class of non-relational data stores that break with a long history of
@@ -226,9 +229,13 @@ from("direct:findById")
     .to("mock:resultFindById");
 ------------------------------------------------------------------------------
 
-TIP: *Supports optional parameters*.
+[TIP]
+====
+*Supports optional parameters*.
+
 This operation supports specifying a fields filter.
 See <<Specifying a fields filter (projection)>>.
+====
 
 ==== findOneByQuery
 
@@ -259,9 +266,13 @@ from("direct:findOneByQuery")
     .to("mock:resultFindOneByQuery");
 ------------------------------------------------------------------------------------
 
-TIP: *Supports optional parameters*.
+[TIP]
+====
+*Supports optional parameters*.
+
 This operation supports specifying a fields projection and/or a sort clause.
 See <<Specifying a fields filter (projection)>>, <<Specifying a sort clause>>.
+====
 
 ==== findAll
 
@@ -342,9 +353,13 @@ consideration. |int/Integer
 consideration. |int/Integer
 |=======================================================================
 
-TIP: *Supports optional parameters*.
+[TIP]
+====
+*Supports optional parameters*.
+
 This operation supports specifying a fields projection and/or a sort clause.
 See <<Specifying a fields filter (projection)>>, <<Specifying a sort clause>>.
+====
 
 ==== count
 
@@ -530,11 +545,17 @@ a update rules.
 You can define the filter using MongoDBConstants.CRITERIA header as `Bson`
 and define the update rules as `Bson` in Body.
 
-NOTE: *Update after enrich* . While defining the filter by using MongoDBConstants.CRITERIA header as `Bson`
+[NOTE]
+====
+*Update after enrich*
+
+While defining the filter by using MongoDBConstants.CRITERIA header as `Bson`
 to query mongodb before you do update, you should notice you need to remove it from the resulting camel exchange 
 during aggregation if you use enrich pattern with a aggregation strategy and then apply mongodb update. 
 If you don't remove this header during aggregation and/or redefine MongoDBConstants.CRITERIA header before sending
 camel exchange to mongodb producer endpoint, you may end up with invalid camel exchange payload while updating mongodb. 
+====
+
 
 The second way Require a
 List<Bson> as the IN message body containing exactly 2 elements:
@@ -546,9 +567,15 @@ updated. All
 http://www.mongodb.org/display/DOCS/Updating#Updating-ModifierOperations[modifier
 operations] from MongoDB are supported.
 
-NOTE: *Multiupdates* . By default, MongoDB will only update 1 object even if multiple objects
+[NOTE]
+====
+*Multiupdates* 
+
+By default, MongoDB will only update 1 object even if multiple objects
 match the filter query. To instruct MongoDB to update *all* matching
 records, set the `CamelMongoDbMultiUpdate` IN message header to `true`.
+====
+
 
 A header with key `CamelMongoDbRecordsAffected` will be returned
 (`MongoDbConstants.RECORDS_AFFECTED` constant) with the number of

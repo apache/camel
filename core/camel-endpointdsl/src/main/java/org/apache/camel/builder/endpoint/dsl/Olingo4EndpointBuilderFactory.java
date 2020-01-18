@@ -1321,7 +1321,8 @@ public interface Olingo4EndpointBuilderFactory {
      */
     public interface Olingo4EndpointBuilder
             extends
-                Olingo4EndpointConsumerBuilder, Olingo4EndpointProducerBuilder {
+                Olingo4EndpointConsumerBuilder,
+                Olingo4EndpointProducerBuilder {
         default AdvancedOlingo4EndpointBuilder advanced() {
             return (AdvancedOlingo4EndpointBuilder) this;
         }
@@ -1591,7 +1592,8 @@ public interface Olingo4EndpointBuilderFactory {
      */
     public interface AdvancedOlingo4EndpointBuilder
             extends
-                AdvancedOlingo4EndpointConsumerBuilder, AdvancedOlingo4EndpointProducerBuilder {
+                AdvancedOlingo4EndpointConsumerBuilder,
+                AdvancedOlingo4EndpointProducerBuilder {
         default Olingo4EndpointBuilder basic() {
             return (Olingo4EndpointBuilder) this;
         }
@@ -1650,6 +1652,29 @@ public interface Olingo4EndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface Olingo4Builders {
+        /**
+         * Olingo4 (camel-olingo4)
+         * Communicates with OData 4.0 services using Apache Olingo OData API.
+         * 
+         * Category: cloud
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-olingo4
+         * 
+         * Syntax: <code>olingo4:apiName/methodName</code>
+         * 
+         * Path parameter: apiName (required)
+         * What kind of operation to perform
+         * The value can be one of: DEFAULT
+         * 
+         * Path parameter: methodName (required)
+         * What sub operation to use for the selected operation
+         */
+        default Olingo4EndpointBuilder olingo4(String path) {
+            return Olingo4EndpointBuilderFactory.olingo4(path);
+        }
+    }
     /**
      * Olingo4 (camel-olingo4)
      * Communicates with OData 4.0 services using Apache Olingo OData API.
@@ -1667,7 +1692,7 @@ public interface Olingo4EndpointBuilderFactory {
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      */
-    default Olingo4EndpointBuilder olingo4(String path) {
+    static Olingo4EndpointBuilder olingo4(String path) {
         class Olingo4EndpointBuilderImpl extends AbstractEndpointBuilder implements Olingo4EndpointBuilder, AdvancedOlingo4EndpointBuilder {
             public Olingo4EndpointBuilderImpl(String path) {
                 super("olingo4", path);

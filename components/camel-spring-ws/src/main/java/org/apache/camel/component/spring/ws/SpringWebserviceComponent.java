@@ -51,7 +51,7 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
     @Deprecated
     protected String preProcessUri(String uri) {
         String[] u = uri.split("\\?");
-        return u[0].replaceAll("%7B", "(").replaceAll("%7D", ")") + (u.length > 1 ? "?" + u[1] : "");
+        return u[0].replace("%7B", "(").replace("%7D", ")") + (u.length > 1 ? "?" + u[1] : "");
     }
 
     @Override

@@ -1787,7 +1787,8 @@ public interface HdfsEndpointBuilderFactory {
      */
     public interface HdfsEndpointBuilder
             extends
-                HdfsEndpointConsumerBuilder, HdfsEndpointProducerBuilder {
+                HdfsEndpointConsumerBuilder,
+                HdfsEndpointProducerBuilder {
         default AdvancedHdfsEndpointBuilder advanced() {
             return (AdvancedHdfsEndpointBuilder) this;
         }
@@ -2001,7 +2002,8 @@ public interface HdfsEndpointBuilderFactory {
      */
     public interface AdvancedHdfsEndpointBuilder
             extends
-                AdvancedHdfsEndpointConsumerBuilder, AdvancedHdfsEndpointProducerBuilder {
+                AdvancedHdfsEndpointConsumerBuilder,
+                AdvancedHdfsEndpointProducerBuilder {
         default HdfsEndpointBuilder basic() {
             return (HdfsEndpointBuilder) this;
         }
@@ -2351,6 +2353,32 @@ public interface HdfsEndpointBuilderFactory {
         RECORD,
         BLOCK;
     }
+
+    public interface HdfsBuilders {
+        /**
+         * HDFS (camel-hdfs)
+         * For reading/writing from/to an HDFS filesystem using Hadoop 2.x.
+         * 
+         * Category: hadoop,file
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-hdfs
+         * 
+         * Syntax: <code>hdfs:hostName:port/path</code>
+         * 
+         * Path parameter: hostName (required)
+         * HDFS host to use
+         * 
+         * Path parameter: port
+         * HDFS port to use
+         * Default value: 8020
+         * 
+         * Path parameter: path (required)
+         * The directory path to use
+         */
+        default HdfsEndpointBuilder hdfs(String path) {
+            return HdfsEndpointBuilderFactory.hdfs(path);
+        }
+    }
     /**
      * HDFS (camel-hdfs)
      * For reading/writing from/to an HDFS filesystem using Hadoop 2.x.
@@ -2371,7 +2399,7 @@ public interface HdfsEndpointBuilderFactory {
      * Path parameter: path (required)
      * The directory path to use
      */
-    default HdfsEndpointBuilder hdfs(String path) {
+    static HdfsEndpointBuilder hdfs(String path) {
         class HdfsEndpointBuilderImpl extends AbstractEndpointBuilder implements HdfsEndpointBuilder, AdvancedHdfsEndpointBuilder {
             public HdfsEndpointBuilderImpl(String path) {
                 super("hdfs", path);

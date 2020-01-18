@@ -1310,7 +1310,8 @@ public interface MllpEndpointBuilderFactory {
      */
     public interface MllpEndpointBuilder
             extends
-                MllpEndpointConsumerBuilder, MllpEndpointProducerBuilder {
+                MllpEndpointConsumerBuilder,
+                MllpEndpointProducerBuilder {
         default AdvancedMllpEndpointBuilder advanced() {
             return (AdvancedMllpEndpointBuilder) this;
         }
@@ -1514,7 +1515,8 @@ public interface MllpEndpointBuilderFactory {
      */
     public interface AdvancedMllpEndpointBuilder
             extends
-                AdvancedMllpEndpointConsumerBuilder, AdvancedMllpEndpointProducerBuilder {
+                AdvancedMllpEndpointConsumerBuilder,
+                AdvancedMllpEndpointProducerBuilder {
         default MllpEndpointBuilder basic() {
             return (MllpEndpointBuilder) this;
         }
@@ -1705,6 +1707,30 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface MllpBuilders {
+        /**
+         * MLLP (camel-mllp)
+         * Provides functionality required by Healthcare providers to
+         * communicate with other systems using the MLLP protocol.
+         * 
+         * Category: mllp
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-mllp
+         * 
+         * Syntax: <code>mllp:hostname:port</code>
+         * 
+         * Path parameter: hostname (required)
+         * Hostname or IP for connection for the TCP connection. The default
+         * value is null, which means any local IP address
+         * 
+         * Path parameter: port (required)
+         * Port number for the TCP connection
+         */
+        default MllpEndpointBuilder mllp(String path) {
+            return MllpEndpointBuilderFactory.mllp(path);
+        }
+    }
     /**
      * MLLP (camel-mllp)
      * Provides functionality required by Healthcare providers to communicate
@@ -1723,7 +1749,7 @@ public interface MllpEndpointBuilderFactory {
      * Path parameter: port (required)
      * Port number for the TCP connection
      */
-    default MllpEndpointBuilder mllp(String path) {
+    static MllpEndpointBuilder mllp(String path) {
         class MllpEndpointBuilderImpl extends AbstractEndpointBuilder implements MllpEndpointBuilder, AdvancedMllpEndpointBuilder {
             public MllpEndpointBuilderImpl(String path) {
                 super("mllp", path);

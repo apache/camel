@@ -542,7 +542,7 @@ public class IrcConfiguration implements Cloneable {
 
     public static String sanitize(String uri) {
         //symbol # has to be encoded. otherwise value after '#' won't be propagated into parameters
-        return uri.replaceAll("#", "%23");
+        return uri.replace("#", "%23");
     }
 
     private static String formatQuery(Map<String, Object> params) {

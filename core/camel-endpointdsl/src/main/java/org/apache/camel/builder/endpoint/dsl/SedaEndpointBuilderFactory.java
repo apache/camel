@@ -818,7 +818,8 @@ public interface SedaEndpointBuilderFactory {
      */
     public interface SedaEndpointBuilder
             extends
-                SedaEndpointConsumerBuilder, SedaEndpointProducerBuilder {
+                SedaEndpointConsumerBuilder,
+                SedaEndpointProducerBuilder {
         default AdvancedSedaEndpointBuilder advanced() {
             return (AdvancedSedaEndpointBuilder) this;
         }
@@ -857,7 +858,8 @@ public interface SedaEndpointBuilderFactory {
      */
     public interface AdvancedSedaEndpointBuilder
             extends
-                AdvancedSedaEndpointConsumerBuilder, AdvancedSedaEndpointProducerBuilder {
+                AdvancedSedaEndpointConsumerBuilder,
+                AdvancedSedaEndpointProducerBuilder {
         default SedaEndpointBuilder basic() {
             return (SedaEndpointBuilder) this;
         }
@@ -944,6 +946,26 @@ public interface SedaEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface SedaBuilders {
+        /**
+         * SEDA (camel-seda)
+         * The seda component provides asynchronous call to another endpoint
+         * from any CamelContext in the same JVM.
+         * 
+         * Category: core,endpoint
+         * Since: 1.1
+         * Maven coordinates: org.apache.camel:camel-seda
+         * 
+         * Syntax: <code>seda:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name of queue
+         */
+        default SedaEndpointBuilder seda(String path) {
+            return SedaEndpointBuilderFactory.seda(path);
+        }
+    }
     /**
      * SEDA (camel-seda)
      * The seda component provides asynchronous call to another endpoint from
@@ -958,7 +980,7 @@ public interface SedaEndpointBuilderFactory {
      * Path parameter: name (required)
      * Name of queue
      */
-    default SedaEndpointBuilder seda(String path) {
+    static SedaEndpointBuilder seda(String path) {
         class SedaEndpointBuilderImpl extends AbstractEndpointBuilder implements SedaEndpointBuilder, AdvancedSedaEndpointBuilder {
             public SedaEndpointBuilderImpl(String path) {
                 super("seda", path);

@@ -61,8 +61,8 @@ public final class StringHelper {
      */
     public static String removeCRLF(String s) {
         return s
-            .replaceAll("\r", "")
-            .replaceAll("\n", "");
+            .replace("\r", "")
+            .replace("\n", "");
     }
 
     /**
@@ -468,7 +468,7 @@ public final class StringHelper {
     public static <T> Optional<T> after(String text, String after, Function<String, T> mapper) {
         String result = after(text, after);
         if (result == null) {
-            return Optional.empty();            
+            return Optional.empty();
         } else {
             return Optional.ofNullable(mapper.apply(result));
         }
@@ -500,7 +500,7 @@ public final class StringHelper {
     public static <T> Optional<T> before(String text, String before, Function<String, T> mapper) {
         String result = before(text, before);
         if (result == null) {
-            return Optional.empty();            
+            return Optional.empty();
         } else {
             return Optional.ofNullable(mapper.apply(result));
         }
@@ -534,7 +534,7 @@ public final class StringHelper {
     public static <T> Optional<T> between(String text, String after, String before, Function<String, T> mapper) {
         String result = between(text, after, before);
         if (result == null) {
-            return Optional.empty();            
+            return Optional.empty();
         } else {
             return Optional.ofNullable(mapper.apply(result));
         }
@@ -615,7 +615,7 @@ public final class StringHelper {
     public static <T> Optional<T> betweenOuterPair(String text, char before, char after, Function<String, T> mapper) {
         String result = betweenOuterPair(text, before, after);
         if (result == null) {
-            return Optional.empty();            
+            return Optional.empty();
         } else {
             return Optional.ofNullable(mapper.apply(result));
         }

@@ -842,6 +842,27 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface GoogleCalendarStreamBuilders {
+        /**
+         * Google Calendar Stream (camel-google-calendar)
+         * The google-calendar component provides access to Google Calendar in a
+         * streaming mode.
+         * 
+         * Category: api,cloud
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-google-calendar
+         * 
+         * Syntax: <code>google-calendar-stream:index</code>
+         * 
+         * Path parameter: index
+         * Specifies an index for the endpoint
+         */
+        default GoogleCalendarStreamEndpointBuilder googleCalendarStream(
+                String path) {
+            return GoogleCalendarStreamEndpointBuilderFactory.googleCalendarStream(path);
+        }
+    }
     /**
      * Google Calendar Stream (camel-google-calendar)
      * The google-calendar component provides access to Google Calendar in a
@@ -856,7 +877,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
      * Path parameter: index
      * Specifies an index for the endpoint
      */
-    default GoogleCalendarStreamEndpointBuilder googleCalendarStream(String path) {
+    static GoogleCalendarStreamEndpointBuilder googleCalendarStream(String path) {
         class GoogleCalendarStreamEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleCalendarStreamEndpointBuilder, AdvancedGoogleCalendarStreamEndpointBuilder {
             public GoogleCalendarStreamEndpointBuilderImpl(String path) {
                 super("google-calendar-stream", path);

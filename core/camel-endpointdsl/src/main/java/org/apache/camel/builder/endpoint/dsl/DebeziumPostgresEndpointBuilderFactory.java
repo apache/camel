@@ -637,6 +637,22 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specify how INTERVAL columns should be represented in change events,
+         * including:'string' represents values as an exact ISO formatted
+         * string'numeric' (default) represents values using the inexact
+         * conversion into microseconds.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: numeric
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder intervalHandlingMode(
+                String intervalHandlingMode) {
+            doSetProperty("intervalHandlingMode", intervalHandlingMode);
+            return this;
+        }
+        /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
          * The option is a: <code>int</code> type.
@@ -1373,6 +1389,28 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface DebeziumPostgresBuilders {
+        /**
+         * Debezium PostgresSQL Connector (camel-debezium-postgres)
+         * Represents a Debezium PostgresSQL endpoint which is used to capture
+         * changes in PostgresSQL database so that that applications can see
+         * those changes and respond to them.
+         * 
+         * Category: database,sql,postgres
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-debezium-postgres
+         * 
+         * Syntax: <code>debezium-postgres:name</code>
+         * 
+         * Path parameter: name (required)
+         * Unique name for the connector. Attempting to register again with the
+         * same name will fail.
+         */
+        default DebeziumPostgresEndpointBuilder debeziumPostgres(String path) {
+            return DebeziumPostgresEndpointBuilderFactory.debeziumPostgres(path);
+        }
+    }
     /**
      * Debezium PostgresSQL Connector (camel-debezium-postgres)
      * Represents a Debezium PostgresSQL endpoint which is used to capture
@@ -1389,7 +1427,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
      * Unique name for the connector. Attempting to register again with the same
      * name will fail.
      */
-    default DebeziumPostgresEndpointBuilder debeziumPostgres(String path) {
+    static DebeziumPostgresEndpointBuilder debeziumPostgres(String path) {
         class DebeziumPostgresEndpointBuilderImpl extends AbstractEndpointBuilder implements DebeziumPostgresEndpointBuilder, AdvancedDebeziumPostgresEndpointBuilder {
             public DebeziumPostgresEndpointBuilderImpl(String path) {
                 super("debezium-postgres", path);

@@ -331,6 +331,28 @@ public interface IgniteComputeEndpointBuilderFactory {
         AFFINITY_CALL,
         AFFINITY_RUN;
     }
+
+    public interface IgniteComputeBuilders {
+        /**
+         * Ignite Compute (camel-ignite)
+         * The Ignite Compute endpoint is one of camel-ignite endpoints which
+         * allows you to run compute operations on the cluster by passing in an
+         * IgniteCallable, an IgniteRunnable, an IgniteClosure, or collections
+         * of them, along with their parameters if necessary.
+         * 
+         * Category: nosql,cache,compute
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ignite
+         * 
+         * Syntax: <code>ignite-compute:endpointId</code>
+         * 
+         * Path parameter: endpointId (required)
+         * The endpoint ID (not used).
+         */
+        default IgniteComputeEndpointBuilder igniteCompute(String path) {
+            return IgniteComputeEndpointBuilderFactory.igniteCompute(path);
+        }
+    }
     /**
      * Ignite Compute (camel-ignite)
      * The Ignite Compute endpoint is one of camel-ignite endpoints which allows
@@ -347,7 +369,7 @@ public interface IgniteComputeEndpointBuilderFactory {
      * Path parameter: endpointId (required)
      * The endpoint ID (not used).
      */
-    default IgniteComputeEndpointBuilder igniteCompute(String path) {
+    static IgniteComputeEndpointBuilder igniteCompute(String path) {
         class IgniteComputeEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteComputeEndpointBuilder, AdvancedIgniteComputeEndpointBuilder {
             public IgniteComputeEndpointBuilderImpl(String path) {
                 super("ignite-compute", path);

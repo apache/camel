@@ -590,7 +590,8 @@ public interface JiraEndpointBuilderFactory {
      */
     public interface JiraEndpointBuilder
             extends
-                JiraEndpointConsumerBuilder, JiraEndpointProducerBuilder {
+                JiraEndpointConsumerBuilder,
+                JiraEndpointProducerBuilder {
         default AdvancedJiraEndpointBuilder advanced() {
             return (AdvancedJiraEndpointBuilder) this;
         }
@@ -710,7 +711,8 @@ public interface JiraEndpointBuilderFactory {
      */
     public interface AdvancedJiraEndpointBuilder
             extends
-                AdvancedJiraEndpointConsumerBuilder, AdvancedJiraEndpointProducerBuilder {
+                AdvancedJiraEndpointConsumerBuilder,
+                AdvancedJiraEndpointProducerBuilder {
         default JiraEndpointBuilder basic() {
             return (JiraEndpointBuilder) this;
         }
@@ -769,6 +771,29 @@ public interface JiraEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface JiraBuilders {
+        /**
+         * Jira (camel-jira)
+         * The jira component interacts with the JIRA issue tracker.
+         * 
+         * Category: api,reporting
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-jira
+         * 
+         * Syntax: <code>jira:type</code>
+         * 
+         * Path parameter: type (required)
+         * Operation to perform. Consumers: NewIssues, NewComments. Producers:
+         * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
+         * Watchers. See this class javadoc description for more information.
+         * The value can be one of: ADDCOMMENT, ADDISSUE, ATTACH, DELETEISSUE,
+         * NEWISSUES, NEWCOMMENTS, UPDATEISSUE, TRANSITIONISSUE, WATCHERS
+         */
+        default JiraEndpointBuilder jira(String path) {
+            return JiraEndpointBuilderFactory.jira(path);
+        }
+    }
     /**
      * Jira (camel-jira)
      * The jira component interacts with the JIRA issue tracker.
@@ -786,7 +811,7 @@ public interface JiraEndpointBuilderFactory {
      * The value can be one of: ADDCOMMENT, ADDISSUE, ATTACH, DELETEISSUE,
      * NEWISSUES, NEWCOMMENTS, UPDATEISSUE, TRANSITIONISSUE, WATCHERS
      */
-    default JiraEndpointBuilder jira(String path) {
+    static JiraEndpointBuilder jira(String path) {
         class JiraEndpointBuilderImpl extends AbstractEndpointBuilder implements JiraEndpointBuilder, AdvancedJiraEndpointBuilder {
             public JiraEndpointBuilderImpl(String path) {
                 super("jira", path);

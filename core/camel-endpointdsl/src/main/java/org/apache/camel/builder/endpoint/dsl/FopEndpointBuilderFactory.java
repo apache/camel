@@ -181,6 +181,29 @@ public interface FopEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface FopBuilders {
+        /**
+         * FOP (camel-fop)
+         * The fop component allows you to render a message into different
+         * output formats using Apache FOP.
+         * 
+         * Category: transformation
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-fop
+         * 
+         * Syntax: <code>fop:outputType</code>
+         * 
+         * Path parameter: outputType (required)
+         * The primary output format is PDF but other output formats are also
+         * supported.
+         * The value can be one of: pdf, ps, pcl, png, jpeg, svg, xml, mif, rtf,
+         * txt
+         */
+        default FopEndpointBuilder fop(String path) {
+            return FopEndpointBuilderFactory.fop(path);
+        }
+    }
     /**
      * FOP (camel-fop)
      * The fop component allows you to render a message into different output
@@ -197,7 +220,7 @@ public interface FopEndpointBuilderFactory {
      * supported.
      * The value can be one of: pdf, ps, pcl, png, jpeg, svg, xml, mif, rtf, txt
      */
-    default FopEndpointBuilder fop(String path) {
+    static FopEndpointBuilder fop(String path) {
         class FopEndpointBuilderImpl extends AbstractEndpointBuilder implements FopEndpointBuilder, AdvancedFopEndpointBuilder {
             public FopEndpointBuilderImpl(String path) {
                 super("fop", path);

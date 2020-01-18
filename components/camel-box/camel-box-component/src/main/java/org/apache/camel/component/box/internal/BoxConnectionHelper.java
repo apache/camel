@@ -207,7 +207,7 @@ public final class BoxConnectionHelper {
         String errorMessage = null;
         if (!errorDivs.isEmpty()) {
             errorMessage = errorDivs.first().text().replaceAll("\\s+", " ")
-                    .replaceAll(" Show Error Details", ":").trim();
+                    .replace(" Show Error Details", ":").trim();
         } else {
             errorDivs = page.select("div[class*=message]");
             if (!errorDivs.isEmpty()) {

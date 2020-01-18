@@ -82,7 +82,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     /**
      * Adapts this {@link org.apache.camel.CamelContext} to the specialized type.
      * <p/>
-     * For example to adapt to <tt>ModelCamelContext</tt>,
+     * For example to adapt to <tt>ExtendedCamelContext</tt>, <tt>ModelCamelContext</tt>,
      * or <tt>SpringCamelContext</tt>, or <tt>CdiCamelContext</tt>, etc.
      *
      * @param type the type to adapt to

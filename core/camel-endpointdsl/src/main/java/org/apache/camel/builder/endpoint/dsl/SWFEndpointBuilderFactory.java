@@ -1000,7 +1000,8 @@ public interface SWFEndpointBuilderFactory {
      */
     public interface SWFEndpointBuilder
             extends
-                SWFEndpointConsumerBuilder, SWFEndpointProducerBuilder {
+                SWFEndpointConsumerBuilder,
+                SWFEndpointProducerBuilder {
         default AdvancedSWFEndpointBuilder advanced() {
             return (AdvancedSWFEndpointBuilder) this;
         }
@@ -1133,7 +1134,8 @@ public interface SWFEndpointBuilderFactory {
      */
     public interface AdvancedSWFEndpointBuilder
             extends
-                AdvancedSWFEndpointConsumerBuilder, AdvancedSWFEndpointProducerBuilder {
+                AdvancedSWFEndpointConsumerBuilder,
+                AdvancedSWFEndpointProducerBuilder {
         default SWFEndpointBuilder basic() {
             return (SWFEndpointBuilder) this;
         }
@@ -1279,6 +1281,27 @@ public interface SWFEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface SWFBuilders {
+        /**
+         * AWS Simple Workflow (camel-aws-swf)
+         * The aws-swf component is used for managing workflows from Amazon
+         * Simple Workflow.
+         * 
+         * Category: cloud,workflow
+         * Since: 2.13
+         * Maven coordinates: org.apache.camel:camel-aws-swf
+         * 
+         * Syntax: <code>aws-swf:type</code>
+         * 
+         * Path parameter: type (required)
+         * Activity or workflow
+         * The value can be one of: activity, workflow
+         */
+        default SWFEndpointBuilder awsSwf(String path) {
+            return SWFEndpointBuilderFactory.awsSwf(path);
+        }
+    }
     /**
      * AWS Simple Workflow (camel-aws-swf)
      * The aws-swf component is used for managing workflows from Amazon Simple
@@ -1294,7 +1317,7 @@ public interface SWFEndpointBuilderFactory {
      * Activity or workflow
      * The value can be one of: activity, workflow
      */
-    default SWFEndpointBuilder awsSwf(String path) {
+    static SWFEndpointBuilder awsSwf(String path) {
         class SWFEndpointBuilderImpl extends AbstractEndpointBuilder implements SWFEndpointBuilder, AdvancedSWFEndpointBuilder {
             public SWFEndpointBuilderImpl(String path) {
                 super("aws-swf", path);

@@ -25,6 +25,7 @@ import com.surftools.BeanstalkClient.Client;
 import com.surftools.BeanstalkClient.Job;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.beanstalk.processors.BuryCommand;
@@ -114,7 +115,7 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
                 if (!awaitJob) {
                     client.delete(job.getJobId());
                 } else {
-                    exchange.addOnCompletion(sync);
+                    exchange.adapt(ExtendedExchange.class).addOnCompletion(sync);
                 }
 
                 return exchange;

@@ -1078,7 +1078,8 @@ public interface EtcdEndpointBuilderFactory {
      */
     public interface EtcdEndpointBuilder
             extends
-                EtcdEndpointConsumerBuilder, EtcdEndpointProducerBuilder {
+                EtcdEndpointConsumerBuilder,
+                EtcdEndpointProducerBuilder {
         default AdvancedEtcdEndpointBuilder advanced() {
             return (AdvancedEtcdEndpointBuilder) this;
         }
@@ -1207,7 +1208,8 @@ public interface EtcdEndpointBuilderFactory {
      */
     public interface AdvancedEtcdEndpointBuilder
             extends
-                AdvancedEtcdEndpointConsumerBuilder, AdvancedEtcdEndpointProducerBuilder {
+                AdvancedEtcdEndpointConsumerBuilder,
+                AdvancedEtcdEndpointProducerBuilder {
         default EtcdEndpointBuilder basic() {
             return (EtcdEndpointBuilder) this;
         }
@@ -1266,6 +1268,30 @@ public interface EtcdEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface EtcdBuilders {
+        /**
+         * Etcd (camel-etcd)
+         * The camel etcd component allows you to work with Etcd, a distributed
+         * reliable key-value store.
+         * 
+         * Category: clustering,database
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-etcd
+         * 
+         * Syntax: <code>etcd:namespace/path</code>
+         * 
+         * Path parameter: namespace (required)
+         * The API namespace to use
+         * The value can be one of: keys, stats, watch
+         * 
+         * Path parameter: path
+         * The path the endpoint refers to
+         */
+        default EtcdEndpointBuilder etcd(String path) {
+            return EtcdEndpointBuilderFactory.etcd(path);
+        }
+    }
     /**
      * Etcd (camel-etcd)
      * The camel etcd component allows you to work with Etcd, a distributed
@@ -1284,7 +1310,7 @@ public interface EtcdEndpointBuilderFactory {
      * Path parameter: path
      * The path the endpoint refers to
      */
-    default EtcdEndpointBuilder etcd(String path) {
+    static EtcdEndpointBuilder etcd(String path) {
         class EtcdEndpointBuilderImpl extends AbstractEndpointBuilder implements EtcdEndpointBuilder, AdvancedEtcdEndpointBuilder {
             public EtcdEndpointBuilderImpl(String path) {
                 super("etcd", path);

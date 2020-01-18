@@ -850,7 +850,8 @@ public interface SlackEndpointBuilderFactory {
      */
     public interface SlackEndpointBuilder
             extends
-                SlackEndpointConsumerBuilder, SlackEndpointProducerBuilder {
+                SlackEndpointConsumerBuilder,
+                SlackEndpointProducerBuilder {
         default AdvancedSlackEndpointBuilder advanced() {
             return (AdvancedSlackEndpointBuilder) this;
         }
@@ -861,7 +862,8 @@ public interface SlackEndpointBuilderFactory {
      */
     public interface AdvancedSlackEndpointBuilder
             extends
-                AdvancedSlackEndpointConsumerBuilder, AdvancedSlackEndpointProducerBuilder {
+                AdvancedSlackEndpointConsumerBuilder,
+                AdvancedSlackEndpointProducerBuilder {
         default SlackEndpointBuilder basic() {
             return (SlackEndpointBuilder) this;
         }
@@ -920,6 +922,26 @@ public interface SlackEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface SlackBuilders {
+        /**
+         * Slack (camel-slack)
+         * The slack component allows you to send messages to Slack.
+         * 
+         * Category: social
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-slack
+         * 
+         * Syntax: <code>slack:channel</code>
+         * 
+         * Path parameter: channel (required)
+         * The channel name (syntax #name) or slackuser (syntax userName) to
+         * send a message directly to an user.
+         */
+        default SlackEndpointBuilder slack(String path) {
+            return SlackEndpointBuilderFactory.slack(path);
+        }
+    }
     /**
      * Slack (camel-slack)
      * The slack component allows you to send messages to Slack.
@@ -934,7 +956,7 @@ public interface SlackEndpointBuilderFactory {
      * The channel name (syntax #name) or slackuser (syntax userName) to send a
      * message directly to an user.
      */
-    default SlackEndpointBuilder slack(String path) {
+    static SlackEndpointBuilder slack(String path) {
         class SlackEndpointBuilderImpl extends AbstractEndpointBuilder implements SlackEndpointBuilder, AdvancedSlackEndpointBuilder {
             public SlackEndpointBuilderImpl(String path) {
                 super("slack", path);

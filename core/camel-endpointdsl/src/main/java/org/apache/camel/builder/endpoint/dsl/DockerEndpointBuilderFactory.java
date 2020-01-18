@@ -954,7 +954,8 @@ public interface DockerEndpointBuilderFactory {
      */
     public interface DockerEndpointBuilder
             extends
-                DockerEndpointConsumerBuilder, DockerEndpointProducerBuilder {
+                DockerEndpointConsumerBuilder,
+                DockerEndpointProducerBuilder {
         default AdvancedDockerEndpointBuilder advanced() {
             return (AdvancedDockerEndpointBuilder) this;
         }
@@ -1118,7 +1119,8 @@ public interface DockerEndpointBuilderFactory {
      */
     public interface AdvancedDockerEndpointBuilder
             extends
-                AdvancedDockerEndpointConsumerBuilder, AdvancedDockerEndpointProducerBuilder {
+                AdvancedDockerEndpointConsumerBuilder,
+                AdvancedDockerEndpointProducerBuilder {
         default DockerEndpointBuilder basic() {
             return (DockerEndpointBuilder) this;
         }
@@ -1332,6 +1334,33 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface DockerBuilders {
+        /**
+         * Docker (camel-docker)
+         * The docker component is used for managing Docker containers.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-docker
+         * 
+         * Syntax: <code>docker:operation</code>
+         * 
+         * Path parameter: operation (required)
+         * Which operation to use
+         * The value can be one of: events, stats, auth, info, ping, version,
+         * imagebuild, imagecreate, imageinspect, imagelist, imagepull,
+         * imagepushimageremove, imagesearch, imagetag, containerattach,
+         * containercommit, containercopyfile, containercreate,
+         * containerdiffinspectcontainer, containerkill, containerlist,
+         * containerlog, containerpause, containerrestart, containerremove,
+         * containerstartcontainerstop, containertop, containerunpause,
+         * containerwait, execcreate, execstart
+         */
+        default DockerEndpointBuilder docker(String path) {
+            return DockerEndpointBuilderFactory.docker(path);
+        }
+    }
     /**
      * Docker (camel-docker)
      * The docker component is used for managing Docker containers.
@@ -1353,7 +1382,7 @@ public interface DockerEndpointBuilderFactory {
      * containerstartcontainerstop, containertop, containerunpause,
      * containerwait, execcreate, execstart
      */
-    default DockerEndpointBuilder docker(String path) {
+    static DockerEndpointBuilder docker(String path) {
         class DockerEndpointBuilderImpl extends AbstractEndpointBuilder implements DockerEndpointBuilder, AdvancedDockerEndpointBuilder {
             public DockerEndpointBuilderImpl(String path) {
                 super("docker", path);

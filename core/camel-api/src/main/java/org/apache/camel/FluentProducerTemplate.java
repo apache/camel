@@ -260,13 +260,25 @@ public interface FluentProducerTemplate extends Service {
     }
 
     /**
-     * Endpoint to send to
+     * Endpoint to send to.
      *
      * @param uri the String formatted endpoint uri to send to
      * @param args arguments for the string formatting of the uri
      */
     default FluentProducerTemplate toF(String uri, Object... args) {
         return to(String.format(uri, args));
+    }
+
+    /**
+     * Endpoint to send to
+     *
+     * @param resolver the {@link EndpointConsumerResolver} that supply the endpoint to send to.
+     */
+    default FluentProducerTemplate to(EndpointConsumerResolver resolver) {
+        final CamelContext context = ObjectHelper.notNull(getCamelContext(), "camel context");
+        final Endpoint endpoint = resolver.resolve(context);
+
+        return to(endpoint);
     }
 
     /**

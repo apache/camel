@@ -885,7 +885,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
      */
     public interface SpringWebserviceEndpointBuilder
             extends
-                SpringWebserviceEndpointConsumerBuilder, SpringWebserviceEndpointProducerBuilder {
+                SpringWebserviceEndpointConsumerBuilder,
+                SpringWebserviceEndpointProducerBuilder {
         default AdvancedSpringWebserviceEndpointBuilder advanced() {
             return (AdvancedSpringWebserviceEndpointBuilder) this;
         }
@@ -950,7 +951,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
      */
     public interface AdvancedSpringWebserviceEndpointBuilder
             extends
-                AdvancedSpringWebserviceEndpointConsumerBuilder, AdvancedSpringWebserviceEndpointProducerBuilder {
+                AdvancedSpringWebserviceEndpointConsumerBuilder,
+                AdvancedSpringWebserviceEndpointProducerBuilder {
         default SpringWebserviceEndpointBuilder basic() {
             return (SpringWebserviceEndpointBuilder) this;
         }
@@ -1011,6 +1013,49 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface SpringWebserviceBuilders {
+        /**
+         * Spring WebService (camel-spring-ws)
+         * The spring-ws component is used for SOAP WebServices using Spring
+         * WebServices.
+         * 
+         * Category: spring,soap,webservice
+         * Since: 2.6
+         * Maven coordinates: org.apache.camel:camel-spring-ws
+         * 
+         * Syntax: <code>spring-ws:type:lookupKey:webServiceEndpointUri</code>
+         * 
+         * Path parameter: type
+         * Endpoint mapping type if endpoint mapping is used. rootqname - Offers
+         * the option to map web service requests based on the qualified name of
+         * the root element contained in the message. soapaction - Used to map
+         * web service requests based on the SOAP action specified in the header
+         * of the message. uri - In order to map web service requests that
+         * target a specific URI. xpathresult - Used to map web service requests
+         * based on the evaluation of an XPath expression against the incoming
+         * message. The result of the evaluation should match the XPath result
+         * specified in the endpoint URI. beanname - Allows you to reference an
+         * org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher
+         * object in order to integrate with existing (legacy) endpoint mappings
+         * like PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc
+         * The value can be one of: ROOT_QNAME, ACTION, TO, SOAP_ACTION,
+         * XPATHRESULT, URI, URI_PATH, BEANNAME
+         * 
+         * Path parameter: lookupKey
+         * Endpoint mapping key if endpoint mapping is used
+         * 
+         * Path parameter: webServiceEndpointUri
+         * The default Web Service endpoint uri to use for the producer.
+         * 
+         * Path parameter: expression
+         * The XPath expression to use when option type=xpathresult. Then this
+         * option is required to be configured.
+         */
+        default SpringWebserviceEndpointBuilder springWs(String path) {
+            return SpringWebserviceEndpointBuilderFactory.springWs(path);
+        }
+    }
     /**
      * Spring WebService (camel-spring-ws)
      * The spring-ws component is used for SOAP WebServices using Spring
@@ -1048,7 +1093,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
      * The XPath expression to use when option type=xpathresult. Then this
      * option is required to be configured.
      */
-    default SpringWebserviceEndpointBuilder springWs(String path) {
+    static SpringWebserviceEndpointBuilder springWs(String path) {
         class SpringWebserviceEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringWebserviceEndpointBuilder, AdvancedSpringWebserviceEndpointBuilder {
             public SpringWebserviceEndpointBuilderImpl(String path) {
                 super("spring-ws", path);

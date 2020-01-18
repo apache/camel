@@ -456,6 +456,26 @@ public interface SnsEndpointBuilderFactory {
         http,
         https;
     }
+
+    public interface SnsBuilders {
+        /**
+         * AWS Simple Notification System (camel-aws-sns)
+         * The aws-sns component is used for sending messages to an Amazon
+         * Simple Notification Topic.
+         * 
+         * Category: cloud,mobile,messaging
+         * Since: 2.8
+         * Maven coordinates: org.apache.camel:camel-aws-sns
+         * 
+         * Syntax: <code>aws-sns:topicNameOrArn</code>
+         * 
+         * Path parameter: topicNameOrArn (required)
+         * Topic name or ARN
+         */
+        default SnsEndpointBuilder awsSns(String path) {
+            return SnsEndpointBuilderFactory.awsSns(path);
+        }
+    }
     /**
      * AWS Simple Notification System (camel-aws-sns)
      * The aws-sns component is used for sending messages to an Amazon Simple
@@ -470,7 +490,7 @@ public interface SnsEndpointBuilderFactory {
      * Path parameter: topicNameOrArn (required)
      * Topic name or ARN
      */
-    default SnsEndpointBuilder awsSns(String path) {
+    static SnsEndpointBuilder awsSns(String path) {
         class SnsEndpointBuilderImpl extends AbstractEndpointBuilder implements SnsEndpointBuilder, AdvancedSnsEndpointBuilder {
             public SnsEndpointBuilderImpl(String path) {
                 super("aws-sns", path);

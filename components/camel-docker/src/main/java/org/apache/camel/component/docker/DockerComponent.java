@@ -50,7 +50,7 @@ public class DockerComponent extends DefaultComponent {
         // a copy of the configuration
         DockerConfiguration configuration = getConfiguration().copy();
 
-        String normalizedRemaining = remaining.replaceAll("/", "");
+        String normalizedRemaining = remaining.replace("/", "");
 
         DockerOperation operation = DockerOperation.getDockerOperation(normalizedRemaining);
 

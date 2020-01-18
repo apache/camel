@@ -36,6 +36,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
@@ -230,7 +231,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     }
 
     private String truncateTypeNamespace(String baseType) {
-        return baseType.replaceAll("tns:", "");
+        return baseType.replace("tns:", "");
     }
 
     private void saveToFile(Document document, File outputFile, Transformer transformer) throws FileNotFoundException, TransformerException {

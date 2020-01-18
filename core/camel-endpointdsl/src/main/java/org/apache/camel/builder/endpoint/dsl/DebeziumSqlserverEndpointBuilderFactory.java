@@ -487,6 +487,20 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
+         * The timezone of the server used to correctly shift the commit
+         * transaction timestamp on the client sideOptions include: Any valid
+         * Java ZoneId.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverEndpointBuilder databaseServerTimezone(
+                String databaseServerTimezone) {
+            doSetProperty("databaseServerTimezone", databaseServerTimezone);
+            return this;
+        }
+        /**
          * Name of the SQL Server database user to be used when connecting to
          * the database.
          * 
@@ -751,9 +765,9 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The criteria for running a snapshot upon startup of the connector.
          * Options include: 'initial' (the default) to specify the connector
          * should run a snapshot only when no offsets are available for the
-         * logical server name; 'initial_schema_only' to specify the connector
-         * should run a snapshot of the schema when no offsets are available for
-         * the logical server name.
+         * logical server name; 'schema_only' to specify the connector should
+         * run a snapshot of the schema when no offsets are available for the
+         * logical server name.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -871,6 +885,40 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         default DebeziumSqlserverEndpointBuilder timePrecisionMode(
                 String timePrecisionMode) {
             doSetProperty("timePrecisionMode", timePrecisionMode);
+            return this;
+        }
+        /**
+         * Whether delete operations should be represented by a delete event and
+         * a subsquenttombstone event (true) or only by a delete event (false).
+         * Emitting the tombstone event (the default behavior) allows Kafka to
+         * completely delete all events pertaining to the given key once the
+         * source record got deleted.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverEndpointBuilder tombstonesOnDelete(
+                boolean tombstonesOnDelete) {
+            doSetProperty("tombstonesOnDelete", tombstonesOnDelete);
+            return this;
+        }
+        /**
+         * Whether delete operations should be represented by a delete event and
+         * a subsquenttombstone event (true) or only by a delete event (false).
+         * Emitting the tombstone event (the default behavior) allows Kafka to
+         * completely delete all events pertaining to the given key once the
+         * source record got deleted.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverEndpointBuilder tombstonesOnDelete(
+                String tombstonesOnDelete) {
+            doSetProperty("tombstonesOnDelete", tombstonesOnDelete);
             return this;
         }
     }
@@ -999,6 +1047,28 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface DebeziumSqlserverBuilders {
+        /**
+         * Debezium SQL Server Connector (camel-debezium-sqlserver)
+         * Represents a Debezium SQL Server endpoint which is used to capture
+         * changes in SQL Server database so that that applications can see
+         * those changes and respond to them.
+         * 
+         * Category: database,sql,sqlserver
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-debezium-sqlserver
+         * 
+         * Syntax: <code>debezium-sqlserver:name</code>
+         * 
+         * Path parameter: name (required)
+         * Unique name for the connector. Attempting to register again with the
+         * same name will fail.
+         */
+        default DebeziumSqlserverEndpointBuilder debeziumSqlserver(String path) {
+            return DebeziumSqlserverEndpointBuilderFactory.debeziumSqlserver(path);
+        }
+    }
     /**
      * Debezium SQL Server Connector (camel-debezium-sqlserver)
      * Represents a Debezium SQL Server endpoint which is used to capture
@@ -1015,7 +1085,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
      * Unique name for the connector. Attempting to register again with the same
      * name will fail.
      */
-    default DebeziumSqlserverEndpointBuilder debeziumSqlserver(String path) {
+    static DebeziumSqlserverEndpointBuilder debeziumSqlserver(String path) {
         class DebeziumSqlserverEndpointBuilderImpl extends AbstractEndpointBuilder implements DebeziumSqlserverEndpointBuilder, AdvancedDebeziumSqlserverEndpointBuilder {
             public DebeziumSqlserverEndpointBuilderImpl(String path) {
                 super("debezium-sqlserver", path);

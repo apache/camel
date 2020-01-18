@@ -258,6 +258,26 @@ public interface XChangeEndpointBuilderFactory {
         metadata,
         account;
     }
+
+    public interface XChangeBuilders {
+        /**
+         * XChange (camel-xchange)
+         * The camel-xchange component provide access to many bitcoin and
+         * altcoin exchanges for trading and accessing market data.
+         * 
+         * Category: bitcoin,blockchain
+         * Since: 2.21
+         * Maven coordinates: org.apache.camel:camel-xchange
+         * 
+         * Syntax: <code>xchange:name</code>
+         * 
+         * Path parameter: name (required)
+         * The exchange to connect to
+         */
+        default XChangeEndpointBuilder xchange(String path) {
+            return XChangeEndpointBuilderFactory.xchange(path);
+        }
+    }
     /**
      * XChange (camel-xchange)
      * The camel-xchange component provide access to many bitcoin and altcoin
@@ -272,7 +292,7 @@ public interface XChangeEndpointBuilderFactory {
      * Path parameter: name (required)
      * The exchange to connect to
      */
-    default XChangeEndpointBuilder xchange(String path) {
+    static XChangeEndpointBuilder xchange(String path) {
         class XChangeEndpointBuilderImpl extends AbstractEndpointBuilder implements XChangeEndpointBuilder, AdvancedXChangeEndpointBuilder {
             public XChangeEndpointBuilderImpl(String path) {
                 super("xchange", path);

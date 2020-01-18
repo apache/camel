@@ -330,7 +330,8 @@ public interface MiloServerEndpointBuilderFactory {
      */
     public interface MiloServerEndpointBuilder
             extends
-                MiloServerEndpointConsumerBuilder, MiloServerEndpointProducerBuilder {
+                MiloServerEndpointConsumerBuilder,
+                MiloServerEndpointProducerBuilder {
         default AdvancedMiloServerEndpointBuilder advanced() {
             return (AdvancedMiloServerEndpointBuilder) this;
         }
@@ -341,7 +342,8 @@ public interface MiloServerEndpointBuilderFactory {
      */
     public interface AdvancedMiloServerEndpointBuilder
             extends
-                AdvancedMiloServerEndpointConsumerBuilder, AdvancedMiloServerEndpointProducerBuilder {
+                AdvancedMiloServerEndpointConsumerBuilder,
+                AdvancedMiloServerEndpointProducerBuilder {
         default MiloServerEndpointBuilder basic() {
             return (MiloServerEndpointBuilder) this;
         }
@@ -401,6 +403,25 @@ public interface MiloServerEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface MiloServerBuilders {
+        /**
+         * OPC UA Server (camel-milo)
+         * Make telemetry data available as an OPC UA server
+         * 
+         * Category: iot
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-milo
+         * 
+         * Syntax: <code>milo-server:itemId</code>
+         * 
+         * Path parameter: itemId (required)
+         * ID of the item
+         */
+        default MiloServerEndpointBuilder miloServer(String path) {
+            return MiloServerEndpointBuilderFactory.miloServer(path);
+        }
+    }
     /**
      * OPC UA Server (camel-milo)
      * Make telemetry data available as an OPC UA server
@@ -414,7 +435,7 @@ public interface MiloServerEndpointBuilderFactory {
      * Path parameter: itemId (required)
      * ID of the item
      */
-    default MiloServerEndpointBuilder miloServer(String path) {
+    static MiloServerEndpointBuilder miloServer(String path) {
         class MiloServerEndpointBuilderImpl extends AbstractEndpointBuilder implements MiloServerEndpointBuilder, AdvancedMiloServerEndpointBuilder {
             public MiloServerEndpointBuilderImpl(String path) {
                 super("milo-server", path);

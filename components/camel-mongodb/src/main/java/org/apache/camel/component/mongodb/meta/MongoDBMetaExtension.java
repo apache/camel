@@ -74,7 +74,7 @@ public class MongoDBMetaExtension extends AbstractMetaDataExtension {
                 return Optional.empty();
             }
             String collectionInfoJson = collectionInfo.toJson();
-            collectionInfoRoot = objectMapper.readTree(collectionInfoJson.replaceAll("bsonType", "type"));
+            collectionInfoRoot = objectMapper.readTree(collectionInfoJson.replace("bsonType", "type"));
         } catch (IOException e) {
             LOGGER.error("Error occurred while reading schema information", e);
             return Optional.empty();

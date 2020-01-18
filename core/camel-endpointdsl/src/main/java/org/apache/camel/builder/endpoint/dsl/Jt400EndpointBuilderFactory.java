@@ -1151,7 +1151,8 @@ public interface Jt400EndpointBuilderFactory {
      */
     public interface Jt400EndpointBuilder
             extends
-                Jt400EndpointConsumerBuilder, Jt400EndpointProducerBuilder {
+                Jt400EndpointConsumerBuilder,
+                Jt400EndpointProducerBuilder {
         default AdvancedJt400EndpointBuilder advanced() {
             return (AdvancedJt400EndpointBuilder) this;
         }
@@ -1295,7 +1296,8 @@ public interface Jt400EndpointBuilderFactory {
      */
     public interface AdvancedJt400EndpointBuilder
             extends
-                AdvancedJt400EndpointConsumerBuilder, AdvancedJt400EndpointProducerBuilder {
+                AdvancedJt400EndpointConsumerBuilder,
+                AdvancedJt400EndpointProducerBuilder {
         default Jt400EndpointBuilder basic() {
             return (Jt400EndpointBuilder) this;
         }
@@ -1377,6 +1379,40 @@ public interface Jt400EndpointBuilderFactory {
         GT,
         GE;
     }
+
+    public interface Jt400Builders {
+        /**
+         * JT400 (camel-jt400)
+         * The jt400 component allows you to exchanges messages with an AS/400
+         * system using data queues or program call.
+         * 
+         * Category: messaging
+         * Since: 1.5
+         * Maven coordinates: org.apache.camel:camel-jt400
+         * 
+         * Syntax: <code>jt400:userID:password/systemName/objectPath.type</code>
+         * 
+         * Path parameter: userID (required)
+         * Returns the ID of the AS/400 user.
+         * 
+         * Path parameter: password (required)
+         * Returns the password of the AS/400 user.
+         * 
+         * Path parameter: systemName (required)
+         * Returns the name of the AS/400 system.
+         * 
+         * Path parameter: objectPath (required)
+         * Returns the fully qualified integrated file system path name of the
+         * target object of this endpoint.
+         * 
+         * Path parameter: type (required)
+         * Whether to work with data queues or remote program call
+         * The value can be one of: DTAQ, PGM, SRVPGM
+         */
+        default Jt400EndpointBuilder jt400(String path) {
+            return Jt400EndpointBuilderFactory.jt400(path);
+        }
+    }
     /**
      * JT400 (camel-jt400)
      * The jt400 component allows you to exchanges messages with an AS/400
@@ -1405,7 +1441,7 @@ public interface Jt400EndpointBuilderFactory {
      * Whether to work with data queues or remote program call
      * The value can be one of: DTAQ, PGM, SRVPGM
      */
-    default Jt400EndpointBuilder jt400(String path) {
+    static Jt400EndpointBuilder jt400(String path) {
         class Jt400EndpointBuilderImpl extends AbstractEndpointBuilder implements Jt400EndpointBuilder, AdvancedJt400EndpointBuilder {
             public Jt400EndpointBuilderImpl(String path) {
                 super("jt400", path);

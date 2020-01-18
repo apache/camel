@@ -64,7 +64,7 @@ The Netty component supports 8 options, which are listed below.
 | *maximumPoolSize* (consumer) | Sets a maximum thread pool size for the netty consumer ordered thread pool. The default size is 2 x cpu core 1. Setting this value to eg 10 will then use 10 threads unless 2 x cpu core 1 is a higher value, which then will override and be used. For example if there are 8 cores, then the consumer thread pool will be 17. This thread pool is used to route messages received from Netty by Camel. We use a separate thread pool to ensure ordering of messages and also in case some messages will block, then nettys worker threads (event loop) wont be affected. |  | int
 | *configuration* (advanced) | To use the NettyConfiguration as configuration when creating endpoints. |  | NettyConfiguration
 | *executorService* (consumer) | To use the given EventExecutorGroup. |  | EventExecutorGroup
-| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
@@ -120,8 +120,8 @@ with the following path and query parameters:
 | *nettyServerBootstrapFactory* (consumer) | To use a custom NettyServerBootstrapFactory |  | NettyServerBootstrapFactory
 | *networkInterface* (consumer) | When using UDP then this option can be used to specify a network interface by its name, such as eth0 to join a multicast group. |  | String
 | *noReplyLogLevel* (consumer) | If sync is enabled this option dictates NettyConsumer which logging level to use when logging a there is no reply to send back. | WARN | LoggingLevel
-| *serverClosedChannel ExceptionCaughtLogLevel* (consumer) | If the server (NettyConsumer) catches an java.nio.channels.ClosedChannelException then its logged using this logging level. This is used to avoid logging the closed channel exceptions, as clients can disconnect abruptly and then cause a flood of closed exceptions in the Netty server. | DEBUG | LoggingLevel
-| *serverExceptionCaughtLog Level* (consumer) | If the server (NettyConsumer) catches an exception then its logged using this logging level. | WARN | LoggingLevel
+| *serverClosedChannelException CaughtLogLevel* (consumer) | If the server (NettyConsumer) catches an java.nio.channels.ClosedChannelException then its logged using this logging level. This is used to avoid logging the closed channel exceptions, as clients can disconnect abruptly and then cause a flood of closed exceptions in the Netty server. | DEBUG | LoggingLevel
+| *serverExceptionCaughtLogLevel* (consumer) | If the server (NettyConsumer) catches an exception then its logged using this logging level. | WARN | LoggingLevel
 | *serverInitializerFactory* (consumer) | To use a custom ServerInitializerFactory |  | ServerInitializerFactory
 | *usingExecutorService* (consumer) | Whether to use ordered thread pool, to ensure events are processed orderly on the same channel. | true | boolean
 | *connectTimeout* (producer) | Time to wait for a socket connection to be available. Value is in milliseconds. | 10000 | int
@@ -133,7 +133,7 @@ with the following path and query parameters:
 | *producerPoolEnabled* (producer) | Whether producer pool is enabled or not. Important: If you turn this off then a single shared connection is used for the producer, also if you are doing request/reply. That means there is a potential issue with interleaved responses if replies comes back out-of-order. Therefore you need to have a correlation id in both the request and reply messages so you can properly correlate the replies to the Camel callback that is responsible for continue processing the message in Camel. To do this you need to implement NettyCamelStateCorrelationManager as correlation manager and configure it via the correlationManager option. See also the correlationManager option for more details. | true | boolean
 | *producerPoolMaxActive* (producer) | Sets the cap on the number of objects that can be allocated by the pool (checked out to clients, or idle awaiting checkout) at a given time. Use a negative value for no limit. | -1 | int
 | *producerPoolMaxIdle* (producer) | Sets the cap on the number of idle instances in the pool. | 100 | int
-| *producerPoolMinEvictable Idle* (producer) | Sets the minimum amount of time (value in millis) an object may sit idle in the pool before it is eligible for eviction by the idle object evictor. | 300000 | long
+| *producerPoolMinEvictableIdle* (producer) | Sets the minimum amount of time (value in millis) an object may sit idle in the pool before it is eligible for eviction by the idle object evictor. | 300000 | long
 | *producerPoolMinIdle* (producer) | Sets the minimum number of instances allowed in the producer pool before the evictor thread (if active) spawns new objects. |  | int
 | *udpConnectionlessSending* (producer) | This option supports connection less udp sending which is a real fire and forget. A connected udp send receive the PortUnreachableException if no one is listen on the receiving port. | false | boolean
 | *useByteBuf* (producer) | If the useByteBuf is true, netty producer will turn the message body into ByteBuf before sending it out. | false | boolean
@@ -334,7 +334,10 @@ Registry. Just remember to prefix the value with #
 so Camel knows it should lookup.
 |===
 
-NOTE: Read below about using non shareable encoders/decoders.
+[NOTE]
+====
+Read below about using non shareable encoders/decoders.
+====
 
 === Using non shareable encoders or decoders
 
@@ -507,10 +510,13 @@ certificate, and you may get an exception
 may also get this exception if the client certificate is expired or not
 valid etc.
 
-TIP: The option `sslClientCertHeaders` can be set to `true` which then
+[TIP]
+====
+The option `sslClientCertHeaders` can be set to `true` which then
 enriches the Camel Message with headers having
 details about the client certificate. For example the subject name is
 readily available in the header `CamelNettySSLClientCertSubjectName`.
+====
 
 === Using Multiple Codecs
 
@@ -523,7 +529,10 @@ ChannelDownstreamHandlers) that should be added to the pipeline. Note
 that if encoders is specified then the encoder param will be ignored,
 similarly for decoders and the decoder param.
 
-NOTE: Read further above about using non shareable encoders/decoders.
+[NOTE]
+====
+Read further above about using non shareable encoders/decoders.
+====
 
 The lists of codecs need to be added to the Camel's registry so they can
 be resolved when the endpoint is created.
@@ -742,11 +751,14 @@ using the `NettyWorkerPoolBuilder` with 2 worker threads as shown below:
 </bean>
 ----
 
-TIP: For boss thread pool there is a
+[TIP]
+====
+For boss thread pool there is a
 `org.apache.camel.component.netty.NettyServerBossPoolBuilder` builder
 for Netty consumers, and a
 `org.apache.camel.component.netty.NettyClientBossPoolBuilder` for the
 Netty producers.
+====
 
 Then in the Camel routes we can refer to this worker pools by
 configuring the `workerPool` option in the URI as shown below:
@@ -791,8 +803,11 @@ correlate the replies to the Camel callback that is responsible for continue pro
 To do this you need to implement `NettyCamelStateCorrelationManager` as correlation manager and configure
 it via the `correlationManager=#myManager` option.
 
-NOTE: We recommend extending the `TimeoutCorrelationManagerSupport` when you build custom correlation managers.
+[NOTE]
+====
+We recommend extending the `TimeoutCorrelationManagerSupport` when you build custom correlation managers.
 This provides support for timeout and other complexities you otherwise would need to implement as well.
+====
 
 You can find an example with the Apache Camel source code in the examples directory
 under the `camel-example-netty-custom-correlation` directory.

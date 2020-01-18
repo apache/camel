@@ -240,6 +240,26 @@ public interface GlanceEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface GlanceBuilders {
+        /**
+         * OpenStack Glance (camel-openstack)
+         * The openstack-glance component allows messages to be sent to an
+         * OpenStack image services.
+         * 
+         * Category: cloud,paas
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-openstack
+         * 
+         * Syntax: <code>openstack-glance:host</code>
+         * 
+         * Path parameter: host (required)
+         * OpenStack host url
+         */
+        default GlanceEndpointBuilder openstackGlance(String path) {
+            return GlanceEndpointBuilderFactory.openstackGlance(path);
+        }
+    }
     /**
      * OpenStack Glance (camel-openstack)
      * The openstack-glance component allows messages to be sent to an OpenStack
@@ -254,7 +274,7 @@ public interface GlanceEndpointBuilderFactory {
      * Path parameter: host (required)
      * OpenStack host url
      */
-    default GlanceEndpointBuilder openstackGlance(String path) {
+    static GlanceEndpointBuilder openstackGlance(String path) {
         class GlanceEndpointBuilderImpl extends AbstractEndpointBuilder implements GlanceEndpointBuilder, AdvancedGlanceEndpointBuilder {
             public GlanceEndpointBuilderImpl(String path) {
                 super("openstack-glance", path);

@@ -418,6 +418,72 @@ public interface SolrEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface SolrBuilders {
+        /**
+         * Solr (camel-solr)
+         * The solr component allows you to interface with an Apache Lucene Solr
+         * server.
+         * 
+         * Category: monitoring,search
+         * Since: 2.9
+         * Maven coordinates: org.apache.camel:camel-solr
+         * 
+         * Syntax: <code>solr:url</code>
+         * 
+         * Path parameter: url (required)
+         * Hostname and port for the solr server
+         */
+        default SolrEndpointBuilder solr(String path) {
+            return SolrEndpointBuilderFactory.solr(path);
+        }
+        /**
+         * Solr (camel-solr)
+         * The solr component allows you to interface with an Apache Lucene Solr
+         * server.
+         * 
+         * Category: monitoring,search
+         * Since: 2.9
+         * Maven coordinates: org.apache.camel:camel-solr
+         * 
+         * Syntax: <code>solrCloud:url</code>
+         * 
+         * Path parameter: url (required)
+         * Hostname and port for the solr server
+         */
+        default SolrEndpointBuilder solrCloud(String path) {
+            return SolrEndpointBuilderFactory.solrCloud(path);
+        }
+        /**
+         * Solr (Secure) (camel-solr)
+         * The solr component allows you to interface with an Apache Lucene Solr
+         * server.
+         * 
+         * Category: monitoring,search
+         * Since: 2.9
+         * Maven coordinates: org.apache.camel:camel-solr
+         * 
+         * Syntax: <code>solrs:url</code>
+         * 
+         * Path parameter: url (required)
+         * Hostname and port for the solr server
+         */
+        default SolrEndpointBuilder solrs(String path) {
+            return SolrEndpointBuilderFactory.solrs(path);
+        }
+        /**
+         * Solr (camel-solr)
+         * The solr component allows you to interface with an Apache Lucene Solr
+         * server.
+         * 
+         * Category: monitoring,search
+         * Since: 2.9
+         * Maven coordinates: org.apache.camel:camel-solr
+         */
+        default SolrEndpointBuilder solr(String scheme, String path) {
+            return SolrEndpointBuilderFactory.solr(scheme,path);
+        }
+    }
     /**
      * Solr (camel-solr)
      * The solr component allows you to interface with an Apache Lucene Solr
@@ -432,7 +498,7 @@ public interface SolrEndpointBuilderFactory {
      * Path parameter: url (required)
      * Hostname and port for the solr server
      */
-    default SolrEndpointBuilder solr(String path) {
+    static SolrEndpointBuilder solr(String path) {
         return solr("solr", path);
     }
     /**
@@ -449,7 +515,7 @@ public interface SolrEndpointBuilderFactory {
      * Path parameter: url (required)
      * Hostname and port for the solr server
      */
-    default SolrEndpointBuilder solrCloud(String path) {
+    static SolrEndpointBuilder solrCloud(String path) {
         return solr("solrCloud", path);
     }
     /**
@@ -466,7 +532,7 @@ public interface SolrEndpointBuilderFactory {
      * Path parameter: url (required)
      * Hostname and port for the solr server
      */
-    default SolrEndpointBuilder solrs(String path) {
+    static SolrEndpointBuilder solrs(String path) {
         return solr("solrs", path);
     }
     /**
@@ -478,7 +544,7 @@ public interface SolrEndpointBuilderFactory {
      * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-solr
      */
-    default SolrEndpointBuilder solr(String scheme, String path) {
+    static SolrEndpointBuilder solr(String scheme, String path) {
         class SolrEndpointBuilderImpl extends AbstractEndpointBuilder implements SolrEndpointBuilder, AdvancedSolrEndpointBuilder {
             public SolrEndpointBuilderImpl(String scheme, String path) {
                 super(scheme, path);

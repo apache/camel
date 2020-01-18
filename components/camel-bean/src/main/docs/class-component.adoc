@@ -123,6 +123,9 @@ Which will lookup a bean from the Registry with the
 id `foo` and invoke the `setCool` method on the created instance of the
 `MyPrefixBean` class.
 
-TIP:See more details at the xref:bean-component.adoc[Bean] component as the *class*
+[TIP]
+====
+See more details at the xref:bean-component.adoc[Bean] component as the *class*
 component works in much the same way.
+====
 

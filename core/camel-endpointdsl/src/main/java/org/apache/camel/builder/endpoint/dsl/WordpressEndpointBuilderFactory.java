@@ -627,7 +627,8 @@ public interface WordpressEndpointBuilderFactory {
      */
     public interface WordpressEndpointBuilder
             extends
-                WordpressEndpointConsumerBuilder, WordpressEndpointProducerBuilder {
+                WordpressEndpointConsumerBuilder,
+                WordpressEndpointProducerBuilder {
         default AdvancedWordpressEndpointBuilder advanced() {
             return (AdvancedWordpressEndpointBuilder) this;
         }
@@ -783,7 +784,8 @@ public interface WordpressEndpointBuilderFactory {
      */
     public interface AdvancedWordpressEndpointBuilder
             extends
-                AdvancedWordpressEndpointConsumerBuilder, AdvancedWordpressEndpointProducerBuilder {
+                AdvancedWordpressEndpointConsumerBuilder,
+                AdvancedWordpressEndpointProducerBuilder {
         default WordpressEndpointBuilder basic() {
             return (WordpressEndpointBuilder) this;
         }
@@ -842,6 +844,31 @@ public interface WordpressEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface WordpressBuilders {
+        /**
+         * Wordpress (camel-wordpress)
+         * Integrates Camel with Wordpress.
+         * 
+         * Category: cms
+         * Since: 2.21
+         * Maven coordinates: org.apache.camel:camel-wordpress
+         * 
+         * Syntax: <code>wordpress:operation</code>
+         * 
+         * Path parameter: operation (required)
+         * The endpoint operation.
+         * The value can be one of: post, user
+         * 
+         * Path parameter: operationDetail
+         * The second part of an endpoint operation. Needed only when endpoint
+         * semantic is not enough, like wordpress:post:delete
+         * The value can be one of: delete
+         */
+        default WordpressEndpointBuilder wordpress(String path) {
+            return WordpressEndpointBuilderFactory.wordpress(path);
+        }
+    }
     /**
      * Wordpress (camel-wordpress)
      * Integrates Camel with Wordpress.
@@ -854,14 +881,14 @@ public interface WordpressEndpointBuilderFactory {
      * 
      * Path parameter: operation (required)
      * The endpoint operation.
-     * The value can be one of: post, , user
+     * The value can be one of: post, user
      * 
      * Path parameter: operationDetail
      * The second part of an endpoint operation. Needed only when endpoint
      * semantic is not enough, like wordpress:post:delete
      * The value can be one of: delete
      */
-    default WordpressEndpointBuilder wordpress(String path) {
+    static WordpressEndpointBuilder wordpress(String path) {
         class WordpressEndpointBuilderImpl extends AbstractEndpointBuilder implements WordpressEndpointBuilder, AdvancedWordpressEndpointBuilder {
             public WordpressEndpointBuilderImpl(String path) {
                 super("wordpress", path);

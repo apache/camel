@@ -246,6 +246,25 @@ public interface GraphqlEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface GraphqlBuilders {
+        /**
+         * GraphQL (camel-graphql)
+         * A Camel GraphQL Component
+         * 
+         * Category: api
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-graphql
+         * 
+         * Syntax: <code>graphql:httpUri</code>
+         * 
+         * Path parameter: httpUri (required)
+         * The GraphQL server URI.
+         */
+        default GraphqlEndpointBuilder graphql(String path) {
+            return GraphqlEndpointBuilderFactory.graphql(path);
+        }
+    }
     /**
      * GraphQL (camel-graphql)
      * A Camel GraphQL Component
@@ -259,7 +278,7 @@ public interface GraphqlEndpointBuilderFactory {
      * Path parameter: httpUri (required)
      * The GraphQL server URI.
      */
-    default GraphqlEndpointBuilder graphql(String path) {
+    static GraphqlEndpointBuilder graphql(String path) {
         class GraphqlEndpointBuilderImpl extends AbstractEndpointBuilder implements GraphqlEndpointBuilder, AdvancedGraphqlEndpointBuilder {
             public GraphqlEndpointBuilderImpl(String path) {
                 super("graphql", path);

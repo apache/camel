@@ -19,9 +19,9 @@ package org.apache.camel.maven.packaging.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.maven.packaging.StringHelper;
+import org.apache.camel.tooling.util.Strings;
 
-import static org.apache.camel.maven.packaging.StringHelper.cutLastZeroDigit;
+import static org.apache.camel.tooling.util.Strings.cutLastZeroDigit;
 
 public class ComponentModel {
 
@@ -118,6 +118,10 @@ public class ComponentModel {
         this.label = label;
     }
 
+    public boolean isDeprecated() {
+        return "true".equals(deprecated);
+    }
+
     public String getDeprecated() {
         return deprecated;
     }
@@ -207,7 +211,7 @@ public class ComponentModel {
     }
 
     public String getShortJavaType() {
-        return StringHelper.getClassShortName(javaType);
+        return Strings.getClassShortName(javaType);
     }
 
     public String getFirstVersionShort() {

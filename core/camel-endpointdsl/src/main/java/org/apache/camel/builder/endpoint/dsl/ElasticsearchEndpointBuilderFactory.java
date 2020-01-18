@@ -502,6 +502,26 @@ public interface ElasticsearchEndpointBuilderFactory {
         Exists,
         Ping;
     }
+
+    public interface ElasticsearchBuilders {
+        /**
+         * Elastichsearch Rest (camel-elasticsearch-rest)
+         * The elasticsearch component is used for interfacing with
+         * ElasticSearch server using REST API.
+         * 
+         * Category: monitoring,search
+         * Since: 2.21
+         * Maven coordinates: org.apache.camel:camel-elasticsearch-rest
+         * 
+         * Syntax: <code>elasticsearch-rest:clusterName</code>
+         * 
+         * Path parameter: clusterName (required)
+         * Name of the cluster
+         */
+        default ElasticsearchEndpointBuilder elasticsearchRest(String path) {
+            return ElasticsearchEndpointBuilderFactory.elasticsearchRest(path);
+        }
+    }
     /**
      * Elastichsearch Rest (camel-elasticsearch-rest)
      * The elasticsearch component is used for interfacing with ElasticSearch
@@ -516,7 +536,7 @@ public interface ElasticsearchEndpointBuilderFactory {
      * Path parameter: clusterName (required)
      * Name of the cluster
      */
-    default ElasticsearchEndpointBuilder elasticsearchRest(String path) {
+    static ElasticsearchEndpointBuilder elasticsearchRest(String path) {
         class ElasticsearchEndpointBuilderImpl extends AbstractEndpointBuilder implements ElasticsearchEndpointBuilder, AdvancedElasticsearchEndpointBuilder {
             public ElasticsearchEndpointBuilderImpl(String path) {
                 super("elasticsearch-rest", path);

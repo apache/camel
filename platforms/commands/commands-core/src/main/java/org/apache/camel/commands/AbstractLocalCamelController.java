@@ -512,8 +512,8 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
                     String url = stat.getUri();
                     String routeId = stat.getRouteId();
                     String direction = stat.getDirection();
-                    Boolean isStatic = staticRegistry.isStatic(url);
-                    Boolean isDynamic = staticRegistry.isDynamic(url);
+                    boolean isStatic = staticRegistry.isStatic(url);
+                    boolean isDynamic = staticRegistry.isDynamic(url);
                     long hits = stat.getHits();
 
                     Map<String, String> row = new LinkedHashMap<>();
@@ -521,8 +521,8 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
                     row.put("uri", url);
                     row.put("routeId", routeId);
                     row.put("direction", direction);
-                    row.put("static", isStatic.toString());
-                    row.put("dynamic", isDynamic.toString());
+                    row.put("static", Boolean.toString(isStatic));
+                    row.put("dynamic", Boolean.toString(isDynamic));
                     row.put("hits", "" + hits);
                     answer.add(row);
                 }

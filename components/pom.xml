@@ -38,6 +38,7 @@
         <module>camel-bean</module>
         <module>camel-browse</module>
         <module>camel-controlbus</module>
+        <module>camel-cron</module>
         <module>camel-dataformat</module>
         <module>camel-dataset</module>
         <module>camel-direct</module>
@@ -122,6 +123,7 @@
         <module>camel-aws-sqs</module>
         <module>camel-aws-swf</module>
         <module>camel-aws-translate</module>
+        <module>camel-aws2-translate</module>
         <module>camel-aws-xray</module>
         <module>camel-azure</module>
         <module>camel-barcode</module>

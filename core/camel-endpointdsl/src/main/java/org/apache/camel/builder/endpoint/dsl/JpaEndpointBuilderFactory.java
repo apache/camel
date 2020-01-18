@@ -1587,7 +1587,8 @@ public interface JpaEndpointBuilderFactory {
      */
     public interface JpaEndpointBuilder
             extends
-                JpaEndpointConsumerBuilder, JpaEndpointProducerBuilder {
+                JpaEndpointConsumerBuilder,
+                JpaEndpointProducerBuilder {
         default AdvancedJpaEndpointBuilder advanced() {
             return (AdvancedJpaEndpointBuilder) this;
         }
@@ -1733,7 +1734,8 @@ public interface JpaEndpointBuilderFactory {
      */
     public interface AdvancedJpaEndpointBuilder
             extends
-                AdvancedJpaEndpointConsumerBuilder, AdvancedJpaEndpointProducerBuilder {
+                AdvancedJpaEndpointConsumerBuilder,
+                AdvancedJpaEndpointProducerBuilder {
         default JpaEndpointBuilder basic() {
             return (JpaEndpointBuilder) this;
         }
@@ -1863,6 +1865,26 @@ public interface JpaEndpointBuilderFactory {
         PESSIMISTIC_FORCE_INCREMENT,
         NONE;
     }
+
+    public interface JpaBuilders {
+        /**
+         * JPA (camel-jpa)
+         * The jpa component enables you to store and retrieve Java objects from
+         * databases using JPA.
+         * 
+         * Category: database,sql
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-jpa
+         * 
+         * Syntax: <code>jpa:entityType</code>
+         * 
+         * Path parameter: entityType (required)
+         * The JPA annotated class to use as entity.
+         */
+        default JpaEndpointBuilder jpa(String path) {
+            return JpaEndpointBuilderFactory.jpa(path);
+        }
+    }
     /**
      * JPA (camel-jpa)
      * The jpa component enables you to store and retrieve Java objects from
@@ -1877,7 +1899,7 @@ public interface JpaEndpointBuilderFactory {
      * Path parameter: entityType (required)
      * The JPA annotated class to use as entity.
      */
-    default JpaEndpointBuilder jpa(String path) {
+    static JpaEndpointBuilder jpa(String path) {
         class JpaEndpointBuilderImpl extends AbstractEndpointBuilder implements JpaEndpointBuilder, AdvancedJpaEndpointBuilder {
             public JpaEndpointBuilderImpl(String path) {
                 super("jpa", path);

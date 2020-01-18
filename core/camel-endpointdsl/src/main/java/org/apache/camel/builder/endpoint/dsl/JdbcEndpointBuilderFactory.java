@@ -489,6 +489,29 @@ public interface JdbcEndpointBuilderFactory {
         SelectList,
         StreamList;
     }
+
+    public interface JdbcBuilders {
+        /**
+         * JDBC (camel-jdbc)
+         * The jdbc component enables you to access databases through JDBC,
+         * where SQL queries are sent in the message body.
+         * 
+         * Category: database,sql
+         * Since: 1.2
+         * Maven coordinates: org.apache.camel:camel-jdbc
+         * 
+         * Syntax: <code>jdbc:dataSourceName</code>
+         * 
+         * Path parameter: dataSourceName (required)
+         * Name of DataSource to lookup in the Registry. If the name is
+         * dataSource or default, then Camel will attempt to lookup a default
+         * DataSource from the registry, meaning if there is a only one instance
+         * of DataSource found, then this DataSource will be used.
+         */
+        default JdbcEndpointBuilder jdbc(String path) {
+            return JdbcEndpointBuilderFactory.jdbc(path);
+        }
+    }
     /**
      * JDBC (camel-jdbc)
      * The jdbc component enables you to access databases through JDBC, where
@@ -506,7 +529,7 @@ public interface JdbcEndpointBuilderFactory {
      * the registry, meaning if there is a only one instance of DataSource
      * found, then this DataSource will be used.
      */
-    default JdbcEndpointBuilder jdbc(String path) {
+    static JdbcEndpointBuilder jdbc(String path) {
         class JdbcEndpointBuilderImpl extends AbstractEndpointBuilder implements JdbcEndpointBuilder, AdvancedJdbcEndpointBuilder {
             public JdbcEndpointBuilderImpl(String path) {
                 super("jdbc", path);

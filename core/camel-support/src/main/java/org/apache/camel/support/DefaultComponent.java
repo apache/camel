@@ -39,6 +39,7 @@ import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerAware;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
@@ -140,11 +141,11 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         }
 
         // extract these global options and infer their value based on global/component level configuration
-        boolean basic = getAndRemoveParameter(parameters, "basicPropertyBinding", boolean.class, basicPropertyBinding 
+        boolean basic = getAndRemoveParameter(parameters, "basicPropertyBinding", boolean.class, basicPropertyBinding
                 ? basicPropertyBinding : getCamelContext().getGlobalEndpointConfiguration().isBasicPropertyBinding());
-        boolean bridge = getAndRemoveParameter(parameters, "bridgeErrorHandler", boolean.class, bridgeErrorHandler 
+        boolean bridge = getAndRemoveParameter(parameters, "bridgeErrorHandler", boolean.class, bridgeErrorHandler
                 ? bridgeErrorHandler : getCamelContext().getGlobalEndpointConfiguration().isBridgeErrorHandler());
-        boolean lazy = getAndRemoveParameter(parameters, "lazyStartProducer", boolean.class, lazyStartProducer 
+        boolean lazy = getAndRemoveParameter(parameters, "lazyStartProducer", boolean.class, lazyStartProducer
                 ? lazyStartProducer : getCamelContext().getGlobalEndpointConfiguration().isLazyStartProducer());
 
         // create endpoint
@@ -230,11 +231,11 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         }
 
         // extract these global options and infer their value based on global/component level configuration
-        boolean basic = getAndRemoveParameter(parameters, "basicPropertyBinding", boolean.class, basicPropertyBinding 
+        boolean basic = getAndRemoveParameter(parameters, "basicPropertyBinding", boolean.class, basicPropertyBinding
                 ? basicPropertyBinding : getCamelContext().getGlobalEndpointConfiguration().isBasicPropertyBinding());
-        boolean bridge = getAndRemoveParameter(parameters, "bridgeErrorHandler", boolean.class, bridgeErrorHandler 
+        boolean bridge = getAndRemoveParameter(parameters, "bridgeErrorHandler", boolean.class, bridgeErrorHandler
                 ? bridgeErrorHandler : getCamelContext().getGlobalEndpointConfiguration().isBridgeErrorHandler());
-        boolean lazy = getAndRemoveParameter(parameters, "lazyStartProducer", boolean.class, lazyStartProducer 
+        boolean lazy = getAndRemoveParameter(parameters, "lazyStartProducer", boolean.class, lazyStartProducer
                 ? lazyStartProducer : getCamelContext().getGlobalEndpointConfiguration().isLazyStartProducer());
 
         Endpoint endpoint = createEndpoint(uri, path, parameters);
@@ -406,19 +407,35 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
                 name = StringHelper.before(name, ",");
             }
             try {
+                final Registry registry = getCamelContext().getRegistry();
                 log.trace("Discovering optional component property configurer class for component: {}", name);
-                Optional<Class<?>> clazz = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH)
-                        .findOptionalClass(name + "-component", null);
-                clazz.ifPresent(c -> componentPropertyConfigurer = org.apache.camel.support.ObjectHelper.newInstance(c, GeneratedPropertyConfigurer.class));
+                final String componentConfigurerName = name + "-component-configurer";
+                componentPropertyConfigurer = registry.lookupByNameAndType(componentConfigurerName, GeneratedPropertyConfigurer.class);
                 if (log.isDebugEnabled() && componentPropertyConfigurer != null) {
-                    log.debug("Discovered component property configurer: {} -> {}", name, componentPropertyConfigurer);
+                    log.debug("Discovered component property configurer using the Camel registry: {} -> {}", componentConfigurerName, componentPropertyConfigurer);
                 }
+                if (componentPropertyConfigurer == null) {
+                    final Optional<Class<?>> clazz = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH)
+                            .findOptionalClass(name + "-component", null);
+                    clazz.ifPresent(c -> componentPropertyConfigurer = org.apache.camel.support.ObjectHelper.newInstance(c, GeneratedPropertyConfigurer.class));
+                    if (log.isDebugEnabled() && componentPropertyConfigurer != null) {
+                        log.debug("Discovered component property configurer using the FactoryFinder: {} -> {}", name, componentPropertyConfigurer);
+                    }
+                }
+
                 log.trace("Discovering optional endpoint property configurer class for component: {}", name);
-                clazz = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH)
-                        .findOptionalClass(name + "-endpoint", null);
-                clazz.ifPresent(c -> endpointPropertyConfigurer = org.apache.camel.support.ObjectHelper.newInstance(c, GeneratedPropertyConfigurer.class));
+                final String endpointConfigurerName = name + "-endpoint-configurer";
+                endpointPropertyConfigurer = registry.lookupByNameAndType(endpointConfigurerName, GeneratedPropertyConfigurer.class);
                 if (log.isDebugEnabled() && endpointPropertyConfigurer != null) {
-                    log.debug("Discovered endpoint property configurer: {} -> {}", name, endpointPropertyConfigurer);
+                    log.debug("Discovered endpoint property configurer using the Camel registry: {} -> {}", endpointConfigurerName, endpointPropertyConfigurer);
+                }
+                if (endpointPropertyConfigurer == null) {
+                    final Optional<Class<?>> clazz = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH)
+                            .findOptionalClass(name + "-endpoint", null);
+                    clazz.ifPresent(c -> endpointPropertyConfigurer = org.apache.camel.support.ObjectHelper.newInstance(c, GeneratedPropertyConfigurer.class));
+                    if (log.isDebugEnabled() && endpointPropertyConfigurer != null) {
+                        log.debug("Discovered endpoint property configurer using the FactoryFinder: {} -> {}", name, endpointPropertyConfigurer);
+                    }
                 }
             } catch (NoFactoryAvailableException e) {
                 // ignore
@@ -586,15 +603,15 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     /**
-     * Resolves a reference parameter in the registry and removes it from the map. 
+     * Resolves a reference parameter in the registry and removes it from the map.
      *
      * @param <T>           type of object to lookup in the registry.
      * @param parameters    parameter map.
      * @param key           parameter map key.
      * @param type          type of object to lookup in the registry.
-     * @return the referenced object or <code>null</code> if the parameter map 
+     * @return the referenced object or <code>null</code> if the parameter map
      *         doesn't contain the key.
-     * @throws IllegalArgumentException if a non-null reference was not found in 
+     * @throws IllegalArgumentException if a non-null reference was not found in
      *         registry.
      */
     public <T> T resolveAndRemoveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type) {
@@ -602,16 +619,16 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     /**
-     * Resolves a reference parameter in the registry and removes it from the map. 
+     * Resolves a reference parameter in the registry and removes it from the map.
      *
      * @param <T>           type of object to lookup in the registry.
      * @param parameters    parameter map.
      * @param key           parameter map key.
      * @param type          type of object to lookup in the registry.
-     * @param defaultValue  default value to use if the parameter map doesn't 
+     * @param defaultValue  default value to use if the parameter map doesn't
      *                      contain the key.
      * @return the referenced object or the default value.
-     * @throws IllegalArgumentException if referenced object was not found in 
+     * @throws IllegalArgumentException if referenced object was not found in
      *         registry.
      */
     public <T> T resolveAndRemoveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
@@ -650,7 +667,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param defaultValue default value to use if the parameter map doesn't
      *            contain the key.
      * @return the list of referenced objects or the default value.
-     * @throws IllegalArgumentException if any of the referenced objects was 
+     * @throws IllegalArgumentException if any of the referenced objects was
      *         not found in registry.
      * @see EndpointHelper#resolveReferenceListParameter(CamelContext, String, Class)
      */

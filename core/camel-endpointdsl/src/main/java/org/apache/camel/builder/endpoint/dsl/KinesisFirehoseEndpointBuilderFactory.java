@@ -288,6 +288,26 @@ public interface KinesisFirehoseEndpointBuilderFactory {
         http,
         https;
     }
+
+    public interface KinesisFirehoseBuilders {
+        /**
+         * AWS Kinesis Firehose (camel-aws-kinesis)
+         * The aws-kinesis-firehose component is used for producing Amazon's
+         * Kinesis Firehose streams.
+         * 
+         * Category: cloud,messaging
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-aws-kinesis
+         * 
+         * Syntax: <code>aws-kinesis-firehose:streamName</code>
+         * 
+         * Path parameter: streamName (required)
+         * Name of the stream
+         */
+        default KinesisFirehoseEndpointBuilder awsKinesisFirehose(String path) {
+            return KinesisFirehoseEndpointBuilderFactory.awsKinesisFirehose(path);
+        }
+    }
     /**
      * AWS Kinesis Firehose (camel-aws-kinesis)
      * The aws-kinesis-firehose component is used for producing Amazon's Kinesis
@@ -302,7 +322,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
      * Path parameter: streamName (required)
      * Name of the stream
      */
-    default KinesisFirehoseEndpointBuilder awsKinesisFirehose(String path) {
+    static KinesisFirehoseEndpointBuilder awsKinesisFirehose(String path) {
         class KinesisFirehoseEndpointBuilderImpl extends AbstractEndpointBuilder implements KinesisFirehoseEndpointBuilder, AdvancedKinesisFirehoseEndpointBuilder {
             public KinesisFirehoseEndpointBuilderImpl(String path) {
                 super("aws-kinesis-firehose", path);

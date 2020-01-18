@@ -18,7 +18,7 @@ package org.apache.camel.maven.packaging.model;
 
 import java.util.stream.Stream;
 
-import org.apache.camel.maven.packaging.StringHelper;
+import org.apache.camel.tooling.util.Strings;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -29,23 +29,16 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 public class StringHelperTest {
 
     static Stream<Arguments> getClassShortNameTypeVarations() {
-        return Stream.of(
-                         arguments("String", "String"),
-                         arguments("String", "java.lang.String"),
-                         arguments("List", "List<String>"),
-                         arguments("List", "java.util.List<String>"),
-                         arguments("List", "List<java.lang.String>"),
-                         arguments("List", "java.util.List.List<org.apache.camel.Exchange>"),
-                         arguments("List", "java.util.List<Map<String,Integer>>"),
-                         arguments("List", "java.util.List<Map<java.lang.String,Integer>>"),
-                         arguments("List", "java.util.List<Map<String,java.lang.Integer>>"),
-                         arguments("List", "java.util.List<Map<java.lang.String,java.lang.Integer>>"),
+        return Stream.of(arguments("String", "String"), arguments("String", "java.lang.String"), arguments("List", "List<String>"), arguments("List", "java.util.List<String>"),
+                         arguments("List", "List<java.lang.String>"), arguments("List", "java.util.List.List<org.apache.camel.Exchange>"),
+                         arguments("List", "java.util.List<Map<String,Integer>>"), arguments("List", "java.util.List<Map<java.lang.String,Integer>>"),
+                         arguments("List", "java.util.List<Map<String,java.lang.Integer>>"), arguments("List", "java.util.List<Map<java.lang.String,java.lang.Integer>>"),
                          arguments("List", "java.util.List<java.util.Map<java.lang.String,java.lang.Integer>>"));
     }
 
     @ParameterizedTest
     @MethodSource("getClassShortNameTypeVarations")
     public void getClassShortName(String expectedBaseClassName, String className) {
-        Assertions.assertEquals(expectedBaseClassName, StringHelper.getClassShortName(className));
+        Assertions.assertEquals(expectedBaseClassName, Strings.getClassShortName(className));
     }
 }

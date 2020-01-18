@@ -429,7 +429,8 @@ public interface PgEventEndpointBuilderFactory {
      */
     public interface PgEventEndpointBuilder
             extends
-                PgEventEndpointConsumerBuilder, PgEventEndpointProducerBuilder {
+                PgEventEndpointConsumerBuilder,
+                PgEventEndpointProducerBuilder {
         default AdvancedPgEventEndpointBuilder advanced() {
             return (AdvancedPgEventEndpointBuilder) this;
         }
@@ -488,7 +489,8 @@ public interface PgEventEndpointBuilderFactory {
      */
     public interface AdvancedPgEventEndpointBuilder
             extends
-                AdvancedPgEventEndpointConsumerBuilder, AdvancedPgEventEndpointProducerBuilder {
+                AdvancedPgEventEndpointConsumerBuilder,
+                AdvancedPgEventEndpointProducerBuilder {
         default PgEventEndpointBuilder basic() {
             return (PgEventEndpointBuilder) this;
         }
@@ -547,6 +549,37 @@ public interface PgEventEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface PgEventBuilders {
+        /**
+         * PostgresSQL Event (camel-pgevent)
+         * The pgevent component allows for producing/consuming PostgreSQL
+         * events related to the listen/notify commands.
+         * 
+         * Category: database,sql
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-pgevent
+         * 
+         * Syntax: <code>pgevent:host:port/database/channel</code>
+         * 
+         * Path parameter: host
+         * To connect using hostname and port to the database.
+         * Default value: localhost
+         * 
+         * Path parameter: port
+         * To connect using hostname and port to the database.
+         * Default value: 5432
+         * 
+         * Path parameter: database (required)
+         * The database name
+         * 
+         * Path parameter: channel (required)
+         * The channel name
+         */
+        default PgEventEndpointBuilder pgevent(String path) {
+            return PgEventEndpointBuilderFactory.pgevent(path);
+        }
+    }
     /**
      * PostgresSQL Event (camel-pgevent)
      * The pgevent component allows for producing/consuming PostgreSQL events
@@ -572,7 +605,7 @@ public interface PgEventEndpointBuilderFactory {
      * Path parameter: channel (required)
      * The channel name
      */
-    default PgEventEndpointBuilder pgevent(String path) {
+    static PgEventEndpointBuilder pgevent(String path) {
         class PgEventEndpointBuilderImpl extends AbstractEndpointBuilder implements PgEventEndpointBuilder, AdvancedPgEventEndpointBuilder {
             public PgEventEndpointBuilderImpl(String path) {
                 super("pgevent", path);

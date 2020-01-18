@@ -23,6 +23,7 @@ import com.lmax.disruptor.InsufficientCapacityException;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
@@ -81,7 +82,7 @@ public class DisruptorProducer extends DefaultAsyncProducer {
             final CountDownLatch latch = new CountDownLatch(1);
 
             // we should wait for the reply so install a on completion so we know when its complete
-            copy.addOnCompletion(new SynchronizationAdapter() {
+            copy.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onDone(final Exchange response) {
                     // check for timeout, which then already would have invoked the latch
@@ -193,7 +194,7 @@ public class DisruptorProducer extends DefaultAsyncProducer {
         // use a new copy of the exchange to route async
         final Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, handover);
         // set a new from endpoint to be the disruptor
-        copy.setFromEndpoint(endpoint);
+        copy.adapt(ExtendedExchange.class).setFromEndpoint(endpoint);
         return copy;
     }
 }

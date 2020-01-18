@@ -922,7 +922,8 @@ public interface KubernetesHPAEndpointBuilderFactory {
      */
     public interface KubernetesHPAEndpointBuilder
             extends
-                KubernetesHPAEndpointConsumerBuilder, KubernetesHPAEndpointProducerBuilder {
+                KubernetesHPAEndpointConsumerBuilder,
+                KubernetesHPAEndpointProducerBuilder {
         default AdvancedKubernetesHPAEndpointBuilder advanced() {
             return (AdvancedKubernetesHPAEndpointBuilder) this;
         }
@@ -1151,7 +1152,8 @@ public interface KubernetesHPAEndpointBuilderFactory {
      */
     public interface AdvancedKubernetesHPAEndpointBuilder
             extends
-                AdvancedKubernetesHPAEndpointConsumerBuilder, AdvancedKubernetesHPAEndpointProducerBuilder {
+                AdvancedKubernetesHPAEndpointConsumerBuilder,
+                AdvancedKubernetesHPAEndpointProducerBuilder {
         default KubernetesHPAEndpointBuilder basic() {
             return (KubernetesHPAEndpointBuilder) this;
         }
@@ -1239,6 +1241,26 @@ public interface KubernetesHPAEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface KubernetesHPABuilders {
+        /**
+         * Kubernetes HPA (camel-kubernetes)
+         * The Kubernetes HPA component provides a producer to execute
+         * kubernetes hpa operations and a consumer to consume HPA events.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-hpa:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         */
+        default KubernetesHPAEndpointBuilder kubernetesHpa(String path) {
+            return KubernetesHPAEndpointBuilderFactory.kubernetesHpa(path);
+        }
+    }
     /**
      * Kubernetes HPA (camel-kubernetes)
      * The Kubernetes HPA component provides a producer to execute kubernetes
@@ -1253,7 +1275,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
      * Path parameter: masterUrl (required)
      * Kubernetes Master url
      */
-    default KubernetesHPAEndpointBuilder kubernetesHpa(String path) {
+    static KubernetesHPAEndpointBuilder kubernetesHpa(String path) {
         class KubernetesHPAEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesHPAEndpointBuilder, AdvancedKubernetesHPAEndpointBuilder {
             public KubernetesHPAEndpointBuilderImpl(String path) {
                 super("kubernetes-hpa", path);

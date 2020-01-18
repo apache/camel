@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 
 import io.nessus.utils.StreamUtils;
@@ -33,65 +32,76 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
+/*
+
+> ipfs config Addresses.Gateway /ip4/127.0.0.1/tcp/8088
+
+> ipfs daemon
+
+Initializing daemon...
+go-ipfs version: 0.4.22-
+Golang version: go1.12.7
+...
+API server listening on /ip4/127.0.0.1/tcp/5001
+WebUI: http://webui
+Gateway (readonly) server listening on /ip4/127.0.0.1/tcp/8088
+Daemon is ready
+
+*/
 
 public class SimpleIPFSTest {
+
+    private static final String SINGLE_HASH = "QmUD7uG5prAMHbcCfp4x1G1mMSpywcSMHTGpq62sbpDAg6";
+    private static final String RECURSIVE_HASH = "QmdcE2PmF5SBGCs1EVtznNTFPu4GoJztgJmAvdq66XxM3h";
 
     @Test
     public void ipfsVersion() throws Exception {
 
-        CamelContext camelctx = new DefaultCamelContext();
-        camelctx.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:startA").to("ipfs:127.0.0.1:5001/version");
-                from("direct:startB").to("ipfs:127.0.0.1:5001/version");
-                from("direct:startC").to("ipfs:127.0.0.1:5001/version");
-            }
-        });
+        try (CamelContext camelctx = new DefaultCamelContext()) {
 
-        camelctx.start();
-
-        try {
-            ProducerTemplate producer = camelctx.createProducerTemplate();
-            String resA = producer.requestBody("direct:startA", null, String.class);
-            String resB = producer.requestBody("direct:startB", null, String.class);
-            String resC = producer.requestBody("direct:startC", null, String.class);
-            Arrays.asList(resA, resB, resC).forEach(res -> {
-                Assert.assertTrue("Expecting 0.4 in: " + resA, resA.startsWith("0.4"));
+            camelctx.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:startA").to("ipfs:version");
+                }
             });
-        } catch (Exception e) {
-            boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
-            Assume.assumeFalse("IPFS is running", notRunning);
-        } finally {
-            camelctx.stop();
+
+            camelctx.start();
+
+            try {
+                ProducerTemplate producer = camelctx.createProducerTemplate();
+                String resA = producer.requestBody("direct:startA", null, String.class);
+                Assert.assertTrue("Expecting 0.4 in: " + resA, resA.startsWith("0.4"));
+            } catch (Exception e) {
+                boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
+                Assume.assumeFalse("IPFS is running", notRunning);
+            }
         }
     }
 
     @Test
     public void ipfsAddSingle() throws Exception {
 
-        String hash = "QmYgjSRbXFPdPYKqQSnUjmXLYLudVahEJQotMaAJKt6Lbd";
+        try (CamelContext camelctx = new DefaultCamelContext()) {
 
-        CamelContext camelctx = new DefaultCamelContext();
-        camelctx.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("ipfs:127.0.0.1:5001/add");
+            camelctx.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:start").to("ipfs:add");
+                }
+            });
+
+            camelctx.start();
+
+            try {
+                Path path = Paths.get("src/test/resources/html/etc/userfile.txt");
+                ProducerTemplate producer = camelctx.createProducerTemplate();
+                String res = producer.requestBody("direct:start", path, String.class);
+                Assert.assertEquals(SINGLE_HASH, res);
+            } catch (Exception e) {
+                boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
+                Assume.assumeFalse("IPFS is running", notRunning);
             }
-        });
-
-        camelctx.start();
-
-        try {
-            Path path = Paths.get("src/test/resources/html/index.html");
-            ProducerTemplate producer = camelctx.createProducerTemplate();
-            String res = producer.requestBody("direct:start", path, String.class);
-            Assert.assertEquals(hash, res);
-        } catch (Exception e) {
-            boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
-            Assume.assumeFalse("IPFS is running", notRunning);
-        } finally {
-            camelctx.stop();
         }
     }
 
@@ -99,113 +109,105 @@ public class SimpleIPFSTest {
     @SuppressWarnings("unchecked")
     public void ipfsAddRecursive() throws Exception {
 
-        String hash = "Qme6hd6tYXTFb7bb7L3JZ5U6ygktpAHKxbaeffYyQN85mW";
+        try (CamelContext camelctx = new DefaultCamelContext()) {
 
-        CamelContext camelctx = new DefaultCamelContext();
-        camelctx.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("ipfs:127.0.0.1:5001/add");
+            camelctx.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:start").to("ipfs:add");
+                }
+            });
+
+            camelctx.start();
+
+            try {
+                Path path = Paths.get("src/test/resources/html");
+                ProducerTemplate producer = camelctx.createProducerTemplate();
+                List<String> res = producer.requestBody("direct:start", path, List.class);
+                Assert.assertEquals(10, res.size());
+                Assert.assertEquals(RECURSIVE_HASH, res.get(9));
+            } catch (Exception e) {
+                boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
+                Assume.assumeFalse("IPFS is running", notRunning);
             }
-        });
-
-        camelctx.start();
-
-        try {
-            Path path = Paths.get("src/test/resources/html");
-            ProducerTemplate producer = camelctx.createProducerTemplate();
-            List<String> res = producer.requestBody("direct:start", path, List.class);
-            Assert.assertEquals(10, res.size());
-            Assert.assertEquals(hash, res.get(9));
-        } catch (Exception e) {
-            boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
-            Assume.assumeFalse("IPFS is running", notRunning);
-        } finally {
-            camelctx.stop();
         }
     }
 
     @Test
     public void ipfsCat() throws Exception {
 
-        String hash = "QmUD7uG5prAMHbcCfp4x1G1mMSpywcSMHTGpq62sbpDAg6";
+        try (CamelContext camelctx = new DefaultCamelContext()) {
 
-        CamelContext camelctx = new DefaultCamelContext();
-        camelctx.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("ipfs:127.0.0.1:5001/cat");
+            camelctx.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:start").to("ipfs:cat");
+                }
+            });
+
+            camelctx.start();
+
+            try {
+                ProducerTemplate producer = camelctx.createProducerTemplate();
+                InputStream res = producer.requestBody("direct:start", SINGLE_HASH, InputStream.class);
+                verifyFileContent(res);
+            } catch (Exception e) {
+                boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
+                Assume.assumeFalse("IPFS is running", notRunning);
             }
-        });
-
-        camelctx.start();
-
-        try {
-            ProducerTemplate producer = camelctx.createProducerTemplate();
-            InputStream res = producer.requestBody("direct:start", hash, InputStream.class);
-            verifyFileContent(res);
-        } catch (Exception e) {
-            boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
-            Assume.assumeFalse("IPFS is running", notRunning);
-        } finally {
-            camelctx.stop();
         }
     }
 
     @Test
     public void ipfsGetSingle() throws Exception {
 
-        String hash = "QmUD7uG5prAMHbcCfp4x1G1mMSpywcSMHTGpq62sbpDAg6";
+        try (CamelContext camelctx = new DefaultCamelContext()) {
 
-        CamelContext camelctx = new DefaultCamelContext();
-        camelctx.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("ipfs:127.0.0.1:5001/get?outdir=target");
+            camelctx.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:start").to("ipfs:get?outdir=target");
+                }
+            });
+
+            camelctx.start();
+
+            try {
+                ProducerTemplate producer = camelctx.createProducerTemplate();
+                Path res = producer.requestBody("direct:start", SINGLE_HASH, Path.class);
+                Assert.assertEquals(Paths.get("target", SINGLE_HASH), res);
+                verifyFileContent(new FileInputStream(res.toFile()));
+            } catch (Exception e) {
+                boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
+                Assume.assumeFalse("IPFS is running", notRunning);
             }
-        });
-
-        camelctx.start();
-
-        try {
-            ProducerTemplate producer = camelctx.createProducerTemplate();
-            Path res = producer.requestBody("direct:start", hash, Path.class);
-            Assert.assertEquals(Paths.get("target", hash), res);
-            verifyFileContent(new FileInputStream(res.toFile()));
-        } catch (Exception e) {
-            boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
-            Assume.assumeFalse("IPFS is running", notRunning);
-        } finally {
-            camelctx.stop();
         }
     }
 
     @Test
     public void ipfsGetRecursive() throws Exception {
 
-        String hash = "Qme6hd6tYXTFb7bb7L3JZ5U6ygktpAHKxbaeffYyQN85mW";
+        try (CamelContext camelctx = new DefaultCamelContext()) {
 
-        CamelContext camelctx = new DefaultCamelContext();
-        camelctx.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("ipfs:127.0.0.1:5001/get?outdir=target");
+            camelctx.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:start").to("ipfs:get?outdir=target");
+                }
+            });
+
+            camelctx.start();
+
+            try {
+                ProducerTemplate producer = camelctx.createProducerTemplate();
+                Path res = producer.requestBody("direct:start", RECURSIVE_HASH, Path.class);
+                Assert.assertEquals(Paths.get("target", RECURSIVE_HASH), res);
+                Assert.assertTrue(res.toFile().isDirectory());
+                Assert.assertTrue(res.resolve("index.html").toFile().exists());
+            } catch (Exception e) {
+                boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
+                Assume.assumeFalse("IPFS is running", notRunning);
             }
-        });
-
-        camelctx.start();
-
-        try {
-            ProducerTemplate producer = camelctx.createProducerTemplate();
-            Path res = producer.requestBody("direct:start", hash, Path.class);
-            Assert.assertEquals(Paths.get("target", hash), res);
-            Assert.assertTrue(res.toFile().isDirectory());
-            Assert.assertTrue(res.resolve("index.html").toFile().exists());
-        } catch (Exception e) {
-            boolean notRunning = e.getCause().getMessage().contains("Is IPFS running");
-            Assume.assumeFalse("IPFS is running", notRunning);
-        } finally {
-            camelctx.stop();
         }
     }
 

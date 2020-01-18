@@ -15,11 +15,15 @@ The purpose of this feature is to make it possible to use Camel's lovely
 built-in expressions for manipulating RSS messages. As shown below, an
 XPath expression can be used to filter the RSS message:
 
-TIP: *Query parameters*
+[TIP]
+====
+*Query parameters*
+
 If the URL for the RSS feed uses query parameters, this component will
 understand them as well, for example if the feed uses `alt=rss`, then
 you can for example do 
 `from("rss:http://someserver.com/feeds/posts/default?alt=rss&splitEntries=false&delay=1000").to("bean:rss");`
+====
 
 == Options
 

@@ -498,7 +498,8 @@ public interface DirectVmEndpointBuilderFactory {
      */
     public interface DirectVmEndpointBuilder
             extends
-                DirectVmEndpointConsumerBuilder, DirectVmEndpointProducerBuilder {
+                DirectVmEndpointConsumerBuilder,
+                DirectVmEndpointProducerBuilder {
         default AdvancedDirectVmEndpointBuilder advanced() {
             return (AdvancedDirectVmEndpointBuilder) this;
         }
@@ -509,7 +510,8 @@ public interface DirectVmEndpointBuilderFactory {
      */
     public interface AdvancedDirectVmEndpointBuilder
             extends
-                AdvancedDirectVmEndpointConsumerBuilder, AdvancedDirectVmEndpointProducerBuilder {
+                AdvancedDirectVmEndpointConsumerBuilder,
+                AdvancedDirectVmEndpointProducerBuilder {
         default DirectVmEndpointBuilder basic() {
             return (DirectVmEndpointBuilder) this;
         }
@@ -596,6 +598,26 @@ public interface DirectVmEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface DirectVmBuilders {
+        /**
+         * Direct VM (camel-directvm)
+         * The direct-vm component provides direct, synchronous call to another
+         * endpoint from any CamelContext in the same JVM.
+         * 
+         * Category: core,endpoint
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-directvm
+         * 
+         * Syntax: <code>direct-vm:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name of direct-vm endpoint
+         */
+        default DirectVmEndpointBuilder directVm(String path) {
+            return DirectVmEndpointBuilderFactory.directVm(path);
+        }
+    }
     /**
      * Direct VM (camel-directvm)
      * The direct-vm component provides direct, synchronous call to another
@@ -610,7 +632,7 @@ public interface DirectVmEndpointBuilderFactory {
      * Path parameter: name (required)
      * Name of direct-vm endpoint
      */
-    default DirectVmEndpointBuilder directVm(String path) {
+    static DirectVmEndpointBuilder directVm(String path) {
         class DirectVmEndpointBuilderImpl extends AbstractEndpointBuilder implements DirectVmEndpointBuilder, AdvancedDirectVmEndpointBuilder {
             public DirectVmEndpointBuilderImpl(String path) {
                 super("direct-vm", path);

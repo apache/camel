@@ -355,6 +355,27 @@ public interface MsvEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface MsvBuilders {
+        /**
+         * MSV (camel-msv)
+         * Validates the payload of a message using the MSV Library.
+         * 
+         * Category: validation
+         * Since: 1.1
+         * Maven coordinates: org.apache.camel:camel-msv
+         * 
+         * Syntax: <code>msv:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * URL to a local resource on the classpath,or a reference to lookup a
+         * bean in the Registry, or a full URL to a remote resource or resource
+         * on the file system which contains the XSD to validate against.
+         */
+        default MsvEndpointBuilder msv(String path) {
+            return MsvEndpointBuilderFactory.msv(path);
+        }
+    }
     /**
      * MSV (camel-msv)
      * Validates the payload of a message using the MSV Library.
@@ -370,7 +391,7 @@ public interface MsvEndpointBuilderFactory {
      * in the Registry, or a full URL to a remote resource or resource on the
      * file system which contains the XSD to validate against.
      */
-    default MsvEndpointBuilder msv(String path) {
+    static MsvEndpointBuilder msv(String path) {
         class MsvEndpointBuilderImpl extends AbstractEndpointBuilder implements MsvEndpointBuilder, AdvancedMsvEndpointBuilder {
             public MsvEndpointBuilderImpl(String path) {
                 super("msv", path);

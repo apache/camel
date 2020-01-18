@@ -18,7 +18,7 @@ package org.apache.camel.tools.apt.model;
 
 import java.util.Set;
 
-import static org.apache.camel.tools.apt.helper.Strings.isNullOrEmpty;
+import static org.apache.camel.tooling.util.Strings.isNullOrEmpty;
 
 public final class ComponentOption implements PropertyOption {
 

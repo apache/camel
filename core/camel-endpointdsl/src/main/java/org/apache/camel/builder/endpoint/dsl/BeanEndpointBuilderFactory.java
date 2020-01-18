@@ -258,6 +258,25 @@ public interface BeanEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface BeanBuilders {
+        /**
+         * Bean (camel-bean)
+         * The bean component is for invoking Java beans from Camel.
+         * 
+         * Category: core,java
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-bean
+         * 
+         * Syntax: <code>bean:beanName</code>
+         * 
+         * Path parameter: beanName (required)
+         * Sets the name of the bean to invoke
+         */
+        default BeanEndpointBuilder bean(String path) {
+            return BeanEndpointBuilderFactory.bean(path);
+        }
+    }
     /**
      * Bean (camel-bean)
      * The bean component is for invoking Java beans from Camel.
@@ -271,7 +290,7 @@ public interface BeanEndpointBuilderFactory {
      * Path parameter: beanName (required)
      * Sets the name of the bean to invoke
      */
-    default BeanEndpointBuilder bean(String path) {
+    static BeanEndpointBuilder bean(String path) {
         class BeanEndpointBuilderImpl extends AbstractEndpointBuilder implements BeanEndpointBuilder, AdvancedBeanEndpointBuilder {
             public BeanEndpointBuilderImpl(String path) {
                 super("bean", path);

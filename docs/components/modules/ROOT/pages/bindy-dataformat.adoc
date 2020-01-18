@@ -1883,8 +1883,11 @@ content to generate a file containing the csv record.
 </beans>
 ----
 
-NOTE: Please verify that your model classes implements serializable otherwise
+[NOTE]
+====
+Please verify that your model classes implements serializable otherwise
 the queue manager will raise an error
+====
 
 == Dependencies
 

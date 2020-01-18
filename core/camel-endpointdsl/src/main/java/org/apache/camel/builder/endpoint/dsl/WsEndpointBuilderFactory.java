@@ -944,7 +944,8 @@ public interface WsEndpointBuilderFactory {
      */
     public interface WsEndpointBuilder
             extends
-                WsEndpointConsumerBuilder, WsEndpointProducerBuilder {
+                WsEndpointConsumerBuilder,
+                WsEndpointProducerBuilder {
         default AdvancedWsEndpointBuilder advanced() {
             return (AdvancedWsEndpointBuilder) this;
         }
@@ -1145,7 +1146,8 @@ public interface WsEndpointBuilderFactory {
      */
     public interface AdvancedWsEndpointBuilder
             extends
-                AdvancedWsEndpointConsumerBuilder, AdvancedWsEndpointProducerBuilder {
+                AdvancedWsEndpointConsumerBuilder,
+                AdvancedWsEndpointProducerBuilder {
         default WsEndpointBuilder basic() {
             return (WsEndpointBuilder) this;
         }
@@ -1314,6 +1316,55 @@ public interface WsEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface WsBuilders {
+        /**
+         * AHC Websocket (camel-ahc-ws)
+         * To exchange data with external Websocket servers using Async Http
+         * Client.
+         * 
+         * Category: websocket
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-ahc-ws
+         * 
+         * Syntax: <code>ahc-ws:httpUri</code>
+         * 
+         * Path parameter: httpUri (required)
+         * The URI to use such as http://hostname:port/path
+         */
+        default WsEndpointBuilder ahcWs(String path) {
+            return WsEndpointBuilderFactory.ahcWs(path);
+        }
+        /**
+         * AHC Secure Websocket (Secure) (camel-ahc-ws)
+         * To exchange data with external Websocket servers using Async Http
+         * Client.
+         * 
+         * Category: websocket
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-ahc-ws
+         * 
+         * Syntax: <code>ahc-wss:httpUri</code>
+         * 
+         * Path parameter: httpUri (required)
+         * The URI to use such as http://hostname:port/path
+         */
+        default WsEndpointBuilder ahcWss(String path) {
+            return WsEndpointBuilderFactory.ahcWss(path);
+        }
+        /**
+         * AHC Websocket (camel-ahc-ws)
+         * To exchange data with external Websocket servers using Async Http
+         * Client.
+         * 
+         * Category: websocket
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-ahc-ws
+         */
+        default WsEndpointBuilder ahcWs(String scheme, String path) {
+            return WsEndpointBuilderFactory.ahcWs(scheme,path);
+        }
+    }
     /**
      * AHC Websocket (camel-ahc-ws)
      * To exchange data with external Websocket servers using Async Http Client.
@@ -1327,7 +1378,7 @@ public interface WsEndpointBuilderFactory {
      * Path parameter: httpUri (required)
      * The URI to use such as http://hostname:port/path
      */
-    default WsEndpointBuilder ahcWs(String path) {
+    static WsEndpointBuilder ahcWs(String path) {
         return ahcWs("ahc-ws", path);
     }
     /**
@@ -1343,7 +1394,7 @@ public interface WsEndpointBuilderFactory {
      * Path parameter: httpUri (required)
      * The URI to use such as http://hostname:port/path
      */
-    default WsEndpointBuilder ahcWss(String path) {
+    static WsEndpointBuilder ahcWss(String path) {
         return ahcWs("ahc-wss", path);
     }
     /**
@@ -1354,7 +1405,7 @@ public interface WsEndpointBuilderFactory {
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-ahc-ws
      */
-    default WsEndpointBuilder ahcWs(String scheme, String path) {
+    static WsEndpointBuilder ahcWs(String scheme, String path) {
         class WsEndpointBuilderImpl extends AbstractEndpointBuilder implements WsEndpointBuilder, AdvancedWsEndpointBuilder {
             public WsEndpointBuilderImpl(String scheme, String path) {
                 super(scheme, path);

@@ -16,16 +16,16 @@
  */
 package org.apache.camel.maven.packaging;
 
+import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
-import java.util.Objects;
 
+import org.apache.camel.tooling.util.FileUtil;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -96,27 +96,31 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 
     public static void updateResource(BuildContext buildContext, Path out, String data) {
         try {
-            if (data == null) {
-                if (Files.isRegularFile(out)) {
-                    Files.delete(out);
-                    refresh(buildContext, out);
-                }
-            } else {
-                if (Files.isRegularFile(out) && Files.isReadable(out)) {
-                    String content = new String(Files.readAllBytes(out), StandardCharsets.UTF_8);
-                    if (Objects.equals(content, data)) {
-                        return;
-                    }
-                }
-                Files.createDirectories(out.getParent());
-                try (Writer w = Files.newBufferedWriter(out, StandardCharsets.UTF_8)) {
-                    w.append(data);
-                }
+            if (FileUtil.updateFile(out, data)) {
                 refresh(buildContext, out);
             }
         } catch (IOException e) {
             throw new IOError(e);
         }
+    }
+
+    public static boolean haveResourcesChanged(Log log, MavenProject project, BuildContext buildContext, String suffix) {
+        String baseDir = project.getBasedir().getAbsolutePath();
+        for (Resource r : project.getBuild().getResources()) {
+            File file = new File(r.getDirectory());
+            if (file.isAbsolute()) {
+                file = new File(r.getDirectory().substring(baseDir.length() + 1));
+            }
+            String path = file.getPath() + "/" + suffix;
+            if (log.isDebugEnabled()) {
+                log.debug("Checking  if " + path + " (" + r.getDirectory() + "/" + suffix + ") has changed.");
+            }
+            if (buildContext.hasDelta(path)) {
+                log.debug("Indeed " + suffix + " has changed.");
+                return true;
+            }
+        }
+        return false;
     }
 
 }

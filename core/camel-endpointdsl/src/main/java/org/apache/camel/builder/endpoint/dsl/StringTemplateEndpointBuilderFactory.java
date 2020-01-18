@@ -222,6 +222,30 @@ public interface StringTemplateEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface StringTemplateBuilders {
+        /**
+         * String Template (camel-stringtemplate)
+         * Transforms the message using a String template.
+         * 
+         * Category: transformation
+         * Since: 1.2
+         * Maven coordinates: org.apache.camel:camel-stringtemplate
+         * 
+         * Syntax: <code>string-template:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * Path to the resource. You can prefix with: classpath, file, http,
+         * ref, or bean. classpath, file and http loads the resource using these
+         * protocols (classpath is default). ref will lookup the resource in the
+         * registry. bean will call a method on a bean to be used as the
+         * resource. For bean you can specify the method name after dot, eg
+         * bean:myBean.myMethod.
+         */
+        default StringTemplateEndpointBuilder stringTemplate(String path) {
+            return StringTemplateEndpointBuilderFactory.stringTemplate(path);
+        }
+    }
     /**
      * String Template (camel-stringtemplate)
      * Transforms the message using a String template.
@@ -239,7 +263,7 @@ public interface StringTemplateEndpointBuilderFactory {
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      */
-    default StringTemplateEndpointBuilder stringTemplate(String path) {
+    static StringTemplateEndpointBuilder stringTemplate(String path) {
         class StringTemplateEndpointBuilderImpl extends AbstractEndpointBuilder implements StringTemplateEndpointBuilder, AdvancedStringTemplateEndpointBuilder {
             public StringTemplateEndpointBuilderImpl(String path) {
                 super("string-template", path);

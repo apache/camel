@@ -28,12 +28,12 @@ public class DefaultKafkaHeaderDeserializerTest {
 
     @Test
     public void shouldDeserializeAsIs() {
-        byte[] value = new byte[]{0, 4, -2, 54, 126};
+        byte[] value = new byte[] {0, 4, -2, 54, 126};
 
         Object deserializedValue = deserializer.deserialize("someKey", value);
 
         assertThat(deserializedValue, CoreMatchers.instanceOf(byte[].class));
-        assertArrayEquals(value, (byte[]) deserializedValue);
+        assertArrayEquals(value, (byte[])deserializedValue);
     }
 
 }

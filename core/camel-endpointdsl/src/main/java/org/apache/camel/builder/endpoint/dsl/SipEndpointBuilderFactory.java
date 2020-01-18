@@ -2014,7 +2014,8 @@ public interface SipEndpointBuilderFactory {
      */
     public interface SipEndpointBuilder
             extends
-                SipEndpointConsumerBuilder, SipEndpointProducerBuilder {
+                SipEndpointConsumerBuilder,
+                SipEndpointProducerBuilder {
         default AdvancedSipEndpointBuilder advanced() {
             return (AdvancedSipEndpointBuilder) this;
         }
@@ -2362,7 +2363,8 @@ public interface SipEndpointBuilderFactory {
      */
     public interface AdvancedSipEndpointBuilder
             extends
-                AdvancedSipEndpointConsumerBuilder, AdvancedSipEndpointProducerBuilder {
+                AdvancedSipEndpointConsumerBuilder,
+                AdvancedSipEndpointProducerBuilder {
         default SipEndpointBuilder basic() {
             return (SipEndpointBuilder) this;
         }
@@ -2875,6 +2877,57 @@ public interface SipEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface SipBuilders {
+        /**
+         * SIP (camel-sip)
+         * To send and receive messages using the SIP protocol (used in telco
+         * and mobile).
+         * 
+         * Category: mobile
+         * Since: 2.5
+         * Maven coordinates: org.apache.camel:camel-sip
+         * 
+         * Syntax: <code>sip:uri</code>
+         * 
+         * Path parameter: uri (required)
+         * URI of the SIP server to connect to (the username and password can be
+         * included such as: john:secretmyserver:9999)
+         */
+        default SipEndpointBuilder sip(String path) {
+            return SipEndpointBuilderFactory.sip(path);
+        }
+        /**
+         * SIP (Secure) (camel-sip)
+         * To send and receive messages using the SIP protocol (used in telco
+         * and mobile).
+         * 
+         * Category: mobile
+         * Since: 2.5
+         * Maven coordinates: org.apache.camel:camel-sip
+         * 
+         * Syntax: <code>sips:uri</code>
+         * 
+         * Path parameter: uri (required)
+         * URI of the SIP server to connect to (the username and password can be
+         * included such as: john:secretmyserver:9999)
+         */
+        default SipEndpointBuilder sips(String path) {
+            return SipEndpointBuilderFactory.sips(path);
+        }
+        /**
+         * SIP (camel-sip)
+         * To send and receive messages using the SIP protocol (used in telco
+         * and mobile).
+         * 
+         * Category: mobile
+         * Since: 2.5
+         * Maven coordinates: org.apache.camel:camel-sip
+         */
+        default SipEndpointBuilder sip(String scheme, String path) {
+            return SipEndpointBuilderFactory.sip(scheme,path);
+        }
+    }
     /**
      * SIP (camel-sip)
      * To send and receive messages using the SIP protocol (used in telco and
@@ -2890,7 +2943,7 @@ public interface SipEndpointBuilderFactory {
      * URI of the SIP server to connect to (the username and password can be
      * included such as: john:secretmyserver:9999)
      */
-    default SipEndpointBuilder sip(String path) {
+    static SipEndpointBuilder sip(String path) {
         return sip("sip", path);
     }
     /**
@@ -2908,7 +2961,7 @@ public interface SipEndpointBuilderFactory {
      * URI of the SIP server to connect to (the username and password can be
      * included such as: john:secretmyserver:9999)
      */
-    default SipEndpointBuilder sips(String path) {
+    static SipEndpointBuilder sips(String path) {
         return sip("sips", path);
     }
     /**
@@ -2920,7 +2973,7 @@ public interface SipEndpointBuilderFactory {
      * Since: 2.5
      * Maven coordinates: org.apache.camel:camel-sip
      */
-    default SipEndpointBuilder sip(String scheme, String path) {
+    static SipEndpointBuilder sip(String scheme, String path) {
         class SipEndpointBuilderImpl extends AbstractEndpointBuilder implements SipEndpointBuilder, AdvancedSipEndpointBuilder {
             public SipEndpointBuilderImpl(String scheme, String path) {
                 super(scheme, path);

@@ -11,7 +11,10 @@
 The AS2 component provides transport of EDI messages using the HTTP transfer protocol
 as specified in https://tools.ietf.org/html/rfc4130[RFC4130]. 
 
-NOTE: This component is currently a work in progress. Expect URI options and path and query parameters to change in future versions of this component.
+[NOTE]
+====
+This component is currently a work in progress. Expect URI options and path and query parameters to change in future versions of this component.
+==== 
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:

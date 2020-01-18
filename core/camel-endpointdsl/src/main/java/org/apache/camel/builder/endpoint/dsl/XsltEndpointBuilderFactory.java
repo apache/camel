@@ -484,6 +484,31 @@ public interface XsltEndpointBuilderFactory {
         DOM,
         file;
     }
+
+    public interface XsltBuilders {
+        /**
+         * XSLT (camel-xslt)
+         * Transforms the message using a XSLT template.
+         * 
+         * Category: core,transformation
+         * Since: 1.3
+         * Maven coordinates: org.apache.camel:camel-xslt
+         * 
+         * Syntax: <code>xslt:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * Path to the template. The following is supported by the default
+         * URIResolver. You can prefix with: classpath, file, http, ref, or
+         * bean. classpath, file and http loads the resource using these
+         * protocols (classpath is default). ref will lookup the resource in the
+         * registry. bean will call a method on a bean to be used as the
+         * resource. For bean you can specify the method name after dot, eg
+         * bean:myBean.myMethod
+         */
+        default XsltEndpointBuilder xslt(String path) {
+            return XsltEndpointBuilderFactory.xslt(path);
+        }
+    }
     /**
      * XSLT (camel-xslt)
      * Transforms the message using a XSLT template.
@@ -502,7 +527,7 @@ public interface XsltEndpointBuilderFactory {
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod
      */
-    default XsltEndpointBuilder xslt(String path) {
+    static XsltEndpointBuilder xslt(String path) {
         class XsltEndpointBuilderImpl extends AbstractEndpointBuilder implements XsltEndpointBuilder, AdvancedXsltEndpointBuilder {
             public XsltEndpointBuilderImpl(String path) {
                 super("xslt", path);

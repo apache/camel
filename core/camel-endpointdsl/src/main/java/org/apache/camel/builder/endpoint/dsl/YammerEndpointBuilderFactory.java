@@ -1012,7 +1012,8 @@ public interface YammerEndpointBuilderFactory {
      */
     public interface YammerEndpointBuilder
             extends
-                YammerEndpointConsumerBuilder, YammerEndpointProducerBuilder {
+                YammerEndpointConsumerBuilder,
+                YammerEndpointProducerBuilder {
         default AdvancedYammerEndpointBuilder advanced() {
             return (AdvancedYammerEndpointBuilder) this;
         }
@@ -1085,7 +1086,8 @@ public interface YammerEndpointBuilderFactory {
      */
     public interface AdvancedYammerEndpointBuilder
             extends
-                AdvancedYammerEndpointConsumerBuilder, AdvancedYammerEndpointProducerBuilder {
+                AdvancedYammerEndpointConsumerBuilder,
+                AdvancedYammerEndpointProducerBuilder {
         default YammerEndpointBuilder basic() {
             return (YammerEndpointBuilder) this;
         }
@@ -1144,6 +1146,28 @@ public interface YammerEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface YammerBuilders {
+        /**
+         * Yammer (camel-yammer)
+         * The yammer component allows you to interact with the Yammer
+         * enterprise social network.
+         * 
+         * Category: social
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-yammer
+         * 
+         * Syntax: <code>yammer:function</code>
+         * 
+         * Path parameter: function (required)
+         * The function to use
+         * The value can be one of: MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT,
+         * PRIVATE, RECEIVED, USERS, CURRENT
+         */
+        default YammerEndpointBuilder yammer(String path) {
+            return YammerEndpointBuilderFactory.yammer(path);
+        }
+    }
     /**
      * Yammer (camel-yammer)
      * The yammer component allows you to interact with the Yammer enterprise
@@ -1160,7 +1184,7 @@ public interface YammerEndpointBuilderFactory {
      * The value can be one of: MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT,
      * PRIVATE, RECEIVED, USERS, CURRENT
      */
-    default YammerEndpointBuilder yammer(String path) {
+    static YammerEndpointBuilder yammer(String path) {
         class YammerEndpointBuilderImpl extends AbstractEndpointBuilder implements YammerEndpointBuilder, AdvancedYammerEndpointBuilder {
             public YammerEndpointBuilderImpl(String path) {
                 super("yammer", path);

@@ -474,7 +474,8 @@ public interface HazelcastSetEndpointBuilderFactory {
      */
     public interface HazelcastSetEndpointBuilder
             extends
-                HazelcastSetEndpointConsumerBuilder, HazelcastSetEndpointProducerBuilder {
+                HazelcastSetEndpointConsumerBuilder,
+                HazelcastSetEndpointProducerBuilder {
         default AdvancedHazelcastSetEndpointBuilder advanced() {
             return (AdvancedHazelcastSetEndpointBuilder) this;
         }
@@ -557,7 +558,8 @@ public interface HazelcastSetEndpointBuilderFactory {
      */
     public interface AdvancedHazelcastSetEndpointBuilder
             extends
-                AdvancedHazelcastSetEndpointConsumerBuilder, AdvancedHazelcastSetEndpointProducerBuilder {
+                AdvancedHazelcastSetEndpointConsumerBuilder,
+                AdvancedHazelcastSetEndpointProducerBuilder {
         default HazelcastSetEndpointBuilder basic() {
             return (HazelcastSetEndpointBuilder) this;
         }
@@ -662,6 +664,26 @@ public interface HazelcastSetEndpointBuilderFactory {
         readOnceTail,
         capacity;
     }
+
+    public interface HazelcastSetBuilders {
+        /**
+         * Hazelcast Set (camel-hazelcast)
+         * The hazelcast-set component is used to access Hazelcast distributed
+         * set.
+         * 
+         * Category: cache,datagrid
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
+         * Syntax: <code>hazelcast-set:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache
+         */
+        default HazelcastSetEndpointBuilder hazelcastSet(String path) {
+            return HazelcastSetEndpointBuilderFactory.hazelcastSet(path);
+        }
+    }
     /**
      * Hazelcast Set (camel-hazelcast)
      * The hazelcast-set component is used to access Hazelcast distributed set.
@@ -675,7 +697,7 @@ public interface HazelcastSetEndpointBuilderFactory {
      * Path parameter: cacheName (required)
      * The name of the cache
      */
-    default HazelcastSetEndpointBuilder hazelcastSet(String path) {
+    static HazelcastSetEndpointBuilder hazelcastSet(String path) {
         class HazelcastSetEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastSetEndpointBuilder, AdvancedHazelcastSetEndpointBuilder {
             public HazelcastSetEndpointBuilderImpl(String path) {
                 super("hazelcast-set", path);

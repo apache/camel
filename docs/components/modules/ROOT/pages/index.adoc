@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 307 in 245 JAR artifacts (1 deprecated)
+Number of Components: 309 in 247 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -45,6 +45,8 @@ Number of Components: 307 in 245 JAR artifacts (1 deprecated)
 | xref:atomix-value-component.adoc[Atomix Value] (camel-atomix) | 2.20 | The atomix-value component is used to access Atomix's distributed value.
 
 | xref:avro-component.adoc[Avro] (camel-avro) | 2.10 | Working with Apache Avro for data serialization.
+
+| xref:aws2-translate-component.adoc[AWS 2 Translate] (camel-aws2-translate) | 3.1 | The aws2-translate component is used for managing Amazon Translate
 
 | xref:aws-cw-component.adoc[AWS CloudWatch] (camel-aws-cw) | 2.11 | The aws-cw component is used for sending metrics to an Amazon CloudWatch.
 
@@ -133,6 +135,8 @@ Number of Components: 307 in 245 JAR artifacts (1 deprecated)
 | xref:couchbase-component.adoc[Couchbase] (camel-couchbase) | 2.19 | Represents a Couchbase endpoint that can query Views with a Poll strategy and/or produce various type of operations.
 
 | xref:couchdb-component.adoc[CouchDB] (camel-couchdb) | 2.11 | The couchdb component is used for integrate with CouchDB databases.
+
+| xref:cron-component.adoc[Cron] (camel-cron) | 3.1 | Camel Cron Component
 
 | xref:crypto-component.adoc[Crypto (JCE)] (camel-crypto) | 2.3 | The crypto component is used for signing and verifying exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
 

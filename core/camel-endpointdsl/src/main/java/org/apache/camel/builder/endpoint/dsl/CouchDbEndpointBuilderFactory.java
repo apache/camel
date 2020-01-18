@@ -525,7 +525,8 @@ public interface CouchDbEndpointBuilderFactory {
      */
     public interface CouchDbEndpointBuilder
             extends
-                CouchDbEndpointConsumerBuilder, CouchDbEndpointProducerBuilder {
+                CouchDbEndpointConsumerBuilder,
+                CouchDbEndpointProducerBuilder {
         default AdvancedCouchDbEndpointBuilder advanced() {
             return (AdvancedCouchDbEndpointBuilder) this;
         }
@@ -582,7 +583,8 @@ public interface CouchDbEndpointBuilderFactory {
      */
     public interface AdvancedCouchDbEndpointBuilder
             extends
-                AdvancedCouchDbEndpointConsumerBuilder, AdvancedCouchDbEndpointProducerBuilder {
+                AdvancedCouchDbEndpointConsumerBuilder,
+                AdvancedCouchDbEndpointProducerBuilder {
         default CouchDbEndpointBuilder basic() {
             return (CouchDbEndpointBuilder) this;
         }
@@ -641,6 +643,36 @@ public interface CouchDbEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface CouchDbBuilders {
+        /**
+         * CouchDB (camel-couchdb)
+         * The couchdb component is used for integrate with CouchDB databases.
+         * 
+         * Category: database,nosql
+         * Since: 2.11
+         * Maven coordinates: org.apache.camel:camel-couchdb
+         * 
+         * Syntax: <code>couchdb:protocol:hostname:port/database</code>
+         * 
+         * Path parameter: protocol (required)
+         * The protocol to use for communicating with the database.
+         * The value can be one of: http, https
+         * 
+         * Path parameter: hostname (required)
+         * Hostname of the running couchdb instance
+         * 
+         * Path parameter: port
+         * Port number for the running couchdb instance
+         * Default value: 5984
+         * 
+         * Path parameter: database (required)
+         * Name of the database to use
+         */
+        default CouchDbEndpointBuilder couchdb(String path) {
+            return CouchDbEndpointBuilderFactory.couchdb(path);
+        }
+    }
     /**
      * CouchDB (camel-couchdb)
      * The couchdb component is used for integrate with CouchDB databases.
@@ -665,7 +697,7 @@ public interface CouchDbEndpointBuilderFactory {
      * Path parameter: database (required)
      * Name of the database to use
      */
-    default CouchDbEndpointBuilder couchdb(String path) {
+    static CouchDbEndpointBuilder couchdb(String path) {
         class CouchDbEndpointBuilderImpl extends AbstractEndpointBuilder implements CouchDbEndpointBuilder, AdvancedCouchDbEndpointBuilder {
             public CouchDbEndpointBuilderImpl(String path) {
                 super("couchdb", path);

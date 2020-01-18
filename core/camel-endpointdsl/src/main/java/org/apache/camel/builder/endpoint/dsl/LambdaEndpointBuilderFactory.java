@@ -328,6 +328,26 @@ public interface LambdaEndpointBuilderFactory {
         http,
         https;
     }
+
+    public interface LambdaBuilders {
+        /**
+         * AWS Lambda (camel-aws-lambda)
+         * The aws-lambda is used for managing and invoking functions from
+         * Amazon Lambda.
+         * 
+         * Category: cloud,computing,serverless
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-aws-lambda
+         * 
+         * Syntax: <code>aws-lambda:function</code>
+         * 
+         * Path parameter: function (required)
+         * Name of the Lambda function.
+         */
+        default LambdaEndpointBuilder awsLambda(String path) {
+            return LambdaEndpointBuilderFactory.awsLambda(path);
+        }
+    }
     /**
      * AWS Lambda (camel-aws-lambda)
      * The aws-lambda is used for managing and invoking functions from Amazon
@@ -342,7 +362,7 @@ public interface LambdaEndpointBuilderFactory {
      * Path parameter: function (required)
      * Name of the Lambda function.
      */
-    default LambdaEndpointBuilder awsLambda(String path) {
+    static LambdaEndpointBuilder awsLambda(String path) {
         class LambdaEndpointBuilderImpl extends AbstractEndpointBuilder implements LambdaEndpointBuilder, AdvancedLambdaEndpointBuilder {
             public LambdaEndpointBuilderImpl(String path) {
                 super("aws-lambda", path);

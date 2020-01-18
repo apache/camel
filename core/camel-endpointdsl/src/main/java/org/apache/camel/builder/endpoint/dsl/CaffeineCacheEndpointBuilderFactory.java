@@ -500,6 +500,26 @@ public interface CaffeineCacheEndpointBuilderFactory {
         size_based,
         time_based;
     }
+
+    public interface CaffeineCacheBuilders {
+        /**
+         * Caffeine Cache (camel-caffeine)
+         * The caffeine-cache component is used for integration with Caffeine
+         * Cache.
+         * 
+         * Category: cache,datagrid,clustering
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-caffeine
+         * 
+         * Syntax: <code>caffeine-cache:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * the cache name
+         */
+        default CaffeineCacheEndpointBuilder caffeineCache(String path) {
+            return CaffeineCacheEndpointBuilderFactory.caffeineCache(path);
+        }
+    }
     /**
      * Caffeine Cache (camel-caffeine)
      * The caffeine-cache component is used for integration with Caffeine Cache.
@@ -513,7 +533,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
      * Path parameter: cacheName (required)
      * the cache name
      */
-    default CaffeineCacheEndpointBuilder caffeineCache(String path) {
+    static CaffeineCacheEndpointBuilder caffeineCache(String path) {
         class CaffeineCacheEndpointBuilderImpl extends AbstractEndpointBuilder implements CaffeineCacheEndpointBuilder, AdvancedCaffeineCacheEndpointBuilder {
             public CaffeineCacheEndpointBuilderImpl(String path) {
                 super("caffeine-cache", path);

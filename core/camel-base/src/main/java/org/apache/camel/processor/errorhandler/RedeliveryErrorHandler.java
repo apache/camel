@@ -39,6 +39,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
@@ -349,11 +350,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         Exchange original;
         Exchange exchange;
         AsyncCallback callback;
-        boolean sync = true;
         int redeliveryCounter;
         long redeliveryDelay;
         Predicate retryWhilePredicate;
-        boolean redeliverFromSync;
 
         // default behavior which can be overloaded on a per exception basis
         RedeliveryPolicy currentRedeliveryPolicy;
@@ -464,7 +463,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                             // mark the exchange to stop continue routing when interrupted
                             // as we do not want to continue routing (for example a task has been cancelled)
                             exchange.setProperty(Exchange.ROUTE_STOP, Boolean.TRUE);
-                            camelContext.getReactiveExecutor().callback(callback);
+                            camelContext.getReactiveExecutor().schedule(callback);
                         }
                     }
                 } else {
@@ -477,7 +476,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     // only process if the exchange hasn't failed
                     // and it has not been handled by the error processor
                     if (isDone(exchange)) {
-                        camelContext.getReactiveExecutor().callback(callback);
+                        camelContext.getReactiveExecutor().schedule(callback);
                     } else {
                         // error occurred so loop back around which we do by invoking the processAsyncErrorHandler
                         camelContext.getReactiveExecutor().schedule(this);
@@ -558,7 +557,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 // only process if the exchange hasn't failed
                 // and it has not been handled by the error processor
                 if (isDone(exchange)) {
-                    camelContext.getReactiveExecutor().callback(callback);
+                    camelContext.getReactiveExecutor().schedule(callback);
                     return;
                 } else {
                     // error occurred so loop back around which we do by invoking the processAsyncErrorHandler
@@ -669,8 +668,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 // route specific failure handler?
                 Processor processor = null;
                 UnitOfWork uow = exchange.getUnitOfWork();
-                if (uow != null && uow.getRouteContext() != null) {
-                    processor = uow.getRouteContext().getOnException(exceptionPolicy.getId());
+                RouteContext rc = uow != null ? uow.getRouteContext() : null;
+                if (rc != null) {
+                    processor = rc.getOnException(exceptionPolicy.getId());
                 } else {
                     // note this should really not happen, but we have this code as a fail safe
                     // to be backwards compatible with the old behavior
@@ -827,8 +827,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
                 // and store the route id so we know in which route we failed
                 UnitOfWork uow = exchange.getUnitOfWork();
-                if (uow != null && uow.getRouteContext() != null) {
-                    exchange.setProperty(Exchange.FAILURE_ROUTE_ID, uow.getRouteContext().getRouteId());
+                RouteContext rc = uow != null ? uow.getRouteContext() : null;
+                if (rc != null) {
+                    exchange.setProperty(Exchange.FAILURE_ROUTE_ID, rc.getRouteId());
                 }
 
                 // fire event as we had a failure processor to handle it, which there is a event for
@@ -846,7 +847,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                         EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, deadLetterChannel, deadLetterUri);
                     } finally {
                         // if the fault was handled asynchronously, this should be reflected in the callback as well
-                        camelContext.getReactiveExecutor().callback(callback);
+                        camelContext.getReactiveExecutor().schedule(callback);
                     }
                 });
             } else {
@@ -865,7 +866,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     prepareExchangeAfterFailure(exchange, isDeadLetterChannel, shouldHandle, shouldContinue);
                 } finally {
                     // callback we are done
-                    camelContext.getReactiveExecutor().callback(callback);
+                    camelContext.getReactiveExecutor().schedule(callback);
                 }
             }
 
@@ -958,8 +959,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
             // and store the route id so we know in which route we failed
             UnitOfWork uow = exchange.getUnitOfWork();
-            if (uow != null && uow.getRouteContext() != null) {
-                exchange.setProperty(Exchange.FAILURE_ROUTE_ID, uow.getRouteContext().getRouteId());
+            RouteContext rc = uow != null ? uow.getRouteContext() : null;
+            if (rc != null) {
+                exchange.setProperty(Exchange.FAILURE_ROUTE_ID, rc.getRouteId());
             }
         }
 

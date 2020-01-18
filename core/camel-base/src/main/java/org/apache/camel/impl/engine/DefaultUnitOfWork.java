@@ -18,7 +18,6 @@ package org.apache.camel.impl.engine;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -29,6 +28,7 @@ import java.util.function.Predicate;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -55,16 +55,17 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     //   to its name. Maybe this implementation should be named ExchangeContext and we can
     //   introduce a simpler UnitOfWork concept. This would also allow us to refactor the
     //   SubUnitOfWork into a general parent/child unit of work concept. However this
-    //   requires API changes and thus is best kept for Camel 3.0
+    //   requires API changes and thus is best kept for future Camel work
 
     private String id;
-    private CamelContext context;
+    private final CamelContext context;
+    // reduce the default size of the stack with the number of nested routes deep (8 level down)
+    private final Deque<RouteContext> routeContextStack = new ArrayDeque<>(8);
+    private final transient Logger log;
     private List<Synchronization> synchronizations;
     private Message originalInMessage;
     private Set<Object> transactedBy;
-    private final Deque<RouteContext> routeContextStack = new ArrayDeque<>();
-    private final transient Logger log;
-    
+
     public DefaultUnitOfWork(Exchange exchange) {
         this(exchange, LOG);
     }
@@ -92,13 +93,8 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             }
         }
 
-        // mark the creation time when this Exchange was created
-        if (exchange.getProperty(Exchange.CREATED_TIMESTAMP) == null) {
-            exchange.setProperty(Exchange.CREATED_TIMESTAMP, new Date());
-        }
-
         // inject breadcrumb header if enabled
-        if (exchange.getContext().isUseBreadcrumb()) {
+        if (context.isUseBreadcrumb()) {
             // create or use existing breadcrumb
             String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
             if (breadcrumbId == null) {
@@ -108,29 +104,16 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             }
         }
         
-        // setup whether the exchange is externally redelivered or not (if not initialized before)
-        // store as property so we know that the origin exchange was redelivered
-        if (exchange.getProperty(Exchange.EXTERNAL_REDELIVERED) == null) {
-            Boolean redelivered = exchange.isExternalRedelivered();
-            if (redelivered == null) {
-                // not from a transactional resource so mark it as false by default
-                redelivered = false;
-            }
-            exchange.setProperty(Exchange.EXTERNAL_REDELIVERED, redelivered);
-        }
-
         // fire event
         try {
-            EventHelper.notifyExchangeCreated(exchange.getContext(), exchange);
+            EventHelper.notifyExchangeCreated(context, exchange);
         } catch (Throwable e) {
             // must catch exceptions to ensure the exchange is not failing due to notification event failed
             log.warn("Exception occurred during event notification. This exception will be ignored.", e);
         }
 
         // register to inflight registry
-        if (exchange.getContext() != null) {
-            exchange.getContext().getInflightRepository().add(exchange);
-        }
+        context.getInflightRepository().add(exchange);
     }
 
     UnitOfWork newInstance(Exchange exchange) {
@@ -151,27 +134,18 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     @Override
     public void start() {
-        id = null;
+        // noop
     }
 
     @Override
     public void stop() {
-        // need to clean up when we are stopping to not leak memory
-        if (synchronizations != null) {
-            synchronizations.clear();
-        }
-        if (transactedBy != null) {
-            transactedBy.clear();
-        }
-        routeContextStack.clear();
-        originalInMessage = null;
-        id = null;
+        // noop
     }
 
     @Override
     public synchronized void addSynchronization(Synchronization synchronization) {
         if (synchronizations == null) {
-            synchronizations = new ArrayList<>();
+            synchronizations = new ArrayList<>(8);
         }
         log.trace("Adding synchronization {}", synchronization);
         synchronizations.add(synchronization);
@@ -212,7 +186,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
             if (handover && (filter == null || filter.test(synchronization))) {
                 log.trace("Handover synchronization {} to: {}", synchronization, target);
-                target.addOnCompletion(synchronization);
+                target.adapt(ExtendedExchange.class).addOnCompletion(synchronization);
                 // remove it if its handed over
                 it.remove();
             } else {
@@ -223,7 +197,9 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     @Override
     public void done(Exchange exchange) {
-        log.trace("UnitOfWork done for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
+        if (log.isTraceEnabled()) {
+            log.trace("UnitOfWork done for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
+        }
 
         boolean failed = exchange.isFailed();
 
@@ -287,7 +263,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     @Override
     public boolean isTransactedBy(Object key) {
-        return getTransactedBy().contains(key);
+        return transactedBy != null && getTransactedBy().contains(key);
     }
 
     @Override

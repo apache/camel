@@ -17,7 +17,6 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
@@ -39,6 +38,8 @@ import org.apache.camel.maven.packaging.model.EipOptionModel;
 import org.apache.camel.maven.packaging.model.EndpointOptionModel;
 import org.apache.camel.maven.packaging.model.LanguageModel;
 import org.apache.camel.maven.packaging.model.LanguageOptionModel;
+import org.apache.camel.tooling.util.PackageHelper;
+import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
@@ -48,14 +49,15 @@ import org.apache.maven.project.MavenProject;
 import org.mvel2.templates.TemplateRuntime;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import static org.apache.camel.maven.packaging.JSonSchemaHelper.getSafeValue;
-import static org.apache.camel.maven.packaging.JSonSchemaHelper.parseJsonSchema;
-import static org.apache.camel.maven.packaging.PackageHelper.loadText;
-import static org.apache.camel.maven.packaging.PackageHelper.writeText;
-import static org.apache.camel.maven.packaging.StringHelper.isEmpty;
+import static org.apache.camel.tooling.util.JSonSchemaHelper.getSafeValue;
+import static org.apache.camel.tooling.util.JSonSchemaHelper.parseJsonSchema;
+import static org.apache.camel.tooling.util.PackageHelper.loadText;
+import static org.apache.camel.tooling.util.PackageHelper.writeText;
+import static org.apache.camel.tooling.util.Strings.isEmpty;
 
 /**
- * Generate or updates the component/dataformat/language/eip readme.md and .adoc files in the project root directory.
+ * Generate or updates the component/dataformat/language/eip readme.md and .adoc
+ * files in the project root directory.
  */
 @Mojo(name = "update-readme", threadSafe = true)
 public class UpdateReadmeMojo extends AbstractMojo {
@@ -127,7 +129,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     String title = asComponentTitle(model.getScheme(), model.getTitle());
                     model.setTitle(title);
 
-                    // we only want the first scheme as the alternatives do not have their own readme file
+                    // we only want the first scheme as the alternatives do not
+                    // have their own readme file
                     if (!isEmpty(model.getAlternativeSchemes())) {
                         String first = model.getAlternativeSchemes().split(",")[0];
                         if (!model.getScheme().equals(first)) {
@@ -148,7 +151,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     updated |= updateAvailableFrom(file, model.getFirstVersion());
                     updated |= updateComponentHeader(file, model);
 
-                    // resolvePropertyPlaceholders is an option which only make sense to use if the component has other options
+                    // resolvePropertyPlaceholders is an option which only make
+                    // sense to use if the component has other options
                     boolean hasOptions = model.getComponentOptions().stream().anyMatch(o -> !o.getName().equals("resolvePropertyPlaceholders"));
                     if (!hasOptions) {
                         model.getComponentOptions().clear();
@@ -381,10 +385,9 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
         boolean updated = false;
 
-        try (InputStream fileStream = new FileInputStream(file)) {
+        try {
             List<String> newLines = new ArrayList<>();
-
-            String text = loadText(fileStream);
+            String text = loadText(file);
             String[] lines = text.split("\n");
             for (int i = 0; i < lines.length; i++) {
                 String line = lines[i];
@@ -422,24 +425,26 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
         boolean updated = false;
 
-        try (InputStream fileStream = new FileInputStream(file)) {
+        try {
             List<String> newLines = new ArrayList<>();
 
-            String text = loadText(fileStream);
+            String text = loadText(file);
             String[] lines = text.split("\n");
             // line 0 is the link
             for (int i = 1; i < lines.length; i++) {
                 String line = lines[i];
 
                 if (i == 1) {
-                    // first line is the title to make the text less noisy we use level 2
+                    // first line is the title to make the text less noisy we
+                    // use level 2
                     String newLine = "= " + title;
                     newLines.add(newLine);
                     updated = !line.equals(newLine);
                     continue;
                 }
 
-                // use single line headers with # as level instead of the cumbersome adoc weird style
+                // use single line headers with # as level instead of the
+                // cumbersome adoc weird style
                 if (line.startsWith("^^^") || line.startsWith("~~~") || line.startsWith("+++")) {
                     String level = line.startsWith("+++") ? "===" : "==";
 
@@ -449,7 +454,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
                     newLines.set(idx, level + " " + prev);
 
-                    // okay if 2nd-prev line is a [[title]] we need to remove that too
+                    // okay if 2nd-prev line is a [[title]] we need to remove
+                    // that too
                     // so we have nice clean sub titles
                     idx = newLines.size() - 2;
                     if (idx >= 0) {
@@ -466,7 +472,6 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     newLines.add(line);
                 }
             }
-
 
             if (updated) {
                 // build the new updated text
@@ -490,10 +495,10 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
         final String headerText = generateHeaderTextData(model);
 
-        try (InputStream fileStream = new FileInputStream(file)) {
-            final String loadedText = loadText(fileStream);
+        try {
+            final String loadedText = loadText(file);
 
-            String existing = StringHelper.between(loadedText, markerStart, markerEnd);
+            String existing = Strings.between(loadedText, markerStart, markerEnd);
 
             if (existing != null) {
                 // remove leading line breaks etc
@@ -502,17 +507,18 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     return false;
                 }
 
-                final String before = StringHelper.before(loadedText, markerStart);
-                final String after = StringHelper.after(loadedText, markerEnd);
+                final String before = Strings.before(loadedText, markerStart);
+                final String after = Strings.after(loadedText, markerEnd);
                 final String updatedHeaderText = before + markerStart + "\n" + headerText + "\n" + markerEnd + after;
 
                 writeText(file, updatedHeaderText);
                 return true;
             } else {
-                // so we don't have the marker, so we add it somewhere after the camel version
+                // so we don't have the marker, so we add it somewhere after the
+                // camel version
                 final String sinceVersion = "*Since Camel " + shortenVersion(model.getFirstVersion()) + "*";
-                final String before = StringHelper.before(loadedText, sinceVersion);
-                final String after = StringHelper.after(loadedText, sinceVersion);
+                final String before = Strings.before(loadedText, sinceVersion);
+                final String after = Strings.after(loadedText, sinceVersion);
                 final String updatedHeaderText = before + sinceVersion + "\n\n" + markerStart + "\n" + headerText + "\n" + markerEnd + after;
 
                 writeText(file, updatedHeaderText);
@@ -547,8 +553,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
         boolean updated = false;
 
-        try (InputStream fileStream = new FileInputStream(file)) {
-            String text = loadText(fileStream);
+        try {
+            String text = loadText(file);
 
             String[] lines = text.split("\n");
 
@@ -557,7 +563,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
             // copy over to all new lines
             newLines.addAll(Arrays.asList(lines));
 
-            // check first if it is a standard documentation file, we expect at least five lines
+            // check first if it is a standard documentation file, we expect at
+            // least five lines
             if (lines.length < 5) {
                 return false;
             }
@@ -613,10 +620,10 @@ public class UpdateReadmeMojo extends AbstractMojo {
         }
 
         final String updated = changed.trim();
-        try (InputStream fileStream = new FileInputStream(file)) {
-            String text = loadText(fileStream);
+        try {
+            String text = loadText(file);
 
-            String existing = StringHelper.between(text, "// " + kind + " options: START", "// " + kind + " options: END");
+            String existing = Strings.between(text, "// " + kind + " options: START", "// " + kind + " options: END");
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
@@ -624,8 +631,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     return false;
                 }
 
-                String before = StringHelper.before(text, "// " + kind  + " options: START");
-                String after = StringHelper.after(text, "// " + kind + " options: END");
+                String before = Strings.before(text, "// " + kind + " options: START");
+                String after = Strings.after(text, "// " + kind + " options: END");
                 text = before + "// " + kind + " options: START\n" + updated + "\n// " + kind + " options: END" + after;
                 writeText(file, text);
                 return true;
@@ -647,8 +654,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
     private static String loadJsonFrom(Set<File> jsonFiles, String kind, String name) {
         for (File file : jsonFiles) {
             if (file.getName().equals(name + ".json")) {
-                try (InputStream fileStream = new FileInputStream(file)) {
-                    String json = loadText(fileStream);
+                try {
+                    String json = loadText(file);
                     boolean isRequestedKind = json.contains("\"kind\": \"" + kind + "\"");
                     if (isRequestedKind) {
                         return json;
@@ -663,8 +670,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
     }
 
     private static String loadEipJson(File file) {
-        try (InputStream fileStream = new FileInputStream(file)) {
-            String json = loadText(fileStream);
+        try {
+            String json = loadText(file);
             boolean isEip = json.contains("\"kind\": \"model\"");
             if (isEip) {
                 return json;
@@ -718,11 +725,12 @@ public class UpdateReadmeMojo extends AbstractMojo {
                 String desc = "*Required* " + option.getDescription();
                 option.setDescription(desc);
             }
-            // is the option deprecated then include that as well in the description
+            // is the option deprecated then include that as well in the
+            // description
             if ("true".equals(option.getDeprecated())) {
                 String desc = "*Deprecated* " + option.getDescription();
                 option.setDescription(desc);
-                if (!StringHelper.isEmpty(option.getDeprecationNote())) {
+                if (!Strings.isEmpty(option.getDeprecationNote())) {
                     desc = option.getDescription();
                     if (!desc.endsWith(".")) {
                         desc = desc + ". Deprecation note: " + option.getDeprecationNote();
@@ -765,11 +773,12 @@ public class UpdateReadmeMojo extends AbstractMojo {
                 String desc = "*Required* " + option.getDescription();
                 option.setDescription(desc);
             }
-            // is the option deprecated then include that as well in the description
+            // is the option deprecated then include that as well in the
+            // description
             if ("true".equals(option.getDeprecated())) {
                 String desc = "*Deprecated* " + option.getDescription();
                 option.setDescription(desc);
-                if (!StringHelper.isEmpty(option.getDeprecationNote())) {
+                if (!Strings.isEmpty(option.getDeprecationNote())) {
                     desc = option.getDescription();
                     if (!desc.endsWith(".")) {
                         desc = desc + ". Deprecation note: " + option.getDeprecationNote();
@@ -779,7 +788,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     option.setDescription(desc);
                 }
             }
-            // separate the options in path vs parameter so we can generate two different tables
+            // separate the options in path vs parameter so we can generate two
+            // different tables
             if ("path".equals(option.getKind())) {
                 component.addEndpointPathOption(option);
             } else {
@@ -834,11 +844,12 @@ public class UpdateReadmeMojo extends AbstractMojo {
                 option.setDescription(doc);
             }
             // lets put required in the description
-            // is the option deprecated then include that as well in the description
+            // is the option deprecated then include that as well in the
+            // description
             if ("true".equals(option.getDeprecated())) {
                 String desc = "*Deprecated* " + option.getDescription();
                 option.setDescription(desc);
-                if (!StringHelper.isEmpty(option.getDeprecationNote())) {
+                if (!Strings.isEmpty(option.getDeprecationNote())) {
                     desc = option.getDescription();
                     if (!desc.endsWith(".")) {
                         desc = desc + ". Deprecation note: " + option.getDeprecationNote();
@@ -891,11 +902,12 @@ public class UpdateReadmeMojo extends AbstractMojo {
             option.setDefaultValue(getSafeValue("defaultValue", row));
             option.setDescription(getSafeValue("description", row));
 
-            // is the option deprecated then include that as well in the description
+            // is the option deprecated then include that as well in the
+            // description
             if ("true".equals(option.getDeprecated())) {
                 String desc = "*Deprecated* " + option.getDescription();
                 option.setDescription(desc);
-                if (!StringHelper.isEmpty(option.getDeprecationNote())) {
+                if (!Strings.isEmpty(option.getDeprecationNote())) {
                     desc = option.getDescription();
                     if (!desc.endsWith(".")) {
                         desc = desc + ". Deprecation note: " + option.getDeprecationNote();
@@ -951,11 +963,12 @@ public class UpdateReadmeMojo extends AbstractMojo {
                 String desc = "*Required* " + option.getDescription();
                 option.setDescription(desc);
             }
-            // is the option deprecated then include that as well in the description
+            // is the option deprecated then include that as well in the
+            // description
             if (option.isDeprecated()) {
                 String desc = "*Deprecated* " + option.getDescription();
                 option.setDescription(desc);
-                if (!StringHelper.isEmpty(option.getDeprecationNote())) {
+                if (!Strings.isEmpty(option.getDeprecationNote())) {
                     desc = option.getDescription();
                     if (!desc.endsWith(".")) {
                         desc = desc + ". Deprecation note: " + option.getDeprecationNote();
@@ -967,8 +980,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
             }
 
             // skip option named id/description/expression/outputs
-            if ("id".equals(option.getName()) || "description".equals(option.getName())
-                || "expression".equals(option.getName()) || "outputs".equals(option.getName())) {
+            if ("id".equals(option.getName()) || "description".equals(option.getName()) || "expression".equals(option.getName()) || "outputs".equals(option.getName())) {
                 getLog().debug("Skipping option: " + option.getName());
             } else {
                 eip.addEipOptionModel(option);
@@ -981,7 +993,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
     private static String evaluateTemplate(final String templateName, final Object model) throws MojoExecutionException {
         try (InputStream templateStream = UpdateReadmeMojo.class.getClassLoader().getResourceAsStream(templateName)) {
             String template = loadText(templateStream);
-            return (String) TemplateRuntime.eval(template, model, Collections.singletonMap("util", MvelHelper.INSTANCE));
+            return (String)TemplateRuntime.eval(template, model, Collections.singletonMap("util", MvelHelper.INSTANCE));
         } catch (IOException e) {
             throw new MojoExecutionException("Error processing mvel template `" + templateName + "`", e);
         }
@@ -996,7 +1008,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
             File[] files = f.listFiles();
             if (files != null) {
                 for (File file : files) {
-                    // skip directories as there may be a sub .resolver directory
+                    // skip directories as there may be a sub .resolver
+                    // directory
                     if (file.isDirectory()) {
                         continue;
                     }

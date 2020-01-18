@@ -110,7 +110,12 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
             exchange.setException(e);
         }
     }
-    
+
+    @Override
+    public boolean hasState() {
+        return false;
+    }
+
     private void doTransform(Message message, DataType from, DataType to) throws Exception {
         if (from == null) {
             // If 'from' is null, only Java-Java convertion is performed.

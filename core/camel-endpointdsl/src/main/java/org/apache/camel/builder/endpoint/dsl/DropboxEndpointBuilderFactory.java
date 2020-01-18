@@ -585,7 +585,8 @@ public interface DropboxEndpointBuilderFactory {
      */
     public interface DropboxEndpointBuilder
             extends
-                DropboxEndpointConsumerBuilder, DropboxEndpointProducerBuilder {
+                DropboxEndpointConsumerBuilder,
+                DropboxEndpointProducerBuilder {
         default AdvancedDropboxEndpointBuilder advanced() {
             return (AdvancedDropboxEndpointBuilder) this;
         }
@@ -720,7 +721,8 @@ public interface DropboxEndpointBuilderFactory {
      */
     public interface AdvancedDropboxEndpointBuilder
             extends
-                AdvancedDropboxEndpointConsumerBuilder, AdvancedDropboxEndpointProducerBuilder {
+                AdvancedDropboxEndpointConsumerBuilder,
+                AdvancedDropboxEndpointProducerBuilder {
         default DropboxEndpointBuilder basic() {
             return (DropboxEndpointBuilder) this;
         }
@@ -789,6 +791,28 @@ public interface DropboxEndpointBuilderFactory {
         add,
         force;
     }
+
+    public interface DropboxBuilders {
+        /**
+         * Dropbox (camel-dropbox)
+         * For uploading, downloading and managing files, folders, groups,
+         * collaborations, etc on dropbox DOT com.
+         * 
+         * Category: api,file
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-dropbox
+         * 
+         * Syntax: <code>dropbox:operation</code>
+         * 
+         * Path parameter: operation (required)
+         * The specific action (typically is a CRUD action) to perform on
+         * Dropbox remote folder.
+         * The value can be one of: put, del, search, get, move
+         */
+        default DropboxEndpointBuilder dropbox(String path) {
+            return DropboxEndpointBuilderFactory.dropbox(path);
+        }
+    }
     /**
      * Dropbox (camel-dropbox)
      * For uploading, downloading and managing files, folders, groups,
@@ -805,7 +829,7 @@ public interface DropboxEndpointBuilderFactory {
      * remote folder.
      * The value can be one of: put, del, search, get, move
      */
-    default DropboxEndpointBuilder dropbox(String path) {
+    static DropboxEndpointBuilder dropbox(String path) {
         class DropboxEndpointBuilderImpl extends AbstractEndpointBuilder implements DropboxEndpointBuilder, AdvancedDropboxEndpointBuilder {
             public DropboxEndpointBuilderImpl(String path) {
                 super("dropbox", path);

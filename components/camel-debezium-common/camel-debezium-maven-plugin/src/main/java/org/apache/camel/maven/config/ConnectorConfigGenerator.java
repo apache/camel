@@ -27,12 +27,12 @@ import io.debezium.config.Configuration;
 import io.debezium.config.Field;
 import io.debezium.relational.history.FileDatabaseHistory;
 import org.apache.camel.component.debezium.configuration.ConfigurationValidation;
-import org.apache.camel.maven.packaging.srcgen.Annotation;
-import org.apache.camel.maven.packaging.srcgen.JavaClass;
-import org.apache.camel.maven.packaging.srcgen.Method;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.tooling.util.srcgen.Annotation;
+import org.apache.camel.tooling.util.srcgen.JavaClass;
+import org.apache.camel.tooling.util.srcgen.Method;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.source.SourceConnector;
@@ -173,7 +173,7 @@ public final class ConnectorConfigGenerator {
         // connector fields
         dbzConfigFields.forEach((fieldName, fieldConfig) -> {
             if (!isFieldInternalOrDeprecated(fieldConfig)) {
-                final org.apache.camel.maven.packaging.srcgen.Field field = javaClass.addField()
+                final org.apache.camel.tooling.util.srcgen.Field field = javaClass.addField()
                         .setName(fieldConfig.getFieldName())
                         .setType(fieldConfig.getRawType())
                         .setPrivate();

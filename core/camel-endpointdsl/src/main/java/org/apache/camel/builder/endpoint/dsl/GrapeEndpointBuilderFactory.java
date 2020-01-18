@@ -144,6 +144,27 @@ public interface GrapeEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface GrapeBuilders {
+        /**
+         * Grape (camel-grape)
+         * The grape component allows you to fetch, load and manage additional
+         * jars when CamelContext is running.
+         * 
+         * Category: management,deployment
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-grape
+         * 
+         * Syntax: <code>grape:defaultCoordinates</code>
+         * 
+         * Path parameter: defaultCoordinates (required)
+         * Maven coordinates to use as default to grab if the message body is
+         * empty.
+         */
+        default GrapeEndpointBuilder grape(String path) {
+            return GrapeEndpointBuilderFactory.grape(path);
+        }
+    }
     /**
      * Grape (camel-grape)
      * The grape component allows you to fetch, load and manage additional jars
@@ -158,7 +179,7 @@ public interface GrapeEndpointBuilderFactory {
      * Path parameter: defaultCoordinates (required)
      * Maven coordinates to use as default to grab if the message body is empty.
      */
-    default GrapeEndpointBuilder grape(String path) {
+    static GrapeEndpointBuilder grape(String path) {
         class GrapeEndpointBuilderImpl extends AbstractEndpointBuilder implements GrapeEndpointBuilder, AdvancedGrapeEndpointBuilder {
             public GrapeEndpointBuilderImpl(String path) {
                 super("grape", path);

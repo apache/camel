@@ -280,6 +280,27 @@ public interface WebhookEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface WebhookBuilders {
+        /**
+         * Webhook (camel-webhook)
+         * The webhook component allows other Camel components that can receive
+         * push notifications to expose webhook endpoints and automatically
+         * register them with their own webhook provider.
+         * 
+         * Category: cloud
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-webhook
+         * 
+         * Syntax: <code>webhook:endpointUri</code>
+         * 
+         * Path parameter: endpointUri
+         * The delegate uri. Must belong to a component that supports webhooks.
+         */
+        default WebhookEndpointBuilder webhook(String path) {
+            return WebhookEndpointBuilderFactory.webhook(path);
+        }
+    }
     /**
      * Webhook (camel-webhook)
      * The webhook component allows other Camel components that can receive push
@@ -295,7 +316,7 @@ public interface WebhookEndpointBuilderFactory {
      * Path parameter: endpointUri
      * The delegate uri. Must belong to a component that supports webhooks.
      */
-    default WebhookEndpointBuilder webhook(String path) {
+    static WebhookEndpointBuilder webhook(String path) {
         class WebhookEndpointBuilderImpl extends AbstractEndpointBuilder implements WebhookEndpointBuilder, AdvancedWebhookEndpointBuilder {
             public WebhookEndpointBuilderImpl(String path) {
                 super("webhook", path);

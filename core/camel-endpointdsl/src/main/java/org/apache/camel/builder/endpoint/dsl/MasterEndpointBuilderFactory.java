@@ -201,6 +201,29 @@ public interface MasterEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface MasterBuilders {
+        /**
+         * Master (camel-master)
+         * Represents an endpoint which only becomes active when the
+         * CamelClusterView has the leadership.
+         * 
+         * Category: clustering
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-master
+         * 
+         * Syntax: <code>master:namespace:delegateUri</code>
+         * 
+         * Path parameter: namespace (required)
+         * The name of the cluster namespace to use
+         * 
+         * Path parameter: delegateUri (required)
+         * The endpoint uri to use in master/slave mode
+         */
+        default MasterEndpointBuilder master(String path) {
+            return MasterEndpointBuilderFactory.master(path);
+        }
+    }
     /**
      * Master (camel-master)
      * Represents an endpoint which only becomes active when the
@@ -218,7 +241,7 @@ public interface MasterEndpointBuilderFactory {
      * Path parameter: delegateUri (required)
      * The endpoint uri to use in master/slave mode
      */
-    default MasterEndpointBuilder master(String path) {
+    static MasterEndpointBuilder master(String path) {
         class MasterEndpointBuilderImpl extends AbstractEndpointBuilder implements MasterEndpointBuilder, AdvancedMasterEndpointBuilder {
             public MasterEndpointBuilderImpl(String path) {
                 super("master", path);

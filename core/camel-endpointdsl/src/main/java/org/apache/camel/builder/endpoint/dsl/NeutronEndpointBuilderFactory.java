@@ -253,6 +253,26 @@ public interface NeutronEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface NeutronBuilders {
+        /**
+         * OpenStack Neutron (camel-openstack)
+         * The openstack-neutron component allows messages to be sent to an
+         * OpenStack network services.
+         * 
+         * Category: cloud,paas
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-openstack
+         * 
+         * Syntax: <code>openstack-neutron:host</code>
+         * 
+         * Path parameter: host (required)
+         * OpenStack host url
+         */
+        default NeutronEndpointBuilder openstackNeutron(String path) {
+            return NeutronEndpointBuilderFactory.openstackNeutron(path);
+        }
+    }
     /**
      * OpenStack Neutron (camel-openstack)
      * The openstack-neutron component allows messages to be sent to an
@@ -267,7 +287,7 @@ public interface NeutronEndpointBuilderFactory {
      * Path parameter: host (required)
      * OpenStack host url
      */
-    default NeutronEndpointBuilder openstackNeutron(String path) {
+    static NeutronEndpointBuilder openstackNeutron(String path) {
         class NeutronEndpointBuilderImpl extends AbstractEndpointBuilder implements NeutronEndpointBuilder, AdvancedNeutronEndpointBuilder {
             public NeutronEndpointBuilderImpl(String path) {
                 super("openstack-neutron", path);

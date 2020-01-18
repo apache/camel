@@ -1144,7 +1144,8 @@ public interface BraintreeEndpointBuilderFactory {
      */
     public interface BraintreeEndpointBuilder
             extends
-                BraintreeEndpointConsumerBuilder, BraintreeEndpointProducerBuilder {
+                BraintreeEndpointConsumerBuilder,
+                BraintreeEndpointProducerBuilder {
         default AdvancedBraintreeEndpointBuilder advanced() {
             return (AdvancedBraintreeEndpointBuilder) this;
         }
@@ -1244,7 +1245,8 @@ public interface BraintreeEndpointBuilderFactory {
      */
     public interface AdvancedBraintreeEndpointBuilder
             extends
-                AdvancedBraintreeEndpointConsumerBuilder, AdvancedBraintreeEndpointProducerBuilder {
+                AdvancedBraintreeEndpointConsumerBuilder,
+                AdvancedBraintreeEndpointProducerBuilder {
         default BraintreeEndpointBuilder basic() {
             return (BraintreeEndpointBuilder) this;
         }
@@ -1397,6 +1399,34 @@ public interface BraintreeEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface BraintreeBuilders {
+        /**
+         * Braintree (camel-braintree)
+         * The braintree component is used for integrating with the Braintree
+         * Payment System.
+         * 
+         * Category: api,cloud,payment
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-braintree
+         * 
+         * Syntax: <code>braintree:apiName/methodName</code>
+         * 
+         * Path parameter: apiName (required)
+         * What kind of operation to perform
+         * The value can be one of: ADDON, ADDRESS, CLIENTTOKEN,
+         * CREDITCARDVERIFICATION, CUSTOMER, DISCOUNT, DISPUTE, DOCUMENTUPLOAD,
+         * MERCHANTACCOUNT, PAYMENTMETHOD, PAYMENTMETHODNONCE, PLAN, REPORT,
+         * SETTLEMENTBATCHSUMMARY, SUBSCRIPTION, TRANSACTION,
+         * WEBHOOKNOTIFICATION
+         * 
+         * Path parameter: methodName
+         * What sub operation to use for the selected operation
+         */
+        default BraintreeEndpointBuilder braintree(String path) {
+            return BraintreeEndpointBuilderFactory.braintree(path);
+        }
+    }
     /**
      * Braintree (camel-braintree)
      * The braintree component is used for integrating with the Braintree
@@ -1418,7 +1448,7 @@ public interface BraintreeEndpointBuilderFactory {
      * Path parameter: methodName
      * What sub operation to use for the selected operation
      */
-    default BraintreeEndpointBuilder braintree(String path) {
+    static BraintreeEndpointBuilder braintree(String path) {
         class BraintreeEndpointBuilderImpl extends AbstractEndpointBuilder implements BraintreeEndpointBuilder, AdvancedBraintreeEndpointBuilder {
             public BraintreeEndpointBuilderImpl(String path) {
                 super("braintree", path);

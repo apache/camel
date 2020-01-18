@@ -197,7 +197,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private Boolean trace = Boolean.FALSE;
     private String tracePattern;
     private Boolean debug = Boolean.FALSE;
-    private Boolean messageHistory = Boolean.TRUE;
+    private Boolean messageHistory = Boolean.FALSE;
     private Boolean logMask = Boolean.FALSE;
     private Boolean logExhaustedMessageBody = Boolean.FALSE;
     private Boolean streamCache = Boolean.FALSE;
@@ -3314,7 +3314,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         getClassResolver();
         getNodeIdFactory();
         getProcessorFactory();
-        getMessageHistoryFactory();
         getStreamCachingStrategy();
         getModelJAXBContextFactory();
         getUuidGenerator();
@@ -3871,6 +3870,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     @Override
     public void setMessageHistoryFactory(MessageHistoryFactory messageHistoryFactory) {
         this.messageHistoryFactory = doAddService(messageHistoryFactory);
+        // enable message history if we set a custom factory
+        setMessageHistory(true);
     }
 
     @Override

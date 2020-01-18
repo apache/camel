@@ -220,10 +220,13 @@ you can simply import when needed.
 It is possible to define routes outside
 `<camelContext/>` which you do in a new `<routeContext/>` tag.
 
-NOTE: When you use <routeContext> then they are separated, and
+[NOTE]
+====
+When you use <routeContext> then they are separated, and
 cannot reuse existing <onException>, <intercept>, <dataFormats> and
 similar cross cutting functionality defined in the <camelContext>. In
 other words the <routeContext> is currently isolated.
+====
 
 For example we could have a file named `myCoolRoutes.xml` which contains
 a couple of routes as shown:
@@ -380,3 +383,29 @@ Integration] for further injections.
 To avoid a hung route when testing using Spring Transactions see the
 note about Spring Integration Testing under Transactional Client.
 
+== Cron Component Support
+
+Camel-spring can be used as implementation of the Camel Cron component.
+
+
+Maven users will need to add the following additional dependency to their `pom.xml`:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-cron</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+Users can then use the cron component inside routes of their Spring or Spring-boot application:
+
+[source,xml]
+----
+<route>
+  <from uri="cron:tab?schedule=0/1+*+*+*+*+?"/>
+  <to uri="log:info"/>
+</route>
+----

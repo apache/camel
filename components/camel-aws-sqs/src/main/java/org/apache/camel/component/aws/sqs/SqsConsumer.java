@@ -37,6 +37,7 @@ import com.amazonaws.services.sqs.model.ReceiptHandleIsInvalidException;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Synchronization;
@@ -165,7 +166,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
                 }
                 final ScheduledFuture<?> scheduledFuture = this.scheduledExecutor.scheduleAtFixedRate(new TimeoutExtender(exchange, repeatSeconds), delay, period,
                                                                                                       TimeUnit.SECONDS);
-                exchange.addOnCompletion(new Synchronization() {
+                exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
                     @Override
                     public void onComplete(Exchange exchange) {
                         cancelExtender(exchange);
@@ -185,7 +186,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
             }
 
             // add on completion to handle after work when the exchange is done
-            exchange.addOnCompletion(new Synchronization() {
+            exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
                 public void onComplete(Exchange exchange) {
                     processCommit(exchange);
                 }

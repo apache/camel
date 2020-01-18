@@ -1481,7 +1481,8 @@ public interface CxfRsEndpointBuilderFactory {
      */
     public interface CxfRsEndpointBuilder
             extends
-                CxfRsEndpointConsumerBuilder, CxfRsEndpointProducerBuilder {
+                CxfRsEndpointConsumerBuilder,
+                CxfRsEndpointProducerBuilder {
         default AdvancedCxfRsEndpointBuilder advanced() {
             return (AdvancedCxfRsEndpointBuilder) this;
         }
@@ -1691,7 +1692,8 @@ public interface CxfRsEndpointBuilderFactory {
      */
     public interface AdvancedCxfRsEndpointBuilder
             extends
-                AdvancedCxfRsEndpointConsumerBuilder, AdvancedCxfRsEndpointProducerBuilder {
+                AdvancedCxfRsEndpointConsumerBuilder,
+                AdvancedCxfRsEndpointProducerBuilder {
         default CxfRsEndpointBuilder basic() {
             return (CxfRsEndpointBuilder) this;
         }
@@ -1989,6 +1991,30 @@ public interface CxfRsEndpointBuilderFactory {
         Default,
         Custom;
     }
+
+    public interface CxfRsBuilders {
+        /**
+         * CXF-RS (camel-cxf)
+         * The cxfrs component is used for JAX-RS REST services using Apache
+         * CXF.
+         * 
+         * Category: rest
+         * Since: 2.0
+         * Maven coordinates: org.apache.camel:camel-cxf
+         * 
+         * Syntax: <code>cxfrs:beanId:address</code>
+         * 
+         * Path parameter: beanId
+         * To lookup an existing configured CxfRsEndpoint. Must used bean: as
+         * prefix.
+         * 
+         * Path parameter: address
+         * The service publish address.
+         */
+        default CxfRsEndpointBuilder cxfrs(String path) {
+            return CxfRsEndpointBuilderFactory.cxfrs(path);
+        }
+    }
     /**
      * CXF-RS (camel-cxf)
      * The cxfrs component is used for JAX-RS REST services using Apache CXF.
@@ -2006,7 +2032,7 @@ public interface CxfRsEndpointBuilderFactory {
      * Path parameter: address
      * The service publish address.
      */
-    default CxfRsEndpointBuilder cxfrs(String path) {
+    static CxfRsEndpointBuilder cxfrs(String path) {
         class CxfRsEndpointBuilderImpl extends AbstractEndpointBuilder implements CxfRsEndpointBuilder, AdvancedCxfRsEndpointBuilder {
             public CxfRsEndpointBuilderImpl(String path) {
                 super("cxfrs", path);

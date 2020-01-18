@@ -1029,7 +1029,8 @@ public interface GoogleCalendarEndpointBuilderFactory {
      */
     public interface GoogleCalendarEndpointBuilder
             extends
-                GoogleCalendarEndpointConsumerBuilder, GoogleCalendarEndpointProducerBuilder {
+                GoogleCalendarEndpointConsumerBuilder,
+                GoogleCalendarEndpointProducerBuilder {
         default AdvancedGoogleCalendarEndpointBuilder advanced() {
             return (AdvancedGoogleCalendarEndpointBuilder) this;
         }
@@ -1161,7 +1162,8 @@ public interface GoogleCalendarEndpointBuilderFactory {
      */
     public interface AdvancedGoogleCalendarEndpointBuilder
             extends
-                AdvancedGoogleCalendarEndpointConsumerBuilder, AdvancedGoogleCalendarEndpointProducerBuilder {
+                AdvancedGoogleCalendarEndpointConsumerBuilder,
+                AdvancedGoogleCalendarEndpointProducerBuilder {
         default GoogleCalendarEndpointBuilder basic() {
             return (GoogleCalendarEndpointBuilder) this;
         }
@@ -1222,6 +1224,32 @@ public interface GoogleCalendarEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface GoogleCalendarBuilders {
+        /**
+         * Google Calendar (camel-google-calendar)
+         * The google-calendar component provides access to Google Calendar.
+         * 
+         * Category: api,cloud
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-google-calendar
+         * 
+         * Syntax: <code>google-calendar:apiName/methodName</code>
+         * 
+         * Path parameter: apiName (required)
+         * What kind of operation to perform
+         * The value can be one of: ACL, LIST, CALENDARS, CHANNELS, COLORS,
+         * FREEBUSY, EVENTS, SETTINGS
+         * 
+         * Path parameter: methodName (required)
+         * What sub operation to use for the selected operation
+         * The value can be one of: calendarImport, clear, delete, get, insert,
+         * instances, list, move, patch, query, quickAdd, stop, update, watch
+         */
+        default GoogleCalendarEndpointBuilder googleCalendar(String path) {
+            return GoogleCalendarEndpointBuilderFactory.googleCalendar(path);
+        }
+    }
     /**
      * Google Calendar (camel-google-calendar)
      * The google-calendar component provides access to Google Calendar.
@@ -1242,7 +1270,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
      * The value can be one of: calendarImport, clear, delete, get, insert,
      * instances, list, move, patch, query, quickAdd, stop, update, watch
      */
-    default GoogleCalendarEndpointBuilder googleCalendar(String path) {
+    static GoogleCalendarEndpointBuilder googleCalendar(String path) {
         class GoogleCalendarEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleCalendarEndpointBuilder, AdvancedGoogleCalendarEndpointBuilder {
             public GoogleCalendarEndpointBuilderImpl(String path) {
                 super("google-calendar", path);

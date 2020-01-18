@@ -428,7 +428,8 @@ public interface AsteriskEndpointBuilderFactory {
      */
     public interface AsteriskEndpointBuilder
             extends
-                AsteriskEndpointConsumerBuilder, AsteriskEndpointProducerBuilder {
+                AsteriskEndpointConsumerBuilder,
+                AsteriskEndpointProducerBuilder {
         default AdvancedAsteriskEndpointBuilder advanced() {
             return (AdvancedAsteriskEndpointBuilder) this;
         }
@@ -475,7 +476,8 @@ public interface AsteriskEndpointBuilderFactory {
      */
     public interface AdvancedAsteriskEndpointBuilder
             extends
-                AdvancedAsteriskEndpointConsumerBuilder, AdvancedAsteriskEndpointProducerBuilder {
+                AdvancedAsteriskEndpointConsumerBuilder,
+                AdvancedAsteriskEndpointProducerBuilder {
         default AsteriskEndpointBuilder basic() {
             return (AsteriskEndpointBuilder) this;
         }
@@ -544,6 +546,25 @@ public interface AsteriskEndpointBuilderFactory {
         SIP_PEERS,
         EXTENSION_STATE;
     }
+
+    public interface AsteriskBuilders {
+        /**
+         * Asterisk (camel-asterisk)
+         * The asterisk component is used to interact with Asterisk PBX Server.
+         * 
+         * Category: voip
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-asterisk
+         * 
+         * Syntax: <code>asterisk:name</code>
+         * 
+         * Path parameter: name (required)
+         * Logical name
+         */
+        default AsteriskEndpointBuilder asterisk(String path) {
+            return AsteriskEndpointBuilderFactory.asterisk(path);
+        }
+    }
     /**
      * Asterisk (camel-asterisk)
      * The asterisk component is used to interact with Asterisk PBX Server.
@@ -557,7 +578,7 @@ public interface AsteriskEndpointBuilderFactory {
      * Path parameter: name (required)
      * Logical name
      */
-    default AsteriskEndpointBuilder asterisk(String path) {
+    static AsteriskEndpointBuilder asterisk(String path) {
         class AsteriskEndpointBuilderImpl extends AbstractEndpointBuilder implements AsteriskEndpointBuilder, AdvancedAsteriskEndpointBuilder {
             public AsteriskEndpointBuilderImpl(String path) {
                 super("asterisk", path);

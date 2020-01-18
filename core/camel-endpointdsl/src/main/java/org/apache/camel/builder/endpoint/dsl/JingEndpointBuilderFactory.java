@@ -171,6 +171,28 @@ public interface JingEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface JingBuilders {
+        /**
+         * Jing (camel-jing)
+         * Validates the payload of a message using RelaxNG Syntax using Jing
+         * library.
+         * 
+         * Category: validation
+         * Since: 1.1
+         * Maven coordinates: org.apache.camel:camel-jing
+         * 
+         * Syntax: <code>jing:resourceUri</code>
+         * 
+         * Path parameter: resourceUri (required)
+         * URL to a local resource on the classpath or a full URL to a remote
+         * resource or resource on the file system which contains the schema to
+         * validate against.
+         */
+        default JingEndpointBuilder jing(String path) {
+            return JingEndpointBuilderFactory.jing(path);
+        }
+    }
     /**
      * Jing (camel-jing)
      * Validates the payload of a message using RelaxNG Syntax using Jing
@@ -187,7 +209,7 @@ public interface JingEndpointBuilderFactory {
      * resource or resource on the file system which contains the schema to
      * validate against.
      */
-    default JingEndpointBuilder jing(String path) {
+    static JingEndpointBuilder jing(String path) {
         class JingEndpointBuilderImpl extends AbstractEndpointBuilder implements JingEndpointBuilder, AdvancedJingEndpointBuilder {
             public JingEndpointBuilderImpl(String path) {
                 super("jing", path);

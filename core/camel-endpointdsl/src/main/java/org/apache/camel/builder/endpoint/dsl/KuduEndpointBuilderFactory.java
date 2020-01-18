@@ -179,6 +179,33 @@ public interface KuduEndpointBuilderFactory {
         CREATE_TABLE,
         SCAN;
     }
+
+    public interface KuduBuilders {
+        /**
+         * Kudu (camel-kudu)
+         * Represents a Kudu endpoint. A kudu endpoint allows you to interact
+         * with Apache Kudu, a free and open source column-oriented data store
+         * of the Apache Hadoop ecosystem.
+         * 
+         * Category: cloud,database,iot
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-kudu
+         * 
+         * Syntax: <code>kudu:host:port/tableName</code>
+         * 
+         * Path parameter: host
+         * Kudu master to connect to
+         * 
+         * Path parameter: port
+         * Port where kudu service is listening
+         * 
+         * Path parameter: tableName
+         * The name of the table where the rows are stored
+         */
+        default KuduEndpointBuilder kudu(String path) {
+            return KuduEndpointBuilderFactory.kudu(path);
+        }
+    }
     /**
      * Kudu (camel-kudu)
      * Represents a Kudu endpoint. A kudu endpoint allows you to interact with
@@ -200,7 +227,7 @@ public interface KuduEndpointBuilderFactory {
      * Path parameter: tableName
      * The name of the table where the rows are stored
      */
-    default KuduEndpointBuilder kudu(String path) {
+    static KuduEndpointBuilder kudu(String path) {
         class KuduEndpointBuilderImpl extends AbstractEndpointBuilder implements KuduEndpointBuilder, AdvancedKuduEndpointBuilder {
             public KuduEndpointBuilderImpl(String path) {
                 super("kudu", path);

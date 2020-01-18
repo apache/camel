@@ -26,6 +26,7 @@ import io.netty.handler.codec.http.HttpUtil;
 import io.netty.util.ReferenceCountUtil;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.NettyProducer;
@@ -118,7 +119,7 @@ public class NettyHttpProducer extends NettyProducer {
                             response.content().retain();
 
                             // need to release the response when we are done
-                            exchange.addOnCompletion(new SynchronizationAdapter() {
+                            exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                                 @Override
                                 public void onDone(Exchange exchange) {
                                     if (response.refCnt() > 0) {

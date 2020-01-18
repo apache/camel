@@ -35,8 +35,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
-import static org.apache.camel.maven.packaging.PackageHelper.findCamelDirectory;
-import static org.apache.camel.maven.packaging.StringHelper.between;
+import static org.apache.camel.tooling.util.Strings.between;
+import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 
 /**
  * Creates the Maven catalog for the Camel archetypes
@@ -65,9 +65,10 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
     /**
      * Execute goal.
      *
-     * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the
-     *                 threads it generated failed.
-     * @throws org.apache.maven.plugin.MojoFailureException something bad happened...
+     * @throws org.apache.maven.plugin.MojoExecutionException execution of the
+     *             main class or one of the threads it generated failed.
+     * @throws org.apache.maven.plugin.MojoFailureException something bad
+     *             happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -97,7 +98,6 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
             }
         });
 
-
         List<ArchetypeModel> models = new ArrayList<>();
 
         for (File dir : dirs) {
@@ -109,7 +109,8 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
             boolean parent = false;
             ArchetypeModel model = new ArchetypeModel();
 
-            // just use a simple line by line text parser (no need for DOM) just to grab 4 lines of data
+            // just use a simple line by line text parser (no need for DOM) just
+            // to grab 4 lines of data
             for (Object o : FileUtils.readLines(pom, StandardCharsets.UTF_8)) {
 
                 String line = o.toString();
@@ -192,7 +193,7 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
 
                     List<String> includes = new ArrayList<>();
                     includes.add("archetype-catalog.xml");
-                    projectHelper.addResource(project, outDir.getPath(), includes, new ArrayList<String>());
+                    projectHelper.addResource(project, outDir.getPath(), includes, new ArrayList<>());
                     projectHelper.attachArtifact(project, "xml", "archetype-catalog", out);
                 }
             } catch (Exception e) {

@@ -3019,7 +3019,8 @@ public interface NettyEndpointBuilderFactory {
      */
     public interface NettyEndpointBuilder
             extends
-                NettyEndpointConsumerBuilder, NettyEndpointProducerBuilder {
+                NettyEndpointConsumerBuilder,
+                NettyEndpointProducerBuilder {
         default AdvancedNettyEndpointBuilder advanced() {
             return (AdvancedNettyEndpointBuilder) this;
         }
@@ -3634,7 +3635,8 @@ public interface NettyEndpointBuilderFactory {
      */
     public interface AdvancedNettyEndpointBuilder
             extends
-                AdvancedNettyEndpointConsumerBuilder, AdvancedNettyEndpointProducerBuilder {
+                AdvancedNettyEndpointConsumerBuilder,
+                AdvancedNettyEndpointProducerBuilder {
         default NettyEndpointBuilder basic() {
             return (NettyEndpointBuilder) this;
         }
@@ -4023,6 +4025,33 @@ public interface NettyEndpointBuilderFactory {
         LINE,
         NULL;
     }
+
+    public interface NettyBuilders {
+        /**
+         * Netty (camel-netty)
+         * Socket level networking using TCP or UDP with the Netty 4.x library.
+         * 
+         * Category: networking,tcp,udp
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-netty
+         * 
+         * Syntax: <code>netty:protocol:host:port</code>
+         * 
+         * Path parameter: protocol (required)
+         * The protocol to use which can be tcp or udp.
+         * The value can be one of: tcp, udp
+         * 
+         * Path parameter: host (required)
+         * The hostname. For the consumer the hostname is localhost or 0.0.0.0.
+         * For the producer the hostname is the remote host to connect to
+         * 
+         * Path parameter: port (required)
+         * The host port number
+         */
+        default NettyEndpointBuilder netty(String path) {
+            return NettyEndpointBuilderFactory.netty(path);
+        }
+    }
     /**
      * Netty (camel-netty)
      * Socket level networking using TCP or UDP with the Netty 4.x library.
@@ -4044,7 +4073,7 @@ public interface NettyEndpointBuilderFactory {
      * Path parameter: port (required)
      * The host port number
      */
-    default NettyEndpointBuilder netty(String path) {
+    static NettyEndpointBuilder netty(String path) {
         class NettyEndpointBuilderImpl extends AbstractEndpointBuilder implements NettyEndpointBuilder, AdvancedNettyEndpointBuilder {
             public NettyEndpointBuilderImpl(String path) {
                 super("netty", path);

@@ -18,12 +18,13 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -35,6 +36,9 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.tooling.util.FileUtil;
+import org.apache.camel.tooling.util.JSonSchemaHelper;
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -47,22 +51,16 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.OptionsBuilder;
 
-import static org.apache.camel.maven.packaging.PackageHelper.loadText;
+import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 /**
- * Prepares the camel catalog to include component, data format, and eip descriptors,
- * and generates a report.
+ * Prepares the camel catalog to include component, data format, and eip
+ * descriptors, and generates a report.
  */
 @Mojo(name = "prepare-catalog", threadSafe = true)
 public class PrepareCatalogMojo extends AbstractMojo {
 
-    public static final int BUFFER_SIZE = 128 * 1024;
-
-    private static final String[] EXCLUDE_DOC_FILES = {
-        "camel-core-osgi", "camel-core-xml",
-        "camel-http-common", "camel-http-base", "camel-jetty-common",
-        "camel-debezium-common"
-    };
+    private static final String[] EXCLUDE_DOC_FILES = {"camel-core-osgi", "camel-core-xml", "camel-http-common", "camel-http-base", "camel-jetty-common", "camel-debezium-common"};
 
     private static final Pattern LABEL_PATTERN = Pattern.compile("\\\"label\\\":\\s\\\"([\\w,]+)\\\"");
 
@@ -75,7 +73,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected MavenProject project;
 
     /**
-     * Whether to validate if the components, data formats, and languages are properly documented and have all the needed details.
+     * Whether to validate if the components, data formats, and languages are
+     * properly documented and have all the needed details.
      */
     @Parameter(defaultValue = "true")
     protected Boolean validate;
@@ -100,7 +99,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     /**
      * The output directory for others catalog
-     *
      */
     @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/others")
     protected File othersOutDir;
@@ -192,9 +190,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
     /**
      * Execute goal.
      *
-     * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the
-     *                                                        threads it generated failed.
-     * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
+     * @throws org.apache.maven.plugin.MojoExecutionException execution of the
+     *             main class or one of the threads it generated failed.
+     * @throws org.apache.maven.plugin.MojoFailureException something bad
+     *             happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -262,7 +261,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
             try {
                 // check if we have a label as we want the eip to include labels
-                String text = loadText(new FileInputStream(file));
+                String text = loadText(file);
                 // just do a basic label check
                 if (text.contains("\"label\": \"\"")) {
                     missingLabels.add(file);
@@ -433,9 +432,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
             }
 
-            // check if we have a component label as we want the components to include labels
+            // check if we have a component label as we want the components to
+            // include labels
             try {
-                String text = loadText(new FileInputStream(file));
+                String text = loadText(file);
                 String name = asComponentName(file);
                 Matcher matcher = LABEL_PATTERN.matcher(text);
                 // grab the label, and remember it in the used labels
@@ -443,25 +443,20 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     String label = matcher.group(1);
                     String[] labels = label.split(",");
                     for (String s : labels) {
-                        Set<String> components = usedComponentLabels.get(s);
-                        if (components == null) {
-                            components = new TreeSet<>();
-                            usedComponentLabels.put(s, components);
-                        }
+                        Set<String> components = usedComponentLabels.computeIfAbsent(s, k -> new TreeSet<>());
                         components.add(name);
                     }
                 }
 
-                // check all the component options and grab the label(s) they use
+                // check all the component options and grab the label(s) they
+                // use
                 List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("componentProperties", text, true);
                 for (Map<String, String> row : rows) {
                     String label = row.get("label");
 
                     if (label != null && !label.isEmpty()) {
                         String[] parts = label.split(",");
-                        for (String part : parts) {
-                            usedOptionLabels.add(part);
-                        }
+                        Collections.addAll(usedOptionLabels, parts);
                     }
                 }
 
@@ -472,9 +467,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     String label = row.get("label");
                     if (label != null && !label.isEmpty()) {
                         String[] parts = label.split(",");
-                        for (String part : parts) {
-                            usedOptionLabels.add(part);
-                        }
+                        usedOptionLabels.addAll(Arrays.asList(parts));
                     } else {
                         unused++;
                     }
@@ -490,11 +483,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     String alternativeScheme = row.get("alternativeSchemes");
                     if (alternativeScheme != null && !alternativeScheme.isEmpty()) {
                         String[] parts = alternativeScheme.split(",");
-                        for (int i = 1; i < parts.length; i++) {
-                            // skip first as that is the regular scheme
-                            String part = parts[i];
-                            alternativeSchemes.add(part);
-                        }
+                        // skip first as that is the regular scheme
+                        alternativeSchemes.addAll(Arrays.asList(parts).subList(1, parts.length));
                     }
                 }
 
@@ -514,49 +504,14 @@ public class PrepareCatalogMojo extends AbstractMojo {
             }
         }
 
-        Set<String> componentNames = new LinkedHashSet<>();
-
-        File all = new File(componentsOutDir, "../components.properties");
-        try {
-            FileOutputStream fos = new FileOutputStream(all, false);
-
-            String[] names = componentsOutDir.list();
-            List<String> components = new ArrayList<>();
-            // sort the names
-            for (String name : names) {
-                if (name.endsWith(".json")) {
-                    // strip out .json from the name
-                    String componentName = name.substring(0, name.length() - 5);
-                    components.add(componentName);
-                }
-            }
-
-            Collections.sort(components);
-            for (String name : components) {
-                fos.write(name.getBytes());
-                fos.write("\n".getBytes());
-
-                // remember component name
-                componentNames.add(name);
-            }
-
-            fos.close();
-
-        } catch (IOException e) {
-            throw new MojoFailureException("Error writing to file " + all);
-        }
+        Set<String> componentNames = generateJsonList(componentsOutDir.toPath(), "../components.properties");
 
         printComponentsReport(jsonFiles, duplicateJsonFiles, missingComponents, usedComponentLabels, usedOptionLabels, unlabeledOptions, missingFirstVersions);
 
-        // filter out duplicate component names that are alternative scheme names
-        Set<String> answer = new LinkedHashSet<>();
-        for (String componentName : componentNames) {
-            if (!alternativeSchemes.contains(componentName)) {
-                answer.add(componentName);
-            }
-        }
-
-        return answer;
+        // filter out duplicate component names that are alternative scheme
+        // names
+        componentNames.removeAll(alternativeSchemes);
+        return componentNames;
     }
     // CHECKSTYLE:ON
 
@@ -623,9 +578,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
             }
 
-            // check if we have a label as we want the data format to include labels
+            // check if we have a label as we want the data format to include
+            // labels
             try {
-                String text = loadText(new FileInputStream(file));
+                String text = loadText(file);
                 String name = asComponentName(file);
                 Matcher matcher = LABEL_PATTERN.matcher(text);
                 // grab the label, and remember it in the used labels
@@ -633,11 +589,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     String label = matcher.group(1);
                     String[] labels = label.split(",");
                     for (String s : labels) {
-                        Set<String> dataFormats = usedLabels.get(s);
-                        if (dataFormats == null) {
-                            dataFormats = new TreeSet<>();
-                            usedLabels.put(s, dataFormats);
-                        }
+                        Set<String> dataFormats = usedLabels.computeIfAbsent(s, k -> new TreeSet<>());
                         dataFormats.add(name);
                     }
                 }
@@ -659,37 +611,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             }
         }
 
-        Set<String> answer = new LinkedHashSet<>();
-
-        File all = new File(dataFormatsOutDir, "../dataformats.properties");
-        try {
-            FileOutputStream fos = new FileOutputStream(all, false);
-
-            String[] names = dataFormatsOutDir.list();
-            List<String> dataFormats = new ArrayList<>();
-            // sort the names
-            for (String name : names) {
-                if (name.endsWith(".json")) {
-                    // strip out .json from the name
-                    String dataFormatName = name.substring(0, name.length() - 5);
-                    dataFormats.add(dataFormatName);
-                }
-            }
-
-            Collections.sort(dataFormats);
-            for (String name : dataFormats) {
-                fos.write(name.getBytes());
-                fos.write("\n".getBytes());
-
-                // remember dataformat name
-                answer.add(name);
-            }
-
-            fos.close();
-
-        } catch (IOException e) {
-            throw new MojoFailureException("Error writing to file " + all);
-        }
+        Set<String> answer = generateJsonList(dataFormatsOutDir.toPath(), "../dataformats.properties");
 
         printDataFormatsReport(jsonFiles, duplicateJsonFiles, usedLabels, missingFirstVersions);
 
@@ -758,9 +680,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
             }
 
-            // check if we have a label as we want the data format to include labels
+            // check if we have a label as we want the data format to include
+            // labels
             try {
-                String text = loadText(new FileInputStream(file));
+                String text = loadText(file);
                 String name = asComponentName(file);
                 Matcher matcher = LABEL_PATTERN.matcher(text);
                 // grab the label, and remember it in the used labels
@@ -768,11 +691,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     String label = matcher.group(1);
                     String[] labels = label.split(",");
                     for (String s : labels) {
-                        Set<String> languages = usedLabels.get(s);
-                        if (languages == null) {
-                            languages = new TreeSet<>();
-                            usedLabels.put(s, languages);
-                        }
+                        Set<String> languages = usedLabels.computeIfAbsent(s, k -> new TreeSet<>());
                         languages.add(name);
                     }
                 }
@@ -794,37 +713,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             }
         }
 
-        Set<String> answer = new LinkedHashSet<>();
-
-        File all = new File(languagesOutDir, "../languages.properties");
-        try {
-            FileOutputStream fos = new FileOutputStream(all, false);
-
-            String[] names = languagesOutDir.list();
-            List<String> languages = new ArrayList<>();
-            // sort the names
-            for (String name : names) {
-                if (name.endsWith(".json")) {
-                    // strip out .json from the name
-                    String languageName = name.substring(0, name.length() - 5);
-                    languages.add(languageName);
-                }
-            }
-
-            Collections.sort(languages);
-            for (String name : languages) {
-                fos.write(name.getBytes());
-                fos.write("\n".getBytes());
-
-                // remember language name
-                answer.add(name);
-            }
-
-            fos.close();
-
-        } catch (IOException e) {
-            throw new MojoFailureException("Error writing to file " + all);
-        }
+        Set<String> answer = generateJsonList(languagesOutDir.toPath(), "../languages.properties");
 
         printLanguagesReport(jsonFiles, duplicateJsonFiles, usedLabels, missingFirstVersions);
 
@@ -848,18 +737,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 for (File dir : others) {
 
                     // skip these special cases
-                    boolean special = "camel-core-osgi".equals(dir.getName())
-                        || "camel-core-xml".equals(dir.getName())
-                        || "camel-box".equals(dir.getName())
-                        || "camel-http-base".equals(dir.getName())
-                        || "camel-http-common".equals(dir.getName())
-                        || "camel-jetty-common".equals(dir.getName());
-                    boolean special2 = "camel-as2".equals(dir.getName())
-                        || "camel-olingo2".equals(dir.getName())
-                        || "camel-olingo4".equals(dir.getName())
-                        || "camel-servicenow".equals(dir.getName())
-                        || "camel-salesforce".equals(dir.getName())
-                        || "camel-fhir".equals(dir.getName());
+                    boolean special = "camel-core-osgi".equals(dir.getName()) || "camel-core-xml".equals(dir.getName()) || "camel-box".equals(dir.getName())
+                                      || "camel-http-base".equals(dir.getName()) || "camel-http-common".equals(dir.getName()) || "camel-jetty-common".equals(dir.getName());
+                    boolean special2 = "camel-as2".equals(dir.getName()) || "camel-olingo2".equals(dir.getName()) || "camel-olingo4".equals(dir.getName())
+                                       || "camel-servicenow".equals(dir.getName()) || "camel-salesforce".equals(dir.getName()) || "camel-fhir".equals(dir.getName());
                     boolean special3 = "camel-debezium-common".equals(dir.getName());
                     if (special || special2 || special3) {
                         continue;
@@ -910,7 +791,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
             // check if we have a label as we want the other to include labels
             try {
-                String text = loadText(new FileInputStream(file));
+                String text = loadText(file);
                 String name = asComponentName(file);
                 Matcher matcher = LABEL_PATTERN.matcher(text);
                 // grab the label, and remember it in the used labels
@@ -918,11 +799,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     String label = matcher.group(1);
                     String[] labels = label.split(",");
                     for (String s : labels) {
-                        Set<String> others = usedLabels.get(s);
-                        if (others == null) {
-                            others = new TreeSet<>();
-                            usedLabels.put(s, others);
-                        }
+                        Set<String> others = usedLabels.computeIfAbsent(s, k -> new TreeSet<>());
                         others.add(name);
                     }
                 }
@@ -944,37 +821,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             }
         }
 
-        Set<String> answer = new LinkedHashSet<>();
-
-        File all = new File(othersOutDir, "../others.properties");
-        try {
-            FileOutputStream fos = new FileOutputStream(all, false);
-
-            String[] names = othersOutDir.list();
-            List<String> others = new ArrayList<>();
-            // sort the names
-            for (String name : names) {
-                if (name.endsWith(".json")) {
-                    // strip out .json from the name
-                    String otherName = name.substring(0, name.length() - 5);
-                    others.add(otherName);
-                }
-            }
-
-            Collections.sort(others);
-            for (String name : others) {
-                fos.write(name.getBytes());
-                fos.write("\n".getBytes());
-
-                // remember other name
-                answer.add(name);
-            }
-
-            fos.close();
-
-        } catch (IOException e) {
-            throw new MojoFailureException("Error writing to file " + all);
-        }
+        Set<String> answer = generateJsonList(othersOutDir.toPath(), "../others.properties");
 
         printOthersReport(jsonFiles, duplicateJsonFiles, usedLabels, missingFirstVersions);
 
@@ -1041,7 +888,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
     }
 
-    protected void executeDocuments(Set<String> components, Set<String> dataformats, Set<String> languages, Set<String> others) throws MojoExecutionException, MojoFailureException {
+    protected void executeDocuments(Set<String> components, Set<String> dataformats, Set<String> languages, Set<String> others)
+        throws MojoExecutionException, MojoFailureException {
         getLog().info("Copying all Camel documents (ascii docs)");
 
         // lets use sorted set/maps
@@ -1111,7 +959,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         // we only want to warn for duplicates if its a clean build
         boolean warnDups = documentsOutDir.list() == null || documentsOutDir.list().length == 0;
 
-        // use ascii doctor to convert the adoc files to html so we have documentation in this format as well
+        // use ascii doctor to convert the adoc files to html so we have
+        // documentation in this format as well
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
 
         int converted = 0;
@@ -1146,7 +995,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 converted++;
 
                 try {
-                    // now fix the html file because we don't want to include certain lines
+                    // now fix the html file because we don't want to include
+                    // certain lines
                     List<String> lines = FileUtils.readLines(toHtml, Charset.defaultCharset());
                     List<String> output = new ArrayList<>();
                     for (String line : lines) {
@@ -1202,7 +1052,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         printDocumentsReport(adocFiles, duplicateAdocFiles, missingAdocFiles);
 
-        // find out if we have documents for each component / dataformat / languages / others
+        // find out if we have documents for each component / dataformat /
+        // languages / others
         printMissingDocumentsReport(docs, components, dataformats, languages, others);
     }
 
@@ -1214,11 +1065,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
         List<String> missing = new ArrayList<>();
         for (String component : components) {
             // special for mail
-            if (component.equals("imap") || component.equals("imaps") || component.equals("pop3") || component.equals("pop3s") || component.equals("smtp") || component.equals("smtps")) {
+            if (component.equals("imap") || component.equals("imaps") || component.equals("pop3") || component.equals("pop3s") || component.equals("smtp")
+                || component.equals("smtps")) {
                 component = "mail";
             } else if (component.equals("ftp") || component.equals("sftp") || component.equals("ftps")) {
                 component = "ftp";
-            } 
+            }
             String name = component + "-component";
             if (!docs.contains(name) && (!component.equalsIgnoreCase("salesforce") && !component.equalsIgnoreCase("servicenow"))) {
                 missing.add(name);
@@ -1331,8 +1183,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("================================================================================");
     }
 
-    private void printComponentsReport(Set<File> json, Set<File> duplicate, Set<File> missing, Map<String,
-            Set<String>> usedComponentLabels, Set<String> usedOptionsLabels, Set<String> unusedLabels, Set<File> missingFirstVersions) {
+    private void printComponentsReport(Set<File> json, Set<File> duplicate, Set<File> missing, Map<String, Set<String>> usedComponentLabels, Set<String> usedOptionsLabels,
+                                       Set<String> unusedLabels, Set<File> missingFirstVersions) {
         getLog().info("================================================================================");
         getLog().info("");
         getLog().info("Camel component catalog report");
@@ -1541,7 +1393,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         File[] files = dir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
-                // skip files in root dirs as Camel does not store information there but others may do
+                // skip files in root dirs as Camel does not store information
+                // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
                 boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(".json");
                 boolean componentFile = !rootDir && file.isFile() && file.getName().equals("component.properties");
@@ -1560,7 +1413,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         File[] files = dir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
-                // skip files in root dirs as Camel does not store information there but others may do
+                // skip files in root dirs as Camel does not store information
+                // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
                 boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(".json");
                 boolean dataFormatFile = !rootDir && file.isFile() && file.getName().equals("dataformat.properties");
@@ -1579,7 +1433,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         File[] files = dir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
-                // skip files in root dirs as Camel does not store information there but others may do
+                // skip files in root dirs as Camel does not store information
+                // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
                 boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(".json");
                 boolean languageFile = !rootDir && file.isFile() && file.getName().equals("language.properties");
@@ -1598,7 +1453,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         File[] files = dir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
-                // skip files in root dirs as Camel does not store information there but others may do
+                // skip files in root dirs as Camel does not store information
+                // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
                 boolean jsonFile = rootDir && file.isFile() && file.getName().endsWith(".json");
                 boolean otherFile = !rootDir && file.isFile() && file.getName().equals("other.properties");
@@ -1617,7 +1473,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         File[] files = dir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
-                // skip files in root dirs as Camel does not store information there but others may do
+                // skip files in root dirs as Camel does not store information
+                // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
                 boolean adocFile = !rootDir && file.isFile() && file.getName().endsWith(".adoc");
                 if (adocFile) {
@@ -1634,13 +1491,14 @@ public class PrepareCatalogMojo extends AbstractMojo {
         @Override
         public boolean accept(File pathname) {
             if (pathname.isDirectory() && pathname.getName().equals("model")) {
-                // do not check the camel-core model packages as there is no components there
+                // do not check the camel-core model packages as there is no
+                // components there
                 return false;
             }
             if (pathname.isFile() && pathname.getName().endsWith(".json")) {
                 // must be a components json file
                 try {
-                    String json = loadText(new FileInputStream(pathname));
+                    String json = loadText(pathname);
                     return json != null && json.contains("\"kind\": \"component\"");
                 } catch (IOException e) {
                     // ignore
@@ -1655,13 +1513,14 @@ public class PrepareCatalogMojo extends AbstractMojo {
         @Override
         public boolean accept(File pathname) {
             if (pathname.isDirectory() && pathname.getName().equals("model")) {
-                // do not check the camel-core model packages as there is no components there
+                // do not check the camel-core model packages as there is no
+                // components there
                 return false;
             }
             if (pathname.isFile() && pathname.getName().endsWith(".json")) {
                 // must be a dataformat json file
                 try {
-                    String json = loadText(new FileInputStream(pathname));
+                    String json = loadText(pathname);
                     return json != null && json.contains("\"kind\": \"dataformat\"");
                 } catch (IOException e) {
                     // ignore
@@ -1676,13 +1535,14 @@ public class PrepareCatalogMojo extends AbstractMojo {
         @Override
         public boolean accept(File pathname) {
             if (pathname.isDirectory() && pathname.getName().equals("model")) {
-                // do not check the camel-core model packages as there is no components there
+                // do not check the camel-core model packages as there is no
+                // components there
                 return false;
             }
             if (pathname.isFile() && pathname.getName().endsWith(".json")) {
                 // must be a language json file
                 try {
-                    String json = loadText(new FileInputStream(pathname));
+                    String json = loadText(pathname);
                     return json != null && json.contains("\"kind\": \"language\"");
                 } catch (IOException e) {
                     // ignore
@@ -1699,7 +1559,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             if (pathname.isFile() && pathname.getName().endsWith(".json")) {
                 // must be a language json file
                 try {
-                    String json = loadText(new FileInputStream(pathname));
+                    String json = loadText(pathname);
                     return json != null && json.contains("\"kind\": \"other\"");
                 } catch (IOException e) {
                     // ignore
@@ -1717,28 +1577,23 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
     }
 
-    public static void copyFile(File from, File to) throws IOException {
-        FileChannel in = null;
-        FileChannel out = null;
-        try (FileInputStream fis = new FileInputStream(from); FileOutputStream fos = new FileOutputStream(to)) {
-            try {
-                in = fis.getChannel();
-                out = fos.getChannel();
-
-                long size = in.size();
-                long position = 0;
-                while (position < size) {
-                    position += in.transferTo(position, BUFFER_SIZE, out);
-                }
-            } finally {
-                if (in != null) {
-                    in.close();
-                }
-                if (out != null) {
-                    out.close();
-                }
-            }
+    public static Set<String> generateJsonList(Path outDir, String outFile) throws MojoFailureException {
+        Set<String> answer;
+        Path all = outDir.resolve(outFile);
+        try {
+            answer = Files.list(outDir).filter(p -> p.getFileName().toString().endsWith(".json")).map(p -> p.getFileName().toString())
+                // strip out .json from the name
+                .map(n -> n.substring(0, n.length() - ".json".length())).sorted().collect(LinkedHashSet::new, LinkedHashSet::add, LinkedHashSet::addAll);
+            String data = String.join("\n", answer) + "\n";
+            FileUtil.updateFile(all, data);
+            return answer;
+        } catch (IOException e) {
+            throw new MojoFailureException("Error writing to file " + all);
         }
+    }
+
+    public static void copyFile(File from, File to) throws IOException {
+        FileUtil.updateFile(from.toPath(), to.toPath());
     }
 
     private static boolean excludeDocumentDir(String name) {

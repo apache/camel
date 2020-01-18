@@ -937,7 +937,8 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
      */
     public interface KubernetesNamespacesEndpointBuilder
             extends
-                KubernetesNamespacesEndpointConsumerBuilder, KubernetesNamespacesEndpointProducerBuilder {
+                KubernetesNamespacesEndpointConsumerBuilder,
+                KubernetesNamespacesEndpointProducerBuilder {
         default AdvancedKubernetesNamespacesEndpointBuilder advanced() {
             return (AdvancedKubernetesNamespacesEndpointBuilder) this;
         }
@@ -1171,7 +1172,8 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
      */
     public interface AdvancedKubernetesNamespacesEndpointBuilder
             extends
-                AdvancedKubernetesNamespacesEndpointConsumerBuilder, AdvancedKubernetesNamespacesEndpointProducerBuilder {
+                AdvancedKubernetesNamespacesEndpointConsumerBuilder,
+                AdvancedKubernetesNamespacesEndpointProducerBuilder {
         default KubernetesNamespacesEndpointBuilder basic() {
             return (KubernetesNamespacesEndpointBuilder) this;
         }
@@ -1259,6 +1261,28 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface KubernetesNamespacesBuilders {
+        /**
+         * Kubernetes Namespaces (camel-kubernetes)
+         * The Kubernetes Namespaces component provides a producer to execute
+         * kubernetes namespace operations and a consumer to consume namespace
+         * events.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-namespaces:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         */
+        default KubernetesNamespacesEndpointBuilder kubernetesNamespaces(
+                String path) {
+            return KubernetesNamespacesEndpointBuilderFactory.kubernetesNamespaces(path);
+        }
+    }
     /**
      * Kubernetes Namespaces (camel-kubernetes)
      * The Kubernetes Namespaces component provides a producer to execute
@@ -1274,7 +1298,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
      * Path parameter: masterUrl (required)
      * Kubernetes Master url
      */
-    default KubernetesNamespacesEndpointBuilder kubernetesNamespaces(String path) {
+    static KubernetesNamespacesEndpointBuilder kubernetesNamespaces(String path) {
         class KubernetesNamespacesEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesNamespacesEndpointBuilder, AdvancedKubernetesNamespacesEndpointBuilder {
             public KubernetesNamespacesEndpointBuilderImpl(String path) {
                 super("kubernetes-namespaces", path);

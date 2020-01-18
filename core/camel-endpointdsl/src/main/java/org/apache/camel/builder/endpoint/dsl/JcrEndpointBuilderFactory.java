@@ -723,7 +723,8 @@ public interface JcrEndpointBuilderFactory {
      */
     public interface JcrEndpointBuilder
             extends
-                JcrEndpointConsumerBuilder, JcrEndpointProducerBuilder {
+                JcrEndpointConsumerBuilder,
+                JcrEndpointProducerBuilder {
         default AdvancedJcrEndpointBuilder advanced() {
             return (AdvancedJcrEndpointBuilder) this;
         }
@@ -930,7 +931,8 @@ public interface JcrEndpointBuilderFactory {
      */
     public interface AdvancedJcrEndpointBuilder
             extends
-                AdvancedJcrEndpointConsumerBuilder, AdvancedJcrEndpointProducerBuilder {
+                AdvancedJcrEndpointConsumerBuilder,
+                AdvancedJcrEndpointProducerBuilder {
         default JcrEndpointBuilder basic() {
             return (JcrEndpointBuilder) this;
         }
@@ -989,6 +991,30 @@ public interface JcrEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface JcrBuilders {
+        /**
+         * JCR (camel-jcr)
+         * The jcr component allows you to add/read nodes to/from a JCR
+         * compliant content repository.
+         * 
+         * Category: cms,database
+         * Since: 1.3
+         * Maven coordinates: org.apache.camel:camel-jcr
+         * 
+         * Syntax: <code>jcr:host/base</code>
+         * 
+         * Path parameter: host (required)
+         * Name of the javax.jcr.Repository to lookup from the Camel registry to
+         * be used.
+         * 
+         * Path parameter: base
+         * Get the base node when accessing the repository
+         */
+        default JcrEndpointBuilder jcr(String path) {
+            return JcrEndpointBuilderFactory.jcr(path);
+        }
+    }
     /**
      * JCR (camel-jcr)
      * The jcr component allows you to add/read nodes to/from a JCR compliant
@@ -1007,7 +1033,7 @@ public interface JcrEndpointBuilderFactory {
      * Path parameter: base
      * Get the base node when accessing the repository
      */
-    default JcrEndpointBuilder jcr(String path) {
+    static JcrEndpointBuilder jcr(String path) {
         class JcrEndpointBuilderImpl extends AbstractEndpointBuilder implements JcrEndpointBuilder, AdvancedJcrEndpointBuilder {
             public JcrEndpointBuilderImpl(String path) {
                 super("jcr", path);

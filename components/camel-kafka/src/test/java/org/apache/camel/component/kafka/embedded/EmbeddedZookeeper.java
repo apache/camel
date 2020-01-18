@@ -39,7 +39,6 @@ public class EmbeddedZookeeper extends ExternalResource {
     private File logDir;
     private ZooKeeperServer zooKeeperServer;
 
-
     public EmbeddedZookeeper() {
         this(AvailablePortFinder.getNextAvailable());
     }

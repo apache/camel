@@ -321,6 +321,26 @@ public interface HazelcastInstanceEndpointBuilderFactory {
         readOnceTail,
         capacity;
     }
+
+    public interface HazelcastInstanceBuilders {
+        /**
+         * Hazelcast Instance (camel-hazelcast)
+         * The hazelcast-instance component is used to consume join/leave events
+         * of the cache instance in the cluster.
+         * 
+         * Category: cache,datagrid
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
+         * Syntax: <code>hazelcast-instance:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache
+         */
+        default HazelcastInstanceEndpointBuilder hazelcastInstance(String path) {
+            return HazelcastInstanceEndpointBuilderFactory.hazelcastInstance(path);
+        }
+    }
     /**
      * Hazelcast Instance (camel-hazelcast)
      * The hazelcast-instance component is used to consume join/leave events of
@@ -335,7 +355,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
      * Path parameter: cacheName (required)
      * The name of the cache
      */
-    default HazelcastInstanceEndpointBuilder hazelcastInstance(String path) {
+    static HazelcastInstanceEndpointBuilder hazelcastInstance(String path) {
         class HazelcastInstanceEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastInstanceEndpointBuilder, AdvancedHazelcastInstanceEndpointBuilder {
             public HazelcastInstanceEndpointBuilderImpl(String path) {
                 super("hazelcast-instance", path);

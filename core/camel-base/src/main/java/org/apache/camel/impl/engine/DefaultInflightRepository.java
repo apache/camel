@@ -19,7 +19,6 @@ package org.apache.camel.impl.engine;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,8 +28,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
@@ -74,7 +76,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public void addRoute(String routeId) {
-        routeCount.putIfAbsent(routeId, new AtomicInteger(0));
+        routeCount.putIfAbsent(routeId, new AtomicInteger());
     }
 
     @Override
@@ -180,12 +182,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     }
 
     private static long getExchangeDuration(Exchange exchange) {
-        long duration = 0;
-        Date created = exchange.getCreated();
-        if (created != null) {
-            duration = System.currentTimeMillis() - created.getTime();
-        }
-        return duration;
+        return System.currentTimeMillis() - exchange.getCreated();
     }
 
     private static final class InflightExchangeEntry implements InflightExchange {
@@ -209,6 +206,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @Override
         @SuppressWarnings("unchecked")
         public long getElapsed() {
+            // this can only be calculate if message history is enabled
             LinkedList<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, LinkedList.class);
             if (list == null || list.isEmpty()) {
                 return 0;
@@ -231,18 +229,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @Override
         @SuppressWarnings("unchecked")
         public String getNodeId() {
-            LinkedList<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, LinkedList.class);
-            if (list == null || list.isEmpty()) {
-                return null;
-            }
-
-            // get latest entry
-            MessageHistory history = list.getLast();
-            if (history != null) {
-                return history.getNode().getId();
-            } else {
-                return null;
-            }
+            return exchange.adapt(ExtendedExchange.class).getHistoryNodeId();
         }
 
         @Override
@@ -253,18 +240,13 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @Override
         @SuppressWarnings("unchecked")
         public String getAtRouteId() {
-            LinkedList<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, LinkedList.class);
-            if (list == null || list.isEmpty()) {
-                return null;
+            // compute route id
+            UnitOfWork uow = exchange.getUnitOfWork();
+            RouteContext rc = uow != null ? uow.getRouteContext() : null;
+            if (rc != null) {
+                return rc.getRouteId();
             }
-
-            // get latest entry
-            MessageHistory history = list.getLast();
-            if (history != null) {
-                return history.getRouteId();
-            } else {
-                return null;
-            }
+            return null;
         }
 
         @Override

@@ -4122,7 +4122,8 @@ public interface FtpEndpointBuilderFactory {
      */
     public interface FtpEndpointBuilder
             extends
-                FtpEndpointConsumerBuilder, FtpEndpointProducerBuilder {
+                FtpEndpointConsumerBuilder,
+                FtpEndpointProducerBuilder {
         default AdvancedFtpEndpointBuilder advanced() {
             return (AdvancedFtpEndpointBuilder) this;
         }
@@ -4456,7 +4457,8 @@ public interface FtpEndpointBuilderFactory {
      */
     public interface AdvancedFtpEndpointBuilder
             extends
-                AdvancedFtpEndpointConsumerBuilder, AdvancedFtpEndpointProducerBuilder {
+                AdvancedFtpEndpointConsumerBuilder,
+                AdvancedFtpEndpointProducerBuilder {
         default FtpEndpointBuilder basic() {
             return (FtpEndpointBuilder) this;
         }
@@ -4968,6 +4970,32 @@ public interface FtpEndpointBuilderFactory {
         Move,
         TryRename;
     }
+
+    public interface FtpBuilders {
+        /**
+         * FTP (camel-ftp)
+         * The ftp component is used for uploading or downloading files from FTP
+         * servers.
+         * 
+         * Category: file
+         * Since: 1.1
+         * Maven coordinates: org.apache.camel:camel-ftp
+         * 
+         * Syntax: <code>ftp:host:port/directoryName</code>
+         * 
+         * Path parameter: host (required)
+         * Hostname of the FTP server
+         * 
+         * Path parameter: port
+         * Port of the FTP server
+         * 
+         * Path parameter: directoryName
+         * The starting directory
+         */
+        default FtpEndpointBuilder ftp(String path) {
+            return FtpEndpointBuilderFactory.ftp(path);
+        }
+    }
     /**
      * FTP (camel-ftp)
      * The ftp component is used for uploading or downloading files from FTP
@@ -4988,7 +5016,7 @@ public interface FtpEndpointBuilderFactory {
      * Path parameter: directoryName
      * The starting directory
      */
-    default FtpEndpointBuilder ftp(String path) {
+    static FtpEndpointBuilder ftp(String path) {
         class FtpEndpointBuilderImpl extends AbstractEndpointBuilder implements FtpEndpointBuilder, AdvancedFtpEndpointBuilder {
             public FtpEndpointBuilderImpl(String path) {
                 super("ftp", path);

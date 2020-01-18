@@ -423,6 +423,27 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface KubernetesPersistentVolumesClaimsBuilders {
+        /**
+         * Kubernetes Persistent Volume Claim (camel-kubernetes)
+         * The Kubernetes Persistent Volumes Claims component provides a
+         * producer to execute kubernetes persistent volume claim operations.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
+         * Syntax: <code>kubernetes-persistent-volumes-claims:masterUrl</code>
+         * 
+         * Path parameter: masterUrl (required)
+         * Kubernetes Master url
+         */
+        default KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesPersistentVolumesClaims(
+                String path) {
+            return KubernetesPersistentVolumesClaimsEndpointBuilderFactory.kubernetesPersistentVolumesClaims(path);
+        }
+    }
     /**
      * Kubernetes Persistent Volume Claim (camel-kubernetes)
      * The Kubernetes Persistent Volumes Claims component provides a producer to
@@ -437,7 +458,7 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
      * Path parameter: masterUrl (required)
      * Kubernetes Master url
      */
-    default KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesPersistentVolumesClaims(
+    static KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesPersistentVolumesClaims(
             String path) {
         class KubernetesPersistentVolumesClaimsEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesPersistentVolumesClaimsEndpointBuilder, AdvancedKubernetesPersistentVolumesClaimsEndpointBuilder {
             public KubernetesPersistentVolumesClaimsEndpointBuilderImpl(String path) {

@@ -1738,7 +1738,8 @@ public interface FhirEndpointBuilderFactory {
      */
     public interface FhirEndpointBuilder
             extends
-                FhirEndpointConsumerBuilder, FhirEndpointProducerBuilder {
+                FhirEndpointConsumerBuilder,
+                FhirEndpointProducerBuilder {
         default AdvancedFhirEndpointBuilder advanced() {
             return (AdvancedFhirEndpointBuilder) this;
         }
@@ -1957,7 +1958,8 @@ public interface FhirEndpointBuilderFactory {
      */
     public interface AdvancedFhirEndpointBuilder
             extends
-                AdvancedFhirEndpointConsumerBuilder, AdvancedFhirEndpointProducerBuilder {
+                AdvancedFhirEndpointConsumerBuilder,
+                AdvancedFhirEndpointProducerBuilder {
         default FhirEndpointBuilder basic() {
             return (FhirEndpointBuilder) this;
         }
@@ -2325,6 +2327,31 @@ public interface FhirEndpointBuilderFactory {
         NEVER,
         ONCE;
     }
+
+    public interface FhirBuilders {
+        /**
+         * FHIR (camel-fhir)
+         * The fhir component is used for working with the FHIR protocol (health
+         * care).
+         * 
+         * Category: hl7,api
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-fhir
+         * 
+         * Syntax: <code>fhir:apiName/methodName</code>
+         * 
+         * Path parameter: apiName (required)
+         * What kind of operation to perform
+         * The value can be one of: capabilities, create, delete, history,
+         * load-page, meta, patch, read, search, transaction, update, validate
+         * 
+         * Path parameter: methodName (required)
+         * What sub operation to use for the selected operation
+         */
+        default FhirEndpointBuilder fhir(String path) {
+            return FhirEndpointBuilderFactory.fhir(path);
+        }
+    }
     /**
      * FHIR (camel-fhir)
      * The fhir component is used for working with the FHIR protocol (health
@@ -2344,7 +2371,7 @@ public interface FhirEndpointBuilderFactory {
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      */
-    default FhirEndpointBuilder fhir(String path) {
+    static FhirEndpointBuilder fhir(String path) {
         class FhirEndpointBuilderImpl extends AbstractEndpointBuilder implements FhirEndpointBuilder, AdvancedFhirEndpointBuilder {
             public FhirEndpointBuilderImpl(String path) {
                 super("fhir", path);

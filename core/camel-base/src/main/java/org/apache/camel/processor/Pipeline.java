@@ -110,7 +110,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
             // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
             log.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
 
-            camelContext.getReactiveExecutor().callback(callback);
+            camelContext.getReactiveExecutor().schedule(callback);
         }
     }
 

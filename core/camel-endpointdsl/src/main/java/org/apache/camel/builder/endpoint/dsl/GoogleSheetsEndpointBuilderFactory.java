@@ -922,7 +922,8 @@ public interface GoogleSheetsEndpointBuilderFactory {
      */
     public interface GoogleSheetsEndpointBuilder
             extends
-                GoogleSheetsEndpointConsumerBuilder, GoogleSheetsEndpointProducerBuilder {
+                GoogleSheetsEndpointConsumerBuilder,
+                GoogleSheetsEndpointProducerBuilder {
         default AdvancedGoogleSheetsEndpointBuilder advanced() {
             return (AdvancedGoogleSheetsEndpointBuilder) this;
         }
@@ -1004,7 +1005,8 @@ public interface GoogleSheetsEndpointBuilderFactory {
      */
     public interface AdvancedGoogleSheetsEndpointBuilder
             extends
-                AdvancedGoogleSheetsEndpointConsumerBuilder, AdvancedGoogleSheetsEndpointProducerBuilder {
+                AdvancedGoogleSheetsEndpointConsumerBuilder,
+                AdvancedGoogleSheetsEndpointProducerBuilder {
         default GoogleSheetsEndpointBuilder basic() {
             return (GoogleSheetsEndpointBuilder) this;
         }
@@ -1065,6 +1067,31 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface GoogleSheetsBuilders {
+        /**
+         * Google Sheets (camel-google-sheets)
+         * The google-sheets component provides access to Google Sheets.
+         * 
+         * Category: api,cloud,sheets
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-google-sheets
+         * 
+         * Syntax: <code>google-sheets:apiName/methodName</code>
+         * 
+         * Path parameter: apiName (required)
+         * What kind of operation to perform
+         * The value can be one of: SPREADSHEETS, DATA
+         * 
+         * Path parameter: methodName (required)
+         * What sub operation to use for the selected operation
+         * The value can be one of: create, get, update, append, batchUpdate,
+         * clear
+         */
+        default GoogleSheetsEndpointBuilder googleSheets(String path) {
+            return GoogleSheetsEndpointBuilderFactory.googleSheets(path);
+        }
+    }
     /**
      * Google Sheets (camel-google-sheets)
      * The google-sheets component provides access to Google Sheets.
@@ -1083,7 +1110,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
      * What sub operation to use for the selected operation
      * The value can be one of: create, get, update, append, batchUpdate, clear
      */
-    default GoogleSheetsEndpointBuilder googleSheets(String path) {
+    static GoogleSheetsEndpointBuilder googleSheets(String path) {
         class GoogleSheetsEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleSheetsEndpointBuilder, AdvancedGoogleSheetsEndpointBuilder {
             public GoogleSheetsEndpointBuilderImpl(String path) {
                 super("google-sheets", path);

@@ -30,7 +30,7 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic.Kind;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
+import static org.apache.camel.tooling.util.Strings.canonicalClassName;
 
 /**
  * APT compiler plugin to generate JSon Schema for all EIP models and camel-spring's <camelContext> types.

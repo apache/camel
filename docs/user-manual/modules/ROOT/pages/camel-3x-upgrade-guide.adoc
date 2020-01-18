@@ -11,11 +11,6 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.0 to 3.1
 
-=== API changes
-
-Cookies from `camel-http-common` has been moved into a new `camel-http-base` JAR.
-The package `org.apache.camel.http.common.cookie` is renamed to `org.apache.camel.http.base.cookie`.
-
 === camel-ahc, camel-netty-http, camel-undertow
 
 These Camel components now no longer have dependency on Javax Servlet.
@@ -32,7 +27,10 @@ This means that the bean is created or looked up once and reused.
 
 The option `cache` has been deprecated in favour of the new `scope` option that by default is `Singleton`. You can set this to `Prototype` to use the old behaviour.
 
-NOTE: Setting this to Prototype will let Camel create/lookup a new bean instance, per use; which acts as prototype scoped. However beware that if you lookup the bean, then the registry that holds the bean, would return a bean accordingly to its configuration, which can be singleton or prototype scoped. For example if you use Spring, or CDI, which has their own settings for setting bean scopes.
+[NOTE]
+====
+Setting this to Prototype will let Camel create/lookup a new bean instance, per use; which acts as prototype scoped. However beware that if you lookup the bean, then the registry that holds the bean, would return a bean accordingly to its configuration, which can be singleton or prototype scoped. For example if you use Spring, or CDI, which has their own settings for setting bean scopes.
+====
 
 === camel-irc
 
@@ -79,8 +77,66 @@ nsq:myTopic?servers=myserver:4161
 This change is motivated by allowing to configure servers on component level,
 and also for Spring Boot auto-configuration etc.
 
+=== camel-ipfs
 
-=== Java DSL
+The `camel-ipfs` component has changed its endpoint syntax from `nsq:host:port/command` to `ipfs:command`.
+The host and port is now configured on the component level instead.
+
+For example before
+
+[source,text]
+----
+ipfs:127.0.0.1:5001/add
+----
+
+Should be changed to
+----
+ipfs:add
+----
+
+=== Graceful Shutdown Timeout
+
+When shutting down Camel, then the default timeout has changed from 300 seconds (5 minutes) to 45 seconds.
+The 45 seconds was chosen as 30 seconds is a common timeout to use for remote protocols, so we wanted to give
+Camel a bit more time, and hence added 15 seconds so the default is 45 seconds.
+
+=== Message History
+
+The message history is now default disabled (due to optimize core for lower footprint out of the box).
+See the xref:message-history.adoc[Message History] documentation for how to enabled message history.
+
+=== API changes
+
+==== Exchange
+
+The `Exchange` API has been modified slightly as part of an optimization effort.
+The returned value of `getCreated` is changed from `java.util.Date` to `long` which is the time millis.
+The `Exchange.CREATED_TIMESTAMP` is no longer stored as exchange property, but you should use the `getCreated` method on `Exchange`.
+The returned value of `isExternalRedelivered` is changed from `Boolean` to `boolean`.
+
+Some of the advanced and API for component developers on `Exchange` has been moved to an extended interface `ExtendedExchange`.
+The following methods has been moved:
+
+- setFromEndpoint
+- setFromRouteId
+- setUnitOfWork
+- addOnCompletion
+- containsOnCompletion
+- handoverCompletions
+
+You can use these methods by adapting to the extended exchange as shown below:
+
+[source,java]
+----
+exchange.adapt(ExtendedExchange.class).addOnCompletion(...);
+----
+
+==== Cookies
+
+Cookies from `camel-http-common` has been moved into a new `camel-http-base` JAR.
+The package `org.apache.camel.http.common.cookie` is renamed to `org.apache.camel.http.base.cookie`.
+
+==== Java DSL
 
 The Java DSL has been revisited and the following methods have been removed:
 
@@ -95,7 +151,7 @@ The Java DSL has been revisited and the following methods have been removed:
 
 This change is motivated by the need to remove method ambiguity for untyped languages such as Groovy and JavaScript, for more info see https://issues.apache.org/jira/browse/CAMEL-14300
 
-=== CamelContext 
+==== CamelContext
 
 Some unused methods have been removed from `CamelContext` which were not part of the public API. The following methods have been removed:
 

@@ -1015,7 +1015,8 @@ public interface MyBatisEndpointBuilderFactory {
      */
     public interface MyBatisEndpointBuilder
             extends
-                MyBatisEndpointConsumerBuilder, MyBatisEndpointProducerBuilder {
+                MyBatisEndpointConsumerBuilder,
+                MyBatisEndpointProducerBuilder {
         default AdvancedMyBatisEndpointBuilder advanced() {
             return (AdvancedMyBatisEndpointBuilder) this;
         }
@@ -1026,7 +1027,8 @@ public interface MyBatisEndpointBuilderFactory {
      */
     public interface AdvancedMyBatisEndpointBuilder
             extends
-                AdvancedMyBatisEndpointConsumerBuilder, AdvancedMyBatisEndpointProducerBuilder {
+                AdvancedMyBatisEndpointConsumerBuilder,
+                AdvancedMyBatisEndpointProducerBuilder {
         default MyBatisEndpointBuilder basic() {
             return (MyBatisEndpointBuilder) this;
         }
@@ -1109,6 +1111,27 @@ public interface MyBatisEndpointBuilderFactory {
         Delete,
         DeleteList;
     }
+
+    public interface MyBatisBuilders {
+        /**
+         * MyBatis (camel-mybatis)
+         * Performs a query, poll, insert, update or delete in a relational
+         * database using MyBatis.
+         * 
+         * Category: database,sql
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-mybatis
+         * 
+         * Syntax: <code>mybatis:statement</code>
+         * 
+         * Path parameter: statement (required)
+         * The statement name in the MyBatis XML mapping file which maps to the
+         * query, insert, update or delete operation you wish to evaluate.
+         */
+        default MyBatisEndpointBuilder mybatis(String path) {
+            return MyBatisEndpointBuilderFactory.mybatis(path);
+        }
+    }
     /**
      * MyBatis (camel-mybatis)
      * Performs a query, poll, insert, update or delete in a relational database
@@ -1124,7 +1147,7 @@ public interface MyBatisEndpointBuilderFactory {
      * The statement name in the MyBatis XML mapping file which maps to the
      * query, insert, update or delete operation you wish to evaluate.
      */
-    default MyBatisEndpointBuilder mybatis(String path) {
+    static MyBatisEndpointBuilder mybatis(String path) {
         class MyBatisEndpointBuilderImpl extends AbstractEndpointBuilder implements MyBatisEndpointBuilder, AdvancedMyBatisEndpointBuilder {
             public MyBatisEndpointBuilderImpl(String path) {
                 super("mybatis", path);

@@ -413,6 +413,26 @@ public interface DdbEndpointBuilderFactory {
         http,
         https;
     }
+
+    public interface DdbBuilders {
+        /**
+         * AWS DynamoDB (camel-aws-ddb)
+         * The aws-ddb component is used for storing and retrieving data from
+         * Amazon's DynamoDB service.
+         * 
+         * Category: cloud,database,nosql
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-aws-ddb
+         * 
+         * Syntax: <code>aws-ddb:tableName</code>
+         * 
+         * Path parameter: tableName (required)
+         * The name of the table currently worked with.
+         */
+        default DdbEndpointBuilder awsDdb(String path) {
+            return DdbEndpointBuilderFactory.awsDdb(path);
+        }
+    }
     /**
      * AWS DynamoDB (camel-aws-ddb)
      * The aws-ddb component is used for storing and retrieving data from
@@ -427,7 +447,7 @@ public interface DdbEndpointBuilderFactory {
      * Path parameter: tableName (required)
      * The name of the table currently worked with.
      */
-    default DdbEndpointBuilder awsDdb(String path) {
+    static DdbEndpointBuilder awsDdb(String path) {
         class DdbEndpointBuilderImpl extends AbstractEndpointBuilder implements DdbEndpointBuilder, AdvancedDdbEndpointBuilder {
             public DdbEndpointBuilderImpl(String path) {
                 super("aws-ddb", path);

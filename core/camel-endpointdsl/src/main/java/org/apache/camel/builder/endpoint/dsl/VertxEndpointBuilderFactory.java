@@ -381,7 +381,8 @@ public interface VertxEndpointBuilderFactory {
      */
     public interface VertxEndpointBuilder
             extends
-                VertxEndpointConsumerBuilder, VertxEndpointProducerBuilder {
+                VertxEndpointConsumerBuilder,
+                VertxEndpointProducerBuilder {
         default AdvancedVertxEndpointBuilder advanced() {
             return (AdvancedVertxEndpointBuilder) this;
         }
@@ -417,7 +418,8 @@ public interface VertxEndpointBuilderFactory {
      */
     public interface AdvancedVertxEndpointBuilder
             extends
-                AdvancedVertxEndpointConsumerBuilder, AdvancedVertxEndpointProducerBuilder {
+                AdvancedVertxEndpointConsumerBuilder,
+                AdvancedVertxEndpointProducerBuilder {
         default VertxEndpointBuilder basic() {
             return (VertxEndpointBuilder) this;
         }
@@ -476,6 +478,26 @@ public interface VertxEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface VertxBuilders {
+        /**
+         * Vert.x (camel-vertx)
+         * The vertx component is used for sending and receive messages from a
+         * vertx event bus.
+         * 
+         * Category: eventbus,reactive
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-vertx
+         * 
+         * Syntax: <code>vertx:address</code>
+         * 
+         * Path parameter: address (required)
+         * Sets the event bus address used to communicate
+         */
+        default VertxEndpointBuilder vertx(String path) {
+            return VertxEndpointBuilderFactory.vertx(path);
+        }
+    }
     /**
      * Vert.x (camel-vertx)
      * The vertx component is used for sending and receive messages from a vertx
@@ -490,7 +512,7 @@ public interface VertxEndpointBuilderFactory {
      * Path parameter: address (required)
      * Sets the event bus address used to communicate
      */
-    default VertxEndpointBuilder vertx(String path) {
+    static VertxEndpointBuilder vertx(String path) {
         class VertxEndpointBuilderImpl extends AbstractEndpointBuilder implements VertxEndpointBuilder, AdvancedVertxEndpointBuilder {
             public VertxEndpointBuilderImpl(String path) {
                 super("vertx", path);

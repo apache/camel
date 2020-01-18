@@ -348,6 +348,26 @@ public interface SesEndpointBuilderFactory {
         http,
         https;
     }
+
+    public interface SesBuilders {
+        /**
+         * AWS Simple Email Service (camel-aws-ses)
+         * The aws-ses component is used for sending emails with Amazon's SES
+         * service.
+         * 
+         * Category: cloud,mail
+         * Since: 2.9
+         * Maven coordinates: org.apache.camel:camel-aws-ses
+         * 
+         * Syntax: <code>aws-ses:from</code>
+         * 
+         * Path parameter: from (required)
+         * The sender's email address.
+         */
+        default SesEndpointBuilder awsSes(String path) {
+            return SesEndpointBuilderFactory.awsSes(path);
+        }
+    }
     /**
      * AWS Simple Email Service (camel-aws-ses)
      * The aws-ses component is used for sending emails with Amazon's SES
@@ -362,7 +382,7 @@ public interface SesEndpointBuilderFactory {
      * Path parameter: from (required)
      * The sender's email address.
      */
-    default SesEndpointBuilder awsSes(String path) {
+    static SesEndpointBuilder awsSes(String path) {
         class SesEndpointBuilderImpl extends AbstractEndpointBuilder implements SesEndpointBuilder, AdvancedSesEndpointBuilder {
             public SesEndpointBuilderImpl(String path) {
                 super("aws-ses", path);

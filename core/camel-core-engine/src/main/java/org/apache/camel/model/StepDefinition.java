@@ -16,8 +16,11 @@
  */
 package org.apache.camel.model;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
@@ -32,6 +35,17 @@ import org.apache.camel.spi.Metadata;
 public class StepDefinition extends OutputDefinition<StepDefinition> {
 
     public StepDefinition() {
+    }
+
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return super.getOutputs();
+    }
+
+    @XmlElementRef
+    @Override
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
+        super.setOutputs(outputs);
     }
 
     @Override

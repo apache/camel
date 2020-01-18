@@ -65,9 +65,12 @@ the option exists to override those by specifying them on the component
 or on the endpoint. Typically you would just need to override the 
 `host` or `basePath` if those differ from the specification.
 
-NOTE: The `host` parameter should contain the absolute URI containing
+[NOTE]
+====
+The `host` parameter should contain the absolute URI containing
 scheme, hostname and port number, for instance:
 `\https://api.example.com`
+====
 
 With `componentName` you specify what component is used to perform the
 requests, this named component needs to be present in the Camel context
@@ -103,7 +106,7 @@ The REST OpenApi component supports 10 options, which are listed below.
 | *produces* (producer) | What payload type this component is producing. For example application/json according to the RFC7231. This equates to the value of Content-Type HTTP header. If set overrides any value present in the OpenApi specification. Can be overridden in endpoint configuration. |  | String
 | *specificationUri* (producer) | Path to the OpenApi specification file. The scheme, host base path are taken from this specification, but these can be overridden with properties on the component or endpoint level. If not given the component tries to load openapi.json resource. Note that the host defined on the component and endpoint of this Component should contain the scheme, hostname and optionally the port in the URI syntax (i.e. \https://api.example.com:8080). Can be overridden in endpoint configuration. | openapi.json | URI
 | *sslContextParameters* (security) | Customize TLS parameters used by the component. If not set defaults to the TLS parameters set in the Camel context |  | SSLContextParameters
-| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 |===
@@ -228,7 +231,9 @@ public Component petstore(CamelContext camelContext, UndertowComponent undertow)
 }
 ----
 
-NOTE: Support in Camel for Spring Boot will auto create the 
+[NOTE]
+====
+Support in Camel for Spring Boot will auto create the 
 `UndertowComponent` Spring bean, and you can configure it using
 `application.properties` (or `application.yml`) using prefix
 `camel.component.undertow.`. We are defining the `petstore`
@@ -236,6 +241,7 @@ component here in order to have a named component in the Camel context
 that we can use to interact with the PetStore REST API, if this is the
 only `rest-openapi` component used we might configure it in the same
 manner (using `application.properties`).
+====
 
 Now in our application we can simply use the `ProducerTemplate` to
 invoke PetStore REST methods:

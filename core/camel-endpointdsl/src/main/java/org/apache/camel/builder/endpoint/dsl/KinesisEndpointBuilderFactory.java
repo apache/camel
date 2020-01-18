@@ -1134,7 +1134,8 @@ public interface KinesisEndpointBuilderFactory {
      */
     public interface KinesisEndpointBuilder
             extends
-                KinesisEndpointConsumerBuilder, KinesisEndpointProducerBuilder {
+                KinesisEndpointConsumerBuilder,
+                KinesisEndpointProducerBuilder {
         default AdvancedKinesisEndpointBuilder advanced() {
             return (AdvancedKinesisEndpointBuilder) this;
         }
@@ -1266,7 +1267,8 @@ public interface KinesisEndpointBuilderFactory {
      */
     public interface AdvancedKinesisEndpointBuilder
             extends
-                AdvancedKinesisEndpointConsumerBuilder, AdvancedKinesisEndpointProducerBuilder {
+                AdvancedKinesisEndpointConsumerBuilder,
+                AdvancedKinesisEndpointProducerBuilder {
         default KinesisEndpointBuilder basic() {
             return (KinesisEndpointBuilder) this;
         }
@@ -1355,6 +1357,26 @@ public interface KinesisEndpointBuilderFactory {
         fail,
         silent;
     }
+
+    public interface KinesisBuilders {
+        /**
+         * AWS Kinesis (camel-aws-kinesis)
+         * The aws-kinesis component is for consuming and producing records from
+         * Amazon Kinesis Streams.
+         * 
+         * Category: cloud,messaging
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-aws-kinesis
+         * 
+         * Syntax: <code>aws-kinesis:streamName</code>
+         * 
+         * Path parameter: streamName (required)
+         * Name of the stream
+         */
+        default KinesisEndpointBuilder awsKinesis(String path) {
+            return KinesisEndpointBuilderFactory.awsKinesis(path);
+        }
+    }
     /**
      * AWS Kinesis (camel-aws-kinesis)
      * The aws-kinesis component is for consuming and producing records from
@@ -1369,7 +1391,7 @@ public interface KinesisEndpointBuilderFactory {
      * Path parameter: streamName (required)
      * Name of the stream
      */
-    default KinesisEndpointBuilder awsKinesis(String path) {
+    static KinesisEndpointBuilder awsKinesis(String path) {
         class KinesisEndpointBuilderImpl extends AbstractEndpointBuilder implements KinesisEndpointBuilder, AdvancedKinesisEndpointBuilder {
             public KinesisEndpointBuilderImpl(String path) {
                 super("aws-kinesis", path);

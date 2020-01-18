@@ -526,7 +526,8 @@ public interface QueueServiceEndpointBuilderFactory {
      */
     public interface QueueServiceEndpointBuilder
             extends
-                QueueServiceEndpointConsumerBuilder, QueueServiceEndpointProducerBuilder {
+                QueueServiceEndpointConsumerBuilder,
+                QueueServiceEndpointProducerBuilder {
         default AdvancedQueueServiceEndpointBuilder advanced() {
             return (AdvancedQueueServiceEndpointBuilder) this;
         }
@@ -588,7 +589,8 @@ public interface QueueServiceEndpointBuilderFactory {
      */
     public interface AdvancedQueueServiceEndpointBuilder
             extends
-                AdvancedQueueServiceEndpointConsumerBuilder, AdvancedQueueServiceEndpointProducerBuilder {
+                AdvancedQueueServiceEndpointConsumerBuilder,
+                AdvancedQueueServiceEndpointProducerBuilder {
         default QueueServiceEndpointBuilder basic() {
             return (QueueServiceEndpointBuilder) this;
         }
@@ -664,6 +666,26 @@ public interface QueueServiceEndpointBuilderFactory {
         updateMessage,
         deleteMessage;
     }
+
+    public interface QueueServiceBuilders {
+        /**
+         * Azure Storage Queue Service (camel-azure)
+         * The azure-queue component is used for storing and retrieving messages
+         * from Azure Storage Queue Service.
+         * 
+         * Category: cloud,queue,azure
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-azure
+         * 
+         * Syntax: <code>azure-queue:containerAndQueueUri</code>
+         * 
+         * Path parameter: containerAndQueueUri (required)
+         * Container Queue compact Uri
+         */
+        default QueueServiceEndpointBuilder azureQueue(String path) {
+            return QueueServiceEndpointBuilderFactory.azureQueue(path);
+        }
+    }
     /**
      * Azure Storage Queue Service (camel-azure)
      * The azure-queue component is used for storing and retrieving messages
@@ -678,7 +700,7 @@ public interface QueueServiceEndpointBuilderFactory {
      * Path parameter: containerAndQueueUri (required)
      * Container Queue compact Uri
      */
-    default QueueServiceEndpointBuilder azureQueue(String path) {
+    static QueueServiceEndpointBuilder azureQueue(String path) {
         class QueueServiceEndpointBuilderImpl extends AbstractEndpointBuilder implements QueueServiceEndpointBuilder, AdvancedQueueServiceEndpointBuilder {
             public QueueServiceEndpointBuilderImpl(String path) {
                 super("azure-queue", path);

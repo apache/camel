@@ -495,6 +495,25 @@ public interface AhcEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface AhcBuilders {
+        /**
+         * AHC (camel-ahc)
+         * To call external HTTP services using Async Http Client.
+         * 
+         * Category: http
+         * Since: 2.8
+         * Maven coordinates: org.apache.camel:camel-ahc
+         * 
+         * Syntax: <code>ahc:httpUri</code>
+         * 
+         * Path parameter: httpUri (required)
+         * The URI to use such as http://hostname:port/path
+         */
+        default AhcEndpointBuilder ahc(String path) {
+            return AhcEndpointBuilderFactory.ahc(path);
+        }
+    }
     /**
      * AHC (camel-ahc)
      * To call external HTTP services using Async Http Client.
@@ -508,7 +527,7 @@ public interface AhcEndpointBuilderFactory {
      * Path parameter: httpUri (required)
      * The URI to use such as http://hostname:port/path
      */
-    default AhcEndpointBuilder ahc(String path) {
+    static AhcEndpointBuilder ahc(String path) {
         class AhcEndpointBuilderImpl extends AbstractEndpointBuilder implements AhcEndpointBuilder, AdvancedAhcEndpointBuilder {
             public AhcEndpointBuilderImpl(String path) {
                 super("ahc", path);

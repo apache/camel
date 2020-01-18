@@ -53,10 +53,14 @@ The default logger logs every exchange (_regular logging_). But Camel
 also ships with the `Throughput` logger, which is used whenever the
 `groupSize` option is specified.
 
-TIP:*Also a log in the DSL*
+[TIP]
+====
+*Also a log in the DSL*
+
 There is also a `log` directly in the DSL, but it has a different
 purpose. Its meant for lightweight and human logs. See more details at
 LogEIP.
+====
 
 == Options
 
@@ -323,10 +327,14 @@ Component is intelligent enough to pick it up automatically.
 <bean name="logFormatter" class="com.xyz.MyCustomExchangeFormatter" />
 -----
 
-NOTE: the `ExchangeFormatter` gets applied to *all Log endpoints within
+[NOTE]
+====
+The `ExchangeFormatter` gets applied to *all Log endpoints within
 that Camel Context*. If you need different ExchangeFormatters for
 different endpoints, just instantiate the LogComponent as many times as
 needed, and use the relevant bean name as the endpoint prefix.
+====
+
 
 When using a custom log formatter, you
 can specify parameters in the log uri, which gets configured on the

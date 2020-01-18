@@ -42,7 +42,7 @@
         <abdera-version>1.1.3</abdera-version>
         <!-- Note that activemq dependency is only used for testing! -->
         <activemq-version>5.15.11</activemq-version>
-        <activemq-artemis-version>2.10.1</activemq-artemis-version>
+        <activemq-artemis-version>2.11.0</activemq-artemis-version>
         <aether-version>1.0.2.v20150114</aether-version>
         <ahc-version>2.10.4</ahc-version>
         <ant-bundle-version>1.7.0_6</ant-bundle-version>
@@ -87,6 +87,7 @@
         <awaitility-version>4.0.2</awaitility-version>
         <aws-java-sdk-bundle-version>1.11.699_1</aws-java-sdk-bundle-version>
         <aws-java-sdk-version>1.11.699</aws-java-sdk-version>
+        <aws-java-sdk2-version>2.10.49</aws-java-sdk2-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.4.0</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
@@ -105,7 +106,7 @@
         <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
         <c3p0-version>0.9.5.5</c3p0-version>
         <c3p0-bundle-version>0.9.5.5_1</c3p0-bundle-version>
-        <caffeine-version>2.8.0</caffeine-version>
+        <caffeine-version>2.8.1</caffeine-version>
         <californium-version>2.0.0</californium-version>
         <cassandra-driver-version>3.7.2</cassandra-driver-version>
         <cassandra-driver-guava-version>19.0</cassandra-driver-guava-version>
@@ -152,11 +153,11 @@
         <couchbase-client-version>1.4.13</couchbase-client-version>
         <couchbase-client-bundle-version>1.4.13_1</couchbase-client-bundle-version>
         <curator-version>2.12.0</curator-version>
-        <cxf-version>3.3.4</cxf-version>
+        <cxf-version>3.3.5</cxf-version>
         <cxf-version-range>[3.3,4.0)</cxf-version-range>
-        <cxf-codegen-plugin-version>3.3.4</cxf-codegen-plugin-version>
-        <cxf-xjc-plugin-version>3.3.0</cxf-xjc-plugin-version>
-        <cxf-xjc-utils-version>3.3.0</cxf-xjc-utils-version>
+        <cxf-codegen-plugin-version>3.3.5</cxf-codegen-plugin-version>
+        <cxf-xjc-plugin-version>3.3.1</cxf-xjc-plugin-version>
+        <cxf-xjc-utils-version>3.3.1</cxf-xjc-utils-version>
         <deltaspike-version>1.9.0</deltaspike-version>
         <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
         <derby-version>10.14.2.0</derby-version>
@@ -171,7 +172,7 @@
         <dozer-version>6.5.0</dozer-version>
         <drools-version>7.31.0.Final</drools-version>
         <dropbox-version>3.1.3</dropbox-version>
-        <debezium-version>0.10.0.Final</debezium-version>
+        <debezium-version>1.0.0.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.15</debezium-mysql-connector-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
         <egit-github-core-bundle-version>2.1.5_1</egit-github-core-bundle-version>
@@ -399,8 +400,8 @@
         <jython-standalone-version>2.5.3</jython-standalone-version>
         <jzlib-version>1.1.3</jzlib-version>
         <jzlib-bundle-version>1.1.3_2</jzlib-bundle-version>
-        <kafka-version>2.3.1</kafka-version>
-        <kafka-bundle-version>2.3.1_1</kafka-bundle-version>
+        <kafka-version>2.4.0</kafka-version>
+        <kafka-bundle-version>2.4.0_1</kafka-bundle-version>
         <karaf4-version>4.2.7</karaf4-version>
         <kie-version>7.31.0.Final</kie-version>
         <kubernetes-client-version>4.7.0</kubernetes-client-version>
@@ -437,7 +438,7 @@
         <maven-bundle-plugin-version>4.2.1</maven-bundle-plugin-version>
         <maven-checkstyle-plugin-version>3.1.0</maven-checkstyle-plugin-version>
         <maven-checkstyle-version>8.26</maven-checkstyle-version>
-        <maven-owasp-plugin-version>5.2.4</maven-owasp-plugin-version>
+        <maven-owasp-plugin-version>5.3.0</maven-owasp-plugin-version>
         <maven-jar-plugin-version>3.1.2</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.0.1</maven-javadoc-plugin-version>
         <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
@@ -478,7 +479,7 @@
         <nsq-client-version>1.0.0.RC4</nsq-client-version>
         <neoscada-version>0.4.0</neoscada-version>
         <netty3-version>3.10.6.Final</netty3-version>
-        <netty-version>4.1.44.Final</netty-version>
+        <netty-version>4.1.45.Final</netty-version>
         <netty-reactive-streams-version>2.0.3</netty-reactive-streams-version>
         <netty40-version>4.0.56.Final</netty40-version>
         <networknt-json-schema-validator-version>1.0.29</networknt-json-schema-validator-version>
@@ -529,7 +530,7 @@
         <pubnub-version>4.25.0</pubnub-version>
         <pulsar-version>2.4.2</pulsar-version>
         <pulsar-bundle-version>2.4.2_1</pulsar-bundle-version>
-        <qpid-broker-version>7.1.6</qpid-broker-version>
+        <qpid-broker-version>7.1.7</qpid-broker-version>
         <qpid-proton-j-version>0.33.3</qpid-proton-j-version>
         <qpid-jms-client-version>0.48.0</qpid-jms-client-version>
         <quartz-version>2.3.2</quartz-version>
@@ -538,7 +539,7 @@
         <rdf4j-rio-version>2.4.4</rdf4j-rio-version>
         <rdf4j-model-version>2.4.4</rdf4j-model-version>
         <reactive-streams-version>1.0.3</reactive-streams-version>
-        <reactor-version>3.2.13.RELEASE</reactor-version>
+        <reactor-version>3.2.14.RELEASE</reactor-version>
         <reflections-bundle-version>0.9.11_1</reflections-bundle-version>
         <regexp-bundle-version>1.4_1</regexp-bundle-version>
         <rescu-version>2.0.2</rescu-version>
@@ -553,7 +554,7 @@
         <robotframework-version>3.1.1</robotframework-version>
         <rome-version>1.12.2</rome-version>
         <rxjava-version>1.3.8</rxjava-version>
-        <rxjava2-version>2.2.16</rxjava2-version>
+        <rxjava2-version>2.2.17</rxjava2-version>
         <saxon-bundle-version>9.9.1-6_1</saxon-bundle-version>
         <saxon-version>9.9.1-6</saxon-version>
         <scala-version>2.11.7</scala-version>
@@ -727,6 +728,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-util-json</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-tooling-util</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -994,6 +1000,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-aws2-translate</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1140,6 +1151,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-couchdb</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-cron</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3754,7 +3770,7 @@
               <artifactId>pulsar-client-admin</artifactId>
               <version>${pulsar-version}</version>
             </dependency>
-            
+
             <!-- apicurio -->
             <dependency>
                 <groupId>io.apicurio</groupId>

@@ -33,13 +33,15 @@ ipfs://cmd?options
 == Options
 
 // component options: START
-The IPFS component supports 2 options, which are listed below.
+The IPFS component supports 4 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *ipfsHost* (producer) | The ipfs host | 127.0.0.1 | String
+| *ipfsPort* (producer) | The ipfs port | 5001 | int
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 |===
@@ -49,19 +51,17 @@ The IPFS component supports 2 options, which are listed below.
 The IPFS endpoint is configured using URI syntax:
 
 ----
-ipfs:ipfsHost:ipfsPort/ipfsCmd
+ipfs:ipfsCmd
 ----
 
 with the following path and query parameters:
 
-=== Path Parameters (3 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *ipfsHost* | *Required* The ipfs host |  | String
-| *ipfsPort* | *Required* The ipfs port |  | int
 | *ipfsCmd* | *Required* The ipfs command |  | String
 |===
 

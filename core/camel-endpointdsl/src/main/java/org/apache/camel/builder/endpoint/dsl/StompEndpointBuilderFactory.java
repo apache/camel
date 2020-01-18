@@ -603,7 +603,8 @@ public interface StompEndpointBuilderFactory {
      */
     public interface StompEndpointBuilder
             extends
-                StompEndpointConsumerBuilder, StompEndpointProducerBuilder {
+                StompEndpointConsumerBuilder,
+                StompEndpointProducerBuilder {
         default AdvancedStompEndpointBuilder advanced() {
             return (AdvancedStompEndpointBuilder) this;
         }
@@ -720,7 +721,8 @@ public interface StompEndpointBuilderFactory {
      */
     public interface AdvancedStompEndpointBuilder
             extends
-                AdvancedStompEndpointConsumerBuilder, AdvancedStompEndpointProducerBuilder {
+                AdvancedStompEndpointConsumerBuilder,
+                AdvancedStompEndpointProducerBuilder {
         default StompEndpointBuilder basic() {
             return (StompEndpointBuilder) this;
         }
@@ -807,6 +809,26 @@ public interface StompEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface StompBuilders {
+        /**
+         * Stomp (camel-stomp)
+         * The stomp component is used for communicating with Stomp compliant
+         * message brokers.
+         * 
+         * Category: messaging
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-stomp
+         * 
+         * Syntax: <code>stomp:destination</code>
+         * 
+         * Path parameter: destination (required)
+         * Name of the queue
+         */
+        default StompEndpointBuilder stomp(String path) {
+            return StompEndpointBuilderFactory.stomp(path);
+        }
+    }
     /**
      * Stomp (camel-stomp)
      * The stomp component is used for communicating with Stomp compliant
@@ -821,7 +843,7 @@ public interface StompEndpointBuilderFactory {
      * Path parameter: destination (required)
      * Name of the queue
      */
-    default StompEndpointBuilder stomp(String path) {
+    static StompEndpointBuilder stomp(String path) {
         class StompEndpointBuilderImpl extends AbstractEndpointBuilder implements StompEndpointBuilder, AdvancedStompEndpointBuilder {
             public StompEndpointBuilderImpl(String path) {
                 super("stomp", path);

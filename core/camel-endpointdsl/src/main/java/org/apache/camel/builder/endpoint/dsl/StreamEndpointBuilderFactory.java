@@ -750,7 +750,8 @@ public interface StreamEndpointBuilderFactory {
      */
     public interface StreamEndpointBuilder
             extends
-                StreamEndpointConsumerBuilder, StreamEndpointProducerBuilder {
+                StreamEndpointConsumerBuilder,
+                StreamEndpointProducerBuilder {
         default AdvancedStreamEndpointBuilder advanced() {
             return (AdvancedStreamEndpointBuilder) this;
         }
@@ -786,7 +787,8 @@ public interface StreamEndpointBuilderFactory {
      */
     public interface AdvancedStreamEndpointBuilder
             extends
-                AdvancedStreamEndpointConsumerBuilder, AdvancedStreamEndpointProducerBuilder {
+                AdvancedStreamEndpointConsumerBuilder,
+                AdvancedStreamEndpointProducerBuilder {
         default StreamEndpointBuilder basic() {
             return (StreamEndpointBuilder) this;
         }
@@ -877,6 +879,27 @@ public interface StreamEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface StreamBuilders {
+        /**
+         * Stream (camel-stream)
+         * The stream: component provides access to the system-in, system-out
+         * and system-err streams as well as allowing streaming of file.
+         * 
+         * Category: file,system
+         * Since: 1.3
+         * Maven coordinates: org.apache.camel:camel-stream
+         * 
+         * Syntax: <code>stream:kind</code>
+         * 
+         * Path parameter: kind (required)
+         * Kind of stream to use such as System.in or System.out.
+         * The value can be one of: in, out, err, header, file
+         */
+        default StreamEndpointBuilder stream(String path) {
+            return StreamEndpointBuilderFactory.stream(path);
+        }
+    }
     /**
      * Stream (camel-stream)
      * The stream: component provides access to the system-in, system-out and
@@ -892,7 +915,7 @@ public interface StreamEndpointBuilderFactory {
      * Kind of stream to use such as System.in or System.out.
      * The value can be one of: in, out, err, header, file
      */
-    default StreamEndpointBuilder stream(String path) {
+    static StreamEndpointBuilder stream(String path) {
         class StreamEndpointBuilderImpl extends AbstractEndpointBuilder implements StreamEndpointBuilder, AdvancedStreamEndpointBuilder {
             public StreamEndpointBuilderImpl(String path) {
                 super("stream", path);

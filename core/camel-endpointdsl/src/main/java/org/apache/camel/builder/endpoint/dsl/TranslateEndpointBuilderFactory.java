@@ -355,6 +355,25 @@ public interface TranslateEndpointBuilderFactory {
         http,
         https;
     }
+
+    public interface TranslateBuilders {
+        /**
+         * AWS Translate (camel-aws-translate)
+         * The aws-translate component is used for managing Amazon Translate
+         * 
+         * Category: cloud,management
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-aws-translate
+         * 
+         * Syntax: <code>aws-translate:label</code>
+         * 
+         * Path parameter: label (required)
+         * Logical name
+         */
+        default TranslateEndpointBuilder awsTranslate(String path) {
+            return TranslateEndpointBuilderFactory.awsTranslate(path);
+        }
+    }
     /**
      * AWS Translate (camel-aws-translate)
      * The aws-translate component is used for managing Amazon Translate
@@ -368,7 +387,7 @@ public interface TranslateEndpointBuilderFactory {
      * Path parameter: label (required)
      * Logical name
      */
-    default TranslateEndpointBuilder awsTranslate(String path) {
+    static TranslateEndpointBuilder awsTranslate(String path) {
         class TranslateEndpointBuilderImpl extends AbstractEndpointBuilder implements TranslateEndpointBuilder, AdvancedTranslateEndpointBuilder {
             public TranslateEndpointBuilderImpl(String path) {
                 super("aws-translate", path);

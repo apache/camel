@@ -303,6 +303,27 @@ public interface IgniteEventsEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface IgniteEventsBuilders {
+        /**
+         * Ignite Events (camel-ignite)
+         * The Ignite Events endpoint is one of camel-ignite endpoints which
+         * allows you to receive events from the Ignite cluster by creating a
+         * local event listener.
+         * 
+         * Category: nosql,cache,compute,messaging,data
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ignite
+         * 
+         * Syntax: <code>ignite-events:endpointId</code>
+         * 
+         * Path parameter: endpointId
+         * The endpoint ID (not used).
+         */
+        default IgniteEventsEndpointBuilder igniteEvents(String path) {
+            return IgniteEventsEndpointBuilderFactory.igniteEvents(path);
+        }
+    }
     /**
      * Ignite Events (camel-ignite)
      * The Ignite Events endpoint is one of camel-ignite endpoints which allows
@@ -318,7 +339,7 @@ public interface IgniteEventsEndpointBuilderFactory {
      * Path parameter: endpointId
      * The endpoint ID (not used).
      */
-    default IgniteEventsEndpointBuilder igniteEvents(String path) {
+    static IgniteEventsEndpointBuilder igniteEvents(String path) {
         class IgniteEventsEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteEventsEndpointBuilder, AdvancedIgniteEventsEndpointBuilder {
             public IgniteEventsEndpointBuilderImpl(String path) {
                 super("ignite-events", path);

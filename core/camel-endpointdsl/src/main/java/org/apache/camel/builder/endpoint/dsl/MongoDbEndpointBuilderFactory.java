@@ -1137,7 +1137,8 @@ public interface MongoDbEndpointBuilderFactory {
      */
     public interface MongoDbEndpointBuilder
             extends
-                MongoDbEndpointConsumerBuilder, MongoDbEndpointProducerBuilder {
+                MongoDbEndpointConsumerBuilder,
+                MongoDbEndpointProducerBuilder {
         default AdvancedMongoDbEndpointBuilder advanced() {
             return (AdvancedMongoDbEndpointBuilder) this;
         }
@@ -1403,7 +1404,8 @@ public interface MongoDbEndpointBuilderFactory {
      */
     public interface AdvancedMongoDbEndpointBuilder
             extends
-                AdvancedMongoDbEndpointConsumerBuilder, AdvancedMongoDbEndpointProducerBuilder {
+                AdvancedMongoDbEndpointConsumerBuilder,
+                AdvancedMongoDbEndpointProducerBuilder {
         default MongoDbEndpointBuilder basic() {
             return (MongoDbEndpointBuilder) this;
         }
@@ -1625,6 +1627,25 @@ public interface MongoDbEndpointBuilderFactory {
         Document,
         MongoIterable;
     }
+
+    public interface MongoDbBuilders {
+        /**
+         * MongoDB (camel-mongodb)
+         * Component for working with documents stored in MongoDB database.
+         * 
+         * Category: database,nosql
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-mongodb
+         * 
+         * Syntax: <code>mongodb:connectionBean</code>
+         * 
+         * Path parameter: connectionBean (required)
+         * Name of com.mongodb.Mongo to use.
+         */
+        default MongoDbEndpointBuilder mongodb(String path) {
+            return MongoDbEndpointBuilderFactory.mongodb(path);
+        }
+    }
     /**
      * MongoDB (camel-mongodb)
      * Component for working with documents stored in MongoDB database.
@@ -1638,7 +1659,7 @@ public interface MongoDbEndpointBuilderFactory {
      * Path parameter: connectionBean (required)
      * Name of com.mongodb.Mongo to use.
      */
-    default MongoDbEndpointBuilder mongodb(String path) {
+    static MongoDbEndpointBuilder mongodb(String path) {
         class MongoDbEndpointBuilderImpl extends AbstractEndpointBuilder implements MongoDbEndpointBuilder, AdvancedMongoDbEndpointBuilder {
             public MongoDbEndpointBuilderImpl(String path) {
                 super("mongodb", path);

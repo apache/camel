@@ -24,13 +24,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
- * Analyses the Camel EIPs in a project and generates extra descriptor information for easier auto-discovery in Camel.
+ * Analyses the Camel EIPs in a project and generates extra descriptor
+ * information for easier auto-discovery in Camel.
  */
 @Mojo(name = "generate-eips-list", threadSafe = true)
 public class PackageModelMojo extends AbstractGeneratorMojo {
@@ -50,9 +52,10 @@ public class PackageModelMojo extends AbstractGeneratorMojo {
     /**
      * Execute goal.
      *
-     * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the
-     *                 threads it generated failed.
-     * @throws org.apache.maven.plugin.MojoFailureException something bad happened...
+     * @throws org.apache.maven.plugin.MojoExecutionException execution of the
+     *             main class or one of the threads it generated failed.
+     * @throws org.apache.maven.plugin.MojoFailureException something bad
+     *             happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

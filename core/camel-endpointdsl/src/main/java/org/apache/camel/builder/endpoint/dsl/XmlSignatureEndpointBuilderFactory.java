@@ -1072,6 +1072,31 @@ public interface XmlSignatureEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface XmlSignatureBuilders {
+        /**
+         * XML Security (camel-xmlsecurity)
+         * Used to sign and verify exchanges using the XML signature
+         * specification.
+         * 
+         * Category: security,transformation
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-xmlsecurity
+         * 
+         * Syntax: <code>xmlsecurity:command:name</code>
+         * 
+         * Path parameter: command (required)
+         * Whether to sign or verify.
+         * The value can be one of: sign, verify
+         * 
+         * Path parameter: name (required)
+         * The name part in the URI can be chosen by the user to distinguish
+         * between different signer/verifier endpoints within the camel context.
+         */
+        default XmlSignatureEndpointBuilder xmlsecurity(String path) {
+            return XmlSignatureEndpointBuilderFactory.xmlsecurity(path);
+        }
+    }
     /**
      * XML Security (camel-xmlsecurity)
      * Used to sign and verify exchanges using the XML signature specification.
@@ -1090,7 +1115,7 @@ public interface XmlSignatureEndpointBuilderFactory {
      * The name part in the URI can be chosen by the user to distinguish between
      * different signer/verifier endpoints within the camel context.
      */
-    default XmlSignatureEndpointBuilder xmlsecurity(String path) {
+    static XmlSignatureEndpointBuilder xmlsecurity(String path) {
         class XmlSignatureEndpointBuilderImpl extends AbstractEndpointBuilder implements XmlSignatureEndpointBuilder, AdvancedXmlSignatureEndpointBuilder {
             public XmlSignatureEndpointBuilderImpl(String path) {
                 super("xmlsecurity", path);

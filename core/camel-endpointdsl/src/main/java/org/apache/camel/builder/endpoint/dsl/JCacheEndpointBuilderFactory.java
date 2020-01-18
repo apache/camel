@@ -1052,7 +1052,8 @@ public interface JCacheEndpointBuilderFactory {
      */
     public interface JCacheEndpointBuilder
             extends
-                JCacheEndpointConsumerBuilder, JCacheEndpointProducerBuilder {
+                JCacheEndpointConsumerBuilder,
+                JCacheEndpointProducerBuilder {
         default AdvancedJCacheEndpointBuilder advanced() {
             return (AdvancedJCacheEndpointBuilder) this;
         }
@@ -1260,7 +1261,8 @@ public interface JCacheEndpointBuilderFactory {
      */
     public interface AdvancedJCacheEndpointBuilder
             extends
-                AdvancedJCacheEndpointConsumerBuilder, AdvancedJCacheEndpointProducerBuilder {
+                AdvancedJCacheEndpointConsumerBuilder,
+                AdvancedJCacheEndpointProducerBuilder {
         default JCacheEndpointBuilder basic() {
             return (JCacheEndpointBuilder) this;
         }
@@ -1427,6 +1429,26 @@ public interface JCacheEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface JCacheBuilders {
+        /**
+         * JCache (camel-jcache)
+         * The jcache component enables you to perform caching operations using
+         * JSR107/JCache as cache implementation.
+         * 
+         * Category: cache,datagrid,clustering
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-jcache
+         * 
+         * Syntax: <code>jcache:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache
+         */
+        default JCacheEndpointBuilder jcache(String path) {
+            return JCacheEndpointBuilderFactory.jcache(path);
+        }
+    }
     /**
      * JCache (camel-jcache)
      * The jcache component enables you to perform caching operations using
@@ -1441,7 +1463,7 @@ public interface JCacheEndpointBuilderFactory {
      * Path parameter: cacheName (required)
      * The name of the cache
      */
-    default JCacheEndpointBuilder jcache(String path) {
+    static JCacheEndpointBuilder jcache(String path) {
         class JCacheEndpointBuilderImpl extends AbstractEndpointBuilder implements JCacheEndpointBuilder, AdvancedJCacheEndpointBuilder {
             public JCacheEndpointBuilderImpl(String path) {
                 super("jcache", path);

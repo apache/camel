@@ -3054,7 +3054,8 @@ public interface KafkaEndpointBuilderFactory {
      */
     public interface KafkaEndpointBuilder
             extends
-                KafkaEndpointConsumerBuilder, KafkaEndpointProducerBuilder {
+                KafkaEndpointConsumerBuilder,
+                KafkaEndpointProducerBuilder {
         default AdvancedKafkaEndpointBuilder advanced() {
             return (AdvancedKafkaEndpointBuilder) this;
         }
@@ -3546,7 +3547,8 @@ public interface KafkaEndpointBuilderFactory {
      */
     public interface AdvancedKafkaEndpointBuilder
             extends
-                AdvancedKafkaEndpointConsumerBuilder, AdvancedKafkaEndpointProducerBuilder {
+                AdvancedKafkaEndpointConsumerBuilder,
+                AdvancedKafkaEndpointProducerBuilder {
         default KafkaEndpointBuilder basic() {
             return (KafkaEndpointBuilder) this;
         }
@@ -3605,6 +3607,28 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface KafkaBuilders {
+        /**
+         * Kafka (camel-kafka)
+         * The kafka component allows messages to be sent to (or consumed from)
+         * Apache Kafka brokers.
+         * 
+         * Category: messaging
+         * Since: 2.13
+         * Maven coordinates: org.apache.camel:camel-kafka
+         * 
+         * Syntax: <code>kafka:topic</code>
+         * 
+         * Path parameter: topic (required)
+         * Name of the topic to use. On the consumer you can use comma to
+         * separate multiple topics. A producer can only send a message to a
+         * single topic.
+         */
+        default KafkaEndpointBuilder kafka(String path) {
+            return KafkaEndpointBuilderFactory.kafka(path);
+        }
+    }
     /**
      * Kafka (camel-kafka)
      * The kafka component allows messages to be sent to (or consumed from)
@@ -3620,7 +3644,7 @@ public interface KafkaEndpointBuilderFactory {
      * Name of the topic to use. On the consumer you can use comma to separate
      * multiple topics. A producer can only send a message to a single topic.
      */
-    default KafkaEndpointBuilder kafka(String path) {
+    static KafkaEndpointBuilder kafka(String path) {
         class KafkaEndpointBuilderImpl extends AbstractEndpointBuilder implements KafkaEndpointBuilder, AdvancedKafkaEndpointBuilder {
             public KafkaEndpointBuilderImpl(String path) {
                 super("kafka", path);

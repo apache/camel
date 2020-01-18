@@ -317,6 +317,26 @@ public interface BeanValidatorEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface BeanValidatorBuilders {
+        /**
+         * Bean Validator (camel-bean-validator)
+         * The Validator component performs bean validation of the message body
+         * using the Java Bean Validation API.
+         * 
+         * Category: validation
+         * Since: 2.3
+         * Maven coordinates: org.apache.camel:camel-bean-validator
+         * 
+         * Syntax: <code>bean-validator:label</code>
+         * 
+         * Path parameter: label (required)
+         * Where label is an arbitrary text value describing the endpoint
+         */
+        default BeanValidatorEndpointBuilder beanValidator(String path) {
+            return BeanValidatorEndpointBuilderFactory.beanValidator(path);
+        }
+    }
     /**
      * Bean Validator (camel-bean-validator)
      * The Validator component performs bean validation of the message body
@@ -331,7 +351,7 @@ public interface BeanValidatorEndpointBuilderFactory {
      * Path parameter: label (required)
      * Where label is an arbitrary text value describing the endpoint
      */
-    default BeanValidatorEndpointBuilder beanValidator(String path) {
+    static BeanValidatorEndpointBuilder beanValidator(String path) {
         class BeanValidatorEndpointBuilderImpl extends AbstractEndpointBuilder implements BeanValidatorEndpointBuilder, AdvancedBeanValidatorEndpointBuilder {
             public BeanValidatorEndpointBuilderImpl(String path) {
                 super("bean-validator", path);

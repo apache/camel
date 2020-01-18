@@ -97,15 +97,15 @@ public class JavadocParser extends Parser {
                                     final int lastHyphen = methodSignature.lastIndexOf('-');
                                     methodSignature = methodSignature.substring(0, firstHyphen) + "("
                                         + methodSignature.substring(firstHyphen + 1, lastHyphen) + ")";
-                                    methodSignature = methodSignature.replaceAll("-", ",");
+                                    methodSignature = methodSignature.replace('-', ',');
                                 }
                                 // support varargs
                                 if (methodSignature.contains("...)")) {
-                                    methodSignature = methodSignature.replaceAll("\\.\\.\\.\\)", "[])");
+                                    methodSignature = methodSignature.replace("...)", "[])");
                                 }
                                 // map Java8 array types
                                 if (methodSignature.contains(":A")) {
-                                    methodSignature = methodSignature.replaceAll(":A", "[]");
+                                    methodSignature = methodSignature.replace(":A", "[]");
                                 }
                                 methodWithTypes = unescapeHtml(methodSignature);
                             }
@@ -113,7 +113,7 @@ public class JavadocParser extends Parser {
                             final String title = (String) attributes.getAttribute(HTML.Attribute.TITLE);
                             if (title != null) {
                                 // append package name to type name text
-                                methodTextBuilder.append(title.substring(title.lastIndexOf(' '))).append('.');
+                                methodTextBuilder.append(title, title.lastIndexOf(' '), title.length()).append('.');
                             }
                         }
                     }
@@ -167,7 +167,7 @@ public class JavadocParser extends Parser {
         String plainText = unescapeHtml(methodTextBuilder.toString());
         // support varargs
         if (plainText.contains("...")) {
-            plainText = plainText.replaceAll("\\.\\.\\.", "[]");
+            plainText = plainText.replace("...", "[]");
         }
         return plainText.substring(plainText.indexOf('('), plainText.indexOf(')') + 1);
     }

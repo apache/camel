@@ -223,6 +223,42 @@ public interface RestOpenApiEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface RestOpenApiBuilders {
+        /**
+         * REST OpenApi (camel-rest-openapi)
+         * An awesome REST endpoint backed by OpenApi specifications.
+         * 
+         * Category: rest,openapi,http
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-rest-openapi
+         * 
+         * Syntax: <code>rest-openapi:specificationUri#operationId</code>
+         * 
+         * Path parameter: specificationUri
+         * Path to the OpenApi specification file. The scheme, host base path
+         * are taken from this specification, but these can be overridden with
+         * properties on the component or endpoint level. If not given the
+         * component tries to load openapi.json resource from the classpath.
+         * Note that the host defined on the component and endpoint of this
+         * Component should contain the scheme, hostname and optionally the port
+         * in the URI syntax (i.e. http://api.example.com:8080). Overrides
+         * component configuration. The OpenApi specification can be loaded from
+         * different sources by prefixing with file: classpath: http: https:.
+         * Support for https is limited to using the JDK installed UrlHandler,
+         * and as such it can be cumbersome to setup TLS/SSL certificates for
+         * https (such as setting a number of javax.net.ssl JVM system
+         * properties). How to do that consult the JDK documentation for
+         * UrlHandler.
+         * Default value: openapi.json
+         * 
+         * Path parameter: operationId (required)
+         * ID of the operation from the OpenApi specification.
+         */
+        default RestOpenApiEndpointBuilder restOpenapi(String path) {
+            return RestOpenApiEndpointBuilderFactory.restOpenapi(path);
+        }
+    }
     /**
      * REST OpenApi (camel-rest-openapi)
      * An awesome REST endpoint backed by OpenApi specifications.
@@ -252,7 +288,7 @@ public interface RestOpenApiEndpointBuilderFactory {
      * Path parameter: operationId (required)
      * ID of the operation from the OpenApi specification.
      */
-    default RestOpenApiEndpointBuilder restOpenapi(String path) {
+    static RestOpenApiEndpointBuilder restOpenapi(String path) {
         class RestOpenApiEndpointBuilderImpl extends AbstractEndpointBuilder implements RestOpenApiEndpointBuilder, AdvancedRestOpenApiEndpointBuilder {
             public RestOpenApiEndpointBuilderImpl(String path) {
                 super("rest-openapi", path);

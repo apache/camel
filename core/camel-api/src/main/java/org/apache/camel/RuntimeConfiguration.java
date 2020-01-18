@@ -103,7 +103,7 @@ public interface RuntimeConfiguration {
     Boolean isDebugging();
 
     /**
-     * Sets whether message history is enabled or not (default is enabled).
+     * Sets whether message history is enabled or not (default is disabled).
      *
      * @param messageHistory whether message history is enabled
      */

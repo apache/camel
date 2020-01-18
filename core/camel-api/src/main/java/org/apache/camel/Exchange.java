@@ -16,7 +16,6 @@
  */
 package org.apache.camel;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -98,6 +97,7 @@ public interface Exchange {
 
     String CHARSET_NAME           = "CamelCharsetName";
     String CIRCUIT_BREAKER_STATE  = "CamelCircuitBreakerState";
+    @Deprecated
     String CREATED_TIMESTAMP      = "CamelCreatedTimestamp";
     String CLAIM_CHECK_REPOSITORY = "CamelClaimCheckRepository";
     String CONTENT_ENCODING       = "Content-Encoding";
@@ -253,6 +253,16 @@ public interface Exchange {
     String XSLT_ERROR       = "CamelXsltError";
     String XSLT_FATAL_ERROR = "CamelXsltFatalError";
     String XSLT_WARNING     = "CamelXsltWarning";
+
+    /**
+     * Adapts this {@link org.apache.camel.Exchange} to the specialized type.
+     * <p/>
+     * For example to adapt to <tt>ExtendedExchange</tt>.
+     *
+     * @param type the type to adapt to
+     * @return this {@link org.apache.camel.Exchange} adapted to the given type
+     */
+    <T extends Exchange> T adapt(Class<T> type);
 
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.
@@ -512,12 +522,12 @@ public interface Exchange {
      * Returns true if this exchange is an external initiated redelivered message (such as a JMS broker).
      * <p/>
      * <b>Important: </b> It is not always possible to determine if the message is a redelivery
-     * or not, and therefore <tt>null</tt> is returned. Such an example would be a JDBC message.
+     * or not, and therefore <tt>false</tt> is returned. Such an example would be a JDBC message.
      * However JMS brokers provides details if a message is redelivered.
      *
-     * @return <tt>true</tt> if redelivered, <tt>false</tt> if not, <tt>null</tt> if not able to determine
+     * @return <tt>true</tt> if redelivered, <tt>false</tt> if not or not able to determine
      */
-    Boolean isExternalRedelivered();
+    boolean isExternalRedelivered();
 
     /**
      * Returns true if this exchange is marked for rollback
@@ -544,38 +554,16 @@ public interface Exchange {
     Endpoint getFromEndpoint();
 
     /**
-     * Sets the endpoint which originated this message exchange. This method
-     * should typically only be called by {@link org.apache.camel.Endpoint} implementations
-     *
-     * @param fromEndpoint the endpoint which is originating this message exchange
-     */
-    void setFromEndpoint(Endpoint fromEndpoint);
-    
-    /**
      * Returns the route id which originated this message exchange if a route consumer on an endpoint
      * created the message exchange, otherwise this property will be <tt>null</tt>
      */
     String getFromRouteId();
 
     /**
-     * Sets the route id which originated this message exchange. This method
-     * should typically only be called by the internal framework.
-     *
-     * @param fromRouteId the from route id
-     */
-    void setFromRouteId(String fromRouteId);
-
-    /**
      * Returns the unit of work that this exchange belongs to; which may map to
      * zero, one or more physical transactions
      */
     UnitOfWork getUnitOfWork();
-
-    /**
-     * Sets the unit of work that this exchange belongs to; which may map to
-     * zero, one or more physical transactions
-     */
-    void setUnitOfWork(UnitOfWork unitOfWork);
 
     /**
      * Returns the exchange id (unique)
@@ -588,39 +576,8 @@ public interface Exchange {
     void setExchangeId(String id);
 
     /**
-     * Adds a {@link org.apache.camel.spi.Synchronization} to be invoked as callback when
-     * this exchange is completed.
-     *
-     * @param onCompletion  the callback to invoke on completion of this exchange
+     * Gets the timestamp in millis when this exchange was created.
      */
-    void addOnCompletion(Synchronization onCompletion);
-
-    /**
-     * Checks if the passed {@link org.apache.camel.spi.Synchronization} instance is
-     * already contained on this exchange.
-     *
-     * @param onCompletion  the callback instance that is being checked for
-     * @return <tt>true</tt>, if callback instance is already contained on this exchange, else <tt>false</tt>
-     */
-    boolean containsOnCompletion(Synchronization onCompletion);
-
-    /**
-     * Handover all the on completions from this exchange to the target exchange.
-     *
-     * @param target the target exchange
-     */
-    void handoverCompletions(Exchange target);
-
-    /**
-     * Handover all the on completions from this exchange
-     *
-     * @return the on completions
-     */
-    List<Synchronization> handoverCompletions();
-
-    /**
-     * Gets the timestamp when this exchange was created.
-     */
-    Date getCreated();
+    long getCreated();
 
 }

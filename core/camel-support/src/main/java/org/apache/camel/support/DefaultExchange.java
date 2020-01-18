@@ -17,7 +17,6 @@
 package org.apache.camel.support;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,6 +29,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.spi.Synchronization;
@@ -39,9 +39,10 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A default implementation of {@link Exchange}
  */
-public final class DefaultExchange implements Exchange {
+public final class DefaultExchange implements ExtendedExchange {
 
-    protected final CamelContext context;
+    private final CamelContext context;
+    private final long created;
     private Map<String, Object> properties;
     private Message in;
     private Message out;
@@ -52,6 +53,9 @@ public final class DefaultExchange implements Exchange {
     private Endpoint fromEndpoint;
     private String fromRouteId;
     private List<Synchronization> onCompletions;
+    private Boolean externalRedelivered;
+    private String historyNodeId;
+    private String historyNodeLabel;
 
     public DefaultExchange(CamelContext context) {
         this(context, ExchangePattern.InOnly);
@@ -60,10 +64,13 @@ public final class DefaultExchange implements Exchange {
     public DefaultExchange(CamelContext context, ExchangePattern pattern) {
         this.context = context;
         this.pattern = pattern;
+        this.created = System.currentTimeMillis();
     }
 
     public DefaultExchange(Exchange parent) {
-        this(parent.getContext(), parent.getPattern());
+        this.context = parent.getContext();
+        this.pattern = parent.getPattern();
+        this.created = parent.getCreated();
         this.fromEndpoint = parent.getFromEndpoint();
         this.fromRouteId = parent.getFromRouteId();
         this.unitOfWork = parent.getUnitOfWork();
@@ -81,16 +88,16 @@ public final class DefaultExchange implements Exchange {
     @Override
     public String toString() {
         // do not output information about the message as it may contain sensitive information
-        return String.format("Exchange[%s]", exchangeId == null ? "" : exchangeId);
+        if (exchangeId != null) {
+            return "Exchange[" + exchangeId + "]";
+        } else {
+            return "Exchange[]";
+        }
     }
 
     @Override
-    public Date getCreated() {
-        if (hasProperties()) {
-            return getProperty(Exchange.CREATED_TIMESTAMP, Date.class);
-        } else {
-            return null;
-        }
+    public long getCreated() {
+        return created;
     }
 
     @Override
@@ -396,6 +403,11 @@ public final class DefaultExchange implements Exchange {
     }
 
     @Override
+    public <T extends Exchange> T adapt(Class<T> type) {
+        return type.cast(this);
+    }
+
+    @Override
     public ExchangePattern getPattern() {
         return pattern;
     }
@@ -454,29 +466,21 @@ public final class DefaultExchange implements Exchange {
     }
 
     @Override
-    public Boolean isExternalRedelivered() {
-        Boolean answer = null;
-
-        // check property first, as the implementation details to know if the message
-        // was externally redelivered is message specific, and thus the message implementation
-        // could potentially change during routing, and therefore later we may not know if the
-        // original message was externally redelivered or not, therefore we store this detail
-        // as a exchange property to keep it around for the lifecycle of the exchange
-        if (hasProperties()) {
-            answer = getProperty(Exchange.EXTERNAL_REDELIVERED, null, Boolean.class);
-        }
-        
-        if (answer == null) {
+    public boolean isExternalRedelivered() {
+        if (externalRedelivered == null) {
             // lets avoid adding methods to the Message API, so we use the
             // DefaultMessage to allow component specific messages to extend
             // and implement the isExternalRedelivered method.
             Message msg = getIn();
             if (msg instanceof DefaultMessage) {
-                answer = ((DefaultMessage) msg).isTransactedRedelivered();
+                externalRedelivered = ((DefaultMessage) msg).isTransactedRedelivered();
+            }
+            // not from a transactional resource so mark it as false by default
+            if (externalRedelivered == null) {
+                externalRedelivered = false;
             }
         }
-
-        return answer;
+        return externalRedelivered;
     }
 
     @Override
@@ -534,7 +538,7 @@ public final class DefaultExchange implements Exchange {
     public void handoverCompletions(Exchange target) {
         if (onCompletions != null) {
             for (Synchronization onCompletion : onCompletions) {
-                target.addOnCompletion(onCompletion);
+                target.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
             }
             // cleanup the temporary on completion list as they have been handed over
             onCompletions.clear();
@@ -554,6 +558,26 @@ public final class DefaultExchange implements Exchange {
             onCompletions = null;
         }
         return answer;
+    }
+
+    @Override
+    public String getHistoryNodeId() {
+        return historyNodeId;
+    }
+
+    @Override
+    public void setHistoryNodeId(String historyNodeId) {
+        this.historyNodeId = historyNodeId;
+    }
+
+    @Override
+    public String getHistoryNodeLabel() {
+        return historyNodeLabel;
+    }
+
+    @Override
+    public void setHistoryNodeLabel(String historyNodeLabel) {
+        this.historyNodeLabel = historyNodeLabel;
     }
 
     /**

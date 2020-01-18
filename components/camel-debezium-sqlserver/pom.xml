@@ -91,9 +91,7 @@
                     <dependency>
                         <groupId>io.debezium</groupId>
                         <artifactId>debezium-connector-sqlserver</artifactId>
-                        <!-- Only for the maven plugin, we will use 1.0.0.Beta2 to generate the config due to missing configs on 0.10 -->
-                        <!-- Once we have 1.0.0.Final, we will change this back to ${debezium-version} -->
-                        <version>1.0.0.Beta2</version>
+                        <version>${debezium-version}</version>
                         <scope>runtime</scope>
                     </dependency>
                 </dependencies>

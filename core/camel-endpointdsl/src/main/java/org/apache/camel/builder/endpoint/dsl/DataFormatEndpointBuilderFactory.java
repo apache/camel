@@ -149,6 +149,30 @@ public interface DataFormatEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface DataFormatBuilders {
+        /**
+         * Data Format (camel-dataformat)
+         * The dataformat component is used for working with Data Formats as if
+         * it was a regular Component supporting Endpoints and URIs.
+         * 
+         * Category: core,transformation
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-dataformat
+         * 
+         * Syntax: <code>dataformat:name:operation</code>
+         * 
+         * Path parameter: name (required)
+         * Name of data format
+         * 
+         * Path parameter: operation (required)
+         * Operation to use either marshal or unmarshal
+         * The value can be one of: marshal, unmarshal
+         */
+        default DataFormatEndpointBuilder dataformat(String path) {
+            return DataFormatEndpointBuilderFactory.dataformat(path);
+        }
+    }
     /**
      * Data Format (camel-dataformat)
      * The dataformat component is used for working with Data Formats as if it
@@ -167,7 +191,7 @@ public interface DataFormatEndpointBuilderFactory {
      * Operation to use either marshal or unmarshal
      * The value can be one of: marshal, unmarshal
      */
-    default DataFormatEndpointBuilder dataformat(String path) {
+    static DataFormatEndpointBuilder dataformat(String path) {
         class DataFormatEndpointBuilderImpl extends AbstractEndpointBuilder implements DataFormatEndpointBuilder, AdvancedDataFormatEndpointBuilder {
             public DataFormatEndpointBuilderImpl(String path) {
                 super("dataformat", path);

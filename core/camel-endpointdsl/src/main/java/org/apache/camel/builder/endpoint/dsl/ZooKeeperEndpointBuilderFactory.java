@@ -542,7 +542,8 @@ public interface ZooKeeperEndpointBuilderFactory {
      */
     public interface ZooKeeperEndpointBuilder
             extends
-                ZooKeeperEndpointConsumerBuilder, ZooKeeperEndpointProducerBuilder {
+                ZooKeeperEndpointConsumerBuilder,
+                ZooKeeperEndpointProducerBuilder {
         default AdvancedZooKeeperEndpointBuilder advanced() {
             return (AdvancedZooKeeperEndpointBuilder) this;
         }
@@ -601,7 +602,8 @@ public interface ZooKeeperEndpointBuilderFactory {
      */
     public interface AdvancedZooKeeperEndpointBuilder
             extends
-                AdvancedZooKeeperEndpointConsumerBuilder, AdvancedZooKeeperEndpointProducerBuilder {
+                AdvancedZooKeeperEndpointConsumerBuilder,
+                AdvancedZooKeeperEndpointProducerBuilder {
         default ZooKeeperEndpointBuilder basic() {
             return (ZooKeeperEndpointBuilder) this;
         }
@@ -660,6 +662,29 @@ public interface ZooKeeperEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface ZooKeeperBuilders {
+        /**
+         * ZooKeeper (camel-zookeeper)
+         * The zookeeper component allows interaction with a ZooKeeper cluster.
+         * 
+         * Category: clustering
+         * Since: 2.9
+         * Maven coordinates: org.apache.camel:camel-zookeeper
+         * 
+         * Syntax: <code>zookeeper:serverUrls/path</code>
+         * 
+         * Path parameter: serverUrls (required)
+         * The zookeeper server hosts (multiple servers can be separated by
+         * comma)
+         * 
+         * Path parameter: path (required)
+         * The node in the ZooKeeper server (aka znode)
+         */
+        default ZooKeeperEndpointBuilder zookeeper(String path) {
+            return ZooKeeperEndpointBuilderFactory.zookeeper(path);
+        }
+    }
     /**
      * ZooKeeper (camel-zookeeper)
      * The zookeeper component allows interaction with a ZooKeeper cluster.
@@ -676,7 +701,7 @@ public interface ZooKeeperEndpointBuilderFactory {
      * Path parameter: path (required)
      * The node in the ZooKeeper server (aka znode)
      */
-    default ZooKeeperEndpointBuilder zookeeper(String path) {
+    static ZooKeeperEndpointBuilder zookeeper(String path) {
         class ZooKeeperEndpointBuilderImpl extends AbstractEndpointBuilder implements ZooKeeperEndpointBuilder, AdvancedZooKeeperEndpointBuilder {
             public ZooKeeperEndpointBuilderImpl(String path) {
                 super("zookeeper", path);

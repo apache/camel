@@ -916,7 +916,8 @@ public interface GoogleMailEndpointBuilderFactory {
      */
     public interface GoogleMailEndpointBuilder
             extends
-                GoogleMailEndpointConsumerBuilder, GoogleMailEndpointProducerBuilder {
+                GoogleMailEndpointConsumerBuilder,
+                GoogleMailEndpointProducerBuilder {
         default AdvancedGoogleMailEndpointBuilder advanced() {
             return (AdvancedGoogleMailEndpointBuilder) this;
         }
@@ -996,7 +997,8 @@ public interface GoogleMailEndpointBuilderFactory {
      */
     public interface AdvancedGoogleMailEndpointBuilder
             extends
-                AdvancedGoogleMailEndpointConsumerBuilder, AdvancedGoogleMailEndpointProducerBuilder {
+                AdvancedGoogleMailEndpointConsumerBuilder,
+                AdvancedGoogleMailEndpointProducerBuilder {
         default GoogleMailEndpointBuilder basic() {
             return (GoogleMailEndpointBuilder) this;
         }
@@ -1056,6 +1058,33 @@ public interface GoogleMailEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface GoogleMailBuilders {
+        /**
+         * Google Mail (camel-google-mail)
+         * The google-mail component provides access to Google Mail.
+         * 
+         * Category: api,cloud,mail
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-google-mail
+         * 
+         * Syntax: <code>google-mail:apiName/methodName</code>
+         * 
+         * Path parameter: apiName (required)
+         * What kind of operation to perform
+         * The value can be one of: THREADS, MESSAGES, ATTACHMENTS, LABELS,
+         * HISTORY, DRAFTS, USERS
+         * 
+         * Path parameter: methodName (required)
+         * What sub operation to use for the selected operation
+         * The value can be one of: attachments, create, delete, get,
+         * getProfile, gmailImport, insert, list, modify, patch, send, trash,
+         * untrash, update
+         */
+        default GoogleMailEndpointBuilder googleMail(String path) {
+            return GoogleMailEndpointBuilderFactory.googleMail(path);
+        }
+    }
     /**
      * Google Mail (camel-google-mail)
      * The google-mail component provides access to Google Mail.
@@ -1076,7 +1105,7 @@ public interface GoogleMailEndpointBuilderFactory {
      * The value can be one of: attachments, create, delete, get, getProfile,
      * gmailImport, insert, list, modify, patch, send, trash, untrash, update
      */
-    default GoogleMailEndpointBuilder googleMail(String path) {
+    static GoogleMailEndpointBuilder googleMail(String path) {
         class GoogleMailEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleMailEndpointBuilder, AdvancedGoogleMailEndpointBuilder {
             public GoogleMailEndpointBuilderImpl(String path) {
                 super("google-mail", path);

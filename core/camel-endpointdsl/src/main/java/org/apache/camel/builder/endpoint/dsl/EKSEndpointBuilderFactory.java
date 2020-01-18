@@ -307,6 +307,25 @@ public interface EKSEndpointBuilderFactory {
         http,
         https;
     }
+
+    public interface EKSBuilders {
+        /**
+         * AWS EKS (camel-aws-eks)
+         * The aws-eks is used for managing Amazon EKS
+         * 
+         * Category: cloud,management
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-aws-eks
+         * 
+         * Syntax: <code>aws-eks:label</code>
+         * 
+         * Path parameter: label (required)
+         * Logical name
+         */
+        default EKSEndpointBuilder awsEks(String path) {
+            return EKSEndpointBuilderFactory.awsEks(path);
+        }
+    }
     /**
      * AWS EKS (camel-aws-eks)
      * The aws-eks is used for managing Amazon EKS
@@ -320,7 +339,7 @@ public interface EKSEndpointBuilderFactory {
      * Path parameter: label (required)
      * Logical name
      */
-    default EKSEndpointBuilder awsEks(String path) {
+    static EKSEndpointBuilder awsEks(String path) {
         class EKSEndpointBuilderImpl extends AbstractEndpointBuilder implements EKSEndpointBuilder, AdvancedEKSEndpointBuilder {
             public EKSEndpointBuilderImpl(String path) {
                 super("aws-eks", path);

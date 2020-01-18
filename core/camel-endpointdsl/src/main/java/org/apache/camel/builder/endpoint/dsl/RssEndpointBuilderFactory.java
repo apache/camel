@@ -806,6 +806,25 @@ public interface RssEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface RssBuilders {
+        /**
+         * RSS (camel-rss)
+         * The rss component is used for consuming RSS feeds.
+         * 
+         * Category: rss
+         * Since: 2.0
+         * Maven coordinates: org.apache.camel:camel-rss
+         * 
+         * Syntax: <code>rss:feedUri</code>
+         * 
+         * Path parameter: feedUri (required)
+         * The URI to the feed to poll.
+         */
+        default RssEndpointBuilder rss(String path) {
+            return RssEndpointBuilderFactory.rss(path);
+        }
+    }
     /**
      * RSS (camel-rss)
      * The rss component is used for consuming RSS feeds.
@@ -819,7 +838,7 @@ public interface RssEndpointBuilderFactory {
      * Path parameter: feedUri (required)
      * The URI to the feed to poll.
      */
-    default RssEndpointBuilder rss(String path) {
+    static RssEndpointBuilder rss(String path) {
         class RssEndpointBuilderImpl extends AbstractEndpointBuilder implements RssEndpointBuilder, AdvancedRssEndpointBuilder {
             public RssEndpointBuilderImpl(String path) {
                 super("rss", path);

@@ -814,7 +814,8 @@ public interface VmEndpointBuilderFactory {
      */
     public interface VmEndpointBuilder
             extends
-                VmEndpointConsumerBuilder, VmEndpointProducerBuilder {
+                VmEndpointConsumerBuilder,
+                VmEndpointProducerBuilder {
         default AdvancedVmEndpointBuilder advanced() {
             return (AdvancedVmEndpointBuilder) this;
         }
@@ -853,7 +854,8 @@ public interface VmEndpointBuilderFactory {
      */
     public interface AdvancedVmEndpointBuilder
             extends
-                AdvancedVmEndpointConsumerBuilder, AdvancedVmEndpointProducerBuilder {
+                AdvancedVmEndpointConsumerBuilder,
+                AdvancedVmEndpointProducerBuilder {
         default VmEndpointBuilder basic() {
             return (VmEndpointBuilder) this;
         }
@@ -940,6 +942,26 @@ public interface VmEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface VmBuilders {
+        /**
+         * VM (camel-vm)
+         * The vm component provides asynchronous call to another endpoint from
+         * the same CamelContext.
+         * 
+         * Category: core,endpoint
+         * Since: 1.1
+         * Maven coordinates: org.apache.camel:camel-vm
+         * 
+         * Syntax: <code>vm:name</code>
+         * 
+         * Path parameter: name (required)
+         * Name of queue
+         */
+        default VmEndpointBuilder vm(String path) {
+            return VmEndpointBuilderFactory.vm(path);
+        }
+    }
     /**
      * VM (camel-vm)
      * The vm component provides asynchronous call to another endpoint from the
@@ -954,7 +976,7 @@ public interface VmEndpointBuilderFactory {
      * Path parameter: name (required)
      * Name of queue
      */
-    default VmEndpointBuilder vm(String path) {
+    static VmEndpointBuilder vm(String path) {
         class VmEndpointBuilderImpl extends AbstractEndpointBuilder implements VmEndpointBuilder, AdvancedVmEndpointBuilder {
             public VmEndpointBuilderImpl(String path) {
                 super("vm", path);

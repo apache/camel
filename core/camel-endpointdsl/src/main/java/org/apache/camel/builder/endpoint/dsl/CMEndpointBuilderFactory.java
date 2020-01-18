@@ -225,6 +225,25 @@ public interface CMEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface CMBuilders {
+        /**
+         * CM SMS Gateway (camel-cm-sms)
+         * The cm-sms component allows to integrate with CM SMS Gateway.
+         * 
+         * Category: mobile
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-cm-sms
+         * 
+         * Syntax: <code>cm-sms:host</code>
+         * 
+         * Path parameter: host (required)
+         * SMS Provider HOST with scheme
+         */
+        default CMEndpointBuilder cmSms(String path) {
+            return CMEndpointBuilderFactory.cmSms(path);
+        }
+    }
     /**
      * CM SMS Gateway (camel-cm-sms)
      * The cm-sms component allows to integrate with CM SMS Gateway.
@@ -238,7 +257,7 @@ public interface CMEndpointBuilderFactory {
      * Path parameter: host (required)
      * SMS Provider HOST with scheme
      */
-    default CMEndpointBuilder cmSms(String path) {
+    static CMEndpointBuilder cmSms(String path) {
         class CMEndpointBuilderImpl extends AbstractEndpointBuilder implements CMEndpointBuilder, AdvancedCMEndpointBuilder {
             public CMEndpointBuilderImpl(String path) {
                 super("cm-sms", path);

@@ -19,16 +19,19 @@ package org.apache.camel.component.kafka.embedded;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import kafka.admin.AdminUtils;
-import kafka.admin.RackAwareMode;
 import kafka.metrics.KafkaMetricsReporter;
 import kafka.server.KafkaConfig;
 import kafka.server.KafkaServer;
-import kafka.utils.ZkUtils;
+import kafka.zk.KafkaZkClient;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.kafka.clients.CommonClientConfigs;
+import org.apache.kafka.clients.admin.Admin;
+import org.apache.kafka.clients.admin.CreateTopicsResult;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +54,6 @@ public class EmbeddedKafkaBroker extends ExternalResource {
 
     private KafkaServer kafkaServer;
     private File logDir;
-    private ZkUtils zkUtils;
 
     public EmbeddedKafkaBroker(int brokerId, String zkConnection) {
         this(brokerId, AvailablePortFinder.getNextAvailable(), zkConnection, new Properties());
@@ -65,14 +67,6 @@ public class EmbeddedKafkaBroker extends ExternalResource {
 
         log.info("Starting broker[{}] on port {}", brokerId, port);
         this.brokerList = "localhost:" + this.port;
-    }
-
-    public ZkUtils getZkUtils() {
-        return zkUtils;
-    }
-
-    public void createTopic(String topic, int partitionCount) {
-        AdminUtils.createTopic(getZkUtils(), topic, partitionCount, 1, new Properties(), RackAwareMode.Enforced$.MODULE$);
     }
 
     @Override
@@ -95,16 +89,10 @@ public class EmbeddedKafkaBroker extends ExternalResource {
         kafkaServer = startBroker(properties);
     }
 
-
     private KafkaServer startBroker(Properties props) {
-        zkUtils = ZkUtils.apply(
-                zkConnection,
-                30000,
-                30000,
-                false);
         List<KafkaMetricsReporter> kmrList = new ArrayList<>();
         Buffer<KafkaMetricsReporter> metricsList = scala.collection.JavaConversions.asScalaBuffer(kmrList);
-        KafkaServer server = new KafkaServer(new KafkaConfig(props), new SystemTime(), Option.<String>empty(), metricsList);
+        KafkaServer server = new KafkaServer(new KafkaConfig(props), new SystemTime(), Option.<String> empty(), metricsList);
         server.startup();
         return server;
     }

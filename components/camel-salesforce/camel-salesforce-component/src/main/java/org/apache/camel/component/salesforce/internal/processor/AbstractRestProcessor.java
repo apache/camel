@@ -581,7 +581,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         int start = 0;
         while (matcher.find()) {
             // append part before parameter template
-            result.append(apexUrl.substring(start, matcher.start()));
+            result.append(apexUrl, start, matcher.start());
             start = matcher.end();
 
             // append template value from exchange header
@@ -591,14 +591,14 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                 throw new IllegalArgumentException("Missing APEX URL template header " + parameterName);
             }
             try {
-                result.append(URLEncoder.encode(String.valueOf(value), "UTF-8").replaceAll("\\+", "%20"));
+                result.append(URLEncoder.encode(String.valueOf(value), "UTF-8").replace("+", "%20"));
             } catch (UnsupportedEncodingException e) {
                 throw new SalesforceException("Unexpected error: " + e.getMessage(), e);
             }
         }
         if (start != 0) {
             // append remaining URL
-            result.append(apexUrl.substring(start));
+            result.append(apexUrl, start, apexUrl.length());
             final String resolvedUrl = result.toString();
             log.debug("Resolved APEX URL {} to {}", apexUrl, resolvedUrl);
             return resolvedUrl;

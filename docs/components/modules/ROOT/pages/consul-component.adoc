@@ -51,7 +51,7 @@ The Consul component supports 11 options, which are listed below.
 | *url* (common) | The Consul agent URL |  | String
 | *datacenter* (common) | The data center |  | String
 | *sslContextParameters* (common) | SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters instance. |  | SSLContextParameters
-| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *aclToken* (common) | Sets the ACL token to be used with Consul |  | String
 | *userName* (common) | Sets the username to be used for basic authentication |  | String
 | *password* (common) | Sets the password to be used for basic authentication |  | String

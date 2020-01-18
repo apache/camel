@@ -1292,7 +1292,8 @@ public interface IrcEndpointBuilderFactory {
      */
     public interface IrcEndpointBuilder
             extends
-                IrcEndpointConsumerBuilder, IrcEndpointProducerBuilder {
+                IrcEndpointConsumerBuilder,
+                IrcEndpointProducerBuilder {
         default AdvancedIrcEndpointBuilder advanced() {
             return (AdvancedIrcEndpointBuilder) this;
         }
@@ -1760,7 +1761,8 @@ public interface IrcEndpointBuilderFactory {
      */
     public interface AdvancedIrcEndpointBuilder
             extends
-                AdvancedIrcEndpointConsumerBuilder, AdvancedIrcEndpointProducerBuilder {
+                AdvancedIrcEndpointConsumerBuilder,
+                AdvancedIrcEndpointProducerBuilder {
         default IrcEndpointBuilder basic() {
             return (IrcEndpointBuilder) this;
         }
@@ -1843,6 +1845,29 @@ public interface IrcEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface IrcBuilders {
+        /**
+         * IRC (camel-irc)
+         * The irc component implements an IRC (Internet Relay Chat) transport.
+         * 
+         * Category: chat
+         * Since: 1.1
+         * Maven coordinates: org.apache.camel:camel-irc
+         * 
+         * Syntax: <code>irc:hostname:port</code>
+         * 
+         * Path parameter: hostname (required)
+         * Hostname for the IRC chat server
+         * 
+         * Path parameter: port
+         * Port number for the IRC chat server. If no port is configured then a
+         * default port of either 6667, 6668 or 6669 is used.
+         */
+        default IrcEndpointBuilder irc(String path) {
+            return IrcEndpointBuilderFactory.irc(path);
+        }
+    }
     /**
      * IRC (camel-irc)
      * The irc component implements an IRC (Internet Relay Chat) transport.
@@ -1860,7 +1885,7 @@ public interface IrcEndpointBuilderFactory {
      * Port number for the IRC chat server. If no port is configured then a
      * default port of either 6667, 6668 or 6669 is used.
      */
-    default IrcEndpointBuilder irc(String path) {
+    static IrcEndpointBuilder irc(String path) {
         class IrcEndpointBuilderImpl extends AbstractEndpointBuilder implements IrcEndpointBuilder, AdvancedIrcEndpointBuilder {
             public IrcEndpointBuilderImpl(String path) {
                 super("irc", path);

@@ -522,7 +522,8 @@ public interface IgniteMessagingEndpointBuilderFactory {
      */
     public interface IgniteMessagingEndpointBuilder
             extends
-                IgniteMessagingEndpointConsumerBuilder, IgniteMessagingEndpointProducerBuilder {
+                IgniteMessagingEndpointConsumerBuilder,
+                IgniteMessagingEndpointProducerBuilder {
         default AdvancedIgniteMessagingEndpointBuilder advanced() {
             return (AdvancedIgniteMessagingEndpointBuilder) this;
         }
@@ -589,7 +590,8 @@ public interface IgniteMessagingEndpointBuilderFactory {
      */
     public interface AdvancedIgniteMessagingEndpointBuilder
             extends
-                AdvancedIgniteMessagingEndpointConsumerBuilder, AdvancedIgniteMessagingEndpointProducerBuilder {
+                AdvancedIgniteMessagingEndpointConsumerBuilder,
+                AdvancedIgniteMessagingEndpointProducerBuilder {
         default IgniteMessagingEndpointBuilder basic() {
             return (IgniteMessagingEndpointBuilder) this;
         }
@@ -659,6 +661,26 @@ public interface IgniteMessagingEndpointBuilderFactory {
         ORDERED,
         UNORDERED;
     }
+
+    public interface IgniteMessagingBuilders {
+        /**
+         * Ignite Messaging (camel-ignite)
+         * The Ignite Messaging endpoint is one of camel-ignite endpoints which
+         * allows you to send and consume messages from an Ignite topic.
+         * 
+         * Category: nosql,cache,messaging
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ignite
+         * 
+         * Syntax: <code>ignite-messaging:topic</code>
+         * 
+         * Path parameter: topic (required)
+         * The topic name.
+         */
+        default IgniteMessagingEndpointBuilder igniteMessaging(String path) {
+            return IgniteMessagingEndpointBuilderFactory.igniteMessaging(path);
+        }
+    }
     /**
      * Ignite Messaging (camel-ignite)
      * The Ignite Messaging endpoint is one of camel-ignite endpoints which
@@ -673,7 +695,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
      * Path parameter: topic (required)
      * The topic name.
      */
-    default IgniteMessagingEndpointBuilder igniteMessaging(String path) {
+    static IgniteMessagingEndpointBuilder igniteMessaging(String path) {
         class IgniteMessagingEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteMessagingEndpointBuilder, AdvancedIgniteMessagingEndpointBuilder {
             public IgniteMessagingEndpointBuilderImpl(String path) {
                 super("ignite-messaging", path);

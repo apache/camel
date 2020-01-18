@@ -389,19 +389,19 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                     quote = '"';
                 }
                 boolean empty = stag.endsWith("/>"); 
-                sb.append(token.substring(0, stag.length() - (empty ? 2 : 1)));
+                sb.append(token, 0, stag.length() - (empty ? 2 : 1));
                 for (Entry<String, String> e : getCurrentNamespaceBindings().entrySet()) {
                     if (!skip.contains(e.getKey())) {
                         sb.append(e.getKey().length() == 0 ? " xmlns" : " xmlns:")
                             .append(e.getKey()).append("=").append(quote).append(e.getValue()).append(quote);
                     }
                 }
-                sb.append(token.substring(stag.length() - (empty ? 2 : 1)));
+                sb.append(token, stag.length() - (empty ? 2 : 1), token.length());
             } else if (mode == 'u') {
                 int bp = token.indexOf(">");
                 int ep = token.lastIndexOf("</");
                 if (bp > 0 && ep > 0) {
-                    sb.append(token.substring(bp + 1, ep));
+                    sb.append(token, bp + 1, ep);
                 }
             } else if (mode == 't') {
                 int bp = 0;
@@ -411,7 +411,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                     if (bp < 0) {
                         break;
                     }
-                    sb.append(token.substring(ep + 1, bp));
+                    sb.append(token, ep + 1, bp);
                 }
             } else {
                 return token;

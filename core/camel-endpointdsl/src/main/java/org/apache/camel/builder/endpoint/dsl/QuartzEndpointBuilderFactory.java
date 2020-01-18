@@ -594,6 +594,32 @@ public interface QuartzEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface QuartzBuilders {
+        /**
+         * Quartz (camel-quartz)
+         * Provides a scheduled delivery of messages using the Quartz 2.x
+         * scheduler.
+         * 
+         * Category: scheduling
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-quartz
+         * 
+         * Syntax: <code>quartz:groupName/triggerName</code>
+         * 
+         * Path parameter: groupName
+         * The quartz group name to use. The combination of group name and timer
+         * name should be unique.
+         * Default value: Camel
+         * 
+         * Path parameter: triggerName (required)
+         * The quartz timer name to use. The combination of group name and timer
+         * name should be unique.
+         */
+        default QuartzEndpointBuilder quartz(String path) {
+            return QuartzEndpointBuilderFactory.quartz(path);
+        }
+    }
     /**
      * Quartz (camel-quartz)
      * Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
@@ -613,7 +639,7 @@ public interface QuartzEndpointBuilderFactory {
      * The quartz timer name to use. The combination of group name and timer
      * name should be unique.
      */
-    default QuartzEndpointBuilder quartz(String path) {
+    static QuartzEndpointBuilder quartz(String path) {
         class QuartzEndpointBuilderImpl extends AbstractEndpointBuilder implements QuartzEndpointBuilder, AdvancedQuartzEndpointBuilder {
             public QuartzEndpointBuilderImpl(String path) {
                 super("quartz", path);

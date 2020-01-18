@@ -230,6 +230,30 @@ public interface RestApiEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface RestApiBuilders {
+        /**
+         * REST API (camel-rest)
+         * The rest-api component is used for providing Swagger API of the REST
+         * services which has been defined using the rest-dsl in Camel.
+         * 
+         * Category: core,rest
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-rest
+         * 
+         * Syntax: <code>rest-api:path/contextIdPattern</code>
+         * 
+         * Path parameter: path (required)
+         * The base path
+         * 
+         * Path parameter: contextIdPattern
+         * Optional CamelContext id pattern to only allow Rest APIs from rest
+         * services within CamelContext's which name matches the pattern.
+         */
+        default RestApiEndpointBuilder restApi(String path) {
+            return RestApiEndpointBuilderFactory.restApi(path);
+        }
+    }
     /**
      * REST API (camel-rest)
      * The rest-api component is used for providing Swagger API of the REST
@@ -248,7 +272,7 @@ public interface RestApiEndpointBuilderFactory {
      * Optional CamelContext id pattern to only allow Rest APIs from rest
      * services within CamelContext's which name matches the pattern.
      */
-    default RestApiEndpointBuilder restApi(String path) {
+    static RestApiEndpointBuilder restApi(String path) {
         class RestApiEndpointBuilderImpl extends AbstractEndpointBuilder implements RestApiEndpointBuilder, AdvancedRestApiEndpointBuilder {
             public RestApiEndpointBuilderImpl(String path) {
                 super("rest-api", path);

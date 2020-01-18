@@ -534,7 +534,8 @@ public interface AtmosEndpointBuilderFactory {
      */
     public interface AtmosEndpointBuilder
             extends
-                AtmosEndpointConsumerBuilder, AtmosEndpointProducerBuilder {
+                AtmosEndpointConsumerBuilder,
+                AtmosEndpointProducerBuilder {
         default AdvancedAtmosEndpointBuilder advanced() {
             return (AdvancedAtmosEndpointBuilder) this;
         }
@@ -636,7 +637,8 @@ public interface AtmosEndpointBuilderFactory {
      */
     public interface AdvancedAtmosEndpointBuilder
             extends
-                AdvancedAtmosEndpointConsumerBuilder, AdvancedAtmosEndpointProducerBuilder {
+                AdvancedAtmosEndpointConsumerBuilder,
+                AdvancedAtmosEndpointProducerBuilder {
         default AtmosEndpointBuilder basic() {
             return (AtmosEndpointBuilder) this;
         }
@@ -706,6 +708,30 @@ public interface AtmosEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface AtmosBuilders {
+        /**
+         * Atmos (camel-atmos)
+         * The atmos component is used for integrating with EMC's Atomos
+         * Storage.
+         * 
+         * Category: file,cloud
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-atmos
+         * 
+         * Syntax: <code>atmos:name/operation</code>
+         * 
+         * Path parameter: name
+         * Atmos name
+         * 
+         * Path parameter: operation (required)
+         * Operation to perform
+         * The value can be one of: put, del, search, get, move
+         */
+        default AtmosEndpointBuilder atmos(String path) {
+            return AtmosEndpointBuilderFactory.atmos(path);
+        }
+    }
     /**
      * Atmos (camel-atmos)
      * The atmos component is used for integrating with EMC's Atomos Storage.
@@ -723,7 +749,7 @@ public interface AtmosEndpointBuilderFactory {
      * Operation to perform
      * The value can be one of: put, del, search, get, move
      */
-    default AtmosEndpointBuilder atmos(String path) {
+    static AtmosEndpointBuilder atmos(String path) {
         class AtmosEndpointBuilderImpl extends AbstractEndpointBuilder implements AtmosEndpointBuilder, AdvancedAtmosEndpointBuilder {
             public AtmosEndpointBuilderImpl(String path) {
                 super("atmos", path);

@@ -924,7 +924,8 @@ public interface WebsocketEndpointBuilderFactory {
      */
     public interface WebsocketEndpointBuilder
             extends
-                WebsocketEndpointConsumerBuilder, WebsocketEndpointProducerBuilder {
+                WebsocketEndpointConsumerBuilder,
+                WebsocketEndpointProducerBuilder {
         default AdvancedWebsocketEndpointBuilder advanced() {
             return (AdvancedWebsocketEndpointBuilder) this;
         }
@@ -1066,7 +1067,8 @@ public interface WebsocketEndpointBuilderFactory {
      */
     public interface AdvancedWebsocketEndpointBuilder
             extends
-                AdvancedWebsocketEndpointConsumerBuilder, AdvancedWebsocketEndpointProducerBuilder {
+                AdvancedWebsocketEndpointConsumerBuilder,
+                AdvancedWebsocketEndpointProducerBuilder {
         default WebsocketEndpointBuilder basic() {
             return (WebsocketEndpointBuilder) this;
         }
@@ -1233,6 +1235,36 @@ public interface WebsocketEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface WebsocketBuilders {
+        /**
+         * Jetty Websocket (camel-websocket)
+         * The websocket component provides websocket endpoints with Jetty for
+         * communicating with clients using websocket.
+         * 
+         * Category: websocket
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-websocket
+         * 
+         * Syntax: <code>websocket:host:port/resourceUri</code>
+         * 
+         * Path parameter: host
+         * The hostname. The default value is 0.0.0.0. Setting this option on
+         * the component will use the component configured value as default.
+         * Default value: 0.0.0.0
+         * 
+         * Path parameter: port
+         * The port number. The default value is 9292. Setting this option on
+         * the component will use the component configured value as default.
+         * Default value: 9292
+         * 
+         * Path parameter: resourceUri (required)
+         * Name of the websocket channel to use
+         */
+        default WebsocketEndpointBuilder websocket(String path) {
+            return WebsocketEndpointBuilderFactory.websocket(path);
+        }
+    }
     /**
      * Jetty Websocket (camel-websocket)
      * The websocket component provides websocket endpoints with Jetty for
@@ -1257,7 +1289,7 @@ public interface WebsocketEndpointBuilderFactory {
      * Path parameter: resourceUri (required)
      * Name of the websocket channel to use
      */
-    default WebsocketEndpointBuilder websocket(String path) {
+    static WebsocketEndpointBuilder websocket(String path) {
         class WebsocketEndpointBuilderImpl extends AbstractEndpointBuilder implements WebsocketEndpointBuilder, AdvancedWebsocketEndpointBuilder {
             public WebsocketEndpointBuilderImpl(String path) {
                 super("websocket", path);

@@ -792,7 +792,8 @@ public interface ApnsEndpointBuilderFactory {
      */
     public interface ApnsEndpointBuilder
             extends
-                ApnsEndpointConsumerBuilder, ApnsEndpointProducerBuilder {
+                ApnsEndpointConsumerBuilder,
+                ApnsEndpointProducerBuilder {
         default AdvancedApnsEndpointBuilder advanced() {
             return (AdvancedApnsEndpointBuilder) this;
         }
@@ -815,7 +816,8 @@ public interface ApnsEndpointBuilderFactory {
      */
     public interface AdvancedApnsEndpointBuilder
             extends
-                AdvancedApnsEndpointConsumerBuilder, AdvancedApnsEndpointProducerBuilder {
+                AdvancedApnsEndpointConsumerBuilder,
+                AdvancedApnsEndpointProducerBuilder {
         default ApnsEndpointBuilder basic() {
             return (ApnsEndpointBuilder) this;
         }
@@ -874,6 +876,25 @@ public interface ApnsEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface ApnsBuilders {
+        /**
+         * APNS (camel-apns)
+         * For sending notifications to Apple iOS devices.
+         * 
+         * Category: eventbus,mobile
+         * Since: 2.8
+         * Maven coordinates: org.apache.camel:camel-apns
+         * 
+         * Syntax: <code>apns:name</code>
+         * 
+         * Path parameter: name
+         * Name of the endpoint
+         */
+        default ApnsEndpointBuilder apns(String path) {
+            return ApnsEndpointBuilderFactory.apns(path);
+        }
+    }
     /**
      * APNS (camel-apns)
      * For sending notifications to Apple iOS devices.
@@ -887,7 +908,7 @@ public interface ApnsEndpointBuilderFactory {
      * Path parameter: name
      * Name of the endpoint
      */
-    default ApnsEndpointBuilder apns(String path) {
+    static ApnsEndpointBuilder apns(String path) {
         class ApnsEndpointBuilderImpl extends AbstractEndpointBuilder implements ApnsEndpointBuilder, AdvancedApnsEndpointBuilder {
             public ApnsEndpointBuilderImpl(String path) {
                 super("apns", path);

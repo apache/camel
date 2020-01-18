@@ -84,7 +84,8 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
         if (PropertiesHelper.hasProperties(params, "additionalProperties.")) {
             final Map<String, Object> additionalProperties = endpoint.getConfiguration().getAdditionalProperties();
 
-            // add and overwrite additional properties from endpoint to pre-configured properties
+            // add and overwrite additional properties from endpoint to
+            // pre-configured properties
             additionalProperties.putAll(PropertiesHelper.extractProperties(params, "additionalProperties."));
         }
 
@@ -96,7 +97,8 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     }
 
     /**
-     * Allows to pre-configure the Kafka component with common options that the endpoints will reuse.
+     * Allows to pre-configure the Kafka component with common options that the
+     * endpoints will reuse.
      */
     public void setConfiguration(KafkaConfiguration configuration) {
         this.configuration = configuration;
@@ -107,10 +109,12 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     }
 
     /**
-     * URL of the Kafka brokers to use.
-     * The format is host1:port1,host2:port2, and the list can be a subset of brokers or a VIP pointing to a subset of brokers.
+     * URL of the Kafka brokers to use. The format is host1:port1,host2:port2,
+     * and the list can be a subset of brokers or a VIP pointing to a subset of
+     * brokers.
      * <p/>
-     * This option is known as <tt>bootstrap.servers</tt> in the Kafka documentation.
+     * This option is known as <tt>bootstrap.servers</tt> in the Kafka
+     * documentation.
      */
     public void setBrokers(String brokers) {
         if (configuration == null) {
@@ -119,15 +123,16 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
         configuration.setBrokers(brokers);
     }
 
-
     public ExecutorService getWorkerPool() {
         return workerPool;
     }
 
     /**
-     * To use a shared custom worker pool for continue routing {@link Exchange} after kafka server has acknowledge
-     * the message that was sent to it from {@link KafkaProducer} using asynchronous non-blocking processing.
-     * If using this option then you must handle the lifecycle of the thread pool to shut the pool down when no longer needed.
+     * To use a shared custom worker pool for continue routing {@link Exchange}
+     * after kafka server has acknowledge the message that was sent to it from
+     * {@link KafkaProducer} using asynchronous non-blocking processing. If
+     * using this option then you must handle the lifecycle of the thread pool
+     * to shut the pool down when no longer needed.
      */
     public void setWorkerPool(ExecutorService workerPool) {
         this.workerPool = workerPool;
@@ -151,12 +156,14 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     }
 
     /**
-     * This options controls what happens when a consumer is processing an exchange and it fails.
-     * If the option is <tt>false</tt> then the consumer continues to the next message and processes it.
-     * If the option is <tt>true</tt> then the consumer breaks out, and will seek back to offset of the
-     * message that caused a failure, and then re-attempt to process this message. However this can lead
-     * to endless processing of the same message if its bound to fail every time, eg a poison message.
-     * Therefore its recommended to deal with that for example by using Camel's error handler.
+     * This options controls what happens when a consumer is processing an
+     * exchange and it fails. If the option is <tt>false</tt> then the consumer
+     * continues to the next message and processes it. If the option is
+     * <tt>true</tt> then the consumer breaks out, and will seek back to offset
+     * of the message that caused a failure, and then re-attempt to process this
+     * message. However this can lead to endless processing of the same message
+     * if its bound to fail every time, eg a poison message. Therefore its
+     * recommended to deal with that for example by using Camel's error handler.
      */
     public void setBreakOnFirstError(boolean breakOnFirstError) {
         this.breakOnFirstError = breakOnFirstError;
@@ -169,8 +176,10 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     /**
      * Whether to allow doing manual commits via {@link KafkaManualCommit}.
      * <p/>
-     * If this option is enabled then an instance of {@link KafkaManualCommit} is stored on the {@link Exchange} message header,
-     * which allows end users to access this API and perform manual offset commits via the Kafka consumer.
+     * If this option is enabled then an instance of {@link KafkaManualCommit}
+     * is stored on the {@link Exchange} message header, which allows end users
+     * to access this API and perform manual offset commits via the Kafka
+     * consumer.
      */
     public void setAllowManualCommit(boolean allowManualCommit) {
         this.allowManualCommit = allowManualCommit;
@@ -181,9 +190,11 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     }
 
     /**
-     * Factory to use for creating {@link KafkaManualCommit} instances. This allows to plugin a custom factory
-     * to create custom {@link KafkaManualCommit} instances in case special logic is needed when doing manual commits
-     * that deviates from the default implementation that comes out of the box.
+     * Factory to use for creating {@link KafkaManualCommit} instances. This
+     * allows to plugin a custom factory to create custom
+     * {@link KafkaManualCommit} instances in case special logic is needed when
+     * doing manual commits that deviates from the default implementation that
+     * comes out of the box.
      */
     public void setKafkaManualCommitFactory(KafkaManualCommitFactory kafkaManualCommitFactory) {
         this.kafkaManualCommitFactory = kafkaManualCommitFactory;

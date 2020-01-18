@@ -513,7 +513,8 @@ public interface ReactiveStreamsEndpointBuilderFactory {
      */
     public interface ReactiveStreamsEndpointBuilder
             extends
-                ReactiveStreamsEndpointConsumerBuilder, ReactiveStreamsEndpointProducerBuilder {
+                ReactiveStreamsEndpointConsumerBuilder,
+                ReactiveStreamsEndpointProducerBuilder {
         default AdvancedReactiveStreamsEndpointBuilder advanced() {
             return (AdvancedReactiveStreamsEndpointBuilder) this;
         }
@@ -524,7 +525,8 @@ public interface ReactiveStreamsEndpointBuilderFactory {
      */
     public interface AdvancedReactiveStreamsEndpointBuilder
             extends
-                AdvancedReactiveStreamsEndpointConsumerBuilder, AdvancedReactiveStreamsEndpointProducerBuilder {
+                AdvancedReactiveStreamsEndpointConsumerBuilder,
+                AdvancedReactiveStreamsEndpointProducerBuilder {
         default ReactiveStreamsEndpointBuilder basic() {
             return (ReactiveStreamsEndpointBuilder) this;
         }
@@ -595,6 +597,25 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         OLDEST,
         LATEST;
     }
+
+    public interface ReactiveStreamsBuilders {
+        /**
+         * Reactive Streams (camel-reactive-streams)
+         * Reactive Camel using reactive streams
+         * 
+         * Category: reactive,streams
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-reactive-streams
+         * 
+         * Syntax: <code>reactive-streams:stream</code>
+         * 
+         * Path parameter: stream
+         * Name of the stream channel used by the endpoint to exchange messages.
+         */
+        default ReactiveStreamsEndpointBuilder reactiveStreams(String path) {
+            return ReactiveStreamsEndpointBuilderFactory.reactiveStreams(path);
+        }
+    }
     /**
      * Reactive Streams (camel-reactive-streams)
      * Reactive Camel using reactive streams
@@ -608,7 +629,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
      * Path parameter: stream
      * Name of the stream channel used by the endpoint to exchange messages.
      */
-    default ReactiveStreamsEndpointBuilder reactiveStreams(String path) {
+    static ReactiveStreamsEndpointBuilder reactiveStreams(String path) {
         class ReactiveStreamsEndpointBuilderImpl extends AbstractEndpointBuilder implements ReactiveStreamsEndpointBuilder, AdvancedReactiveStreamsEndpointBuilder {
             public ReactiveStreamsEndpointBuilderImpl(String path) {
                 super("reactive-streams", path);

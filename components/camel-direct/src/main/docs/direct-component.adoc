@@ -12,13 +12,21 @@ consumers when a producer sends a message exchange. +
  This endpoint can be used to connect existing routes in the *same*
 camel context.
 
-TIP: *Asynchronous*
+[TIP]
+====
+*Asynchronous*
+
 The xref:seda-component.adoc[SEDA] component provides asynchronous invocation of
 any consumers when a producer sends a message exchange.
+====
 
-TIP: *Connection to other camel contexts*
+[TIP]
+====
+*Connection to other camel contexts*
+
 The xref:vm-component.adoc[VM] component provides connections between Camel
 contexts as long they run in the same *JVM*.
+====
 
 == URI format
 

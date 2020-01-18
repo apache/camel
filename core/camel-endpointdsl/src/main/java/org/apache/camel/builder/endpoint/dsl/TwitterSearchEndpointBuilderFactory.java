@@ -1328,7 +1328,8 @@ public interface TwitterSearchEndpointBuilderFactory {
      */
     public interface TwitterSearchEndpointBuilder
             extends
-                TwitterSearchEndpointConsumerBuilder, TwitterSearchEndpointProducerBuilder {
+                TwitterSearchEndpointConsumerBuilder,
+                TwitterSearchEndpointProducerBuilder {
         default AdvancedTwitterSearchEndpointBuilder advanced() {
             return (AdvancedTwitterSearchEndpointBuilder) this;
         }
@@ -1451,7 +1452,8 @@ public interface TwitterSearchEndpointBuilderFactory {
      */
     public interface AdvancedTwitterSearchEndpointBuilder
             extends
-                AdvancedTwitterSearchEndpointConsumerBuilder, AdvancedTwitterSearchEndpointProducerBuilder {
+                AdvancedTwitterSearchEndpointConsumerBuilder,
+                AdvancedTwitterSearchEndpointProducerBuilder {
         default TwitterSearchEndpointBuilder basic() {
             return (TwitterSearchEndpointBuilder) this;
         }
@@ -1521,6 +1523,26 @@ public interface TwitterSearchEndpointBuilderFactory {
         POLLING,
         DIRECT;
     }
+
+    public interface TwitterSearchBuilders {
+        /**
+         * Twitter Search (camel-twitter)
+         * The Twitter Search component consumes search results.
+         * 
+         * Category: api,social
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-twitter
+         * 
+         * Syntax: <code>twitter-search:keywords</code>
+         * 
+         * Path parameter: keywords (required)
+         * The search query, use the keywords AND, OR, - and () to narrow the
+         * search results.
+         */
+        default TwitterSearchEndpointBuilder twitterSearch(String path) {
+            return TwitterSearchEndpointBuilderFactory.twitterSearch(path);
+        }
+    }
     /**
      * Twitter Search (camel-twitter)
      * The Twitter Search component consumes search results.
@@ -1535,7 +1557,7 @@ public interface TwitterSearchEndpointBuilderFactory {
      * The search query, use the keywords AND, OR, - and () to narrow the search
      * results.
      */
-    default TwitterSearchEndpointBuilder twitterSearch(String path) {
+    static TwitterSearchEndpointBuilder twitterSearch(String path) {
         class TwitterSearchEndpointBuilderImpl extends AbstractEndpointBuilder implements TwitterSearchEndpointBuilder, AdvancedTwitterSearchEndpointBuilder {
             public TwitterSearchEndpointBuilderImpl(String path) {
                 super("twitter-search", path);

@@ -479,7 +479,8 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
      */
     public interface HazelcastReplicatedmapEndpointBuilder
             extends
-                HazelcastReplicatedmapEndpointConsumerBuilder, HazelcastReplicatedmapEndpointProducerBuilder {
+                HazelcastReplicatedmapEndpointConsumerBuilder,
+                HazelcastReplicatedmapEndpointProducerBuilder {
         default AdvancedHazelcastReplicatedmapEndpointBuilder advanced() {
             return (AdvancedHazelcastReplicatedmapEndpointBuilder) this;
         }
@@ -562,7 +563,8 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
      */
     public interface AdvancedHazelcastReplicatedmapEndpointBuilder
             extends
-                AdvancedHazelcastReplicatedmapEndpointConsumerBuilder, AdvancedHazelcastReplicatedmapEndpointProducerBuilder {
+                AdvancedHazelcastReplicatedmapEndpointConsumerBuilder,
+                AdvancedHazelcastReplicatedmapEndpointProducerBuilder {
         default HazelcastReplicatedmapEndpointBuilder basic() {
             return (HazelcastReplicatedmapEndpointBuilder) this;
         }
@@ -667,6 +669,27 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         readOnceTail,
         capacity;
     }
+
+    public interface HazelcastReplicatedmapBuilders {
+        /**
+         * Hazelcast Replicated Map (camel-hazelcast)
+         * The hazelcast-replicatedmap component is used to access Hazelcast
+         * replicated map.
+         * 
+         * Category: cache,datagrid
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
+         * Syntax: <code>hazelcast-replicatedmap:cacheName</code>
+         * 
+         * Path parameter: cacheName (required)
+         * The name of the cache
+         */
+        default HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(
+                String path) {
+            return HazelcastReplicatedmapEndpointBuilderFactory.hazelcastReplicatedmap(path);
+        }
+    }
     /**
      * Hazelcast Replicated Map (camel-hazelcast)
      * The hazelcast-replicatedmap component is used to access Hazelcast
@@ -681,7 +704,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
      * Path parameter: cacheName (required)
      * The name of the cache
      */
-    default HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(
+    static HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(
             String path) {
         class HazelcastReplicatedmapEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastReplicatedmapEndpointBuilder, AdvancedHazelcastReplicatedmapEndpointBuilder {
             public HazelcastReplicatedmapEndpointBuilderImpl(String path) {

@@ -1286,7 +1286,8 @@ public interface BoxEndpointBuilderFactory {
      */
     public interface BoxEndpointBuilder
             extends
-                BoxEndpointConsumerBuilder, BoxEndpointProducerBuilder {
+                BoxEndpointConsumerBuilder,
+                BoxEndpointProducerBuilder {
         default AdvancedBoxEndpointBuilder advanced() {
             return (AdvancedBoxEndpointBuilder) this;
         }
@@ -1448,7 +1449,8 @@ public interface BoxEndpointBuilderFactory {
      */
     public interface AdvancedBoxEndpointBuilder
             extends
-                AdvancedBoxEndpointConsumerBuilder, AdvancedBoxEndpointProducerBuilder {
+                AdvancedBoxEndpointConsumerBuilder,
+                AdvancedBoxEndpointProducerBuilder {
         default BoxEndpointBuilder basic() {
             return (BoxEndpointBuilder) this;
         }
@@ -1621,6 +1623,31 @@ public interface BoxEndpointBuilderFactory {
         RSA_SHA_384,
         RSA_SHA_512;
     }
+
+    public interface BoxBuilders {
+        /**
+         * Box (camel-box)
+         * For uploading downloading and managing files folders groups
+         * collaborations etc on box DOT com.
+         * 
+         * Category: api,file,cloud
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-box
+         * 
+         * Syntax: <code>box:apiName/methodName</code>
+         * 
+         * Path parameter: apiName (required)
+         * What kind of operation to perform
+         * The value can be one of: COLLABORATIONS, COMMENTS, EVENT_LOGS, FILES,
+         * FOLDERS, GROUPS, EVENTS, SEARCH, TASKS, USERS
+         * 
+         * Path parameter: methodName (required)
+         * What sub operation to use for the selected operation
+         */
+        default BoxEndpointBuilder box(String path) {
+            return BoxEndpointBuilderFactory.box(path);
+        }
+    }
     /**
      * Box (camel-box)
      * For uploading downloading and managing files folders groups
@@ -1640,7 +1667,7 @@ public interface BoxEndpointBuilderFactory {
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      */
-    default BoxEndpointBuilder box(String path) {
+    static BoxEndpointBuilder box(String path) {
         class BoxEndpointBuilderImpl extends AbstractEndpointBuilder implements BoxEndpointBuilder, AdvancedBoxEndpointBuilder {
             public BoxEndpointBuilderImpl(String path) {
                 super("box", path);

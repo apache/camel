@@ -17,12 +17,14 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.camel.maven.packaging.PackageHelper.loadText;
+import org.apache.camel.tooling.util.JSonSchemaHelper;
+import org.apache.camel.tooling.util.Strings;
+
+import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 /**
  * Validation helper for validating components, data formats and languages
@@ -35,12 +37,12 @@ public final class ValidateHelper {
     /**
      * Validates the component json file
      *
-     * @param file        the json file
+     * @param file the json file
      * @param errorDetail details to add errors
      */
     public static void validate(File file, ErrorDetail errorDetail) {
         try {
-            String json = loadText(new FileInputStream(file));
+            String json = loadText(file);
 
             boolean isComponent = json.contains("\"kind\": \"component\"");
             boolean isDataFormat = json.contains("\"kind\": \"dataformat\"");
@@ -65,23 +67,23 @@ public final class ValidateHelper {
             boolean syntax = false;
             for (Map<String, String> row : rows) {
                 String value = row.get("label");
-                if (!StringHelper.isEmpty(value)) {
+                if (!Strings.isEmpty(value)) {
                     label = true;
                 }
                 value = row.get("description");
-                if (!StringHelper.isEmpty(value)) {
+                if (!Strings.isEmpty(value)) {
                     description = true;
                 }
                 value = row.get("syntax");
-                if (!StringHelper.isEmpty(value)) {
+                if (!Strings.isEmpty(value)) {
                     syntax = true;
                 }
             }
-            
+
             if (!label) {
                 errorDetail.setMissingLabel(true);
             }
-            
+
             if (!description) {
                 errorDetail.setMissingDescription(true);
             }
@@ -127,7 +129,8 @@ public final class ValidateHelper {
     }
 
     /**
-     * Returns the name of the component, data format or language from the given json file
+     * Returns the name of the component, data format or language from the given
+     * json file
      */
     public static String asName(File file) {
         String name = file.getName();

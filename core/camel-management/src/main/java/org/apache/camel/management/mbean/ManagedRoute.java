@@ -398,7 +398,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         StringBuilder sb = new StringBuilder();
 
         // need to calculate this value first, as we need that value for the route stat
-        Long processorAccumulatedTime = 0L;
+        long processorAccumulatedTime = 0L;
 
         // gather all the processors for this route, which requires JMX
         if (includeProcessors) {
@@ -466,7 +466,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             answer.append(" oldestInflightExchangeId=\"").append(oldest.getExchange().getExchangeId()).append("\"");
             answer.append(" oldestInflightDuration=\"").append(oldest.getDuration()).append("\"");
         }
-        answer.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
+        answer.append(" ").append(stat, 7, stat.length() - 2).append(">\n");
 
         if (includeProcessors) {
             answer.append(sb);
@@ -524,7 +524,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             answer.append(" oldestInflightExchangeId=\"").append(oldest.getExchange().getExchangeId()).append("\"");
             answer.append(" oldestInflightDuration=\"").append(oldest.getDuration()).append("\"");
         }
-        answer.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
+        answer.append(" ").append(stat, 7, stat.length() - 2).append(">\n");
 
         answer.append(sb);
 

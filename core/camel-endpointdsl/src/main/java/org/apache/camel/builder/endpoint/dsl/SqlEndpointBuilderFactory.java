@@ -1735,7 +1735,8 @@ public interface SqlEndpointBuilderFactory {
      */
     public interface SqlEndpointBuilder
             extends
-                SqlEndpointConsumerBuilder, SqlEndpointProducerBuilder {
+                SqlEndpointConsumerBuilder,
+                SqlEndpointProducerBuilder {
         default AdvancedSqlEndpointBuilder advanced() {
             return (AdvancedSqlEndpointBuilder) this;
         }
@@ -1909,7 +1910,8 @@ public interface SqlEndpointBuilderFactory {
      */
     public interface AdvancedSqlEndpointBuilder
             extends
-                AdvancedSqlEndpointConsumerBuilder, AdvancedSqlEndpointProducerBuilder {
+                AdvancedSqlEndpointConsumerBuilder,
+                AdvancedSqlEndpointProducerBuilder {
         default SqlEndpointBuilder basic() {
             return (SqlEndpointBuilder) this;
         }
@@ -2140,6 +2142,27 @@ public interface SqlEndpointBuilderFactory {
         SelectList,
         StreamList;
     }
+
+    public interface SqlBuilders {
+        /**
+         * SQL (camel-sql)
+         * The sql component allows you to work with databases using JDBC SQL
+         * queries.
+         * 
+         * Category: database,sql
+         * Since: 1.4
+         * Maven coordinates: org.apache.camel:camel-sql
+         * 
+         * Syntax: <code>sql:query</code>
+         * 
+         * Path parameter: query (required)
+         * Sets the SQL query to perform. You can externalize the query by using
+         * file: or classpath: as prefix and specify the location of the file.
+         */
+        default SqlEndpointBuilder sql(String path) {
+            return SqlEndpointBuilderFactory.sql(path);
+        }
+    }
     /**
      * SQL (camel-sql)
      * The sql component allows you to work with databases using JDBC SQL
@@ -2155,7 +2178,7 @@ public interface SqlEndpointBuilderFactory {
      * Sets the SQL query to perform. You can externalize the query by using
      * file: or classpath: as prefix and specify the location of the file.
      */
-    default SqlEndpointBuilder sql(String path) {
+    static SqlEndpointBuilder sql(String path) {
         class SqlEndpointBuilderImpl extends AbstractEndpointBuilder implements SqlEndpointBuilder, AdvancedSqlEndpointBuilder {
             public SqlEndpointBuilderImpl(String path) {
                 super("sql", path);

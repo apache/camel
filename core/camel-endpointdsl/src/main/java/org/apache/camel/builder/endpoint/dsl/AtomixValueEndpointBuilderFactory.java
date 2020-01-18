@@ -921,7 +921,8 @@ public interface AtomixValueEndpointBuilderFactory {
      */
     public interface AtomixValueEndpointBuilder
             extends
-                AtomixValueEndpointConsumerBuilder, AtomixValueEndpointProducerBuilder {
+                AtomixValueEndpointConsumerBuilder,
+                AtomixValueEndpointProducerBuilder {
         default AdvancedAtomixValueEndpointBuilder advanced() {
             return (AdvancedAtomixValueEndpointBuilder) this;
         }
@@ -1063,7 +1064,8 @@ public interface AtomixValueEndpointBuilderFactory {
      */
     public interface AdvancedAtomixValueEndpointBuilder
             extends
-                AdvancedAtomixValueEndpointConsumerBuilder, AdvancedAtomixValueEndpointProducerBuilder {
+                AdvancedAtomixValueEndpointConsumerBuilder,
+                AdvancedAtomixValueEndpointProducerBuilder {
         default AtomixValueEndpointBuilder basic() {
             return (AtomixValueEndpointBuilder) this;
         }
@@ -1303,6 +1305,26 @@ public interface AtomixValueEndpointBuilderFactory {
         SEQUENTIAL,
         LOCAL;
     }
+
+    public interface AtomixValueBuilders {
+        /**
+         * Atomix Value (camel-atomix)
+         * The atomix-value component is used to access Atomix's distributed
+         * value.
+         * 
+         * Category: clustering
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-atomix
+         * 
+         * Syntax: <code>atomix-value:resourceName</code>
+         * 
+         * Path parameter: resourceName (required)
+         * The distributed resource name
+         */
+        default AtomixValueEndpointBuilder atomixValue(String path) {
+            return AtomixValueEndpointBuilderFactory.atomixValue(path);
+        }
+    }
     /**
      * Atomix Value (camel-atomix)
      * The atomix-value component is used to access Atomix's distributed value.
@@ -1316,7 +1338,7 @@ public interface AtomixValueEndpointBuilderFactory {
      * Path parameter: resourceName (required)
      * The distributed resource name
      */
-    default AtomixValueEndpointBuilder atomixValue(String path) {
+    static AtomixValueEndpointBuilder atomixValue(String path) {
         class AtomixValueEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixValueEndpointBuilder, AdvancedAtomixValueEndpointBuilder {
             public AtomixValueEndpointBuilderImpl(String path) {
                 super("atomix-value", path);

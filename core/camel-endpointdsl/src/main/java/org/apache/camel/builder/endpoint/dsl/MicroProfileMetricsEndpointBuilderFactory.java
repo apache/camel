@@ -347,6 +347,31 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface MicroProfileMetricsBuilders {
+        /**
+         * MicroProfile Metrics (camel-microprofile-metrics)
+         * Camel metrics exposed with Eclipse MicroProfile Metrics
+         * 
+         * Category: monitoring
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-microprofile-metrics
+         * 
+         * Syntax: <code>microprofile-metrics:metricType:metricName</code>
+         * 
+         * Path parameter: metricType (required)
+         * Metric type
+         * The value can be one of: CONCURRENT_GAUGE, COUNTER, GAUGE, METERED,
+         * HISTOGRAM, TIMER, INVALID
+         * 
+         * Path parameter: metricName (required)
+         * Metric name
+         */
+        default MicroProfileMetricsEndpointBuilder microprofileMetrics(
+                String path) {
+            return MicroProfileMetricsEndpointBuilderFactory.microprofileMetrics(path);
+        }
+    }
     /**
      * MicroProfile Metrics (camel-microprofile-metrics)
      * Camel metrics exposed with Eclipse MicroProfile Metrics
@@ -365,7 +390,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
      * Path parameter: metricName (required)
      * Metric name
      */
-    default MicroProfileMetricsEndpointBuilder microprofileMetrics(String path) {
+    static MicroProfileMetricsEndpointBuilder microprofileMetrics(String path) {
         class MicroProfileMetricsEndpointBuilderImpl extends AbstractEndpointBuilder implements MicroProfileMetricsEndpointBuilder, AdvancedMicroProfileMetricsEndpointBuilder {
             public MicroProfileMetricsEndpointBuilderImpl(String path) {
                 super("microprofile-metrics", path);

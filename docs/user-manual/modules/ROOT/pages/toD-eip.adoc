@@ -203,9 +203,12 @@ Where _expression_ will be evaluated dynamically. Notice how the uri in `toD` is
 This optimisation allows Camel to reuse the same endpoint and its associated producer for all dynamic variations.
 This yields much lower resource overhead as the same http producer will be used for all the different variations of userid's.
 
-NOTE: When the optimised component is in use, then you cannot use the headers `Exchange.HTTP_PATH` and `Exchange.HTTP_QUERY`
+[NOTE]
+====
+When the optimised component is in use, then you cannot use the headers `Exchange.HTTP_PATH` and `Exchange.HTTP_QUERY`
 to provide dynamic values to override the uri in `toD`. If you want to use these headers, then use the plain `to` DSL instead.
 In other words these headers are used internally by `toD` to carry the dynamic details of the endpoint.
+====
 
 In case of problems then you can turn on DEBUG logging level on `org.apache.camel.processor.SendDynamicProcessor` which will log
 during startup if `toD` was optimised, or if there was a failure loading the optimised component, with a stacktrace logged.

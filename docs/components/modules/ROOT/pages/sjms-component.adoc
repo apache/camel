@@ -97,8 +97,8 @@ The Simple JMS component supports 17 options, which are listed below.
 | *connectionResource* (advanced) | A ConnectionResource is an interface that allows for customization and container control of the ConnectionFactory. See Plugable Connection Resource Management for further details. |  | ConnectionResource
 | *connectionCount* (common) | The maximum number of connections available to endpoints started under this component | 1 | Integer
 | *jmsKeyFormatStrategy* (advanced) | Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel provides one implementation out of the box: default. The default strategy will safely marshal dots and hyphens (. and -). Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the # notation. |  | JmsKeyFormatStrategy
-| *transactionCommit Strategy* (transaction) | To configure which kind of commit strategy to use. Camel provides two implementations out of the box, default and batch. |  | TransactionCommitStrategy
-| *destinationCreation Strategy* (advanced) | To use a custom DestinationCreationStrategy. |  | DestinationCreationStrategy
+| *transactionCommitStrategy* (transaction) | To configure which kind of commit strategy to use. Camel provides two implementations out of the box, default and batch. |  | TransactionCommitStrategy
+| *destinationCreationStrategy* (advanced) | To use a custom DestinationCreationStrategy. |  | DestinationCreationStrategy
 | *timedTaskManager* (advanced) | To use a custom TimedTaskManager |  | TimedTaskManager
 | *messageCreatedStrategy* (advanced) | To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message. |  | MessageCreatedStrategy
 | *connectionTestOnBorrow* (advanced) | When using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource then should each javax.jms.Connection be tested (calling start) before returned from the pool. | true | boolean
@@ -484,7 +484,10 @@ reducing the overhead on the broker since all the messages are consumed
 from the destination in the order they are produced by the interested
 consumer.
 
-NOTE: You should only use queues as destination types, topics is not recommended or fully supported.
+[NOTE]
+====
+You should only use queues as destination types, topics is not recommended or fully supported.
+====
 
 Currently the only correlation strategy is to use the `JMSCorrelationId`.
 The _InOut_ Consumer uses this strategy as well ensuring that all

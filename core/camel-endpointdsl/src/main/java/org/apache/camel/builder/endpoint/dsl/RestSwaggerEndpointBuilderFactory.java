@@ -249,6 +249,42 @@ public interface RestSwaggerEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface RestSwaggerBuilders {
+        /**
+         * REST Swagger (camel-rest-swagger)
+         * An awesome REST endpoint backed by Swagger specifications.
+         * 
+         * Category: rest,swagger,http
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-rest-swagger
+         * 
+         * Syntax: <code>rest-swagger:specificationUri#operationId</code>
+         * 
+         * Path parameter: specificationUri
+         * Path to the Swagger specification file. The scheme, host base path
+         * are taken from this specification, but these can be overridden with
+         * properties on the component or endpoint level. If not given the
+         * component tries to load swagger.json resource from the classpath.
+         * Note that the host defined on the component and endpoint of this
+         * Component should contain the scheme, hostname and optionally the port
+         * in the URI syntax (i.e. http://api.example.com:8080). Overrides
+         * component configuration. The Swagger specification can be loaded from
+         * different sources by prefixing with file: classpath: http: https:.
+         * Support for https is limited to using the JDK installed UrlHandler,
+         * and as such it can be cumbersome to setup TLS/SSL certificates for
+         * https (such as setting a number of javax.net.ssl JVM system
+         * properties). How to do that consult the JDK documentation for
+         * UrlHandler.
+         * Default value: swagger.json
+         * 
+         * Path parameter: operationId (required)
+         * ID of the operation from the Swagger specification.
+         */
+        default RestSwaggerEndpointBuilder restSwagger(String path) {
+            return RestSwaggerEndpointBuilderFactory.restSwagger(path);
+        }
+    }
     /**
      * REST Swagger (camel-rest-swagger)
      * An awesome REST endpoint backed by Swagger specifications.
@@ -278,7 +314,7 @@ public interface RestSwaggerEndpointBuilderFactory {
      * Path parameter: operationId (required)
      * ID of the operation from the Swagger specification.
      */
-    default RestSwaggerEndpointBuilder restSwagger(String path) {
+    static RestSwaggerEndpointBuilder restSwagger(String path) {
         class RestSwaggerEndpointBuilderImpl extends AbstractEndpointBuilder implements RestSwaggerEndpointBuilder, AdvancedRestSwaggerEndpointBuilder {
             public RestSwaggerEndpointBuilderImpl(String path) {
                 super("rest-swagger", path);

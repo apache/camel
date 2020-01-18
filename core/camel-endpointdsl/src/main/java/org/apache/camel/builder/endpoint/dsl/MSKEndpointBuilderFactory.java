@@ -307,6 +307,25 @@ public interface MSKEndpointBuilderFactory {
         http,
         https;
     }
+
+    public interface MSKBuilders {
+        /**
+         * AWS MSK (camel-aws-msk)
+         * The aws-msk is used for managing Amazon MSK
+         * 
+         * Category: cloud,management
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-aws-msk
+         * 
+         * Syntax: <code>aws-msk:label</code>
+         * 
+         * Path parameter: label (required)
+         * Logical name
+         */
+        default MSKEndpointBuilder awsMsk(String path) {
+            return MSKEndpointBuilderFactory.awsMsk(path);
+        }
+    }
     /**
      * AWS MSK (camel-aws-msk)
      * The aws-msk is used for managing Amazon MSK
@@ -320,7 +339,7 @@ public interface MSKEndpointBuilderFactory {
      * Path parameter: label (required)
      * Logical name
      */
-    default MSKEndpointBuilder awsMsk(String path) {
+    static MSKEndpointBuilder awsMsk(String path) {
         class MSKEndpointBuilderImpl extends AbstractEndpointBuilder implements MSKEndpointBuilder, AdvancedMSKEndpointBuilder {
             public MSKEndpointBuilderImpl(String path) {
                 super("aws-msk", path);

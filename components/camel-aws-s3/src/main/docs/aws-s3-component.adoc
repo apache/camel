@@ -131,7 +131,7 @@ with the following path and query parameters:
 | *accelerateModeEnabled* ( advanced) | Define if Accelerate Mode enabled is true or false | false | boolean
 | *chunkedEncodingDisabled* ( advanced) | Define if disabled Chunked Encoding is true or false | false | boolean
 | *dualstackEnabled* ( advanced) | Define if Dualstack enabled is true or false | false | boolean
-| *forceGlobalBucketAccess Enabled* ( advanced) | Define if Force Global Bucket Access enabled is true or false | false | boolean
+| *forceGlobalBucketAccessEnabled* ( advanced) | Define if Force Global Bucket Access enabled is true or false | false | boolean
 | *payloadSigningEnabled* ( advanced) | Define if Payload Signing enabled is true or false | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int

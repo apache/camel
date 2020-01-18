@@ -1256,7 +1256,8 @@ public interface NatsEndpointBuilderFactory {
      */
     public interface NatsEndpointBuilder
             extends
-                NatsEndpointConsumerBuilder, NatsEndpointProducerBuilder {
+                NatsEndpointConsumerBuilder,
+                NatsEndpointProducerBuilder {
         default AdvancedNatsEndpointBuilder advanced() {
             return (AdvancedNatsEndpointBuilder) this;
         }
@@ -1658,7 +1659,8 @@ public interface NatsEndpointBuilderFactory {
      */
     public interface AdvancedNatsEndpointBuilder
             extends
-                AdvancedNatsEndpointConsumerBuilder, AdvancedNatsEndpointProducerBuilder {
+                AdvancedNatsEndpointConsumerBuilder,
+                AdvancedNatsEndpointProducerBuilder {
         default NatsEndpointBuilder basic() {
             return (NatsEndpointBuilder) this;
         }
@@ -1740,6 +1742,25 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface NatsBuilders {
+        /**
+         * Nats (camel-nats)
+         * The nats component allows you produce and consume messages from NATS.
+         * 
+         * Category: messaging
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-nats
+         * 
+         * Syntax: <code>nats:topic</code>
+         * 
+         * Path parameter: topic (required)
+         * The name of topic we want to use
+         */
+        default NatsEndpointBuilder nats(String path) {
+            return NatsEndpointBuilderFactory.nats(path);
+        }
+    }
     /**
      * Nats (camel-nats)
      * The nats component allows you produce and consume messages from NATS.
@@ -1753,7 +1774,7 @@ public interface NatsEndpointBuilderFactory {
      * Path parameter: topic (required)
      * The name of topic we want to use
      */
-    default NatsEndpointBuilder nats(String path) {
+    static NatsEndpointBuilder nats(String path) {
         class NatsEndpointBuilderImpl extends AbstractEndpointBuilder implements NatsEndpointBuilder, AdvancedNatsEndpointBuilder {
             public NatsEndpointBuilderImpl(String path) {
                 super("nats", path);

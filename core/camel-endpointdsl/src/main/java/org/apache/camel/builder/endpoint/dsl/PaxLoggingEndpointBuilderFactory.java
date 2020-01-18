@@ -204,6 +204,27 @@ public interface PaxLoggingEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface PaxLoggingBuilders {
+        /**
+         * OSGi PAX Logging (camel-paxlogging)
+         * The paxlogging component can be used in an OSGi environment to
+         * receive PaxLogging events and process them.
+         * 
+         * Category: monitoring
+         * Since: 2.6
+         * Maven coordinates: org.apache.camel:camel-paxlogging
+         * 
+         * Syntax: <code>paxlogging:appender</code>
+         * 
+         * Path parameter: appender (required)
+         * Appender is the name of the pax appender that need to be configured
+         * in the PaxLogging service configuration.
+         */
+        default PaxLoggingEndpointBuilder paxlogging(String path) {
+            return PaxLoggingEndpointBuilderFactory.paxlogging(path);
+        }
+    }
     /**
      * OSGi PAX Logging (camel-paxlogging)
      * The paxlogging component can be used in an OSGi environment to receive
@@ -219,7 +240,7 @@ public interface PaxLoggingEndpointBuilderFactory {
      * Appender is the name of the pax appender that need to be configured in
      * the PaxLogging service configuration.
      */
-    default PaxLoggingEndpointBuilder paxlogging(String path) {
+    static PaxLoggingEndpointBuilder paxlogging(String path) {
         class PaxLoggingEndpointBuilderImpl extends AbstractEndpointBuilder implements PaxLoggingEndpointBuilder, AdvancedPaxLoggingEndpointBuilder {
             public PaxLoggingEndpointBuilderImpl(String path) {
                 super("paxlogging", path);

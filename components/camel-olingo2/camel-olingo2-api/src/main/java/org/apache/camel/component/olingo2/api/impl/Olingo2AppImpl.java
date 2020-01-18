@@ -918,7 +918,7 @@ public final class Olingo2AppImpl implements Olingo2App {
             referencedEntity.append(')');
         }
 
-        return pathSeparator == -1 ? referencedEntityName : referencedEntity.append(entityReference.substring(pathSeparator)).toString();
+        return pathSeparator == -1 ? referencedEntityName : referencedEntity.append(entityReference, pathSeparator, entityReference.length()).toString();
     }
 
     private Olingo2BatchResponse parseResponse(Edm edm, Map<String, String> contentIdLocationMap, Olingo2BatchRequest request, BatchSingleResponse response)

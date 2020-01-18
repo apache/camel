@@ -349,9 +349,9 @@ public final class CamelJavaParserHelper {
 
                 // if the node is fromF or toF, then replace all %X with {{%X}} as we cannot parse that value
                 if ("fromF".equals(node) || "toF".equals(node)) {
-                    uri = uri.replaceAll("\\%s", "\\{\\{\\%s\\}\\}");
-                    uri = uri.replaceAll("\\%d", "\\{\\{\\%d\\}\\}");
-                    uri = uri.replaceAll("\\%b", "\\{\\{\\%b\\}\\}");
+                    uri = uri.replace("%s", "{{%s}}");
+                    uri = uri.replace("%d", "{{%d}}");
+                    uri = uri.replace("%b", "{{%b}}");
                 }
 
                 uris.add(new ParserResult(node, position, len, uri));

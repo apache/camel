@@ -361,7 +361,8 @@ public interface JGroupsRaftEndpointBuilderFactory {
      */
     public interface JGroupsRaftEndpointBuilder
             extends
-                JGroupsRaftEndpointConsumerBuilder, JGroupsRaftEndpointProducerBuilder {
+                JGroupsRaftEndpointConsumerBuilder,
+                JGroupsRaftEndpointProducerBuilder {
         default AdvancedJGroupsRaftEndpointBuilder advanced() {
             return (AdvancedJGroupsRaftEndpointBuilder) this;
         }
@@ -372,7 +373,8 @@ public interface JGroupsRaftEndpointBuilderFactory {
      */
     public interface AdvancedJGroupsRaftEndpointBuilder
             extends
-                AdvancedJGroupsRaftEndpointConsumerBuilder, AdvancedJGroupsRaftEndpointProducerBuilder {
+                AdvancedJGroupsRaftEndpointConsumerBuilder,
+                AdvancedJGroupsRaftEndpointProducerBuilder {
         default JGroupsRaftEndpointBuilder basic() {
             return (JGroupsRaftEndpointBuilder) this;
         }
@@ -433,6 +435,26 @@ public interface JGroupsRaftEndpointBuilderFactory {
             return this;
         }
     }
+
+    public interface JGroupsRaftBuilders {
+        /**
+         * JGroups raft (camel-jgroups-raft)
+         * The jgroups component provides exchange of messages between Camel and
+         * JGroups clusters.
+         * 
+         * Category: clustering,messaging
+         * Since: 2.24
+         * Maven coordinates: org.apache.camel:camel-jgroups-raft
+         * 
+         * Syntax: <code>jgroups-raft:clusterName</code>
+         * 
+         * Path parameter: clusterName (required)
+         * The name of the JGroupsraft cluster the component should connect to.
+         */
+        default JGroupsRaftEndpointBuilder jgroupsRaft(String path) {
+            return JGroupsRaftEndpointBuilderFactory.jgroupsRaft(path);
+        }
+    }
     /**
      * JGroups raft (camel-jgroups-raft)
      * The jgroups component provides exchange of messages between Camel and
@@ -447,7 +469,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
      * Path parameter: clusterName (required)
      * The name of the JGroupsraft cluster the component should connect to.
      */
-    default JGroupsRaftEndpointBuilder jgroupsRaft(String path) {
+    static JGroupsRaftEndpointBuilder jgroupsRaft(String path) {
         class JGroupsRaftEndpointBuilderImpl extends AbstractEndpointBuilder implements JGroupsRaftEndpointBuilder, AdvancedJGroupsRaftEndpointBuilder {
             public JGroupsRaftEndpointBuilderImpl(String path) {
                 super("jgroups-raft", path);
