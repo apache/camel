@@ -31,7 +31,7 @@ public class JcrProducerDifferentWorkspaceTest extends JcrRouteDifferentWorkspac
         Exchange exchange = createExchangeWithBody("<hello>world!</hello>");
         Exchange out = template.send("direct:a", exchange);
         assertNotNull(out);
-        String uuid = out.getOut().getBody(String.class);
+        String uuid = out.getMessage().getBody(String.class);
         Session session = openSession(CUSTOM_WORKSPACE_NAME);
         try {
             Node node = session.getNodeByIdentifier(uuid);
