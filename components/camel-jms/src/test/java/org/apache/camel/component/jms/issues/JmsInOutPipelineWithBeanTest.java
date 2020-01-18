@@ -21,7 +21,6 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -71,18 +70,14 @@ public class JmsInOutPipelineWithBeanTest extends CamelTestSupport {
                 from("activemq:testB").to("activemq:a").to("bean:dummyBean").to("activemq:b");
                 from("activemq:testC").to("activemq:a").to("activemq:b").to("bean:dummyBean");
 
-                from("activemq:a").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody(body + ",From A");
-                    }
+                from("activemq:a").process(exchange -> {
+                    String body = exchange.getIn().getBody(String.class);
+                    exchange.getMessage().setBody(body + ",From A");
                 });
 
-                from("activemq:b").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody(body + ",From B");
-                    }
+                from("activemq:b").process(exchange -> {
+                    String body = exchange.getIn().getBody(String.class);
+                    exchange.getMessage().setBody(body + ",From B");
                 });
             }
         };
@@ -91,7 +86,7 @@ public class JmsInOutPipelineWithBeanTest extends CamelTestSupport {
     public static class MyDummyBean {
         public void doSomething(Exchange exchange) {
             String body = exchange.getIn().getBody(String.class);
-            exchange.getOut().setBody(body + ",From Bean");
+            exchange.getMessage().setBody(body + ",From Bean");
         }
     }
 

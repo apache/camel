@@ -37,11 +37,9 @@ public class JmsPollingConsumerTest extends CamelTestSupport {
 
         // use another thread for polling consumer to demonstrate that we can wait before
         // the message is sent to the queue
-        Executors.newSingleThreadExecutor().execute(new Runnable() {
-            public void run() {
-                String body = consumer.receiveBody("activemq:queue.start", String.class);
-                template.sendBody("activemq:queue.foo", body + " Claus");
-            }
+        Executors.newSingleThreadExecutor().execute(() -> {
+            String body = consumer.receiveBody("activemq:queue.start", String.class);
+            template.sendBody("activemq:queue.foo", body + " Claus");
         });
 
         // wait a little to demonstrate we can start poll before we have a msg on the queue
@@ -59,13 +57,11 @@ public class JmsPollingConsumerTest extends CamelTestSupport {
 
         // use another thread for polling consumer to demonstrate that we can wait before
         // the message is sent to the queue
-        Executors.newSingleThreadExecutor().execute(new Runnable() {
-            public void run() {
-                String body = consumer.receiveBodyNoWait("activemq:queue.start", String.class);
-                assertNull("Should be null", body);
+        Executors.newSingleThreadExecutor().execute(() -> {
+            String body = consumer.receiveBodyNoWait("activemq:queue.start", String.class);
+            assertNull("Should be null", body);
 
-                template.sendBody("activemq:queue.foo", "Hello Claus");
-            }
+            template.sendBody("activemq:queue.foo", "Hello Claus");
         });
 
         // wait a little to demonstrate we can start poll before we have a msg on the queue
@@ -83,13 +79,11 @@ public class JmsPollingConsumerTest extends CamelTestSupport {
 
         // use another thread for polling consumer to demonstrate that we can wait before
         // the message is sent to the queue
-        Executors.newSingleThreadExecutor().execute(new Runnable() {
-            public void run() {
-                String body = consumer.receiveBody("activemq:queue.start", 100, String.class);
-                assertNull("Should be null", body);
+        Executors.newSingleThreadExecutor().execute(() -> {
+            String body = consumer.receiveBody("activemq:queue.start", 100, String.class);
+            assertNull("Should be null", body);
 
-                template.sendBody("activemq:queue.foo", "Hello Claus");
-            }
+            template.sendBody("activemq:queue.foo", "Hello Claus");
         });
 
         // wait a little to demonstrate we can start poll before we have a msg on the queue
@@ -107,11 +101,9 @@ public class JmsPollingConsumerTest extends CamelTestSupport {
 
         // use another thread for polling consumer to demonstrate that we can wait before
         // the message is sent to the queue
-        Executors.newSingleThreadExecutor().execute(new Runnable() {
-            public void run() {
-                String body = consumer.receiveBody("activemq:queue.start", 3000, String.class);
-                template.sendBody("activemq:queue.foo", body + " Claus");
-            }
+        Executors.newSingleThreadExecutor().execute(() -> {
+            String body = consumer.receiveBody("activemq:queue.start", 3000, String.class);
+            template.sendBody("activemq:queue.foo", body + " Claus");
         });
 
         // wait a little to demonstrate we can start poll before we have a msg on the queue

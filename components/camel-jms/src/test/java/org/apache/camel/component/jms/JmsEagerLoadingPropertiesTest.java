@@ -19,8 +19,6 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -56,11 +54,9 @@ public class JmsEagerLoadingPropertiesTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("activemq:queue:foo?eagerLoadingOfProperties=true").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String name = exchange.getIn().getHeader("name", String.class);
-                        assertEquals("Claus", name);
-                    }
+                from("activemq:queue:foo?eagerLoadingOfProperties=true").process(exchange -> {
+                    String name = exchange.getIn().getHeader("name", String.class);
+                    assertEquals("Claus", name);
                 }).to("mock:result");
             }
         };

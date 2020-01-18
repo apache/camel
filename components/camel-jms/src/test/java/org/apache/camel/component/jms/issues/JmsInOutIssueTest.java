@@ -23,7 +23,6 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -56,25 +55,19 @@ public class JmsInOutIssueTest extends CamelTestSupport {
 
     @Test
     public void testInOutWithSendExchange() throws Exception {
-        Exchange out = template.send("activemq:queue:in", ExchangePattern.InOut, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Hello World");
-            }
-        });
+        Exchange out = template.send("activemq:queue:in", ExchangePattern.InOut, exchange -> exchange.getIn().setBody("Hello World"));
 
-        assertEquals("Bye World", out.getOut().getBody());
+        assertEquals("Bye World", out.getMessage().getBody());
     }
 
     @Test
     public void testInOutWithAsyncSendExchange() throws Exception {
-        Future<Exchange> out = template.asyncSend("activemq:queue:in", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.setPattern(ExchangePattern.InOut);
-                exchange.getIn().setBody("Hello World");
-            }
+        Future<Exchange> out = template.asyncSend("activemq:queue:in", exchange -> {
+            exchange.setPattern(ExchangePattern.InOut);
+            exchange.getIn().setBody("Hello World");
         });
 
-        assertEquals("Bye World", out.get().getOut().getBody());
+        assertEquals("Bye World", out.get().getMessage().getBody());
     }
 
     @Override
@@ -89,11 +82,7 @@ public class JmsInOutIssueTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:queue:in").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody("Bye World");
-                    }
-                });
+                from("activemq:queue:in").process(exchange -> exchange.getMessage().setBody("Bye World"));
             }
         };
     }

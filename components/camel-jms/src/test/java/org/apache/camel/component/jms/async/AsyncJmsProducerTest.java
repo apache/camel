@@ -19,8 +19,6 @@ package org.apache.camel.component.jms.async;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -65,17 +63,9 @@ public class AsyncJmsProducerTest extends CamelTestSupport {
                 from("direct:start")
                         .to("mock:before")
                         .to("log:before")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                beforeThreadName = Thread.currentThread().getName();
-                            }
-                        })
+                        .process(exchange -> beforeThreadName = Thread.currentThread().getName())
                         .to("activemq:queue:foo")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                afterThreadName = Thread.currentThread().getName();
-                            }
-                        })
+                        .process(exchange -> afterThreadName = Thread.currentThread().getName())
                         .to("log:after")
                         .to("mock:after")
                         .to("mock:result");

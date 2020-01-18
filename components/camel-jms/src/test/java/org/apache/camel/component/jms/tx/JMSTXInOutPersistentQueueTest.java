@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jms.tx;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
@@ -66,11 +64,9 @@ public class JMSTXInOutPersistentQueueTest extends CamelSpringTestSupport {
             public void configure() throws Exception {
                 from("direct:start").inOut("activemq:queue:foo?replyTo=myReplies")
                     .to("mock:reply")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            if (counter++ < 2) {
-                                throw new IllegalArgumentException("Damn");
-                            }
+                    .process(exchange -> {
+                        if (counter++ < 2) {
+                            throw new IllegalArgumentException("Damn");
                         }
                     }).to("mock:result");
 

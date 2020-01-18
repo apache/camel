@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.jms.tx;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
@@ -46,16 +44,14 @@ public class QueueToQueueRequestReplyTransactionTest extends AbstractTransaction
 
                 from("activemq:queue:foo").policy(required).process(cp).to("activemq-1:queue:bar?replyTo=queue:bar.reply");
 
-                from("activemq-1:queue:bar").process(new Processor() {
-                    public void process(Exchange e) {
-                        String request = e.getIn().getBody(String.class);
-                        Message out = e.getOut();
-                        String selectorValue = e.getIn().getHeader("camelProvider", String.class);
-                        if (selectorValue != null) {
-                            out.setHeader("camelProvider", selectorValue);
-                        }
-                        out.setBody("Re: " + request);
+                from("activemq-1:queue:bar").process(e -> {
+                    String request = e.getIn().getBody(String.class);
+                    Message out = e.getMessage();
+                    String selectorValue = e.getIn().getHeader("camelProvider", String.class);
+                    if (selectorValue != null) {
+                        out.setHeader("camelProvider", selectorValue);
                     }
+                    out.setBody("Re: " + request);
                 });
             }
         });

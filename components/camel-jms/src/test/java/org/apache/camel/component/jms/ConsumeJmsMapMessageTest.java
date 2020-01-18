@@ -20,10 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
 import javax.jms.MapMessage;
-import javax.jms.Message;
-import javax.jms.Session;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -34,7 +31,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -47,13 +43,11 @@ public class ConsumeJmsMapMessageTest extends CamelTestSupport {
         endpoint.expectedMessageCount(1);
 
         jmsTemplate.setPubSubDomain(false);
-        jmsTemplate.send("test.map", new MessageCreator() {
-            public Message createMessage(Session session) throws JMSException {
-                MapMessage mapMessage = session.createMapMessage();
-                mapMessage.setString("foo", "abc");
-                mapMessage.setString("bar", "xyz");
-                return mapMessage;
-            }
+        jmsTemplate.send("test.map", session -> {
+            MapMessage mapMessage = session.createMapMessage();
+            mapMessage.setString("foo", "abc");
+            mapMessage.setString("bar", "xyz");
+            return mapMessage;
         });
 
         endpoint.assertIsSatisfied();

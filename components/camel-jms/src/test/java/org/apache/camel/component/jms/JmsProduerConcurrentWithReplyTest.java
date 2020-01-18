@@ -18,7 +18,6 @@ package org.apache.camel.component.jms;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -52,11 +51,7 @@ public class JmsProduerConcurrentWithReplyTest extends CamelTestSupport {
         final List<Future<String>> futures = new ArrayList<>();
         for (int i = 0; i < files; i++) {
             final int index = i;
-            Future<String> out = executor.submit(new Callable<String>() {
-                public String call() throws Exception {
-                    return template.requestBody("direct:start", "Message " + index, String.class);
-                }
-            });
+            Future<String> out = executor.submit(() -> template.requestBody("direct:start", "Message " + index, String.class));
             futures.add(out);
         }
 

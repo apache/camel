@@ -21,8 +21,6 @@ import java.util.Map;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -68,12 +66,10 @@ public class JmsPassThroughtJmsKeyFormatStrategyEndpointTest extends CamelTestSu
             @Override
             public void configure() throws Exception {
                 from(uri)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            Map<String, Object> headers = exchange.getIn().getHeaders();
-                            assertEquals("VALUE_1", headers.get("HEADER_1"));
-                            assertEquals("VALUE_1", exchange.getIn().getHeader("HEADER_1"));
-                        }
+                    .process(exchange -> {
+                        Map<String, Object> headers = exchange.getIn().getHeaders();
+                        assertEquals("VALUE_1", headers.get("HEADER_1"));
+                        assertEquals("VALUE_1", exchange.getIn().getHeader("HEADER_1"));
                     })
                     .setHeader("HEADER_2", constant("VALUE_2"))
                     .to("mock:result");

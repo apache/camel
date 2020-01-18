@@ -37,7 +37,6 @@ import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
-import org.springframework.jms.core.SessionCallback;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.listener.SimpleMessageListenerContainer;
@@ -524,43 +523,31 @@ public class JmsConfiguration implements Cloneable {
         public void send(final String destinationName,
                          final MessageCreator messageCreator,
                          final MessageSentCallback callback) throws JmsException {
-            execute(new SessionCallback<Object>() {
-                public Object doInJms(Session session) throws JMSException {
-                    Destination destination = resolveDestinationName(session, destinationName);
-                    return doSendToDestination(destination, messageCreator, callback, session);
-                }
+            execute(session -> {
+                Destination destination = resolveDestinationName(session, destinationName);
+                return doSendToDestination(destination, messageCreator, callback, session);
             }, false);
         }
 
         public void send(final Destination destination,
                          final MessageCreator messageCreator,
                          final MessageSentCallback callback) throws JmsException {
-            execute(new SessionCallback<Object>() {
-                public Object doInJms(Session session) throws JMSException {
-                    return doSendToDestination(destination, messageCreator, callback, session);
-                }
-            }, false);
+            execute(session -> doSendToDestination(destination, messageCreator, callback, session), false);
         }
 
         @Override
         public void send(final String destinationName,
                          final MessageCreator messageCreator) throws JmsException {
-            execute(new SessionCallback<Object>() {
-                public Object doInJms(Session session) throws JMSException {
-                    Destination destination = resolveDestinationName(session, destinationName);
-                    return doSendToDestination(destination, messageCreator, null, session);
-                }
+            execute(session -> {
+                Destination destination = resolveDestinationName(session, destinationName);
+                return doSendToDestination(destination, messageCreator, null, session);
             }, false);
         }
 
         @Override
         public void send(final Destination destination,
                          final MessageCreator messageCreator) throws JmsException {
-            execute(new SessionCallback<Object>() {
-                public Object doInJms(Session session) throws JMSException {
-                    return doSendToDestination(destination, messageCreator, null, session);
-                }
-            }, false);
+            execute(session -> doSendToDestination(destination, messageCreator, null, session), false);
         }
 
         private Object doSendToDestination(final Destination destination,
@@ -1474,11 +1461,7 @@ public class JmsConfiguration implements Cloneable {
     // -------------------------------------------------------------------------
 
     public static DestinationResolver createDestinationResolver(final DestinationEndpoint destinationEndpoint) {
-        return new DestinationResolver() {
-            public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain) throws JMSException {
-                return destinationEndpoint.getJmsDestination(session);
-            }
-        };
+        return (session, destinationName, pubSubDomain) -> destinationEndpoint.getJmsDestination(session);
     }
 
     protected void configureMessageListenerContainer(AbstractMessageListenerContainer container,

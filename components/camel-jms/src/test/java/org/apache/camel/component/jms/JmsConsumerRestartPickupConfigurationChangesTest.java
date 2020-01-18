@@ -19,8 +19,6 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -32,11 +30,7 @@ public class JmsConsumerRestartPickupConfigurationChangesTest extends CamelTestS
     @Test
     public void testRestartJmsConsumerPickupChanges() throws Exception {
         JmsEndpoint endpoint = context.getEndpoint("activemq:queue:foo", JmsEndpoint.class);
-        JmsConsumer consumer = endpoint.createConsumer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                template.send("mock:result", exchange);
-            }
-        });
+        JmsConsumer consumer = endpoint.createConsumer(exchange -> template.send("mock:result", exchange));
 
         consumer.start();
 

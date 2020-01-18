@@ -28,7 +28,6 @@ import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.AssertionClause;
@@ -105,14 +104,12 @@ public class ActiveMQPropagateSerializableHeadersTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:test.a").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        // set the JMS headers
-                        Message in = exchange.getIn();
-                        in.setHeader("myString", "stringValue");
-                        in.setHeader("myMap", mapValue);
-                        in.setHeader("myCal", calValue);
-                    }
+                from("activemq:test.a").process(exchange -> {
+                    // set the JMS headers
+                    Message in = exchange.getIn();
+                    in.setHeader("myString", "stringValue");
+                    in.setHeader("myMap", mapValue);
+                    in.setHeader("myCal", calValue);
                 }).to("activemq:test.b?transferExchange=true&allowSerializedHeaders=true");
 
                 from("activemq:test.b").to("mock:result");

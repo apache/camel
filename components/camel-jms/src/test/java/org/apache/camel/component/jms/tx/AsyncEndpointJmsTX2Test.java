@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jms.tx;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.async.MyAsyncComponent;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
@@ -59,18 +57,14 @@ public class AsyncEndpointJmsTX2Test extends CamelSpringTestSupport {
                     .transacted()
                         .to("mock:before")
                         .to("log:before")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                beforeThreadName = Thread.currentThread().getName();
-                                assertTrue("Exchange should be transacted", exchange.isTransacted());
-                            }
+                        .process(exchange -> {
+                            beforeThreadName = Thread.currentThread().getName();
+                            assertTrue("Exchange should be transacted", exchange.isTransacted());
                         })
                         .to("async:hi:camel")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                afterThreadName = Thread.currentThread().getName();
-                                assertTrue("Exchange should be transacted", exchange.isTransacted());
-                            }
+                        .process(exchange -> {
+                            afterThreadName = Thread.currentThread().getName();
+                            assertTrue("Exchange should be transacted", exchange.isTransacted());
                         })
                         .to("log:after")
                         .to("mock:after")

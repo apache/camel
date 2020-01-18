@@ -25,7 +25,6 @@ import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.AssertionClause;
@@ -79,17 +78,15 @@ public class ActiveMQPropagateHeadersTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:test.a").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        // set the JMS headers
-                        Message in = exchange.getIn();
-                        in.setHeader("JMSReplyTo", replyQueue);
-                        in.setHeader("JMSCorrelationID", correlationID);
-                        in.setHeader("JMSType", messageType);
-                    }
                 // must set option to preserve message QoS as we send an InOnly but put a JMSReplyTo
-                // that does not work well on the consumer side, as it would assume it should send a reply
-                // but we do not expect a reply as we are InOnly.
+// that does not work well on the consumer side, as it would assume it should send a reply
+// but we do not expect a reply as we are InOnly.
+                from("activemq:test.a").process(exchange -> {
+                    // set the JMS headers
+                    Message in = exchange.getIn();
+                    in.setHeader("JMSReplyTo", replyQueue);
+                    in.setHeader("JMSCorrelationID", correlationID);
+                    in.setHeader("JMSType", messageType);
                 }).to("activemq:test.b?preserveMessageQos=true");
 
                 from("activemq:test.b").to("mock:result");
