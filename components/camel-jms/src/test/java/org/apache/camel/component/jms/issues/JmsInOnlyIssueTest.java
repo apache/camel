@@ -21,7 +21,6 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -60,11 +59,7 @@ public class JmsInOnlyIssueTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        Exchange out = template.send("activemq:queue:in", ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Hello World");
-            }
-        });
+        Exchange out = template.send("activemq:queue:in", ExchangePattern.InOnly, exchange -> exchange.getIn().setBody("Hello World"));
 
         assertMockEndpointsSatisfied();
         assertFalse("Should not have OUT", out.hasOut());
@@ -78,11 +73,9 @@ public class JmsInOnlyIssueTest extends CamelTestSupport {
         // need a little sleep to let task exectuor be ready
         Thread.sleep(1000);
 
-        template.asyncSend("activemq:queue:in", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.setPattern(ExchangePattern.InOnly);
-                exchange.getIn().setBody("Hello World");
-            }
+        template.asyncSend("activemq:queue:in", exchange -> {
+            exchange.setPattern(ExchangePattern.InOnly);
+            exchange.getIn().setBody("Hello World");
         });
 
         assertMockEndpointsSatisfied();
@@ -100,11 +93,7 @@ public class JmsInOnlyIssueTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:queue:in").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getIn().setBody("Bye World");
-                    }
-                }).to("mock:result");
+                from("activemq:queue:in").process(exchange -> exchange.getIn().setBody("Bye World")).to("mock:result");
             }
         };
     }

@@ -19,8 +19,6 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -36,11 +34,9 @@ public class JmsInOnlyWithReplyToHeaderTest extends CamelTestSupport {
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived("JMSReplyTo", "queue://bar");
 
-        template.send("activemq:queue:foo?preserveMessageQos=true", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("World");
-                exchange.getIn().setHeader("JMSReplyTo", "bar");
-            }
+        template.send("activemq:queue:foo?preserveMessageQos=true", exchange -> {
+            exchange.getIn().setBody("World");
+            exchange.getIn().setHeader("JMSReplyTo", "bar");
         });
 
         assertMockEndpointsSatisfied();

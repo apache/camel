@@ -23,7 +23,6 @@ import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
-import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
@@ -50,14 +49,12 @@ public class TempReplyToIssueTest extends CamelTestSupport {
 
         // we send the reply manually (notice we just use a bogus endpoint uri)
         ProducerTemplate producer = exchange.getContext().createProducerTemplate();
-        producer.send("activemq:queue:xxx", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Hello Moon");
-                // remember to set correlation id
-                exchange.getIn().setHeader("JMSCorrelationID", id);
-                // this is the real destination we send the reply to
-                exchange.getIn().setHeader(JmsConstants.JMS_DESTINATION, jmsReplyTo);
-            }
+        producer.send("activemq:queue:xxx", exchange1 -> {
+            exchange1.getIn().setBody("Hello Moon");
+            // remember to set correlation id
+            exchange1.getIn().setHeader("JMSCorrelationID", id);
+            // this is the real destination we send the reply to
+            exchange1.getIn().setHeader(JmsConstants.JMS_DESTINATION, jmsReplyTo);
         });
         // stop it after use
         producer.stop();

@@ -214,26 +214,25 @@ public class JmsProducer extends DefaultAsyncProducer {
             in.setHeader(correlationPropertyToUse, GENERATED_CORRELATION_ID_PREFIX + getUuidGenerator().generateUuid());
         }
 
-        MessageCreator messageCreator = new MessageCreator() {
-            public Message createMessage(Session session) throws JMSException {
-                Message answer = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
+        MessageCreator messageCreator = session -> {
+            Message answer = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
 
-                Destination replyTo = null;
-                String replyToOverride = configuration.getReplyToOverride();
-                if (replyToOverride != null) {
-                    replyTo = resolveOrCreateDestination(replyToOverride, session);
-                } else {
-                    // get the reply to destination to be used from the reply manager
-                    replyTo = replyManager.getReplyTo();
-                }
-                if (replyTo == null) {
-                    throw new RuntimeExchangeException("Failed to resolve replyTo destination", exchange);
-                }
-                JmsMessageHelper.setJMSReplyTo(answer, replyTo);
-                replyManager.setReplyToSelectorHeader(in, answer);
+            Destination replyTo = null;
+            String replyToOverride = configuration.getReplyToOverride();
+            if (replyToOverride != null) {
+                replyTo = resolveOrCreateDestination(replyToOverride, session);
+            } else {
+                // get the reply to destination to be used from the reply manager
+                replyTo = replyManager.getReplyTo();
+            }
+            if (replyTo == null) {
+                throw new RuntimeExchangeException("Failed to resolve replyTo destination", exchange);
+            }
+            JmsMessageHelper.setJMSReplyTo(answer, replyTo);
+            replyManager.setReplyToSelectorHeader(in, answer);
 
-                String correlationId = determineCorrelationId(answer, provisionalCorrelationId);
-                replyManager.registerReply(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
+            String correlationId = determineCorrelationId(answer, provisionalCorrelationId);
+            replyManager.registerReply(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
 
                 if (correlationProperty != null) {
                     replyManager.setCorrelationProperty(correlationProperty);
@@ -320,14 +319,13 @@ public class JmsProducer extends DefaultAsyncProducer {
         MessageSentCallback messageSentCallback = getEndpoint().getConfiguration().isIncludeSentJMSMessageID()
                 ? new InOnlyMessageSentCallback(exchange) : null;
 
-        MessageCreator messageCreator = new MessageCreator() {
-            public Message createMessage(Session session) throws JMSException {
-                Message answer = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
+        MessageCreator messageCreator = session -> {
+            Message answer = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
 
-                // when in InOnly mode the JMSReplyTo is a bit complicated
-                // we only want to set the JMSReplyTo on the answer if
-                // there is a JMSReplyTo from the header/endpoint and
-                // we have been told to preserveMessageQos
+            // when in InOnly mode the JMSReplyTo is a bit complicated
+            // we only want to set the JMSReplyTo on the answer if
+            // there is a JMSReplyTo from the header/endpoint and
+            // we have been told to preserveMessageQos
 
                 Object jmsReplyTo = JmsMessageHelper.getJMSReplyTo(answer);
                 if (endpoint.isDisableReplyTo()) {
@@ -359,13 +357,13 @@ public class JmsProducer extends DefaultAsyncProducer {
                     jmsReplyTo = null;
                 }
 
-                // the reply to is a String, so we need to look up its Destination instance
-                // and if needed create the destination using the session if needed to
-                if (jmsReplyTo instanceof String) {
-                    String replyTo = (String) jmsReplyTo;
-                    // we need to null it as we use the String to resolve it as a Destination instance
-                    jmsReplyTo = resolveOrCreateDestination(replyTo, session);
-                }
+            // the reply to is a String, so we need to look up its Destination instance
+            // and if needed create the destination using the session if needed to
+            if (jmsReplyTo instanceof String) {
+                String replyTo = (String) jmsReplyTo;
+                // we need to null it as we use the String to resolve it as a Destination instance
+                jmsReplyTo = resolveOrCreateDestination(replyTo, session);
+            }
 
                 // set the JMSReplyTo on the answer if we are to use it
                 Destination replyTo = null;

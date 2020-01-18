@@ -22,9 +22,7 @@ import javax.jms.Destination;
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consume;
-import org.apache.camel.Exchange;
 import org.apache.camel.Header;
-import org.apache.camel.Processor;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -50,11 +48,9 @@ public class JmsRequestReplyManualWithJMSReplyToTest extends CamelTestSupport {
         context.start();
 
         // send an InOnly but force Camel to pass JMSReplyTo
-        template.send("activemq:queue:foo?preserveMessageQos=true", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Hello World");
-                exchange.getIn().setHeader("JMSReplyTo", "bar");
-            }
+        template.send("activemq:queue:foo?preserveMessageQos=true", exchange -> {
+            exchange.getIn().setBody("Hello World");
+            exchange.getIn().setHeader("JMSReplyTo", "bar");
         });
 
         String reply = consumer.receiveBody("activemq:queue:bar", 5000, String.class);

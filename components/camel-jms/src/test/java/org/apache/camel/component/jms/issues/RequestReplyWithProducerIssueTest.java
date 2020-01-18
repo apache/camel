@@ -22,7 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
@@ -44,7 +43,7 @@ public class RequestReplyWithProducerIssueTest extends CamelTestSupport {
         producer.process(exchange);
         producer.stop();
 
-        assertTrue("Bye World".equals(exchange.getOut().getBody()));
+        assertTrue("Bye World".equals(exchange.getMessage().getBody()));
     }
 
     @Override
@@ -63,11 +62,7 @@ public class RequestReplyWithProducerIssueTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setBody("Bye World");
-                            }
-                        });
+                        .process(exchange -> exchange.getMessage().setBody("Bye World"));
             }
         };
     }

@@ -25,7 +25,6 @@ import org.apache.activemq.command.ActiveMQObjectMessage;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchangeHolder;
@@ -55,21 +54,18 @@ public class JmsInOutTransferExchangeTest extends CamelTestSupport {
         transfer.expectedMessageCount(1);
         result.expectedMessageCount(1);
 
-        template.send("direct:start", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(new SerializableRequestDto("Restless Camel"));
-                
-                Map<String, Object> map = new HashMap<>();
-                map.put("boolean", Boolean.TRUE);
-                map.put("string", "hello");
-                map.put("long", new Long(123));
-                map.put("double", new Double(1.23));
+        template.send("direct:start", exchange -> {
+            exchange.getIn().setBody(new SerializableRequestDto("Restless Camel"));
 
-                exchange.getIn().setHeaders(map);
+            Map<String, Object> map = new HashMap<>();
+            map.put("boolean", Boolean.TRUE);
+            map.put("string", "hello");
+            map.put("long", 123L);
+            map.put("double", 1.23);
 
-                exchange.setProperty("PropertyName", "PropertyValue");
-            }
+            exchange.getIn().setHeaders(map);
+
+            exchange.setProperty("PropertyName", "PropertyValue");
         });
 
         assertMockEndpointsSatisfied();
@@ -119,11 +115,7 @@ public class JmsInOutTransferExchangeTest extends CamelTestSupport {
 
                 from("activemq:responseGenerator?transferExchange=true")
                     .to("mock:transfer")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getIn().setBody(new SerializableResponseDto(true));
-                        }
-                    });
+                    .process(exchange -> exchange.getIn().setBody(new SerializableResponseDto(true)));
             }
         };
     }

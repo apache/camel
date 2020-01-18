@@ -66,7 +66,7 @@ public class ManagedJmsEndpointTest extends CamelTestSupport {
         assertEquals("activemq://queue:start", uri);
 
         Boolean singleton = (Boolean) mbeanServer.getAttribute(name, "Singleton");
-        assertTrue(singleton.booleanValue());
+        assertTrue(singleton);
 
         Integer running = (Integer) mbeanServer.getAttribute(name, "RunningMessageListeners");
         assertEquals(1, running.intValue());

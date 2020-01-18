@@ -19,8 +19,6 @@ package org.apache.camel.component.jms.issues;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -54,13 +52,11 @@ public class JmsInOutUseMessageIDasCorrelationIDTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:queue:in?useMessageIDAsCorrelationID=true").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String id = exchange.getIn().getHeader("JMSCorrelationID", String.class);
-                        assertNull("JMSCorrelationID should be null", id);
+                from("activemq:queue:in?useMessageIDAsCorrelationID=true").process(exchange -> {
+                    String id = exchange.getIn().getHeader("JMSCorrelationID", String.class);
+                    assertNull("JMSCorrelationID should be null", id);
 
-                        exchange.getOut().setBody("Bye World");
-                    }
+                    exchange.getMessage().setBody("Bye World");
                 });
             }
         };

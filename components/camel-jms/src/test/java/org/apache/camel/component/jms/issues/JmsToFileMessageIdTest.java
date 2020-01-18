@@ -19,8 +19,6 @@ package org.apache.camel.component.jms.issues;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.JmsMessage;
@@ -63,25 +61,21 @@ public class JmsToFileMessageIdTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // Make a route from an activemq queue to a file endpoint, then try to call getMessageId()
                 from("activemq:foo")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                // assert camel id is based on jms id 
-                                String camelId = exchange.getIn().getMessageId();
-                                assertNotNull(camelId);
+                        .process(exchange -> {
+                            // assert camel id is based on jms id
+                            String camelId = exchange.getIn().getMessageId();
+                            assertNotNull(camelId);
 
-                                JmsMessage jms = (JmsMessage) exchange.getIn();
-                                String jmsId = jms.getJmsMessage().getJMSMessageID();
-                                assertNotNull(jmsId);
+                            JmsMessage jms = (JmsMessage) exchange.getIn();
+                            String jmsId = jms.getJmsMessage().getJMSMessageID();
+                            assertNotNull(jmsId);
 
-                                assertEquals(jmsId, camelId);
-                            }
+                            assertEquals(jmsId, camelId);
                         })
                         .to("file://target/tofile")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) {
-                                // in Camel 1.4 or older this caused a NPE
-                                assertNotNull(exchange.getIn().getMessageId());
-                            }
+                        .process(exchange -> {
+                            // in Camel 1.4 or older this caused a NPE
+                            assertNotNull(exchange.getIn().getMessageId());
                         })
                         .to("mock:result");
             }

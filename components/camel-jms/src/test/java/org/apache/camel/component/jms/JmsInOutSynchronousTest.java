@@ -19,8 +19,6 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -55,25 +53,13 @@ public class JmsInOutSynchronousTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .to("log:before")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            beforeThreadName = Thread.currentThread().getName();
-                        }
-                    })
+                    .process(exchange -> beforeThreadName = Thread.currentThread().getName())
                     .to(url)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            afterThreadName = Thread.currentThread().getName();
-                        }
-                    })
+                    .process(exchange -> afterThreadName = Thread.currentThread().getName())
                     .to("log:after")
                     .to("mock:result");
 
-                from("activemq:queue:in").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody("Bye World");
-                    }
-                });
+                from("activemq:queue:in").process(exchange -> exchange.getMessage().setBody("Bye World"));
             }
         };
     }

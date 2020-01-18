@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -34,14 +32,11 @@ public class JmsInOutFixedReplyQueueTimeoutUseMessageIDAsCorrelationIDTest exten
                         .to("mock:result");
 
                 from("activemq:queue:foo")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                String body = exchange.getIn().getBody(String.class);
-                                if ("World".equals(body)) {
-                                    log.debug("Sleeping for 4 sec to force a timeout");
-                                    Thread.sleep(4000);
-                                }
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            if ("World".equals(body)) {
+                                log.debug("Sleeping for 4 sec to force a timeout");
+                                Thread.sleep(4000);
                             }
                         }).transform(body().prepend("Bye ")).to("log:reply");
             }

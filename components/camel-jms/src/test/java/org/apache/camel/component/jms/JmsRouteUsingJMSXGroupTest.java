@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -49,13 +48,11 @@ public class JmsRouteUsingJMSXGroupTest extends CamelTestSupport {
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         for (int i = 0; i < files; i++) {
             final int index = i;
-            executor.submit(new Callable<Object>() {
-                public Object call() throws Exception {
-                    template.sendBodyAndHeader("direct:start", "IBM: " + index, JMS_X_GROUP_ID, "IBM");
-                    template.sendBodyAndHeader("direct:start", "SUN: " + index, JMS_X_GROUP_ID, "SUN");
+            executor.submit(() -> {
+                template.sendBodyAndHeader("direct:start", "IBM: " + index, JMS_X_GROUP_ID, "IBM");
+                template.sendBodyAndHeader("direct:start", "SUN: " + index, JMS_X_GROUP_ID, "SUN");
 
-                    return null;
-                }
+                return null;
             });
         }
 
