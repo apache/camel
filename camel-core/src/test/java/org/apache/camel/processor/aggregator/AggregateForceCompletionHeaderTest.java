@@ -59,17 +59,17 @@ public class AggregateForceCompletionHeaderTest extends ContextTestSupport {
 
         getMockEndpoint("mock:aggregated").expectedMessageCount(0);
 
-        getMockEndpoint("mock:aggregated").expectedMessageCount(3);
-        getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3", "test2test4", "test5");
-        getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "force");
-        //getMockEndpoint("mock:aggregated").allMessages().header(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE).isNull();
-
         template.sendBodyAndHeader("direct:start", "test1", "id", "1");
         template.sendBodyAndHeader("direct:start", "test2", "id", "2");
         template.sendBodyAndHeader("direct:start", "test3", "id", "1");
         template.sendBodyAndHeader("direct:start", "test4", "id", "2");
 
-        //assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied();
+
+        getMockEndpoint("mock:aggregated").expectedMessageCount(3);
+        getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3", "test2test4", "test5");
+        getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "force");
+        getMockEndpoint("mock:aggregated").allMessages().header(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE).isNull();
 
         //now send a message to trigger completion of all groups, message should be aggregated
         Map<String, Object> headers = new HashMap<>();
