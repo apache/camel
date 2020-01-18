@@ -287,7 +287,7 @@ setting the property `Exchange.AGGREGATION_COMPLETE_ALL_GROUPS` to `true`.
 *Available as of Camel 2.9*
 
 You can manually trigger completion of all current aggregated exchanges
-by sending a message containing the header
+by sending an exchange containing the property
 `Exchange.AGGREGATION_COMPLETE_ALL_GROUPS` set to `true`. The message is
 considered a signal message only, the message headers/contents will not
 be processed otherwise.
