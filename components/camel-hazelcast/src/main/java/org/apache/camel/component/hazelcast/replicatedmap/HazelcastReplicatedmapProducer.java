@@ -89,7 +89,7 @@ public class HazelcastReplicatedmapProducer extends HazelcastDefaultProducer {
     }
 
     private void get(Object oid, Exchange exchange) {
-        exchange.getOut().setBody(this.cache.get(oid));
+        exchange.getMessage().setBody(this.cache.get(oid));
     }
 
     private void delete(Object oid) {
@@ -101,11 +101,11 @@ public class HazelcastReplicatedmapProducer extends HazelcastDefaultProducer {
     }
 
     private void containsKey(Object oid, Exchange exchange) {
-        exchange.getOut().setBody(this.cache.containsKey(oid));
+        exchange.getMessage().setBody(this.cache.containsKey(oid));
     }
 
     private void containsValue(Exchange exchange) {
         Object body = exchange.getIn().getBody();
-        exchange.getOut().setBody(this.cache.containsValue(body));
+        exchange.getMessage().setBody(this.cache.containsValue(body));
     }
 }
