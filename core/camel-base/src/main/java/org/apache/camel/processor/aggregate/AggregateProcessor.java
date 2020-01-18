@@ -323,7 +323,8 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         }
 
         //check for the special header to force completion of all groups (and ignore the exchange otherwise)
-        if (getAndRemoveBooleanHeader(exchange, Exchange.AGGREGATION_COMPLETE_ALL_GROUPS)) {
+        if (isCompleteAllGroups(exchange)) {
+            removeFlagCompleteAllGroups(exchange);
             forceCompletionOfAllGroups();
             callback.done(false);
             return;
@@ -386,10 +387,10 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         // the aggregated output runs in another unit of work
         Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
 
-        // remove the complete all groups headers as it should not be on the copy
-        copy.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP);
-        copy.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS);
-        copy.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE);
+        // remove the complete all groups flags as it should not be on the copy
+        removeFlagCompleteCurrentGroup(copy);
+        removeFlagCompleteAllGroups(copy);
+        removeFlagCompleteAllGroupsInclusive(copy);
 
         List<Exchange> aggregated = null;
         lock.lock();
@@ -408,23 +409,47 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         }
 
         // check for the special header to force completion of all groups (inclusive of the message)
-        if (getAndRemoveBooleanHeader(exchange, Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE)) {
+        if (isCompleteAllGroupsInclusive(exchange)) {
+            removeFlagCompleteAllGroupsInclusive(exchange);
             forceCompletionOfAllGroups();
         }
 
         callback.done(false);
     }
 
-    protected boolean getBooleanProperty(Exchange exchange, String key) {
-        return camelContext.getTypeConverter().convertTo(boolean.class, exchange, exchange.getProperty(key));
+    private Object removeFlagCompleteCurrentGroup(Exchange exchange) {
+        //before everywhere : return exchange.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP);
+        return exchange.removeProperty(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP);
     }
 
-    protected boolean getAndRemoveBooleanProperty(Exchange exchange, String key) {
-        return camelContext.getTypeConverter().convertTo(boolean.class, exchange, exchange.removeProperty(key));
+    private Boolean isCompleteCurrentGroup(Exchange exchange) {
+        return exchange.getProperty(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP, false, boolean.class);
     }
 
-    protected boolean getAndRemoveBooleanHeader(Exchange exchange, String key) {
-        return camelContext.getTypeConverter().convertTo(boolean.class, exchange, exchange.getIn().removeHeader(key));
+    private Object removeFlagCompleteAllGroups(Exchange exchange) {
+        Object removedHeader = exchange.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS);
+        Object removedProp = exchange.removeProperty(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS);
+
+        return removedHeader == null ? removedProp: removedHeader;
+    }
+
+    private Boolean isCompleteAllGroups(Exchange exchange) {
+        Boolean retVal;
+        retVal = exchange.getIn().getHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, false, boolean.class);
+        if(!Boolean.TRUE.equals(retVal)) {
+            // according to doc it is a property but it is sometimes read as header
+            // some test don't fail because they use the header expression which contains a fallback to properties
+            retVal = exchange.getProperty(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, false, boolean.class);
+        }
+        return retVal;
+    }
+
+    private Object removeFlagCompleteAllGroupsInclusive(Exchange exchange) {
+        return exchange.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE);
+    }
+
+    private Boolean isCompleteAllGroupsInclusive(Exchange exchange) {
+        return exchange.getIn().getHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE, false, boolean.class);
     }
 
     /**
@@ -532,7 +557,8 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         }
 
         // check for the special exchange property to force completion of all groups
-        if (getAndRemoveBooleanProperty(answer, Exchange.AGGREGATION_COMPLETE_ALL_GROUPS)) {
+        if (isCompleteAllGroups(answer)) {
+            removeFlagCompleteAllGroups(answer);
             forceCompletionOfAllGroups();
         } else if (isCompletionOnNewCorrelationGroup() && originalExchange == null) {
             // its a new group so force complete of all existing groups
@@ -654,7 +680,8 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             }
         }
 
-        if (getBooleanProperty(exchange, Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP)) {
+        if (isCompleteCurrentGroup(exchange)) {
+            removeFlagCompleteCurrentGroup(exchange);
             return COMPLETED_BY_STRATEGY;
         }
 
