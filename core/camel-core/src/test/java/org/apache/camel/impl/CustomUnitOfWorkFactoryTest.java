@@ -76,5 +76,10 @@ public class CustomUnitOfWorkFactoryTest extends ContextTestSupport {
             exchange.getIn().setHeader("before", "I was here");
             return callback;
         }
+
+        @Override
+        public boolean isBeforeAfterProcess() {
+            return true;
+        }
     }
 }

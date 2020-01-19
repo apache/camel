@@ -127,6 +127,11 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     }
 
     @Override
+    public boolean isBeforeAfterProcess() {
+        return true;
+    }
+
+    @Override
     public AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback) {
         // add optional step id
         String stepId = exchange.getProperty(Exchange.STEP_ID, String.class);

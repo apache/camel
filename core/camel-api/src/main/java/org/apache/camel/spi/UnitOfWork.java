@@ -188,11 +188,18 @@ public interface UnitOfWork extends Service {
     RouteContext popRouteContext();
 
     /**
-     * Strategy for optional work to be execute before processing
+     * Whether the unit of work should call the before/after process methods or not.
+     */
+    boolean isBeforeAfterProcess();
+
+    /**
+     * Strategy for work to be execute before processing.
      * <p/>
      * For example the MDCUnitOfWork leverages this
      * to ensure MDC is handled correctly during routing exchanges using the
      * asynchronous routing engine.
+     * <p/>
+     * This requires {@link #isBeforeAfterProcess()} returns <tt>true</tt> to be enabled.
      *
      * @param processor the processor to be executed
      * @param exchange  the current exchange
@@ -202,7 +209,9 @@ public interface UnitOfWork extends Service {
     AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback);
 
     /**
-     * Strategy for optional work to be executed after the processing
+     * Strategy for work to be executed after the processing
+     * <p/>
+     * This requires {@link #isBeforeAfterProcess()} returns <tt>true</tt> to be enabled.
      *
      * @param processor the processor executed
      * @param exchange  the current exchange
