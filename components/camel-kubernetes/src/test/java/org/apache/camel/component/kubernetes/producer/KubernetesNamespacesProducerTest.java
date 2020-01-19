@@ -26,7 +26,6 @@ import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
@@ -55,15 +54,9 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
         ObjectMeta meta = new ObjectMeta();
         meta.setName("test");
         server.expect().withPath("/api/v1/namespaces/test").andReturn(200, new NamespaceBuilder().withMetadata(meta).build()).once();
-        Exchange ex = template.request("direct:getNs", new Processor() {
+        Exchange ex = template.request("direct:getNs", exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test"));
 
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
-            }
-        });
-
-        Namespace ns = ex.getOut().getBody(Namespace.class);
+        Namespace ns = ex.getMessage().getBody(Namespace.class);
 
         assertEquals(ns.getMetadata().getName(), "test");
 
@@ -74,15 +67,9 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
         Namespace ns1 = new NamespaceBuilder().withNewMetadata().withName("ns1").endMetadata().build();
         server.expect().withPath("/api/v1/namespaces/ns1").andReturn(200, ns1).once();
 
-        Exchange ex = template.request("direct:deleteNamespace", new Processor() {
+        Exchange ex = template.request("direct:deleteNamespace", exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "ns1"));
 
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "ns1");
-            }
-        });
-
-        boolean nsDeleted = ex.getOut().getBody(Boolean.class);
+        boolean nsDeleted = ex.getMessage().getBody(Boolean.class);
 
         assertTrue(nsDeleted);
     }

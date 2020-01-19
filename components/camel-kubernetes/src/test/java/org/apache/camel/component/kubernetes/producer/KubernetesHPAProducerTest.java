@@ -69,7 +69,7 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
             }
         });
 
-        List<HorizontalPodAutoscaler> result = ex.getOut().getBody(List.class);
+        List<HorizontalPodAutoscaler> result = ex.getMessage().getBody(List.class);
 
         assertEquals(3, result.size());
     }
@@ -90,7 +90,7 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
             }
         });
 
-        HorizontalPodAutoscaler result = ex.getOut().getBody(HorizontalPodAutoscaler.class);
+        HorizontalPodAutoscaler result = ex.getMessage().getBody(HorizontalPodAutoscaler.class);
 
         assertEquals("hpa1", result.getMetadata().getName());
     }
@@ -109,7 +109,7 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
             }
         });
 
-        boolean podDeleted = ex.getOut().getBody(Boolean.class);
+        boolean podDeleted = ex.getMessage().getBody(Boolean.class);
 
         assertTrue(podDeleted);
     }

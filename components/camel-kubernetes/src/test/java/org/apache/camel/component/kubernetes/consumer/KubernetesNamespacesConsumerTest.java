@@ -49,32 +49,24 @@ public class KubernetesNamespacesConsumerTest extends KubernetesTestSupport {
         mockResultEndpoint.expectedMessageCount(5);
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED", "MODIFIED", "MODIFIED", "MODIFIED", "DELETED");
 
-        Exchange ex = template.request("direct:createNamespace", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
-                Map<String, String> labels = new HashMap<>();
-                labels.put("this", "rocks");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, labels);
-            }
+        Exchange ex = template.request("direct:createNamespace", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            Map<String, String> labels = new HashMap<>();
+            labels.put("this", "rocks");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, labels);
         });
 
-        Namespace ns = ex.getOut().getBody(Namespace.class);
+        Namespace ns = ex.getMessage().getBody(Namespace.class);
 
         assertEquals(ns.getMetadata().getName(), "test");
 
-        ex = template.request("direct:listByLabels", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                Map<String, String> labels = new HashMap<>();
-                labels.put("this", "rocks");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, labels);
-            }
+        ex = template.request("direct:listByLabels", exchange -> {
+            Map<String, String> labels = new HashMap<>();
+            labels.put("this", "rocks");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, labels);
         });
 
-        List<Namespace> result = ex.getOut().getBody(List.class);
+        List<Namespace> result = ex.getMessage().getBody(List.class);
 
         boolean testExists = false;
 
@@ -88,15 +80,9 @@ public class KubernetesNamespacesConsumerTest extends KubernetesTestSupport {
 
         assertTrue(testExists);
 
-        ex = template.request("direct:deleteNamespace", new Processor() {
+        ex = template.request("direct:deleteNamespace", exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test"));
 
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
-            }
-        });
-
-        boolean nsDeleted = ex.getOut().getBody(Boolean.class);
+        boolean nsDeleted = ex.getMessage().getBody(Boolean.class);
 
         assertTrue(nsDeleted);
 
@@ -115,12 +101,12 @@ public class KubernetesNamespacesConsumerTest extends KubernetesTestSupport {
                 from("direct:getNs").toF("kubernetes-namespaces://%s?oauthToken=%s&operation=getNamespace", host, authToken);
                 from("direct:createNamespace").toF("kubernetes-namespaces://%s?oauthToken=%s&operation=createNamespace", host, authToken);
                 from("direct:deleteNamespace").toF("kubernetes-namespaces://%s?oauthToken=%s&operation=deleteNamespace", host, authToken);
-                fromF("kubernetes-namespaces://%s?oauthToken=%s", host, authToken).process(new KubernertesProcessor()).to(mockResultEndpoint);
+                fromF("kubernetes-namespaces://%s?oauthToken=%s", host, authToken).process(new KubernetesProcessor()).to(mockResultEndpoint);
             }
         };
     }
 
-    public class KubernertesProcessor implements Processor {
+    public class KubernetesProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
