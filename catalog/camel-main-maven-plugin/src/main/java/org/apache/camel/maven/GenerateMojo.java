@@ -413,8 +413,7 @@ public class GenerateMojo extends AbstractMainMojo {
     protected Properties loadMappingsFile() throws MojoFailureException {
         Properties mappings = new OrderedProperties();
         if (mappingsFile.exists() && mappingsFile.isFile()) {
-            try {
-                InputStream is = new FileInputStream(mappingsFile);
+            try (InputStream is = new FileInputStream(mappingsFile)) {
                 mappings.load(is);
             } catch (IOException e) {
                 throw new MojoFailureException("Cannot load file: " + mappingsFile);
