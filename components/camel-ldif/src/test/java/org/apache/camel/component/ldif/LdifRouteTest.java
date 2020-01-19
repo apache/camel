@@ -324,9 +324,9 @@ public class LdifRouteTest extends AbstractLdapTestUnit {
     private List<String> defaultLdapModuleOutAssertions(Exchange out) {
         // assertions of the response
         assertNotNull(out);
-        assertNotNull(out.getOut());
-        List<String> data = out.getOut().getBody(List.class);
-        assertNotNull("out body could not be converted to a List - was: " + out.getOut().getBody(), data);
+        assertNotNull(out.getMessage());
+        List<String> data = out.getMessage().getBody(List.class);
+        assertNotNull("out body could not be converted to a List - was: " + out.getMessage().getBody(), data);
         return data;
     }
 
