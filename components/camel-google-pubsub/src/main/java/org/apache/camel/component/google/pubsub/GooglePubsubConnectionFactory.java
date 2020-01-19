@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.pubsub;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -112,14 +113,15 @@ public class GooglePubsubConnectionFactory {
     }
 
     private GoogleCredential createFromFile() throws Exception {
+        try (InputStream is = new FileInputStream(credentialsFileLocation)) {
+            GoogleCredential credential = GoogleCredential.fromStream(is);
 
-        GoogleCredential credential = GoogleCredential.fromStream(new FileInputStream(credentialsFileLocation));
+            if (credential.createScopedRequired()) {
+                credential = credential.createScoped(PubsubScopes.all());
+            }
 
-        if (credential.createScopedRequired()) {
-            credential = credential.createScoped(PubsubScopes.all());
+            return credential;
         }
-
-        return credential;
     }
 
     private GoogleCredential createDefault() throws Exception {

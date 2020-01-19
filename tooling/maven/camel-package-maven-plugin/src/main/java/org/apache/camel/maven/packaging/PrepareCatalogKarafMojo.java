@@ -527,10 +527,8 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         // load features.xml file and parse it
 
         Set<String> answer = new LinkedHashSet<>();
-        try {
-            File file = new File(featuresDir, "features.xml");
-            InputStream is = new FileInputStream(file);
-
+        File file = new File(featuresDir, "features.xml");
+        try (InputStream is = new FileInputStream(file)) {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             dbf.setIgnoringComments(true);
