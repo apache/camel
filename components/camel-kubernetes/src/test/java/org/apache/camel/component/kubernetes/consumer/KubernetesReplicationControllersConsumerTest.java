@@ -48,42 +48,34 @@ public class KubernetesReplicationControllersConsumerTest extends KubernetesTest
         }
 
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED", "DELETED", "MODIFIED", "MODIFIED", "MODIFIED");
-        Exchange ex = template.request("direct:createReplicationController", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, "test");
-                Map<String, String> labels = new HashMap<>();
-                labels.put("this", "rocks");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLERS_LABELS, labels);
-                ReplicationControllerSpec rcSpec = new ReplicationControllerSpec();
-                rcSpec.setReplicas(2);
-                PodTemplateSpecBuilder builder = new PodTemplateSpecBuilder();
-                PodTemplateSpec t = builder.withNewMetadata().withName("nginx-template").addToLabels("server", "nginx").endMetadata().withNewSpec().addNewContainer()
-                    .withName("wildfly").withImage("jboss/wildfly").addNewPort().withContainerPort(80).endPort().endContainer().endSpec().build();
-                rcSpec.setTemplate(t);
-                Map<String, String> selectorMap = new HashMap<>();
-                selectorMap.put("server", "nginx");
-                rcSpec.setSelector(selectorMap);
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_SPEC, rcSpec);
-            }
+        Exchange ex = template.request("direct:createReplicationController", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, "test");
+            Map<String, String> labels = new HashMap<>();
+            labels.put("this", "rocks");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLERS_LABELS, labels);
+            ReplicationControllerSpec rcSpec = new ReplicationControllerSpec();
+            rcSpec.setReplicas(2);
+            PodTemplateSpecBuilder builder = new PodTemplateSpecBuilder();
+            PodTemplateSpec t = builder.withNewMetadata().withName("nginx-template").addToLabels("server", "nginx").endMetadata().withNewSpec().addNewContainer()
+                .withName("wildfly").withImage("jboss/wildfly").addNewPort().withContainerPort(80).endPort().endContainer().endSpec().build();
+            rcSpec.setTemplate(t);
+            Map<String, String> selectorMap = new HashMap<>();
+            selectorMap.put("server", "nginx");
+            rcSpec.setSelector(selectorMap);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_SPEC, rcSpec);
         });
 
-        ReplicationController rc = ex.getOut().getBody(ReplicationController.class);
+        ReplicationController rc = ex.getMessage().getBody(ReplicationController.class);
 
         assertEquals(rc.getMetadata().getName(), "test");
 
-        ex = template.request("direct:deleteReplicationController", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, "test");
-            }
+        ex = template.request("direct:deleteReplicationController", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, "test");
         });
 
-        boolean rcDeleted = ex.getOut().getBody(Boolean.class);
+        boolean rcDeleted = ex.getMessage().getBody(Boolean.class);
 
         assertTrue(rcDeleted);
 
@@ -102,12 +94,12 @@ public class KubernetesReplicationControllersConsumerTest extends KubernetesTest
                 from("direct:getReplicationController").toF("kubernetes-replication-controllers://%s?oauthToken=%s&operation=getReplicationController", host, authToken);
                 from("direct:createReplicationController").toF("kubernetes-replication-controllers://%s?oauthToken=%s&operation=createReplicationController", host, authToken);
                 from("direct:deleteReplicationController").toF("kubernetes-replication-controllers://%s?oauthToken=%s&operation=deleteReplicationController", host, authToken);
-                fromF("kubernetes-replication-controllers://%s?oauthToken=%s&resourceName=wildfly", host, authToken).process(new KubernertesProcessor()).to(mockResultEndpoint);
+                fromF("kubernetes-replication-controllers://%s?oauthToken=%s&resourceName=wildfly", host, authToken).process(new KubernetesProcessor()).to(mockResultEndpoint);
             }
         };
     }
 
-    public class KubernertesProcessor implements Processor {
+    public class KubernetesProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
