@@ -220,6 +220,7 @@
             <configuration>
               <excludeSubProjects>false</excludeSubProjects>
               <excludes>
+                <exclude>**/generated.txt</exclude>
                 <exclude>**/README</exclude>
                 <exclude>**/README.txt</exclude>
                 <exclude>**/README.md</exclude>
