@@ -25,7 +25,6 @@ import javax.naming.ldap.LdapContext;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -146,11 +145,9 @@ public class LdapRouteTest extends AbstractLdapTestUnit {
         camel.addRoutes(createRouteBuilder("ldap:localhost:" + port + "?base=ou=system"));
         camel.start();
 
-        Exchange out = template.request("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("(!(ou=test1))");
-                exchange.getIn().setHeader("ldapTest", "Camel");
-            }
+        Exchange out = template.request("direct:start", exchange -> {
+            exchange.getIn().setBody("(!(ou=test1))");
+            exchange.getIn().setHeader("ldapTest", "Camel");
         });
         
         Collection<SearchResult> searchResults = defaultLdapModuleOutAssertions(out);
@@ -159,16 +156,16 @@ public class LdapRouteTest extends AbstractLdapTestUnit {
         assertTrue(contains("uid=test2,ou=test,ou=system", searchResults));
         assertTrue(contains("uid=testNoOU,ou=test,ou=system", searchResults));
         assertTrue(contains("uid=tcruise,ou=actors,ou=system", searchResults));
-        assertEquals("Camel", out.getOut().getHeader("ldapTest"));
+        assertEquals("Camel", out.getMessage().getHeader("ldapTest"));
     }
 
     @SuppressWarnings("unchecked")
     private Collection<SearchResult> defaultLdapModuleOutAssertions(Exchange out) {
         // assertions of the response
         assertNotNull(out);
-        assertNotNull(out.getOut());
-        Collection<SearchResult> data = out.getOut().getBody(Collection.class);
-        assertNotNull("out body could not be converted to a Collection - was: " + out.getOut().getBody(), data);
+        assertNotNull(out.getMessage());
+        Collection<SearchResult> data = out.getMessage().getBody(Collection.class);
+        assertNotNull("out body could not be converted to a Collection - was: " + out.getMessage().getBody(), data);
         return data;
     }
 
