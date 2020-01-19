@@ -82,16 +82,16 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (exchange.isTransacted()) {
-            camelContext.getReactiveExecutor().scheduleSync(() -> Pipeline.this.doProcess(exchange, callback, processors, 0, true));
+            camelContext.getReactiveExecutor().scheduleSync(() -> Pipeline.this.doProcess(exchange, callback, processors, 0));
         } else {
-            camelContext.getReactiveExecutor().scheduleMain(() -> Pipeline.this.doProcess(exchange, callback, processors, 0, true));
+            camelContext.getReactiveExecutor().scheduleMain(() -> Pipeline.this.doProcess(exchange, callback, processors, 0));
         }
         return false;
     }
 
-    protected void doProcess(Exchange exchange, AsyncCallback callback, List<AsyncProcessor> processors, int index, boolean first) {
+    protected void doProcess(Exchange exchange, AsyncCallback callback, List<AsyncProcessor> processors, int index) {
         if (continueRouting(processors, index, exchange)
-                && (first || continueProcessing(exchange, "so breaking out of pipeline", log))) {
+                && (index == 0 || continueProcessing(exchange, "so breaking out of pipeline", log))) {
 
             // prepare for next run
             ExchangeHelper.prepareOutToIn(exchange);
@@ -101,14 +101,16 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
 
             final Integer idx = index + 1;
             processor.process(exchange, doneSync ->
-                    camelContext.getReactiveExecutor().schedule(() -> doProcess(exchange, callback, processors, idx, false)));
+                    camelContext.getReactiveExecutor().schedule(() -> doProcess(exchange, callback, processors, idx)));
         } else {
             ExchangeHelper.copyResults(exchange, exchange);
 
             // logging nextExchange as it contains the exchange that might have altered the payload and since
             // we are logging the completion if will be confusing if we log the original instead
             // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
-            log.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+            if (log.isTraceEnabled()) {
+                log.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+            }
 
             camelContext.getReactiveExecutor().schedule(callback);
         }
@@ -119,13 +121,17 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
         if (stop != null) {
             boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
             if (doStop) {
-                log.debug("ExchangeId: {} is marked to stop routing: {}", exchange.getExchangeId(), exchange);
+                if (log.isTraceEnabled()) {
+                    log.debug("ExchangeId: {} is marked to stop routing: {}", exchange.getExchangeId(), exchange);
+                }
                 return false;
             }
         }
         // continue if there are more processors to route
         boolean answer = index < processors.size();
-        log.trace("ExchangeId: {} should continue routing: {}", exchange.getExchangeId(), answer);
+        if (log.isTraceEnabled()) {
+            log.trace("ExchangeId: {} should continue routing: {}", exchange.getExchangeId(), answer);
+        }
         return answer;
     }
 
