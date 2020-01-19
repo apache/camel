@@ -67,7 +67,9 @@ public final class PipelineHelper {
         if (stop != null) {
             boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, exchange, stop);
             if (doStop) {
-                log.debug("ExchangeId: {} is marked to stop routing: {}", exchange.getExchangeId(), exchange);
+                if (log.isDebugEnabled()) {
+                    log.debug("ExchangeId: {} is marked to stop routing: {}", exchange.getExchangeId(), exchange);
+                }
                 return false;
             }
         }
