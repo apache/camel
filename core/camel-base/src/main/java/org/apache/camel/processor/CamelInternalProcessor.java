@@ -134,6 +134,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean process(Exchange exchange, AsyncCallback originalCallback) {
         // ----------------------------------------------------------
         // CAMEL END USER - READ ME FOR DEBUGGING TIPS
@@ -193,7 +194,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 // CAMEL END USER - DEBUG ME HERE +++ START +++
                 // ----------------------------------------------------------
                 // callback must be called
-                exchange.getContext().getReactiveExecutor().schedule(originalCallback);
+                if (originalCallback != null) {
+                    exchange.getContext().getReactiveExecutor().schedule(originalCallback);
+                }
                 // ----------------------------------------------------------
                 // CAMEL END USER - DEBUG ME HERE +++ END +++
                 // ----------------------------------------------------------
@@ -225,11 +228,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         } else {
             final UnitOfWork uow = exchange.getUnitOfWork();
 
-            // allow unit of work to wrap callback in case it need to do some special work
-            // for example the MDCUnitOfWork
+            // do uow before processing and if a value is returned the the uow wants to be processed after
+            // was well in the same thread
             AsyncCallback async = callback;
-            if (uow != null) {
-                async = uow.beforeProcess(processor, exchange, callback);
+            boolean beforeAndAfter = uow.isBeforeAfterProcess();
+            if (beforeAndAfter) {
+                async = uow.beforeProcess(processor, exchange, async);
             }
 
             // ----------------------------------------------------------
@@ -243,17 +247,19 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------
 
-            exchange.getContext().getReactiveExecutor().schedule(() -> {
-                // execute any after processor work (in current thread, not in the callback)
-                if (uow != null) {
+            // optimize to only do after uow processing if really needed
+            if (beforeAndAfter) {
+                exchange.getContext().getReactiveExecutor().schedule(() -> {
+                    // execute any after processor work (in current thread, not in the callback)
                     uow.afterProcess(processor, exchange, callback, false);
-                }
+                });
+            }
 
-                if (log.isTraceEnabled()) {
-                    log.trace("Exchange processed and is continued routed asynchronously for exchangeId: {} -> {}",
-                             exchange.getExchangeId(), exchange);
-                }
-            });
+            if (log.isTraceEnabled()) {
+                log.trace("Exchange processed and is continued routed asynchronously for exchangeId: {} -> {}",
+                        exchange.getExchangeId(), exchange);
+            }
+            // must return false
             return false;
         }
     }

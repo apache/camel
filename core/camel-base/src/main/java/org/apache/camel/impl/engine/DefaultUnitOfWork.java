@@ -292,6 +292,11 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     }
 
     @Override
+    public boolean isBeforeAfterProcess() {
+        return false;
+    }
+
+    @Override
     public AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback) {
         // no wrapping needed
         return callback;
@@ -299,6 +304,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     @Override
     public void afterProcess(Processor processor, Exchange exchange, AsyncCallback callback, boolean doneSync) {
+        // noop
     }
 
     private Set<Object> getTransactedBy() {
