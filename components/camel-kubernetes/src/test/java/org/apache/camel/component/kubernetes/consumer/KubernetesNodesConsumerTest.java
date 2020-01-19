@@ -51,50 +51,42 @@ public class KubernetesNodesConsumerTest extends KubernetesTestSupport {
 
         mockResultEndpoint.expectedMessageCount(1);
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "MODIFIED");
-        Exchange ex = template.request("direct:createPod", new Processor() {
+        Exchange ex = template.request("direct:createPod", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_NAME, "test");
+            Map<String, String> labels = new HashMap<>();
+            labels.put("this", "rocks");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, labels);
+            PodSpec podSpec = new PodSpec();
+            podSpec.setHostname("localhost");
+            Container cont = new Container();
+            cont.setImage("docker.io/jboss/wildfly:latest");
+            cont.setName("pippo");
 
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_NAME, "test");
-                Map<String, String> labels = new HashMap<>();
-                labels.put("this", "rocks");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, labels);
-                PodSpec podSpec = new PodSpec();
-                podSpec.setHostname("localhost");
-                Container cont = new Container();
-                cont.setImage("docker.io/jboss/wildfly:latest");
-                cont.setName("pippo");
+            List<ContainerPort> containerPort = new ArrayList<>();
+            ContainerPort port = new ContainerPort();
+            port.setHostIP("0.0.0.0");
+            port.setHostPort(8080);
+            port.setContainerPort(8080);
 
-                List<ContainerPort> containerPort = new ArrayList<>();
-                ContainerPort port = new ContainerPort();
-                port.setHostIP("0.0.0.0");
-                port.setHostPort(8080);
-                port.setContainerPort(8080);
+            containerPort.add(port);
 
-                containerPort.add(port);
+            cont.setPorts(containerPort);
 
-                cont.setPorts(containerPort);
+            List<Container> list = new ArrayList<>();
+            list.add(cont);
 
-                List<Container> list = new ArrayList<>();
-                list.add(cont);
+            podSpec.setContainers(list);
 
-                podSpec.setContainers(list);
-
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_SPEC, podSpec);
-            }
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_SPEC, podSpec);
         });
 
-        ex = template.request("direct:deletePod", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_NAME, "test");
-            }
+        ex = template.request("direct:deletePod", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_NAME, "test");
         });
 
-        boolean podDeleted = ex.getOut().getBody(Boolean.class);
+        boolean podDeleted = ex.getMessage().getBody(Boolean.class);
 
         assertTrue(podDeleted);
 
@@ -113,12 +105,12 @@ public class KubernetesNodesConsumerTest extends KubernetesTestSupport {
                 from("direct:getPod").toF("kubernetes-pods://%s?oauthToken=%s&operation=getPod", host, authToken);
                 from("direct:createPod").toF("kubernetes-pods://%s?oauthToken=%s&operation=createPod", host, authToken);
                 from("direct:deletePod").toF("kubernetes-pods://%s?oauthToken=%s&operation=deletePod", host, authToken);
-                fromF("kubernetes-nodes://%s?oauthToken=%s&resourceName=minikube", host, authToken).process(new KubernertesProcessor()).to(mockResultEndpoint);
+                fromF("kubernetes-nodes://%s?oauthToken=%s&resourceName=minikube", host, authToken).process(new KubernetesProcessor()).to(mockResultEndpoint);
             }
         };
     }
 
-    public class KubernertesProcessor implements Processor {
+    public class KubernetesProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();

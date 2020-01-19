@@ -51,44 +51,36 @@ public class KubernetesServicesConsumerTest extends KubernetesTestSupport {
 
         mockResultEndpoint.expectedMessageCount(2);
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED", "DELETED");
-        Exchange ex = template.request("direct:createService", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "test");
-                Map<String, String> labels = new HashMap<>();
-                labels.put("this", "rocks");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
-                ServiceSpec serviceSpec = new ServiceSpec();
-                List<ServicePort> lsp = new ArrayList<>();
-                ServicePort sp = new ServicePort();
-                sp.setPort(8080);
-                sp.setTargetPort(new IntOrString(8080));
-                sp.setProtocol("TCP");
-                lsp.add(sp);
-                serviceSpec.setPorts(lsp);
-                Map<String, String> selectorMap = new HashMap<>();
-                selectorMap.put("containter", "test");
-                serviceSpec.setSelector(selectorMap);
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_SPEC, serviceSpec);
-            }
+        Exchange ex = template.request("direct:createService", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "test");
+            Map<String, String> labels = new HashMap<>();
+            labels.put("this", "rocks");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
+            ServiceSpec serviceSpec = new ServiceSpec();
+            List<ServicePort> lsp = new ArrayList<>();
+            ServicePort sp = new ServicePort();
+            sp.setPort(8080);
+            sp.setTargetPort(new IntOrString(8080));
+            sp.setProtocol("TCP");
+            lsp.add(sp);
+            serviceSpec.setPorts(lsp);
+            Map<String, String> selectorMap = new HashMap<>();
+            selectorMap.put("containter", "test");
+            serviceSpec.setSelector(selectorMap);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_SPEC, serviceSpec);
         });
 
-        Service serv = ex.getOut().getBody(Service.class);
+        Service serv = ex.getMessage().getBody(Service.class);
 
         assertEquals(serv.getMetadata().getName(), "test");
 
-        ex = template.request("direct:deleteService", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "test");
-            }
+        ex = template.request("direct:deleteService", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "test");
         });
 
-        boolean servDeleted = ex.getOut().getBody(Boolean.class);
+        boolean servDeleted = ex.getMessage().getBody(Boolean.class);
 
         assertTrue(servDeleted);
 
@@ -107,12 +99,12 @@ public class KubernetesServicesConsumerTest extends KubernetesTestSupport {
                 from("direct:getServices").toF("kubernetes-services://%s?oauthToken=%s&operation=getService", host, authToken);
                 from("direct:createService").toF("kubernetes-services://%s?oauthToken=%s&operation=createService", host, authToken);
                 from("direct:deleteService").toF("kubernetes-services://%s?oauthToken=%s&operation=deleteService", host, authToken);
-                fromF("kubernetes-services://%s?oauthToken=%s&labelKey=this&labelValue=rocks", host, authToken).process(new KubernertesProcessor()).to(mockResultEndpoint);
+                fromF("kubernetes-services://%s?oauthToken=%s&labelKey=this&labelValue=rocks", host, authToken).process(new KubernetesProcessor()).to(mockResultEndpoint);
             }
         };
     }
 
-    public class KubernertesProcessor implements Processor {
+    public class KubernetesProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
