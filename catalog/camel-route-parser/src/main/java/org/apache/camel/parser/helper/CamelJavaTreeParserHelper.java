@@ -455,9 +455,9 @@ public final class CamelJavaTreeParserHelper {
                 // if numeric then we plus the values, otherwise we string concat
                 boolean numeric = isNumericOperator(clazz, block, ie.getLeftOperand()) && isNumericOperator(clazz, block, ie.getRightOperand());
                 if (numeric) {
-                    Long num1 = val1 != null ? Long.valueOf(val1) : 0;
-                    Long num2 = val2 != null ? Long.valueOf(val2) : 0;
-                    answer = "" + (num1 + num2);
+                    long num1 = val1 != null ? Long.parseLong(val1) : 0;
+                    long num2 = val2 != null ? Long.parseLong(val2) : 0;
+                    answer = Long.toString(num1 + num2);
                 } else {
                     answer = (val1 != null ? val1 : "") + (val2 != null ? val2 : "");
                 }
@@ -469,9 +469,9 @@ public final class CamelJavaTreeParserHelper {
                         for (Object ext : extended) {
                             String val3 = getLiteralValue(clazz, block, (Expression) ext);
                             if (numeric) {
-                                Long num3 = val3 != null ? Long.valueOf(val3) : 0;
-                                Long num = Long.valueOf(answer);
-                                answer = "" + (num + num3);
+                                long num3 = val3 != null ? Long.parseLong(val3) : 0;
+                                long num = Long.parseLong(answer);
+                                answer = Long.toString(num + num3);
                             } else {
                                 answer += val3 != null ? val3 : "";
                             }

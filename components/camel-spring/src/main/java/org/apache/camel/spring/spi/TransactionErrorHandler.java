@@ -125,8 +125,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
 
     protected void processInTransaction(final Exchange exchange) {
         // is the exchange redelivered, for example JMS brokers support such details
-        Boolean externalRedelivered = exchange.isExternalRedelivered();
-        final String redelivered = externalRedelivered != null ? externalRedelivered.toString() : "unknown";
+        final String redelivered = Boolean.toString(exchange.isExternalRedelivered());
         final String ids = ExchangeHelper.logIds(exchange);
 
         try {
