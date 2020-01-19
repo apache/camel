@@ -52,6 +52,7 @@ public class HawtDBAggregateForceCompletionHeaderTest extends CamelTestSupport {
         getMockEndpoint("mock:aggregated").expectedMessageCount(2);
         getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3", "test2test4");
         getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "force");
+        getMockEndpoint("mock:aggregated").allMessages().exchangeProperty(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS).isNull();
 
         //now send the signal message to trigger completion of all groups, message should NOT be aggregated
         template.sendBodyAndProperty("direct:start", "test5", Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, true);
@@ -74,6 +75,7 @@ public class HawtDBAggregateForceCompletionHeaderTest extends CamelTestSupport {
         getMockEndpoint("mock:aggregated").expectedMessageCount(3);
         getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3", "test2test4", "test5");
         getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "force");
+        getMockEndpoint("mock:aggregated").allMessages().header(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE).isNull();
 
         //now send a message to trigger completion of all groups, message should be aggregated
         Map<String, Object> headers = new HashMap<>();
