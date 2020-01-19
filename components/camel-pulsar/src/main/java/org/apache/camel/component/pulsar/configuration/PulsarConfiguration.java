@@ -19,6 +19,7 @@ package org.apache.camel.component.pulsar.configuration;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.pulsar.PulsarMessageReceipt;
+import org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition;
 import org.apache.camel.component.pulsar.utils.consumers.SubscriptionType;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -26,6 +27,7 @@ import org.apache.pulsar.client.api.CompressionType;
 import org.apache.pulsar.client.api.MessageRouter;
 import org.apache.pulsar.client.api.MessageRoutingMode;
 
+import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.LATEST;
 import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.EXCLUSIVE;
 
 @UriParams
@@ -51,6 +53,8 @@ public class PulsarConfiguration {
     private long ackTimeoutMillis = 10000;
     @UriParam(label = "consumer", defaultValue = "100")
     private long ackGroupTimeMillis = 100;
+    @UriParam(label = "consumer", defaultValue = "LATEST")
+    private SubscriptionInitialPosition subscriptionInitialPosition = LATEST;
     @UriParam(label = "producer", description = "Send timeout in milliseconds", defaultValue = "30000")
     private int sendTimeoutMs = 30000;
     @UriParam(label = "producer", description = "Whether to block the producing thread if pending messages queue is full or to throw a ProducerQueueIsFullError", defaultValue = "false")
@@ -283,6 +287,17 @@ public class PulsarConfiguration {
 
     public boolean isBatchingEnabled() {
         return batchingEnabled;
+    }
+
+    /**
+     * Control the initial position in the topic of a newly created subscription. Default is latest message.
+     */
+    public void setSubscriptionInitialPosition(SubscriptionInitialPosition subscriptionInitialPosition) {
+        this.subscriptionInitialPosition = subscriptionInitialPosition;
+    }
+
+    public SubscriptionInitialPosition getSubscriptionInitialPosition() {
+        return subscriptionInitialPosition;
     }
 
     /**

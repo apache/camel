@@ -95,6 +95,7 @@ with the following path and query parameters:
 | *subscriptionName* (consumer) | Name of the subscription to use | subs | String
 | *subscriptionType* (consumer) | Type of the subscription EXCLUSIVESHAREDFAILOVER, defaults to EXCLUSIVE | EXCLUSIVE | SubscriptionType
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *subscriptionInitialPosition* (consumer) | Controls the position of the cursor within the topic when a new subscription is created. Defaults to LATEST message. | LATEST | SubscriptionInitialPosition
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *batchingEnabled* (producer) | Control whether automatic batching of messages is enabled for the producer. Default is true. | true | boolean
 | *batchingMaxMessages* (producer) | Set the maximum number of messages permitted in a batch. Default 1,000. | 1000 | int
