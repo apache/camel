@@ -253,6 +253,8 @@ public final class StringHelper {
      * @throws IllegalArgumentException if the input arguments is invalid
      */
     public static String replaceAll(String input, String from, String to) {
+        // TODO: Use String.replace instead of this method when using JDK11+ as its much faster there
+
         if (ObjectHelper.isEmpty(input)) {
             return input;
         }
@@ -468,7 +470,7 @@ public final class StringHelper {
     public static <T> Optional<T> after(String text, String after, Function<String, T> mapper) {
         String result = after(text, after);
         if (result == null) {
-            return Optional.empty();            
+            return Optional.empty();
         } else {
             return Optional.ofNullable(mapper.apply(result));
         }
@@ -500,7 +502,7 @@ public final class StringHelper {
     public static <T> Optional<T> before(String text, String before, Function<String, T> mapper) {
         String result = before(text, before);
         if (result == null) {
-            return Optional.empty();            
+            return Optional.empty();
         } else {
             return Optional.ofNullable(mapper.apply(result));
         }
@@ -534,7 +536,7 @@ public final class StringHelper {
     public static <T> Optional<T> between(String text, String after, String before, Function<String, T> mapper) {
         String result = between(text, after, before);
         if (result == null) {
-            return Optional.empty();            
+            return Optional.empty();
         } else {
             return Optional.ofNullable(mapper.apply(result));
         }
@@ -615,7 +617,7 @@ public final class StringHelper {
     public static <T> Optional<T> betweenOuterPair(String text, char before, char after, Function<String, T> mapper) {
         String result = betweenOuterPair(text, before, after);
         if (result == null) {
-            return Optional.empty();            
+            return Optional.empty();
         } else {
             return Optional.ofNullable(mapper.apply(result));
         }

@@ -42,7 +42,7 @@
         <abdera-version>1.1.3</abdera-version>
         <!-- Note that activemq dependency is only used for testing! -->
         <activemq-version>5.15.11</activemq-version>
-        <activemq-artemis-version>2.10.1</activemq-artemis-version>
+        <activemq-artemis-version>2.11.0</activemq-artemis-version>
         <aether-version>1.0.2.v20150114</aether-version>
         <ahc-version>2.10.4</ahc-version>
         <ant-bundle-version>1.7.0_6</ant-bundle-version>
@@ -61,7 +61,7 @@
         <aries-spifly-version>1.2.1</aries-spifly-version>
         <aries-util-version>1.1.3</aries-util-version>
         <arquillian-container-se-managed-version>1.0.2.Final</arquillian-container-se-managed-version>
-        <arquillian-version>1.5.0.Final</arquillian-version>
+        <arquillian-version>1.6.0.Final</arquillian-version>
         <arquillian-weld-embedded-version>2.0.0.Final</arquillian-weld-embedded-version>
         <asciidoctorj-version>2.1.0</asciidoctorj-version>
         <asm-version>5.0.4</asm-version>
@@ -71,7 +71,7 @@
         <asterisk-java-bundle-version>1.0.0-final_1</asterisk-java-bundle-version>
         <atlassian-fugue-version>3.0.0</atlassian-fugue-version>
         <atmos-client-version>3.1.0</atmos-client-version>
-        <atmosphere-version>2.5.12</atmosphere-version>
+        <atmosphere-version>2.5.13</atmosphere-version>
         <atmosphere-version-range>[2.5,3.0)</atmosphere-version-range>
         <atomix-version>1.0.8</atomix-version>
         <atomix-catalyst-version>1.2.1</atomix-catalyst-version>
@@ -376,6 +376,7 @@
         <jose4j-version>0.6.4</jose4j-version>
         <josql-bundle-version>1.5_5</josql-bundle-version>
         <jsendnsca-version>2.1.1</jsendnsca-version>
+        <jslt-version>0.1.8</jslt-version>
         <jsmpp-version>2.3.7</jsmpp-version>
         <jsch-version>0.1.55</jsch-version>
         <jsch-bundle-version>0.1.55_1</jsch-bundle-version>
@@ -539,7 +540,7 @@
         <rdf4j-rio-version>2.4.4</rdf4j-rio-version>
         <rdf4j-model-version>2.4.4</rdf4j-model-version>
         <reactive-streams-version>1.0.3</reactive-streams-version>
-        <reactor-version>3.2.13.RELEASE</reactor-version>
+        <reactor-version>3.2.14.RELEASE</reactor-version>
         <reflections-bundle-version>0.9.11_1</reflections-bundle-version>
         <regexp-bundle-version>1.4_1</regexp-bundle-version>
         <rescu-version>2.0.2</rescu-version>
@@ -554,7 +555,7 @@
         <robotframework-version>3.1.1</robotframework-version>
         <rome-version>1.12.2</rome-version>
         <rxjava-version>1.3.8</rxjava-version>
-        <rxjava2-version>2.2.16</rxjava2-version>
+        <rxjava2-version>2.2.17</rxjava2-version>
         <saxon-bundle-version>9.9.1-6_1</saxon-bundle-version>
         <saxon-version>9.9.1-6</saxon-version>
         <scala-version>2.11.7</scala-version>
@@ -587,7 +588,7 @@
         <splunk-version>1.6.5.0_1</splunk-version>
         <spring-batch-version>4.1.2.RELEASE</spring-batch-version>
         <spring-batch-bundle-version>4.1.2.RELEASE_1</spring-batch-bundle-version>
-        <spring-boot-version>2.2.2.RELEASE</spring-boot-version>
+        <spring-boot-version>2.2.3.RELEASE</spring-boot-version>
         <spring-data-commons-bundle-version>2.1.10.RELEASE_1</spring-data-commons-bundle-version>
         <spring-data-keyvalue-bundle-version>2.1.10.RELEASE_1</spring-data-keyvalue-bundle-version>
         <spring-data-redis-version>2.1.10.RELEASE</spring-data-redis-version>
@@ -597,7 +598,7 @@
         <spring-ldap-bundle-version>2.3.2.RELEASE_1</spring-ldap-bundle-version>
         <spring-version-range>[5,6)</spring-version-range>
         <spring-version>${spring5-version}</spring-version>
-        <spring5-version>5.2.2.RELEASE</spring5-version>
+        <spring5-version>5.2.3.RELEASE</spring5-version>
         <spring-security-version>5.2.1.RELEASE</spring-security-version>
         <spring-ws-version>3.0.7.RELEASE</spring-ws-version>
         <spring-ws-bundle-version>3.0.7.RELEASE_1</spring-ws-bundle-version>
@@ -1661,6 +1662,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jsch</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jslt</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

@@ -181,6 +181,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.JoltEndpointBuilderFactory.JoltBuilders,
             org.apache.camel.builder.endpoint.dsl.JooqEndpointBuilderFactory.JooqBuilders,
             org.apache.camel.builder.endpoint.dsl.JpaEndpointBuilderFactory.JpaBuilders,
+            org.apache.camel.builder.endpoint.dsl.JsltEndpointBuilderFactory.JsltBuilders,
             org.apache.camel.builder.endpoint.dsl.JsonValidatorEndpointBuilderFactory.JsonValidatorBuilders,
             org.apache.camel.builder.endpoint.dsl.Jt400EndpointBuilderFactory.Jt400Builders,
             org.apache.camel.builder.endpoint.dsl.KMSEndpointBuilderFactory.KMSBuilders,

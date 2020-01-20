@@ -234,10 +234,12 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         return baseType.replace("tns:", "");
     }
 
-    private void saveToFile(Document document, File outputFile, Transformer transformer) throws FileNotFoundException, TransformerException {
-        StreamResult result = new StreamResult(new FileOutputStream(outputFile));
-        DOMSource source = new DOMSource(document);
-        transformer.transform(source, result);
+    private void saveToFile(Document document, File outputFile, Transformer transformer) throws FileNotFoundException, IOException, TransformerException {
+        try (FileOutputStream os = new FileOutputStream(outputFile)) {
+            StreamResult result = new StreamResult(os);
+            DOMSource source = new DOMSource(document);
+            transformer.transform(source, result);
+        }
     }
 
     private void validateIsFile(File file, String name) throws MojoExecutionException {

@@ -140,24 +140,27 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
                 watch = null;
             }
 
+            // optimize to only create a new callback if really needed, otherwise we can use the provided callback as-is
+            AsyncCallback ac = callback;
+            boolean newCallback = watch != null || existingPattern != target.getPattern();
+            if (newCallback) {
+                ac = doneSync -> {
+                    try {
+                        // restore previous MEP
+                        target.setPattern(existingPattern);
+                        // emit event that the exchange was sent to the endpoint
+                        if (watch != null) {
+                            long timeTaken = watch.taken();
+                            EventHelper.notifyExchangeSent(target.getContext(), target, destination, timeTaken);
+                        }
+                    } finally {
+                        callback.done(doneSync);
+                    }
+                };
+            }
             try {
                 log.debug(">>>> {} {}", destination, exchange);
-                return producer.process(exchange, new AsyncCallback() {
-                    @Override
-                    public void done(boolean doneSync) {
-                        try {
-                            // restore previous MEP
-                            target.setPattern(existingPattern);
-                            // emit event that the exchange was sent to the endpoint
-                            if (watch != null) {
-                                long timeTaken = watch.taken();
-                                EventHelper.notifyExchangeSent(target.getContext(), target, destination, timeTaken);
-                            }
-                        } finally {
-                            callback.done(doneSync);
-                        }
-                    }
-                });
+                return producer.process(exchange, ac);
             } catch (Throwable throwable) {
                 exchange.setException(throwable);
                 callback.done(true);

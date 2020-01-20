@@ -2436,7 +2436,7 @@ public interface AS2EndpointBuilderFactory {
 
     public interface AS2Builders {
         /**
-         * AS2 (@@@ARTIFACTID@@@)
+         * AS2 (camel-as2)
          * Component used for transferring data secure and reliable over the
          * internet using the AS2 protocol.
          * 
@@ -2458,7 +2458,7 @@ public interface AS2EndpointBuilderFactory {
         }
     }
     /**
-     * AS2 (@@@ARTIFACTID@@@)
+     * AS2 (camel-as2)
      * Component used for transferring data secure and reliable over the
      * internet using the AS2 protocol.
      * 

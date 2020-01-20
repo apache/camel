@@ -69,13 +69,23 @@ import org.slf4j.LoggerFactory;
 public class SharedCamelInternalProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(SharedCamelInternalProcessor.class);
-    private final List<CamelInternalProcessorAdvice> advices = new ArrayList<>();
+    private static final Object[] EMPTY_STATES = new Object[0];
+    private final List<CamelInternalProcessorAdvice> advices;
+    private byte statefulAdvices;
 
     public SharedCamelInternalProcessor(CamelInternalProcessorAdvice... advices) {
         if (advices != null) {
-            this.advices.addAll(Arrays.asList(advices));
+            this.advices = new ArrayList<>(advices.length);
+            for (CamelInternalProcessorAdvice advice : advices) {
+                this.advices.add(advice);
+                if (advice.hasState()) {
+                    statefulAdvices++;
+                }
+            }
             // ensure advices are sorted so they are in the order we want
             this.advices.sort(OrderedComparator.get());
+        } else {
+            this.advices = null;
         }
     }
 
@@ -128,14 +138,16 @@ public class SharedCamelInternalProcessor {
             return true;
         }
 
-        // optimise to use object array for states
-        final Object[] states = new Object[advices.size()];
+        // optimise to use object array for states, and only for the number of advices that keep state
+        final Object[] states = statefulAdvices > 0 ? new Object[statefulAdvices] : EMPTY_STATES;
         // optimise for loop using index access to avoid creating iterator object
-        for (int i = 0; i < advices.size(); i++) {
+        for (int i = 0, j = 0; i < advices.size(); i++) {
             CamelInternalProcessorAdvice task = advices.get(i);
             try {
                 Object state = task.before(exchange);
-                states[i] = state;
+                if (task.hasState()) {
+                    states[j++] = state;
+                }
             } catch (Throwable e) {
                 exchange.setException(e);
                 originalCallback.done(true);
@@ -239,9 +251,12 @@ public class SharedCamelInternalProcessor {
 
             // we should call after in reverse order
             try {
-                for (int i = advices.size() - 1; i >= 0; i--) {
+                for (int i = advices.size() - 1, j = states.length - 1; i >= 0; i--) {
                     CamelInternalProcessorAdvice task = advices.get(i);
-                    Object state = states[i];
+                    Object state = null;
+                    if (task.hasState()) {
+                        state = states[j--];
+                    }
                     try {
                         task.after(exchange, state);
                     } catch (Throwable e) {

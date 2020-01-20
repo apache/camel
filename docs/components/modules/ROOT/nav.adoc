@@ -203,6 +203,7 @@
 * xref:jooq-component.adoc[JOOQ Component]
 * xref:jpa-component.adoc[JPA Component]
 * xref:scp-component.adoc[SCP Component]
+* xref:jslt-component.adoc[JSLT Component]
 * xref:json-validator-component.adoc[JSON Schema Validator Component]
 * xref:jsonApi-dataformat.adoc[JSonApi DataFormat]
 * xref:jsonpath-language.adoc[JsonPath Language]
