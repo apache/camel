@@ -588,7 +588,7 @@
         <splunk-version>1.6.5.0_1</splunk-version>
         <spring-batch-version>4.1.2.RELEASE</spring-batch-version>
         <spring-batch-bundle-version>4.1.2.RELEASE_1</spring-batch-bundle-version>
-        <spring-boot-version>2.2.2.RELEASE</spring-boot-version>
+        <spring-boot-version>2.2.3.RELEASE</spring-boot-version>
         <spring-data-commons-bundle-version>2.1.10.RELEASE_1</spring-data-commons-bundle-version>
         <spring-data-keyvalue-bundle-version>2.1.10.RELEASE_1</spring-data-keyvalue-bundle-version>
         <spring-data-redis-version>2.1.10.RELEASE</spring-data-redis-version>
