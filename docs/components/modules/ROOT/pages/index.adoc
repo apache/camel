@@ -6,7 +6,6 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-=======
 Number of Components: 310 in 248 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
