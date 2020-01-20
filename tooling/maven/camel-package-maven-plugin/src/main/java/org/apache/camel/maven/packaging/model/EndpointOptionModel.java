@@ -16,8 +16,14 @@
  */
 package org.apache.camel.maven.packaging.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.camel.tooling.util.JSonSchemaHelper;
 import org.apache.camel.tooling.util.Strings;
 
+import static org.apache.camel.tooling.util.JSonSchemaHelper.getSafeValue;
 import static org.apache.camel.tooling.util.Strings.wrapCamelCaseWords;
 
 public class EndpointOptionModel {
@@ -38,10 +44,65 @@ public class EndpointOptionModel {
     private String secret;
     private String defaultValue;
     private String description;
-    private String enumValues;
+    private String enumValues; // TODO: do we need this since we have enums?
 
     // special for documentation rendering
     private boolean newGroup;
+
+    public EndpointOptionModel() {
+    }
+
+    public EndpointOptionModel(String name, String displayName, String kind, String group, String label,
+                               String required, String type, String javaType, String enums, String prefix, String multiValue, String deprecated,
+                               String deprecationNote, String secret, String defaultValue, String description, String enumValues, boolean newGroup) {
+        this.name = name;
+        this.displayName = displayName;
+        this.kind = kind;
+        this.group = group;
+        this.label = label;
+        this.required = required;
+        this.type = type;
+        this.javaType = javaType;
+        this.enums = enums;
+        this.prefix = prefix;
+        this.multiValue = multiValue;
+        this.deprecated = deprecated;
+        this.deprecationNote = deprecationNote;
+        this.secret = secret;
+        this.defaultValue = defaultValue;
+        this.description = description;
+        this.enumValues = enumValues;
+        this.newGroup = newGroup;
+    }
+
+    public static List<EndpointOptionModel> generateEndpointOptionsFromJsonString(final String json) {
+        final List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+        final ArrayList<EndpointOptionModel> options = new ArrayList<>();
+
+        for (Map<String, String> row : rows) {
+            String name = getSafeValue("name", row);
+            String displayName = getSafeValue("displayName", row);
+            String kind = getSafeValue("kind", row);
+            String group = getSafeValue("group", row);
+            String label = getSafeValue("label", row);
+            String required = getSafeValue("required", row);
+            String type = getSafeValue("type", row);
+            String javaType = getSafeValue("javaType", row);
+            String enums = getSafeValue("enum", row);
+            String prefix = getSafeValue("prefix", row);
+            String multiValue = getSafeValue("multiValue", row);
+            String deprecated = getSafeValue("deprecated", row);
+            String deprecationNote = getSafeValue("deprecationNote", row);
+            String secret = getSafeValue("secret", row);
+            String defaultValue = getSafeValue("defaultValue", row);
+            String description = getSafeValue("description", row);
+            String enumValues = getSafeValue("enum", row);
+
+            options.add(new EndpointOptionModel(name, displayName, kind, group, label, required, type, javaType, enums, prefix, multiValue, deprecated, deprecationNote, secret, defaultValue, description, enumValues, false));
+        }
+
+        return options;
+    }
 
     public String getName() {
         return name;

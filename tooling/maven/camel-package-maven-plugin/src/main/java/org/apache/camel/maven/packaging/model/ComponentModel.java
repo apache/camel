@@ -17,10 +17,14 @@
 package org.apache.camel.maven.packaging.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.camel.tooling.util.JSonSchemaHelper;
 import org.apache.camel.tooling.util.Strings;
 
+import static org.apache.camel.tooling.util.JSonSchemaHelper.getSafeValue;
 import static org.apache.camel.tooling.util.Strings.cutLastZeroDigit;
 
 public class ComponentModel {
@@ -42,9 +46,65 @@ public class ComponentModel {
     private String groupId;
     private String artifactId;
     private String version;
-    private final List<ComponentOptionModel> componentOptions = new ArrayList<>();
-    private final List<EndpointOptionModel> endpointPathOptions = new ArrayList<>();
-    private final List<EndpointOptionModel> endpointOptions = new ArrayList<>();
+    private List<ComponentOptionModel> componentOptions = new ArrayList<>();
+    private List<EndpointOptionModel> endpointPathOptions = new ArrayList<>();
+    private List<EndpointOptionModel> endpointOptions = new ArrayList<>();
+
+    public ComponentModel() {}
+
+    public ComponentModel(String kind, String scheme, String syntax, String alternativeSyntax, String alternativeSchemes,
+                          String title, String description, String firstVersion, String label, String deprecated, String deprecationNote,
+                          String consumerOnly, String producerOnly, String javaType, String groupId, String artifactId, String version, List<ComponentOptionModel> componentOptions,
+                          List<EndpointOptionModel> endpointPathOptions, List<EndpointOptionModel> endpointOptions) {
+        this.kind = kind;
+        this.scheme = scheme;
+        this.syntax = syntax;
+        this.alternativeSyntax = alternativeSyntax;
+        this.alternativeSchemes = alternativeSchemes;
+        this.title = title;
+        this.description = description;
+        this.firstVersion = firstVersion;
+        this.label = label;
+        this.deprecated = deprecated;
+        this.deprecationNote = deprecationNote;
+        this.consumerOnly = consumerOnly;
+        this.producerOnly = producerOnly;
+        this.javaType = javaType;
+        this.groupId = groupId;
+        this.artifactId = artifactId;
+        this.version = version;
+        this.componentOptions = componentOptions;
+        this.endpointPathOptions = endpointPathOptions;
+        this.endpointOptions = endpointOptions;
+    }
+
+    public static ComponentModel generateComponentModelFromJsonString(final String json) {
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
+        final String kind = getSafeValue("kind", rows);
+        final String schema = getSafeValue("scheme", rows);
+        final String syntax = getSafeValue("syntax", rows);
+        final String alternativeSyntax = getSafeValue("alternativeSyntax", rows);
+        final String alternativeSchemes = getSafeValue("alternativeSchemes", rows);
+        final String title = getSafeValue("title", rows);
+        final String description = getSafeValue("description", rows);
+        final String firstVersion = getSafeValue("firstVersion", rows);
+        final String label = getSafeValue("label", rows);
+        final String deprecated = getSafeValue("deprecated", rows);
+        final String deprecationNote = getSafeValue("deprecationNote", rows);
+        final String consumerOnly = getSafeValue("consumerOnly", rows);
+        final String producerOnly = getSafeValue("producerOnly", rows);
+        final String javaType = getSafeValue("javaType", rows);
+        final String groupId = getSafeValue("groupId", rows);
+        final String artifactId = getSafeValue("artifactId", rows);
+        final String version = getSafeValue("version", rows);
+
+        final List<ComponentOptionModel> componentOptions = ComponentOptionModel.generateComponentOptionsFromJsonString(json);
+        final List<EndpointOptionModel> endpointPathOptions = Collections.emptyList(); // we need to fix this
+        final List<EndpointOptionModel> endpointOptions = EndpointOptionModel.generateEndpointOptionsFromJsonString(json);
+
+        return new ComponentModel(kind, schema, syntax, alternativeSyntax, alternativeSchemes, title, description, firstVersion, label, deprecated, deprecationNote, consumerOnly, producerOnly, javaType,
+                groupId, artifactId, version, componentOptions, endpointPathOptions, endpointOptions);
+    }
 
     public String getKind() {
         return kind;

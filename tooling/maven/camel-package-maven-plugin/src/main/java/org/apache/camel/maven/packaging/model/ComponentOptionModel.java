@@ -16,8 +16,14 @@
  */
 package org.apache.camel.maven.packaging.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.camel.tooling.util.JSonSchemaHelper;
 import org.apache.camel.tooling.util.Strings;
 
+import static org.apache.camel.tooling.util.JSonSchemaHelper.getSafeValue;
 import static org.apache.camel.tooling.util.Strings.wrapCamelCaseWords;
 
 public class ComponentOptionModel {
@@ -35,9 +41,59 @@ public class ComponentOptionModel {
     private String description;
     private String defaultValue;
     private String enums;
-
     // special for documentation rendering
     private boolean newGroup;
+
+    public ComponentOptionModel() {
+
+    }
+
+    public ComponentOptionModel(String name, String displayName, String kind, String group, String required,
+                                String type, String javaType, String deprecated, String deprecationNote, String secret,
+                                String description, String defaultValue, String enums, boolean newGroup) {
+        this.name = name;
+        this.displayName = displayName;
+        this.kind = kind;
+        this.group = group;
+        this.required = required;
+        this.type = type;
+        this.javaType = javaType;
+        this.deprecated = deprecated;
+        this.deprecationNote = deprecationNote;
+        this.secret = secret;
+        this.description = description;
+        this.defaultValue = defaultValue;
+        this.enums = enums;
+        this.newGroup = newGroup;
+    }
+
+    public static List<ComponentOptionModel> generateComponentOptionsFromJsonString(final String json) {
+        final List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
+        final ArrayList<ComponentOptionModel> options = new ArrayList<>();
+
+        for (Map<String, String> row : rows) {
+            final ComponentOptionModel option = new ComponentOptionModel();
+            String name = getSafeValue("name", row);
+            String displayName = getSafeValue("displayName", row);
+            String kind = getSafeValue("kind", row);
+            String group = getSafeValue("group", row);
+            String required = getSafeValue("required", row);
+            String type = getSafeValue("type", row);
+            String javaType = getSafeValue("javaType", row);
+            String deprecated = getSafeValue("deprecated", row);
+            String deprecationNote = getSafeValue("deprecationNote", row);
+            String secret = getSafeValue("secret", row);
+            String description = getSafeValue("description", row);
+            String defaultValue = getSafeValue("defaultValue", row);
+            String enums = getSafeValue("enum", row);
+
+            // TODO: check how to refactor newGroup logic
+            options.add(new ComponentOptionModel(name, displayName, kind, group, required, type, javaType, deprecated, deprecationNote, secret, description, defaultValue, enums, false));
+        }
+
+        return options;
+    }
+
 
     public String getName() {
         return name;
