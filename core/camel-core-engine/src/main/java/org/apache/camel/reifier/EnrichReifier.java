@@ -22,6 +22,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.Enricher;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.spi.RouteContext;
@@ -34,7 +35,6 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-
         Expression exp = definition.getExpression().createExpression(routeContext);
         boolean isShareUnitOfWork = definition.getShareUnitOfWork() != null && Boolean.parseBoolean(definition.getShareUnitOfWork());
         boolean isIgnoreInvalidEndpoint = definition.getIgnoreInvalidEndpoint() != null && Boolean.parseBoolean(definition.getIgnoreInvalidEndpoint());
@@ -49,7 +49,13 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
         if (definition.getAggregateOnException() != null) {
             enricher.setAggregateOnException(Boolean.parseBoolean(definition.getAggregateOnException()));
         }
+
         return enricher;
+
+        // and wrap in unit of work
+//        CamelInternalProcessor internal = new CamelInternalProcessor(enricher);
+//        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
+//        return internal;
     }
 
     private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
