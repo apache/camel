@@ -128,16 +128,4 @@ public final class ValidateHelper {
         }
     }
 
-    /**
-     * Returns the name of the component, data format or language from the given
-     * json file
-     */
-    public static String asName(File file) {
-        String name = file.getName();
-        if (name.endsWith(".json")) {
-            return name.substring(0, name.length() - 5);
-        }
-        return name;
-    }
-
 }

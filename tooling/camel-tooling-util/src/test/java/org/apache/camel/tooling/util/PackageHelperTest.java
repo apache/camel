@@ -18,9 +18,12 @@ package org.apache.camel.tooling.util;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
+import static org.apache.camel.tooling.util.PackageHelper.JSON_SUFIX;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -29,12 +32,14 @@ public class PackageHelperTest {
 
     @Test
     public void testFileToString() throws Exception {
-        assertEquals("dk19i21)@+#(OR", PackageHelper.fileToString(ResourceUtils.getResourceAsFile("filecontent/a.txt")));
+        assertEquals("dk19i21)@+#(OR\n", PackageHelper.loadText(ResourceUtils.getResourceAsFile("filecontent/a.txt")));
     }
 
     @Test
     public void testFindJsonFiles() throws Exception {
-        Map<String, File> jsonFiles = PackageHelper.findJsonFiles(ResourceUtils.getResourceAsFile("json"));
+        Set<File> jsons = PackageHelper.findJsonFiles(ResourceUtils.getResourceAsFile("json"));
+        Map<String, File> jsonFiles = jsons.stream().collect(Collectors.toMap(
+                file -> file.getName().replace(JSON_SUFIX, ""), file -> file));
 
         assertTrue("Files a.json must be found", jsonFiles.containsKey("a"));
         assertTrue("Files b.json must be found", jsonFiles.containsKey("b"));

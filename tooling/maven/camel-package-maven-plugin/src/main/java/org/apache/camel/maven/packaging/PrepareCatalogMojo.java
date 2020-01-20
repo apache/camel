@@ -222,15 +222,15 @@ public class PrepareCatalogMojo extends AbstractMojo {
         // find all json files in camel-core
         if (coreDir != null && coreDir.isDirectory()) {
             File target = new File(coreDir, "target/classes/org/apache/camel/model");
-            PackageHelper.findJsonFiles(target, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+            PackageHelper.findJsonFiles(target, jsonFiles);
         }
 
         // find all json files in camel-spring
         if (springDir != null && springDir.isDirectory()) {
             File target = new File(springDir, "target/classes/org/apache/camel/spring");
-            PackageHelper.findJsonFiles(target, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+            PackageHelper.findJsonFiles(target, jsonFiles);
             File target2 = new File(springDir, "target/classes/org/apache/camel/core/xml");
-            PackageHelper.findJsonFiles(target2, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+            PackageHelper.findJsonFiles(target2, jsonFiles);
         }
 
         getLog().info("Found " + jsonFiles.size() + " model json files");

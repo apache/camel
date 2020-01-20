@@ -132,7 +132,7 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
 
     private static void enrichComponentJsonFiles(Log log, MavenProject project, File buildDir, Set<String> components) throws MojoExecutionException {
         Set<File> files = new HashSet<>();
-        PackageHelper.findJsonFiles(buildDir, files, p -> p.isDirectory() || p.getName().endsWith(".json"));
+        PackageHelper.findJsonFiles(buildDir, files);
 
         for (File file : files) {
             // clip the .json suffix
