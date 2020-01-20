@@ -22,7 +22,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.Enricher;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.spi.RouteContext;
@@ -51,11 +50,6 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
         }
 
         return enricher;
-
-        // and wrap in unit of work
-//        CamelInternalProcessor internal = new CamelInternalProcessor(enricher);
-//        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
-//        return internal;
     }
 
     private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
