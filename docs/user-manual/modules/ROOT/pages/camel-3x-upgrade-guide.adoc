@@ -131,6 +131,11 @@ You can use these methods by adapting to the extended exchange as shown below:
 exchange.adapt(ExtendedExchange.class).addOnCompletion(...);
 ----
 
+==== UnitOfWork
+
+For advanced Camel users whom implement custom `UnitOfWork` should implement the new `isBeforeAfterProcess()' method and return true of false,
+whether Camel should invoke the before and after processor methods.
+
 ==== Cookies
 
 Cookies from `camel-http-common` has been moved into a new `camel-http-base` JAR.
