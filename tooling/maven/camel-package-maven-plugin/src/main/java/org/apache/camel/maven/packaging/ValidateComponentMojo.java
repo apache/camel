@@ -17,10 +17,9 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.util.Set;
-import java.util.TreeSet;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.maven.plugin.AbstractMojo;
@@ -33,9 +32,8 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import static org.apache.camel.tooling.util.PackageHelper.loadText;
 import static org.apache.camel.tooling.util.Strings.indentCollection;
-import static org.apache.camel.maven.packaging.ValidateHelper.asName;
+import static org.apache.camel.tooling.util.PackageHelper.asName;
 import static org.apache.camel.maven.packaging.ValidateHelper.validate;
 
 /**
@@ -96,16 +94,15 @@ public class ValidateComponentMojo extends AbstractMojo {
         if (!validate) {
             getLog().info("Validation disabled");
         } else {
-            final Set<File> jsonFiles = new TreeSet<>();
-            PackageHelper.findJsonFiles(outDir, jsonFiles, new CamelComponentsFileFilter());
+            List<Path> jsonFiles = PackageHelper.findJsonFiles(outDir.toPath()).collect(Collectors.toList());
             boolean failed = false;
 
-            for (File file : jsonFiles) {
+            for (Path file : jsonFiles) {
                 final String name = asName(file);
                 final ErrorDetail detail = new ErrorDetail();
 
                 getLog().debug("Validating file " + file);
-                validate(file, detail);
+                validate(file.toFile(), detail);
 
                 if (detail.hasErrors()) {
                     failed = true;
@@ -136,29 +133,6 @@ public class ValidateComponentMojo extends AbstractMojo {
             } else {
                 getLog().info("Validation complete");
             }
-        }
-    }
-
-    private class CamelComponentsFileFilter implements FileFilter {
-
-        @Override
-        public boolean accept(File pathname) {
-            if (pathname.isDirectory() && pathname.getName().equals("model")) {
-                // do not check the camel-core model packages as there is no
-                // components there
-                return false;
-            }
-
-            if (pathname.isFile() && pathname.getName().endsWith(".json")) {
-                // must be a components json file
-                try {
-                    String json = loadText(pathname);
-                    return json.contains("\"kind\": \"component\"");
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-            return pathname.isDirectory() || (pathname.isFile() && pathname.getName().equals("component.properties"));
         }
     }
 

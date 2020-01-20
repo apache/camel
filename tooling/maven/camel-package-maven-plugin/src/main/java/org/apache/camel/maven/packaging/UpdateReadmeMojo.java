@@ -112,7 +112,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
         List<String> componentNames = listDescriptorNamesOfType("component");
 
         final Set<File> jsonFiles = new TreeSet<>();
-        PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+        PackageHelper.findJsonFiles(buildDir, jsonFiles);
 
         // only if there is components we should update the documentation files
         if (!componentNames.isEmpty()) {
@@ -184,7 +184,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
         List<String> dataFormatNames = listDescriptorNamesOfType("dataformat");
 
         final Set<File> jsonFiles = new TreeSet<>();
-        PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+        PackageHelper.findJsonFiles(buildDir, jsonFiles);
 
         // only if there is dataformat we should update the documentation files
         if (!dataFormatNames.isEmpty()) {
@@ -245,7 +245,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
         List<String> languageNames = listDescriptorNamesOfType("language");
 
         final Set<File> jsonFiles = new TreeSet<>();
-        PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+        PackageHelper.findJsonFiles(buildDir, jsonFiles);
 
         // only if there is language we should update the documentation files
         if (!languageNames.isEmpty()) {
@@ -300,7 +300,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
         File coreDir = new File(".");
         if (coreDir.isDirectory()) {
             File target = new File(coreDir, "target/classes/org/apache/camel/model");
-            PackageHelper.findJsonFiles(target, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+            PackageHelper.findJsonFiles(target, jsonFiles);
         }
 
         // only if there is dataformat we should update the documentation files

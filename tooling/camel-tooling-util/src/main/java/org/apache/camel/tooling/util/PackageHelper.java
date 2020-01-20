@@ -18,22 +18,18 @@ package org.apache.camel.tooling.util;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Utility class to find, read json files.
@@ -78,6 +74,10 @@ public final class PackageHelper {
         return loadText(new FileInputStream(file));
     }
 
+    public static String loadText(Path file) throws IOException {
+        return loadText(Files.newInputStream(file));
+    }
+
     public static void writeText(File file, String text) throws IOException {
         FileUtil.updateFile(file.toPath(), text);
     }
@@ -112,71 +112,38 @@ public final class PackageHelper {
         return answer;
     }
 
-    public static String fileToString(File file) throws IOException {
-        byte[] encoded = Files.readAllBytes(Paths.get(file.toURI()));
-        return new String(encoded, Charset.defaultCharset());
+    public static Set<File> findJsonFiles(File rootDir) {
+        return findJsonFiles(rootDir, new HashSet<>());
     }
 
-    public static Map<String, File> findJsonFiles(File rootDir) {
-        return findJsonFiles(rootDir, new CamelComponentsModelFilter());
-    }
-
-    public static void findJsonFiles(File rootDir, Set<File> files, FileFilter filter) {
-        findJsonFiles0(rootDir, files, filter);
-    }
-
-    public static Map<String, File> findJsonFiles(File rootDir, FileFilter filter) {
-        Set<File> results = new HashSet<>();
-        findJsonFiles0(rootDir, results, filter);
-        Map<String, File> files = new HashMap<>();
-        results.forEach(file -> files.put(file.getName().replace(JSON_SUFIX, ""), file));
+    public static Set<File> findJsonFiles(File rootDir, Set<File> files) {
+        findJsonFiles(rootDir.toPath()).forEach(p -> files.add(p.toFile()));
         return files;
     }
 
-    private static void findJsonFiles0(File dir, Set<File> result, FileFilter filter) {
-        File[] files = dir.listFiles(filter);
-        if (files != null) {
-            for (File file : files) {
-                // skip files in root dirs as Camel does not store information there but others may do
-                boolean jsonFile = file.isFile() && file.getName().endsWith(JSON_SUFIX);
-                if (jsonFile) {
-                    result.add(file);
-                } else if (file.isDirectory()) {
-                    findJsonFiles0(file, result, filter);
-                }
+    public static Stream<Path> findJsonFiles(Path rootDir) {
+        try {
+            if (Files.isDirectory(rootDir)) {
+                return Files.walk(rootDir)
+                        .filter(p -> p.getFileName().toString().endsWith(JSON_SUFIX));
+            } else {
+                return Stream.empty();
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public static class CamelComponentsModelFilter implements FileFilter {
-        @Override
-        public boolean accept(File pathname) {
-            return pathname.isDirectory() || pathname.getName().endsWith(JSON_SUFIX);
+    /**
+     * Returns the name of the component, data format or language from the given
+     * json file
+     */
+    public static String asName(Path file) {
+        String name = file.getFileName().toString();
+        if (name.endsWith(JSON_SUFIX)) {
+            return name.substring(0, name.length() - 5);
         }
-    }
-
-    public static class CamelOthersModelFilter implements FileFilter {
-
-        @Override
-        public boolean accept(File pathname) {
-            String name = pathname.getName();
-            boolean special = "camel-core-osgi".equals(name)
-                    || "camel-core-xml".equals(name)
-                    || "camel-http-base".equals(name)
-                    || "camel-http-common".equals(name)
-                    || "camel-jetty-common".equals(name);
-            boolean special2 = "camel-as2".equals(name)
-                    || "camel-box".equals(name)
-                    || "camel-olingo2".equals(name)
-                    || "camel-olingo4".equals(name)
-                    || "camel-salesforce".equals(name)
-                    || "camel-debezium-common".equals(name);
-            if (special || special2) {
-                return false;
-            }
-
-            return pathname.isDirectory() || name.endsWith(".json");
-        }
+        return name;
     }
 
     public static File findCamelCoreDirectory(File dir) {
