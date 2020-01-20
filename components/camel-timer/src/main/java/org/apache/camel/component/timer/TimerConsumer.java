@@ -175,15 +175,18 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
 
     protected void sendTimerExchange(long counter) {
         final Exchange exchange = endpoint.createExchange();
-        exchange.setProperty(Exchange.TIMER_COUNTER, counter);
-        exchange.setProperty(Exchange.TIMER_NAME, endpoint.getTimerName());
-        exchange.setProperty(Exchange.TIMER_TIME, endpoint.getTime());
-        exchange.setProperty(Exchange.TIMER_PERIOD, endpoint.getPeriod());
 
-        Date now = new Date();
-        exchange.setProperty(Exchange.TIMER_FIRED_TIME, now);
-        // also set now on in header with same key as quartz to be consistent
-        exchange.getIn().setHeader("firedTime", now);
+        if (endpoint.isIncludeMetadata()) {
+            exchange.setProperty(Exchange.TIMER_COUNTER, counter);
+            exchange.setProperty(Exchange.TIMER_NAME, endpoint.getTimerName());
+            exchange.setProperty(Exchange.TIMER_TIME, endpoint.getTime());
+            exchange.setProperty(Exchange.TIMER_PERIOD, endpoint.getPeriod());
+
+            Date now = new Date();
+            exchange.setProperty(Exchange.TIMER_FIRED_TIME, now);
+            // also set now on in header with same key as quartz to be consistent
+            exchange.getIn().setHeader("firedTime", now);
+        }
 
         if (log.isTraceEnabled()) {
             log.trace("Timer {} is firing #{} count", endpoint.getTimerName(), counter);
