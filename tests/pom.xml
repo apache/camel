@@ -71,14 +71,6 @@
             </modules>
         </profile>
 
-        <!-- spring-boot tests -->
-        <profile>
-            <id>spring-boot.test</id>
-            <modules>
-                <module>camel-itest-spring-boot</module>
-            </modules>
-        </profile>
-
         <!-- performance tests -->
         <profile>
             <id>performance.test</id>
