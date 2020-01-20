@@ -33,7 +33,6 @@ import org.wildfly.security.authz.Roles;
 /**
  * Consumer contains decides if request contains required roles (which are defined for endpoint)
  *
- * @author JiriOndrusek
  */
 public class ElytronConsumer extends UndertowConsumer {
 

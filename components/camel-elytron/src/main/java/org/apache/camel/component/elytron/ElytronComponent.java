@@ -58,7 +58,6 @@ import org.wildfly.security.http.util.SecurityProviderServerMechanismFactory;
  *
  * Example: to use bearer_token, mechanism name has to be "BEARER_TOKEN" and realm has to be TokenSecurityRealm.
  *
- * @author JiriOndrusek
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 @Component("elytron")
