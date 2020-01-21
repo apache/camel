@@ -197,9 +197,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         }
         // record timing for sending the exchange using the producer
         final StopWatch watch = sw;
-        // make sure to wrap producer in unit of work
-        AsyncProcessor ap = AsyncProcessorConverterHelper.convert(new UnitOfWorkProducer(producer));
-        // wrap in UoW
+        AsyncProcessor ap = AsyncProcessorConverterHelper.convert(producer);
         boolean sync = ap.process(resourceExchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 // we only have to handle async completion of the routing slip
