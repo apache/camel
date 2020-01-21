@@ -78,7 +78,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (21 parameters):
+=== Query Parameters (22 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -101,6 +101,7 @@ with the following path and query parameters:
 | *timeout2* (connection) | Timeout T2 in milliseconds. | 10000 | int
 | *timeout3* (connection) | Timeout T3 in milliseconds. | 20000 | int
 | *causeSourceAddress* (data) | Whether to include the source address |  | byte
+| *connectionTimeout* (data) | Timeout in millis to wait for client to establish a connected connection. | 10000 | int
 | *ignoreBackgroundScan* (data) | Whether background scan transmissions should be ignored. | true | boolean
 | *ignoreDaylightSavingTime* (data) | Whether to ignore or respect DST | false | boolean
 | *timeZone* (data) | The timezone to use. May be any Java time zone string | UTC | TimeZone
