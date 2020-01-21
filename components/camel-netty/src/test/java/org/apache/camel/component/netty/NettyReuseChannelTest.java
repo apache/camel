@@ -24,10 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("TODO: Fix me")
 public class NettyReuseChannelTest extends BaseNettyTest {
 
     private final List<Channel> channels = new ArrayList<>();
@@ -44,7 +42,7 @@ public class NettyReuseChannelTest extends BaseNettyTest {
 
         assertMockEndpointsSatisfied();
 
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         assertEquals(2, channels.size());
         assertSame("Should reuse channel", channels.get(0), channels.get(1));
