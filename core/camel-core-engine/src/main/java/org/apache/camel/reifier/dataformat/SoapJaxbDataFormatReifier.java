@@ -16,10 +16,10 @@
  */
 package org.apache.camel.reifier.dataformat;
 
-import org.apache.camel.CamelContext;
+import java.util.Map;
+
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class SoapJaxbDataFormatReifier extends DataFormatReifier<SoapJaxbDataFormat> {
 
@@ -28,26 +28,14 @@ public class SoapJaxbDataFormatReifier extends DataFormatReifier<SoapJaxbDataFor
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (definition.getElementNameStrategy() != null) {
-            setProperty(camelContext, dataFormat, "elementNameStrategy", definition.getElementNameStrategy());
-        }
-        if (definition.getElementNameStrategyRef() != null) {
-            setProperty(camelContext, dataFormat, "elementNameStrategyRef", definition.getElementNameStrategyRef());
-        }
-        if (definition.getEncoding() != null) {
-            setProperty(camelContext, dataFormat, "encoding", definition.getEncoding());
-        }
-        if (definition.getVersion() != null) {
-            setProperty(camelContext, dataFormat, "version", definition.getVersion());
-        }
-        if (definition.getNamespacePrefixRef() != null) {
-            setProperty(camelContext, dataFormat, "namespacePrefixRef", definition.getNamespacePrefixRef());
-        }
-        if (definition.getSchema() != null) {
-            setProperty(camelContext, dataFormat, "schema", definition.getSchema());
-        }
-        setProperty(camelContext, dataFormat, "contextPath", definition.getContextPath());
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("elementNameStrategy", or(definition.getElementNameStrategy(),
+                asRef(definition.getElementNameStrategyRef())));
+        properties.put("encoding", definition.getEncoding());
+        properties.put("version", definition.getVersion());
+        properties.put("namespacePrefix", asRef(definition.getNamespacePrefixRef()));
+        properties.put("schema", definition.getSchema());
+        properties.put("contextPath", definition.getContextPath());
     }
 
 }

@@ -14,28 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.reifier.dataformat;
+package org.apache.camel.spi;
 
-import java.util.Map;
+/**
+ * Special accessor for a DataFormat
+ */
+public interface DataFormatContentTypeHeader {
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.dataformat.CustomDataFormat;
-import org.apache.camel.spi.DataFormat;
-
-public class CustomDataFormatReifier extends DataFormatReifier<CustomDataFormat> {
-
-    public CustomDataFormatReifier(DataFormatDefinition definition) {
-        super((CustomDataFormat)definition);
-    }
-
-    @Override
-    protected DataFormat doCreateDataFormat(CamelContext camelContext) {
-        return DataFormatReifier.getDataFormat(camelContext, null, definition.getRef());
-    }
-
-    @Override
-    protected void prepareDataFormatConfig(Map<String, Object> properties) {
-    }
-
+    /**
+     * Whether the data format should set the <tt>Content-Type</tt> header with
+     * the type from the data format if the data format is capable of doing so.
+     * <p/>
+     * For example <tt>application/xml</tt> for data formats marshalling to XML,
+     * or <tt>application/json</tt> for data formats marshalling to JSon etc.
+     */
+    void setContentTypeHeader(boolean contentTypeHeader);
 }

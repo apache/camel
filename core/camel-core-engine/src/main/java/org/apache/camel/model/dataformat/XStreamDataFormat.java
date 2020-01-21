@@ -78,6 +78,11 @@ public class XStreamDataFormat extends DataFormatDefinition {
         setEncoding(encoding);
     }
 
+    @Override
+    public String getDataFormatName() {
+        return "json".equals(driver) ? "json-xstream" : "xstream";
+    }
+
     public String getEncoding() {
         return encoding;
     }

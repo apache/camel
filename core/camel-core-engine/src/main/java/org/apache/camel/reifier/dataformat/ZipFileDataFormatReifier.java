@@ -16,10 +16,10 @@
  */
 package org.apache.camel.reifier.dataformat;
 
-import org.apache.camel.CamelContext;
+import java.util.Map;
+
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class ZipFileDataFormatReifier extends DataFormatReifier<ZipFileDataFormat> {
 
@@ -28,16 +28,10 @@ public class ZipFileDataFormatReifier extends DataFormatReifier<ZipFileDataForma
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (definition.getUsingIterator() != null) {
-            setProperty(camelContext, dataFormat, "usingIterator", definition.getUsingIterator());
-        }
-        if (definition.getAllowEmptyDirectory() != null) {
-            setProperty(camelContext, dataFormat, "allowEmptyDirectory", definition.getAllowEmptyDirectory());
-        }
-        if (definition.getPreservePathElements() != null) {
-            setProperty(camelContext, dataFormat, "preservePathElements", definition.getPreservePathElements());
-        }
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("usingIterator", definition.getUsingIterator());
+        properties.put("allowEmptyDirectory", definition.getAllowEmptyDirectory());
+        properties.put("preservePathElements", definition.getPreservePathElements());
     }
 
 }

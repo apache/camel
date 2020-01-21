@@ -16,11 +16,11 @@
  */
 package org.apache.camel.reifier.dataformat;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.BindyDataFormat;
-import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.spi.DataFormat;
 
 public class BindyDataFormatReifier extends DataFormatReifier<BindyDataFormat> {
@@ -34,35 +34,15 @@ public class BindyDataFormatReifier extends DataFormatReifier<BindyDataFormat> {
         if (definition.getClassTypeAsString() == null && definition.getClassType() == null) {
             throw new IllegalArgumentException("Either packages or classType must be specified");
         }
-
-        if (definition.getType() == BindyType.Csv) {
-            definition.setDataFormatName("bindy-csv");
-        } else if (definition.getType() == BindyType.Fixed) {
-            definition.setDataFormatName("bindy-fixed");
-        } else {
-            definition.setDataFormatName("bindy-kvp");
-        }
-
-        if (definition.getClassType() == null && definition.getClassTypeAsString() != null) {
-            try {
-                definition.setClassType(camelContext.getClassResolver().resolveMandatoryClass(definition.getClassTypeAsString()));
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
         return super.doCreateDataFormat(camelContext);
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        setProperty(camelContext, dataFormat, "locale", definition.getLocale());
-        setProperty(camelContext, dataFormat, "classType", definition.getClassType());
-        if (definition.getUnwrapSingleInstance() != null) {
-            setProperty(camelContext, dataFormat, "unwrapSingleInstance", definition.getUnwrapSingleInstance());
-        }
-        if (definition.getAllowEmptyStream() != null) {
-            setProperty(camelContext, dataFormat, "allowEmptyStream", definition.getAllowEmptyStream());
-        }
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("locale", definition.getLocale());
+        properties.put("classType", or(definition.getClassType(), definition.getClassTypeAsString()));
+        properties.put("unwrapSingleInstance", definition.getUnwrapSingleInstance());
+        properties.put("allowEmptyStream", definition.getAllowEmptyStream());
     }
 
 }

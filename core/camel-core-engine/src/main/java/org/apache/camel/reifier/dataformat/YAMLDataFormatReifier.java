@@ -18,16 +18,13 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.YAMLLibrary;
 import org.apache.camel.model.dataformat.YAMLTypeFilterDefinition;
 import org.apache.camel.model.dataformat.YAMLTypeFilterType;
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.ObjectHelper;
 
 public class YAMLDataFormatReifier extends DataFormatReifier<YAMLDataFormat> {
 
@@ -36,37 +33,26 @@ public class YAMLDataFormatReifier extends DataFormatReifier<YAMLDataFormat> {
     }
 
     @Override
-    protected DataFormat doCreateDataFormat(CamelContext camelContext) {
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
         if (definition.getLibrary() == YAMLLibrary.SnakeYAML) {
-            setProperty(camelContext, this, "dataFormatName", "yaml-snakeyaml");
-        }
-
-        return super.doCreateDataFormat(camelContext);
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (definition.getLibrary() == YAMLLibrary.SnakeYAML) {
-            configureSnakeDataFormat(dataFormat, camelContext);
+            configureSnakeDataFormat(properties);
         }
     }
 
-    protected void configureSnakeDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        Class<?> yamlUnmarshalType = definition.getUnmarshalType();
-        if (yamlUnmarshalType == null && definition.getUnmarshalTypeName() != null) {
-            try {
-                yamlUnmarshalType = camelContext.getClassResolver().resolveMandatoryClass(definition.getUnmarshalTypeName());
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
+    protected void configureSnakeDataFormat(Map<String, Object> properties) {
+        properties.put("unmarshalType", or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()));
+        properties.put("classLoader", definition.getClassLoader());
+        properties.put("useApplicationContextClassLoader", definition.isUseApplicationContextClassLoader());
+        properties.put("prettyFlow", definition.isPrettyFlow());
+        properties.put("allowAnyType", definition.isAllowAnyType());
+        properties.put("typeFilterDefinitions", getTypeFilterDefinitions());
+        properties.put("constructor", definition.getConstructor());
+        properties.put("representer", definition.getRepresenter());
+        properties.put("dumperOptions", definition.getDumperOptions());
+        properties.put("resolver", definition.getResolver());
+    }
 
-        setProperty(dataFormat, camelContext, "unmarshalType", yamlUnmarshalType);
-        setProperty(dataFormat, camelContext, "classLoader", definition.getClassLoader());
-        setProperty(dataFormat, camelContext, "useApplicationContextClassLoader", definition.isUseApplicationContextClassLoader());
-        setProperty(dataFormat, camelContext, "prettyFlow", definition.isPrettyFlow());
-        setProperty(dataFormat, camelContext, "allowAnyType", definition.isAllowAnyType());
-
+    private List<String> getTypeFilterDefinitions() {
         if (definition.getTypeFilters() != null && !definition.getTypeFilters().isEmpty()) {
             List<String> typeFilterDefinitions = new ArrayList<>(definition.getTypeFilters().size());
             for (YAMLTypeFilterDefinition definition : definition.getTypeFilters()) {
@@ -83,27 +69,9 @@ public class YAMLDataFormatReifier extends DataFormatReifier<YAMLDataFormat> {
 
                 typeFilterDefinitions.add(value);
             }
-
-            setProperty(dataFormat, camelContext, "typeFilterDefinitions", typeFilterDefinitions);
-        }
-
-        setPropertyRef(dataFormat, camelContext, "constructor", definition.getConstructor());
-        setPropertyRef(dataFormat, camelContext, "representer", definition.getRepresenter());
-        setPropertyRef(dataFormat, camelContext, "dumperOptions", definition.getDumperOptions());
-        setPropertyRef(dataFormat, camelContext, "resolver", definition.getResolver());
-    }
-
-    protected void setProperty(DataFormat dataFormat, CamelContext camelContext, String propertyName, Object propertyValue) {
-        if (ObjectHelper.isNotEmpty(propertyValue)) {
-            setProperty(camelContext, dataFormat, propertyName, propertyValue);
-        }
-    }
-
-    protected void setPropertyRef(DataFormat dataFormat, CamelContext camelContext, String propertyName, String propertyValue) {
-        if (ObjectHelper.isNotEmpty(propertyValue)) {
-            // must be a reference value
-            String ref = propertyValue.startsWith("#") ? propertyValue : "#" + propertyValue;
-            setProperty(camelContext, dataFormat, propertyName, ref);
+            return typeFilterDefinitions;
+        } else {
+            return null;
         }
     }
 

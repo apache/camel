@@ -16,10 +16,10 @@
  */
 package org.apache.camel.reifier.dataformat;
 
-import org.apache.camel.CamelContext;
+import java.util.Map;
+
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.BarcodeDataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class BarcodeDataFormatReifier extends DataFormatReifier<BarcodeDataFormat> {
 
@@ -28,19 +28,11 @@ public class BarcodeDataFormatReifier extends DataFormatReifier<BarcodeDataForma
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (definition.getWidth() != null) {
-            setProperty(camelContext, dataFormat, "width", definition.getWidth());
-        }
-        if (definition.getHeight() != null) {
-            setProperty(camelContext, dataFormat, "height", definition.getHeight());
-        }
-        if (definition.getImageType() != null) {
-            setProperty(camelContext, dataFormat, "barcodeImageType", definition.getImageType());
-        }
-        if (definition.getBarcodeFormat() != null) {
-            setProperty(camelContext, dataFormat, "barcodeFormat", definition.getBarcodeFormat());
-        }
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("width", definition.getWidth());
+        properties.put("height", definition.getHeight());
+        properties.put("barcodeImageType", definition.getImageType());
+        properties.put("barcodeFormat", definition.getBarcodeFormat());
     }
 
 }

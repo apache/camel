@@ -18,12 +18,11 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.UniVocityAbstractDataFormat;
 import org.apache.camel.model.dataformat.UniVocityHeader;
-import org.apache.camel.spi.DataFormat;
 
 public class UniVocityAbstractDataFormatReifier<T extends UniVocityAbstractDataFormat> extends DataFormatReifier<T> {
 
@@ -32,59 +31,21 @@ public class UniVocityAbstractDataFormatReifier<T extends UniVocityAbstractDataF
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        super.configureDataFormat(dataFormat, camelContext);
-
-        if (definition.getNullValue() != null) {
-            setProperty(camelContext, dataFormat, "nullValue", definition.getNullValue());
-        }
-        if (definition.getSkipEmptyLines() != null) {
-            setProperty(camelContext, dataFormat, "skipEmptyLines", definition.getSkipEmptyLines());
-        }
-        if (definition.getIgnoreTrailingWhitespaces() != null) {
-            setProperty(camelContext, dataFormat, "ignoreTrailingWhitespaces", definition.getIgnoreTrailingWhitespaces());
-        }
-        if (definition.getIgnoreLeadingWhitespaces() != null) {
-            setProperty(camelContext, dataFormat, "ignoreLeadingWhitespaces", definition.getIgnoreLeadingWhitespaces());
-        }
-        if (definition.getHeadersDisabled() != null) {
-            setProperty(camelContext, dataFormat, "headersDisabled", definition.getHeadersDisabled());
-        }
-        String[] validHeaderNames = getValidHeaderNames();
-        if (validHeaderNames != null) {
-            setProperty(camelContext, dataFormat, "headers", validHeaderNames);
-        }
-        if (definition.getHeaderExtractionEnabled() != null) {
-            setProperty(camelContext, dataFormat, "headerExtractionEnabled", definition.getHeaderExtractionEnabled());
-        }
-        if (definition.getNumberOfRecordsToRead() != null) {
-            setProperty(camelContext, dataFormat, "numberOfRecordsToRead", definition.getNumberOfRecordsToRead());
-        }
-        if (definition.getEmptyValue() != null) {
-            setProperty(camelContext, dataFormat, "emptyValue", definition.getEmptyValue());
-        }
-        if (definition.getLineSeparator() != null) {
-            setProperty(camelContext, dataFormat, "lineSeparator", definition.getLineSeparator());
-        }
-        if (definition.getNormalizedLineSeparator() != null) {
-            setProperty(camelContext, dataFormat, "normalizedLineSeparator", singleCharOf("normalizedLineSeparator", definition.getNormalizedLineSeparator()));
-        }
-        if (definition.getComment() != null) {
-            setProperty(camelContext, dataFormat, "comment", singleCharOf("comment", definition.getComment()));
-        }
-        if (definition.getLazyLoad() != null) {
-            setProperty(camelContext, dataFormat, "lazyLoad", definition.getLazyLoad());
-        }
-        if (definition.getAsMap() != null) {
-            setProperty(camelContext, dataFormat, "asMap", definition.getAsMap());
-        }
-    }
-
-    protected static Character singleCharOf(String attributeName, String string) {
-        if (string.length() != 1) {
-            throw new IllegalArgumentException("Only one character must be defined for " + attributeName);
-        }
-        return string.charAt(0);
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("nullValue", definition.getNullValue());
+        properties.put("skipEmptyLines", definition.getSkipEmptyLines());
+        properties.put("ignoreTrailingWhitespaces", definition.getIgnoreTrailingWhitespaces());
+        properties.put("ignoreLeadingWhitespaces", definition.getIgnoreLeadingWhitespaces());
+        properties.put("headersDisabled", definition.getHeadersDisabled());
+        properties.put("headers", getValidHeaderNames());
+        properties.put("headerExtractionEnabled", definition.getHeaderExtractionEnabled());
+        properties.put("numberOfRecordsToRead", definition.getNumberOfRecordsToRead());
+        properties.put("emptyValue", definition.getEmptyValue());
+        properties.put("lineSeparator", definition.getLineSeparator());
+        properties.put("normalizedLineSeparator", definition.getNormalizedLineSeparator());
+        properties.put("comment", definition.getComment());
+        properties.put("lazyLoad", definition.getLazyLoad());
+        properties.put("asMap", definition.getAsMap());
     }
 
     /**
@@ -103,6 +64,6 @@ public class UniVocityAbstractDataFormatReifier<T extends UniVocityAbstractDataF
                 names.add(header.getName());
             }
         }
-        return names.isEmpty() ? null : names.toArray(new String[names.size()]);
+        return names.isEmpty() ? null : names.toArray(new String[0]);
     }
 }

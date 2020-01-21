@@ -16,67 +16,32 @@
  */
 package org.apache.camel.reifier.dataformat;
 
-import org.apache.camel.CamelContext;
+import java.util.Map;
+
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class XMLSecurityDataFormatReifier extends DataFormatReifier<XMLSecurityDataFormat> {
-
-    private static final String DEFAULT_ENCRYPTION_ALG = "http://www.w3.org/2009/xmlenc11#aes256-gcm";
 
     public XMLSecurityDataFormatReifier(DataFormatDefinition definition) {
         super((XMLSecurityDataFormat)definition);
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (definition.getSecureTag() != null) {
-            setProperty(camelContext, dataFormat, "secureTag", definition.getSecureTag());
-        } else {
-            setProperty(camelContext, dataFormat, "secureTag", "");
-        }
-
-        boolean isSecureTagContents = definition.getSecureTagContents() != null && definition.getSecureTagContents();
-        setProperty(camelContext, dataFormat, "secureTagContents", isSecureTagContents);
-
-        if (definition.getPassPhrase() != null) {
-            setProperty(camelContext, dataFormat, "passPhrase", definition.getPassPhrase().getBytes());
-        } else if (definition.getPassPhraseByte() != null) {
-            setProperty(camelContext, dataFormat, "passPhrase", definition.getPassPhraseByte());
-        }
-        if (definition.getXmlCipherAlgorithm() != null) {
-            setProperty(camelContext, dataFormat, "xmlCipherAlgorithm", definition.getXmlCipherAlgorithm());
-        } else {
-            setProperty(camelContext, dataFormat, "xmlCipherAlgorithm", DEFAULT_ENCRYPTION_ALG);
-        }
-        if (definition.getKeyCipherAlgorithm() != null) {
-            setProperty(camelContext, dataFormat, "keyCipherAlgorithm", definition.getKeyCipherAlgorithm());
-        }
-        if (definition.getRecipientKeyAlias() != null) {
-            setProperty(camelContext, dataFormat, "recipientKeyAlias", definition.getRecipientKeyAlias());
-        }
-        if (definition.getKeyOrTrustStoreParametersRef() != null) {
-            setProperty(camelContext, dataFormat, "keyOrTrustStoreParametersRef", definition.getKeyOrTrustStoreParametersRef());
-        }
-        if (definition.getKeyOrTrustStoreParameters() != null) {
-            setProperty(camelContext, dataFormat, "keyOrTrustStoreParameters", definition.getKeyOrTrustStoreParameters());
-        }
-        if (definition.getNamespaces() != null) {
-            setProperty(camelContext, dataFormat, "namespaces", definition.getNamespaces());
-        }
-        if (definition.getKeyPassword() != null) {
-            setProperty(camelContext, dataFormat, "keyPassword", definition.getKeyPassword());
-        }
-        if (definition.getDigestAlgorithm() != null) {
-            setProperty(camelContext, dataFormat, "digestAlgorithm", definition.getDigestAlgorithm());
-        }
-        if (definition.getMgfAlgorithm() != null) {
-            setProperty(camelContext, dataFormat, "mgfAlgorithm", definition.getMgfAlgorithm());
-        }
-        // should be true by default
-        boolean isAddKeyValueForEncryptedKey = definition.getAddKeyValueForEncryptedKey() == null || definition.getAddKeyValueForEncryptedKey();
-        setProperty(camelContext, dataFormat, "addKeyValueForEncryptedKey", isAddKeyValueForEncryptedKey);
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("secureTag", definition.getSecureTag());
+        properties.put("secureTagContents", definition.getSecureTagContents());
+        properties.put("passPhrase", or(definition.getPassPhrase(), definition.getPassPhraseByte()));
+        properties.put("xmlCipherAlgorithm", definition.getXmlCipherAlgorithm());
+        properties.put("keyCipherAlgorithm", definition.getKeyCipherAlgorithm());
+        properties.put("recipientKeyAlias", definition.getRecipientKeyAlias());
+        properties.put("keyOrTrustStoreParameters", or(definition.getKeyOrTrustStoreParameters(),
+                asRef(definition.getKeyOrTrustStoreParametersRef())));
+        properties.put("namespaces", definition.getNamespaces());
+        properties.put("keyPassword", definition.getKeyPassword());
+        properties.put("digestAlgorithm", definition.getDigestAlgorithm());
+        properties.put("mgfAlgorithm", definition.getMgfAlgorithm());
+        properties.put("addKeyValueForEncryptedKey", definition.getAddKeyValueForEncryptedKey());
     }
 
 }

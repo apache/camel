@@ -16,10 +16,10 @@
  */
 package org.apache.camel.reifier.dataformat;
 
-import org.apache.camel.CamelContext;
+import java.util.Map;
+
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.XmlRpcDataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class XmlRpcDataFormatReifier extends DataFormatReifier<XmlRpcDataFormat> {
 
@@ -28,10 +28,8 @@ public class XmlRpcDataFormatReifier extends DataFormatReifier<XmlRpcDataFormat>
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (definition.getRequest() != null) {
-            setProperty(camelContext, dataFormat, "request", definition.getRequest());
-        }
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("request", definition.getRequest());
     }
 
 }

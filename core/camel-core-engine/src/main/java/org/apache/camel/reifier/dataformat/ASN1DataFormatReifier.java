@@ -16,10 +16,10 @@
  */
 package org.apache.camel.reifier.dataformat;
 
-import org.apache.camel.CamelContext;
+import java.util.Map;
+
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class ASN1DataFormatReifier extends DataFormatReifier<ASN1DataFormat> {
 
@@ -28,13 +28,9 @@ public class ASN1DataFormatReifier extends DataFormatReifier<ASN1DataFormat> {
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (definition.getUsingIterator() != null) {
-            setProperty(camelContext, dataFormat, "usingIterator", definition.getUsingIterator());
-        }
-        if (definition.getClazzName() != null) {
-            setProperty(camelContext, dataFormat, "clazzName", definition.getClazzName());
-        }
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("usingIterator", definition.getUsingIterator());
+        properties.put("clazzName", definition.getClazzName());
     }
 
 }
