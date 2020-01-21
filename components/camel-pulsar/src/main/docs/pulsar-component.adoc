@@ -7,10 +7,6 @@
 *Both producer and consumer is supported*
 // HEADER END
 
-*Since Camel 2.24*
-
-
-
 Maven users will need to add the following dependency to
 their `pom.xml` for this component.
 
