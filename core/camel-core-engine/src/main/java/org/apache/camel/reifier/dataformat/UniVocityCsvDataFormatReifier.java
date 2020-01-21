@@ -16,10 +16,10 @@
  */
 package org.apache.camel.reifier.dataformat;
 
-import org.apache.camel.CamelContext;
+import java.util.Map;
+
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class UniVocityCsvDataFormatReifier extends UniVocityAbstractDataFormatReifier<UniVocityCsvDataFormat> {
 
@@ -28,20 +28,11 @@ public class UniVocityCsvDataFormatReifier extends UniVocityAbstractDataFormatRe
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        super.configureDataFormat(dataFormat, camelContext);
-
-        if (definition.getQuoteAllFields() != null) {
-            setProperty(camelContext, dataFormat, "quoteAllFields", definition.getQuoteAllFields());
-        }
-        if (definition.getQuote() != null) {
-            setProperty(camelContext, dataFormat, "quote", singleCharOf("quote", definition.getQuote()));
-        }
-        if (definition.getQuoteEscape() != null) {
-            setProperty(camelContext, dataFormat, "quoteEscape", singleCharOf("quoteEscape", definition.getQuoteEscape()));
-        }
-        if (definition.getDelimiter() != null) {
-            setProperty(camelContext, dataFormat, "delimiter", singleCharOf("delimiter", definition.getDelimiter()));
-        }
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        super.prepareDataFormatConfig(properties);
+        properties.put("quoteAllFields", definition.getQuoteAllFields());
+        properties.put("quote", definition.getQuote());
+        properties.put("quoteEscape", definition.getQuoteEscape());
+        properties.put("delimiter", definition.getDelimiter());
     }
 }

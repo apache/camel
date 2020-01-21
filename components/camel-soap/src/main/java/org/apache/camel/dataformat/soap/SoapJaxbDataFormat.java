@@ -49,8 +49,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     private static final Logger LOG = LoggerFactory.getLogger(SoapJaxbDataFormat.class);
 
     private SoapDataFormatAdapter adapter;
-    private ElementNameStrategy elementNameStrategy;
-    private String elementNameStrategyRef;
+    private ElementNameStrategy elementNameStrategy = new TypeNameStrategy();
     private boolean ignoreUnmarshalledHeaders;
     private String version;
 
@@ -77,16 +76,6 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         this.elementNameStrategy = elementNameStrategy;
     }
 
-    /**
-     * Initialize the data format. The serviceInterface is necessary to
-     * determine the element name and namespace of the element inside the soap
-     * body when marshalling
-     */
-    public SoapJaxbDataFormat(String contextPath, String elementNameStrategyRef) {
-        this(contextPath);
-        this.elementNameStrategyRef = elementNameStrategyRef;
-    }
-
     @Override
     public String getDataFormatName() {
         return "soapjaxb";
@@ -104,23 +93,6 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         super.doStart();
     }
 
-    protected void checkElementNameStrategy(Exchange exchange) {
-        if (elementNameStrategy == null) {
-            synchronized (this) {
-                if (elementNameStrategy != null) {
-                    return;
-                } else {
-                    if (elementNameStrategyRef != null) {
-                        elementNameStrategy = exchange.getContext().getRegistry().lookupByNameAndType(elementNameStrategyRef,
-                                ElementNameStrategy.class);
-                    } else {
-                        elementNameStrategy = new TypeNameStrategy();
-                    }
-                }
-            }
-        }
-    }
-
     /**
      * Marshal inputObjects to SOAP xml. If the exchange or message has an
      * EXCEPTION_CAUGTH property or header then instead of the object the
@@ -131,8 +103,6 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      */
     @Override
     public void marshal(Exchange exchange, Object inputObject, OutputStream stream) throws IOException {
-        checkElementNameStrategy(exchange);
-
         String soapAction = getSoapActionFromExchange(exchange);
         Object envelope = adapter.doMarshal(exchange, inputObject, stream, soapAction);
 
@@ -212,8 +182,6 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      */
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
-        checkElementNameStrategy(exchange);
-        
         String soapAction = getSoapActionFromExchange(exchange);
         
         // Determine the method name for an eventual BeanProcessor in the route
@@ -276,14 +244,6 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
             throw new IllegalArgumentException("The argument for setElementNameStrategy should be subClass of "
                     + ElementNameStrategy.class.getName());
         }
-    }
-
-    public String getElementNameStrategyRef() {
-        return elementNameStrategyRef;
-    }
-
-    public void setElementNameStrategyRef(String elementNameStrategyRef) {
-        this.elementNameStrategyRef = elementNameStrategyRef;
     }
 
     public boolean isIgnoreUnmarshalledHeaders() {

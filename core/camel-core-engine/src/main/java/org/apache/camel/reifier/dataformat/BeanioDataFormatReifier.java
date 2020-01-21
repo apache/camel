@@ -16,10 +16,10 @@
  */
 package org.apache.camel.reifier.dataformat;
 
-import org.apache.camel.CamelContext;
+import java.util.Map;
+
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.BeanioDataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class BeanioDataFormatReifier extends DataFormatReifier<BeanioDataFormat> {
 
@@ -28,27 +28,15 @@ public class BeanioDataFormatReifier extends DataFormatReifier<BeanioDataFormat>
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        setProperty(camelContext, dataFormat, "mapping", definition.getMapping());
-        setProperty(camelContext, dataFormat, "streamName", definition.getStreamName());
-        if (definition.getIgnoreUnidentifiedRecords() != null) {
-            setProperty(camelContext, dataFormat, "ignoreUnidentifiedRecords", definition.getIgnoreUnidentifiedRecords());
-        }
-        if (definition.getIgnoreUnexpectedRecords() != null) {
-            setProperty(camelContext, dataFormat, "ignoreUnexpectedRecords", definition.getIgnoreUnexpectedRecords());
-        }
-        if (definition.getIgnoreInvalidRecords() != null) {
-            setProperty(camelContext, dataFormat, "ignoreInvalidRecords", definition.getIgnoreInvalidRecords());
-        }
-        if (definition.getEncoding() != null) {
-            setProperty(camelContext, dataFormat, "encoding", definition.getEncoding());
-        }
-        if (definition.getBeanReaderErrorHandlerType() != null) {
-            setProperty(camelContext, dataFormat, "beanReaderErrorHandlerType", definition.getBeanReaderErrorHandlerType());
-        }
-        if (definition.getUnmarshalSingleObject() != null) {
-            setProperty(camelContext, dataFormat, "unmarshalSingleObject", definition.getUnmarshalSingleObject());
-        }
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("mapping", definition.getMapping());
+        properties.put("streamName", definition.getStreamName());
+        properties.put("ignoreUnidentifiedRecords", definition.getIgnoreUnidentifiedRecords());
+        properties.put("ignoreUnexpectedRecords", definition.getIgnoreUnexpectedRecords());
+        properties.put("ignoreInvalidRecords", definition.getIgnoreInvalidRecords());
+        properties.put("encoding", definition.getEncoding());
+        properties.put("beanReaderErrorHandlerType", definition.getBeanReaderErrorHandlerType());
+        properties.put("unmarshalSingleObject", definition.getUnmarshalSingleObject());
     }
 
 }

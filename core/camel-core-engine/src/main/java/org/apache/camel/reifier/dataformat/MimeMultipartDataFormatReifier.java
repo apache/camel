@@ -16,10 +16,10 @@
  */
 package org.apache.camel.reifier.dataformat;
 
-import org.apache.camel.CamelContext;
+import java.util.Map;
+
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class MimeMultipartDataFormatReifier extends DataFormatReifier<MimeMultipartDataFormat> {
 
@@ -28,22 +28,12 @@ public class MimeMultipartDataFormatReifier extends DataFormatReifier<MimeMultip
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (definition.getMultipartSubType() != null) {
-            setProperty(camelContext, dataFormat, "multipartSubType", definition.getMultipartSubType());
-        }
-        if (definition.getMultipartWithoutAttachment() != null) {
-            setProperty(camelContext, dataFormat, "multipartWithoutAttachment", definition.getMultipartWithoutAttachment());
-        }
-        if (definition.getHeadersInline() != null) {
-            setProperty(camelContext, dataFormat, "headersInline", definition.getHeadersInline());
-        }
-        if (definition.getIncludeHeaders() != null) {
-            setProperty(camelContext, dataFormat, "includeHeaders", definition.getIncludeHeaders());
-        }
-        if (definition.getBinaryContent() != null) {
-            setProperty(camelContext, dataFormat, "binaryContent", definition.getBinaryContent());
-        }
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("multipartSubType", definition.getMultipartSubType());
+        properties.put("multipartWithoutAttachment", definition.getMultipartWithoutAttachment());
+        properties.put("headersInline", definition.getHeadersInline());
+        properties.put("includeHeaders", definition.getIncludeHeaders());
+        properties.put("binaryContent", definition.getBinaryContent());
     }
 
 }

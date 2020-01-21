@@ -17,11 +17,12 @@
 package org.apache.camel.reifier.dataformat;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ProcessorDefinitionHelper;
@@ -69,9 +70,11 @@ import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatContentTypeHeader;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerAware;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.support.EndpointHelper.isReferenceParameter;
 
 public abstract class DataFormatReifier<T extends DataFormatDefinition> extends AbstractReifier {
 
@@ -192,13 +195,11 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             try {
                 dataFormat = doCreateDataFormat(camelContext);
                 if (dataFormat != null) {
-                    // is enabled by default so assume true if null
-                    final boolean contentTypeHeader = definition.getContentTypeHeader() == null || Boolean.parseBoolean(definition.getContentTypeHeader());
-                    try {
-                        setProperty(camelContext, dataFormat, "contentTypeHeader", contentTypeHeader);
-                    } catch (Exception e) {
-                        // ignore as this option is optional and not all data
-                        // formats support this
+                    if (dataFormat instanceof DataFormatContentTypeHeader) {
+                        // is enabled by default so assume true if null
+                        final boolean contentTypeHeader = definition.getContentTypeHeader() == null
+                                || parseBoolean(camelContext, definition.getContentTypeHeader());
+                        ((DataFormatContentTypeHeader) dataFormat).setContentTypeHeader(contentTypeHeader);
                     }
                     // configure the rest of the options
                     configureDataFormat(dataFormat, camelContext);
@@ -218,34 +219,46 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
      * Factory method to create the data format instance
      */
     protected DataFormat doCreateDataFormat(CamelContext camelContext) {
-        // must use getDataFormatName() as we need special logic in json
-        // dataformat
-        if (definition.getDataFormatName() != null) {
-            return camelContext.createDataFormat(definition.getDataFormatName());
+        // must use getDataFormatName() as we need special logic in json dataformat
+        String dfn = definition.getDataFormatName();
+        if (dfn != null) {
+            return camelContext.createDataFormat(dfn);
         }
         return null;
+    }
+
+    private String getDataFormatName() {
+        return definition.getDataFormatName();
     }
 
     /**
      * Allows derived classes to customize the data format
      */
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
+        Map<String, Object> properties = new LinkedHashMap<>();
+        prepareDataFormatConfig(properties);
+        properties.entrySet().removeIf(e -> e.getValue() == null);
+        PropertyConfigurer configurer = dataFormat instanceof PropertyConfigurerAware
+                ? ((PropertyConfigurerAware) dataFormat).getPropertyConfigurer(dataFormat)
+                : null;
+        PropertyBindingSupport.build()
+                .withCamelContext(camelContext)
+                .withTarget(dataFormat)
+                .withReference(true)
+                .withMandatory(true)
+                .withConfigurer(configurer)
+                .withProperties(properties)
+                .bind();
     }
 
-    /**
-     * Sets a named property on the data format instance using introspection
-     */
-    protected void setProperty(CamelContext camelContext, Object bean, String name, Object value) {
-        try {
-            String ref = value instanceof String ? value.toString() : null;
-            if (isReferenceParameter(ref) && camelContext != null) {
-                camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, camelContext.getTypeConverter(), bean, name, null, ref, true, false, false);
-            } else {
-                camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, bean, name, value);
-            }
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to set property: " + name + " on: " + bean + ". Reason: " + e, e);
-        }
+    protected abstract void prepareDataFormatConfig(Map<String, Object> properties);
+
+    protected Object or(Object a, Object b) {
+        return a != null ? a : b;
+    }
+
+    protected Object asRef(String s) {
+        return s != null ? s.startsWith("#") ? s : "#" + s : null;
     }
 
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.reifier;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.CamelContextHelper;
 
@@ -27,6 +28,11 @@ public abstract class AbstractReifier {
 
     protected static boolean parseBoolean(RouteContext routeContext, String text) {
         Boolean b = CamelContextHelper.parseBoolean(routeContext.getCamelContext(), text);
+        return b != null && b;
+    }
+
+    protected static boolean parseBoolean(CamelContext camelContext, String text) {
+        Boolean b = CamelContextHelper.parseBoolean(camelContext, text);
         return b != null && b;
     }
 
