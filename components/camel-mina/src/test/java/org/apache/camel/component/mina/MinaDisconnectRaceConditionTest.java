@@ -20,7 +20,6 @@ import java.lang.reflect.Field;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.mina.core.session.IoSession;
@@ -47,7 +46,7 @@ public class MinaDisconnectRaceConditionTest extends BaseMinaTest {
             producer.process(e);
             final IoSession ioSession = (IoSession) field.get(producer);
             assertTrue(ioSession.getCloseFuture().isDone());
-            Object out = e.getOut().getBody();
+            Object out = e.getMessage().getBody();
             assertEquals("Bye Chad", out);
         }
     }
@@ -57,12 +56,9 @@ public class MinaDisconnectRaceConditionTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() throws Exception {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true&textline=true", getPort())).process(new Processor() {
-
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Bye " + body);
-                    }
+                from(String.format("mina:tcp://localhost:%1$s?sync=true&textline=true", getPort())).process(exchange -> {
+                    String body = exchange.getIn().getBody(String.class);
+                    exchange.getMessage().setBody("Bye " + body);
                 });
             }
         };

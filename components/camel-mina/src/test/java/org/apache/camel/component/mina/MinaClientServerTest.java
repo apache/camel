@@ -54,7 +54,7 @@ public class MinaClientServerTest extends BaseMinaTest {
             // get the input from the IN body
             String name = exchange.getIn().getBody(String.class);
             // send back a response on the OUT body
-            exchange.getOut().setBody("Hello " + name);
+            exchange.getMessage().setBody("Hello " + name);
         }
     }
     // END SNIPPET: e2

@@ -22,7 +22,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -63,12 +62,12 @@ public class MinaVMTransferExchangeOptionTest extends BaseMinaTest {
 
     private void assertExchange(Exchange exchange, boolean hasException) {
         if (!hasException) {
-            Message out = exchange.getOut();
+            Message out = exchange.getMessage();
             assertNotNull(out);
             assertEquals("Goodbye!", out.getBody());
             assertEquals("cheddar", out.getHeader("cheese"));
         } else {
-            Message fault = exchange.getOut();
+            Message fault = exchange.getMessage();
             assertNotNull(fault);
             assertNotNull(fault.getBody());
             assertTrue("Should get the InterruptedException exception", fault.getBody() instanceof InterruptedException);
@@ -91,28 +90,25 @@ public class MinaVMTransferExchangeOptionTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:vm://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true", getPort())).process(new Processor() {
+                from(String.format("mina:vm://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true", getPort())).process(e -> {
+                    assertNotNull(e.getIn().getBody());
+                    assertNotNull(e.getIn().getHeaders());
+                    assertNotNull(e.getProperties());
+                    assertEquals("Hello!", e.getIn().getBody());
+                    assertEquals("feta", e.getIn().getHeader("cheese"));
+                    assertEquals("old", e.getProperty("ham"));
+                    assertEquals(ExchangePattern.InOut, e.getPattern());
+                    Boolean setException = (Boolean) e.getProperty("setException");
 
-                    public void process(Exchange e) throws InterruptedException {
-                        assertNotNull(e.getIn().getBody());
-                        assertNotNull(e.getIn().getHeaders());
-                        assertNotNull(e.getProperties());
-                        assertEquals("Hello!", e.getIn().getBody());
-                        assertEquals("feta", e.getIn().getHeader("cheese"));
-                        assertEquals("old", e.getProperty("ham"));
-                        assertEquals(ExchangePattern.InOut, e.getPattern());
-                        Boolean setException = (Boolean) e.getProperty("setException");
-
-                        if (setException) {
-                            e.getOut().setBody(new InterruptedException());
-                            e.getOut().setHeader("hello", "nihao");
-                        } else {
-                            e.getOut().setBody("Goodbye!");
-                            e.getOut().setHeader("cheese", "cheddar");
-                        }
-                        e.setProperty("salami", "fresh");
-                        e.setProperty("Charset", Charset.defaultCharset());
+                    if (setException) {
+                        e.getOut().setBody(new InterruptedException());
+                        e.getOut().setHeader("hello", "nihao");
+                    } else {
+                        e.getOut().setBody("Goodbye!");
+                        e.getOut().setHeader("cheese", "cheddar");
                     }
+                    e.setProperty("salami", "fresh");
+                    e.setProperty("Charset", Charset.defaultCharset());
                 });
             }
         };
