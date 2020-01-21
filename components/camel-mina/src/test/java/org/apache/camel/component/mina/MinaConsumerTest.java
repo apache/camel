@@ -67,7 +67,7 @@ public class MinaConsumerTest extends BaseMinaTest {
 
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Bye " + body);
+                        exchange.getMessage().setBody("Bye " + body);
                     }
                 });
                 // END SNIPPET: e3

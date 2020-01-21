@@ -22,8 +22,6 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
 import org.junit.Test;
@@ -130,22 +128,19 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends BaseMinaTest {
 
             public void configure() {
                 from(String.format("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort()))
-                    .process(new Processor() {
-
-                        public void process(Exchange e) {
-                            String in = e.getIn().getBody(String.class);
-                            if ("force-null-out-body".equals(in)) {
-                                // forcing a null out body
-                                e.getOut().setBody(null);
-                            } else if ("force-exception".equals(in)) {
-                                // clear out before throwing exception
-                                e.getOut().setBody(null);
-                                throw new IllegalArgumentException("Forced exception");
-                            } else if ("force-set-in-body".equals(in)) {
-                                e.getIn().setBody("Update the in message!");
-                            } else {
-                                e.getOut().setBody("Hello " + in);
-                            }
+                    .process(e -> {
+                        String in = e.getIn().getBody(String.class);
+                        if ("force-null-out-body".equals(in)) {
+                            // forcing a null out body
+                            e.getMessage().setBody(null);
+                        } else if ("force-exception".equals(in)) {
+                            // clear out before throwing exception
+                            e.getMessage().setBody(null);
+                            throw new IllegalArgumentException("Forced exception");
+                        } else if ("force-set-in-body".equals(in)) {
+                            e.getIn().setBody("Update the in message!");
+                        } else {
+                            e.getMessage().setBody("Hello " + in);
                         }
                     });
             }
