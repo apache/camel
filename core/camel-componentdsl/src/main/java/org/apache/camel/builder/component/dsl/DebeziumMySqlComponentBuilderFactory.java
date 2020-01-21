@@ -5,8 +5,8 @@ import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.debezium.DebeziumMySqlComponent;
 
-public class DebeziumMySqlComponentBuilderFactory {
-    public interface DebeziumMySqlComponentBuilder extends ComponentBuilder {
+public interface DebeziumMySqlComponentBuilderFactory {
+    interface DebeziumMySqlComponentBuilder extends ComponentBuilder {
         default DebeziumMySqlComponentBuilder withComponentName(String name) {
             doSetComponentName(name);
             return this;
@@ -22,16 +22,17 @@ public class DebeziumMySqlComponentBuilderFactory {
         }
     }
 
-    public static DebeziumMySqlComponentBuilder debeziumMysql() {
-        class DebeziumMySqlComponentBuilderImpl extends AbstractComponentBuilder implements DebeziumMySqlComponentBuilder {
-            public DebeziumMySqlComponentBuilderImpl() {
-                super("debezium-mysql");
-            }
-            @Override
-            protected Component buildConcreteComponent() {
-                return new DebeziumMySqlComponent();
-            }
+    class DebeziumMySqlComponentBuilderImpl extends AbstractComponentBuilder implements DebeziumMySqlComponentBuilder {
+        public DebeziumMySqlComponentBuilderImpl() {
+            super("debezium-mysql");
         }
+        @Override
+        protected Component buildConcreteComponent() {
+            return new DebeziumMySqlComponent();
+        }
+    }
+
+    static DebeziumMySqlComponentBuilder debeziumMysql() {
         return new DebeziumMySqlComponentBuilderImpl();
     }
 }

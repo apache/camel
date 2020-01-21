@@ -5,10 +5,12 @@ import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.kafka.KafkaComponent;
 
-public class KafkaComponentBuilderFactory {
+public interface KafkaComponentBuilderFactory {
+    static KafkaComponentBuilder kafka() {
+        return new KafkaComponentBuilderImpl();
+    }
 
-
-    public interface KafkaComponentBuilder extends ComponentBuilder {
+    interface KafkaComponentBuilder extends ComponentBuilder {
         default KafkaComponentBuilder withComponentName(String name) {
             doSetComponentName(name);
             return this;
@@ -61,6 +63,20 @@ public class KafkaComponentBuilderFactory {
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
+        }
+    }
+
+    class KafkaComponentBuilderImpl
+            extends
+            AbstractComponentBuilder
+            implements
+            KafkaComponentBuilder {
+        public KafkaComponentBuilderImpl() {
+            super("kafka");
+        }
+        @Override
+        protected Component buildConcreteComponent() {
+            return new KafkaComponent();
         }
     }
 }

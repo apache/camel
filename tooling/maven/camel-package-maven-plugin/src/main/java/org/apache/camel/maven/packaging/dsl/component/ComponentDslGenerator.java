@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
+import org.apache.commons.text.CaseUtils;
 
 public class ComponentDslGenerator {
     private static final String COMPONENT_DSL_PACKAGE_NAME = "org.apache.camel.builder.component";
@@ -39,7 +40,9 @@ public class ComponentDslGenerator {
         setPackage();
         setImports();
         setBuilderFactoryClassNameAndType();
-        ComponentDslInnerBuilderGenerator.generateInnerClass(javaClass.addNestedType(), componentModel);
+        final String innerBuilderInterfaceName = ComponentDslInnerBuilderGenerator.generateClass(javaClass.addNestedType(), componentModel).getClassName();
+        final String innerBuilderImplName = ComponentDslInnerImplBuilderGenerator.generateClass(javaClass.addNestedType(), componentModel).getBuilderImplClassName();
+        setDslEntryMethod(innerBuilderInterfaceName, innerBuilderImplName);
     }
 
     private void setPackage() {
@@ -56,6 +59,16 @@ public class ComponentDslGenerator {
     private void setBuilderFactoryClassNameAndType() {
         final String className = componentModel.getShortJavaType() + BUILDER_FACTORY_SUFFIX;
         javaClass.setName(className);
+
+    }
+
+    private void setDslEntryMethod(final String innerBuilderInterfaceName, final String innerBuilderImplName) {
+        javaClass.addMethod()
+                .setPublic()
+                .setStatic()
+                .setReturnType(innerBuilderInterfaceName)
+                .setName(CaseUtils.toCamelCase(componentModel.getScheme(), false, '-'))
+                .setBody(String.format("return new %s();", innerBuilderImplName));
 
     }
 }

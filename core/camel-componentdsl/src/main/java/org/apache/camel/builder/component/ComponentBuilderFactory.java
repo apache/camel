@@ -17,7 +17,11 @@
 package org.apache.camel.builder.component;
 
 import org.apache.camel.builder.component.dsl.DebeziumMySqlComponentBuilderFactory;
+import org.apache.camel.builder.component.dsl.KafkaComponentBuilderFactory;
 
-public final class ComponentBuilderFactory extends
-        DebeziumMySqlComponentBuilderFactory
-{}
+public interface ComponentBuilderFactory
+{
+    static KafkaComponentBuilderFactory.KafkaComponentBuilder kafka() {
+        return KafkaComponentBuilderFactory.kafka();
+    }
+}

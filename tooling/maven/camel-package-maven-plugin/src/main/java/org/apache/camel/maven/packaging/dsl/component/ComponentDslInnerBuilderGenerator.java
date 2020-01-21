@@ -8,8 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 public class ComponentDslInnerBuilderGenerator {
     private static final String BUILDER_SUFFIX = "Builder";
 
-    final JavaClass javaClass;
-    final ComponentModel componentModel;
+    final private JavaClass javaClass;
+    final private ComponentModel componentModel;
 
     private ComponentDslInnerBuilderGenerator(final JavaClass javaClass, final ComponentModel componentModel) {
         this.javaClass = javaClass;
@@ -18,7 +18,7 @@ public class ComponentDslInnerBuilderGenerator {
         generateJavaClass();
     }
 
-    public static ComponentDslInnerBuilderGenerator generateInnerClass(final JavaClass javaClass, final ComponentModel componentModel) {
+    public static ComponentDslInnerBuilderGenerator generateClass(final JavaClass javaClass, final ComponentModel componentModel) {
         return new ComponentDslInnerBuilderGenerator(javaClass, componentModel);
     }
 
