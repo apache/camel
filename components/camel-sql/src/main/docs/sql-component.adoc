@@ -869,7 +869,7 @@ To use this feature, add the following dependencies to your spring boot pom.xml 
 [source,xml]
 ----
 <dependency>
-    <groupId>org.apache.camel</groupId>
+    <groupId>org.apache.camel.springboot</groupId>
     <artifactId>camel-sql-starter</artifactId>
     <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
 </dependency>
