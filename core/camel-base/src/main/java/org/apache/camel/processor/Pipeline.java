@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,26 +83,25 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (exchange.isTransacted()) {
-            camelContext.getReactiveExecutor().scheduleSync(() -> Pipeline.this.doProcess(exchange, callback, processors, 0));
+            camelContext.getReactiveExecutor().scheduleSync(() -> Pipeline.this.doProcess(exchange, callback, processors.iterator(), true));
         } else {
-            camelContext.getReactiveExecutor().scheduleMain(() -> Pipeline.this.doProcess(exchange, callback, processors, 0));
+            camelContext.getReactiveExecutor().scheduleMain(() -> Pipeline.this.doProcess(exchange, callback, processors.iterator(), true));
         }
         return false;
     }
 
-    protected void doProcess(Exchange exchange, AsyncCallback callback, List<AsyncProcessor> processors, int index) {
-        if (continueRouting(processors, index, exchange)
-                && (index == 0 || continueProcessing(exchange, "so breaking out of pipeline", log))) {
+    protected void doProcess(Exchange exchange, AsyncCallback callback, Iterator<AsyncProcessor> processors, boolean first) {
+        if (continueRouting(processors, exchange)
+                && (first || continueProcessing(exchange, "so breaking out of pipeline", log))) {
 
             // prepare for next run
             ExchangeHelper.prepareOutToIn(exchange);
 
             // get the next processor
-            AsyncProcessor processor = processors.get(index);
+            AsyncProcessor processor = processors.next();
 
-            final Integer idx = index + 1;
             processor.process(exchange, doneSync ->
-                    camelContext.getReactiveExecutor().schedule(() -> doProcess(exchange, callback, processors, idx)));
+                    camelContext.getReactiveExecutor().schedule(() -> doProcess(exchange, callback, processors, false)));
         } else {
             ExchangeHelper.copyResults(exchange, exchange);
 
@@ -116,19 +116,19 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
         }
     }
 
-    protected boolean continueRouting(List<AsyncProcessor> processors, int index, Exchange exchange) {
+    protected boolean continueRouting(Iterator<AsyncProcessor> it, Exchange exchange) {
         Object stop = exchange.getProperty(Exchange.ROUTE_STOP);
         if (stop != null) {
             boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
             if (doStop) {
-                if (log.isTraceEnabled()) {
+                if (log.isDebugEnabled()) {
                     log.debug("ExchangeId: {} is marked to stop routing: {}", exchange.getExchangeId(), exchange);
                 }
                 return false;
             }
         }
         // continue if there are more processors to route
-        boolean answer = index < processors.size();
+        boolean answer = it.hasNext();
         if (log.isTraceEnabled()) {
             log.trace("ExchangeId: {} should continue routing: {}", exchange.getExchangeId(), answer);
         }
@@ -150,6 +150,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
         return id;
     }
 
+    @SuppressWarnings("unchecked")
     public List<Processor> getProcessors() {
         return (List) processors;
     }
