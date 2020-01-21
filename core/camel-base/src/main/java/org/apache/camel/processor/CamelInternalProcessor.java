@@ -231,7 +231,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             // do uow before processing and if a value is returned the the uow wants to be processed after
             // was well in the same thread
             AsyncCallback async = callback;
-            boolean beforeAndAfter = uow.isBeforeAfterProcess();
+            boolean beforeAndAfter = uow != null && uow.isBeforeAfterProcess();
             if (beforeAndAfter) {
                 async = uow.beforeProcess(processor, exchange, async);
             }
