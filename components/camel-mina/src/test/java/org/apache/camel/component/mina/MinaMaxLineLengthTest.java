@@ -60,7 +60,7 @@ public class MinaMaxLineLengthTest extends BaseMinaTest {
             // get the input from the IN body
             String request = exchange.getIn().getBody(String.class);
             // echo back the response on the OUT body
-            exchange.getOut().setBody(request);
+            exchange.getMessage().setBody(request);
         }
     }
     // END SNIPPET: e2

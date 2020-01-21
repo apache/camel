@@ -19,7 +19,6 @@ package org.apache.camel.component.mina;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
-import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -52,15 +51,13 @@ public class MinaExchangeTimeOutTest extends BaseMinaTest {
 
             public void configure() {
                 from(String.format("mina:tcp://localhost:%1$s?textline=true&sync=true&timeout=30000", getPort()))
-                    .process(new Processor() {
-                        public void process(Exchange e) throws Exception {
-                            assertEquals("Hello World", e.getIn().getBody(String.class));
-                            // MinaProducer has a default timeout of 3 seconds so we just wait 2 seconds
-                            // (template.requestBody is a MinaProducer behind the doors)
-                            Thread.sleep(2000);
+                    .process(e -> {
+                        assertEquals("Hello World", e.getIn().getBody(String.class));
+                        // MinaProducer has a default timeout of 3 seconds so we just wait 2 seconds
+                        // (template.requestBody is a MinaProducer behind the doors)
+                        Thread.sleep(2000);
 
-                            e.getOut().setBody("Okay I will be faster in the future");
-                        }
+                        e.getMessage().setBody("Okay I will be faster in the future");
                     });
             }
         };
