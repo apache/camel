@@ -250,6 +250,36 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
+         * Control the initial position in the topic of a newly created
+         * subscription. Default is latest message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition</code> type.
+         * 
+         * Default: LATEST
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder subscriptionInitialPosition(
+                SubscriptionInitialPosition subscriptionInitialPosition) {
+            doSetProperty("subscriptionInitialPosition", subscriptionInitialPosition);
+            return this;
+        }
+        /**
+         * Control the initial position in the topic of a newly created
+         * subscription. Default is latest message.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition</code> type.
+         * 
+         * Default: LATEST
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder subscriptionInitialPosition(
+                String subscriptionInitialPosition) {
+            doSetProperty("subscriptionInitialPosition", subscriptionInitialPosition);
+            return this;
+        }
+        /**
          * Name of the subscription to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -938,6 +968,15 @@ public interface PulsarEndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
+    }
+
+    /**
+     * Proxy enum for
+     * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition</code> enum.
+     */
+    enum SubscriptionInitialPosition {
+        EARLIEST,
+        LATEST;
     }
 
     /**
