@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.FolderNotFoundException;
@@ -84,6 +83,30 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         }
 
         super.doStop();
+    }
+
+    /**
+     * Returns the max number of messages to be processed. Will return -1 if no maximum is set
+     *
+     * @return
+     */
+    private int getMaxNumberOfMessages() {
+        int maxMessagesPerPoll = (getEndpoint().getMaxMessagesPerPoll() == 0) ? -1 : getEndpoint().getMaxMessagesPerPoll();
+        int fetchSize = getEndpoint().getConfiguration().getFetchSize();
+
+        if (hasMessageLimit(fetchSize)) {
+            return fetchSize;
+        }
+
+        if (hasMessageLimit(maxMessagesPerPoll)) {
+            return maxMessagesPerPoll;
+        }
+
+        return -1;
+    }
+
+    private boolean hasMessageLimit(int limitValue) {
+        return limitValue >= 0;
     }
 
     protected int poll() throws Exception {
@@ -174,13 +197,6 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
 
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
-
-        // limit if needed
-        if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.", maxMessagesPerPoll, total);
-            total = maxMessagesPerPoll;
-        }
-
         for (int index = 0; index < total && isBatchAllowed(); index++) {
             // only loop if we are started (allowed to run)
             Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
@@ -269,11 +285,20 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             }
         }
 
+        int maxMessage = getMaxNumberOfMessages();
+        boolean messageNeedsValidation = getEndpoint().getIdempotentRepository() != null;
         for (Message message : messages) {
+            if (hasMessageLimit(maxMessage) && answer.size() >= maxMessage) {
+                break;
+            }
             String key = getEndpoint().getMailUidGenerator().generateUuid(getEndpoint(), message);
-            if (isValidMessage(key, message)) {
+            if (!messageNeedsValidation || isValidMessage(key, message)) {
                 answer.add(new KeyValueHolder<>(key, message));
             }
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Fetching {} messages. Total {} messages.", answer.size(), messages.length);
         }
 
         return answer;
@@ -328,16 +353,9 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
     }
 
     protected Queue<Exchange> createExchanges(List<KeyValueHolder<String, Message>> messages) throws MessagingException {
-        Queue<Exchange> answer = new LinkedList<>();
+        Queue<Exchange> answer = new LinkedList<Exchange>();
 
-        int fetchSize = getEndpoint().getConfiguration().getFetchSize();
-        int count = fetchSize == -1 ? messages.size() : Math.min(fetchSize, messages.size());
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Fetching {} messages. Total {} messages.", count, messages.size());
-        }
-
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < messages.size(); i++) {
             try {
                 KeyValueHolder<String, Message> holder = messages.get(i);
                 String key = holder.getKey();
