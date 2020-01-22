@@ -70,6 +70,8 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of the <a
@@ -87,6 +89,8 @@ import org.apache.camel.util.TimeUtils;
  * together into a single invoice message.
  */
 public class AggregateProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, ShutdownPrepared, ShutdownAware, IdAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AggregateProcessor.class);
 
     public static final String AGGREGATE_TIMEOUT_CHECKER = "AggregateTimeoutChecker";
     public static final String AGGREGATE_OPTIMISTIC_LOCKING_EXECUTOR = "AggregateOptimisticLockingExecutor";
@@ -335,7 +339,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         if (ObjectHelper.isEmpty(key)) {
             // we have a bad correlation key
             if (isIgnoreInvalidCorrelationKeys()) {
-                log.debug("Invalid correlation key. This Exchange will be ignored: {}", exchange);
+                LOG.debug("Invalid correlation key. This Exchange will be ignored: {}", exchange);
             } else {
                 exchange.setException(new CamelExchangeException("Invalid correlation key", exchange));
             }
@@ -364,7 +368,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                 doProcess(exchange, key, callback);
                 return;
             } catch (OptimisticLockingAggregationRepository.OptimisticLockingException e) {
-                log.trace("On attempt {} OptimisticLockingAggregationRepository: {} threw OptimisticLockingException while trying to aggregate exchange: {}",
+                LOG.trace("On attempt {} OptimisticLockingAggregationRepository: {} threw OptimisticLockingException while trying to aggregate exchange: {}",
                         attempt, aggregationRepository, exchange, e);
                 if (optimisticLockRetryPolicy.shouldRetry(attempt)) {
                     long delay = optimisticLockRetryPolicy.getDelay(attempt);
@@ -443,7 +447,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
      * @throws org.apache.camel.CamelExchangeException is thrown if error aggregating
      */
     private List<Exchange> doAggregation(String key, Exchange newExchange) throws CamelExchangeException {
-        log.trace("onAggregation +++ start +++ with correlation key: {}", key);
+        LOG.trace("onAggregation +++ start +++ with correlation key: {}", key);
 
         List<Exchange> list = new ArrayList<>();
         String complete = null;
@@ -516,7 +520,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             aggregateFailed = true;
             if (isDiscardOnAggregationFailure()) {
                 // discard due failure in aggregation strategy
-                log.debug("Aggregation for correlation key {} discarding aggregated exchange: {} due to failure in AggregationStrategy caused by: {}", key, oldExchange, e.getMessage());
+                LOG.debug("Aggregation for correlation key {} discarding aggregated exchange: {} due to failure in AggregationStrategy caused by: {}", key, oldExchange, e.getMessage());
                 complete = COMPLETED_BY_STRATEGY;
                 answer = oldExchange;
                 if (answer == null) {
@@ -544,7 +548,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         if (aggregationRepository instanceof RecoverableAggregationRepository) {
             boolean valid = oldExchange == null || answer.getExchangeId().equals(oldExchange.getExchangeId());
             if (!valid && aggregateRepositoryWarned.compareAndSet(false, true)) {
-                log.warn("AggregationStrategy should return the oldExchange instance instead of the newExchange whenever possible"
+                LOG.warn("AggregationStrategy should return the oldExchange instance instead of the newExchange whenever possible"
                     + " as otherwise this can lead to unexpected behavior with some RecoverableAggregationRepository implementations");
             }
         }
@@ -569,7 +573,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             doAggregationComplete(complete, list, key, originalExchange, answer, aggregateFailed);
         }
 
-        log.trace("onAggregation +++  end  +++ with correlation key: {}", key);
+        LOG.trace("onAggregation +++  end  +++ with correlation key: {}", key);
         return list;
     }
 
@@ -606,7 +610,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
     }
 
     protected void doAggregationRepositoryAdd(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange) {
-        log.trace("In progress aggregated oldExchange: {}, newExchange: {} with correlation key: {}", oldExchange, newExchange, key);
+        LOG.trace("In progress aggregated oldExchange: {}, newExchange: {} with correlation key: {}", oldExchange, newExchange, key);
         if (optimisticLocking) {
             try {
                 ((OptimisticLockingAggregationRepository)aggregationRepository).add(camelContext, key, oldExchange, newExchange);
@@ -696,8 +700,8 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         if (getCompletionTimeoutExpression() != null) {
             Long value = getCompletionTimeoutExpression().evaluate(exchange, Long.class);
             if (value != null && value > 0) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Updating correlation key {} to timeout after {} ms. as exchange received: {}",
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Updating correlation key {} to timeout after {} ms. as exchange received: {}",
                             key, value, exchange);
                 }
                 addExchangeToTimeoutMap(key, exchange, value);
@@ -706,8 +710,8 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         }
         if (!timeoutSet && getCompletionTimeout() > 0) {
             // timeout is used so use the timeout map to keep an eye on this
-            if (log.isTraceEnabled()) {
-                log.trace("Updating correlation key {} to timeout after {} ms. as exchange received: {}",
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Updating correlation key {} to timeout after {} ms. as exchange received: {}",
                         key, getCompletionTimeout(), exchange);
             }
             addExchangeToTimeoutMap(key, exchange, getCompletionTimeout());
@@ -734,7 +738,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
 
         if (!fromTimeout && timeoutMap != null) {
             // cleanup timeout map if it was a incoming exchange which triggered the timeout (and not the timeout checker)
-            log.trace("Removing correlation key {} from timeout", key);
+            LOG.trace("Removing correlation key {} from timeout", key);
             timeoutMap.remove(key);
         }
 
@@ -754,7 +758,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             // this exchange is discarded
             discarded.incrementAndGet();
             // discard due timeout
-            log.debug("Aggregation for correlation key {} discarding aggregated exchange: {}", key, aggregated);
+            LOG.debug("Aggregation for correlation key {} discarding aggregated exchange: {}", key, aggregated);
             // must confirm the discarded exchange
             aggregationRepository.confirm(aggregated.getContext(), aggregated.getExchangeId());
             // and remove redelivery state as well
@@ -765,7 +769,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             // this exchange is discarded
             discarded.incrementAndGet();
             // discard due aggregation failed (or by force)
-            log.debug("Aggregation for correlation key {} discarding aggregated exchange: {}", key, aggregated);
+            LOG.debug("Aggregation for correlation key {} discarding aggregated exchange: {}", key, aggregated);
             // must confirm the discarded exchange
             aggregationRepository.confirm(aggregated.getContext(), aggregated.getExchangeId());
             // and remove redelivery state as well
@@ -781,7 +785,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
     }
 
     private void onSubmitCompletion(final String key, final Exchange exchange) {
-        log.debug("Aggregation complete for correlation key {} sending aggregated exchange: {}", key, exchange);
+        LOG.debug("Aggregation complete for correlation key {} sending aggregated exchange: {}", key, exchange);
 
         // add this as in progress before we submit the task
         inProgressCompleteExchanges.add(exchange.getExchangeId());
@@ -816,12 +820,12 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                 completedByStrategy.incrementAndGet();
                 break;
             default:
-                log.error("Invalid value of {} property: {}", Exchange.AGGREGATED_COMPLETED_BY, exchange);
+                LOG.error("Invalid value of {} property: {}", Exchange.AGGREGATED_COMPLETED_BY, exchange);
                 break;
             }
         }
 
-        log.debug("Processing aggregated exchange: {}", exchange);
+        LOG.debug("Processing aggregated exchange: {}", exchange);
 
         // add on completion task so we remember to update the inProgressCompleteExchanges
         exchange.adapt(ExtendedExchange.class).addOnCompletion(new AggregateOnCompletion(exchange.getExchangeId()));
@@ -834,7 +838,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                 // if there was an exception then let the exception handler handle it
                 getExceptionHandler().handleException("Error processing aggregated exchange", exchange, exchange.getException());
             } else {
-                log.trace("Processing aggregated exchange: {} complete.", exchange);
+                LOG.trace("Processing aggregated exchange: {} complete.", exchange);
             }
         })));
     }
@@ -853,20 +857,20 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         }
 
         StopWatch watch = new StopWatch();
-        log.trace("Starting restoring CompletionTimeout for {} existing exchanges from the aggregation repository...", keys.size());
+        LOG.trace("Starting restoring CompletionTimeout for {} existing exchanges from the aggregation repository...", keys.size());
 
         for (String key : keys) {
             Exchange exchange = aggregationRepository.get(camelContext, key);
             // grab the timeout value
             long timeout = exchange.hasProperties() ? exchange.getProperty(Exchange.AGGREGATED_TIMEOUT, 0, long.class) : 0;
             if (timeout > 0) {
-                log.trace("Restoring CompletionTimeout for exchangeId: {} with timeout: {} millis.", exchange.getExchangeId(), timeout);
+                LOG.trace("Restoring CompletionTimeout for exchangeId: {} with timeout: {} millis.", exchange.getExchangeId(), timeout);
                 addExchangeToTimeoutMap(key, exchange, timeout);
             }
         }
 
         // log duration of this task so end user can see how long it takes to pre-check this upon starting
-        log.info("Restored {} CompletionTimeout conditions in the AggregationTimeoutChecker in {}",
+        LOG.info("Restored {} CompletionTimeout conditions in the AggregationTimeoutChecker in {}",
                 timeoutMap.size(), TimeUtils.printDuration(watch.taken()));
     }
 
@@ -1144,7 +1148,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
 
         @Override
         public void onFailure(Exchange exchange) {
-            log.trace("Aggregated exchange onFailure: {}", exchange);
+            LOG.trace("Aggregated exchange onFailure: {}", exchange);
 
             // must remember to remove in progress when we failed
             inProgressCompleteExchanges.remove(exchangeId);
@@ -1153,7 +1157,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
 
         @Override
         public void onComplete(Exchange exchange) {
-            log.trace("Aggregated exchange onComplete: {}", exchange);
+            LOG.trace("Aggregated exchange onComplete: {}", exchange);
 
             // only confirm if we processed without a problem
             try {
@@ -1243,11 +1247,11 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         public void run() {
             // only run if CamelContext has been fully started
             if (!camelContext.getStatus().isStarted()) {
-                log.trace("Completion interval task cannot start due CamelContext({}) has not been started yet", camelContext.getName());
+                LOG.trace("Completion interval task cannot start due CamelContext({}) has not been started yet", camelContext.getName());
                 return;
             }
 
-            log.trace("Starting completion interval task");
+            LOG.trace("Starting completion interval task");
 
             // trigger completion for all in the repository
             Set<String> keys = aggregationRepository.getKeys();
@@ -1262,7 +1266,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                         if (exchange == null) {
                             stolenInterval = true;
                         } else {
-                            log.trace("Completion interval triggered for correlation key: {}", key);
+                            LOG.trace("Completion interval triggered for correlation key: {}", key);
                             // indicate it was completed by interval
                             exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, COMPLETED_BY_INTERVAL);
                             try {
@@ -1275,7 +1279,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                             }
                         }
                         if (optimisticLocking && stolenInterval) {
-                            log.debug("Another Camel instance has already processed this interval aggregation for exchange with correlation id: {}", key);
+                            LOG.debug("Another Camel instance has already processed this interval aggregation for exchange with correlation id: {}", key);
                         }
                     }
                 } finally {
@@ -1283,7 +1287,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                 }
             }
 
-            log.trace("Completion interval task complete");
+            LOG.trace("Completion interval task complete");
         }
     }
 
@@ -1301,11 +1305,11 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         public void run() {
             // only run if CamelContext has been fully started
             if (!camelContext.getStatus().isStarted()) {
-                log.trace("Recover check cannot start due CamelContext({}) has not been started yet", camelContext.getName());
+                LOG.trace("Recover check cannot start due CamelContext({}) has not been started yet", camelContext.getName());
                 return;
             }
 
-            log.trace("Starting recover check");
+            LOG.trace("Starting recover check");
 
             // copy the current in progress before doing scan
             final Set<String> copyOfInProgress = new LinkedHashSet<>(inProgressCompleteExchanges);
@@ -1315,7 +1319,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
 
                 // we may shutdown while doing recovery
                 if (!isRunAllowed()) {
-                    log.info("We are shutting down so stop recovering");
+                    LOG.info("We are shutting down so stop recovering");
                     return;
                 }
                 lock.lock();
@@ -1324,9 +1328,9 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                     // its safer to consider it in progress than risk duplicates due both in progress + recovered
                     boolean inProgress = copyOfInProgress.contains(exchangeId) || inProgressCompleteExchanges.contains(exchangeId);
                     if (inProgress) {
-                        log.trace("Aggregated exchange with id: {} is already in progress.", exchangeId);
+                        LOG.trace("Aggregated exchange with id: {} is already in progress.", exchangeId);
                     } else {
-                        log.debug("Loading aggregated exchange with id: {} to be recovered.", exchangeId);
+                        LOG.debug("Loading aggregated exchange with id: {} to be recovered.", exchangeId);
                         Exchange exchange = recoverable.recover(camelContext, exchangeId);
                         if (exchange != null) {
                             // get the correlation key
@@ -1339,7 +1343,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
 
                             // if we are exhausted, then move to dead letter channel
                             if (data != null && recoverable.getMaximumRedeliveries() > 0 && data.redeliveryCounter >= recoverable.getMaximumRedeliveries()) {
-                                log.warn("The recovered exchange is exhausted after " + recoverable.getMaximumRedeliveries()
+                                LOG.warn("The recovered exchange is exhausted after " + recoverable.getMaximumRedeliveries()
                                         + " attempts, will now be moved to dead letter channel: " + recoverable.getDeadLetterUri());
 
                                 // send to DLC
@@ -1374,7 +1378,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                                     exchange.getIn().setHeader(Exchange.REDELIVERY_MAX_COUNTER, recoverable.getMaximumRedeliveries());
                                 }
 
-                                log.debug("Delivery attempt: {} to recover aggregated exchange with id: {}", data.redeliveryCounter, exchangeId);
+                                LOG.debug("Delivery attempt: {} to recover aggregated exchange with id: {}", data.redeliveryCounter, exchangeId);
 
                                 // not exhaust so resubmit the recovered exchange
                                 onSubmitCompletion(key, exchange);
@@ -1386,7 +1390,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                 }
             }
 
-            log.trace("Recover check complete");
+            LOG.trace("Recover check complete");
         }
     }
 
@@ -1398,7 +1402,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         }
         if (aggregationStrategy.canPreComplete()) {
             preCompletion = true;
-            log.info("PreCompletionAwareAggregationStrategy detected. Aggregator {} is in pre-completion mode.", getId());
+            LOG.info("PreCompletionAwareAggregationStrategy detected. Aggregator {} is in pre-completion mode.", getId());
         }
 
         if (!preCompletion) {
@@ -1413,24 +1417,24 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
 
         if (getCloseCorrelationKeyOnCompletion() != null) {
             if (getCloseCorrelationKeyOnCompletion() > 0) {
-                log.info("Using ClosedCorrelationKeys with a LRUCache with a capacity of {}", getCloseCorrelationKeyOnCompletion());
+                LOG.info("Using ClosedCorrelationKeys with a LRUCache with a capacity of {}", getCloseCorrelationKeyOnCompletion());
                 closedCorrelationKeys = LRUCacheFactory.newLRUCache(getCloseCorrelationKeyOnCompletion());
             } else {
-                log.info("Using ClosedCorrelationKeys with unbounded capacity");
+                LOG.info("Using ClosedCorrelationKeys with unbounded capacity");
                 closedCorrelationKeys = new ConcurrentHashMap<>();
             }
         }
 
         if (aggregationRepository == null) {
             aggregationRepository = new MemoryAggregationRepository(optimisticLocking);
-            log.info("Defaulting to MemoryAggregationRepository");
+            LOG.info("Defaulting to MemoryAggregationRepository");
         }
 
         if (optimisticLocking) {
             if (!(aggregationRepository instanceof OptimisticLockingAggregationRepository)) {
                 throw new IllegalArgumentException("Optimistic locking cannot be enabled without using an AggregationRepository that implements OptimisticLockingAggregationRepository");
             }
-            log.info("Optimistic locking is enabled");
+            LOG.info("Optimistic locking is enabled");
         }
 
         ServiceHelper.startService(aggregationStrategy, processor, aggregationRepository);
@@ -1447,7 +1451,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                 // create a background recover thread to check every interval
                 recoverService = camelContext.getExecutorServiceManager().newScheduledThreadPool(this, "AggregateRecoverChecker", 1);
                 Runnable recoverTask = new RecoverTask(recoverable);
-                log.info("Using RecoverableAggregationRepository by scheduling recover checker to run every {} millis.", interval);
+                LOG.info("Using RecoverableAggregationRepository by scheduling recover checker to run every {} millis.", interval);
                 // use fixed delay so there is X interval between each run
                 recoverService.scheduleWithFixedDelay(recoverTask, 1000L, interval, TimeUnit.MILLISECONDS);
 
@@ -1456,7 +1460,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                     if (max <= 0) {
                         throw new IllegalArgumentException("Option maximumRedeliveries must be a positive number, was: " + max);
                     }
-                    log.info("After {} failed redelivery attempts Exchanges will be moved to deadLetterUri: {}", max, recoverable.getDeadLetterUri());
+                    LOG.info("After {} failed redelivery attempts Exchanges will be moved to deadLetterUri: {}", max, recoverable.getDeadLetterUri());
 
                     // dead letter uri must be a valid endpoint
                     Endpoint endpoint = camelContext.getEndpoint(recoverable.getDeadLetterUri());
@@ -1472,7 +1476,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             throw new IllegalArgumentException("Only one of completionInterval or completionTimeout can be used, not both.");
         }
         if (getCompletionInterval() > 0) {
-            log.info("Using CompletionInterval to run every {} millis.", getCompletionInterval());
+            LOG.info("Using CompletionInterval to run every {} millis.", getCompletionInterval());
             if (getTimeoutCheckerExecutorService() == null) {
                 setTimeoutCheckerExecutorService(camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, AGGREGATE_TIMEOUT_CHECKER));
                 shutdownTimeoutCheckerExecutorService = true;
@@ -1483,7 +1487,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
 
         // start timeout service if its in use
         if (getCompletionTimeout() > 0 || getCompletionTimeoutExpression() != null) {
-            log.info("Using CompletionTimeout to trigger after {} millis of inactivity.", getCompletionTimeout());
+            LOG.info("Using CompletionTimeout to trigger after {} millis of inactivity.", getCompletionTimeout());
             if (getTimeoutCheckerExecutorService() == null) {
                 setTimeoutCheckerExecutorService(camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, AGGREGATE_TIMEOUT_CHECKER));
                 shutdownTimeoutCheckerExecutorService = true;
@@ -1576,18 +1580,18 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
 
         StopWatch watch = new StopWatch();
         while (inProgressCompleteExchanges.size() > 0) {
-            log.trace("Waiting for {} inflight exchanges to complete", getInProgressCompleteExchanges());
+            LOG.trace("Waiting for {} inflight exchanges to complete", getInProgressCompleteExchanges());
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 // break out as we got interrupted such as the JVM terminating
-                log.warn("Interrupted while waiting for {} inflight exchanges to complete.", getInProgressCompleteExchanges());
+                LOG.warn("Interrupted while waiting for {} inflight exchanges to complete.", getInProgressCompleteExchanges());
                 break;
             }
         }
 
         if (expected > 0) {
-            log.info("Forcing completion of all groups with {} exchanges completed in {}", expected, TimeUtils.printDuration(watch.taken()));
+            LOG.info("Forcing completion of all groups with {} exchanges completed in {}", expected, TimeUtils.printDuration(watch.taken()));
         }
     }
 
@@ -1623,7 +1627,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             Exchange exchange = aggregationRepository.get(camelContext, key);
             if (exchange != null) {
                 total = 1;
-                log.trace("Force completion triggered for correlation key: {}", key);
+                LOG.trace("Force completion triggered for correlation key: {}", key);
                 // indicate it was completed by a force completion request
                 exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, COMPLETED_BY_FORCE);
                 Exchange answer = onCompletion(key, exchange, exchange, false, false);
@@ -1634,10 +1638,10 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         } finally {
             lock.unlock();
         }
-        log.trace("Completed force completion of group {}", key);
+        LOG.trace("Completed force completion of group {}", key);
 
         if (total > 0) {
-            log.debug("Forcing completion of group {} with {} exchanges", key, total);
+            LOG.debug("Forcing completion of group {} with {} exchanges", key, total);
         }
         return total;
     }
@@ -1647,11 +1651,11 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         // only run if CamelContext has been fully started or is stopping
         boolean allow = camelContext.getStatus().isStarted() || camelContext.getStatus().isStopping();
         if (!allow) {
-            log.warn("Cannot start force completion of all groups because CamelContext({}) has not been started", camelContext.getName());
+            LOG.warn("Cannot start force completion of all groups because CamelContext({}) has not been started", camelContext.getName());
             return 0;
         }
 
-        log.trace("Starting force completion of all groups task");
+        LOG.trace("Starting force completion of all groups task");
 
         // trigger completion for all in the repository
         Set<String> keys = aggregationRepository.getKeys();
@@ -1665,7 +1669,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                 for (String key : keys) {
                     Exchange exchange = aggregationRepository.get(camelContext, key);
                     if (exchange != null) {
-                        log.trace("Force completion triggered for correlation key: {}", key);
+                        LOG.trace("Force completion triggered for correlation key: {}", key);
                         // indicate it was completed by a force completion request
                         exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, COMPLETED_BY_FORCE);
                         Exchange answer = onCompletion(key, exchange, exchange, false, false);
@@ -1678,10 +1682,10 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                 lock.unlock();
             }
         }
-        log.trace("Completed force completion of all groups task");
+        LOG.trace("Completed force completion of all groups task");
 
         if (total > 0) {
-            log.debug("Forcing completion of all groups with {} exchanges", total);
+            LOG.debug("Forcing completion of all groups with {} exchanges", total);
         }
         return total;
     }
@@ -1695,17 +1699,17 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             Exchange exchange = aggregationRepository.get(camelContext, key);
             if (exchange != null) {
                 total = 1;
-                log.trace("Force discarded triggered for correlation key: {}", key);
+                LOG.trace("Force discarded triggered for correlation key: {}", key);
                 // force discarding by setting aggregate failed as true
                 onCompletion(key, exchange, exchange, false, true);
             }
         } finally {
             lock.unlock();
         }
-        log.trace("Completed force discarded of group {}", key);
+        LOG.trace("Completed force discarded of group {}", key);
 
         if (total > 0) {
-            log.debug("Forcing discarding of group {} with {} exchanges", key, total);
+            LOG.debug("Forcing discarding of group {} with {} exchanges", key, total);
         }
         return total;
     }
@@ -1715,11 +1719,11 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         // only run if CamelContext has been fully started or is stopping
         boolean allow = camelContext.getStatus().isStarted() || camelContext.getStatus().isStopping();
         if (!allow) {
-            log.warn("Cannot start force discarding of all groups because CamelContext({}) has not been started", camelContext.getName());
+            LOG.warn("Cannot start force discarding of all groups because CamelContext({}) has not been started", camelContext.getName());
             return 0;
         }
 
-        log.trace("Starting force discarding of all groups task");
+        LOG.trace("Starting force discarding of all groups task");
 
         // trigger completion for all in the repository
         Set<String> keys = aggregationRepository.getKeys();
@@ -1733,7 +1737,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                 for (String key : keys) {
                     Exchange exchange = aggregationRepository.get(camelContext, key);
                     if (exchange != null) {
-                        log.trace("Force discarded triggered for correlation key: {}", key);
+                        LOG.trace("Force discarded triggered for correlation key: {}", key);
                         // force discarding by setting aggregate failed as true
                         onCompletion(key, exchange, exchange, false, true);
                     }
@@ -1742,10 +1746,10 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                 lock.unlock();
             }
         }
-        log.trace("Completed force discarding of all groups task");
+        LOG.trace("Completed force discarding of all groups task");
 
         if (total > 0) {
-            log.debug("Forcing discarding of all groups with {} exchanges", total);
+            LOG.debug("Forcing discarding of all groups with {} exchanges", total);
         }
         return total;
     }

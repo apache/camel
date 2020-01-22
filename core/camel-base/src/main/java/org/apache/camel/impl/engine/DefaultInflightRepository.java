@@ -34,11 +34,15 @@ import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.service.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default {@link org.apache.camel.spi.InflightRepository}.
  */
 public class DefaultInflightRepository extends ServiceSupport implements InflightRepository {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultInflightRepository.class);
 
     private final ConcurrentMap<String, Exchange> inflight = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, AtomicInteger> routeCount = new ConcurrentHashMap<>();
@@ -174,9 +178,9 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     protected void doStop() throws Exception {
         int count = size();
         if (count > 0) {
-            log.warn("Shutting down while there are still {} inflight exchanges.", count);
+            LOG.warn("Shutting down while there are still {} inflight exchanges.", count);
         } else {
-            log.debug("Shutting down with no inflight exchanges.");
+            LOG.debug("Shutting down with no inflight exchanges.");
         }
         routeCount.clear();
     }

@@ -28,17 +28,22 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.StateRepository;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.Scanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This {@link FileStateRepository} class is a file-based implementation of a {@link StateRepository}.
  */
 @ManagedResource(description = "File based state repository")
 public class FileStateRepository extends ServiceSupport implements StateRepository<String, String> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FileStateRepository.class);
 
     private static final String STORE_DELIMITER = "\n";
     private static final String KEY_VALUE_DELIMITER = "=";
@@ -142,19 +147,19 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
      * @param key the state key
      */
     private void appendToStore(String key, String value) {
-        if (log.isDebugEnabled()) {
-            log.debug("Appending {}={} to state filestore: {}", key, value, fileStore);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Appending {}={} to state filestore: {}", key, value, fileStore);
         }
         FileOutputStream fos = null;
         try {
             // create store parent directory if missing
             File storeParentDirectory = fileStore.getParentFile();
             if (storeParentDirectory != null && !storeParentDirectory.exists()) {
-                log.info("Parent directory of file store {} doesn't exist. Creating.", fileStore);
+                LOG.info("Parent directory of file store {} doesn't exist. Creating.", fileStore);
                 if (fileStore.getParentFile().mkdirs()) {
-                    log.info("Parent directory of file store {} successfully created.", fileStore);
+                    LOG.info("Parent directory of file store {} successfully created.", fileStore);
                 } else {
-                    log.warn("Parent directory of file store {} cannot be created.", fileStore);
+                    LOG.warn("Parent directory of file store {} cannot be created.", fileStore);
                 }
             }
             // create store if missing
@@ -170,7 +175,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
         } catch (IOException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } finally {
-            IOHelper.close(fos, "Appending to file state repository", log);
+            IOHelper.close(fos, "Appending to file state repository", LOG);
         }
     }
 
@@ -179,7 +184,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
      * to the file store.
      */
     protected void trunkStore() {
-        log.info("Trunking state filestore: {}", fileStore);
+        LOG.info("Trunking state filestore: {}", fileStore);
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(fileStore);
@@ -192,7 +197,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
         } catch (IOException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } finally {
-            IOHelper.close(fos, "Trunking file state repository", log);
+            IOHelper.close(fos, "Trunking file state repository", LOG);
         }
     }
 
@@ -202,7 +207,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
     protected void loadStore() throws IOException {
         // auto create starting directory if needed
         if (!fileStore.exists()) {
-            log.debug("Creating filestore: {}", fileStore);
+            LOG.debug("Creating filestore: {}", fileStore);
             File parent = fileStore.getParentFile();
             if (parent != null) {
                 parent.mkdirs();
@@ -213,7 +218,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
             }
         }
 
-        log.trace("Loading to 1st level cache from state filestore: {}", fileStore);
+        LOG.trace("Loading to 1st level cache from state filestore: {}", fileStore);
 
         cache.clear();
         try (Scanner scanner = new Scanner(fileStore, null, STORE_DELIMITER)) {
@@ -228,7 +233,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
-        log.debug("Loaded {} to the 1st level cache from state filestore: {}", cache.size(), fileStore);
+        LOG.debug("Loaded {} to the 1st level cache from state filestore: {}", cache.size(), fileStore);
     }
 
     @Override

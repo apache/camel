@@ -47,11 +47,15 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.function.Suppliers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default component to use for base for components implementations.
  */
 public abstract class DefaultComponent extends ServiceSupport implements Component {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultComponent.class);
 
     /**
      * Simple RAW() pattern used only for validating URI in this class
@@ -132,12 +136,12 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         parameters.remove("hash");
 
         validateURI(uri, path, parameters);
-        if (log.isTraceEnabled()) {
+        if (LOG.isTraceEnabled()) {
             // at trace level its okay to have parameters logged, that may contain passwords
-            log.trace("Creating endpoint uri=[{}], path=[{}], parameters=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path), parameters);
-        } else if (log.isDebugEnabled()) {
+            LOG.trace("Creating endpoint uri=[{}], path=[{}], parameters=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path), parameters);
+        } else if (LOG.isDebugEnabled()) {
             // but at debug level only output sanitized uris
-            log.debug("Creating endpoint uri=[{}], path=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path));
+            LOG.debug("Creating endpoint uri=[{}], path=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path));
         }
 
         // extract these global options and infer their value based on global/component level configuration
@@ -222,12 +226,12 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         uri = useRawUri() ? uri : encodedUri;
 
         validateURI(uri, path, parameters);
-        if (log.isTraceEnabled()) {
+        if (LOG.isTraceEnabled()) {
             // at trace level its okay to have parameters logged, that may contain passwords
-            log.trace("Creating endpoint uri=[{}], path=[{}], parameters=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path), parameters);
-        } else if (log.isDebugEnabled()) {
+            LOG.trace("Creating endpoint uri=[{}], path=[{}], parameters=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path), parameters);
+        } else if (LOG.isDebugEnabled()) {
             // but at debug level only output sanitized uris
-            log.debug("Creating endpoint uri=[{}], path=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path));
+            LOG.debug("Creating endpoint uri=[{}], path=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path));
         }
 
         // extract these global options and infer their value based on global/component level configuration
@@ -408,33 +412,33 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             }
             try {
                 final Registry registry = getCamelContext().getRegistry();
-                log.trace("Discovering optional component property configurer class for component: {}", name);
+                LOG.trace("Discovering optional component property configurer class for component: {}", name);
                 final String componentConfigurerName = name + "-component-configurer";
                 componentPropertyConfigurer = registry.lookupByNameAndType(componentConfigurerName, GeneratedPropertyConfigurer.class);
-                if (log.isDebugEnabled() && componentPropertyConfigurer != null) {
-                    log.debug("Discovered component property configurer using the Camel registry: {} -> {}", componentConfigurerName, componentPropertyConfigurer);
+                if (LOG.isDebugEnabled() && componentPropertyConfigurer != null) {
+                    LOG.debug("Discovered component property configurer using the Camel registry: {} -> {}", componentConfigurerName, componentPropertyConfigurer);
                 }
                 if (componentPropertyConfigurer == null) {
                     final Optional<Class<?>> clazz = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH)
                             .findOptionalClass(name + "-component", null);
                     clazz.ifPresent(c -> componentPropertyConfigurer = org.apache.camel.support.ObjectHelper.newInstance(c, GeneratedPropertyConfigurer.class));
-                    if (log.isDebugEnabled() && componentPropertyConfigurer != null) {
-                        log.debug("Discovered component property configurer using the FactoryFinder: {} -> {}", name, componentPropertyConfigurer);
+                    if (LOG.isDebugEnabled() && componentPropertyConfigurer != null) {
+                        LOG.debug("Discovered component property configurer using the FactoryFinder: {} -> {}", name, componentPropertyConfigurer);
                     }
                 }
 
-                log.trace("Discovering optional endpoint property configurer class for component: {}", name);
+                LOG.trace("Discovering optional endpoint property configurer class for component: {}", name);
                 final String endpointConfigurerName = name + "-endpoint-configurer";
                 endpointPropertyConfigurer = registry.lookupByNameAndType(endpointConfigurerName, GeneratedPropertyConfigurer.class);
-                if (log.isDebugEnabled() && endpointPropertyConfigurer != null) {
-                    log.debug("Discovered endpoint property configurer using the Camel registry: {} -> {}", endpointConfigurerName, endpointPropertyConfigurer);
+                if (LOG.isDebugEnabled() && endpointPropertyConfigurer != null) {
+                    LOG.debug("Discovered endpoint property configurer using the Camel registry: {} -> {}", endpointConfigurerName, endpointPropertyConfigurer);
                 }
                 if (endpointPropertyConfigurer == null) {
                     final Optional<Class<?>> clazz = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH)
                             .findOptionalClass(name + "-endpoint", null);
                     clazz.ifPresent(c -> endpointPropertyConfigurer = org.apache.camel.support.ObjectHelper.newInstance(c, GeneratedPropertyConfigurer.class));
-                    if (log.isDebugEnabled() && endpointPropertyConfigurer != null) {
-                        log.debug("Discovered endpoint property configurer using the FactoryFinder: {} -> {}", name, endpointPropertyConfigurer);
+                    if (LOG.isDebugEnabled() && endpointPropertyConfigurer != null) {
+                        LOG.debug("Discovered endpoint property configurer using the FactoryFinder: {} -> {}", name, endpointPropertyConfigurer);
                     }
                 }
             } catch (NoFactoryAvailableException e) {

@@ -45,23 +45,21 @@ import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
-import org.apache.camel.reifier.transformer.TransformerReifier;
-import org.apache.camel.reifier.validator.ValidatorReifier;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
-import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the context used to configure routes and the policies to use.
  */
 public abstract class AbstractModelCamelContext extends AbstractCamelContext implements ModelCamelContext, CatalogCamelContext {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractModelCamelContext.class);
 
     private final Model model = new DefaultModel(this);
 
@@ -289,7 +287,7 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
         for (Map.Entry<String, DataFormatDefinition> e : model.getDataFormats().entrySet()) {
             String id = e.getKey();
             DataFormatDefinition def = e.getValue();
-            log.debug("Creating Dataformat with id: {} and definition: {}", id, def);
+            LOG.debug("Creating Dataformat with id: {} and definition: {}", id, def);
             DataFormat df = DataFormatReifier.reifier(def).createDataFormat(this);
             addService(df, true);
             getRegistry().bind(id, df);

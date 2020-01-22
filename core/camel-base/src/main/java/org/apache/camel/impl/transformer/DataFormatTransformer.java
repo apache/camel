@@ -27,6 +27,8 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Transformer} implementation which leverages {@link DataFormat} to perform transformation.
@@ -34,6 +36,8 @@ import org.apache.camel.util.ObjectHelper;
  * {@see Transformer}
  */
 public class DataFormatTransformer extends Transformer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DataFormatTransformer.class);
 
     private DataFormat dataFormat;
     private String transformerString;
@@ -55,12 +59,12 @@ public class DataFormatTransformer extends Transformer {
         
         // Unmarshaling into Java Object
         if ((to == null || to.isJavaType()) && (from.equals(getFrom()) || from.getModel().equals(getModel()))) {
-            log.debug("Unmarshaling with '{}'", dataFormat);
+            LOG.debug("Unmarshaling with: {}", dataFormat);
             Object answer = dataFormat.unmarshal(exchange, message.getBody(InputStream.class));
             if (to != null && to.getName() != null) {
                 Class<?> toClass = context.getClassResolver().resolveClass(to.getName());
                 if (!toClass.isAssignableFrom(answer.getClass())) {
-                    log.debug("Converting to '{}'", toClass.getName());
+                    LOG.debug("Converting to: {}", toClass.getName());
                     answer = context.getTypeConverter().mandatoryConvertTo(toClass, answer);
                 }
             }
@@ -72,12 +76,12 @@ public class DataFormatTransformer extends Transformer {
             if (from != null && from.getName() != null) {
                 Class<?> fromClass = context.getClassResolver().resolveClass(from.getName());
                 if (!fromClass.isAssignableFrom(input.getClass())) {
-                    log.debug("Converting to '{}'", fromClass.getName());
+                    LOG.debug("Converting to: {}", fromClass.getName());
                     input = context.getTypeConverter().mandatoryConvertTo(fromClass, input);
                 }
             }
             OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
-            log.debug("Marshaling with '{}'", dataFormat);
+            LOG.debug("Marshaling with: {}", dataFormat);
             dataFormat.marshal(exchange, message.getBody(), osb);
             message.setBody(osb.build());
             

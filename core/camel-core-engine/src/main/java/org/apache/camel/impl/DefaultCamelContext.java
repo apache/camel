@@ -16,9 +16,8 @@
  */
 package org.apache.camel.impl;
 
-import java.util.Map;
-
 import javax.naming.Context;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -97,11 +96,15 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.DefaultRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the context used to configure routes and the policies to use.
  */
 public class DefaultCamelContext extends AbstractModelCamelContext {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContext.class);
 
     /**
      * Creates the {@link CamelContext} using {@link DefaultRegistry} as
@@ -270,7 +273,7 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
         PackageScanClassResolver packageScanClassResolver;
         // use WebSphere specific resolver if running on WebSphere
         if (WebSpherePackageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
-            log.info("Using WebSphere specific PackageScanClassResolver");
+            LOG.info("Using WebSphere specific PackageScanClassResolver");
             packageScanClassResolver = new WebSpherePackageScanClassResolver("META-INF/services/org/apache/camel/TypeConverter");
         } else {
             packageScanClassResolver = new DefaultPackageScanClassResolver();

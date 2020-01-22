@@ -160,7 +160,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         AsyncProducer producer = acquireProducer(endpoint);
         try {
             // now lets dispatch
-            log.debug(">>>> {} {}", endpoint, exchange);
+            LOG.debug(">>>> {} {}", endpoint, exchange);
 
             // set property which endpoint we send to
             exchange.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());
@@ -270,7 +270,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
 
             if (producer == null) {
                 if (isStopped()) {
-                    log.warn("Ignoring exchange sent after processor is stopped: {}", exchange);
+                    LOG.warn("Ignoring exchange sent after processor is stopped: {}", exchange);
                     callback.done(true);
                     return true;
                 } else {
@@ -327,7 +327,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     protected boolean asyncDispatchExchange(Endpoint endpoint, AsyncProducer producer,
                                             Processor resultProcessor, Exchange exchange, AsyncCallback callback) {
         // now lets dispatch
-        log.debug(">>>> {} {}", endpoint, exchange);
+        LOG.debug(">>>> {} {}", endpoint, exchange);
 
         // set property which endpoint we send to
         exchange.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());
@@ -371,7 +371,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     public int size() {
         int size = producers.size();
 
-        log.trace("size = {}", size);
+        LOG.trace("size = {}", size);
         return size;
     }
 
@@ -386,7 +386,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
             producers.stop();
             producers.start();
         } catch (Exception e) {
-            log.debug("Error restarting producers", e);
+            LOG.debug("Error restarting producers", e);
         }
         if (statistics != null) {
             statistics.clear();

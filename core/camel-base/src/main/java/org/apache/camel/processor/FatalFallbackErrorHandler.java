@@ -23,6 +23,8 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.support.builder.ExpressionBuilder.routeIdExpression;
 
@@ -35,6 +37,8 @@ import static org.apache.camel.support.builder.ExpressionBuilder.routeIdExpressi
  * cause new error handling to process and this then keep on failing with new exceptions in an endless loop.
  */
 public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements ErrorHandler {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FatalFallbackErrorHandler.class);
 
     private boolean deadLetterChannel;
 
@@ -60,7 +64,7 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
             exchange.setProperty(Exchange.FATAL_FALLBACK_ERROR_HANDLER, fatals);
         }
         if (fatals.contains(id)) {
-            log.warn("Circular error-handler detected at route: {} - breaking out processing Exchange: {}", id, exchange);
+            LOG.warn("Circular error-handler detected at route: {} - breaking out processing Exchange: {}", id, exchange);
             // mark this exchange as already been error handler handled (just by having this property)
             // the false value mean the caught exception will be kept on the exchange, causing the
             // exception to be propagated back to the caller, and to break out routing
@@ -158,15 +162,15 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
         // when using dead letter channel we only want to log at WARN level
         if (deadLetterChannel) {
             if (t != null) {
-                log.warn(message, t);
+                LOG.warn(message, t);
             } else {
-                log.warn(message);
+                LOG.warn(message);
             }
         } else {
             if (t != null) {
-                log.error(message, t);
+                LOG.error(message, t);
             } else {
-                log.error(message);
+                LOG.error(message);
             }
         }
     }

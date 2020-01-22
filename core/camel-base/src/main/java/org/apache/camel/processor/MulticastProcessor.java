@@ -63,6 +63,9 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.concurrent.AsyncCompletionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -73,6 +76,8 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @see Pipeline
  */
 public class MulticastProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MulticastProcessor.class);
 
     /**
      * Class that represent each step in the multicast route to do
@@ -343,7 +348,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
                         // Decide whether to continue with the multicast or not; similar logic to the Pipeline
                         // remember to test for stop on exception and aggregate before copying back results
-                        boolean continueProcessing = PipelineHelper.continueProcessing(exchange, "Multicast processing failed for number " + index, log);
+                        boolean continueProcessing = PipelineHelper.continueProcessing(exchange, "Multicast processing failed for number " + index, LOG);
                         if (stopOnException && !continueProcessing) {
                             if (exchange.getException() != null) {
                                 // wrap in exception to explain where it failed
@@ -503,7 +508,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
         // we are done so close the pairs iterator
         if (pairs instanceof Closeable) {
-            IOHelper.close((Closeable) pairs, "pairs", log);
+            IOHelper.close((Closeable) pairs, "pairs", LOG);
         }
 
         AggregationStrategy strategy = getAggregationStrategy(subExchange);
@@ -715,11 +720,11 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             // lookup cached first to reuse and preserve memory
             answer = errorHandlers.get(key);
             if (answer != null) {
-                log.trace("Using existing error handler for: {}", processor);
+                LOG.trace("Using existing error handler for: {}", processor);
                 return answer;
             }
 
-            log.trace("Creating error handler for: {}", processor);
+            LOG.trace("Creating error handler for: {}", processor);
             ErrorHandlerFactory builder = routeContext.getErrorHandlerFactory();
             // create error handler (create error handler directly to keep it light weight,
             // instead of using ProcessorDefinition.wrapInErrorHandler)

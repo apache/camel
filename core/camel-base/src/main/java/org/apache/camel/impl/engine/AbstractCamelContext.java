@@ -154,7 +154,10 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.function.ThrowingRunnable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+
 
 import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
 
@@ -162,6 +165,8 @@ import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
  * Represents the context used to configure routes and the policies to use.
  */
 public abstract class AbstractCamelContext extends ServiceSupport implements ExtendedCamelContext, Suspendable {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContext.class);
 
     public enum Initialization {
         Eager, Default, Lazy
@@ -518,8 +523,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         Component component = null;
         if (autoCreateComponents) {
             try {
-                if (log.isDebugEnabled()) {
-                    log.debug("Using ComponentResolver: {} to resolve component with name: {}", getComponentResolver(), name);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Using ComponentResolver: {} to resolve component with name: {}", getComponentResolver(), name);
                 }
 
                 // Mark the component as being created so we can detect circular
@@ -605,7 +610,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             try {
                 stopServices(oldComponent);
             } catch (Exception e) {
-                log.warn("Error stopping component " + oldComponent + ". This exception will be ignored.", e);
+                LOG.warn("Error stopping component " + oldComponent + ". This exception will be ignored.", e);
             }
             for (LifecycleStrategy strategy : lifecycleStrategies) {
                 strategy.onComponentRemove(componentName, oldComponent);
@@ -677,7 +682,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                     try {
                         stopServices(oldEndpoint);
                     } catch (Exception e) {
-                        log.warn("Error stopping endpoint " + oldEndpoint + ". This exception will be ignored.", e);
+                        LOG.warn("Error stopping endpoint " + oldEndpoint + ". This exception will be ignored.", e);
                     }
                     answer.add(oldEndpoint);
                     endpoints.remove(entry.getKey());
@@ -702,7 +707,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
         StringHelper.notEmpty(uri, "uri");
 
-        log.trace("Getting endpoint with uri: {}", uri);
+        LOG.trace("Getting endpoint with uri: {}", uri);
 
         // in case path has property placeholders then try to let property
         // component resolve those
@@ -718,7 +723,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         // parameters is not in the same order
         uri = normalizeEndpointUri(uri);
 
-        log.trace("Getting endpoint with raw uri: {}, normalized uri: {}", rawUri, uri);
+        LOG.trace("Getting endpoint with raw uri: {}, normalized uri: {}", rawUri, uri);
 
         Endpoint answer;
         String scheme = null;
@@ -731,12 +736,12 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 String[] splitURI = StringHelper.splitOnCharacter(uri, ":", 2);
                 if (splitURI[1] != null) {
                     scheme = splitURI[0];
-                    log.trace("Endpoint uri: {} is from component with name: {}", uri, scheme);
+                    LOG.trace("Endpoint uri: {} is from component with name: {}", uri, scheme);
                     Component component = getComponent(scheme);
 
                     // Ask the component to resolve the endpoint.
                     if (component != null) {
-                        log.trace("Creating endpoint from uri: {} using component: {}", uri, component);
+                        LOG.trace("Creating endpoint from uri: {} using component: {}", uri, component);
 
                         // Have the component create the endpoint if it can.
                         if (component.useRawUri()) {
@@ -745,8 +750,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                             answer = component.createEndpoint(uri);
                         }
 
-                        if (answer != null && log.isDebugEnabled()) {
-                            log.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
+                        if (answer != null && LOG.isDebugEnabled()) {
+                            LOG.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
                         }
                     }
                 }
@@ -754,7 +759,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 if (answer == null) {
                     // no component then try in registry and elsewhere
                     answer = createEndpoint(uri);
-                    log.trace("No component to create endpoint from uri: {} fallback lookup in registry -> {}", uri, answer);
+                    LOG.trace("No component to create endpoint from uri: {} fallback lookup in registry -> {}", uri, answer);
                 }
 
                 if (answer == null && splitURI[1] == null) {
@@ -769,7 +774,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
                     // Ask the component to resolve the endpoint.
                     if (component != null) {
-                        log.trace("Creating endpoint from uri: {} using component: {}", uri, component);
+                        LOG.trace("Creating endpoint from uri: {} using component: {}", uri, component);
 
                         // Have the component create the endpoint if it can.
                         if (component.useRawUri()) {
@@ -778,8 +783,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                             answer = component.createEndpoint(uri);
                         }
 
-                        if (answer != null && log.isDebugEnabled()) {
-                            log.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
+                        if (answer != null && LOG.isDebugEnabled()) {
+                            LOG.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
                         }
                     }
 
@@ -808,7 +813,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
         StringHelper.notEmpty(uri, "uri");
 
-        log.trace("Getting endpoint with uri: {} and parameters: {}", uri, parameters);
+        LOG.trace("Getting endpoint with uri: {} and parameters: {}", uri, parameters);
 
         // in case path has property placeholders then try to let property
         // component resolve those
@@ -824,7 +829,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         // parameters is not in the same order
         uri = normalizeEndpointUri(uri);
 
-        log.trace("Getting endpoint with raw uri: {}, normalized uri: {}", rawUri, uri);
+        LOG.trace("Getting endpoint with raw uri: {}, normalized uri: {}", rawUri, uri);
 
         Endpoint answer;
         String scheme = null;
@@ -837,12 +842,12 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 String[] splitURI = StringHelper.splitOnCharacter(uri, ":", 2);
                 if (splitURI[1] != null) {
                     scheme = splitURI[0];
-                    log.trace("Endpoint uri: {} is from component with name: {}", uri, scheme);
+                    LOG.trace("Endpoint uri: {} is from component with name: {}", uri, scheme);
                     Component component = getComponent(scheme);
 
                     // Ask the component to resolve the endpoint.
                     if (component != null) {
-                        log.trace("Creating endpoint from uri: {} using component: {}", uri, component);
+                        LOG.trace("Creating endpoint from uri: {} using component: {}", uri, component);
 
                         // Have the component create the endpoint if it can.
                         if (component.useRawUri()) {
@@ -851,8 +856,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                             answer = component.createEndpoint(uri, parameters);
                         }
 
-                        if (answer != null && log.isDebugEnabled()) {
-                            log.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
+                        if (answer != null && LOG.isDebugEnabled()) {
+                            LOG.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
                         }
                     }
                 }
@@ -860,7 +865,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 if (answer == null) {
                     // no component then try in registry and elsewhere
                     answer = createEndpoint(uri);
-                    log.trace("No component to create endpoint from uri: {} fallback lookup in registry -> {}", uri, answer);
+                    LOG.trace("No component to create endpoint from uri: {} fallback lookup in registry -> {}", uri, answer);
                 }
 
                 if (answer == null && splitURI[1] == null) {
@@ -875,7 +880,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
                     // Ask the component to resolve the endpoint.
                     if (component != null) {
-                        log.trace("Creating endpoint from uri: {} using component: {}", uri, component);
+                        LOG.trace("Creating endpoint from uri: {} using component: {}", uri, component);
 
                         // Have the component create the endpoint if it can.
                         if (component.useRawUri()) {
@@ -884,8 +889,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                             answer = component.createEndpoint(uri, parameters);
                         }
 
-                        if (answer != null && log.isDebugEnabled()) {
-                            log.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
+                        if (answer != null && LOG.isDebugEnabled()) {
+                            LOG.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
                         }
                     }
 
@@ -1107,7 +1112,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     @Override
     public void addRoutes(final RoutesBuilder builder) throws Exception {
         init();
-        log.debug("Adding routes from builder: {}", builder);
+        LOG.debug("Adding routes from builder: {}", builder);
         doWithDefinedClassLoader(() -> builder.addRoutesToCamelContext(AbstractCamelContext.this));
     }
 
@@ -1277,7 +1282,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                         }
                     }
                     for (Endpoint endpoint : toRemove) {
-                        log.debug("Removing: {} which was only in use by route: {}", endpoint, routeId);
+                        LOG.debug("Removing: {} which was only in use by route: {}", endpoint, routeId);
                         removeEndpoint(endpoint);
                     }
                 } catch (Exception e) {
@@ -1516,7 +1521,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
         ClassResolver resolver = getClassResolver();
         InputStream inputStream = resolver.loadResourceAsStream(path);
-        log.debug("Loading component JSON Schema for: {} using class resolver: {} -> {}", componentName, resolver, inputStream);
+        LOG.debug("Loading component JSON Schema for: {} using class resolver: {} -> {}", componentName, resolver, inputStream);
         if (inputStream != null) {
             try {
                 return IOHelper.loadText(inputStream);
@@ -1548,7 +1553,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
         ClassResolver resolver = getClassResolver();
         InputStream inputStream = resolver.loadResourceAsStream(path);
-        log.debug("Loading dataformat JSON Schema for: {} using class resolver: {} -> {}", dataFormatName, resolver, inputStream);
+        LOG.debug("Loading dataformat JSON Schema for: {} using class resolver: {} -> {}", dataFormatName, resolver, inputStream);
         if (inputStream != null) {
             try {
                 return IOHelper.loadText(inputStream);
@@ -1575,7 +1580,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
         ClassResolver resolver = getClassResolver();
         InputStream inputStream = resolver.loadResourceAsStream(path);
-        log.debug("Loading language JSON Schema for: {} using class resolver: {} -> {}", languageName, resolver, inputStream);
+        LOG.debug("Loading language JSON Schema for: {} using class resolver: {} -> {}", languageName, resolver, inputStream);
         if (inputStream != null) {
             try {
                 return IOHelper.loadText(inputStream);
@@ -1595,7 +1600,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             ClassResolver resolver = getClassResolver();
             InputStream inputStream = resolver.loadResourceAsStream(path);
             if (inputStream != null) {
-                log.debug("Loading eip JSON Schema for: {} using class resolver: {} -> {}", eipName, resolver, inputStream);
+                LOG.debug("Loading eip JSON Schema for: {} using class resolver: {} -> {}", eipName, resolver, inputStream);
                 try {
                     return IOHelper.loadText(inputStream);
                 } finally {
@@ -1652,7 +1657,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         if (text != null && text.contains(PropertiesComponent.PREFIX_TOKEN)) {
             // the parser will throw exception if property key was not found
             String answer = getPropertiesComponent().parseUri(text);
-            log.debug("Resolved text: {} -> {}", text, answer);
+            LOG.debug("Resolved text: {} -> {}", text, answer);
             return answer;
         }
 
@@ -2200,7 +2205,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     protected void doSuspend() throws Exception {
         EventHelper.notifyCamelContextSuspending(this);
 
-        log.info("Apache Camel {} (CamelContext: {}) is suspending", getVersion(), getName());
+        LOG.info("Apache Camel {} (CamelContext: {}) is suspending", getVersion(), getName());
         StopWatch watch = new StopWatch();
 
         // update list of started routes to be suspended
@@ -2240,8 +2245,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         }
 
         watch.taken();
-        if (log.isInfoEnabled()) {
-            log.info("Apache Camel {} (CamelContext: {}) is suspended in {}", getVersion(), getName(), TimeUtils.printDuration(watch.taken()));
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Apache Camel {} (CamelContext: {}) is suspended in {}", getVersion(), getName(), TimeUtils.printDuration(watch.taken()));
         }
 
         EventHelper.notifyCamelContextSuspended(this);
@@ -2252,7 +2257,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         try {
             EventHelper.notifyCamelContextResuming(this);
 
-            log.info("Apache Camel {} (CamelContext: {}) is resuming", getVersion(), getName());
+            LOG.info("Apache Camel {} (CamelContext: {}) is resuming", getVersion(), getName());
             StopWatch watch = new StopWatch();
 
             // start the suspended routes (do not check for route clashes, and
@@ -2269,9 +2274,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 }
             }
 
-            if (log.isInfoEnabled()) {
-                log.info("Resumed {} routes", suspendedRouteServices.size());
-                log.info("Apache Camel {} (CamelContext: {}) resumed in {}", getVersion(), getName(), TimeUtils.printDuration(watch.taken()));
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Resumed {} routes", suspendedRouteServices.size());
+                LOG.info("Apache Camel {} (CamelContext: {}) resumed in {}", getVersion(), getName(), TimeUtils.printDuration(watch.taken()));
             }
 
             // and clear the list as they have been resumed
@@ -2291,7 +2296,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             init();
             vetoStarted.set(false);
             stopWatch.restart();
-            log.info("Apache Camel {} (CamelContext: {}) is starting", getVersion(), getName());
+            LOG.info("Apache Camel {} (CamelContext: {}) is starting", getVersion(), getName());
 
             // Start the route controller
             ServiceHelper.startService(this.routeController);
@@ -2324,19 +2329,19 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                     if (veto.isRethrowException()) {
                         throw e;
                     } else {
-                        log.info("CamelContext ({}) vetoed to not start due {}", getName(), e.getMessage());
+                        LOG.info("CamelContext ({}) vetoed to not start due {}", getName(), e.getMessage());
                         // swallow exception and change state of this camel context
                         // to stopped
                         stop();
                         return;
                     }
                 } else {
-                    log.error("Error starting CamelContext (" + getName() + ") due to exception thrown: " + e.getMessage(), e);
+                    LOG.error("Error starting CamelContext (" + getName() + ") due to exception thrown: " + e.getMessage(), e);
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }
             }
 
-            if (log.isInfoEnabled()) {
+            if (LOG.isInfoEnabled()) {
                 // count how many routes are actually started
                 int started = 0;
                 for (Route route : getRoutes()) {
@@ -2348,12 +2353,12 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
                 final Collection<Route> controlledRoutes = getRouteController().getControlledRoutes();
                 if (controlledRoutes.isEmpty()) {
-                    log.info("Total {} routes, of which {} are started", getRoutes().size(), started);
+                    LOG.info("Total {} routes, of which {} are started", getRoutes().size(), started);
                 } else {
-                    log.info("Total {} routes, of which {} are started, and {} are managed by RouteController: {}", getRoutes().size(), started, controlledRoutes.size(),
+                    LOG.info("Total {} routes, of which {} are started, and {} are managed by RouteController: {}", getRoutes().size(), started, controlledRoutes.size(),
                              getRouteController().getClass().getName());
                 }
-                log.info("Apache Camel {} (CamelContext: {}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
+                LOG.info("Apache Camel {} (CamelContext: {}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
             }
 
             // okay the routes has been started so emit event that CamelContext
@@ -2442,8 +2447,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 if (value != null) {
                     String replaced = resolvePropertyPlaceholders(value);
                     if (!value.equals(replaced)) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Camel property with key {} replaced value from {} -> {}", key, value, replaced);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Camel property with key {} replaced value from {} -> {}", key, value, replaced);
                         }
                         entry.setValue(replaced);
                     }
@@ -2451,36 +2456,36 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             }
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Using ClassResolver={}, PackageScanClassResolver={}, ApplicationContextClassLoader={}, RouteController={}", getClassResolver(),
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Using ClassResolver={}, PackageScanClassResolver={}, ApplicationContextClassLoader={}, RouteController={}", getClassResolver(),
                       getPackageScanClassResolver(), getApplicationContextClassLoader(), getRouteController());
         }
 
         if (isStreamCaching()) {
-            log.info("StreamCaching is enabled on CamelContext: {}", getName());
+            LOG.info("StreamCaching is enabled on CamelContext: {}", getName());
         }
 
         if (isBacklogTracing()) {
             // tracing is added in the DefaultChannel so we can enable it on the fly
-            log.info("Backlog Tracing is enabled on CamelContext: {}", getName());
+            LOG.info("Backlog Tracing is enabled on CamelContext: {}", getName());
         }
         if (isTracing()) {
             // tracing is added in the DefaultChannel so we can enable it on the fly
-            log.info("Tracing is enabled on CamelContext: {}", getName());
+            LOG.info("Tracing is enabled on CamelContext: {}", getName());
         }
 
         if (isUseMDCLogging()) {
             // log if MDC has been enabled
             String pattern = getMDCLoggingKeysPattern();
             if (pattern != null) {
-                log.info("MDC logging (keys-pattern: {}) is enabled on CamelContext: {}", pattern, getName());
+                LOG.info("MDC logging (keys-pattern: {}) is enabled on CamelContext: {}", pattern, getName());
             } else {
-                log.info("MDC logging is enabled on CamelContext: {}", getName());
+                LOG.info("MDC logging is enabled on CamelContext: {}", getName());
             }
         }
 
         if (getDelayer() != null && getDelayer() > 0) {
-            log.info("Delayer is enabled with: {} ms. on CamelContext: {}", getDelayer(), getName());
+            LOG.info("Delayer is enabled with: {} ms. on CamelContext: {}", getDelayer(), getName());
         }
 
         // start management strategy before lifecycles are started
@@ -2496,10 +2501,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 strategy.onContextStart(this);
             } catch (VetoCamelContextStartException e) {
                 // okay we should not start Camel since it was vetoed
-                log.warn("Lifecycle strategy vetoed starting CamelContext ({}) due: {}", getName(), e.getMessage());
+                LOG.warn("Lifecycle strategy vetoed starting CamelContext ({}) due: {}", getName(), e.getMessage());
                 throw e;
             } catch (Exception e) {
-                log.warn("Lifecycle strategy " + strategy + " failed starting CamelContext ({}) due: {}", getName(), e.getMessage());
+                LOG.warn("Lifecycle strategy " + strategy + " failed starting CamelContext ({}) due: {}", getName(), e.getMessage());
                 throw e;
             }
         }
@@ -2560,7 +2565,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
         if (isUseDataType()) {
             // log if DataType has been enabled
-            log.info("Message DataType is enabled on CamelContext: {}", getName());
+            LOG.info("Message DataType is enabled on CamelContext: {}", getName());
         }
 
         // is there any stream caching enabled then log an info about this and
@@ -2571,30 +2576,30 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         } else {
             // log if stream caching is not in use as this can help people to
             // enable it if they use streams
-            log.info("StreamCaching is not in use. If using streams then its recommended to enable stream caching."
+            LOG.info("StreamCaching is not in use. If using streams then its recommended to enable stream caching."
                      + " See more details at http://camel.apache.org/stream-caching.html");
         }
 
         if (isAllowUseOriginalMessage()) {
-            log.debug("AllowUseOriginalMessage enabled because UseOriginalMessage is in use");
+            LOG.debug("AllowUseOriginalMessage enabled because UseOriginalMessage is in use");
         }
 
-        log.debug("Using HeadersMapFactory: {}", getHeadersMapFactory());
+        LOG.debug("Using HeadersMapFactory: {}", getHeadersMapFactory());
         if (!getHeadersMapFactory().isCaseInsensitive()) {
-            log.info("HeadersMapFactory: {} is case-sensitive which can cause problems for protocols such as HTTP based, which rely on case-insensitive headers.",
+            LOG.info("HeadersMapFactory: {} is case-sensitive which can cause problems for protocols such as HTTP based, which rely on case-insensitive headers.",
                      getHeadersMapFactory());
         }
 
         // lets log at INFO level if we are not using the default reactive executor
         if (!getReactiveExecutor().getClass().getSimpleName().equals("DefaultReactiveExecutor")) {
-            log.info("Using ReactiveExecutor: {}", getReactiveExecutor());
+            LOG.info("Using ReactiveExecutor: {}", getReactiveExecutor());
         } else {
-            log.debug("Using ReactiveExecutor: {}", getReactiveExecutor());
+            LOG.debug("Using ReactiveExecutor: {}", getReactiveExecutor());
         }
 
         // start routes
         if (doNotStartRoutesOnFirstStart) {
-            log.debug("Skip starting routes as CamelContext has been configured with autoStartup=false");
+            LOG.debug("Skip starting routes as CamelContext has been configured with autoStartup=false");
         }
 
         // invoke this logic to warmup the routes and if possible also start the routes
@@ -2604,12 +2609,12 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
         long cacheCounter = beanIntrospection != null ? beanIntrospection.getCachedClassesCounter() : 0;
         if (cacheCounter > 0) {
-            log.debug("Clearing BeanIntrospection cache with {} objects using during starting Camel", cacheCounter);
+            LOG.debug("Clearing BeanIntrospection cache with {} objects using during starting Camel", cacheCounter);
             beanIntrospection.clearCache();
         }
         long invokedCounter = beanIntrospection != null ? beanIntrospection.getInvokedCounter() : 0;
         if (invokedCounter > 0) {
-            log.debug("BeanIntrospection invoked {} times during starting Camel", invokedCounter);
+            LOG.debug("BeanIntrospection invoked {} times during starting Camel", invokedCounter);
         }
 
         // starting will continue in the start method
@@ -2628,7 +2633,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     @Override
     protected synchronized void doStop() throws Exception {
         stopWatch.restart();
-        log.info("Apache Camel {} (CamelContext: {}) is shutting down", getVersion(), getName());
+        LOG.info("Apache Camel {} (CamelContext: {}) is shutting down", getVersion(), getName());
         EventHelper.notifyCamelContextStopping(this);
         EventHelper.notifyCamelContextRoutesStopping(this);
 
@@ -2643,7 +2648,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 shutdownStrategy.shutdownForced(this, getRouteStartupOrder());
             }
         } catch (Throwable e) {
-            log.warn("Error occurred while shutting down routes. This exception will be ignored.", e);
+            LOG.warn("Error occurred while shutting down routes. This exception will be ignored.", e);
         }
 
         // shutdown await manager to trigger interrupt of blocked threads to
@@ -2654,7 +2659,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         for (BaseRouteService routeService : routeServices.values()) {
             boolean found = routeStartupOrder.stream().anyMatch(o -> o.getRoute().getId().equals(routeService.getId()));
             if (!found) {
-                log.debug("Route: {} which failed to startup will be stopped", routeService.getId());
+                LOG.debug("Route: {} which failed to startup will be stopped", routeService.getId());
                 routeStartupOrder.add(doPrepareRouteToBeStarted(routeService));
             }
         }
@@ -2712,7 +2717,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 strategy.onContextStop(this);
             }
         } catch (Throwable e) {
-            log.warn("Error occurred while stopping lifecycle strategies. This exception will be ignored.", e);
+            LOG.warn("Error occurred while stopping lifecycle strategies. This exception will be ignored.", e);
         }
 
         // shutdown services as late as possible (except type converters as they may be needed during the remainder of the stopping)
@@ -2743,9 +2748,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         // stop the lazy created so they can be re-created on restart
         forceStopLazyInitialization();
 
-        if (log.isInfoEnabled()) {
-            log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") uptime {}", getUptime());
-            log.info("Apache Camel {} (CamelContext: {}) is shutdown in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") uptime {}", getUptime());
+            LOG.info("Apache Camel {} (CamelContext: {}) is shutdown in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
         }
 
         // and clear start date
@@ -2826,7 +2831,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 ServiceHelper.stopAndShutdownServices((Collection<?>)service);
             }
         } catch (Throwable e) {
-            log.warn("Error occurred while shutting down service: " + service + ". This exception will be ignored.", e);
+            LOG.warn("Error occurred while shutting down service: " + service + ". This exception will be ignored.", e);
             // fire event
             EventHelper.notifyServiceStopFailure(this, service, e);
         }
@@ -2950,13 +2955,13 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     protected void logRouteState(Route route, String state) {
-        if (log.isInfoEnabled()) {
+        if (LOG.isInfoEnabled()) {
             if (route.getConsumer() != null) {
                 // use basic endpoint uri to not log verbose details or potential sensitive data
                 String uri = route.getEndpoint().getEndpointBaseUri();
-                log.info("Route: {} is {}, was consuming from: {}", route.getId(), state, uri);
+                LOG.info("Route: {} is {}, was consuming from: {}", route.getId(), state, uri);
             } else {
-                log.info("Route: {} is {}.", route.getId(), state);
+                LOG.info("Route: {} is {}.", route.getId(), state);
             }
         }
     }
@@ -3117,7 +3122,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             // consume messages to be routed
             BaseRouteService routeService = entry.getValue().getRouteService();
             try {
-                log.debug("Warming up route id: {} having autoStartup={}", routeService.getId(), autoStartup);
+                LOG.debug("Warming up route id: {} having autoStartup={}", routeService.getId(), autoStartup);
                 setupRoute.set(routeService.getRoute());
                 routeService.warmUp();
             } finally {
@@ -3146,7 +3151,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             // to not be auto started
             boolean autoStartup = routeService.isAutoStartup();
             if (addingRoute && !autoStartup) {
-                log.info("Skipping starting of route {} as its configured with autoStartup=false", routeService.getId());
+                LOG.info("Skipping starting of route {} as its configured with autoStartup=false", routeService.getId());
                 continue;
             }
 
@@ -3180,11 +3185,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 }
 
                 // start the consumer on the route
-                log.debug("Route: {} >>> {}", route.getId(), route);
+                LOG.debug("Route: {} >>> {}", route.getId(), route);
                 if (resumeOnly) {
-                    log.debug("Resuming consumer (order: {}) on route: {}", order, route.getId());
+                    LOG.debug("Resuming consumer (order: {}) on route: {}", order, route.getId());
                 } else {
-                    log.debug("Starting consumer (order: {}) on route: {}", order, route.getId());
+                    LOG.debug("Starting consumer (order: {}) on route: {}", order, route.getId());
                 }
 
                 if (resumeOnly && route.supportsSuspension()) {
@@ -3192,7 +3197,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                     ServiceHelper.resumeService(consumer);
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = endpoint.getEndpointBaseUri();
-                    log.info("Route: {} resumed and consuming from: {}", route.getId(), uri);
+                    LOG.info("Route: {} resumed and consuming from: {}", route.getId(), uri);
                 } else {
                     // when starting we should invoke the lifecycle strategies
                     for (LifecycleStrategy strategy : lifecycleStrategies) {
@@ -3208,7 +3213,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = endpoint.getEndpointBaseUri();
-                    log.info("Route: {} started and consuming from: {}", route.getId(), uri);
+                    LOG.info("Route: {} started and consuming from: {}", route.getId(), uri);
                 }
 
                 routeInputs.add(endpoint);
@@ -3551,7 +3556,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public void setupManagement(Map<String, Object> options) {
-        log.trace("Setting up management");
+        LOG.trace("Setting up management");
 
         ManagementStrategyFactory factory = null;
         if (!isJMXDisabled()) {
@@ -3564,13 +3569,13 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                     }
                 }
             } catch (Exception e) {
-                log.warn("Cannot create JmxManagementStrategyFactory. Will fallback and disable JMX.", e);
+                LOG.warn("Cannot create JmxManagementStrategyFactory. Will fallback and disable JMX.", e);
             }
         }
         if (factory == null) {
             factory = new DefaultManagementStrategyFactory();
         }
-        log.debug("Setting up management with factory: {}", factory);
+        LOG.debug("Setting up management with factory: {}", factory);
 
         // preserve any existing event notifiers that may have been already added
         List<EventNotifier> notifiers = null;
@@ -3586,7 +3591,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             LifecycleStrategy lifecycle = factory.createLifecycle(this);
             factory.setupManagement(this, strategy, lifecycle);
         } catch (Exception e) {
-            log.warn("Error setting up management due " + e.getMessage());
+            LOG.warn("Error setting up management due " + e.getMessage());
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }

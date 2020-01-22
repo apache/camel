@@ -26,6 +26,8 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link org.apache.camel.spi.RoutePolicy} which executes for a duration and then triggers an action.
@@ -33,6 +35,8 @@ import org.apache.camel.util.ObjectHelper;
  * This can be used to stop the route after it has processed a number of messages, or has been running for N seconds.
  */
 public class DurationRoutePolicy extends org.apache.camel.support.RoutePolicySupport implements CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DurationRoutePolicy.class);
 
     enum Action {
         STOP_CAMEL_CONTEXT, STOP_ROUTE, SUSPEND_ROUTE, SUSPEND_ALL_ROUTES
@@ -168,20 +172,20 @@ public class DurationRoutePolicy extends org.apache.camel.support.RoutePolicySup
                 }
 
                 if (action == Action.STOP_CAMEL_CONTEXT) {
-                    log.info("Stopping CamelContext {}", tail);
+                    LOG.info("Stopping CamelContext {}", tail);
                     camelContext.stop();
                 } else if (action == Action.STOP_ROUTE) {
-                    log.info("Stopping route: {}{}", routeId, tail);
+                    LOG.info("Stopping route: {}{}", routeId, tail);
                     camelContext.getRouteController().stopRoute(routeId);
                 } else if (action == Action.SUSPEND_ROUTE) {
-                    log.info("Suspending route: {}{}", routeId, tail);
+                    LOG.info("Suspending route: {}{}", routeId, tail);
                     camelContext.getRouteController().suspendRoute(routeId);
                 } else if (action == Action.SUSPEND_ALL_ROUTES) {
-                    log.info("Suspending all routes {}", tail);
+                    LOG.info("Suspending all routes {}", tail);
                     camelContext.suspend();
                 }
             } catch (Throwable e) {
-                log.warn("Error performing action: {}", action, e);
+                LOG.warn("Error performing action: {}", action, e);
             }
         };
     }

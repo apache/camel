@@ -60,12 +60,16 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.DoubleMap;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base implementation of a type converter registry used for
  * <a href="http://camel.apache.org/type-converter.html">type converters</a> in Camel.
  */
 public abstract class BaseTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry {
+
+    private static final Logger LOG = LoggerFactory.getLogger(BaseTypeConverterRegistry.class);
 
     public static final String META_INF_SERVICES_TYPE_CONVERTER_LOADER = "META-INF/services/org/apache/camel/TypeConverterLoader";
     public static final String META_INF_SERVICES_FALLBACK_TYPE_CONVERTER = "META-INF/services/org/apache/camel/FallbackTypeConverter";
@@ -189,11 +193,11 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     }
 
     protected Object doConvertTo(final Class<?> type, final Exchange exchange, final Object value, final boolean tryConvert) throws Exception {
-        boolean trace = log.isTraceEnabled();
+        boolean trace = LOG.isTraceEnabled();
         boolean statisticsEnabled = statistics.isStatisticsEnabled();
 
         if (trace) {
-            log.trace("Finding type converter to convert {} -> {} with value: {}",
+            LOG.trace("Finding type converter to convert {} -> {} with value: {}",
                     value == null ? "null" : value.getClass().getCanonicalName(),
                     type.getCanonicalName(), value);
         }
@@ -252,7 +256,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         TypeConverter converter = getOrFindTypeConverter(type, value.getClass());
         if (converter != null) {
             if (trace) {
-                log.trace("Using converter: {} to convert [{}=>{}]", converter, value.getClass(), type);
+                LOG.trace("Using converter: {} to convert [{}=>{}]", converter, value.getClass(), type);
             }
             Object rc;
             if (tryConvert) {
@@ -313,15 +317,15 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
                 // if fallback can promote then let it be promoted to a first class type converter
                 if (fallback.isCanPromote()) {
                     // add it as a known type converter since we found a fallback that could do it
-                    if (log.isDebugEnabled()) {
-                        log.debug("Promoting fallback type converter as a known type converter to convert from: {} to: {} for the fallback converter: {}",
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Promoting fallback type converter as a known type converter to convert from: {} to: {} for the fallback converter: {}",
                                 type.getCanonicalName(), value.getClass().getCanonicalName(), fallback.getFallbackTypeConverter());
                     }
                     addTypeConverter(type, value.getClass(), fallback.getFallbackTypeConverter());
                 }
 
-                if (log.isTraceEnabled()) {
-                    log.trace("Fallback type converter {} converted type from: {} to: {}",
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Fallback type converter {} converted type from: {} to: {}",
                             fallback.getFallbackTypeConverter(), type.getCanonicalName(), value.getClass().getCanonicalName());
                 }
 
@@ -342,7 +346,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
     @Override
     public void addTypeConverter(Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
-        log.trace("Adding type converter: {}", typeConverter);
+        LOG.trace("Adding type converter: {}", typeConverter);
         TypeConverter converter = typeMappings.get(toType, fromType);
         // only override it if its different
         // as race conditions can lead to many threads trying to promote the same fallback converter
@@ -355,10 +359,10 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             // if converter is not null then a duplicate exists
             if (converter != null) {
                 if (typeConverterExists == TypeConverterExists.Override) {
-                    CamelLogger logger = new CamelLogger(log, typeConverterExistsLoggingLevel);
+                    CamelLogger logger = new CamelLogger(LOG, typeConverterExistsLoggingLevel);
                     logger.log("Overriding type converter from: " + converter + " to: " + typeConverter);
                 } else if (typeConverterExists == TypeConverterExists.Ignore) {
-                    CamelLogger logger = new CamelLogger(log, typeConverterExistsLoggingLevel);
+                    CamelLogger logger = new CamelLogger(LOG, typeConverterExistsLoggingLevel);
                     logger.log("Ignoring duplicate type converter from: " + converter + " to: " + typeConverter);
                     add = false;
                 } else {
@@ -375,7 +379,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
     @Override
     public void addTypeConverters(TypeConverters typeConverters) {
-        log.trace("Adding type converters: {}", typeConverters);
+        LOG.trace("Adding type converters: {}", typeConverters);
         try {
             // scan the class for @Converter and load them into this registry
             TypeConvertersLoader loader = new TypeConvertersLoader(typeConverters);
@@ -387,13 +391,13 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
     @Override
     public boolean removeTypeConverter(Class<?> toType, Class<?> fromType) {
-        log.trace("Removing type converter from: {} to: {}", fromType, toType);
+        LOG.trace("Removing type converter from: {} to: {}", fromType, toType);
         return typeMappings.remove(toType, fromType);
     }
 
     @Override
     public void addFallbackTypeConverter(TypeConverter typeConverter, boolean canPromote) {
-        log.trace("Adding fallback type converter: {} which can promote: {}", typeConverter, canPromote);
+        LOG.trace("Adding fallback type converter: {} which can promote: {}", typeConverter, canPromote);
 
         // add in top of fallback as the toString() fallback will nearly always be able to convert
         // the last one which is add to the FallbackTypeConverter will be called at the first place
@@ -408,7 +412,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     }
 
     private void addCoreFallbackTypeConverterToList(TypeConverter typeConverter, boolean canPromote, List<FallbackTypeConverter> converters) {
-        log.trace("Adding core fallback type converter: {} which can promote: {}", typeConverter, canPromote);
+        LOG.trace("Adding core fallback type converter: {} which can promote: {}", typeConverter, canPromote);
 
         // add in top of fallback as the toString() fallback will nearly always be able to convert
         // the last one which is add to the FallbackTypeConverter will be called at the first place
@@ -523,7 +527,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     public void loadCoreAndFastTypeConverters() throws Exception {
         Collection<String> names = findTypeConverterLoaderClasses();
         for (String name : names) {
-            log.debug("Resolving TypeConverterLoader: {}", name);
+            LOG.debug("Resolving TypeConverterLoader: {}", name);
             Class clazz = null;
             for (ClassLoader loader : getResolver().getClassLoaders()) {
                 try {
@@ -541,7 +545,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             Object obj = getInjector().newInstance(clazz, false);
             if (obj instanceof TypeConverterLoader) {
                 TypeConverterLoader loader = (TypeConverterLoader) obj;
-                log.debug("TypeConverterLoader: {} loading converters", name);
+                LOG.debug("TypeConverterLoader: {} loading converters", name);
                 loader.load(this);
             }
         }
@@ -555,7 +559,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         Set<String> loaders = new LinkedHashSet<>();
         Collection<URL> loaderResources = getLoaderUrls();
         for (URL url : loaderResources) {
-            log.debug("Loading file {} to retrieve list of type converters, from url: {}", META_INF_SERVICES_TYPE_CONVERTER_LOADER, url);
+            LOG.debug("Loading file {} to retrieve list of type converters, from url: {}", META_INF_SERVICES_TYPE_CONVERTER_LOADER, url);
             BufferedReader reader = IOHelper.buffered(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
             String line;
             do {
@@ -605,7 +609,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         Set<String> loaders = new LinkedHashSet<>();
         Collection<URL> loaderResources = getFallbackUrls();
         for (URL url : loaderResources) {
-            log.debug("Loading file {} to retrieve list of fallback type converters, from url: {}", META_INF_SERVICES_FALLBACK_TYPE_CONVERTER, url);
+            LOG.debug("Loading file {} to retrieve list of fallback type converters, from url: {}", META_INF_SERVICES_FALLBACK_TYPE_CONVERTER, url);
             BufferedReader reader = IOHelper.buffered(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
             try {
                 reader.lines()
@@ -614,7 +618,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
                         .filter(l -> !l.startsWith("#"))
                         .forEach(loaders::add);
             } finally {
-                IOHelper.close(reader, url.toString(), log);
+                IOHelper.close(reader, url.toString(), LOG);
             }
         }
         return loaders;
@@ -635,7 +639,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected void loadFallbackTypeConverters() throws IOException, ClassNotFoundException {
         Collection<String> names = findFallbackTypeConverterClasses();
         for (String name : names) {
-            log.debug("Resolving FallbackTypeConverter: {}", name);
+            LOG.debug("Resolving FallbackTypeConverter: {}", name);
             Class clazz = getResolver().getClassLoaders().stream()
                     .map(cl -> ObjectHelper.loadClass(name, cl))
                     .filter(Objects::nonNull)
@@ -643,7 +647,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             Object obj = getInjector().newInstance(clazz, false);
             if (obj instanceof TypeConverter) {
                 TypeConverter fb = (TypeConverter) obj;
-                log.debug("Adding loaded FallbackTypeConverter: {}", name);
+                LOG.debug("Adding loaded FallbackTypeConverter: {}", name);
                 addFallbackTypeConverter(fb, false);
             }
         }
@@ -747,7 +751,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
                 }
             });
             info += String.format(" mappings[total=%s, misses=%s]", typeMappings.size(), misses);
-            log.info(info);
+            LOG.info(info);
         }
 
         typeMappings.clear();

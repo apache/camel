@@ -44,11 +44,15 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Processor for wire tapping exchanges to an endpoint destination.
  */
 public class WireTapProcessor extends AsyncProcessorSupport implements Traceable, ShutdownAware, IdAware, RouteIdAware, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(WireTapProcessor.class);
 
     private String id;
     private String routeId;
@@ -162,10 +166,10 @@ public class WireTapProcessor extends AsyncProcessorSupport implements Traceable
         // send the exchange to the destination using an executor service
         executorService.submit(() -> {
             taskCount.increment();
-            log.debug(">>>> (wiretap) {} {}", uri, wireTapExchange);
+            LOG.debug(">>>> (wiretap) {} {}", uri, wireTapExchange);
             AsyncProcessorConverterHelper.convert(processor).process(wireTapExchange, doneSync -> {
                 if (wireTapExchange.getException() != null) {
-                    log.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + uri + ". This exception will be ignored.", wireTapExchange.getException());
+                    LOG.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + uri + ". This exception will be ignored.", wireTapExchange.getException());
                 }
                 taskCount.decrement();
             });

@@ -29,11 +29,15 @@ import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A processor which catches exceptions.
  */
 public class CatchProcessor extends DelegateAsyncProcessor implements Traceable, IdAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CatchProcessor.class);
 
     private String id;
     private String routeId;
@@ -85,8 +89,8 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
             callback.done(true);
             return true;
         }
-        if (log.isTraceEnabled()) {
-            log.trace("This CatchProcessor catches the exception: {} caused by: {}", caught.getClass().getName(), e.getMessage());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("This CatchProcessor catches the exception: {} caused by: {}", caught.getClass().getName(), e.getMessage());
         }
 
         // store the last to endpoint as the failure endpoint
@@ -100,8 +104,8 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
         // and we should not be regarded as exhausted as we are in a try .. catch block
         exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
 
-        if (log.isDebugEnabled()) {
-            log.debug("The exception is handled for the exception: {} caused by: {}",
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("The exception is handled for the exception: {} caused by: {}",
                     new Object[]{e.getClass().getName(), e.getMessage()});
         }
 

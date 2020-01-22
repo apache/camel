@@ -31,11 +31,15 @@ import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default consumer useful for implementation inheritance.
  */
 public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultConsumer.class);
 
     private transient String consumerToString;
     private final Endpoint endpoint;
@@ -152,19 +156,19 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
 
     @Override
     protected void doInit() throws Exception {
-        log.debug("Init consumer: {}", this);
+        LOG.debug("Init consumer: {}", this);
         ServiceHelper.initService(processor);
     }
 
     @Override
     protected void doStop() throws Exception {
-        log.debug("Stopping consumer: {}", this);
+        LOG.debug("Stopping consumer: {}", this);
         ServiceHelper.stopService(processor);
     }
 
     @Override
     protected void doStart() throws Exception {
-        log.debug("Starting consumer: {}", this);
+        LOG.debug("Starting consumer: {}", this);
         ServiceHelper.startService(processor);
     }
 

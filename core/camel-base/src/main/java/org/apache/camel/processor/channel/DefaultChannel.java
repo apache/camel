@@ -42,6 +42,8 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DefaultChannel is the default {@link Channel}.
@@ -54,6 +56,8 @@ import org.apache.camel.support.service.ServiceHelper;
  * in the graph.
  */
 public class DefaultChannel extends CamelInternalProcessor implements Channel {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultChannel.class);
 
     private Processor errorHandler;
     // the next processor (non wrapped)
@@ -183,7 +187,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         // the definition to wrap should be the fine grained,
         // so if a child is set then use it, if not then its the original output used
         NamedNode targetOutputDef = childDefinition != null ? childDefinition : definition;
-        log.debug("Initialize channel for target: '{}'", targetOutputDef);
+        LOG.trace("Initialize channel for target: {}", targetOutputDef);
 
         // setup instrumentation processor for management (jmx)
         // this is later used in postInitChannel as we need to setup the error handler later as well
@@ -237,7 +241,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             // use the fine grained definition (eg the child if available). Its always possible to get back to the parent
             Processor wrapped = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, next);
             if (!(wrapped instanceof AsyncProcessor)) {
-                log.warn("Interceptor: " + strategy + " at: " + definition + " does not return an AsyncProcessor instance."
+                LOG.warn("Interceptor: " + strategy + " at: " + definition + " does not return an AsyncProcessor instance."
                         + " This causes the asynchronous routing engine to not work as optimal as possible."
                         + " See more details at the InterceptStrategy javadoc."
                         + " Camel will use a bridge to adapt the interceptor to the asynchronous routing engine,"

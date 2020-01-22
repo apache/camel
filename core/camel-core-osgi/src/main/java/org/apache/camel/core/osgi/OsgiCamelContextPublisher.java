@@ -33,12 +33,16 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.Version;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This {@link org.apache.camel.spi.EventNotifier} is in charge of registering
  * {@link CamelContext} in the OSGi registry
  */
 public class OsgiCamelContextPublisher extends EventNotifierSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(OsgiCamelContextPublisher.class);
 
     public static final String CONTEXT_SYMBOLIC_NAME_PROPERTY = "camel.context.symbolicname";
     public static final String CONTEXT_VERSION_PROPERTY = "camel.context.version";
@@ -62,13 +66,13 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
             CamelContext context = ((CamelContextEvent) event).getContext();
             ServiceRegistration<?> reg = registrations.remove(context);
             if (reg != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Unregistering CamelContext [{}] from OSGi registry", context.getName());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Unregistering CamelContext [{}] from OSGi registry", context.getName());
                 }
                 try {
                     reg.unregister();
                 } catch (Exception e) {
-                    log.warn("Error unregistering CamelContext [" + context.getName() + "] from OSGi registry. This exception will be ignored.", e);
+                    LOG.warn("Error unregistering CamelContext [" + context.getName() + "] from OSGi registry. This exception will be ignored.", e);
                 }
             }
         }
@@ -83,12 +87,12 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
     protected void doShutdown() throws Exception {
         // clear and unregister any left-over registration (which should not happen)
         if (!registrations.isEmpty()) {
-            log.warn("On shutdown there are {} registrations which was supposed to have been unregistered already. Will unregister these now.", registrations.size());
+            LOG.warn("On shutdown there are {} registrations which was supposed to have been unregistered already. Will unregister these now.", registrations.size());
             for (ServiceRegistration<?> reg : registrations.values()) {
                 try {
                     reg.unregister();
                 } catch (Exception e) {
-                    log.warn("Error unregistering from OSGi registry. This exception will be ignored.", e);
+                    LOG.warn("Error unregistering from OSGi registry. This exception will be ignored.", e);
                 }
             }
         }
@@ -114,7 +118,7 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
                 props.put(CONTEXT_MANAGEMENT_NAME_PROPERTY, managementName);
             }
 
-            log.debug("Registering CamelContext [{}] in OSGi registry", name);
+            LOG.debug("Registering CamelContext [{}] in OSGi registry", name);
 
             ServiceRegistration<?> reg = bundleContext.registerService(CamelContext.class.getName(), camelContext, props);
             if (reg != null) {

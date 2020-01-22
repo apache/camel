@@ -28,6 +28,8 @@ import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.apache.camel.spi.EventNotifier} which publishes the {@link EventObject} to some
@@ -39,6 +41,8 @@ import org.apache.camel.util.URISupport;
  */
 public class PublishEventNotifier extends EventNotifierSupport implements CamelContextAware {
 
+    private static final Logger LOG = LoggerFactory.getLogger(PublishEventNotifier.class);
+
     private CamelContext camelContext;
     private Endpoint endpoint;
     private String endpointUri;
@@ -48,13 +52,13 @@ public class PublishEventNotifier extends EventNotifierSupport implements CamelC
     public void notify(CamelEvent event) throws Exception {
         // only notify when we are started
         if (!isStarted()) {
-            log.debug("Cannot publish event as notifier is not started: {}", event);
+            LOG.debug("Cannot publish event as notifier is not started: {}", event);
             return;
         }
 
         // only notify when camel context is running
         if (!camelContext.getStatus().isStarted()) {
-            log.debug("Cannot publish event as CamelContext is not started: {}", event);
+            LOG.debug("Cannot publish event as CamelContext is not started: {}", event);
             return;
         }
 
