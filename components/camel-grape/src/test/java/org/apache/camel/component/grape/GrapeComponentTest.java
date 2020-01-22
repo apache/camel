@@ -16,13 +16,10 @@
  */
 package org.apache.camel.component.grape;
 
-import static org.apache.camel.ServiceStatus.Stopped;
-import static org.apache.camel.component.grape.GrapeComponent.grapeCamelContext;
-import static org.apache.camel.component.grape.GrapeEndpoint.loadPatches;
-
 import java.util.Arrays;
 import java.util.List;
 
+import groovy.lang.GroovyClassLoader;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
@@ -32,7 +29,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import groovy.lang.GroovyClassLoader;
+import static org.apache.camel.ServiceStatus.Stopped;
+import static org.apache.camel.component.grape.GrapeComponent.grapeCamelContext;
+import static org.apache.camel.component.grape.GrapeEndpoint.loadPatches;
 
 @Ignore("FIXME")
 public class GrapeComponentTest extends Assert {
