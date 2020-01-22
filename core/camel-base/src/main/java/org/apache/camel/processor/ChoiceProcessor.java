@@ -31,6 +31,9 @@ import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.service.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
@@ -40,6 +43,8 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * if none match.
  */
 public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ChoiceProcessor.class);
 
     private String id;
     private String routeId;
@@ -97,7 +102,7 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
             }
 
             // check for error if so we should break out
-            if (!continueProcessing(exchange, "so breaking out of choice", log)) {
+            if (!continueProcessing(exchange, "so breaking out of choice", LOG)) {
                 break;
             }
 

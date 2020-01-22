@@ -30,11 +30,15 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A logger for logging message throughput.
  */
 public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProcessor, IdAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ThroughputLogger.class);
 
     private String id;
     private String routeId;
@@ -209,7 +213,7 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
 
             logSchedulerService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ThroughputLogger");
             Runnable scheduledLogTask = new ScheduledLogTask();
-            log.info("Scheduling throughput logger to run every {} millis.", groupInterval);
+            LOG.info("Scheduling throughput logger to run every {} millis.", groupInterval);
             // must use fixed rate to have it trigger at every X interval
             logSchedulerService.scheduleAtFixedRate(scheduledLogTask, groupDelay, groupInterval, TimeUnit.MILLISECONDS);
         }
@@ -249,7 +253,7 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
         public void run() {
             // only run if CamelContext has been fully started
             if (!camelContext.getStatus().isStarted()) {
-                log.trace("ThroughputLogger cannot start because CamelContext({}) has not been started yet", camelContext.getName());
+                LOG.trace("ThroughputLogger cannot start because CamelContext({}) has not been started yet", camelContext.getName());
                 return;
             }
 

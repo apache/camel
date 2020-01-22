@@ -37,6 +37,8 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Processor for forwarding exchanges to a dynamic endpoint destination.
@@ -44,6 +46,8 @@ import org.apache.camel.util.URISupport;
  * @see org.apache.camel.processor.SendProcessor
  */
 public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SendDynamicProcessor.class);
 
     protected SendDynamicAware dynamicAware;
     protected CamelContext camelContext;
@@ -122,8 +126,8 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                         preAwareProcessor = dynamicAware.createPreProcessor(exchange, entry);
                         postAwareProcessor = dynamicAware.createPostProcessor(exchange, entry);
                         if (staticUri != null) {
-                            if (log.isDebugEnabled()) {
-                                log.debug("Optimising toD via SendDynamicAware component: {} to use static uri: {}", scheme, URISupport.sanitizeUri(staticUri));
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Optimising toD via SendDynamicAware component: {} to use static uri: {}", scheme, URISupport.sanitizeUri(staticUri));
                             }
                         }
                     }
@@ -135,8 +139,8 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                 endpoint = resolveEndpoint(exchange, recipient);
             }
             if (endpoint == null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Send dynamic evaluated as null so cannot send to any endpoint");
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Send dynamic evaluated as null so cannot send to any endpoint");
                 }
                 // no endpoint to send to, so ignore
                 callback.done(true);
@@ -145,8 +149,8 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
             destinationExchangePattern = EndpointHelper.resolveExchangePatternFromUrl(endpoint.getEndpointUri());
         } catch (Throwable e) {
             if (isIgnoreInvalidEndpoint()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
                 }
             } else {
                 exchange.setException(e);
@@ -174,7 +178,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                 c.done(true);
             }
 
-            log.debug(">>>> {} {}", endpoint, e);
+            LOG.debug(">>>> {} {}", endpoint, e);
             return p.process(target, new AsyncCallback() {
                 public void done(boolean doneSync) {
                     // restore previous MEP
@@ -254,7 +258,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
     protected void doStart() throws Exception {
         if (producerCache == null) {
             producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
-            log.debug("DynamicSendTo {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
+            LOG.debug("DynamicSendTo {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
         }
 
         if (isAllowOptimisedComponents() && uri != null) {
@@ -268,15 +272,15 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                     SendDynamicAwareResolver resolver = new SendDynamicAwareResolver();
                     dynamicAware = resolver.resolve(camelContext, scheme);
                     if (dynamicAware != null) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Detected SendDynamicAware component: {} optimising toD: {}", scheme, URISupport.sanitizeUri(uri));
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Detected SendDynamicAware component: {} optimising toD: {}", scheme, URISupport.sanitizeUri(uri));
                         }
                     }
                 }
             } catch (Throwable e) {
                 // ignore
-                if (log.isDebugEnabled()) {
-                    log.debug("Error creating optimised SendDynamicAwareResolver for uri: " + URISupport.sanitizeUri(uri)
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Error creating optimised SendDynamicAwareResolver for uri: " + URISupport.sanitizeUri(uri)
                         + " due to " + e.getMessage() + ". This exception is ignored", e);
                 }
             }

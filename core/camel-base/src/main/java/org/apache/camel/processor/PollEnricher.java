@@ -39,6 +39,9 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.EventDrivenPollingConsumer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
 
@@ -55,6 +58,8 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  * @see Enricher
  */
 public class PollEnricher extends AsyncProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PollEnricher.class);
 
     private CamelContext camelContext;
     private ConsumerCache consumerCache;
@@ -211,8 +216,8 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
             consumer = consumerCache.acquirePollingConsumer(endpoint);
         } catch (Throwable e) {
             if (isIgnoreInvalidEndpoint()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
                 }
             } else {
                 exchange.setException(e);
@@ -239,20 +244,20 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         Exchange resourceExchange;
         try {
             if (timeout < 0) {
-                log.debug("Consumer receive: {}", consumer);
+                LOG.debug("Consumer receive: {}", consumer);
                 resourceExchange = consumer.receive();
             } else if (timeout == 0) {
-                log.debug("Consumer receiveNoWait: {}", consumer);
+                LOG.debug("Consumer receiveNoWait: {}", consumer);
                 resourceExchange = consumer.receiveNoWait();
             } else {
-                log.debug("Consumer receive with timeout: {} ms. {}", timeout, consumer);
+                LOG.debug("Consumer receive with timeout: {} ms. {}", timeout, consumer);
                 resourceExchange = consumer.receive(timeout);
             }
 
             if (resourceExchange == null) {
-                log.debug("Consumer received no exchange");
+                LOG.debug("Consumer received no exchange");
             } else {
-                log.debug("Consumer received: {}", resourceExchange);
+                LOG.debug("Consumer received: {}", resourceExchange);
             }
         } catch (Exception e) {
             exchange.setException(new CamelExchangeException("Error during poll", exchange, e));
@@ -367,7 +372,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         if (consumerCache == null) {
             // create consumer cache if we use dynamic expressions for computing the endpoints to poll
             consumerCache = new DefaultConsumerCache(this, camelContext, cacheSize);
-            log.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
+            LOG.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
         }
         if (aggregationStrategy instanceof CamelContextAware) {
             ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);

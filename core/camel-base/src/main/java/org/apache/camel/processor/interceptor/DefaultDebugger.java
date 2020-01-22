@@ -284,7 +284,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
         try {
             breakpoint.beforeProcess(exchange, processor, definition);
         } catch (Throwable e) {
-            log.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
+            // ignore
         }
     }
 
@@ -292,7 +292,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
         try {
             breakpoint.afterProcess(exchange, processor, definition, timeTaken);
         } catch (Throwable e) {
-            log.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
+            // ignore
         }
     }
 
@@ -306,7 +306,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
         try {
             breakpoint.onEvent(exchange, event, definition);
         } catch (Throwable e) {
-            log.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
+            // ignore
         }
     }
 

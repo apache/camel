@@ -35,6 +35,9 @@ import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
@@ -43,6 +46,8 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * input to the next step, reusing the same message exchanges
  */
 public class Pipeline extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Pipeline.class);
 
     private final CamelContext camelContext;
     private List<AsyncProcessor> processors;
@@ -92,7 +97,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
 
     protected void doProcess(Exchange exchange, AsyncCallback callback, Iterator<AsyncProcessor> processors, boolean first) {
         if (continueRouting(processors, exchange)
-                && (first || continueProcessing(exchange, "so breaking out of pipeline", log))) {
+                && (first || continueProcessing(exchange, "so breaking out of pipeline", LOG))) {
 
             // prepare for next run
             ExchangeHelper.prepareOutToIn(exchange);
@@ -108,8 +113,8 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
             // logging nextExchange as it contains the exchange that might have altered the payload and since
             // we are logging the completion if will be confusing if we log the original instead
             // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
-            if (log.isTraceEnabled()) {
-                log.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
             }
 
             camelContext.getReactiveExecutor().schedule(callback);
@@ -121,16 +126,16 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
         if (stop != null) {
             boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
             if (doStop) {
-                if (log.isDebugEnabled()) {
-                    log.debug("ExchangeId: {} is marked to stop routing: {}", exchange.getExchangeId(), exchange);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("ExchangeId: {} is marked to stop routing: {}", exchange.getExchangeId(), exchange);
                 }
                 return false;
             }
         }
         // continue if there are more processors to route
         boolean answer = it.hasNext();
-        if (log.isTraceEnabled()) {
-            log.trace("ExchangeId: {} should continue routing: {}", exchange.getExchangeId(), answer);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("ExchangeId: {} should continue routing: {}", exchange.getExchangeId(), answer);
         }
         return answer;
     }

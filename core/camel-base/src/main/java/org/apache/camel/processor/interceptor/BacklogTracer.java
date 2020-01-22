@@ -96,9 +96,6 @@ public final class BacklogTracer extends ServiceSupport {
             filter = shouldTraceFilter(exchange);
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("Should trace evaluated {} -> pattern: {}, filter: {}", definition.getId(), pattern, filter);
-        }
         return pattern && filter;
     }
 

@@ -37,6 +37,9 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -47,6 +50,8 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * dependent on some dynamic expression.
  */
 public class RecipientList extends AsyncProcessorSupport implements IdAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RecipientList.class);
 
     private static final String IGNORE_DELIMITER_MARKER = "false";
     private final CamelContext camelContext;
@@ -193,7 +198,7 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
     protected void doStart() throws Exception {
         if (producerCache == null) {
             producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
-            log.debug("RecipientList {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
+            LOG.debug("RecipientList {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
         }
         ServiceHelper.startService(aggregationStrategy, producerCache);
     }

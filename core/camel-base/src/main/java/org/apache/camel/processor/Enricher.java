@@ -40,6 +40,9 @@ import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
 
@@ -56,6 +59,8 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  * @see PollEnricher
  */
 public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Enricher.class);
 
     private CamelContext camelContext;
     private String id;
@@ -177,8 +182,8 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
             producer = producerCache.acquireProducer(endpoint);
         } catch (Throwable e) {
             if (isIgnoreInvalidEndpoint()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
                 }
             } else {
                 exchange.setException(e);
@@ -249,13 +254,13 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         });
 
         if (!sync) {
-            log.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
+            LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
             // the remainder of the routing slip will be completed async
             // so we break out now, then the callback will be invoked which then continue routing from where we left here
             return false;
         }
 
-        log.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
+        LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
 
         if (watch != null) {
             // emit event that the exchange was sent to the endpoint
@@ -358,7 +363,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
 
         if (producerCache == null) {
             producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
-            log.debug("Enricher {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
+            LOG.debug("Enricher {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
         }
 
         ServiceHelper.startService(producerCache, aggregationStrategy);

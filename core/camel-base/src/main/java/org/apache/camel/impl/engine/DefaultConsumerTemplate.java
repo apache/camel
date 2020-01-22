@@ -29,6 +29,9 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
@@ -36,6 +39,8 @@ import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
  * Default implementation of {@link ConsumerTemplate}.
  */
 public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerTemplate {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultConsumerTemplate.class);
 
     private final CamelContext camelContext;
     private ConsumerCache consumerCache;
@@ -216,13 +221,13 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
             if (exchange.getUnitOfWork() == null) {
                 // handover completions and done them manually to ensure they are being executed
                 List<Synchronization> synchronizations = exchange.adapt(ExtendedExchange.class).handoverCompletions();
-                UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations, log);
+                UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations, LOG);
             } else {
                 // done the unit of work
                 exchange.getUnitOfWork().done(exchange);
             }
         } catch (Throwable e) {
-            log.warn("Exception occurred during done UnitOfWork for Exchange: " + exchange
+            LOG.warn("Exception occurred during done UnitOfWork for Exchange: " + exchange
                     + ". This exception will be ignored.", e);
         }
     }

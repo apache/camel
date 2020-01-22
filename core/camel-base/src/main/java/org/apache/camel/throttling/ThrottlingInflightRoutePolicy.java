@@ -34,6 +34,8 @@ import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A throttle based {@link org.apache.camel.spi.RoutePolicy} which is capable of dynamic
@@ -47,6 +49,8 @@ import org.apache.camel.util.ObjectHelper;
  * {@link #throttle(org.apache.camel.Route, org.apache.camel.Exchange)} when the current {@link Exchange} is done.
  */
 public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ThrottlingInflightRoutePolicy.class);
 
     public enum ThrottlingScope {
         Context, Route
@@ -108,8 +112,8 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
 
         int size = getSize(route, exchange);
         boolean stop = maxInflightExchanges > 0 && size > maxInflightExchanges;
-        if (log.isTraceEnabled()) {
-            log.trace("{} > 0 && {} > {} evaluated as {}", maxInflightExchanges, size, maxInflightExchanges, stop);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("{} > 0 && {} > {} evaluated as {}", maxInflightExchanges, size, maxInflightExchanges, stop);
         }
         if (stop) {
             try {
@@ -126,8 +130,8 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
         // so we need to ensure that we read the most current size and start the consumer if we are already to low
         size = getSize(route, exchange);
         boolean start = size <= resumeInflightExchanges;
-        if (log.isTraceEnabled()) {
-            log.trace("{} <= {} evaluated as {}", size, resumeInflightExchanges, start);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("{} <= {} evaluated as {}", size, resumeInflightExchanges, start);
         }
         if (start) {
             try {
@@ -225,7 +229,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     }
 
     protected CamelLogger createLogger() {
-        return new CamelLogger(log, getLoggingLevel());
+        return new CamelLogger(LOG, getLoggingLevel());
     }
 
     private int getSize(Route route, Exchange exchange) {

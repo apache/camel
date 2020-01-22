@@ -29,6 +29,8 @@ import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A useful base class for any processor which provides some kind of throttling
@@ -37,6 +39,8 @@ import org.apache.camel.util.ObjectHelper;
  * This implementation will block while waiting.
  */
 public abstract class DelayProcessorSupport extends DelegateAsyncProcessor implements ShutdownAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DelayProcessorSupport.class);
 
     private final CamelContext camelContext;
     private final ScheduledExecutorService executorService;
@@ -61,7 +65,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor imple
             // we are running now so decrement the counter
             delayedCount.decrementAndGet();
 
-            log.trace("Delayed task woke up and continues routing for exchangeId: {}", exchange.getExchangeId());
+            LOG.trace("Delayed task woke up and continues routing for exchangeId: {}", exchange.getExchangeId());
             if (!isRunAllowed()) {
                 exchange.setException(new RejectedExecutionException("Run is not allowed"));
             }
@@ -70,7 +74,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor imple
             DelayProcessorSupport.this.processor.process(exchange, new AsyncCallback() {
                 @Override
                 public void done(boolean doneSync) {
-                    log.trace("Delayed task done for exchangeId: {}", exchange.getExchangeId());
+                    LOG.trace("Delayed task done for exchangeId: {}", exchange.getExchangeId());
                     // we must done the callback from this async callback as well, to ensure callback is done correctly
                     // must invoke done on callback with false, as that is what the original caller would
                     // expect as we returned false in the process method
@@ -110,7 +114,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor imple
             delayedCount.incrementAndGet();
             ProcessCall call = new ProcessCall(exchange, callback);
             try {
-                log.trace("Scheduling delayed task to run in {} millis for exchangeId: {}",
+                LOG.trace("Scheduling delayed task to run in {} millis for exchangeId: {}",
                         delay, exchange.getExchangeId());
                 executorService.schedule(call, delay, TimeUnit.MILLISECONDS);
                 // tell Camel routing engine we continue routing asynchronous
@@ -122,7 +126,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor imple
                     if (!isRunAllowed()) {
                         exchange.setException(new RejectedExecutionException());
                     } else {
-                        log.debug("Scheduling rejected task, so letting caller run, delaying at first for {} millis for exchangeId: {}", delay, exchange.getExchangeId());
+                        LOG.debug("Scheduling rejected task, so letting caller run, delaying at first for {} millis for exchangeId: {}", delay, exchange.getExchangeId());
                         // let caller run by processing
                         try {
                             delay(delay, exchange);
@@ -156,7 +160,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor imple
             delay = calculateDelay(exchange);
             if (delay <= 0) {
                 // no delay then continue routing
-                log.trace("No delay for exchangeId: {}", exchange.getExchangeId());
+                LOG.trace("No delay for exchangeId: {}", exchange.getExchangeId());
                 return processor.process(exchange, callback);
             }
         } catch (Throwable e) {
@@ -226,8 +230,8 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor imple
      * Called when a sleep is interrupted; allows derived classes to handle this case differently
      */
     protected void handleSleepInterruptedException(InterruptedException e, Exchange exchange) throws InterruptedException {
-        if (log.isDebugEnabled()) {
-            log.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
         }
         Thread.currentThread().interrupt();
         throw e;
@@ -241,7 +245,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor imple
         if (delay <= 0) {
             return;
         }
-        log.trace("Sleeping for: {} millis", delay);
+        LOG.trace("Sleeping for: {} millis", delay);
         Thread.sleep(delay);
     }
 

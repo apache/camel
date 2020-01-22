@@ -24,11 +24,15 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Processor to handle do finally supporting asynchronous routing engine
  */
 public class FinallyProcessor extends DelegateAsyncProcessor implements Traceable, IdAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FinallyProcessor.class);
 
     private String id;
     private String routeId;
@@ -111,7 +115,7 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
                 if (!doneSync) {
                     // signal callback to continue routing async
                     ExchangeHelper.prepareOutToIn(exchange);
-                    log.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                    LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                 }
             } finally {
                 // callback must always be called

@@ -24,17 +24,20 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.PollingConsumer;
-import org.apache.camel.Producer;
 import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Cache containing created {@link org.apache.camel.Consumer}.
  */
 public class DefaultConsumerCache extends ServiceSupport implements ConsumerCache {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultConsumerCache.class);
 
     private final CamelContext camelContext;
     private final PollingConsumerServicePool consumers;
@@ -109,7 +112,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
             throw new RejectedExecutionException("CamelContext is stopped");
         }
 
-        log.debug("<<<< {}", endpoint);
+        LOG.debug("<<<< {}", endpoint);
         PollingConsumer consumer = null;
         try {
             consumer = acquirePollingConsumer(endpoint);
@@ -127,7 +130,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
             throw new RejectedExecutionException("CamelContext is stopped");
         }
 
-        log.debug("<<<< {}", endpoint);
+        LOG.debug("<<<< {}", endpoint);
         PollingConsumer consumer = null;
         try {
             consumer = acquirePollingConsumer(endpoint);
@@ -145,7 +148,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
             throw new RejectedExecutionException("CamelContext is stopped");
         }
 
-        log.debug("<<<< {}", endpoint);
+        LOG.debug("<<<< {}", endpoint);
         PollingConsumer consumer = null;
         try {
             consumer = acquirePollingConsumer(endpoint);
@@ -189,7 +192,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
     @Override
     public int size() {
         int size = consumers.size();
-        log.trace("size = {}", size);
+        LOG.trace("size = {}", size);
         return size;
     }
 
@@ -202,7 +205,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
             consumers.stop();
             consumers.start();
         } catch (Exception e) {
-            log.debug("Error restarting consumer pool", e);
+            LOG.debug("Error restarting consumer pool", e);
         }
         if (statistics != null) {
             statistics.clear();

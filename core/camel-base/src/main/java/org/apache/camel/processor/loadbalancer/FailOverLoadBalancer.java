@@ -26,8 +26,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Traceable;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This FailOverLoadBalancer will failover to use next processor when an exception occurred
@@ -37,6 +40,8 @@ import org.apache.camel.util.ObjectHelper;
  * pipeline to ensure it works the same and the async routing engine is flawless.
  */
 public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceable, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FailOverLoadBalancer.class);
 
     private final List<Class<?>> exceptions;
     private CamelContext camelContext;
@@ -141,7 +146,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
             }
         }
 
-        log.trace("Should failover: {} for exchangeId: {}", answer, exchange.getExchangeId());
+        LOG.trace("Should failover: {} for exchangeId: {}", answer, exchange.getExchangeId());
 
         return answer;
     }
@@ -151,7 +156,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         // determine if we can still run, or the camel context is forcing a shutdown
         boolean forceShutdown = camelContext.getShutdownStrategy().forceShutdown(this);
         if (forceShutdown) {
-            log.trace("Run not allowed as ShutdownStrategy is forcing shutting down");
+            LOG.trace("Run not allowed as ShutdownStrategy is forcing shutting down");
         }
         return !forceShutdown && super.isRunAllowed();
     }
@@ -186,7 +191,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
             } else if (isRoundRobin()) {
                 index = counter.updateAndGet(x -> ++x < processors.length ? x : 0);
             }
-            log.trace("Failover starting with endpoint index {}", index);
+            LOG.trace("Failover starting with endpoint index {}", index);
         }
 
         public void run() {
@@ -195,14 +200,14 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 lastGoodIndex.set(index);
                 // and copy the current result to original so it will contain this result of this eip
                 ExchangeHelper.copyResults(exchange, copy);
-                log.debug("Failover complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                LOG.debug("Failover complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                 callback.done(false);
                 return;
             }
 
             // can we still run
             if (!isRunAllowed()) {
-                log.trace("Run not allowed, will reject executing exchange: {}", exchange);
+                LOG.trace("Run not allowed, will reject executing exchange: {}", exchange);
                 if (exchange.getException() == null) {
                     exchange.setException(new RejectedExecutionException());
                 }
@@ -215,7 +220,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 attempts++;
                 // are we exhausted by attempts?
                 if (maximumFailoverAttempts > -1 && attempts > maximumFailoverAttempts) {
-                    log.debug("Breaking out of failover after {} failover attempts", attempts);
+                    LOG.debug("Breaking out of failover after {} failover attempts", attempts);
                     ExchangeHelper.copyResults(exchange, copy);
                     callback.done(false);
                     return;
@@ -228,12 +233,12 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
             if (index >= processors.length) {
                 // out of bounds
                 if (isRoundRobin()) {
-                    log.trace("Failover is round robin enabled and therefore starting from the first endpoint");
+                    LOG.trace("Failover is round robin enabled and therefore starting from the first endpoint");
                     index = 0;
                     counter.set(0);
                 } else {
                     // no more processors to try
-                    log.trace("Breaking out of failover as we reached the end of endpoints to use for failover");
+                    LOG.trace("Breaking out of failover as we reached the end of endpoints to use for failover");
                     ExchangeHelper.copyResults(exchange, copy);
                     callback.done(false);
                     return;
@@ -245,7 +250,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
             AsyncProcessor processor = processors[index];
 
             // process the exchange
-            log.debug("Processing failover at attempt {} for {}", attempts, copy);
+            LOG.debug("Processing failover at attempt {} for {}", attempts, copy);
             processor.process(copy, doneSync -> exchange.getContext().getReactiveExecutor().schedule(this::run));
         }
 

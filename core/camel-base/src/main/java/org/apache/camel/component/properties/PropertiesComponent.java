@@ -246,7 +246,7 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
             uri = uri + SUFFIX_TOKEN;
         }
 
-        log.trace("Parsing uri {}", uri);
+        LOG.trace("Parsing uri {}", uri);
         return propertiesParser.parseUri(uri, properties, defaultFallbackEnabled);
     }
 
@@ -598,11 +598,11 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
         List<PropertiesLocation> answer = new ArrayList<>();
 
         for (PropertiesLocation location : locations) {
-            log.trace("Parsing location: {}", location);
+            LOG.trace("Parsing location: {}", location);
 
             try {
                 String path = FilePathResolver.resolvePath(location.getPath());
-                log.debug("Parsed location: {}", path);
+                LOG.debug("Parsed location: {}", path);
                 if (ObjectHelper.isNotEmpty(path)) {
                     answer.add(new PropertiesLocation(
                         location.getResolver(),
@@ -614,7 +614,7 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
                 if (!ignoreMissingLocation && !location.isOptional()) {
                     throw e;
                 } else {
-                    log.debug("Ignored missing location: {}", location);
+                    LOG.debug("Ignored missing location: {}", location);
                 }
             }
         }
