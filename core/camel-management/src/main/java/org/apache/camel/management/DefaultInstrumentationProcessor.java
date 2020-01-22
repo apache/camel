@@ -68,24 +68,22 @@ public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         final StopWatch watch = before(exchange);
 
-        return processor.process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
+        // optimize to only create a new callback if needed
+        AsyncCallback ac = callback;
+        boolean newCallback = watch != null;
+        if (newCallback) {
+            ac = doneSync -> {
                 try {
                     // record end time
-                    if (watch != null) {
-                        after(exchange, watch);
-                    }
+                    after(exchange, watch);
                 } finally {
                     // and let the original callback know we are done as well
                     callback.done(doneSync);
                 }
-            }
+            };
+        }
 
-            @Override
-            public String toString() {
-                return DefaultInstrumentationProcessor.this.toString();
-            }
-        });
+        return processor.process(exchange, ac);
     }
 
     protected void beginTime(Exchange exchange) {
