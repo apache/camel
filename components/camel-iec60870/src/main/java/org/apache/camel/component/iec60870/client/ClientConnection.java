@@ -98,13 +98,14 @@ public class ClientConnection {
         this.client = new AutoConnectClient(this.host, this.port, this.options.getProtocolOptions(), factory, new StateListener() {
             @Override
             public void stateChanged(final State state, final Throwable e) {
-                if (state == State.CONNECTED)
+                if (state == State.CONNECTED) {
                     latch.countDown();
+                }
             }
         });
         try {
             latch.await(this.options.getConnectionTimeout(), TimeUnit.MILLISECONDS);
-        } catch (InterruptedException ex) {
+        } catch (InterruptedException e) {
             // ignore
         }
     }
