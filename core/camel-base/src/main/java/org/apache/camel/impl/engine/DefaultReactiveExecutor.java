@@ -131,10 +131,10 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                 executor.runningWorkers.incrementAndGet();
                 try {
                     for (;;) {
-                        final Runnable polled = queue.poll();
+                        final Runnable polled = queue.pollFirst();
                         if (polled == null) {
                             if (back != null && !back.isEmpty()) {
-                                queue = back.poll();
+                                queue = back.pollFirst();
                                 continue;
                             } else {
                                 break;
@@ -162,7 +162,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
         }
 
         boolean executeFromQueue() {
-            final Runnable polled = queue != null ? queue.poll() : null;
+            final Runnable polled = queue != null ? queue.pollFirst() : null;
             if (polled == null) {
                 return false;
             }
