@@ -7,7 +7,8 @@ import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.commons.text.CaseUtils;
 
 public class ComponentDslGenerator {
-    private static final String COMPONENT_DSL_PACKAGE_NAME = "org.apache.camel.builder.component";
+    public static final String COMPONENT_DSL_PACKAGE_NAME = "org.apache.camel.builder.component";
+
     private static final String BUILDER_FACTORY_SUFFIX = "BuilderFactory";
 
     private final ComponentModel componentModel;
