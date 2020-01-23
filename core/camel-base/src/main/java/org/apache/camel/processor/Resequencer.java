@@ -60,10 +60,10 @@ import org.slf4j.LoggerFactory;
  */
 public class Resequencer extends AsyncProcessorSupport implements Navigate<Processor>, IdAware, RouteIdAware, Traceable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Resequencer.class);
-
     public static final long DEFAULT_BATCH_TIMEOUT = 1000L;
     public static final int DEFAULT_BATCH_SIZE = 100;
+
+    private static final Logger LOG = LoggerFactory.getLogger(Resequencer.class);
 
     private String id;
     private String routeId;

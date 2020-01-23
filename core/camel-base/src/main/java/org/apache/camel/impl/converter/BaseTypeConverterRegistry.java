@@ -69,8 +69,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BaseTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BaseTypeConverterRegistry.class);
-
     public static final String META_INF_SERVICES_TYPE_CONVERTER_LOADER = "META-INF/services/org/apache/camel/TypeConverterLoader";
     public static final String META_INF_SERVICES_FALLBACK_TYPE_CONVERTER = "META-INF/services/org/apache/camel/FallbackTypeConverter";
 
@@ -80,6 +78,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             return (T) MISS_VALUE;
         }
     };
+
+    private static final Logger LOG = LoggerFactory.getLogger(BaseTypeConverterRegistry.class);
 
     protected final DoubleMap<Class<?>, Class<?>, TypeConverter> typeMappings = new DoubleMap<>(200);
     protected final List<TypeConverterLoader> typeConverterLoaders = new ArrayList<>();
