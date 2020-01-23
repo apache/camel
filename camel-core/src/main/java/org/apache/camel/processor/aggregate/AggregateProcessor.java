@@ -393,14 +393,13 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     private Object removeFlagCompleteAllGroups(Exchange exchange) {
         Object removedHeader = exchange.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS);
         Object removedProp = exchange.removeProperty(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS);
-
         return removedHeader == null ? removedProp: removedHeader;
     }
 
     private Boolean isCompleteAllGroups(Exchange exchange) {
-        Boolean retVal;
+        boolean retVal;
         retVal = exchange.getIn().getHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, false, boolean.class);
-        if(!Boolean.TRUE.equals(retVal)) {
+        if(!retVal) {
             // according to doc it is a property but it is sometimes read as header
             // some test don't fail because they use the header expression which contains a fallback to properties
             retVal = exchange.getProperty(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, false, boolean.class);
