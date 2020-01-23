@@ -760,7 +760,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     }
 
     @Override
-    public Boolean getInflightRepositoryExchangeEnabled() {
+    public Boolean getInflightRepositoryBrowseEnabled() {
         return inflightRepositoryBrowseEnabled;
     }
 
