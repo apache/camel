@@ -176,7 +176,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
             for (String componentName : componentNames) {
                 String json = loadComponentJson(jsonFiles, componentName);
                 if (json != null) {
-                    ComponentModel model = generateComponentModel(componentName, json);
+                    ComponentModel model = ComponentModel.generateComponentModelFromJsonString(json);
                     allModels.add(model);
                 }
             }
@@ -232,68 +232,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private static ComponentModel generateComponentModel(String componentName, String json) {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
-
-        ComponentModel component = new ComponentModel();
-        component.setScheme(getSafeValue("scheme", rows));
-        component.setSyntax(getSafeValue("syntax", rows));
-        component.setAlternativeSyntax(getSafeValue("alternativeSyntax", rows));
-        component.setTitle(getSafeValue("title", rows));
-        component.setDescription(getSafeValue("description", rows));
-        component.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
-        component.setLabel(getSafeValue("label", rows));
-        component.setDeprecated(getSafeValue("deprecated", rows));
-        component.setDeprecationNote(getSafeValue("deprecationNote", rows));
-        component.setConsumerOnly(getSafeValue("consumerOnly", rows));
-        component.setProducerOnly(getSafeValue("producerOnly", rows));
-        component.setJavaType(getSafeValue("javaType", rows));
-        component.setGroupId(getSafeValue("groupId", rows));
-        component.setArtifactId(getSafeValue("artifactId", rows));
-        component.setVersion(getSafeValue("version", rows));
-
-        rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
-        for (Map<String, String> row : rows) {
-            ComponentOptionModel option = new ComponentOptionModel();
-            option.setName(getSafeValue("name", row));
-            option.setDisplayName(getSafeValue("displayName", row));
-            option.setKind(getSafeValue("kind", row));
-            option.setType(getSafeValue("type", row));
-            option.setJavaType(getSafeValue("javaType", row));
-            option.setDeprecated(getSafeValue("deprecated", row));
-            option.setDeprecationNote(getSafeValue("deprecationNote", row));
-            option.setDescription(getSafeValue("description", row));
-            option.setDefaultValue(getSafeValue("defaultValue", row));
-            option.setEnums(getSafeValue("enum", row));
-            component.addComponentOption(option);
-        }
-
-        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
-        for (Map<String, String> row : rows) {
-            EndpointOptionModel option = new EndpointOptionModel();
-            option.setName(getSafeValue("name", row));
-            option.setDisplayName(getSafeValue("displayName", row));
-            option.setKind(getSafeValue("kind", row));
-            option.setGroup(getSafeValue("group", row));
-            option.setLabel(getSafeValue("label", row));
-            option.setRequired(getSafeValue("required", row));
-            option.setType(getSafeValue("type", row));
-            option.setJavaType(getSafeValue("javaType", row));
-            option.setEnums(getSafeValue("enum", row));
-            option.setPrefix(getSafeValue("prefix", row));
-            option.setMultiValue(getSafeValue("multiValue", row));
-            option.setDeprecated(getSafeValue("deprecated", row));
-            option.setDeprecationNote(getSafeValue("deprecationNote", row));
-            option.setDefaultValue(getSafeValue("defaultValue", row));
-            option.setDescription(getSafeValue("description", row));
-            option.setEnumValues(getSafeValue("enum", row));
-            component.addEndpointOption(option);
-        }
-
-        return component;
-    }
-
-    private void syncPomFile(final File pomFile, final Map<String, Map<String, Object>> componentsModels) throws MojoExecutionException {
+    private void syncPomFile(final File pomFile, final Map<String, ComponentModel> componentsModels) throws MojoExecutionException {
         final String startMainComponentImportMarker = "<!-- START: camel components import -->";
         final String endMainComponentImportMarker = "<!-- END: camel components import -->";
 
@@ -319,42 +258,10 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         }
     }
 
-    /*private void updatePomFile(final File file, final ComponentModel componentModel) throws MojoExecutionException {
-        final String componentArtifactId = componentModel.getArtifactId();
-
-        final String startComponentImportMarker = "<!-- START: " + componentArtifactId + " -->";
-        final String endComponentImportMarker = "<!-- END: " + componentArtifactId + " -->";
-
-        final String startMainComponentImportMarker = "<!-- START: camel components import -->";
-        final String endMainComponentImportMarker = "<!-- END: camel components import -->";
-
-        if (!file.exists()) {
-            throw new MojoExecutionException("Pom file " + file.getPath() + " does not exist");
-        }
-
-        try {
-            final String pomText = loadText(file);
-            final String existing = between(pomText, startComponentImportMarker, endComponentImportMarker);
-            if (existing == null) {
-                // we have no component import, let's add it then
-                final String before = Strings.before(pomText, startMainComponentImportMarker).trim();
-                final String after = Strings.after(pomText, endMainComponentImportMarker).trim();
-                final String existingImports = between(pomText, startMainComponentImportMarker, endMainComponentImportMarker).trim();
-
-                final String updatedPom = before + "\n\t\t" + startMainComponentImportMarker + "\n\t\t" + existingImports + "\n\t\t"
-                        + startComponentImportMarker + "\n" + generateDependencyModule(componentModel) + "\n\t\t" + endComponentImportMarker + "\n\t\t"
-                        + endMainComponentImportMarker + "\n\t\t" + after;
-                writeText(file, updatedPom);
-            }
-        } catch (IOException e) {
-            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
-        }
-    }*/
-
-    private String generateDependencyModule(final Map<String, Object> model) {
+    private String generateDependencyModule(final ComponentModel model) {
         return  "\t\t<dependency>\n" +
-                "\t\t\t<groupId>" + model.get("groupId") + "</groupId>\n" +
-                "\t\t\t<artifactId>" + model.get("artifactId") + "</artifactId>\n" +
+                "\t\t\t<groupId>" + model.getGroupId() + "</groupId>\n" +
+                "\t\t\t<artifactId>" + model.getArtifactId() + "</artifactId>\n" +
                 "\t\t\t<scope>provided</scope>\n" +
                 "\t\t\t<version>${project.version}</version>\n" +
                 "\t\t</dependency>\n";

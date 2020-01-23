@@ -74,13 +74,25 @@
 		<!-- START: camel components import -->
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-activemq</artifactId>
+			<scope>provided</scope>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-debezium-mysql</artifactId>
+			<scope>provided</scope>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-kafka</artifactId>
 			<scope>provided</scope>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-activemq</artifactId>
+			<artifactId>camel-salesforce</artifactId>
 			<scope>provided</scope>
 			<version>${project.version}</version>
 		</dependency>

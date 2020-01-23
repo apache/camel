@@ -3,6 +3,7 @@ package org.apache.camel.maven.packaging.dsl.component;
 import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -21,7 +22,7 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 public class ComponentDslMetadataGenerator {
 
-    private Map<String, Map<String, Object>> componentsCache;
+    private Map<String, ComponentModel> componentsCache;
     private Set<String> componentsDslFactories;
     private File metadataFile;
 
@@ -34,8 +35,8 @@ public class ComponentDslMetadataGenerator {
         this.metadataFile = metadataFile;
     }
 
-    private Map<String, Map<String, Object>> loadMetadataFileIntoMap(final File metadataFile) {
-        return gson.fromJson(loadJson(metadataFile), new TypeToken<Map<String, Map<String, Object>>>() {}.getType());
+    private Map<String, ComponentModel> loadMetadataFileIntoMap(final File metadataFile) {
+        return gson.fromJson(loadJson(metadataFile), new TypeToken<Map<String, ComponentModel>>() {}.getType());
     }
 
     private Set<String> loadComponentsFactoriesFromDir(final File componentDir) {
@@ -50,7 +51,14 @@ public class ComponentDslMetadataGenerator {
     }
 
     public void addComponentToMetadataAndSyncMetadataFile(final ComponentModel componentModel, final String key) {
-        componentsCache.put(key, convertComponentModelToMap(componentModel));
+        // first we remove unwanted endpoints options and component options
+        componentModel.setComponentOptions(Collections.emptyList());
+        componentModel.setEndpointOptions(Collections.emptyList());
+        componentModel.setEndpointPathOptions(Collections.emptyList());
+
+        // put the component into the cache
+        componentsCache.put(key, componentModel);
+
         syncMetadataFile();
     }
 
@@ -96,7 +104,7 @@ public class ComponentDslMetadataGenerator {
         }
     }
 
-    public Map<String, Map<String, Object>> getComponentCacheFromMemory() {
+    public Map<String, ComponentModel> getComponentCacheFromMemory() {
         return componentsCache;
     }
 
