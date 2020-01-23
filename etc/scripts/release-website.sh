@@ -29,7 +29,7 @@ COMPLIST=( "camel-spring:spring"
   "camel-blueprint:blueprint" )
 SITE_DIR="${DOWNLOAD}/websites/production/camel"
 WEBSITE_URL="https://svn.apache.org/repos/infra/websites/production/camel/content"
-
+GIT_WEBSITE_URL="https://gitbox.apache.org/repos/asf/camel-website.git"
 
 if [ -z "${VERSION}" -o ! -d "${DOWNLOAD}" ]
 then
@@ -60,9 +60,9 @@ done
 echo
 
 echo "################################################################################"
-echo "                           CHECKOUT SCHEMAS WEBSITE                             "
+echo "                           CHECKOUT CAMEL WEBSITE                               "
 echo "################################################################################"
-cd "${SITE_DIR}/${VERSION}" && svn co --non-interactive "${WEBSITE_URL}/schema/"
+cd "${SITE_DIR}/${VERSION}" && git clone "${GIT_WEBSITE_URL}"
 
 echo "################################################################################"
 echo "                           PUBLISH CAMEL SCHEMAS                                "
@@ -70,7 +70,7 @@ echo "##########################################################################
 for comp in ${COMPLIST[*]}; do
   src=${comp%:*}
   dest=${comp#*:}
-  cp ${DOWNLOAD}/${VERSION}/org/apache/camel/${src}/${VERSION}/*.xsd ${SITE_DIR}/${VERSION}/schema/${dest}/
+  cp ${DOWNLOAD}/${VERSION}/org/apache/camel/${src}/${VERSION}/*.xsd ${SITE_DIR}/${VERSION}/camel-website/static/schema/${dest}/
   # update_latest_released_schema("${SITE_DIR}/content/schema/${dest}/")
 done
 echo
@@ -98,10 +98,10 @@ echo "NOTE: Manual steps required! Check the schemas and manual files for new ar
 echo "      add them to the repository as required and commit your changes. This step"
 echo "      is intentionally not automated at this point to avoid errors."
 echo
-echo "cd ${SITE_DIR}/${VERSION}/schema/"
-echo "svn status"
-echo "svn add <schema-${VERSION}-qualifier>.xsd"
-echo "svn ci -m \"Uploading released schemas for camel-${VERSION}\""
+echo "cd ${SITE_DIR}/${VERSION}/camel-website/"
+echo "git status"
+echo "git add <schema-${VERSION}-qualifier>.xsd"
+echo "git commit -m \"Add XML schemas for camel-${VERSION}\""
 echo
 echo "cd ${SITE_DIR}/${VERSION}/manual/"
 echo "svn status"
