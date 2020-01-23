@@ -39,15 +39,15 @@ import org.slf4j.LoggerFactory;
 @ManagedResource(description = "Managed Hystrix EventStreamService")
 public class HystrixEventStreamService extends ServiceSupport implements StaticService, HystrixMetricsPoller.MetricsAsJsonPollerListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HystrixEventStreamService.class);
-
     public static final int METRICS_QUEUE_SIZE = 1000;
 
+    private static final Logger LOG = LoggerFactory.getLogger(HystrixEventStreamService.class);
     private int delay = 500;
     private int queueSize = METRICS_QUEUE_SIZE;
     private HystrixMetricsPoller poller;
     // use a queue with a upper limit to avoid storing too many metrics
     private Queue<String> queue;
+
 
     public int getDelay() {
         return delay;
