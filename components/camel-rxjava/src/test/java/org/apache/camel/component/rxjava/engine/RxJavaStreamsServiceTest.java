@@ -255,7 +255,7 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
         AtomicInteger value = new AtomicInteger(0);
         CountDownLatch latch = new CountDownLatch(1);
 
-        Flowable.just(1, 2, 3).flatMap(e -> crs.to("bean:hello", e)).map(e -> e.getOut()).map(e -> e.getBody(String.class))
+        Flowable.just(1, 2, 3).flatMap(e -> crs.to("bean:hello", e)).map(e -> e.getMessage()).map(e -> e.getBody(String.class))
             .doOnNext(res -> Assert.assertEquals("Hello " + value.incrementAndGet(), res)).doOnNext(res -> latch.countDown()).subscribe();
 
         Assert.assertTrue(latch.await(2, TimeUnit.SECONDS));
@@ -282,7 +282,7 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
         CountDownLatch latch = new CountDownLatch(1);
         Function<Object, Publisher<Exchange>> fun = crs.to("bean:hello");
 
-        Flowable.just(1, 2, 3).flatMap(fun::apply).map(e -> e.getOut()).map(e -> e.getBody(String.class))
+        Flowable.just(1, 2, 3).flatMap(fun::apply).map(e -> e.getMessage()).map(e -> e.getBody(String.class))
             .doOnNext(res -> Assert.assertEquals("Hello " + value.incrementAndGet(), res)).doOnNext(res -> latch.countDown()).subscribe();
 
         Assert.assertTrue(latch.await(2, TimeUnit.SECONDS));
