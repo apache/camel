@@ -22,15 +22,7 @@ mkdir -p ${DOWNLOAD} 2>/dev/null
 
 # The following component contain schema definitions that must be published
 RUNDIR=$(cd ${0%/*} && echo $PWD)
-COMPLIST=( "camel-spring:spring"
-  "camel-cxf:cxf"
-  "camel-osgi:osgi"
-  "camel-spring-integration:spring/integration"
-  "camel-spring-security:spring-security"
-  "camel-blueprint:blueprint" )
 DIST_REPO="https://dist.apache.org/repos/dist/release/camel/apache-camel/"
-SITE_DIR="/www/camel.apache.org"
-
 
 if [ -z "${VERSION}" -o ! -d "${DOWNLOAD}" ]
 then
