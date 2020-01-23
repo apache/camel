@@ -28,6 +28,7 @@ import org.apache.camel.component.soroushbot.utils.MultiQueueWithTopicThreadPool
  * thread pool size could be configured using {@link SoroushBotEndpoint#getConcurrentConsumers()}
  * this consumer support both Sync and Async processors.
  */
+//CHECKSTYLE:OFF
 public class SoroushBotMultiThreadConsumer extends SoroushBotAbstractConsumer {
 
     /**
