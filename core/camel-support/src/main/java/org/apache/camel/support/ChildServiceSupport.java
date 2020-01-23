@@ -23,11 +23,15 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class to control lifecycle for a set of child {@link org.apache.camel.Service}s.
  */
 public abstract class ChildServiceSupport extends ServiceSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ChildServiceSupport.class);
 
     protected volatile List<Service> childServices;
 
@@ -35,24 +39,30 @@ public abstract class ChildServiceSupport extends ServiceSupport {
     public void start() {
         synchronized (lock) {
             if (status == STARTED) {
+                LOG.trace("Service: {} already started", this);
                 return;
             }
             if (status == STARTING) {
+                LOG.trace("Service: {} already starting", this);
                 return;
             }
             try {
                 initService(childServices);
             } catch (Exception e) {
                 status = FAILED;
+                LOG.trace("Error while initializing service: " + this, e);
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
             try {
                 status = STARTING;
+                LOG.trace("Starting service: {}", this);
                 ServiceHelper.startService(childServices);
                 doStart();
                 status = STARTED;
+                LOG.trace("Service: {} started", this);
             } catch (Exception e) {
                 status = FAILED;
+                LOG.trace("Error while starting service: " + this, e);
                 ServiceHelper.stopService(childServices);
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
@@ -63,18 +73,23 @@ public abstract class ChildServiceSupport extends ServiceSupport {
     public void stop() {
         synchronized (lock) {
             if (status == STOPPED || status == SHUTTINGDOWN || status == SHUTDOWN) {
+                LOG.trace("Service: {} already stopped", this);
                 return;
             }
             if (status == STOPPING) {
+                LOG.trace("Service: {} already stopping", this);
                 return;
             }
             status = STOPPING;
+            LOG.trace("Stopping service: {}", this);
             try {
                 doStop();
                 ServiceHelper.stopService(childServices);
                 status = STOPPED;
+                LOG.trace("Service: {} stopped service", this);
             } catch (Exception e) {
                 status = FAILED;
+                LOG.trace("Error while stopping service: " + this, e);
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
@@ -84,19 +99,24 @@ public abstract class ChildServiceSupport extends ServiceSupport {
     public void shutdown() {
         synchronized (lock) {
             if (status == SHUTDOWN) {
+                LOG.trace("Service: {} already shut down", this);
                 return;
             }
             if (status == SHUTTINGDOWN) {
+                LOG.trace("Service: {} already shutting down", this);
                 return;
             }
             stop();
             status = SHUTDOWN;
+            LOG.trace("Shutting down service: {}", this);
             try {
                 doShutdown();
                 ServiceHelper.stopAndShutdownServices(childServices);
+                LOG.trace("Service: {} shut down", this);
                 status = SHUTDOWN;
             } catch (Exception e) {
                 status = FAILED;
+                LOG.trace("Error shutting down service: " + this, e);
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
