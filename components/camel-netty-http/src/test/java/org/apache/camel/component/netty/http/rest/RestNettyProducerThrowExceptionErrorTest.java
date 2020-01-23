@@ -35,7 +35,7 @@ public class RestNettyProducerThrowExceptionErrorTest extends BaseNettyTest {
         Exchange out = fluentTemplate.withHeader("id", "777").to("direct:start").request(Exchange.class);
         assertNotNull(out);
         assertFalse("Should not have thrown exception", out.isFailed());
-        assertEquals(500, out.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals(500, out.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
     }
 
     @Override
@@ -55,14 +55,12 @@ public class RestNettyProducerThrowExceptionErrorTest extends BaseNettyTest {
                         .get("{id}/basic")
                         .route()
                         .to("mock:input")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                if ("777".equals(id)) {
-                                    throw new IllegalArgumentException("Bad id number");
-                                }
-                                exchange.getOut().setBody(id + ";Donald Duck");
+                        .process(exchange -> {
+                            String id = exchange.getIn().getHeader("id", String.class);
+                            if ("777".equals(id)) {
+                                throw new IllegalArgumentException("Bad id number");
                             }
+                            exchange.getMessage().setBody(id + ";Donald Duck");
                         });
             }
         };

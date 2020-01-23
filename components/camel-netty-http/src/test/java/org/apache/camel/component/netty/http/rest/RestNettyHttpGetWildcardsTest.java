@@ -54,20 +54,16 @@ public class RestNettyHttpGetWildcardsTest extends BaseNettyTest {
                     .get("{id}/{query}")
                         .route()
                         .to("log:query")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Goofy");
-                            }
+                        .process(exchange -> {
+                            String id = exchange.getIn().getHeader("id", String.class);
+                            exchange.getMessage().setBody(id + ";Goofy");
                         }).endRest()
                     .get("{id}/basic")
                         .route()
                         .to("log:input")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Donald Duck");
-                            }
+                        .process(exchange -> {
+                            String id = exchange.getIn().getHeader("id", String.class);
+                            exchange.getMessage().setBody(id + ";Donald Duck");
                         }).endRest();
             }
         };

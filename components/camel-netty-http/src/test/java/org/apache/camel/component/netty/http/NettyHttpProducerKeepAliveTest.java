@@ -19,7 +19,6 @@ package org.apache.camel.component.netty.http;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -54,15 +53,10 @@ public class NettyHttpProducerKeepAliveTest extends BaseNettyTest {
     @Test
     public void testConnectionClosed() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-        Exchange ex = template.request("netty-http:http://localhost:{{port}}/bar?keepAlive=false", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Hello World");
-            }
-        });
+        Exchange ex = template.request("netty-http:http://localhost:{{port}}/bar?keepAlive=false", exchange -> exchange.getIn().setBody("Hello World"));
 
         assertMockEndpointsSatisfied();
-        assertEquals(HttpHeaderValues.CLOSE.toString(), ex.getOut().getHeader(HttpHeaderNames.CONNECTION.toString()));
+        assertEquals(HttpHeaderValues.CLOSE.toString(), ex.getMessage().getHeader(HttpHeaderNames.CONNECTION.toString()));
     }
 
 

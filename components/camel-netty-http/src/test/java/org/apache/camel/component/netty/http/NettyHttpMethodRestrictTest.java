@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.netty.http;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -61,12 +59,10 @@ public class NettyHttpMethodRestrictTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("netty-http:http://localhost:{{port}}/methodRestrict?httpMethodRestrict=POST").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        Message in = exchange.getIn();
-                        String request = in.getBody(String.class);
-                        exchange.getOut().setBody(request + " response");
-                    }
+                from("netty-http:http://localhost:{{port}}/methodRestrict?httpMethodRestrict=POST").process(exchange -> {
+                    Message in = exchange.getIn();
+                    String request = in.getBody(String.class);
+                    exchange.getMessage().setBody(request + " response");
                 });
             }
         };

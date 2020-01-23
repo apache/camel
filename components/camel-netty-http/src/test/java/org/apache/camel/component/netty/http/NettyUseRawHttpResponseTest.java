@@ -21,8 +21,6 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.NettyConverter;
 import org.junit.Test;
@@ -46,15 +44,12 @@ public class NettyUseRawHttpResponseTest extends BaseNettyTest {
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                     .to("mock:input")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            HttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK,
-                                                                                NettyConverter.toByteBuffer("Bye World".getBytes()));
-                            response.headers().set(HttpHeaderNames.CONTENT_LENGTH.toString(), 9);
+                    .process(exchange -> {
+                        HttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK,
+                                                                            NettyConverter.toByteBuffer("Bye World".getBytes()));
+                        response.headers().set(HttpHeaderNames.CONTENT_LENGTH.toString(), 9);
 
-                            exchange.getOut().setBody(response);
-                        }
+                        exchange.getMessage().setBody(response);
                     });
             }
         };

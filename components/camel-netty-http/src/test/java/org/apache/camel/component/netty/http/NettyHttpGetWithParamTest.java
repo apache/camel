@@ -69,9 +69,9 @@ public class NettyHttpGetWithParamTest extends BaseNettyTest {
             String uri = message.getHttpRequest().uri();
             assertTrue(uri.endsWith("one=uno&two=dos"));
 
-            exchange.getOut().setBody("Bye World");
-            exchange.getOut().setHeader("one", "eins");
-            exchange.getOut().setHeader("two", "zwei");
+            exchange.getMessage().setBody("Bye World");
+            exchange.getMessage().setHeader("one", "eins");
+            exchange.getMessage().setHeader("two", "zwei");
         }
     }
 

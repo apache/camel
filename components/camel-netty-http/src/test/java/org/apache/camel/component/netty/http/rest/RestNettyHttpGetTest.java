@@ -48,11 +48,9 @@ public class RestNettyHttpGetTest extends BaseNettyTest {
                     .get("{id}/basic")
                         .route()
                         .to("mock:input")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Donald Duck");
-                            }
+                        .process(exchange -> {
+                            String id = exchange.getIn().getHeader("id", String.class);
+                            exchange.getMessage().setBody(id + ";Donald Duck");
                         });
             }
         };

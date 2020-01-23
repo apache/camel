@@ -78,7 +78,7 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
         });
 
         assertNotNull(out);
-        String result = out.getOut().getBody(String.class);
+        String result = out.getMessage().getBody(String.class);
         assertNotNull(result);
         assertTrue("We should get the 404 response.", result.indexOf("404 Not Found") > 0);
 
