@@ -1,0 +1,32 @@
+{
+  "KafkaComponentBuilderFactory": {
+    "schema": "kafka",
+    "deprecationNote": "",
+    "producerOnly": "false",
+    "deprecated": "false",
+    "groupId": "org.apache.camel",
+    "description": "The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.",
+    "label": "messaging",
+    "title": "Kafka",
+    "version": "3.1.0-SNAPSHOT",
+    "javaType": "org.apache.camel.component.kafka.KafkaComponent",
+    "firstVersion": "2.13.0",
+    "artifactId": "camel-kafka",
+    "consumerOnly": "false"
+  },
+  "ActiveMQComponentBuilderFactory": {
+    "schema": "activemq",
+    "deprecationNote": "",
+    "producerOnly": "false",
+    "deprecated": "false",
+    "groupId": "org.apache.camel",
+    "description": "The activemq component allows messages to be sent to (or consumed from) Apache ActiveMQ. This component extends the Camel JMS component.",
+    "label": "messaging",
+    "title": "ActiveMQ",
+    "version": "3.1.0-SNAPSHOT",
+    "javaType": "org.apache.camel.component.activemq.ActiveMQComponent",
+    "firstVersion": "1.0.0",
+    "artifactId": "camel-activemq",
+    "consumerOnly": "false"
+  }
+}

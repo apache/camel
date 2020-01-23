@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.component;
 
-import org.apache.camel.builder.component.dsl.DebeziumMySqlComponentBuilderFactory;
 import org.apache.camel.builder.component.dsl.KafkaComponentBuilderFactory;
 
 public interface ComponentBuilderFactory

@@ -37,6 +37,10 @@ public class ComponentDslGenerator {
         return printClassAsString();
     }
 
+    public String getGeneratedClassName() {
+        return componentModel.getShortJavaType() + BUILDER_FACTORY_SUFFIX;
+    }
+
     private void generateJavaClass() {
         setPackage();
         setImports();
@@ -58,14 +62,13 @@ public class ComponentDslGenerator {
     }
 
     private void setBuilderFactoryClassNameAndType() {
-        final String className = componentModel.getShortJavaType() + BUILDER_FACTORY_SUFFIX;
-        javaClass.setName(className);
+        javaClass.setClass(false)
+                .setName(getGeneratedClassName());
 
     }
 
     private void setDslEntryMethod(final String innerBuilderInterfaceName, final String innerBuilderImplName) {
         javaClass.addMethod()
-                .setPublic()
                 .setStatic()
                 .setReturnType(innerBuilderInterfaceName)
                 .setName(CaseUtils.toCamelCase(componentModel.getScheme(), false, '-'))

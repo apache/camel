@@ -11,7 +11,11 @@ public final class DslHelper {
 
     public static List<File> loadAllJavaFiles(final File dir, final String targetJavaPackageName) {
         final File allComponentsDslEndpointFactory = new File(dir, targetJavaPackageName.replace('.', '/'));
-        final File[] files = allComponentsDslEndpointFactory.listFiles();
+        return loadAllJavaFiles(allComponentsDslEndpointFactory);
+    }
+
+    public static List<File> loadAllJavaFiles(final File dir) {
+        final File[] files = dir.listFiles();
 
         if (files == null) {
             return Collections.emptyList();

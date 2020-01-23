@@ -34,7 +34,7 @@ public class ComponentDslInnerBuilderGenerator {
 
     private void setClassNameAndType() {
         javaClass.setName(getClassName())
-                .setPublic()
+                .setPackagePrivate()
                 .setClass(false)
                 .extendSuperType("ComponentBuilder");
     }

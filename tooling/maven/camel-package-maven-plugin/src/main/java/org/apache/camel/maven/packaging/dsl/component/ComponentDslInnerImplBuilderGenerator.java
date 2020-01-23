@@ -38,7 +38,8 @@ public class ComponentDslInnerImplBuilderGenerator {
 
     private void setClassNameAndType() {
         javaClass.setName(getBuilderImplClassName())
-                .setStatic(true)
+                .setPackagePrivate()
+                .setStatic(false)
                 .extendSuperType("AbstractComponentBuilder")
                 .implementInterface(getBuilderClassName());
     }

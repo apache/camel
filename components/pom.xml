@@ -389,6 +389,7 @@
                             <goal>validate-components</goal>
                             <goal>generate-legal</goal>
                             <goal>generate-endpoint-dsl</goal>
+                            <goal>generate-component-dsl</goal>
                         </goals>
                         <phase>prepare-package</phase>
                     </execution>

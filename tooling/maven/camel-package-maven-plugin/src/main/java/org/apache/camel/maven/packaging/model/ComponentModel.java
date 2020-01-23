@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.camel.tooling.util.JSonSchemaHelper;
 import org.apache.camel.tooling.util.Strings;
@@ -104,6 +105,38 @@ public class ComponentModel {
 
         return new ComponentModel(kind, schema, syntax, alternativeSyntax, alternativeSchemes, title, description, firstVersion, label, deprecated, deprecationNote, consumerOnly, producerOnly, javaType,
                 groupId, artifactId, version, componentOptions, endpointPathOptions, endpointOptions);
+    }
+
+    public static ComponentModel generateComponentModelFromMap(final Map<String, Object> input) {
+        final String kind = castValueToStringFromMap(input, "kind");
+        final String schema = castValueToStringFromMap(input, "schema");
+        final String syntax = castValueToStringFromMap(input, "syntax");
+        final String alternativeSyntax = castValueToStringFromMap(input, "alternativeSyntax");
+        final String alternativeSchemes = castValueToStringFromMap(input, "alternativeSchemes");
+        final String title = castValueToStringFromMap(input, "title");
+        final String description = castValueToStringFromMap(input, "description");
+        final String firstVersion = castValueToStringFromMap(input, "firstVersion");
+        final String label = castValueToStringFromMap(input, "label");
+        final String deprecated = castValueToStringFromMap(input, "deprecated");
+        final String deprecationNote = castValueToStringFromMap(input, "deprecationNote");
+        final String consumerOnly = castValueToStringFromMap(input, "consumerOnly");
+        final String producerOnly = castValueToStringFromMap(input, "producerOnly");
+        final String javaType = castValueToStringFromMap(input, "javaType");
+        final String groupId = castValueToStringFromMap(input, "groupId");
+        final String artifactId = castValueToStringFromMap(input, "artifactId");
+        final String version = castValueToStringFromMap(input, "version");
+
+        // For now we don't support this in the map mode
+        final List<ComponentOptionModel> componentOptions = Collections.emptyList();
+        final List<EndpointOptionModel> endpointPathOptions = Collections.emptyList();
+        final List<EndpointOptionModel> endpointOptions = Collections.emptyList();
+
+        return new ComponentModel(kind, schema, syntax, alternativeSyntax, alternativeSchemes, title, description, firstVersion, label, deprecated, deprecationNote, consumerOnly, producerOnly, javaType,
+                groupId, artifactId, version, componentOptions, endpointPathOptions, endpointOptions);
+    }
+
+    private static String castValueToStringFromMap(final Map<String, Object> input, final String key) {
+        return input.get(key).toString();
     }
 
     public String getKind() {

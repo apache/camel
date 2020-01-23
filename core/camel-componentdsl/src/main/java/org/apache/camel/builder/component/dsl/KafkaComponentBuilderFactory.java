@@ -6,6 +6,7 @@ import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.kafka.KafkaComponent;
 
 public interface KafkaComponentBuilderFactory {
+
     static KafkaComponentBuilder kafka() {
         return new KafkaComponentBuilderImpl();
     }
@@ -68,9 +69,9 @@ public interface KafkaComponentBuilderFactory {
 
     class KafkaComponentBuilderImpl
             extends
-            AbstractComponentBuilder
+                AbstractComponentBuilder
             implements
-            KafkaComponentBuilder {
+                KafkaComponentBuilder {
         public KafkaComponentBuilderImpl() {
             super("kafka");
         }

@@ -3,56 +3,68 @@ package org.apache.camel.maven.packaging.dsl.component;
 import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.apache.camel.maven.packaging.dsl.DslHelper;
 import org.apache.camel.maven.packaging.model.ComponentModel;
-import org.apache.camel.tooling.util.JSonSchemaHelper;
-import org.apache.camel.tooling.util.PackageHelper;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.tooling.util.FileUtil;
+import org.apache.camel.tooling.util.Strings;
 
 import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 public class ComponentDslMetadataGenerator {
 
-    private static Map<String, Object> componentsList;
-    private final File componentDir;
-    private final String componentDslJavaPackage;
+    private Map<String, Map<String, Object>> componentsCache;
+    private Set<String> componentsDslFactories;
+    private File metadataFile;
 
-    private final Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public ComponentDslMetadataGenerator(final File componentDir, final File metadataFile, final String componentDslJavaPackage) {
-        this.componentDir = componentDir;
-        this.componentDslJavaPackage = componentDslJavaPackage;
+    public ComponentDslMetadataGenerator(final File componentDslDir, final File metadataFile) {
         // First: Load the content of the metadata file into memory
-        componentsList = loadMetadataFileIntoMap(metadataFile);
-        // Second: Read only the file names of the generated DSL classes in order to sync the metadata file
-        // If there is a component in the memory but not in the dir, then we shall delete it from the memory
+        componentsCache = loadMetadataFileIntoMap(metadataFile);
+        componentsDslFactories = loadComponentsFactoriesFromDir(componentDslDir);
+        this.metadataFile = metadataFile;
     }
 
-    private Map<String, Object> loadMetadataFileIntoMap(final File metadataFile) {
-        return gson.fromJson(loadJson(metadataFile), new TypeToken<Map<String, Object>>() {}.getType());
+    private Map<String, Map<String, Object>> loadMetadataFileIntoMap(final File metadataFile) {
+        return gson.fromJson(loadJson(metadataFile), new TypeToken<Map<String, Map<String, Object>>>() {}.getType());
+    }
+
+    private Set<String> loadComponentsFactoriesFromDir(final File componentDir) {
+        return DslHelper.loadAllJavaFiles(componentDir).stream()
+                .map(file -> Strings.before(file.getName(), "."))
+                .collect(Collectors.toSet());
+    }
+
+    public void syncMetadataFile() {
+        syncMetadataFileWithGeneratedDslComponents();
+        writeCacheIntoMetadataFile();
+    }
+
+    public void addComponentToMetadataAndSyncMetadataFile(final ComponentModel componentModel, final String key) {
+        componentsCache.put(key, convertComponentModelToMap(componentModel));
+        syncMetadataFile();
     }
 
     private void syncMetadataFileWithGeneratedDslComponents() {
-        final List<File> generatedComponents = DslHelper.loadAllJavaFiles(componentDir, componentDslJavaPackage);
-    }
+        // First: We check if there is a component in the memory but not in the dir, then we shall delete it from the memory
+        final Set<String> componentsNamesToRemoveFromCache = new HashSet<>();
+        componentsCache.forEach((componentFactoryName, value) -> {
+            if (!componentsDslFactories.contains(componentFactoryName)) {
+                // remove the component from the metadata
+                componentsNamesToRemoveFromCache.add(componentFactoryName);
+            }
+        });
 
-    public void addComponentToMetadataAndUpdateMetadataFile(final ComponentModel componentModel, final String key) {
-        // Third: Update component model into the hashmap memory
-        componentsList.put(key, convertComponentModelToMap(componentModel));
-        // Fourth: Write back into the hashmap memory
-        // Fifth: Return back the hashmap memory for the user to be used
-    }
-
-    public void addComponentToMetadata(final ComponentModel componentModel, final String key) {
-        componentsList.put(key, convertComponentModelToMap(componentModel));
+        componentsNamesToRemoveFromCache.forEach(componentFactoryName -> componentsCache.remove(componentFactoryName));
     }
 
     private Map<String, Object> convertComponentModelToMap(final ComponentModel componentModel) {
@@ -75,12 +87,17 @@ public class ComponentDslMetadataGenerator {
         return componentMap;
     }
 
-    public Map<String, Object> getComponentListFromMemory() {
-        return componentsList;
+    private void writeCacheIntoMetadataFile() {
+        final String jsonText = gson.toJson(componentsCache);
+        try {
+            FileUtil.updateFile(metadataFile.toPath(), jsonText);
+        } catch (IOException ex) {
+            throw new IOError(ex);
+        }
     }
 
-    public String toJson() {
-        return gson.toJson(componentsList);
+    public Map<String, Map<String, Object>> getComponentCacheFromMemory() {
+        return componentsCache;
     }
 
     private static String loadJson(File file) {
