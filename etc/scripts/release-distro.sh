@@ -39,11 +39,21 @@ wget -e robots=off --wait 3 --no-check-certificate \
  -r -np "--reject=html,txt" "--follow-tags=" \
  -P "${DOWNLOAD}/${VERSION}" -nH "--cut-dirs=3" "--level=1" "--ignore-length" \
  "https://repository.apache.org/content/repositories/releases/org/apache/camel/apache-camel/${VERSION}/"
+
+DOWNLOAD_LOCATION="${DOWNLOAD}/${VERSION}/org/apache/camel/apache-camel/${VERSION}"
+
 # Remove duplicate signature files
-rm ${DOWNLOAD}/dist/${VERSION}/*.asc.asc
-# Remove the signature check sum files
-rm ${DOWNLOAD}/dist/${VERSION}/*.asc.md5
-rm ${DOWNLOAD}/dist/${VERSION}/*.asc.sha1
+rm "${DOWNLOAD_LOCATION}/"*.asc.asc
+
+# Remove the md5 and sha1 check sum files
+rm "${DOWNLOAD_LOCATION}/"*.md5
+rm "${DOWNLOAD_LOCATION}/"*.sha1
+
+# Create sha512 check sum files
+cd "${DOWNLOAD_LOCATION}"
+for file in *.pom *.tar.gz *.zip; do
+  sha512sum "${file}" > "${file}.sha512"
+done
 
 echo "################################################################################"
 echo "                         RESET GROUP PERMISSIONS                                "
