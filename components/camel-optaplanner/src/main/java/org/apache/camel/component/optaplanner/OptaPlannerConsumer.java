@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * OptaPlanner component for Camel
  */
 public class OptaPlannerConsumer extends DefaultConsumer {
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(OptaPlannerConsumer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(OptaPlannerConsumer.class);
     private final OptaPlannerEndpoint endpoint;
     private final OptaPlannerConfiguration configuration;
     private final SolverEventListener<Object> listener;
@@ -54,7 +54,7 @@ public class OptaPlannerConsumer extends DefaultConsumer {
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
-            LOGGER.error("Error processing event ", e);
+            LOG.error("Error processing event ", e);
         }
     }
 

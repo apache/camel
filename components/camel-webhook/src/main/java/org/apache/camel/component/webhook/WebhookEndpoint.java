@@ -26,6 +26,8 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The webhook component allows other Camel components that can receive push notifications to expose
@@ -33,6 +35,8 @@ import org.apache.camel.support.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "webhook", title = "Webhook", syntax = "webhook:endpointUri", consumerOnly = true, label = "cloud", lenientProperties = true)
 public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(WebhookEndpoint.class);
 
     private WebhookCapableEndpoint delegateEndpoint;
 
@@ -75,7 +79,7 @@ public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint
         delegateEndpoint.setWebhookConfiguration(configuration);
 
         if (configuration.isWebhookAutoRegister()) {
-            log.info("Registering webhook for endpoint {}", delegateEndpoint);
+            LOG.info("Registering webhook for endpoint: {}", delegateEndpoint);
             delegateEndpoint.registerWebhook();
         }
     }
@@ -85,7 +89,7 @@ public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint
         super.doStop();
 
         if (configuration.isWebhookAutoRegister() && delegateEndpoint != null) {
-            log.info("Unregistering webhook for endpoint {}", delegateEndpoint);
+            LOG.info("Unregistering webhook for endpoint: {}", delegateEndpoint);
             delegateEndpoint.unregisterWebhook();
         }
     }

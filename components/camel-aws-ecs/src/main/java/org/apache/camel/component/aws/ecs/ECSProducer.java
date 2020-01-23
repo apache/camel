@@ -32,12 +32,16 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Producer which sends messages to the Amazon ECS Service
  * <a href="http://aws.amazon.com/ecs/">AWS ECS</a>
  */
 public class ECSProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ECSProducer.class);
 
     private transient String ecsProducerToString;
 
@@ -100,7 +104,7 @@ public class ECSProducer extends DefaultProducer {
         try {
             result = ecsClient.listClusters();
         } catch (AmazonServiceException ase) {
-            log.trace("List Clusters command returned the error code {}", ase.getErrorCode());
+            LOG.trace("List Clusters command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -117,7 +121,7 @@ public class ECSProducer extends DefaultProducer {
         try {
             result = ecsClient.createCluster(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Create Cluster command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Create Cluster command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -134,7 +138,7 @@ public class ECSProducer extends DefaultProducer {
         try {
             result = ecsClient.describeClusters(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Describe Clusters command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Describe Clusters command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -153,7 +157,7 @@ public class ECSProducer extends DefaultProducer {
         try {
             result = ecsClient.deleteCluster(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Delete Cluster command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Delete Cluster command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

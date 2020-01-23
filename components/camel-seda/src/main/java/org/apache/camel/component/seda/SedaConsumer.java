@@ -36,6 +36,8 @@ import org.apache.camel.support.EmptyAsyncCallback;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Consumer for the SEDA component.
@@ -44,6 +46,8 @@ import org.apache.camel.util.ObjectHelper;
  * the consumer may pickup a newly arrived messages and process it. That period is up till 1 second.
  */
 public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownAware, Suspendable {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SedaConsumer.class);
 
     private final AtomicInteger taskCount = new AtomicInteger();
     private volatile CountDownLatch latch;
@@ -84,7 +88,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
         // if we are suspending then we want to keep the thread running but just not route the exchange
         // this logic is only when we stop or shutdown the consumer
         if (suspendOnly) {
-            log.debug("Skip preparing to shutdown as consumer is being suspended");
+            LOG.debug("Skip preparing to shutdown as consumer is being suspended");
             return;
         }
 
@@ -93,7 +97,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
         forceShutdown = forced;
 
         if (latch != null) {
-            log.debug("Preparing to shutdown, waiting for {} consumer threads to complete.", latch.getCount());
+            LOG.debug("Preparing to shutdown, waiting for {} consumer threads to complete.", latch.getCount());
 
             // wait for all threads to end
             try {
@@ -127,7 +131,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
         } finally {
             taskCount.decrementAndGet();
             latch.countDown();
-            log.debug("Ending this polling consumer thread, there are still {} consumer threads left.", latch.getCount());
+            LOG.debug("Ending this polling consumer thread, there are still {} consumer threads left.", latch.getCount());
         }
     }
 
@@ -138,12 +142,12 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
 
             // do not poll during CamelContext is starting, as we should only poll when CamelContext is fully started
             if (getEndpoint().getCamelContext().getStatus().isStarting()) {
-                log.trace("CamelContext is starting so skip polling");
+                LOG.trace("CamelContext is starting so skip polling");
                 try {
                     // sleep at most 1 sec
                     Thread.sleep(Math.min(pollTimeout, 1000));
                 } catch (InterruptedException e) {
-                    log.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
+                    LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
                 }
                 continue;
             }
@@ -151,16 +155,16 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
             // do not poll if we are suspended or starting again after resuming
             if (isSuspending() || isSuspended() || isStarting()) {
                 if (shutdownPending && queue.isEmpty()) {
-                    log.trace("Consumer is suspended and shutdown is pending, so this consumer thread is breaking out because the task queue is empty.");
+                    LOG.trace("Consumer is suspended and shutdown is pending, so this consumer thread is breaking out because the task queue is empty.");
                     // we want to shutdown so break out if there queue is empty
                     break;
                 } else {
-                    log.trace("Consumer is suspended so skip polling");
+                    LOG.trace("Consumer is suspended so skip polling");
                     try {
                         // sleep at most 1 sec
                         Thread.sleep(Math.min(pollTimeout, 1000));
                     } catch (InterruptedException e) {
-                        log.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
+                        LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
                     }
                     continue;
                 }
@@ -170,8 +174,8 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
             try {
                 // use the end user configured poll timeout
                 exchange = queue.poll(pollTimeout, TimeUnit.MILLISECONDS);
-                if (log.isTraceEnabled()) {
-                    log.trace("Polled queue {} with timeout {} ms. -> {}", ObjectHelper.getIdentityHashCode(queue), pollTimeout, exchange);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Polled queue {} with timeout {} ms. -> {}", ObjectHelper.getIdentityHashCode(queue), pollTimeout, exchange);
                 }
                 if (exchange != null) {
                     try {
@@ -194,12 +198,12 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
                         getExceptionHandler().handleException("Error processing exchange", exchange, e);
                     }
                 } else if (shutdownPending && queue.isEmpty()) {
-                    log.trace("Shutdown is pending, so this consumer thread is breaking out because the task queue is empty.");
+                    LOG.trace("Shutdown is pending, so this consumer thread is breaking out because the task queue is empty.");
                     // we want to shutdown so break out if there queue is empty
                     break;
                 }
             } catch (InterruptedException e) {
-                log.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
+                LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
                 continue;
             } catch (Throwable e) {
                 if (exchange != null) {
@@ -246,8 +250,8 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
         // if there are multiple consumers then multicast to them
         if (getEndpoint().isMultipleConsumersSupported()) {
 
-            if (log.isTraceEnabled()) {
-                log.trace("Multicasting to {} consumers for Exchange: {}", size, exchange);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Multicasting to {} consumers for Exchange: {}", size, exchange);
             }
 
             // handover completions, as we need to done this when the multicast is done
@@ -260,7 +264,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
             // and use the asynchronous routing engine to support it
             mp.process(exchange, doneSync -> {
                 // done the uow on the completions
-                UnitOfWorkHelper.doneSynchronizations(exchange, completions, log);
+                UnitOfWorkHelper.doneSynchronizations(exchange, completions, LOG);
             });
         } else {
             // use the regular processor and use the asynchronous routing engine to support it
@@ -328,7 +332,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
 
         // submit needed number of tasks
         int tasks = poolSize - taskCount.get();
-        log.debug("Creating {} consumer tasks with poll timeout {} ms.", tasks, pollTimeout);
+        LOG.debug("Creating {} consumer tasks with poll timeout {} ms.", tasks, pollTimeout);
         for (int i = 0; i < tasks; i++) {
             executor.execute(this);
         }

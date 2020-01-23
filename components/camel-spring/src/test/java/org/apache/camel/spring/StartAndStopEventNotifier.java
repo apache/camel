@@ -22,12 +22,16 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.Type;
 import org.apache.camel.support.EventNotifierSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Event notifier which is executed just after Camel has been started,
  * and before Camel is being stopped.
  */
 public class StartAndStopEventNotifier extends EventNotifierSupport implements CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(StartAndStopEventNotifier.class);
 
     private CamelContext camelContext;
     private ProducerTemplate template;
@@ -48,12 +52,12 @@ public class StartAndStopEventNotifier extends EventNotifierSupport implements C
         // and then Camel is starting. And when all that is done this event
         // (CamelContextStartedEvent) is send
         if (event.getType() == Type.CamelContextStarted) {
-            log.info("Sending a message on startup...");
+            LOG.info("Sending a message on startup...");
             template.sendBody("file:target/startandstop/start.txt", "Starting");
         } else if (event.getType() == Type.CamelContextStopping) {
             // Note: there is also a CamelContextStoppedEvent which is send
             // afterwards, when Camel has been fully stopped.
-            log.info("Sending a message on stopping...");
+            LOG.info("Sending a message on stopping...");
             template.sendBody("file:target/startandstop/stop.txt", "Stopping");
         }
     }

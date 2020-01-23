@@ -53,8 +53,12 @@ import org.apache.camel.util.IOHelper;
 import org.apache.commons.pool.ObjectPool;
 import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NettyProducer extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(NettyProducer.class);
 
     private ChannelGroup allChannels;
     private CamelContext context;
@@ -69,7 +73,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         super(nettyEndpoint);
         this.configuration = configuration;
         this.context = this.getEndpoint().getCamelContext();
-        this.noReplyLogger = new CamelLogger(log, configuration.getNoReplyLogLevel());
+        this.noReplyLogger = new CamelLogger(LOG, configuration.getNoReplyLogLevel());
     }
 
     @Override
@@ -107,14 +111,14 @@ public class NettyProducer extends DefaultAsyncProducer {
             config.whenExhaustedAction = GenericObjectPool.WHEN_EXHAUSTED_FAIL;
             pool = new GenericObjectPool<>(new NettyProducerPoolableObjectFactory(), config);
 
-            if (log.isDebugEnabled()) {
-                log.debug("Created NettyProducer pool[maxActive={}, minIdle={}, maxIdle={}, minEvictableIdleTimeMillis={}] -> {}",
-                        new Object[]{config.maxActive, config.minIdle, config.maxIdle, config.minEvictableIdleTimeMillis, pool});
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Created NettyProducer pool[maxActive={}, minIdle={}, maxIdle={}, minEvictableIdleTimeMillis={}] -> {}",
+                        config.maxActive, config.minIdle, config.maxIdle, config.minEvictableIdleTimeMillis, pool);
             }
         } else {
             pool = new SharedSingletonObjectPool<>(new NettyProducerPoolableObjectFactory());
-            if (log.isDebugEnabled()) {
-                log.debug("Created NettyProducer shared singleton pool -> {}", pool);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Created NettyProducer shared singleton pool -> {}", pool);
             }
         }
 
@@ -163,9 +167,9 @@ public class NettyProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStop() throws Exception {
-        log.debug("Stopping producer at address: {}", configuration.getAddress());
+        LOG.debug("Stopping producer at address: {}", configuration.getAddress());
         // close all channels
-        log.trace("Closing {} channels", allChannels.size());
+        LOG.trace("Closing {} channels", allChannels.size());
         ChannelGroupFuture future = allChannels.close();
         future.awaitUninterruptibly();
 
@@ -178,8 +182,8 @@ public class NettyProducer extends DefaultAsyncProducer {
         ServiceHelper.stopService(correlationManager);
 
         if (pool != null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Stopping producer with channel pool[active={}, idle={}]", pool.getNumActive(), pool.getNumIdle());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Stopping producer with channel pool[active={}, idle={}]", pool.getNumActive(), pool.getNumIdle());
             }
             pool.close();
         }
@@ -220,8 +224,8 @@ public class NettyProducer extends DefaultAsyncProducer {
             exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(getConfiguration().getCharsetName()));
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("Pool[active={}, idle={}]", pool.getNumActive(), pool.getNumIdle());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Pool[active={}, idle={}]", pool.getNumActive(), pool.getNumIdle());
         }
 
         // get a channel from the pool
@@ -237,7 +241,7 @@ public class NettyProducer extends DefaultAsyncProducer {
                 }
                 channelFuture = pool.borrowObject();
                 if (channelFuture != null) {
-                    log.trace("Got channel request from pool {}", channelFuture);
+                    LOG.trace("Got channel request from pool {}", channelFuture);
                 }
             } else {
                 channelFuture = channel.newSucceededFuture();
@@ -283,7 +287,7 @@ public class NettyProducer extends DefaultAsyncProducer {
                     }
 
                     if (disconnect) {
-                        log.trace("Closing channel {} as routing the Exchange is done", channel);
+                        LOG.trace("Closing channel {} as routing the Exchange is done", channel);
                         NettyHelper.close(channel);
                     }
 
@@ -323,9 +327,9 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         // write body
-        NettyHelper.writeBodyAsync(log, channel, remoteAddress, body, exchange, new ChannelFutureListener() {
+        NettyHelper.writeBodyAsync(LOG, channel, remoteAddress, body, exchange, new ChannelFutureListener() {
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                log.trace("Operation complete {}", channelFuture);
+                LOG.trace("Operation complete {}", channelFuture);
                 if (!channelFuture.isSuccess()) {
                     // no success then exit, (any exception has been handled by ClientChannelHandler#exceptionCaught)
                     return;
@@ -350,8 +354,8 @@ public class NettyProducer extends DefaultAsyncProducer {
 
                         // we should not close if we are reusing the channel
                         if (!configuration.isReuseChannel() && disconnect) {
-                            if (log.isTraceEnabled()) {
-                                log.trace("Closing channel when complete at address: {}", getEndpoint().getConfiguration().getAddress());
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace("Closing channel when complete at address: {}", getEndpoint().getConfiguration().getAddress());
                             }
                             NettyHelper.close(channel);
                         }
@@ -424,9 +428,9 @@ public class NettyProducer extends DefaultAsyncProducer {
             // set the pipeline factory, which creates the pipeline for each newly created channels
             clientBootstrap.handler(pipelineFactory);
             answer = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-            if (log.isDebugEnabled()) {
-                log.debug("Created new TCP client bootstrap connecting to {}:{} with options: {}",
-                        new Object[]{configuration.getHost(), configuration.getPort(), clientBootstrap});
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Created new TCP client bootstrap connecting to {}:{} with options: {}",
+                        configuration.getHost(), configuration.getPort(), clientBootstrap);
             }
             return answer;
         } else {
@@ -468,8 +472,8 @@ public class NettyProducer extends DefaultAsyncProducer {
                 allChannels.add(channel);
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("Created new UDP client bootstrap connecting to {}:{} with options: {}",
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Created new UDP client bootstrap connecting to {}:{} with options: {}",
                         configuration.getHost(), configuration.getPort(), connectionlessClientBootstrap);
             }
             return answer;
@@ -478,8 +482,8 @@ public class NettyProducer extends DefaultAsyncProducer {
 
     protected void notifyChannelOpen(ChannelFuture channelFuture) throws Exception {
         // blocking for channel to be done
-        if (log.isTraceEnabled()) {
-            log.trace("Channel open finished with {}", channelFuture);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Channel open finished with {}", channelFuture);
         }
 
         if (channelFuture.isSuccess()) {
@@ -487,8 +491,8 @@ public class NettyProducer extends DefaultAsyncProducer {
             // to keep track of all channels in use
             allChannels.add(answer);
 
-            if (log.isDebugEnabled()) {
-                log.debug("Creating connector to address: {}", configuration.getAddress());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Creating connector to address: {}", configuration.getAddress());
             }
         }
     }
@@ -498,15 +502,15 @@ public class NettyProducer extends DefaultAsyncProducer {
         try {
             // Only put the connected channel back to the pool
             if (channel.isActive()) {
-                log.trace("Putting channel back to pool {}", channel);
+                LOG.trace("Putting channel back to pool {}", channel);
                 pool.returnObject(channelFuture);
             } else {
                 // and if its not active then invalidate it
-                log.trace("Invalidating channel from pool {}", channel);
+                LOG.trace("Invalidating channel from pool {}", channel);
                 pool.invalidateObject(channelFuture);
             }
         } catch (Exception e) {
-            log.warn("Error returning channel to pool " + channel + ". This exception will be ignored.", e);
+            LOG.warn("Error returning channel to pool " + channel + ". This exception will be ignored.", e);
         }
     }
 
@@ -560,13 +564,13 @@ public class NettyProducer extends DefaultAsyncProducer {
                     notifyChannelOpen(future);
                 }
             });
-            log.trace("Requested channel: {}", channelFuture);
+            LOG.trace("Requested channel: {}", channelFuture);
             return channelFuture;
         }
 
         @Override
         public void destroyObject(ChannelFuture channelFuture) throws Exception {
-            log.trace("Destroying channel request: {}", channelFuture);
+            LOG.trace("Destroying channel request: {}", channelFuture);
             channelFuture.addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {
@@ -584,29 +588,29 @@ public class NettyProducer extends DefaultAsyncProducer {
         public boolean validateObject(ChannelFuture channelFuture) {
             // we need a connecting or connected channel to be valid
             if (!channelFuture.isDone()) {
-                log.trace("Validating connecting channel request: {} -> {}", channelFuture, true);
+                LOG.trace("Validating connecting channel request: {} -> {}", channelFuture, true);
                 return true;
             }
             if (!channelFuture.isSuccess()) {
-                log.trace("Validating unsuccessful channel request: {} -> {}", channelFuture, false);
+                LOG.trace("Validating unsuccessful channel request: {} -> {}", channelFuture, false);
                 return false;
             }
             Channel channel = channelFuture.channel();
             boolean answer = channel.isActive();
-            log.trace("Validating channel: {} -> {}", channel, answer);
+            LOG.trace("Validating channel: {} -> {}", channel, answer);
             return answer;
         }
 
         @Override
         public void activateObject(ChannelFuture channelFuture) {
             // noop
-            log.trace("activateObject channel request: {}", channelFuture);
+            LOG.trace("activateObject channel request: {}", channelFuture);
         }
 
         @Override
         public void passivateObject(ChannelFuture channelFuture) {
             // noop
-            log.trace("passivateObject channel request: {}", channelFuture);
+            LOG.trace("passivateObject channel request: {}", channelFuture);
         }
     }
 

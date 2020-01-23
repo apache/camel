@@ -35,6 +35,8 @@ import org.apache.camel.component.sql.SqlConstants;
 import org.apache.camel.component.sql.SqlOutputType;
 import org.apache.camel.component.sql.SqlPrepareStatementStrategy;
 import org.apache.camel.support.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -50,6 +52,8 @@ import static org.springframework.jdbc.support.JdbcUtils.closeResultSet;
 import static org.springframework.jdbc.support.JdbcUtils.closeStatement;
 
 public class ElsqlProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ElsqlProducer.class);
 
     private final ElSql elSql;
     private final String elSqlName;
@@ -80,7 +84,7 @@ public class ElsqlProducer extends DefaultProducer {
 
         final SqlParameterSource param = new ElsqlSqlMapSource(exchange, data);
         final String sql = elSql.getSql(elSqlName, new SpringSqlParams(param));
-        log.debug("ElsqlProducer @{} using sql: {}", elSqlName, sql);
+        LOG.debug("ElsqlProducer @{} using sql: {}", elSqlName, sql);
 
         // special for processing stream list (batch not supported)
         final SqlOutputType outputType = getEndpoint().getOutputType();
@@ -89,7 +93,7 @@ public class ElsqlProducer extends DefaultProducer {
             return;
         }
 
-        log.trace("jdbcTemplate.execute: {}", sql);
+        LOG.trace("jdbcTemplate.execute: {}", sql);
         jdbcTemplate.execute(sql, param, new PreparedStatementCallback<Object>() {
             @Override
             public Object doInPreparedStatement(final PreparedStatement ps) throws SQLException, DataAccessException {
@@ -128,7 +132,7 @@ public class ElsqlProducer extends DefaultProducer {
                             exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
 
                             final SqlOutputType outputType = getEndpoint().getOutputType();
-                            log.trace("Got result list from query: {}, outputType={}", rs, outputType);
+                            LOG.trace("Got result list from query: {}, outputType={}", rs, outputType);
                             if (outputType == SqlOutputType.SelectList) {
                                 final List<?> data = getEndpoint().queryForList(rs, true);
                                 // for noop=true we still want to enrich with the row count header
@@ -194,7 +198,7 @@ public class ElsqlProducer extends DefaultProducer {
     }
 
     protected void processStreamList(final Exchange exchange, final PreparedStatementCreator statementCreator, final String preparedQuery) throws Exception {
-        log.trace("processStreamList: {}", preparedQuery);
+        LOG.trace("processStreamList: {}", preparedQuery);
 
         // do not use the jdbcTemplate as it will auto-close connection/ps/rs when exiting the execute method
         // and we need to keep the connection alive while routing and close it when the Exchange is done being routed

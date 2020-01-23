@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GenericFileOnCompletion<T> implements Synchronization {
 
-    private final Logger log = LoggerFactory.getLogger(GenericFileOnCompletion.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GenericFileOnCompletion.class);
     private GenericFileEndpoint<T> endpoint;
     private GenericFileOperations<T> operations;
     private GenericFileProcessStrategy<T> processStrategy;
@@ -72,7 +72,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     }
 
     protected void onCompletion(Exchange exchange) {
-        log.debug("Done processing file: {} using exchange: {}", file, exchange);
+        LOG.debug("Done processing file: {} using exchange: {}", file, exchange);
 
         // commit or rollback
         boolean committed = false;
@@ -123,7 +123,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
         handleDoneFile(exchange);
 
         try {
-            log.trace("Commit file strategy: {} for file: {}", processStrategy, file);
+            LOG.trace("Commit file strategy: {} for file: {}", processStrategy, file);
             processStrategy.commit(operations, endpoint, exchange, file);
         } catch (Exception e) {
             handleException("Error during commit", exchange, e);
@@ -140,8 +140,8 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     protected void processStrategyRollback(GenericFileProcessStrategy<T> processStrategy,
                                            Exchange exchange, GenericFile<T> file) {
 
-        if (log.isWarnEnabled()) {
-            log.warn("Rollback file strategy: {} for file: {}", processStrategy, file);
+        if (LOG.isWarnEnabled()) {
+            LOG.warn("Rollback file strategy: {} for file: {}", processStrategy, file);
         }
 
         // only delete done file if moveFailed option is enabled, as otherwise on rollback,
@@ -170,9 +170,9 @@ public class GenericFileOnCompletion<T> implements Synchronization {
                 try {
                     // delete done file
                     boolean deleted = operations.deleteFile(doneFileName);
-                    log.trace("Done file: {} was deleted: {}", doneFileName, deleted);
+                    LOG.trace("Done file: {} was deleted: {}", doneFileName, deleted);
                     if (!deleted) {
-                        log.warn("Done file: {} could not be deleted", doneFileName);
+                        LOG.warn("Done file: {} could not be deleted", doneFileName);
                     }
                 } catch (Exception e) {
                     handleException("Error deleting done file: " + doneFileName, exchange, e);

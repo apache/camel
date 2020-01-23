@@ -35,6 +35,8 @@ import javax.persistence.Query;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.PollingConsumerSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -42,6 +44,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 
 public class JpaPollingConsumer extends PollingConsumerSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JpaPollingConsumer.class);
 
     private transient ExecutorService executorService;
     private final EntityManagerFactory entityManagerFactory;
@@ -140,7 +144,7 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
                     query.setLockMode(getLockModeType());
                 }
 
-                log.trace("Created query {}", query);
+                LOG.trace("Created query {}", query);
 
                 Object answer;
 
@@ -156,14 +160,14 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
                     }
 
                     // commit
-                    log.debug("Flushing EntityManager");
+                    LOG.debug("Flushing EntityManager");
                     entityManager.flush();
 
                     // must clear after flush
                     entityManager.clear();
 
                 } catch (PersistenceException e) {
-                    log.info("Disposing EntityManager {} on {} due to coming transaction rollback", entityManager, this);
+                    LOG.info("Disposing EntityManager {} on {} due to coming transaction rollback", entityManager, this);
 
                     entityManager.close();
 

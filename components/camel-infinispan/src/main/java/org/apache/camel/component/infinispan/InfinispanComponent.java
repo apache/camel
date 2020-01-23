@@ -27,9 +27,14 @@ import org.apache.camel.support.DefaultComponent;
 import org.infinispan.commons.api.BasicCacheContainer;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component("infinispan")
 public class InfinispanComponent extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InfinispanComponent.class);
+
     @Metadata(description = "Default configuration")
     private InfinispanConfiguration configuration;
     @Metadata(description = "Default Cache container")
@@ -81,7 +86,7 @@ public class InfinispanComponent extends DefaultComponent {
                     new org.infinispan.configuration.cache.ConfigurationBuilder().build());
 
                 setCacheFromComponent = false;
-                log.debug("Default cacheContainer has been created");
+                LOG.debug("Default cacheContainer has been created");
             }
             conf.setCacheContainer(cacheContainer);
 

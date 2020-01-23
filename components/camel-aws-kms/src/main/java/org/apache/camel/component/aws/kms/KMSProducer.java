@@ -36,12 +36,16 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Producer which sends messages to the Amazon KMS Service
  * <a href="http://aws.amazon.com/kms/">AWS KMS</a>
  */
 public class KMSProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(KMSProducer.class);
 
     private transient String kmsProducerToString;
 
@@ -114,7 +118,7 @@ public class KMSProducer extends DefaultProducer {
         try {
             result = kmsClient.listKeys(request);
         } catch (AmazonServiceException ase) {
-            log.trace("List Keys command returned the error code {}", ase.getErrorCode());
+            LOG.trace("List Keys command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -131,7 +135,7 @@ public class KMSProducer extends DefaultProducer {
         try {
             result = kmsClient.createKey(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Create Key command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Create Key command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -150,7 +154,7 @@ public class KMSProducer extends DefaultProducer {
         try {
             result = kmsClient.disableKey(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Disable Key command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Disable Key command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -173,7 +177,7 @@ public class KMSProducer extends DefaultProducer {
         try {
             result = kmsClient.scheduleKeyDeletion(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Schedule Key Deletion command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Schedule Key Deletion command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -192,7 +196,7 @@ public class KMSProducer extends DefaultProducer {
         try {
             result = kmsClient.describeKey(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Describe Key command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Describe Key command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -211,7 +215,7 @@ public class KMSProducer extends DefaultProducer {
         try {
             result = kmsClient.enableKey(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Enable Key command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Enable Key command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

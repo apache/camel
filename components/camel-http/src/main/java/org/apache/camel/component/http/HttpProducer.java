@@ -72,10 +72,15 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.http.HttpHeaders.HOST;
 
 public class HttpProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HttpProducer.class);
 
     private HttpClient httpClient;
     private HttpContext httpContext;
@@ -190,12 +195,12 @@ public class HttpProducer extends DefaultProducer {
         // lets store the result in the output message.
         HttpResponse httpResponse = null;
         try {
-            if (log.isDebugEnabled()) {
-                log.debug("Executing http {} method: {}", httpRequest.getMethod(), httpRequest.getURI());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Executing http {} method: {}", httpRequest.getMethod(), httpRequest.getURI());
             }
             httpResponse = executeMethod(httpRequest);
             int responseCode = httpResponse.getStatusLine().getStatusCode();
-            log.debug("Http responseCode: {}", responseCode);
+            LOG.debug("Http responseCode: {}", responseCode);
 
             if (!throwException) {
                 // if we do not use failed exception then populate response for all response codes
@@ -427,7 +432,7 @@ public class HttpProducer extends DefaultProducer {
             }
             throw ex;
         } finally {
-            IOHelper.close(is, "Extracting response body", log);
+            IOHelper.close(is, "Extracting response body", LOG);
         }
     }
 
@@ -459,14 +464,14 @@ public class HttpProducer extends DefaultProducer {
             method = new HttpGetWithBodyMethod(url, requestEntity);
         }
 
-        log.trace("Using URL: {} with method: {}", url, method);
+        LOG.trace("Using URL: {} with method: {}", url, method);
 
         if (methodToUse.isEntityEnclosing()) {
             // only create entity for http payload if the HTTP method carries payload (such as POST)
             HttpEntity requestEntity = createRequestEntity(exchange);
             ((HttpEntityEnclosingRequestBase) method).setEntity(requestEntity);
             if (requestEntity != null && requestEntity.getContentType() == null) {
-                log.debug("No Content-Type provided for URL: {} with exchange: {}", url, exchange);
+                LOG.debug("No Content-Type provided for URL: {} with exchange: {}", url, exchange);
             }
         }
 

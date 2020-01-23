@@ -45,6 +45,9 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static com.mongodb.client.model.Filters.eq;
 import static org.apache.camel.component.mongodb.MongoDbConstants.BATCH_SIZE;
@@ -71,6 +74,9 @@ import static org.apache.camel.component.mongodb.MongoDbConstants.WRITERESULT;
  * The MongoDb producer.
  */
 public class MongoDbProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MongoDbProducer.class);
+
     private final Map<MongoDbOperation, Processor> operations = new HashMap<>();
     private MongoDbEndpoint endpoint;
 
@@ -101,7 +107,7 @@ public class MongoDbProducer extends DefaultProducer {
         MongoDbOperation operation = endpoint.getOperation();
         Object header = exchange.getIn().getHeader(OPERATION_HEADER);
         if (header != null) {
-            log.debug("Overriding default operation with operation specified on header: {}", header);
+            LOG.debug("Overriding default operation with operation specified on header: {}", header);
             try {
                 if (header instanceof MongoDbOperation) {
                     operation = ObjectHelper.cast(MongoDbOperation.class, header);
@@ -168,8 +174,8 @@ public class MongoDbProducer extends DefaultProducer {
             db = endpoint.getMongoConnection().getDatabase(dynamicDB);
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Dynamic database selected: {}", db.getName());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Dynamic database selected: {}", db.getName());
         }
         return db;
     }
@@ -221,8 +227,8 @@ public class MongoDbProducer extends DefaultProducer {
             }
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Dynamic database and/or collection selected: {}->{}", endpoint.getDatabase(), endpoint.getCollection());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Dynamic database and/or collection selected: {}->{}", endpoint.getDatabase(), endpoint.getCollection());
         }
         return dbCol;
     }

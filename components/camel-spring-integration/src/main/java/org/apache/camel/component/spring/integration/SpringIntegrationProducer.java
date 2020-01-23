@@ -22,6 +22,8 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.support.channel.BeanFactoryChannelResolver;
 import org.springframework.messaging.Message;
@@ -36,7 +38,10 @@ import org.springframework.messaging.core.DestinationResolver;
  * If the message pattern is inOut, the inputChannel property
  * should be set for receiving the response message.
  */
-public class SpringIntegrationProducer extends DefaultProducer implements Processor {    
+public class SpringIntegrationProducer extends DefaultProducer implements Processor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SpringIntegrationProducer.class);
+
     private final DestinationResolver<MessageChannel> destinationResolver;
     private DirectChannel inputChannel;
     private MessageChannel outputChannel;
@@ -96,7 +101,7 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
             // subscribe so we can receive the reply from spring integration
             inputChannel.subscribe(new MessageHandler() {
                 public void handleMessage(Message<?> message) {
-                    log.debug("Received {} from InputChannel: {}", message, inputChannel);
+                    LOG.debug("Received {} from InputChannel: {}", message, inputChannel);
                     SpringIntegrationBinding.storeToCamelMessage(message, exchange.getOut());
                 }
             });
@@ -104,7 +109,7 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
         org.springframework.messaging.Message<?> siOutmessage = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
 
         // send the message to spring integration
-        log.debug("Sending {} to OutputChannel: {}", siOutmessage, outputChannel);
+        LOG.debug("Sending {} to OutputChannel: {}", siOutmessage, outputChannel);
         outputChannel.send(siOutmessage);
     }
 

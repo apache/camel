@@ -29,6 +29,8 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.support.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -38,6 +40,9 @@ import static org.springframework.jdbc.support.JdbcUtils.closeResultSet;
 import static org.springframework.jdbc.support.JdbcUtils.closeStatement;
 
 public class SqlProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SqlProducer.class);
+
     private final String query;
     private String resolvedQuery;
     private final JdbcTemplate jdbcTemplate;
@@ -114,7 +119,7 @@ public class SqlProducer extends DefaultProducer {
             return;
         }
 
-        log.trace("jdbcTemplate.execute: {}", preparedQuery);
+        LOG.trace("jdbcTemplate.execute: {}", preparedQuery);
         jdbcTemplate.execute(statementCreator, new PreparedStatementCallback<Map<?, ?>>() {
             public Map<?, ?> doInPreparedStatement(PreparedStatement ps) throws SQLException {
                 ResultSet rs = null;
@@ -167,7 +172,7 @@ public class SqlProducer extends DefaultProducer {
 
                             rs = ps.getResultSet();
                             SqlOutputType outputType = getEndpoint().getOutputType();
-                            log.trace("Got result list from query: {}, outputType={}", rs, outputType);
+                            LOG.trace("Got result list from query: {}, outputType={}", rs, outputType);
                             if (outputType == SqlOutputType.SelectList) {
                                 List<?> data = getEndpoint().queryForList(rs, true);
                                 // for noop=true we still want to enrich with the row count header
@@ -236,7 +241,7 @@ public class SqlProducer extends DefaultProducer {
     }
 
     protected void processStreamList(Exchange exchange, PreparedStatementCreator statementCreator, String sql, String preparedQuery) throws Exception {
-        log.trace("processStreamList: {}", preparedQuery);
+        LOG.trace("processStreamList: {}", preparedQuery);
 
         // do not use the jdbcTemplate as it will auto-close connection/ps/rs when exiting the execute method
         // and we need to keep the connection alive while routing and close it when the Exchange is done being routed

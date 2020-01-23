@@ -24,8 +24,12 @@ import com.amazonaws.services.kinesisfirehose.model.Record;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class KinesisFirehoseProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(KinesisFirehoseProducer.class);
 
     public KinesisFirehoseProducer(KinesisFirehoseEndpoint endpoint) {
         super(endpoint);
@@ -39,9 +43,9 @@ public class KinesisFirehoseProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         PutRecordRequest request = createRequest(exchange);
-        log.trace("Sending request [{}] from exchange [{}]...", request, exchange);
+        LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
         PutRecordResult putRecordResult = getEndpoint().getClient().putRecord(request);
-        log.trace("Received result [{}]", putRecordResult);
+        LOG.trace("Received result [{}]", putRecordResult);
         Message message = getMessageForResponse(exchange);
         message.setHeader(KinesisFirehoseConstants.RECORD_ID, putRecordResult.getRecordId());
     }

@@ -18,6 +18,8 @@ package org.apache.camel.component.snmp;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.PDU;
 import org.snmp4j.Snmp;
@@ -38,7 +40,9 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
  * A snmp trap producer
  */
 public class SnmpTrapProducer extends DefaultProducer {
-   
+
+    private static final Logger LOG = LoggerFactory.getLogger(SnmpTrapProducer.class);
+
     private SnmpEndpoint endpoint;
     
     private Address targetAddress;
@@ -55,7 +59,7 @@ public class SnmpTrapProducer extends DefaultProducer {
         super.doStart();
 
         this.targetAddress = GenericAddress.parse(this.endpoint.getAddress());
-        log.debug("targetAddress: {}", targetAddress);
+        LOG.debug("targetAddress: {}", targetAddress);
 
         this.usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
         SecurityModels.getInstance().addSecurityModel(this.usm);
@@ -89,7 +93,7 @@ public class SnmpTrapProducer extends DefaultProducer {
         TransportMapping<? extends Address> transport = null;
 
         try {
-            log.debug("Starting SNMP Trap producer on {}", this.endpoint.getAddress());
+            LOG.debug("Starting SNMP Trap producer on {}", this.endpoint.getAddress());
             
             // either tcp or udp
             if ("tcp".equals(this.endpoint.getProtocol())) {
@@ -102,7 +106,7 @@ public class SnmpTrapProducer extends DefaultProducer {
     
             snmp = new Snmp(transport);
 
-            log.debug("SnmpTrap: getting pdu from body");
+            LOG.debug("SnmpTrap: getting pdu from body");
             PDU trap = exchange.getIn().getBody(PDU.class);
 
             trap.setErrorIndex(0);
@@ -114,9 +118,9 @@ public class SnmpTrapProducer extends DefaultProducer {
                 trap.setType(PDU.TRAP);
             }
 
-            log.debug("SnmpTrap: sending");
+            LOG.debug("SnmpTrap: sending");
             snmp.send(trap, this.target);            
-            log.debug("SnmpTrap: sent");
+            LOG.debug("SnmpTrap: sent");
         } finally {
             try {
                 transport.close(); 

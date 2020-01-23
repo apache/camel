@@ -29,11 +29,15 @@ import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Remote file endpoint.
  */
 public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RemoteFileEndpoint.class);
 
     @UriParam(label = "advanced")
     private int maximumReconnectAttempts = 3;
@@ -114,13 +118,13 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
         // if noop=true then idempotent should also be configured
         if (isNoop() && !isIdempotentSet()) {
-            log.info("Endpoint is configured with noop=true so forcing endpoint to be idempotent as well");
+            LOG.info("Endpoint is configured with noop=true so forcing endpoint to be idempotent as well");
             setIdempotent(true);
         }
 
         // if idempotent and no repository set then create a default one
         if (isIdempotentSet() && isIdempotent() && idempotentRepository == null) {
-            log.info("Using default memory based idempotent repository with cache max size: {}", DEFAULT_IDEMPOTENT_CACHE_SIZE);
+            LOG.info("Using default memory based idempotent repository with cache max size: {}", DEFAULT_IDEMPOTENT_CACHE_SIZE);
             idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
         }
 
@@ -138,8 +142,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
                 getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(), getPollingConsumerBlockTimeout());
         }
         GenericFilePollingConsumer result = new GenericFilePollingConsumer(this);

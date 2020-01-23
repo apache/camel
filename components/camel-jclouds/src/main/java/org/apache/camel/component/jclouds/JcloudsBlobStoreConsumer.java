@@ -103,7 +103,6 @@ public class JcloudsBlobStoreConsumer extends ScheduledBatchPollingConsumer {
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
-            log.trace("Processing exchange [{}]...", exchange);
             getProcessor().process(exchange);
             if (exchange.getException() != null) {
                 // if we failed then throw exception

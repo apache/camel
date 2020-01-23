@@ -25,12 +25,16 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.ResourceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The <a href="http://camel.apache.org/xslt.html">XSLT Component</a> is for performing XSLT transformations of messages
  */
 @Component("xslt")
 public class XsltComponent extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(XsltComponent.class);
 
     @Metadata(label = "advanced")
     private URIResolver uriResolver;
@@ -149,7 +153,7 @@ public class XsltComponent extends DefaultComponent {
             // if its a http uri, then append additional parameters as they are part of the uri
             resourceUri = ResourceHelper.appendParameters(resourceUri, parameters);
         }
-        log.debug("{} using schema resource: {}", this, resourceUri);
+        LOG.debug("{} using schema resource: {}", this, resourceUri);
         xslt.setResourceUri(resourceUri);
 
         if (!parameters.isEmpty()) {

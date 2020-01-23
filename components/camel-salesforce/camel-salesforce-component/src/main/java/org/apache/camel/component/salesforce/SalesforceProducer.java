@@ -29,11 +29,15 @@ import org.apache.camel.component.salesforce.internal.processor.SalesforceProces
 import org.apache.camel.component.salesforce.internal.processor.XmlRestProcessor;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.service.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Salesforce producer.
  */
 public class SalesforceProducer extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SalesforceProducer.class);
 
     private final SalesforceProcessor processor;
 
@@ -109,7 +113,7 @@ public class SalesforceProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        log.debug("Processing {}", ((SalesforceEndpoint)getEndpoint()).getOperationName());
+        LOG.debug("Processing {}", ((SalesforceEndpoint)getEndpoint()).getOperationName());
         return processor.process(exchange, callback);
     }
 

@@ -22,8 +22,12 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WeatherProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(WeatherProducer.class);
 
     private final String query;
 
@@ -48,13 +52,13 @@ public class WeatherProducer extends DefaultProducer {
         HttpClient httpClient = ((WeatherComponent) getEndpoint().getComponent()).getHttpClient();
         GetMethod method = new GetMethod(q);
         try {
-            log.debug("Going to execute the Weather query {}", q);
+            LOG.debug("Going to execute the Weather query {}", q);
             int statusCode = httpClient.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK) {
                 throw new IllegalStateException("Got the invalid http status value '" + method.getStatusLine() + "' as the result of the query '" + query + "'");
             }
             String weather = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, method.getResponseBodyAsStream());
-            log.debug("Got back the Weather information {}", weather);
+            LOG.debug("Got back the Weather information {}", weather);
 
             if (ObjectHelper.isEmpty(weather)) {
                 throw new IllegalStateException("Got the unexpected value '" + weather + "' as the result of the query '" + q + "'");

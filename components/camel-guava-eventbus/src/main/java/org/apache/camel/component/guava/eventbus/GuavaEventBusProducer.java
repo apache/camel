@@ -20,12 +20,16 @@ import com.google.common.eventbus.EventBus;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Guava EventBus (http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/eventbus/EventBus.html)
  * producer forwarding messages from Camel routes to the bus.
  */
 public class GuavaEventBusProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GuavaEventBusProducer.class);
 
     private final EventBus eventBus;
 
@@ -38,10 +42,10 @@ public class GuavaEventBusProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         Object body = exchange.getIn().getBody();
         if (body != null) {
-            log.debug("Posting: {} to EventBus: {}", body, eventBus);
+            LOG.debug("Posting: {} to EventBus: {}", body, eventBus);
             eventBus.post(body);
         } else {
-            log.debug("Body is null, cannot post to EventBus");
+            LOG.debug("Body is null, cannot post to EventBus");
         }
     }
 

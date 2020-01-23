@@ -28,12 +28,16 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Producer which sends messages to the Amazon Translate Service
  * <a href="http://aws.amazon.com/translate/">AWS Translate</a>
  */
 public class TranslateProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TranslateProducer.class);
 
     private transient String translateProducerToString;
 
@@ -115,7 +119,7 @@ public class TranslateProducer extends DefaultProducer {
         try {
             result = translateClient.translateText(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Translate Text command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Translate Text command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

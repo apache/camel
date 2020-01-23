@@ -47,8 +47,12 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.utils.Bytes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class KafkaProducer extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaProducer.class);
 
     @SuppressWarnings("rawtypes")
     private org.apache.kafka.clients.producer.KafkaProducer kafkaProducer;
@@ -111,13 +115,13 @@ public class KafkaProducer extends DefaultAsyncProducer {
                 // Kafka uses reflection for loading authentication settings,
                 // use its classloader
                 Thread.currentThread().setContextClassLoader(org.apache.kafka.clients.producer.KafkaProducer.class.getClassLoader());
-                log.trace("Creating KafkaProducer");
+                LOG.trace("Creating KafkaProducer");
                 kafkaProducer = new org.apache.kafka.clients.producer.KafkaProducer(props);
                 closeKafkaProducer = true;
             } finally {
                 Thread.currentThread().setContextClassLoader(threadClassLoader);
             }
-            log.debug("Created KafkaProducer: {}", kafkaProducer);
+            LOG.debug("Created KafkaProducer: {}", kafkaProducer);
         }
 
         // if we are in asynchronous mode we need a worker pool
@@ -131,7 +135,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
     @Override
     protected void doStop() throws Exception {
         if (kafkaProducer != null && closeKafkaProducer) {
-            log.debug("Closing KafkaProducer: {}", kafkaProducer);
+            LOG.debug("Closing KafkaProducer: {}", kafkaProducer);
             kafkaProducer.close();
             kafkaProducer = null;
         }
@@ -149,7 +153,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         // must remove header so its not propagated
         Object overrideTopic = exchange.getIn().removeHeader(KafkaConstants.OVERRIDE_TOPIC);
         if (overrideTopic != null) {
-            log.debug("Using override topic: {}", overrideTopic);
+            LOG.debug("Using override topic: {}", overrideTopic);
             topic = overrideTopic.toString();
         }
 
@@ -308,8 +312,8 @@ public class KafkaProducer extends DefaultAsyncProducer {
         while (c.hasNext()) {
             KeyValueHolder<Object, ProducerRecord> exrec = c.next();
             ProducerRecord rec = exrec.getValue();
-            if (log.isDebugEnabled()) {
-                log.debug("Sending message to topic: {}, partition: {}, key: {}", rec.topic(), rec.partition(), rec.key());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sending message to topic: {}, partition: {}, key: {}", rec.topic(), rec.partition(), rec.key());
             }
             futures.add(new KeyValueHolder(exrec.getKey(), kafkaProducer.send(rec)));
         }
@@ -352,8 +356,8 @@ public class KafkaProducer extends DefaultAsyncProducer {
                 cb.increment();
                 KeyValueHolder<Object, ProducerRecord> exrec = c.next();
                 ProducerRecord rec = exrec.getValue();
-                if (log.isDebugEnabled()) {
-                    log.debug("Sending message to topic: {}, partition: {}, key: {}", rec.topic(), rec.partition(), rec.key());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Sending message to topic: {}, partition: {}, key: {}", rec.topic(), rec.partition(), rec.key());
                 }
                 List<Callback> delegates = new ArrayList<>(Arrays.asList(cb));
                 if (exrec.getKey() != null) {
@@ -455,7 +459,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
         boolean allSent() {
             if (count.decrementAndGet() == 0) {
-                log.trace("All messages sent, continue routing.");
+                LOG.trace("All messages sent, continue routing.");
                 // was able to get all the work done while queuing the requests
                 if (callback != null) {
                     callback.done(true);
@@ -485,7 +489,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
                 workerPool.submit(new Runnable() {
                     @Override
                     public void run() {
-                        log.trace("All messages sent, continue routing.");
+                        LOG.trace("All messages sent, continue routing.");
                         if (callback != null) {
                             callback.done(false);
                         }

@@ -48,6 +48,8 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import org.apache.camel.CamelContext;
@@ -71,6 +73,8 @@ import org.apache.camel.util.ObjectHelper;
  */
 @Dataformat("jaxb")
 public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JaxbDataFormat.class);
 
     private static final BlockingQueue<SchemaFactory> SCHEMA_FACTORY_POOL = new LinkedBlockingQueue<>();
 
@@ -160,8 +164,8 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             }
             if (customProperties != null) {
                 for (Entry<String, Object> property : customProperties.entrySet()) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Using JAXB Provider Property {}={}", property.getKey(), property.getValue());
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Using JAXB Provider Property {}={}", property.getKey(), property.getValue());
                     }
                     marshaller.setProperty(property.getKey(), property.getValue());
                 }
@@ -247,7 +251,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
                         throw e;
                     }
                     
-                    log.debug("Unable to create JAXBElement object for type " + element.getClass() + " due to " + e.getMessage(), e);
+                    LOG.debug("Unable to create JAXBElement object for type " + element.getClass() + " due to " + e.getMessage(), e);
                 }
             }
         }
@@ -255,8 +259,8 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         // cannot marshal
         if (!mustBeJAXBElement) {
             // write the graph as is to the output stream
-            if (log.isDebugEnabled()) {
-                log.debug("Attempt to marshalling non JAXBElement with type {} as InputStream", ObjectHelper.classCanonicalName(graph));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Attempt to marshalling non JAXBElement with type {} as InputStream", ObjectHelper.classCanonicalName(graph));
             }
             InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
             IOHelper.copyAndCloseInput(is, stream);
@@ -524,7 +528,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             cachedSchema = createSchema(getSources());
         }
 
-        log.debug("JaxbDataFormat [prettyPrint={}, objectFactory={}]", prettyPrint, objectFactory);
+        LOG.debug("JaxbDataFormat [prettyPrint={}, objectFactory={}]", prettyPrint, objectFactory);
     }
 
     @Override
@@ -540,14 +544,14 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             // load the class which has been JAXB annotated
             ClassLoader cl = camelContext.getApplicationContextClassLoader();
             if (cl != null) {
-                log.debug("Creating JAXBContext with contextPath: " + contextPath + " and ApplicationContextClassLoader: " + cl);
+                LOG.debug("Creating JAXBContext with contextPath: " + contextPath + " and ApplicationContextClassLoader: " + cl);
                 return JAXBContext.newInstance(contextPath, cl);
             } else {
-                log.debug("Creating JAXBContext with contextPath: {}", contextPath);
+                LOG.debug("Creating JAXBContext with contextPath: {}", contextPath);
                 return JAXBContext.newInstance(contextPath);
             }
         } else {
-            log.debug("Creating JAXBContext");
+            LOG.debug("Creating JAXBContext");
             return JAXBContext.newInstance();
         }
     }

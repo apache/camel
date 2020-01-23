@@ -21,8 +21,12 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.BusFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.container.BlueprintContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CxfBlueprintEndpoint extends CxfEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CxfBlueprintEndpoint.class);
 
     private BlueprintContainer blueprintContainer;
     private BundleContext bundleContext;
@@ -53,7 +57,7 @@ public class CxfBlueprintEndpoint extends CxfEndpoint {
     @Override
     protected void checkName(Object value, String name) {
         if (ObjectHelper.isEmpty(value)) {
-            log.warn("The " + name + " of " + this.getEndpointUri() + " is empty, cxf will try to load the first one in wsdl for you.");
+            LOG.warn("The " + name + " of " + this.getEndpointUri() + " is empty, cxf will try to load the first one in wsdl for you.");
         }
     }
 

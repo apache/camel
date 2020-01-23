@@ -303,9 +303,9 @@ public abstract class CamelTestSupport extends TestSupport {
 
     @Before
     public void setUp() throws Exception {
-        log.info("********************************************************************************");
-        log.info("Testing: " + getTestMethodName() + "(" + getClass().getName() + ")");
-        log.info("********************************************************************************");
+        LOG.info("********************************************************************************");
+        LOG.info("Testing: " + getTestMethodName() + "(" + getClass().getName() + ")");
+        LOG.info("********************************************************************************");
 
         if (isCreateCamelContextPerClass()) {
             INSTANCE.set(this);
@@ -368,7 +368,7 @@ public abstract class CamelTestSupport extends TestSupport {
     }
 
     private void doSetUp() throws Exception {
-        log.debug("setUp test");
+        LOG.debug("setUp test");
         // jmx is enabled if we have configured to use it, or if dump route coverage is enabled (it requires JMX)
         boolean jmx = useJmx() || isRouteCoverageEnabled();
         if (jmx) {
@@ -391,7 +391,7 @@ public abstract class CamelTestSupport extends TestSupport {
         // set debugger if enabled
         if (isUseDebugger()) {
             if (context.getStatus().equals(ServiceStatus.Started)) {
-                log.info("Cannot setting the Debugger to the starting CamelContext, stop the CamelContext now.");
+                LOG.info("Cannot setting the Debugger to the starting CamelContext, stop the CamelContext now.");
                 // we need to stop the context first to setup the debugger
                 context.stop();
             }
@@ -437,7 +437,7 @@ public abstract class CamelTestSupport extends TestSupport {
         String include = getRouteFilterIncludePattern();
         String exclude = getRouteFilterExcludePattern();
         if (include != null || exclude != null) {
-            log.info("Route filtering pattern: include={}, exclude={}", include, exclude);
+            LOG.info("Route filtering pattern: include={}, exclude={}", include, exclude);
             context.getExtension(Model.class).setRouteFilterPattern(include, exclude);
         }
 
@@ -447,23 +447,23 @@ public abstract class CamelTestSupport extends TestSupport {
         if (isUseRouteBuilder()) {
             RoutesBuilder[] builders = createRouteBuilders();
             for (RoutesBuilder builder : builders) {
-                log.debug("Using created route builder: " + builder);
+                LOG.debug("Using created route builder: " + builder);
                 context.addRoutes(builder);
             }
             replaceFromEndpoints();
             boolean skip = "true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"));
             if (skip) {
-                log.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
+                LOG.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
             } else if (isUseAdviceWith()) {
-                log.info("Skipping starting CamelContext as isUseAdviceWith is set to true.");
+                LOG.info("Skipping starting CamelContext as isUseAdviceWith is set to true.");
             } else {
                 startCamelContext();
             }
         } else {
             replaceFromEndpoints();
-            log.debug("Using route builder from the created context: " + context);
+            LOG.debug("Using route builder from the created context: " + context);
         }
-        log.debug("Routing Rules are: " + context.getRoutes());
+        LOG.debug("Routing Rules are: " + context.getRoutes());
 
         assertValidContext(context);
     }
@@ -487,9 +487,9 @@ public abstract class CamelTestSupport extends TestSupport {
     public void tearDown() throws Exception {
         long time = watch.taken();
 
-        log.info("********************************************************************************");
-        log.info("Testing done: " + getTestMethodName() + "(" + getClass().getName() + ")");
-        log.info("Took: " + TimeUtils.printDuration(time) + " (" + time + " millis)");
+        LOG.info("********************************************************************************");
+        LOG.info("Testing done: " + getTestMethodName() + "(" + getClass().getName() + ")");
+        LOG.info("Took: " + TimeUtils.printDuration(time) + " (" + time + " millis)");
 
         // if we should dump route stats, then write that to a file
         if (isRouteCoverageEnabled()) {
@@ -500,7 +500,7 @@ public abstract class CamelTestSupport extends TestSupport {
             ManagedCamelContext mc = context != null ? context.getExtension(ManagedCamelContext.class) : null;
             ManagedCamelContextMBean managedCamelContext = mc != null ? mc.getManagedCamelContext() : null;
             if (managedCamelContext == null) {
-                log.warn("Cannot dump route coverage to file as JMX is not enabled. "
+                LOG.warn("Cannot dump route coverage to file as JMX is not enabled. "
                         + "Add camel-management JAR as dependency and/or override useJmx() method to enable JMX in the unit test classes.");
             } else {
                 logCoverageSummary(managedCamelContext);
@@ -513,14 +513,14 @@ public abstract class CamelTestSupport extends TestSupport {
                 file.mkdirs();
                 file = new File(dir, name);
 
-                log.info("Dumping route coverage to file: {}", file);
+                LOG.info("Dumping route coverage to file: {}", file);
                 InputStream is = new ByteArrayInputStream(combined.getBytes());
                 OutputStream os = new FileOutputStream(file, false);
                 IOHelper.copyAndCloseInput(is, os);
                 IOHelper.close(os);
             }
         }
-        log.info("********************************************************************************");
+        LOG.info("********************************************************************************");
 
         if (isCreateCamelContextPerClass()) {
             // will tear down test specially in CamelTearDownRule
@@ -618,7 +618,7 @@ public abstract class CamelTestSupport extends TestSupport {
         }
 
         builder.append(routesSummary);
-        log.info(builder.toString());
+        LOG.info(builder.toString());
     }
 
     /**
@@ -891,7 +891,7 @@ public abstract class CamelTestSupport extends TestSupport {
         // jndi.properties is optional
         InputStream in = getClass().getClassLoader().getResourceAsStream("jndi.properties");
         if (in != null) {
-            log.debug("Using jndi.properties from classpath root");
+            LOG.debug("Using jndi.properties from classpath root");
             properties.load(in);
         } else {
             properties.put("java.naming.factory.initial", "org.apache.camel.support.jndi.CamelInitialContextFactory");

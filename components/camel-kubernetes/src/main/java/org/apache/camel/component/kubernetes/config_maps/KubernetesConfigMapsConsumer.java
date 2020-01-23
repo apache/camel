@@ -32,8 +32,12 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.consumer.common.ConfigMapEvent;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class KubernetesConfigMapsConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(KubernetesConfigMapsConsumer.class);
 
     private final Processor processor;
     private ExecutorService executor;
@@ -62,7 +66,7 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         super.doStop();
 
-        log.debug("Stopping Kubernetes ConfigMap Consumer");
+        LOG.debug("Stopping Kubernetes ConfigMap Consumer");
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
                 if (configMapWatcher != null) {
@@ -117,7 +121,7 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
                 @Override
                 public void onClose(KubernetesClientException cause) {
                     if (cause != null) {
-                        log.error(cause.getMessage(), cause);
+                        LOG.error(cause.getMessage(), cause);
                     }
 
                 }

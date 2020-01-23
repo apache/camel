@@ -22,6 +22,8 @@ import java.util.Map;
 
 import javax.xml.ws.WebFault;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import org.apache.camel.AsyncCallback;
@@ -56,6 +58,8 @@ import org.apache.cxf.ws.addressing.EndpointReferenceType;
  * back responses to CXF client.
  */
 public class CxfConsumer extends DefaultConsumer implements Suspendable {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CxfConsumer.class);
 
     private Server server;
     private CxfEndpoint cxfEndpoint;
@@ -150,14 +154,14 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
         // we receive a CXF request when this method is called
         @Override
         public Object invoke(Exchange cxfExchange, Object o) {
-            log.trace("Received CXF Request: {}", cxfExchange);
+            LOG.trace("Received CXF Request: {}", cxfExchange);
             Continuation continuation;
             if (!endpoint.isSynchronous() && isAsyncInvocationSupported(cxfExchange)
                 && (continuation = getContinuation(cxfExchange)) != null) {
-                log.trace("Calling the Camel async processors.");
+                LOG.trace("Calling the Camel async processors.");
                 return asyncInvoke(cxfExchange, continuation);
             } else {
-                log.trace("Calling the Camel sync processors.");
+                LOG.trace("Calling the Camel sync processors.");
                 return syncInvoke(cxfExchange);
             }
         }
@@ -165,13 +169,13 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
         // NOTE this code cannot work with CXF 2.2.x and JMSContinuation
         // as it doesn't break out the interceptor chain when we call it
         private Object asyncInvoke(Exchange cxfExchange, final Continuation continuation) {
-            log.trace("asyncInvoke continuation: {}", continuation);
+            LOG.trace("asyncInvoke continuation: {}", continuation);
             synchronized (continuation) {
                 if (continuation.isNew()) {
                     final org.apache.camel.Exchange camelExchange = prepareCamelExchange(cxfExchange);
 
                     // Now we don't set up the timeout value
-                    log.trace("Suspending continuation of exchangeId: {}", camelExchange.getExchangeId());
+                    LOG.trace("Suspending continuation of exchangeId: {}", camelExchange.getExchangeId());
 
                     // The continuation could be called before the suspend is called
                     continuation.suspend(cxfEndpoint.getContinuationTimeout());
@@ -183,7 +187,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
                         public void done(boolean doneSync) {
                             // make sure the continuation resume will not be called before the suspend method in other thread
                             synchronized (continuation) {
-                                log.trace("Resuming continuation of exchangeId: {}", camelExchange.getExchangeId());
+                                LOG.trace("Resuming continuation of exchangeId: {}", camelExchange.getExchangeId());
                                 // resume processing after both, sync and async callbacks
                                 continuation.resume();
                             }
@@ -232,14 +236,14 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
             org.apache.camel.Exchange camelExchange = prepareCamelExchange(cxfExchange);
             try {
                 try {
-                    log.trace("Processing +++ START +++");
+                    LOG.trace("Processing +++ START +++");
                     // send Camel exchange to the target processor
                     getProcessor().process(camelExchange);
                 } catch (Exception e) {
                     throw new Fault(e);
                 }
 
-                log.trace("Processing +++ END +++");
+                LOG.trace("Processing +++ END +++");
                 setResponseBack(cxfExchange, camelExchange);
             }  catch (Exception ex) {
                 doneUoW(camelExchange);
@@ -270,7 +274,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
 
             if (boi != null) {
                 camelExchange.setProperty(BindingOperationInfo.class.getName(), boi);
-                log.trace("Set exchange property: BindingOperationInfo: {}", boi);
+                LOG.trace("Set exchange property: BindingOperationInfo: {}", boi);
                 // set the message exchange patter with the boi
                 if (boi.getOperationInfo().isOneWay()) {
                     camelExchange.setPattern(ExchangePattern.InOnly);
@@ -284,7 +288,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
 
             // set data format mode in Camel exchange
             camelExchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, dataFormat);
-            log.trace("Set Exchange property: {}={}", DataFormat.class.getName(), dataFormat);
+            LOG.trace("Set Exchange property: {}={}", DataFormat.class.getName(), dataFormat);
 
             camelExchange.setProperty(Message.MTOM_ENABLED, String.valueOf(endpoint.isMtomEnabled()));
 
@@ -303,7 +307,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
             try {
                 CxfConsumer.this.createUoW(camelExchange);
             } catch (Exception e) {
-                log.error("Error processing request", e);
+                LOG.error("Error processing request", e);
                 throw new Fault(e);
             }
             return camelExchange;

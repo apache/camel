@@ -30,6 +30,8 @@ import org.apache.camel.api.management.NotificationSenderAware;
 import org.apache.camel.support.management.DefaultManagementMBeanAssembler;
 import org.apache.camel.support.management.NotificationSenderAdapter;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
@@ -40,6 +42,8 @@ import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
  * gather the list of JMX operations and attributes.
  */
 public class SpringManagementMBeanAssembler extends DefaultManagementMBeanAssembler {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SpringManagementMBeanAssembler.class);
 
     private final MetadataMBeanInfoAssembler springAssembler;
 
@@ -57,7 +61,7 @@ public class SpringManagementMBeanAssembler extends DefaultManagementMBeanAssemb
         if (obj instanceof ManagedInstance) {
             Object custom = ((ManagedInstance) obj).getInstance();
             if (custom != null && ObjectHelper.hasAnnotation(custom.getClass().getAnnotations(), ManagedResource.class)) {
-                log.trace("Assembling MBeanInfo for: {} from custom @ManagedResource object: {}", name, custom);
+                LOG.trace("Assembling MBeanInfo for: {} from custom @ManagedResource object: {}", name, custom);
                 // get the mbean info from the custom managed object
                 mbi = springAssembler.getMBeanInfo(custom, name.toString());
                 // and let the custom object be registered in JMX
@@ -68,7 +72,7 @@ public class SpringManagementMBeanAssembler extends DefaultManagementMBeanAssemb
         if (mbi == null) {
             if (ObjectHelper.hasAnnotation(obj.getClass().getAnnotations(), ManagedResource.class)) {
                 // the object has a Spring ManagedResource annotations so assemble the MBeanInfo
-                log.trace("Assembling MBeanInfo for: {} from @ManagedResource object: {}", name, obj);
+                LOG.trace("Assembling MBeanInfo for: {} from @ManagedResource object: {}", name, obj);
                 mbi = springAssembler.getMBeanInfo(obj, name.toString());
             } else {
                 // fallback and let the default mbean assembler handle this instead
@@ -76,7 +80,7 @@ public class SpringManagementMBeanAssembler extends DefaultManagementMBeanAssemb
             }
         }
 
-        log.trace("Assembled MBeanInfo {}", mbi);
+        LOG.trace("Assembled MBeanInfo {}", mbi);
 
         RequiredModelMBean mbean = (RequiredModelMBean) mBeanServer.instantiate(RequiredModelMBean.class.getName());
         mbean.setModelMBeanInfo(mbi);

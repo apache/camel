@@ -31,6 +31,8 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The pgevent component allows for producing/consuming PostgreSQL events related to the listen/notify commands.
@@ -40,6 +42,8 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "2.15.0", scheme = "pgevent", title = "PostgresSQL Event", syntax = "pgevent:host:port/database/channel",
     label = "database,sql")
 public class PgEventEndpoint extends DefaultEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PgEventEndpoint.class);
 
     private static final String FORMAT1 = "^pgevent://([^:]*):(\\d+)/(\\w+)/(\\w+).*$";
     private static final String FORMAT2 = "^pgevent://([^:]+)/(\\w+)/(\\w+).*$";
@@ -97,30 +101,30 @@ public class PgEventEndpoint extends DefaultEndpoint {
      * @throws IllegalArgumentException if there is an error in the parameters
      */
     protected final void parseUri() throws IllegalArgumentException {
-        log.info("URI: {}", uri);
+        LOG.debug("URI: {}", uri);
         if (uri.matches(FORMAT1)) {
-            log.info("FORMAT1");
+            LOG.trace("FORMAT1");
             String[] parts = uri.replaceFirst(FORMAT1, "$1:$2:$3:$4").split(":");
             host = parts[0];
             port = Integer.parseInt(parts[1]);
             database = parts[2];
             channel = parts[3];
         } else if (uri.matches(FORMAT2)) {
-            log.info("FORMAT2");
+            LOG.trace("FORMAT2");
             String[] parts = uri.replaceFirst(FORMAT2, "$1:$2:$3").split(":");
             host = parts[0];
             port = 5432;
             database = parts[1];
             channel = parts[2];
         } else if (uri.matches(FORMAT3)) {
-            log.info("FORMAT3");
+            LOG.trace("FORMAT3");
             String[] parts = uri.replaceFirst(FORMAT3, "$1:$2").split(":");
             host = "localhost";
             port = 5432;
             database = parts[0];
             channel = parts[1];
         } else if (uri.matches(FORMAT4)) {
-            log.info("FORMAT4");
+            LOG.trace("FORMAT4");
             String[] parts = uri.replaceFirst(FORMAT4, "$1:$2").split(":");
             database = parts[0];
             channel = parts[1];

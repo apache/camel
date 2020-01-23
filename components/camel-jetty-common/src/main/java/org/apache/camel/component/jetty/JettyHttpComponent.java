@@ -88,6 +88,8 @@ import org.eclipse.jetty.util.component.Container;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An HttpComponent which starts an embedded Jetty for to handle consuming from
@@ -98,6 +100,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<>();
 
+    private static final Logger LOG = LoggerFactory.getLogger(JettyHttpComponent.class);
     private static final String JETTY_SSL_KEYSTORE = "org.eclipse.jetty.ssl.keystore";
     private static final String JETTY_SSL_KEYPASSWORD = "org.eclipse.jetty.ssl.keypassword";
     private static final String JETTY_SSL_PASSWORD = "org.eclipse.jetty.ssl.password";
@@ -317,7 +320,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                 Server server = createServer();
                 Connector connector = getConnector(server, endpoint);
                 if ("localhost".equalsIgnoreCase(endpoint.getHttpUri().getHost())) {
-                    log.warn("You use localhost interface! It means that no external connections will be available."
+                    LOG.warn("You use localhost interface! It means that no external connections will be available."
                             + " Don't you want to use 0.0.0.0 instead (all network interfaces)? " + endpoint);
                 }
                 if (endpoint.isEnableJmx()) {
@@ -332,11 +335,11 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                 }
                 connectorRef.server.start();
 
-                log.debug("Adding connector key: {} -> {}", connectorKey, connectorRef);
+                LOG.debug("Adding connector key: {} -> {}", connectorKey, connectorRef);
                 CONNECTORS.put(connectorKey, connectorRef);
 
             } else {
-                log.debug("Using existing connector key: {} -> {}", connectorKey, connectorRef);
+                LOG.debug("Using existing connector key: {} -> {}", connectorKey, connectorRef);
 
                 // check if there are any new handlers, and if so then we need to re-start the server
                 if (endpoint.getHandlers() != null && !endpoint.getHandlers().isEmpty()) {
@@ -347,7 +350,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                     List<Handler> newHandlers = new ArrayList<>(endpoint.getHandlers());
                     boolean changed = !existingHandlers.containsAll(newHandlers) && !newHandlers.containsAll(existingHandlers);
                     if (changed) {
-                        log.debug("Restarting Jetty server due to adding new Jetty Handlers: {}", newHandlers);
+                        LOG.debug("Restarting Jetty server due to adding new Jetty Handlers: {}", newHandlers);
                         connectorRef.server.stop();
                         addJettyHandlers(connectorRef.server, endpoint.getHandlers());
                         connectorRef.server.start();
@@ -375,7 +378,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     private void enableJmx(Server server) {
         MBeanContainer containerToRegister = getMbContainer();
         if (containerToRegister != null) {
-            log.info("Jetty JMX Extensions is enabled");
+            LOG.info("Jetty JMX Extensions is enabled");
             addServerMBean(server);
             // Since we may have many Servers running, don't tie the MBeanContainer
             // to a Server lifecycle or we end up closing it while it is still in use.
@@ -448,7 +451,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
         }
         addFilter(context, filterHolder, pathSpec);
-        log.debug("using multipart filter implementation " + filter.getClass().getName() + " for path " + pathSpec);
+        LOG.debug("using multipart filter implementation " + filter.getClass().getName() + " for path " + pathSpec);
     }
 
     /**
@@ -800,7 +803,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             if (mbs != null) {
                 mbContainer = new MBeanContainer(mbs);
             } else {
-                log.warn("JMX disabled in CamelContext. Jetty JMX extensions will remain disabled.");
+                LOG.warn("JMX disabled in CamelContext. Jetty JMX extensions will remain disabled.");
             }
         }
 

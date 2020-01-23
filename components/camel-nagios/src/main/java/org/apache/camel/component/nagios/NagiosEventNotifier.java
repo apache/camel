@@ -30,11 +30,15 @@ import org.apache.camel.spi.CamelEvent.ExchangeRedeliveryEvent;
 import org.apache.camel.spi.CamelEvent.ServiceStartupFailureEvent;
 import org.apache.camel.spi.CamelEvent.ServiceStopFailureEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An {@link org.apache.camel.spi.EventNotifier} which sends alters to Nagios.
  */
 public class NagiosEventNotifier extends EventNotifierSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(NagiosEventNotifier.class);
 
     private NagiosSettings nagiosSettings;
     private NagiosConfiguration configuration;
@@ -43,7 +47,6 @@ public class NagiosEventNotifier extends EventNotifierSupport {
     private String hostName = "localhost";
 
     public NagiosEventNotifier() {
-
     }
 
     public NagiosEventNotifier(PassiveCheckSender sender) {
@@ -57,11 +60,11 @@ public class NagiosEventNotifier extends EventNotifierSupport {
         Level level = determineLevel(eventObject);
         MessagePayload payload = new MessagePayload(getHostName(), level, getServiceName(), message);
 
-        if (log.isInfoEnabled()) {
-            log.info("Sending notification to Nagios: {}", payload.getMessage());
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Sending notification to Nagios: {}", payload.getMessage());
         }
         sender.send(payload);
-        log.trace("Sending notification done");
+        LOG.trace("Sending notification done");
     }
 
     @Override
@@ -134,7 +137,7 @@ public class NagiosEventNotifier extends EventNotifierSupport {
             sender = new NagiosPassiveCheckSender(nagiosSettings);
         }
 
-        log.info("Using {}", configuration);
+        LOG.info("Using {}", configuration);
     }
 
     @Override

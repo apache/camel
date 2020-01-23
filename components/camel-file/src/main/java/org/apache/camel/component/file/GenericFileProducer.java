@@ -38,7 +38,8 @@ import org.slf4j.LoggerFactory;
  * Generic file producer
  */
 public class GenericFileProducer<T> extends DefaultProducer {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(GenericFileProducer.class);
+
     protected final GenericFileEndpoint<T> endpoint;
     protected GenericFileOperations<T> operations;
     // assume writing to 100 different files concurrently at most for the same file producer
@@ -103,7 +104,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
      * @throws Exception is thrown if some error
      */
     protected void processExchange(Exchange exchange, String target) throws Exception {
-        log.trace("Processing file: {} for exchange: {}", target, exchange);
+        LOG.trace("Processing file: {} for exchange: {}", target, exchange);
 
         try {
             preWriteCheck(exchange);
@@ -117,7 +118,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 // compute temporary name with the temp prefix
                 tempTarget = createTempFileName(exchange, target);
 
-                log.trace("Writing using tempNameFile: {}", tempTarget);
+                LOG.trace("Writing using tempNameFile: {}", tempTarget);
                
                 //if we should eager delete target file before deploying temporary file
                 if (endpoint.getFileExist() != GenericFileExist.TryRename && endpoint.isEagerDeleteTargetFile()) {
@@ -129,11 +130,11 @@ public class GenericFileProducer<T> extends DefaultProducer {
                     targetExists = operations.existsFile(target);
                     if (targetExists) {
                         
-                        log.trace("EagerDeleteTargetFile, target exists");
+                        LOG.trace("EagerDeleteTargetFile, target exists");
                         
                         if (endpoint.getFileExist() == GenericFileExist.Ignore) {
                             // ignore but indicate that the file was written
-                            log.trace("An existing file already exists: {}. Ignore and do not override it.", target);
+                            LOG.trace("An existing file already exists: {}. Ignore and do not override it.", target);
                             return;
                         } else if (endpoint.getFileExist() == GenericFileExist.Fail) {
                             throw new GenericFileOperationFailedException("File already exist: " + target + ". Cannot write new file.");
@@ -143,7 +144,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
                         } else if (endpoint.isEagerDeleteTargetFile() && endpoint.getFileExist() == GenericFileExist.Override) {
                             // we override the target so we do this by deleting it so the temp file can be renamed later
                             // with success as the existing target file have been deleted
-                            log.trace("Eagerly deleting existing file: {}", target);
+                            LOG.trace("Eagerly deleting existing file: {}", target);
                             if (!operations.deleteFile(target)) {
                                 throw new GenericFileOperationFailedException("Cannot delete file: " + target);
                             }
@@ -153,7 +154,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
                 // delete any pre existing temp file
                 if (endpoint.getFileExist() != GenericFileExist.TryRename && operations.existsFile(tempTarget)) {
-                    log.trace("Deleting existing temp file: {}", tempTarget);
+                    LOG.trace("Deleting existing temp file: {}", tempTarget);
                     if (!operations.deleteFile(tempTarget)) {
                         throw new GenericFileOperationFailedException("Cannot delete file: " + tempTarget);
                     }
@@ -173,18 +174,18 @@ public class GenericFileProducer<T> extends DefaultProducer {
                     targetExists = operations.existsFile(target);
                     if (targetExists) {
 
-                        log.trace("Not using EagerDeleteTargetFile, target exists");
+                        LOG.trace("Not using EagerDeleteTargetFile, target exists");
 
                         if (endpoint.getFileExist() == GenericFileExist.Ignore) {
                             // ignore but indicate that the file was written
-                            log.trace("An existing file already exists: {}. Ignore and do not override it.", target);
+                            LOG.trace("An existing file already exists: {}. Ignore and do not override it.", target);
                             return;
                         } else if (endpoint.getFileExist() == GenericFileExist.Fail) {
                             throw new GenericFileOperationFailedException("File already exist: " + target + ". Cannot write new file.");
                         } else if (endpoint.getFileExist() == GenericFileExist.Override) {
                             // we override the target so we do this by deleting it so the temp file can be renamed later
                             // with success as the existing target file have been deleted
-                            log.trace("Deleting existing file: {}", target);
+                            LOG.trace("Deleting existing file: {}", target);
                             if (!operations.deleteFile(target)) {
                                 throw new GenericFileOperationFailedException("Cannot delete file: " + target);
                             }
@@ -193,7 +194,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 }
 
                 // now we are ready to rename the temp file to the target file
-                log.trace("Renaming file: [{}] to: [{}]", tempTarget, target);
+                LOG.trace("Renaming file: [{}] to: [{}]", tempTarget, target);
                 boolean renamed = operations.renameFile(tempTarget, target);
                 if (!renamed) {
                     throw new GenericFileOperationFailedException("Cannot rename file from: " + tempTarget + " to: " + target);
@@ -209,7 +210,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 Exchange empty = new DefaultExchange(exchange);
                 empty.getIn().setBody("");
 
-                log.trace("Writing done file: [{}]", doneFileName);
+                LOG.trace("Writing done file: [{}]", doneFileName);
                 // delete any existing done file
                 if (operations.existsFile(doneFileName)) {
                     if (!operations.deleteFile(doneFileName)) {
@@ -287,21 +288,21 @@ public class GenericFileProducer<T> extends DefaultProducer {
             boolean absolute = FileUtil.isAbsolute(file);
             if (directory != null) {
                 if (!operations.buildDirectory(directory, absolute)) {
-                    log.debug("Cannot build directory [{}] (could be because of denied permissions)", directory);
+                    LOG.debug("Cannot build directory [{}] (could be because of denied permissions)", directory);
                 }
             }
         }
 
         // upload
-        if (log.isTraceEnabled()) {
-            log.trace("About to write [{}] to [{}] from exchange [{}]", fileName, getEndpoint(), exchange);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("About to write [{}] to [{}] from exchange [{}]", fileName, getEndpoint(), exchange);
         }
 
         boolean success = operations.storeFile(fileName, exchange, -1);
         if (!success) {
             throw new GenericFileOperationFailedException("Error writing file [" + fileName + "]");
         }
-        log.debug("Wrote [{}] to [{}]", fileName, getEndpoint());
+        LOG.debug("Wrote [{}] to [{}]", fileName, getEndpoint());
     }
 
     public String createFileName(Exchange exchange) {
@@ -327,7 +328,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         }
 
         if (value instanceof String && StringHelper.hasStartToken((String) value, "simple")) {
-            log.warn("Simple expression: {} detected in header: {} of type String. This feature has been removed (see CAMEL-6748).", value, Exchange.FILE_NAME);
+            LOG.warn("Simple expression: {} detected in header: {} of type String. This feature has been removed (see CAMEL-6748).", value, Exchange.FILE_NAME);
         }
 
         // expression support
@@ -339,7 +340,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         // evaluate the name as a String from the value
         String name;
         if (expression != null) {
-            log.trace("Filename evaluated as expression: {}", expression);
+            LOG.trace("Filename evaluated as expression: {}", expression);
             name = expression.evaluate(exchange, String.class);
         } else {
             name = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);

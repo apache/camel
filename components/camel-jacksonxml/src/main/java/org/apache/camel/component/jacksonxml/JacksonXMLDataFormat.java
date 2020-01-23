@@ -43,6 +43,8 @@ import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a>
@@ -51,6 +53,8 @@ import org.apache.camel.support.service.ServiceSupport;
  */
 @Dataformat("jacksonxml")
 public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JacksonXMLDataFormat.class);
 
     private CamelContext camelContext;
     private XmlMapper xmlMapper;
@@ -472,7 +476,7 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
         if (enableJaxbAnnotationModule) {
             // Enables JAXB processing
             JaxbAnnotationModule module = new JaxbAnnotationModule();
-            log.info("Registering module: {}", module);
+            LOG.info("Registering module: {}", module);
             xmlMapper.registerModule(module);
         }
 
@@ -538,7 +542,7 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
 
         if (modules != null) {
             for (Module module : modules) {
-                log.info("Registering module: {}", module);
+                LOG.info("Registering module: {}", module);
                 xmlMapper.registerModules(module);
             }
         }
@@ -548,7 +552,7 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
                 String name = o.toString();
                 Class<Module> clazz = camelContext.getClassResolver().resolveMandatoryClass(name, Module.class);
                 Module module = camelContext.getInjector().newInstance(clazz);
-                log.info("Registering module: {} -> {}", name, module);
+                LOG.info("Registering module: {} -> {}", name, module);
                 xmlMapper.registerModule(module);
             }
         }
@@ -560,12 +564,12 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
                     name = name.substring(1);
                 }
                 Module module = CamelContextHelper.mandatoryLookup(camelContext, name, Module.class);
-                log.info("Registering module: {} -> {}", name, module);
+                LOG.info("Registering module: {} -> {}", name, module);
                 xmlMapper.registerModule(module);
             }
         }
         if (org.apache.camel.util.ObjectHelper.isNotEmpty(timezone)) {
-            log.debug("Setting timezone to XML Mapper: {}", timezone);
+            LOG.debug("Setting timezone to XML Mapper: {}", timezone);
             xmlMapper.setTimeZone(timezone);
         }
     }

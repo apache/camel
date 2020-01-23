@@ -25,10 +25,15 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.iec60870.client.ClientOptions;
 import org.apache.camel.support.DefaultComponent;
 import org.eclipse.neoscada.protocol.iec60870.ProtocolOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static java.util.Objects.requireNonNull;
 
 public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractIecComponent.class);
 
     private final Map<ConnectionId, T1> connections = new HashMap<>();
 
@@ -71,7 +76,7 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
     @Override
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
 
-        log.info("Create endpoint - uri: {}, remaining: {}, parameters: {}", uri, remaining, parameters);
+        LOG.info("Create endpoint - uri: {}, remaining: {}, parameters: {}", uri, remaining, parameters);
 
         final T1 connection = lookupConnection(uri, parameters);
         final ObjectAddress address = parseAddress(uri);
@@ -121,7 +126,7 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
 
     private T1 lookupConnection(final String fullUri, final Map<String, Object> parameters) throws Exception {
 
-        log.debug("parse connection - '{}'", fullUri);
+        LOG.debug("parse connection - '{}'", fullUri);
 
         if (fullUri == null || fullUri.isEmpty()) {
             throw new IllegalArgumentException("Invalid URI: " + fullUri);
@@ -129,18 +134,18 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
 
         final ConnectionId id = parseConnectionId(fullUri, parameters);
 
-        log.debug("parse connection - fullUri: {} -> {}", fullUri, id);
+        LOG.debug("parse connection - fullUri: {} -> {}", fullUri, id);
 
         synchronized (this) {
-            log.debug("Locating connection - {}", id);
+            LOG.debug("Locating connection - {}", id);
 
             T1 connection = this.connections.get(id);
 
-            log.debug("Result - {} -> {}", id, connection);
+            LOG.debug("Result - {} -> {}", id, connection);
 
             if (connection == null) {
                 final T2 options = parseOptions(id, parameters);
-                log.debug("Creating new connection: {}", options);
+                LOG.debug("Creating new connection: {}", options);
 
                 connection = createConnection(id, options);
                 this.connections.put(id, connection);
