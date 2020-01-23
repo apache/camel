@@ -151,7 +151,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlAttribute
     private Boolean typeConverterStatisticsEnabled;
     @XmlAttribute
-    private Boolean inflightRepositoryExchangeEnabled;
+    private Boolean inflightRepositoryBrowseEnabled;
     @XmlAttribute @Metadata(defaultValue = "Override")
     private TypeConverterExists typeConverterExists;
     @XmlAttribute @Metadata(defaultValue = "WARN")
@@ -923,16 +923,16 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     @Override
     public Boolean getInflightRepositoryExchangeEnabled() {
-        return inflightRepositoryExchangeEnabled;
+        return inflightRepositoryBrowseEnabled;
     }
 
     /**
-     * Sets whether the inflight repository should track each inflight exchange.
+     * Sets whether the inflight repository should allow browsing each inflight exchange.
      *
      * This is by default disabled as there is a very slight performance overhead when enabled.
      */
-    public void setInflightRepositoryExchangeEnabled(Boolean inflightRepositoryExchangeEnabled) {
-        this.inflightRepositoryExchangeEnabled = inflightRepositoryExchangeEnabled;
+    public void setInflightRepositoryBrowseEnabled(Boolean inflightRepositoryBrowseEnabled) {
+        this.inflightRepositoryBrowseEnabled = inflightRepositoryBrowseEnabled;
     }
 
     @Override

@@ -36,7 +36,7 @@ public class ManagedInflightStatisticsTest extends ManagementTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getInflightRepository().setInflightExchangeEnabled(true);
+        context.getInflightRepository().setInflightBrowseEnabled(true);
         return context;
     }
 

@@ -34,7 +34,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean shutdownNowOnTimeout = true;
     private boolean shutdownRoutesInReverseOrder = true;
     private boolean shutdownLogInflightExchangesOnTimeout = true;
-    private boolean inflightRepositoryExchangeEnabled;
+    private boolean inflightRepositoryBrowseEnabled;
     private String fileConfigurations;
     private boolean jmxEnabled = true;
     private int producerTemplateCacheSize = 1000;
@@ -192,23 +192,23 @@ public abstract class DefaultConfigurationProperties<T> {
      * Sets whether to log information about the inflight Exchanges which are still running
      * during a shutdown which didn't complete without the given timeout.
      *
-     * This requires to enable the option inflightRepositoryExchangeEnabled.
+     * This requires to enable the option inflightRepositoryBrowseEnabled.
      */
     public void setShutdownLogInflightExchangesOnTimeout(boolean shutdownLogInflightExchangesOnTimeout) {
         this.shutdownLogInflightExchangesOnTimeout = shutdownLogInflightExchangesOnTimeout;
     }
 
-    public boolean isInflightRepositoryExchangeEnabled() {
-        return inflightRepositoryExchangeEnabled;
+    public boolean isInflightRepositoryBrowseEnabled() {
+        return inflightRepositoryBrowseEnabled;
     }
 
     /**
-     * Sets whether the inflight repository should track each inflight exchange.
+     * Sets whether the inflight repository should allow browsing each inflight exchange.
      *
      * This is by default disabled as there is a very slight performance overhead when enabled.
      */
-    public void setInflightRepositoryExchangeEnabled(boolean inflightRepositoryExchangeEnabled) {
-        this.inflightRepositoryExchangeEnabled = inflightRepositoryExchangeEnabled;
+    public void setInflightRepositoryBrowseEnabled(boolean inflightRepositoryBrowseEnabled) {
+        this.inflightRepositoryBrowseEnabled = inflightRepositoryBrowseEnabled;
     }
 
     public String getFileConfigurations() {
@@ -962,12 +962,12 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Sets whether the inflight repository should track each inflight exchange.
+     * Sets whether the inflight repository should allow browsing each inflight exchange.
      *
      * This is by default disabled as there is a very slight performance overhead when enabled.
      */
-    public T withInflightRepositoryExchangeEnabled(boolean inflightRepositoryExchangeEnabled) {
-        this.inflightRepositoryExchangeEnabled = inflightRepositoryExchangeEnabled;
+    public T withInflightRepositoryBrowseEnabled(boolean inflightRepositoryBrowseEnabled) {
+        this.inflightRepositoryBrowseEnabled = inflightRepositoryBrowseEnabled;
         return (T) this;
     }
 

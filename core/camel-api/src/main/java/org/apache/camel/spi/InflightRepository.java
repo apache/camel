@@ -135,20 +135,20 @@ public interface InflightRepository extends StaticService {
     int size(String routeId);
 
     /**
-     * Whether tracking inflight exchanges is enabled. This is required to be enabled for the browse and oldest APIs to function.
+     * Whether the inflight repository should allow browsing each inflight exchange.
      *
      * This is by default disabled as there is a very slight performance overhead when enabled.
      */
-    boolean isInflightExchangeEnabled();
+    boolean isInflightBrowseEnabled();
 
     /**
-     * Whether tracking inflight exchanges is enabled. This is required to be enabled for the browse and oldest APIs to function.
+     * Whether the inflight repository should allow browsing each inflight exchange.
      *
      * This is by default disabled as there is a very slight performance overhead when enabled.
      *
-     * @param inflightExchangeEnabled whether tracking inflight exchanges is enabled
+     * @param inflightBrowseEnabled whether browsing is enabled
      */
-    void setInflightExchangeEnabled(boolean inflightExchangeEnabled);
+    void setInflightBrowseEnabled(boolean inflightBrowseEnabled);
 
     /**
      * A <i>read-only</i> browser of the {@link InflightExchange}s that are currently inflight.

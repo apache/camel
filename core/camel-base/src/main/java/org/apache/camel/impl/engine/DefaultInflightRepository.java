@@ -105,13 +105,13 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     }
 
     @Override
-    public boolean isInflightExchangeEnabled() {
+    public boolean isInflightBrowseEnabled() {
         return inflightExchangeEnabled;
     }
 
     @Override
-    public void setInflightExchangeEnabled(boolean inflightExchangeEnabled) {
-        this.inflightExchangeEnabled = inflightExchangeEnabled;
+    public void setInflightBrowseEnabled(boolean inflightBrowseEnabled) {
+        this.inflightExchangeEnabled = inflightBrowseEnabled;
     }
 
     @Override

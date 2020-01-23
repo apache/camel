@@ -147,7 +147,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     private Boolean typeConverterStatisticsEnabled;
 
     @XmlAttribute
-    private Boolean inflightRepositoryExchangeEnabled;
+    private Boolean inflightRepositoryBrowseEnabled;
 
     @XmlAttribute
     private TypeConverterExists typeConverterExists;
@@ -761,11 +761,11 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     @Override
     public Boolean getInflightRepositoryExchangeEnabled() {
-        return inflightRepositoryExchangeEnabled;
+        return inflightRepositoryBrowseEnabled;
     }
 
-    public void setInflightRepositoryExchangeEnabled(Boolean inflightRepositoryExchangeEnabled) {
-        this.inflightRepositoryExchangeEnabled = inflightRepositoryExchangeEnabled;
+    public void setInflightRepositoryBrowseEnabled(Boolean inflightRepositoryBrowseEnabled) {
+        this.inflightRepositoryBrowseEnabled = inflightRepositoryBrowseEnabled;
     }
 
     @Override

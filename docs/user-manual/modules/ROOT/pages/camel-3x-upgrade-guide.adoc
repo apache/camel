@@ -107,20 +107,19 @@ See the xref:message-history.adoc[Message History] documentation for how to enab
 
 === Inflight Repository
 
-The inflight repository now does not track each individual exchange (due to optimize core for lower footprint out of the box).
-To enable tracking of each exchange (which is required for the browse API on inflight repository to function) then
-you can turn this on via:
+The inflight repository now does no longer allow browsing each individual exchange (due to optimize core for lower footprint out of the box).
+To enable browsing then you can turn this on via:
 
 [source,java]
 ----
-    context.getInflightRepository().setInflightExchangeEnabled(true);
+    context.getInflightRepository().setInflightBrowseEnabled(true);
 ----
 
 And in XML DSL:
 
 [source,xml]
 ----
-<camelContext inflightRepositoryExchangeEnabled="true">
+<camelContext inflightRepositoryBrowseEnabled="true">
 
 </camelContext>
 ----

@@ -54,8 +54,8 @@ public class ManagedInflightRepository extends ManagedService implements Managed
     }
 
     @Override
-    public boolean isInflightExchangeEnabled() {
-        return inflightRepository.isInflightExchangeEnabled();
+    public boolean isInflightBrowseEnabled() {
+        return inflightRepository.isInflightBrowseEnabled();
     }
 
     @Override
