@@ -35,11 +35,15 @@ import org.apache.thrift.transport.TSSLTransportFactory;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents asynchronous and synchronous Thrift producer implementations
  */
 public class ThriftProducer extends DefaultAsyncProducer implements AsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ThriftProducer.class);
 
     protected final ThriftConfiguration configuration;
     protected final ThriftEndpoint endpoint;
@@ -98,7 +102,7 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
             
             if (syncTransport == null) {
                 initializeSslTransport();
-                log.info("Getting synchronous secured client implementation");
+                LOG.info("Getting synchronous secured client implementation");
                 thriftClient = ThriftUtils.constructClientInstance(endpoint.getServicePackage(), endpoint.getServiceName(),
                                                                    syncTransport, configuration.getExchangeProtocol(),
                                                                    configuration.getNegotiationType(), configuration.getCompressionType(),
@@ -107,7 +111,7 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
         } else if (endpoint.isSynchronous()) {
             if (syncTransport == null) {
                 initializeSyncTransport();
-                log.info("Getting synchronous client implementation");
+                LOG.info("Getting synchronous client implementation");
                 thriftClient = ThriftUtils.constructClientInstance(endpoint.getServicePackage(), endpoint.getServiceName(),
                                                                    syncTransport, configuration.getExchangeProtocol(),
                                                                    configuration.getNegotiationType(), configuration.getCompressionType(),
@@ -116,7 +120,7 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
         } else {
             if (asyncTransport == null) {
                 initializeAsyncTransport();
-                log.info("Getting asynchronous client implementation");
+                LOG.info("Getting asynchronous client implementation");
                 thriftClient = ThriftUtils.constructAsyncClientInstance(endpoint.getServicePackage(), endpoint.getServiceName(), asyncTransport,
                                                                         configuration.getExchangeProtocol(), endpoint.getCamelContext());
             }
@@ -126,11 +130,11 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
     @Override
     protected void doStop() throws Exception {
         if (syncTransport != null) {
-            log.debug("Terminating synchronous transport the remote Thrift server");
+            LOG.debug("Terminating synchronous transport the remote Thrift server");
             syncTransport.close();
             syncTransport = null;
         } else if (asyncTransport != null) {
-            log.debug("Terminating asynchronous transport the remote Thrift server");
+            LOG.debug("Terminating asynchronous transport the remote Thrift server");
             asyncTransport.close();
             asyncTransport = null;
         }
@@ -139,7 +143,7 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
     
     protected void initializeSyncTransport() throws TTransportException {
         if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
-            log.info("Creating transport to the remote Thrift server {}:{}", configuration.getHost(), configuration.getPort());
+            LOG.info("Creating transport to the remote Thrift server {}:{}", configuration.getHost(), configuration.getPort());
             syncTransport = new TSocket(configuration.getHost(), configuration.getPort());
         } else {
             throw new IllegalArgumentException("No connection properties (host, port) specified");
@@ -149,7 +153,7 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
     
     protected void initializeAsyncTransport() throws IOException, TTransportException {
         if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
-            log.info("Creating transport to the remote Thrift server {}:{}", configuration.getHost(), configuration.getPort());
+            LOG.info("Creating transport to the remote Thrift server {}:{}", configuration.getHost(), configuration.getPort());
             asyncTransport = new TNonblockingSocket(configuration.getHost(), configuration.getPort());
         } else {
             throw new IllegalArgumentException("No connection properties (host, port) specified");
@@ -167,7 +171,7 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
             ObjectHelper.notNull(sslParameters.getTrustManagers().getKeyStore().getResource(), "Trust store path");
             ObjectHelper.notNull(sslParameters.getTrustManagers().getKeyStore().getPassword(), "Trust store password");
             
-            log.info("Creating secured transport to the remote Thrift server {}:{}", configuration.getHost(), configuration.getPort());
+            LOG.info("Creating secured transport to the remote Thrift server {}:{}", configuration.getHost(), configuration.getPort());
             
             TSSLTransportFactory.TSSLTransportParameters sslParams;
             ClassResolver classResolver = endpoint.getCamelContext().getClassResolver();

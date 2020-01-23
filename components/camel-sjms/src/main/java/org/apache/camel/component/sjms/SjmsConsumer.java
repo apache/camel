@@ -40,11 +40,15 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The SjmsConsumer is the base class for the SJMS MessageListener pool.
  */
 public class SjmsConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SjmsConsumer.class);
 
     protected GenericObjectPool<MessageConsumerResources> consumers;
     private ExecutorService executor;
@@ -118,7 +122,7 @@ public class SjmsConsumer extends DefaultConsumer {
                         try {
                             fillConsumersPool();
                         } catch (Throwable e) {
-                            log.warn("Error starting listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                            LOG.warn("Error starting listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
                         }
                     }
 
@@ -154,7 +158,7 @@ public class SjmsConsumer extends DefaultConsumer {
                             consumers.close();
                             consumers = null;
                         } catch (Throwable e) {
-                            log.warn("Error stopping listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                            LOG.warn("Error stopping listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
                         }
                     }
 
@@ -189,7 +193,7 @@ public class SjmsConsumer extends DefaultConsumer {
 
             answer = new MessageConsumerResources(session, messageConsumer);
         } catch (Exception e) {
-            log.error("Unable to create the MessageConsumer", e);
+            LOG.error("Unable to create the MessageConsumer", e);
             throw e;
         } finally {
             connectionResource.returnConnection(conn);

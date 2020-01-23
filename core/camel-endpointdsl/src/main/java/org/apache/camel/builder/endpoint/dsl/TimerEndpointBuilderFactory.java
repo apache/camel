@@ -139,6 +139,32 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to include metadata in the exchange such as fired time, timer
+         * name, timer count etc. This information is default included.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default TimerEndpointBuilder includeMetadata(boolean includeMetadata) {
+            doSetProperty("includeMetadata", includeMetadata);
+            return this;
+        }
+        /**
+         * Whether to include metadata in the exchange such as fired time, timer
+         * name, timer count etc. This information is default included.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default TimerEndpointBuilder includeMetadata(String includeMetadata) {
+            doSetProperty("includeMetadata", includeMetadata);
+            return this;
+        }
+        /**
          * If greater than 0, generate periodic events every period
          * milliseconds. The default value is 1000. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30

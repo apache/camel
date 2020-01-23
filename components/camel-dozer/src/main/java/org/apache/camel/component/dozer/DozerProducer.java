@@ -22,11 +22,15 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.processor.MarshalProcessor;
 import org.apache.camel.support.processor.UnmarshalProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Producer class for Dozer endpoints.
  */
 public class DozerProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DozerProducer.class);
 
     private DozerEndpoint endpoint;
     private UnmarshalProcessor unmarshaller;
@@ -46,7 +50,7 @@ public class DozerProducer extends DefaultProducer {
         // Unmarshal the source content only if an unmarshaller is configured.
         String unmarshalId = endpoint.getConfiguration().getUnmarshalId();
         if (unmarshalId != null) {
-            log.debug("Unmarshalling input data using data format '{}'.", unmarshalId);
+            LOG.debug("Unmarshalling input data using data format '{}'.", unmarshalId);
             resolveUnmarshaller(exchange, unmarshalId).process(exchange);
             if (exchange.getException() != null) {
                 throw exchange.getException();
@@ -63,7 +67,7 @@ public class DozerProducer extends DefaultProducer {
         // Convert to source model, if specified
         String sourceType = endpoint.getConfiguration().getSourceModel();
         if (sourceType != null) {
-            log.debug("Converting to source model {}.", sourceType);
+            LOG.debug("Converting to source model {}.", sourceType);
             Class<?> sourceModel = endpoint.getCamelContext()
                     .getClassResolver().resolveClass(sourceType);
             if (sourceModel == null) {
@@ -73,7 +77,7 @@ public class DozerProducer extends DefaultProducer {
         }
         
         // Perform mappings
-        log.debug("Mapping to target model {}.", targetModel.getName());
+        LOG.debug("Mapping to target model {}.", targetModel.getName());
         Object targetObject = endpoint.getMapper().map(msg.getBody(), targetModel);
         // Second pass to process literal mappings
         endpoint.getMapper().map(endpoint.getVariableMapper(), targetObject);
@@ -91,7 +95,7 @@ public class DozerProducer extends DefaultProducer {
         // Marshal the source content only if a marshaller is configured.
         String marshalId = endpoint.getConfiguration().getMarshalId();
         if (marshalId != null) {
-            log.debug("Marshalling output data using data format '{}'.", marshalId);
+            LOG.debug("Marshalling output data using data format '{}'.", marshalId);
             resolveMarshaller(exchange, marshalId).process(exchange);
             if (exchange.getException() != null) {
                 throw exchange.getException();

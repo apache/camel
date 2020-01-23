@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SWFActivityProducer extends DefaultProducer {
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(SWFActivityProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SWFActivityProducer.class);
     private final CamelSWFActivityClient camelSWFClient;
     private SWFEndpoint endpoint;
     private SWFConfiguration configuration;
@@ -41,7 +41,7 @@ public class SWFActivityProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         String eventName = getEventName(exchange);
         String version = getVersion(exchange);
-        LOGGER.debug("scheduleActivity : " + eventName + " : " + version);
+        LOG.debug("scheduleActivity : " + eventName + " : " + version);
 
         Object result = camelSWFClient.scheduleActivity(eventName, version, exchange.getIn().getBody());
         endpoint.setResult(exchange, result);

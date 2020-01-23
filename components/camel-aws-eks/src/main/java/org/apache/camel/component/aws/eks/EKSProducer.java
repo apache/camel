@@ -33,6 +33,8 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Producer which sends messages to the Amazon EKS Service
@@ -40,6 +42,7 @@ import org.apache.camel.util.URISupport;
  */
 public class EKSProducer extends DefaultProducer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(EKSProducer.class);
     private transient String eksProducerToString;
 
     public EKSProducer(Endpoint endpoint) {
@@ -101,7 +104,7 @@ public class EKSProducer extends DefaultProducer {
         try {
             result = eksClient.listClusters(request);
         } catch (AmazonServiceException ase) {
-            log.trace("List Clusters command returned the error code {}", ase.getErrorCode());
+            LOG.trace("List Clusters command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -126,7 +129,7 @@ public class EKSProducer extends DefaultProducer {
         try {
             result = eksClient.createCluster(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Create Cluster command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Create Cluster command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -145,7 +148,7 @@ public class EKSProducer extends DefaultProducer {
         try {
             result = eksClient.describeCluster(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Describe Cluster command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Describe Cluster command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -164,7 +167,7 @@ public class EKSProducer extends DefaultProducer {
         try {
             result = eksClient.deleteCluster(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Delete Cluster command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Delete Cluster command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

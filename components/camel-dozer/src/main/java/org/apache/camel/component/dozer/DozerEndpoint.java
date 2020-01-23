@@ -33,12 +33,16 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.ResourceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The dozer component provides the ability to map between Java beans using the Dozer mapping library.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "dozer", title = "Dozer", syntax = "dozer:name", producerOnly = true, label = "transformation")
 public class DozerEndpoint extends DefaultEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DozerEndpoint.class);
 
     // IDs for built-in custom converters used with the Dozer component
     private static final String CUSTOM_MAPPING_ID = "_customMapping";
@@ -109,7 +113,7 @@ public class DozerEndpoint extends DefaultEndpoint {
     }
 
     protected void initDozerBeanContainerAndMapper() throws Exception {
-        log.info("Configuring {}...", Mapper.class.getName());
+        LOG.info("Configuring {}...", Mapper.class.getName());
 
         // Validate endpoint parameters
         if (configuration.getTargetModel() == null) {

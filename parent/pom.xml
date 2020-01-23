@@ -63,7 +63,7 @@
         <arquillian-container-se-managed-version>1.0.2.Final</arquillian-container-se-managed-version>
         <arquillian-version>1.6.0.Final</arquillian-version>
         <arquillian-weld-embedded-version>2.0.0.Final</arquillian-weld-embedded-version>
-        <asciidoctorj-version>2.1.0</asciidoctorj-version>
+        <asciidoctorj-version>2.2.0</asciidoctorj-version>
         <asm-version>5.0.4</asm-version>
         <aspectj-version>1.9.5</aspectj-version>
         <assertj-version>3.14.0</assertj-version>
@@ -100,7 +100,7 @@
         <beanstalkd-client-version>1.4.6</beanstalkd-client-version>
         <bndlib-version>2.4.0</bndlib-version>
         <bouncycastle-version>1.64</bouncycastle-version>
-        <box-java-sdk-version>2.43.0</box-java-sdk-version>
+        <box-java-sdk-version>2.44.0</box-java-sdk-version>
         <braintree-gateway-version>2.106.0</braintree-gateway-version>
         <brave-zipkin-version>5.9.1</brave-zipkin-version>
         <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
@@ -163,7 +163,7 @@
         <derby-version>10.14.2.0</derby-version>
         <digitalocean-api-client-version>2.17</digitalocean-api-client-version>
         <digitalocean-api-client-bundle-version>2.17_1</digitalocean-api-client-bundle-version>
-        <directory-watcher-version>0.9.6</directory-watcher-version>
+        <directory-watcher-version>0.9.9</directory-watcher-version>
         <disruptor-version>3.4.2</disruptor-version>
         <dnsjava-version>2.1.9</dnsjava-version>
         <dnsjava-bundle-version>2.1.9_1</dnsjava-bundle-version>
@@ -272,8 +272,8 @@
         <htmlunit-bundle-version>2.24_1</htmlunit-bundle-version>
         <htrace-version>3.1.0-incubating</htrace-version>
         <httpunit-version>1.7</httpunit-version>
-        <httpcore4-version>4.4.12</httpcore4-version>
-        <httpclient4-version>4.5.10</httpclient4-version>
+        <httpcore4-version>4.4.13</httpcore4-version>
+        <httpclient4-version>4.5.11</httpclient4-version>
         <httpasyncclient-version>4.1.4</httpasyncclient-version>
         <httpclient-version>3.1</httpclient-version>
         <hystrix-version>1.5.18</hystrix-version>
@@ -281,7 +281,7 @@
         <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
         <ical4j-version>1.0.7</ical4j-version>
         <ignite-version>2.7.6</ignite-version>
-        <infinispan-version>10.0.1.Final</infinispan-version>
+        <infinispan-version>10.1.1.Final</infinispan-version>
         <infinispan-spring-boot-version>2.1.7.Final</infinispan-spring-boot-version>
         <influx-java-driver-version>2.17</influx-java-driver-version>
         <influx-java-driver-bundle-version>2.17_1</influx-java-driver-bundle-version>
@@ -377,7 +377,7 @@
         <josql-bundle-version>1.5_5</josql-bundle-version>
         <jsendnsca-version>2.1.1</jsendnsca-version>
         <jslt-version>0.1.8</jslt-version>
-        <jsmpp-version>2.3.7</jsmpp-version>
+        <jsmpp-version>2.3.8</jsmpp-version>
         <jsch-version>0.1.55</jsch-version>
         <jsch-bundle-version>0.1.55_1</jsch-bundle-version>
         <json-accessors-smart-version>1.2</json-accessors-smart-version>
@@ -403,7 +403,7 @@
         <jzlib-bundle-version>1.1.3_2</jzlib-bundle-version>
         <kafka-version>2.4.0</kafka-version>
         <kafka-bundle-version>2.4.0_1</kafka-bundle-version>
-        <karaf4-version>4.2.7</karaf4-version>
+        <karaf4-version>4.2.8</karaf4-version>
         <kie-version>7.31.0.Final</kie-version>
         <kubernetes-client-version>4.7.0</kubernetes-client-version>
         <kubernetes-model-version>4.7.0</kubernetes-model-version>
@@ -467,7 +467,7 @@
         <mock-javamail-version>1.9</mock-javamail-version>
         <mockwebserver-version>0.1.7</mockwebserver-version>
         <mockito-version>3.1.0</mockito-version>
-        <mongo-java-driver-version>3.12.0</mongo-java-driver-version>
+        <mongo-java-driver-version>3.12.1</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
         <msv-version>2013.6.1</msv-version>
         <mustache-java-version>0.9.6</mustache-java-version>
@@ -545,7 +545,7 @@
         <regexp-bundle-version>1.4_1</regexp-bundle-version>
         <rescu-version>2.0.2</rescu-version>
         <resilience4j-version>1.2.0</resilience4j-version>
-        <rest-assured-version>4.1.2</rest-assured-version>
+        <rest-assured-version>4.2.0</rest-assured-version>
         <revapi-java-version>0.20.0</revapi-java-version>
         <revapi-maven-plugin-version>0.11.2</revapi-maven-plugin-version>
         <rhino-version>1.7.7.1</rhino-version>
@@ -588,7 +588,7 @@
         <splunk-version>1.6.5.0_1</splunk-version>
         <spring-batch-version>4.1.2.RELEASE</spring-batch-version>
         <spring-batch-bundle-version>4.1.2.RELEASE_1</spring-batch-bundle-version>
-        <spring-boot-version>2.2.3.RELEASE</spring-boot-version>
+        <spring-boot-version>2.2.4.RELEASE</spring-boot-version>
         <spring-data-commons-bundle-version>2.1.10.RELEASE_1</spring-data-commons-bundle-version>
         <spring-data-keyvalue-bundle-version>2.1.10.RELEASE_1</spring-data-keyvalue-bundle-version>
         <spring-data-redis-version>2.1.10.RELEASE</spring-data-redis-version>

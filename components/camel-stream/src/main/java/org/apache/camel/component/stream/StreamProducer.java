@@ -33,11 +33,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Producer that can write to streams
  */
 public class StreamProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(StreamProducer.class);
 
     private static final String TYPES = "out,err,file,header,url";
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
@@ -81,7 +85,7 @@ public class StreamProducer extends DefaultProducer {
     private OutputStream resolveStreamFromFile() throws IOException {
         String fileName = endpoint.getFileName();
         StringHelper.notEmpty(fileName, "fileName");
-        log.debug("About to write to file: {}", fileName);
+        LOG.debug("About to write to file: {}", fileName);
         File f = new File(fileName);
         // will create a new file if missing or append to existing
         f.getParentFile().mkdirs();
@@ -97,7 +101,7 @@ public class StreamProducer extends DefaultProducer {
         if (ms == 0) {
             return;
         }
-        log.trace("Delaying {} millis", ms);
+        LOG.trace("Delaying {} millis", ms);
         Thread.sleep(ms);
     }
 
@@ -105,7 +109,7 @@ public class StreamProducer extends DefaultProducer {
         Object body = exchange.getIn().getBody();
 
         if (body == null) {
-            log.debug("Body is null, cannot write it to the stream.");
+            LOG.debug("Body is null, cannot write it to the stream.");
             return;
         }
 
@@ -113,7 +117,7 @@ public class StreamProducer extends DefaultProducer {
         if (!(body instanceof String)) {
             byte[] bytes = exchange.getIn().getBody(byte[].class);
             if (bytes != null) {
-                log.debug("Writing as byte[]: {} to {}", bytes, outputStream);
+                LOG.debug("Writing as byte[]: {} to {}", bytes, outputStream);
                 outputStream.write(bytes);
                 return;
             }
@@ -124,8 +128,8 @@ public class StreamProducer extends DefaultProducer {
         Charset charset = endpoint.getCharset();
         Writer writer = new OutputStreamWriter(outputStream, charset);
         BufferedWriter bw = IOHelper.buffered(writer);
-        if (log.isDebugEnabled()) {
-            log.debug("Writing as text: {} to {} using encoding: {}", body, outputStream, charset);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Writing as text: {} to {} using encoding: {}", body, outputStream, charset);
         }
         bw.write(s);
         bw.write(System.lineSeparator());
@@ -145,7 +149,7 @@ public class StreamProducer extends DefaultProducer {
             outputStream = resolveStreamFromFile();
         }
         count.set(outputStream == null ? 0 : endpoint.getAutoCloseCount());
-        log.debug("Opened stream '{}'", endpoint.getEndpointKey());
+        LOG.debug("Opened stream '{}'", endpoint.getEndpointKey());
     }
 
     private void openStream(final Exchange exchange) throws Exception {
@@ -154,7 +158,7 @@ public class StreamProducer extends DefaultProducer {
         }
         if ("header".equals(uri)) {
             outputStream = resolveStreamFromHeader(exchange.getIn().getHeader("stream"), exchange);
-            log.debug("Opened stream '{}'", endpoint.getEndpointKey());
+            LOG.debug("Opened stream '{}'", endpoint.getEndpointKey());
         } else {
             openStream();
         }
@@ -181,7 +185,7 @@ public class StreamProducer extends DefaultProducer {
         if (!systemStream && expiredStream) {
             outputStream.close();
             outputStream = null;
-            log.debug("Closed stream '{}'", endpoint.getEndpointKey());
+            LOG.debug("Closed stream '{}'", endpoint.getEndpointKey());
         }
     }
 

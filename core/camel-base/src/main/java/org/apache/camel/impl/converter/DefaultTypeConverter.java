@@ -22,6 +22,8 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of a type converter registry used for
@@ -30,6 +32,8 @@ import org.apache.camel.util.TimeUtils;
  * This implementation will load type converters up-front on startup.
  */
 public class DefaultTypeConverter extends BaseTypeConverterRegistry {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultTypeConverter.class);
 
     private final boolean loadTypeConverters;
 
@@ -78,8 +82,8 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry {
 
             // report how many type converters we have loaded
             if (additional > 0) {
-                log.info("Type converters loaded (fast: {}, scanned: {})", fast, additional);
-                log.warn("Annotation scanning mode loaded {} type converters. Its recommended to migrate to @Converter(loader = true) for fast type converter mode.", additional);
+                LOG.info("Type converters loaded (fast: {}, scanned: {})", fast, additional);
+                LOG.warn("Annotation scanning mode loaded {} type converters. Its recommended to migrate to @Converter(loader = true) for fast type converter mode.", additional);
             }
 
             // lets clear the cache from the resolver as its often only used during startup
@@ -89,7 +93,7 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry {
         }
 
         String time = TimeUtils.printDuration(watch.taken());
-        log.debug("Loaded {} type converters in {}", typeMappings.size(), time);
+        LOG.debug("Loaded {} type converters in {}", typeMappings.size(), time);
     }
 
     @Override

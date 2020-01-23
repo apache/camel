@@ -42,7 +42,7 @@ public class NettyReuseChannelTest extends BaseNettyTest {
 
         assertMockEndpointsSatisfied();
 
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         assertEquals(2, channels.size());
         assertSame("Should reuse channel", channels.get(0), channels.get(1));

@@ -232,7 +232,7 @@ public class S3Producer extends DefaultProducer {
         } else {
             is = exchange.getIn().getMandatoryBody(InputStream.class);
             if (objectMetadata.getContentLength() == 0 && ObjectHelper.isEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
-                log.debug("The content length is not defined. It needs to be determined by reading the data into memory");
+                LOG.debug("The content length is not defined. It needs to be determined by reading the data into memory");
                 baos = determineLengthInputStream(is);
                 objectMetadata.setContentLength(baos.size());
                 is = new ByteArrayInputStream(baos.toByteArray());

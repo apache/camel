@@ -58,10 +58,10 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     //   requires API changes and thus is best kept for future Camel work
 
     private String id;
+    private final Logger log;
     private final CamelContext context;
-    // reduce the default size of the stack with the number of nested routes deep (8 level down)
-    private final Deque<RouteContext> routeContextStack = new ArrayDeque<>(8);
-    private final transient Logger log;
+    private RouteContext prevRouteContext;
+    private RouteContext routeContext;
     private List<Synchronization> synchronizations;
     private Message originalInMessage;
     private Set<Object> transactedBy;
@@ -75,7 +75,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         if (log.isTraceEnabled()) {
             log.trace("UnitOfWork created for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
         }
-
         context = exchange.getContext();
 
         if (context.isAllowUseOriginalMessage()) {
@@ -229,7 +228,9 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         if (log.isTraceEnabled()) {
             log.trace("UnitOfWork beforeRoute: {} for ExchangeId: {} with {}", route.getId(), exchange.getExchangeId(), exchange);
         }
-        UnitOfWorkHelper.beforeRouteSynchronizations(route, exchange, synchronizations, log);
+        if (synchronizations != null && !synchronizations.isEmpty()) {
+            UnitOfWorkHelper.beforeRouteSynchronizations(route, exchange, synchronizations, log);
+        }
     }
 
     @Override
@@ -237,7 +238,9 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         if (log.isTraceEnabled()) {
             log.trace("UnitOfWork afterRoute: {} for ExchangeId: {} with {}", route.getId(), exchange.getExchangeId(), exchange);
         }
-        UnitOfWorkHelper.afterRouteSynchronizations(route, exchange, synchronizations, log);
+        if (synchronizations != null && !synchronizations.isEmpty()) {
+            UnitOfWorkHelper.afterRouteSynchronizations(route, exchange, synchronizations, log);
+        }
     }
 
     @Override
@@ -278,17 +281,26 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     @Override
     public RouteContext getRouteContext() {
-        return routeContextStack.peek();
+        return routeContext;
     }
 
     @Override
     public void pushRouteContext(RouteContext routeContext) {
-        routeContextStack.push(routeContext);
+        this.prevRouteContext = this.routeContext;
+        this.routeContext = routeContext;
     }
 
     @Override
     public RouteContext popRouteContext() {
-        return routeContextStack.pollFirst();
+        RouteContext answer = this.routeContext;
+        this.routeContext = this.prevRouteContext;
+        this.prevRouteContext = null;
+        return answer;
+    }
+
+    @Override
+    public boolean isBeforeAfterProcess() {
+        return false;
     }
 
     @Override
@@ -299,6 +311,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     @Override
     public void afterProcess(Processor processor, Exchange exchange, AsyncCallback callback, boolean doneSync) {
+        // noop
     }
 
     private Set<Object> getTransactedBy() {

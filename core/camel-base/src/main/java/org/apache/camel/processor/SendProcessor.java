@@ -32,12 +32,15 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Processor for forwarding exchanges to a static endpoint destination.
@@ -45,6 +48,8 @@ import org.apache.camel.util.URISupport;
  * @see SendDynamicProcessor
  */
 public class SendProcessor extends AsyncProcessorSupport implements Traceable, EndpointAware, IdAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SendProcessor.class);
 
     protected transient String traceLabelToString;
     protected final CamelContext camelContext;
@@ -159,7 +164,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
                 };
             }
             try {
-                log.debug(">>>> {} {}", destination, exchange);
+                LOG.debug(">>>> {} {}", destination, exchange);
                 return producer.process(exchange, ac);
             } catch (Throwable throwable) {
                 exchange.setException(throwable);
@@ -169,7 +174,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
             return true;
         } else {
             configureExchange(exchange, pattern);
-            log.debug(">>>> {} {}", destination, exchange);
+            LOG.debug(">>>> {} {}", destination, exchange);
 
             // send the exchange to the destination using the producer cache for the non optimized producers
             return producerCache.doInAsyncProducer(destination, exchange, callback, (producer, ex, cb) -> producer.process(ex, doneSync -> {

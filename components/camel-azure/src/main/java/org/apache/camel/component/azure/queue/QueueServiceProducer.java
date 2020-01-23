@@ -29,11 +29,15 @@ import org.apache.camel.component.azure.common.ExchangeUtil;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Producer which sends messages to the Azure Storage Queue Service
  */
 public class QueueServiceProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(QueueServiceProducer.class);
 
     public QueueServiceProducer(final Endpoint endpoint) {
         super(endpoint);
@@ -97,7 +101,7 @@ public class QueueServiceProducer extends DefaultProducer {
     }
     
     private void doCreateQueue(CloudQueue client, QueueServiceRequestOptions opts, Exchange exchange) throws Exception {
-        log.trace("Creating the queue [{}] from exchange [{}]...",
+        LOG.trace("Creating the queue [{}] from exchange [{}]...",
                   getConfiguration().getQueueName(), exchange);
         client.createIfNotExists(opts.getRequestOpts(), opts.getOpContext());
         ExchangeUtil.getMessageForResponse(exchange)
@@ -105,7 +109,7 @@ public class QueueServiceProducer extends DefaultProducer {
     }
     
     private void deleteQueue(Exchange exchange) throws Exception {
-        log.trace("Deleting the queue [{}] from exchange [{}]...",
+        LOG.trace("Deleting the queue [{}] from exchange [{}]...",
                   getConfiguration().getQueueName(), exchange);
         CloudQueue client = QueueServiceUtil.createQueueClient(getConfiguration());
         QueueServiceRequestOptions opts = QueueServiceUtil.getRequestOptions(exchange);
@@ -113,7 +117,7 @@ public class QueueServiceProducer extends DefaultProducer {
     }
     
     private void addMessage(Exchange exchange) throws Exception {
-        log.trace("Putting the message into the queue [{}] from exchange [{}]...",
+        LOG.trace("Putting the message into the queue [{}] from exchange [{}]...",
                   getConfiguration().getQueueName(), exchange);
         CloudQueue client = QueueServiceUtil.createQueueClient(getConfiguration());
         QueueServiceRequestOptions opts = QueueServiceUtil.getRequestOptions(exchange);
@@ -135,7 +139,7 @@ public class QueueServiceProducer extends DefaultProducer {
         QueueServiceRequestOptions opts = QueueServiceUtil.getRequestOptions(exchange);
         
         CloudQueueMessage message = getCloudQueueMessage(exchange);
-        log.trace("Updating the message in the queue [{}] from exchange [{}]...",
+        LOG.trace("Updating the message in the queue [{}] from exchange [{}]...",
                   getConfiguration().getQueueName(), exchange);
         
         EnumSet<MessageUpdateFields> fields = null;
@@ -154,7 +158,7 @@ public class QueueServiceProducer extends DefaultProducer {
     }
     
     private void deleteMessage(Exchange exchange) throws Exception {
-        log.trace("Deleting the message from the queue [{}] from exchange [{}]...",
+        LOG.trace("Deleting the message from the queue [{}] from exchange [{}]...",
                   getConfiguration().getQueueName(), exchange);
         CloudQueue client = QueueServiceUtil.createQueueClient(getConfiguration());
         QueueServiceRequestOptions opts = QueueServiceUtil.getRequestOptions(exchange);

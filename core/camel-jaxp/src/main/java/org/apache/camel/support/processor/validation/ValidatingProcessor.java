@@ -37,6 +37,8 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.ls.LSResourceResolver;
 
@@ -59,6 +61,8 @@ import static org.apache.camel.support.processor.validation.SchemaReader.ACCESS_
  * against some schema either in XSD or RelaxNG
  */
 public class ValidatingProcessor extends AsyncProcessorSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ValidatingProcessor.class);
 
     private final SchemaReader schemaReader;
     private ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
@@ -102,11 +106,11 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
         // turn off access to external schema by default
         if (!Boolean.parseBoolean(exchange.getContext().getGlobalOptions().get(ACCESS_EXTERNAL_DTD))) {
             try {
-                log.debug("Configuring Validator to not allow access to external DTD/Schema");
+                LOG.debug("Configuring Validator to not allow access to external DTD/Schema");
                 validator.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
                 validator.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             } catch (SAXException e) {
-                log.warn(e.getMessage(), e);
+                LOG.warn(e.getMessage(), e);
             }
         }
 
@@ -160,7 +164,7 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
                 validator.setErrorHandler(handler);
 
                 try {
-                    log.trace("Validating {}", source);
+                    LOG.trace("Validating {}", source);
                     validator.validate(source, result);
                     handler.handleErrors(exchange, schema, result);
                 } catch (SAXParseException e) {

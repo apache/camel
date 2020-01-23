@@ -38,6 +38,9 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.support.RestProducerFactoryHelper.setupComponent;
 
@@ -51,6 +54,8 @@ public class RestEndpoint extends DefaultEndpoint {
     public static final String[] DEFAULT_REST_PRODUCER_COMPONENTS = new String[]{"http", "netty-http", "undertow"};
     public static final String DEFAULT_API_COMPONENT_NAME = "openapi";
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/rest/";
+
+    private static final Logger LOG = LoggerFactory.getLogger(RestEndpoint.class);
 
     @UriPath(label = "common", enums = "get,post,put,delete,patch,head,trace,connect,options") @Metadata(required = true)
     private String method;
@@ -298,7 +303,7 @@ public class RestEndpoint extends DefaultEndpoint {
         RestProducerFactory factory = null;
 
         if (apiDoc != null) {
-            log.debug("Discovering camel-openapi-java on classpath for using api-doc: {}", apiDoc);
+            LOG.debug("Discovering camel-openapi-java on classpath for using api-doc: {}", apiDoc);
             // lookup on classpath using factory finder to automatic find it (just add camel-openapi-java to classpath etc)
             FactoryFinder finder = null;
             try {
@@ -310,7 +315,7 @@ public class RestEndpoint extends DefaultEndpoint {
                 parameters.put("apiDoc", apiDoc);
             } catch (NoFactoryAvailableException e) {
                 try {
-                    log.debug("Discovering camel-swagger-java on classpath as fallback for using api-doc: {}", apiDoc);
+                    LOG.debug("Discovering camel-swagger-java on classpath as fallback for using api-doc: {}", apiDoc);
                     Object instance = finder.newInstance("swagger").get();
                     if (instance instanceof RestProducerFactory) {
                         // this factory from camel-swagger-java will facade the http component in use
@@ -401,13 +406,13 @@ public class RestEndpoint extends DefaultEndpoint {
                 }
             }
             if (found != null) {
-                log.debug("Auto discovered {} as RestProducerFactory", foundName);
+                LOG.debug("Auto discovered {} as RestProducerFactory", foundName);
                 factory = found;
             }
         }
 
         if (factory != null) {
-            log.debug("Using RestProducerFactory: {}", factory);
+            LOG.debug("Using RestProducerFactory: {}", factory);
 
             RestConfiguration config = getCamelContext().getRestConfiguration(pname, false);
             if (config == null) {
@@ -499,7 +504,7 @@ public class RestEndpoint extends DefaultEndpoint {
                 }
             }
             if (found != null) {
-                log.debug("Auto discovered {} as RestConsumerFactory", foundName);
+                LOG.debug("Auto discovered {} as RestConsumerFactory", foundName);
                 factory = found;
             }
         }

@@ -47,6 +47,9 @@ import org.elasticsearch.client.sniff.Sniffer;
 import org.elasticsearch.client.sniff.SnifferBuilder;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.component.elasticsearch.ElasticsearchConstants.PARAM_SCROLL;
 import static org.apache.camel.component.elasticsearch.ElasticsearchConstants.PARAM_SCROLL_KEEP_ALIVE_MS;
@@ -55,6 +58,8 @@ import static org.apache.camel.component.elasticsearch.ElasticsearchConstants.PA
  * Represents an Elasticsearch producer.
  */
 public class ElasticsearchProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchProducer.class);
 
     protected final ElasticsearchConfiguration configuration;
     private RestClient client;
@@ -270,12 +275,12 @@ public class ElasticsearchProducer extends DefaultProducer {
 
     private void startClient() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, UnknownHostException {
         if (client == null) {
-            log.info("Connecting to the ElasticSearch cluster: {}", configuration.getClusterName());
+            LOG.info("Connecting to the ElasticSearch cluster: {}", configuration.getClusterName());
             if (configuration.getHostAddressesList() != null
                 && !configuration.getHostAddressesList().isEmpty()) {
                 client = createClient();
             } else {
-                log.warn("Incorrect ip address and port parameters settings for ElasticSearch cluster");
+                LOG.warn("Incorrect ip address and port parameters settings for ElasticSearch cluster");
             }
         }
     }
@@ -307,7 +312,7 @@ public class ElasticsearchProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         if (client != null) {
-            log.info("Disconnecting from ElasticSearch cluster: {}", configuration.getClusterName());
+            LOG.info("Disconnecting from ElasticSearch cluster: {}", configuration.getClusterName());
             client.close();
             if (sniffer != null) {
                 sniffer.close();

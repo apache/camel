@@ -20,10 +20,15 @@ import com.codahale.metrics.Histogram;
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_HISTOGRAM_VALUE;
 
 public class HistogramProducer extends AbstractMetricsProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HistogramProducer.class);
 
     public HistogramProducer(MetricsEndpoint endpoint) {
         super(endpoint);
@@ -38,7 +43,7 @@ public class HistogramProducer extends AbstractMetricsProducer {
         if (finalValue != null) {
             histogram.update(finalValue);
         } else {
-            log.warn("Cannot update histogram \"{}\" with null value", metricsName);
+            LOG.warn("Cannot update histogram \"{}\" with null value", metricsName);
         }
     }
 }

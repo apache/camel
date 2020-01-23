@@ -24,6 +24,8 @@ import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.spi.ManagementInterceptStrategy.InstrumentationProcessor;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * JMX enabled processor or advice that uses the {@link org.apache.camel.management.mbean.ManagedCounter} for instrumenting
@@ -34,6 +36,9 @@ import org.apache.camel.util.StopWatch;
  */
 public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
         implements InstrumentationProcessor<StopWatch>, Ordered {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultInstrumentationProcessor.class);
+
 
     private PerformanceCounter counter;
     private String type;
@@ -68,24 +73,22 @@ public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         final StopWatch watch = before(exchange);
 
-        return processor.process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
+        // optimize to only create a new callback if needed
+        AsyncCallback ac = callback;
+        boolean newCallback = watch != null;
+        if (newCallback) {
+            ac = doneSync -> {
                 try {
                     // record end time
-                    if (watch != null) {
-                        after(exchange, watch);
-                    }
+                    after(exchange, watch);
                 } finally {
                     // and let the original callback know we are done as well
                     callback.done(doneSync);
                 }
-            }
+            };
+        }
 
-            @Override
-            public String toString() {
-                return DefaultInstrumentationProcessor.this.toString();
-            }
-        });
+        return processor.process(exchange, ac);
     }
 
     protected void beginTime(Exchange exchange) {
@@ -93,8 +96,8 @@ public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
     }
 
     protected void recordTime(Exchange exchange, long duration) {
-        if (log.isTraceEnabled()) {
-            log.trace("{}Recording duration: {} millis for exchange: {}", type != null ? type + ": " : "", duration, exchange);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("{}Recording duration: {} millis for exchange: {}", type != null ? type + ": " : "", duration, exchange);
         }
 
         if (!exchange.isFailed() && exchange.getException() == null) {

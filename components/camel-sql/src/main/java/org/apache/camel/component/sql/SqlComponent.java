@@ -29,6 +29,8 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.PropertiesHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -36,6 +38,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 @Component("sql")
 public class SqlComponent extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SqlComponent.class);
 
     private DataSource dataSource;
     @Metadata(label = "advanced", defaultValue = "true")
@@ -84,7 +88,7 @@ public class SqlComponent extends DefaultComponent {
         if (target == null) {
             throw new IllegalArgumentException("DataSource must be configured");
         }
-        log.debug("Using default DataSource discovered from registry: {}", target);
+        LOG.debug("Using default DataSource discovered from registry: {}", target);
 
         String parameterPlaceholderSubstitute = getAndRemoveParameter(parameters, "placeholder", String.class, "#");
 

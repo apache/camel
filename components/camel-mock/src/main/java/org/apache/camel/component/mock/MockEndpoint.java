@@ -59,6 +59,8 @@ import org.apache.camel.support.ExpressionComparator;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The mock component is used for testing routes and mediation rules using mocks.
@@ -91,6 +93,8 @@ import org.apache.camel.util.StopWatch;
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "mock", title = "Mock", syntax = "mock:name", producerOnly = true, label = "core,testing", lenientProperties = true)
 public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, NotifyBuilderMatcher {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MockEndpoint.class);
 
     // must be volatile so changes is visible between the thread which performs the assertions
     // and the threads which process the exchanges when routing messages in Camel
@@ -381,12 +385,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      *                should wait for the test to be true
      */
     public void assertIsSatisfied(long timeoutForEmptyEndpoints) throws InterruptedException {
-        log.info("Asserting: {} is satisfied", this);
+        LOG.info("Asserting: {} is satisfied", this);
         doAssertIsSatisfied(timeoutForEmptyEndpoints);
         if (assertPeriod > 0) {
             // if an assert period was set then re-assert again to ensure the assertion is still valid
             Thread.sleep(assertPeriod);
-            log.info("Re-asserting: {} is satisfied after {} millis", this, assertPeriod);
+            LOG.info("Re-asserting: {} is satisfied after {} millis", this, assertPeriod);
             // do not use timeout when we re-assert
             doAssertIsSatisfied(0);
         }
@@ -395,7 +399,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     protected void doAssertIsSatisfied(long timeoutForEmptyEndpoints) throws InterruptedException {
         if (expectedCount == 0) {
             if (timeoutForEmptyEndpoints > 0) {
-                log.debug("Sleeping for: {} millis to check there really are no messages received", timeoutForEmptyEndpoints);
+                LOG.debug("Sleeping for: {} millis to check there really are no messages received", timeoutForEmptyEndpoints);
                 Thread.sleep(timeoutForEmptyEndpoints);
             }
             assertEquals("Received message count", expectedCount, getReceivedCounter());
@@ -429,7 +433,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
         for (Throwable failure : failures) {
             if (failure != null) {
-                log.error("Caught exception on " + getEndpointUri() + " due to: " + failure.getMessage(), failure);
+                LOG.error("Caught exception on " + getEndpointUri() + " due to: " + failure.getMessage(), failure);
                 fail(failure);
             }
         }
@@ -445,11 +449,11 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             // did not throw expected error... fail!
             failed = true;
         } catch (AssertionError e) {
-            if (log.isDebugEnabled()) {
+            if (LOG.isDebugEnabled()) {
                 // log incl stacktrace
-                log.debug("Caught expected failure: " + e.getMessage(), e);
+                LOG.debug("Caught expected failure: " + e.getMessage(), e);
             } else {
-                log.info("Caught expected failure: " + e.getMessage());
+                LOG.info("Caught expected failure: " + e.getMessage());
             }
         }
         if (failed) {
@@ -471,11 +475,11 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             // did not throw expected error... fail!
             failed = true;
         } catch (AssertionError e) {
-            if (log.isDebugEnabled()) {
+            if (LOG.isDebugEnabled()) {
                 // log incl stacktrace
-                log.debug("Caught expected failure: " + e.getMessage(), e);
+                LOG.debug("Caught expected failure: " + e.getMessage(), e);
             } else {
-                log.info("Caught expected failure: " + e.getMessage());
+                LOG.info("Caught expected failure: " + e.getMessage());
             }
         }
         if (failed) { 
@@ -1522,12 +1526,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                     if (test instanceof AssertionTask) {
                         AssertionTask task = (AssertionTask) test;
                         try {
-                            log.debug("Running assertOnIndex({}) on task: {}", index, task);
+                            LOG.debug("Running assertOnIndex({}) on task: {}", index, task);
                             task.assertOnIndex(index);
                         } catch (AssertionError e) {
                             failFastAssertionError = e;
                             // signal latch we are done as we are failing fast
-                            log.debug("Assertion failed fast on " + index + " received exchange due to " + e.getMessage());
+                            LOG.debug("Assertion failed fast on " + index + " received exchange due to " + e.getMessage());
                             while (latch != null && latch.getCount() > 0) {
                                 latch.countDown();
                             }
@@ -1592,12 +1596,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         }
 
         // let counter be 0 index-based in the logs
-        if (log.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
             String msg = getEndpointUri() + " >>>> " + counter + " : " + copy + " with body: " + actualBody;
             if (copy.getIn().hasHeaders()) {
                 msg += " and headers:" + copy.getIn().getHeaders();
             }
-            log.debug(msg);
+            LOG.debug(msg);
         }
 
         // record timestamp when exchange was received
@@ -1663,7 +1667,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         StopWatch watch = new StopWatch();
         waitForCompleteLatch(resultWaitTime);
         long delta = watch.taken();
-        log.debug("Took {} millis to complete latch", delta);
+        LOG.debug("Took {} millis to complete latch", delta);
 
         if (resultMinimumWaitTime > 0 && delta < resultMinimumWaitTime) {
             fail("Expected minimum " + resultMinimumWaitTime
@@ -1676,7 +1680,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         long waitTime = timeout == 0 ? 10000L : timeout;
 
         // now let's wait for the results
-        log.debug("Waiting on the latch for: {} millis", timeout);
+        LOG.debug("Waiting on the latch for: {} millis", timeout);
         latch.await(waitTime, TimeUnit.MILLISECONDS);
     }
 
@@ -1693,11 +1697,11 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     protected void fail(Object message) {
-        if (log.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
             List<Exchange> list = getReceivedExchanges();
             int index = 0;
             for (Exchange exchange : list) {
-                log.debug("{} failed and received[{}]: {}", getEndpointUri(), ++index, exchange);
+                LOG.debug("{} failed and received[{}]: {}", getEndpointUri(), ++index, exchange);
             }
         }
         if (message instanceof Throwable) {

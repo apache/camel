@@ -43,6 +43,8 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.apache.camel.spi.Debugger} that has easy debugging functionality which
@@ -59,10 +61,12 @@ import org.apache.camel.support.service.ServiceSupport;
  */
 public final class BacklogDebugger extends ServiceSupport {
 
+    private static final Logger LOG = LoggerFactory.getLogger(BacklogDebugger.class);
+
     private long fallbackTimeout = 300;
     private final CamelContext camelContext;
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
-    private final CamelLogger logger = new CamelLogger(log, loggingLevel);
+    private final CamelLogger logger = new CamelLogger(LOG, loggingLevel);
     private final AtomicBoolean enabled = new AtomicBoolean();
     private final AtomicLong debugCounter = new AtomicLong(0);
     private final Debugger debugger;

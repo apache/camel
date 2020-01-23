@@ -19,12 +19,16 @@ package org.apache.camel.component.jgroups;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 import org.jgroups.JChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Consumes messages from the JGroups channels ({@code org.jgroups.Channel}). Received messages
  * ({@code org.jgroups.Message}) are routed to Camel as the body of {@link org.apache.camel.Exchange}.
  */
 public class JGroupsConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JGroupsConsumer.class);
 
     private final JChannel channel;
     private final String clusterName;
@@ -45,14 +49,14 @@ public class JGroupsConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        log.debug("Connecting receiver: {} to the cluster: {}.", receiver, clusterName);
+        LOG.debug("Connecting receiver: {} to the cluster: {}.", receiver, clusterName);
         channel.setReceiver(receiver);
         endpoint.connect();
     }
 
     @Override
     protected void doStop() throws Exception {
-        log.debug("Closing connection to cluster: {} from receiver: {}.", clusterName, receiver);
+        LOG.debug("Closing connection to cluster: {} from receiver: {}.", clusterName, receiver);
         channel.setReceiver(null);
         endpoint.disconnect();
         super.doStop();

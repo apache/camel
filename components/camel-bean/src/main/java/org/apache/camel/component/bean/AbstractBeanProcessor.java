@@ -25,12 +25,16 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.service.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Processor} which converts the inbound exchange to a method
  * invocation on a POJO
  */
 public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractBeanProcessor.class);
 
     private final BeanHolder beanHolder;
     private transient Processor processor;
@@ -106,8 +110,8 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
                 }
             }
             if (target != null) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Using a custom adapter as bean invocation: {}", target);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Using a custom adapter as bean invocation: {}", target);
                 }
                 try {
                     target.process(exchange);

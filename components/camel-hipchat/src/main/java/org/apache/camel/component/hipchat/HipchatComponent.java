@@ -24,6 +24,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link HipchatEndpoint}. Hipchat is an Atlassian software for team chat.
@@ -35,6 +37,8 @@ import org.apache.camel.util.URISupport;
  */
 @Component("hipchat")
 public class HipchatComponent extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HipchatComponent.class);
 
     public HipchatComponent() {
     }
@@ -51,7 +55,7 @@ public class HipchatComponent extends DefaultComponent {
             throw new HipchatException("OAuth 2 auth token must be specified");
         }
         parseUri(remaining, endpoint);
-        log.debug("Using Hipchat API URL: {}", endpoint.getConfiguration().hipChatUrl());
+        LOG.debug("Using Hipchat API URL: {}", endpoint.getConfiguration().hipChatUrl());
         return endpoint;
     }
 

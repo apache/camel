@@ -94,7 +94,11 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     @Override
     public void pushRouteContext(RouteContext routeContext) {
         super.pushRouteContext(routeContext);
-        MDC.put(MDC_ROUTE_ID, routeContext.getRouteId());
+        if (routeContext != null) {
+            MDC.put(MDC_ROUTE_ID, routeContext.getRouteId());
+        } else {
+            MDC.remove(MDC_ROUTE_ID);
+        }
     }
 
     @Override
@@ -124,6 +128,11 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     public void endTransactedBy(Object key) {
         MDC.remove(MDC_TRANSACTION_KEY);
         super.endTransactedBy(key);
+    }
+
+    @Override
+    public boolean isBeforeAfterProcess() {
+        return true;
     }
 
     @Override

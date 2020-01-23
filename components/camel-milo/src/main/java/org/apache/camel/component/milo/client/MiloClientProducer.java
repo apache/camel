@@ -50,8 +50,6 @@ public class MiloClientProducer extends DefaultAsyncProducer {
         final Message msg = exchange.getIn();
         final Object value = msg.getBody();
 
-        log.debug("Processing message: {}", value);
-
         final CompletableFuture<?> future;
 
         if (this.methodId == null) {

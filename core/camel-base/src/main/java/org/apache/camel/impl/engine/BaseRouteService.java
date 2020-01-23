@@ -151,7 +151,6 @@ public abstract class BaseRouteService extends ChildServiceSupport {
                 // warm up the route first
                 route.warmUp();
 
-                log.debug("Starting services on route: {}", route.getId());
                 List<Service> services = route.getServices();
 
                 // callback that we are staring these services
@@ -235,8 +234,6 @@ public abstract class BaseRouteService extends ChildServiceSupport {
         }
         
         try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
-            log.debug("Stopping services on route: {}", route.getId());
-
             // gather list of services to stop as we need to start child services as well
             Set<Service> services = gatherChildServices();
 
@@ -266,8 +263,6 @@ public abstract class BaseRouteService extends ChildServiceSupport {
     @Override
     protected void doShutdown() {
         try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
-            log.debug("Shutting down services on route: {}", route.getId());
-
             // gather list of services to stop as we need to start child services as well
             Set<Service> services = gatherChildServices();
 
@@ -333,7 +328,6 @@ public abstract class BaseRouteService extends ChildServiceSupport {
 
     protected void startChildService(Route route, List<Service> services) {
         for (Service service : services) {
-            log.debug("Starting child service on route: {} -> {}", route.getId(), service);
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
                 strategy.onServiceAdd(camelContext, service, route);
             }
@@ -344,7 +338,6 @@ public abstract class BaseRouteService extends ChildServiceSupport {
 
     protected void stopChildService(Route route, Set<Service> services, boolean shutdown) {
         for (Service service : services) {
-            log.debug("{} child service on route: {} -> {}", shutdown ? "Shutting down" : "Stopping", route.getId(), service);
             if (service instanceof ErrorHandler) {
                 // special for error handlers
                 for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {

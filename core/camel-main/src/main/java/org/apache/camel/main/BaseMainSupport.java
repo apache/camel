@@ -479,7 +479,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
             // invoke configure method if exists
             Method method = findMethod(config.getClass(), "configure");
             if (method != null) {
-                log.info("Calling configure method on configuration class: {}", config.getClass().getName());
+                LOG.info("Calling configure method on configuration class: {}", config.getClass().getName());
                 invokeMethod(method, config);
             }
         }

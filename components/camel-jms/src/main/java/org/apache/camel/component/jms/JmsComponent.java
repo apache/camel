@@ -32,6 +32,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
@@ -49,6 +51,7 @@ import static org.apache.camel.util.StringHelper.removeStartingCharacters;
 @Component("jms")
 public class JmsComponent extends HeaderFilterStrategyComponent {
 
+    private static final Logger LOG = LoggerFactory.getLogger(JmsComponent.class);
     private static final String KEY_FORMAT_STRATEGY_PARAM = "jmsKeyFormatStrategy";
 
     private ExecutorService asyncStartStopExecutorService;
@@ -1238,7 +1241,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
                 ConnectionFactory cf = beans.iterator().next();
                 configuration.setConnectionFactory(cf);
             } else if (beans.size() > 1) {
-                log.debug("Cannot autowire ConnectionFactory as " + beans.size() + " instances found in registry.");
+                LOG.debug("Cannot autowire ConnectionFactory as " + beans.size() + " instances found in registry.");
             }
         }
 
@@ -1248,7 +1251,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
                 DestinationResolver destinationResolver = beans.iterator().next();
                 configuration.setDestinationResolver(destinationResolver);
             } else if (beans.size() > 1) {
-                log.debug("Cannot autowire ConnectionFactory as " + beans.size() + " instances found in registry.");
+                LOG.debug("Cannot autowire ConnectionFactory as " + beans.size() + " instances found in registry.");
             }
         }
 
@@ -1333,7 +1336,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         if (cfUsername != null && cfPassword != null) {
             cf = endpoint.getConfiguration().getOrCreateConnectionFactory();
             ObjectHelper.notNull(cf, "ConnectionFactory");
-            log.debug("Wrapping existing ConnectionFactory with UserCredentialsConnectionFactoryAdapter using username: {} and password: ******", cfUsername);
+            LOG.debug("Wrapping existing ConnectionFactory with UserCredentialsConnectionFactoryAdapter using username: {} and password: ******", cfUsername);
             UserCredentialsConnectionFactoryAdapter ucfa = new UserCredentialsConnectionFactoryAdapter();
             ucfa.setTargetConnectionFactory(cf);
             ucfa.setPassword(cfPassword);

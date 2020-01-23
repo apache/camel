@@ -34,23 +34,37 @@ import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.service.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default {@link org.apache.camel.spi.InflightRepository}.
  */
 public class DefaultInflightRepository extends ServiceSupport implements InflightRepository {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultInflightRepository.class);
+
+    private final AtomicInteger size = new AtomicInteger();
     private final ConcurrentMap<String, Exchange> inflight = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, AtomicInteger> routeCount = new ConcurrentHashMap<>();
+    private boolean inflightExchangeEnabled;
 
     @Override
     public void add(Exchange exchange) {
-        inflight.put(exchange.getExchangeId(), exchange);
+        size.incrementAndGet();
+
+        if (inflightExchangeEnabled) {
+            inflight.put(exchange.getExchangeId(), exchange);
+        }
     }
 
     @Override
     public void remove(Exchange exchange) {
-        inflight.remove(exchange.getExchangeId());
+        size.decrementAndGet();
+
+        if (inflightExchangeEnabled) {
+            inflight.remove(exchange.getExchangeId());
+        }
     }
 
     @Override
@@ -71,7 +85,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public int size() {
-        return inflight.size();
+        return size.get();
     }
 
     @Override
@@ -91,6 +105,16 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     }
 
     @Override
+    public boolean isInflightBrowseEnabled() {
+        return inflightExchangeEnabled;
+    }
+
+    @Override
+    public void setInflightBrowseEnabled(boolean inflightBrowseEnabled) {
+        this.inflightExchangeEnabled = inflightBrowseEnabled;
+    }
+
+    @Override
     public Collection<InflightExchange> browse() {
         return browse(null, -1, false);
     }
@@ -107,6 +131,10 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public Collection<InflightExchange> browse(String fromRouteId, int limit, boolean sortByLongestDuration) {
+        if (!inflightExchangeEnabled) {
+            return Collections.emptyList();
+        }
+
         Stream<Exchange> values;
         if (fromRouteId == null) {
             // all values
@@ -140,6 +168,10 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public InflightExchange oldest(String fromRouteId) {
+        if (!inflightExchangeEnabled) {
+            return null;
+        }
+
         Stream<Exchange> values;
 
         if (fromRouteId == null) {
@@ -174,9 +206,9 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     protected void doStop() throws Exception {
         int count = size();
         if (count > 0) {
-            log.warn("Shutting down while there are still {} inflight exchanges.", count);
+            LOG.warn("Shutting down while there are still {} inflight exchanges.", count);
         } else {
-            log.debug("Shutting down with no inflight exchanges.");
+            LOG.debug("Shutting down with no inflight exchanges.");
         }
         routeCount.clear();
     }

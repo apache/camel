@@ -33,6 +33,8 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default management strategy that does <b>not</b> manage.
@@ -47,6 +49,8 @@ import org.apache.camel.util.ObjectHelper;
  * @see org.apache.camel.management.JmxManagementStrategy
  */
 public class DefaultManagementStrategy extends ServiceSupport implements ManagementStrategy, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementStrategy.class);
 
     private final List<EventNotifier> eventNotifiers = new CopyOnWriteArrayList<>();
     private EventFactory eventFactory = new DefaultEventFactory();
@@ -178,7 +182,7 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
 
     @Override
     protected void doStart() throws Exception {
-        log.info("JMX is disabled");
+        LOG.info("JMX is disabled");
         doStartManagementStrategy();
     }
 

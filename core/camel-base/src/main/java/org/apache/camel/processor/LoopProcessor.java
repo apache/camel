@@ -27,6 +27,9 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
@@ -34,6 +37,8 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * The processor which sends messages in a loop.
  */
 public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, IdAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LoopProcessor.class);
 
     private String id;
     private String routeId;
@@ -96,7 +101,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
         public void run() {
             try {
                 // check for error if so we should break out
-                boolean cont = continueProcessing(current, "so breaking out of loop", log);
+                boolean cont = continueProcessing(current, "so breaking out of loop", LOG);
                 boolean doWhile = predicate == null || predicate.matches(current);
                 boolean doLoop = expression == null || index < count;
 
@@ -106,7 +111,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                     current = prepareExchange(exchange, index);
 
                     // set current index as property
-                    log.debug("LoopProcessor: iteration #{}", index);
+                    LOG.debug("LoopProcessor: iteration #{}", index);
                     current.setProperty(Exchange.LOOP_INDEX, index);
 
                     processor.process(current, doneSync -> {
@@ -117,11 +122,11 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                 } else {
                     // we are done so prepare the result
                     ExchangeHelper.copyResults(exchange, current);
-                    log.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                    LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                     callback.done(false);
                 }
             } catch (Exception e) {
-                log.trace("Processing failed for exchangeId: {} >>> {}", exchange.getExchangeId(), e.getMessage());
+                LOG.trace("Processing failed for exchangeId: {} >>> {}", exchange.getExchangeId(), e.getMessage());
                 exchange.setException(e);
                 callback.done(false);
             }

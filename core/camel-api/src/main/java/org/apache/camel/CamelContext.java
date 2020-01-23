@@ -536,6 +536,11 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     List<Route> getRoutes();
 
     /**
+     * Returns the total number of routes in this CamelContext
+     */
+    int getRoutesSize();
+
+    /**
      * Gets the route with the given id
      *
      * @param id id of the route

@@ -45,12 +45,16 @@ import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Consumer of messages from the Amazon Web Service Simple Queue Service
  * <a href="http://aws.amazon.com/sqs/">AWS SQS</a>
  */
 public class SqsConsumer extends ScheduledBatchPollingConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SqsConsumer.class);
 
     private ScheduledExecutorService scheduledExecutor;
     private transient String sqsConsumerToString;
@@ -88,19 +92,19 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
             request.setMessageAttributeNames(messageAttributeNames);
         }
 
-        log.trace("Receiving messages with request [{}]...", request);
+        LOG.trace("Receiving messages with request [{}]...", request);
 
         ReceiveMessageResult messageResult;
         try {
             messageResult = getClient().receiveMessage(request);
         } catch (QueueDoesNotExistException e) {
-            log.info("Queue does not exist....recreating now...");
+            LOG.info("Queue does not exist....recreating now...");
             reConnectToQueue();
             messageResult = getClient().receiveMessage(request);
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("Received {} messages", messageResult.getMessages().size());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Received {} messages", messageResult.getMessages().size());
         }
 
         Queue<Exchange> exchanges = createExchanges(messageResult.getMessages());
@@ -113,21 +117,21 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
                 getEndpoint().createQueue(getClient());
             }
         } catch (QueueDeletedRecentlyException qdr) {
-            log.debug("Queue recently deleted, will retry in 30 seconds.");
+            LOG.debug("Queue recently deleted, will retry in 30 seconds.");
             try {
                 Thread.sleep(30000);
                 getEndpoint().createQueue(getClient());
             } catch (Exception e) {
-                log.warn("failed to retry queue connection.", e);
+                LOG.warn("failed to retry queue connection.", e);
             }
         } catch (Exception e) {
-            log.warn("Could not connect to queue in amazon.", e);
+            LOG.warn("Could not connect to queue in amazon.", e);
         }
     }
 
     protected Queue<Exchange> createExchanges(List<Message> messages) {
-        if (log.isTraceEnabled()) {
-            log.trace("Received {} messages in this poll", messages.size());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Received {} messages in this poll", messages.size());
         }
 
         Queue<Exchange> answer = new LinkedList<>();
@@ -160,8 +164,8 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
                 int delay = visibilityTimeout.intValue() / 2;
                 int period = visibilityTimeout.intValue();
                 int repeatSeconds = Double.valueOf(visibilityTimeout.doubleValue() * 1.5).intValue();
-                if (log.isDebugEnabled()) {
-                    log.debug("Scheduled TimeoutExtender task to start after {} delay, and run with {}/{} period/repeat (seconds), to extend exchangeId: {}", delay, period,
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Scheduled TimeoutExtender task to start after {} delay, and run with {}/{} period/repeat (seconds), to extend exchangeId: {}", delay, period,
                               repeatSeconds, exchange.getExchangeId());
                 }
                 final ScheduledFuture<?> scheduledFuture = this.scheduledExecutor.scheduleAtFixedRate(new TimeoutExtender(exchange, repeatSeconds), delay, period,
@@ -179,7 +183,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
 
                     private void cancelExtender(Exchange exchange) {
                         // cancel task as we are done
-                        log.trace("Processing done so cancelling TimeoutExtender task for exchangeId: {}", exchange.getExchangeId());
+                        LOG.trace("Processing done so cancelling TimeoutExtender task for exchangeId: {}", exchange.getExchangeId());
                         scheduledFuture.cancel(true);
                     }
                 });
@@ -201,8 +205,8 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
                 }
             });
 
-            log.trace("Processing exchange [{}]...", exchange);
-            getAsyncProcessor().process(exchange, doneSync -> log.trace("Processing exchange [{}] done.", exchange));
+            LOG.trace("Processing exchange [{}]...", exchange);
+            getAsyncProcessor().process(exchange, doneSync -> LOG.trace("Processing exchange [{}] done.", exchange));
         }
 
         return total;
@@ -220,11 +224,11 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
                 String receiptHandle = exchange.getIn().getHeader(SqsConstants.RECEIPT_HANDLE, String.class);
                 DeleteMessageRequest deleteRequest = new DeleteMessageRequest(getQueueUrl(), receiptHandle);
 
-                log.trace("Deleting message with receipt handle {}...", receiptHandle);
+                LOG.trace("Deleting message with receipt handle {}...", receiptHandle);
 
                 getClient().deleteMessage(deleteRequest);
 
-                log.trace("Deleted message with receipt handle {}...", receiptHandle);
+                LOG.trace("Deleted message with receipt handle {}...", receiptHandle);
             }
         } catch (AmazonClientException e) {
             getExceptionHandler().handleException("Error occurred during deleting message. This exception is ignored.", exchange, e);
@@ -314,15 +318,15 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
                                                                                         repeatSeconds);
 
             try {
-                log.trace("Extending visibility window by {} seconds for exchange {}", this.repeatSeconds, this.exchange);
+                LOG.trace("Extending visibility window by {} seconds for exchange {}", this.repeatSeconds, this.exchange);
                 getEndpoint().getClient().changeMessageVisibility(request);
-                log.debug("Extended visibility window by {} seconds for exchange {}", this.repeatSeconds, this.exchange);
+                LOG.debug("Extended visibility window by {} seconds for exchange {}", this.repeatSeconds, this.exchange);
             } catch (ReceiptHandleIsInvalidException e) {
                 // Ignore.
             } catch (MessageNotInflightException e) {
                 // Ignore.
             } catch (Exception e) {
-                log.warn("Extending visibility window failed for exchange " + exchange + ". Will not attempt to extend visibility further. This exception will be ignored.", e);
+                LOG.warn("Extending visibility window failed for exchange " + exchange + ". Will not attempt to extend visibility further. This exception will be ignored.", e);
             }
         }
     }

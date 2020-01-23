@@ -28,11 +28,16 @@ import org.apache.camel.component.file.GenericFileConsumer;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class for remote file consumers.
  */
 public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RemoteFileConsumer.class);
+
     protected transient boolean loggedIn;
     protected transient boolean loggedInWarning;
 
@@ -53,8 +58,8 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
     @Override
     protected boolean prePollCheck() throws Exception {
-        if (log.isTraceEnabled()) {
-            log.trace("prePollCheck on {}", getEndpoint().getConfiguration().remoteServerInformation());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("prePollCheck on {}", getEndpoint().getConfiguration().remoteServerInformation());
         }
         try {
             connectIfNecessary();
@@ -70,7 +75,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         if (!loggedIn) {
             String message = "Cannot connect/login to: " + remoteServer() + ". Will skip this poll.";
             if (!loggedInWarning) {
-                log.warn(message);
+                LOG.warn(message);
                 loggedInWarning = true;
             }
             return false;
@@ -84,15 +89,15 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
     @Override
     protected void postPollCheck(int polledMessages) {
-        if (log.isTraceEnabled()) {
-            log.trace("postPollCheck on {}", getEndpoint().getConfiguration().remoteServerInformation());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("postPollCheck on {}", getEndpoint().getConfiguration().remoteServerInformation());
         }
 
         // if we did not poll any messages, but are configured to disconnect then we need to do this now
         // as there is no exchanges to be routed that otherwise will disconnect from the last UoW
         if (polledMessages == 0) {
             if (getEndpoint().isDisconnect()) {
-                log.trace("postPollCheck disconnect from: {}", getEndpoint());
+                LOG.trace("postPollCheck disconnect from: {}", getEndpoint());
                 disconnect();
             }
         }
@@ -110,7 +115,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onDone(Exchange exchange) {
-                    log.trace("processExchange disconnect from: {}", getEndpoint());
+                    LOG.trace("processExchange disconnect from: {}", getEndpoint());
                     disconnect();
                 }
 
@@ -153,14 +158,14 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         // disconnect
         try {
             if (getOperations().isConnected()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Disconnecting from: {}", remoteServer());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Disconnecting from: {}", remoteServer());
                 }
                 getOperations().disconnect();
             }
         } catch (GenericFileOperationFailedException e) {
             // ignore just log a warning
-            log.warn("Error occurred while disconnecting from " + remoteServer() + " due: " + e.getMessage() + ". This exception will be ignored.");
+            LOG.warn("Error occurred while disconnecting from " + remoteServer() + " due: " + e.getMessage() + ". This exception will be ignored.");
         }
     }
 
@@ -170,13 +175,13 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
         // disconnect
         try {
-            if (log.isDebugEnabled()) {
-                log.debug("Force disconnecting from: {}", remoteServer());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Force disconnecting from: {}", remoteServer());
             }
             getOperations().forceDisconnect();
         } catch (GenericFileOperationFailedException e) {
             // ignore just log a warning
-            log.warn("Error occurred while disconnecting from " + remoteServer() + " due: " + e.getMessage() + ". This exception will be ignored.");
+            LOG.warn("Error occurred while disconnecting from " + remoteServer() + " due: " + e.getMessage() + ". This exception will be ignored.");
         }
     }
 
@@ -187,18 +192,18 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             isConnected = getOperations().sendNoop();
         } catch (Exception ex) {
             // here we just ignore the exception and try to reconnect
-            if (log.isDebugEnabled()) {
-                log.debug("Exception checking connection status: {}", ex.getMessage());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Exception checking connection status: {}", ex.getMessage());
             }
         }
 
         if (!loggedIn || !isConnected) {
-            if (log.isDebugEnabled()) {
-                log.debug("Not connected/logged in, connecting to: {}", remoteServer());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Not connected/logged in, connecting to: {}", remoteServer());
             }
             loggedIn = getOperations().connect((RemoteFileConfiguration) endpoint.getConfiguration(), null);
             if (loggedIn) {
-                log.debug("Connected and logged in to: {}", remoteServer());
+                LOG.debug("Connected and logged in to: {}", remoteServer());
             }
         }
     }
@@ -222,17 +227,17 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
      */
     protected boolean doSafePollSubDirectory(String absolutePath, String dirName, List<GenericFile<T>> fileList, int depth) {
         try {
-            log.trace("Polling sub directory: {} from: {}", absolutePath, endpoint);
+            LOG.trace("Polling sub directory: {} from: {}", absolutePath, endpoint);
             //Try to poll the directory
             return doPollDirectory(absolutePath, dirName, fileList, depth);
         } catch (Exception e) {
-            log.debug("Caught exception {}", e.getMessage());
+            LOG.debug("Caught exception {}", e.getMessage());
             if (ignoreCannotRetrieveFile(absolutePath, null, e)) {
-                log.trace("Ignoring file error {} for {}", e.getMessage(), absolutePath);
+                LOG.trace("Ignoring file error {} for {}", e.getMessage(), absolutePath);
                 //indicate no files in this directory to poll, continue with fileList
                 return true;
             } else {
-                log.trace("Not ignoring file error {} for {}", e.getMessage(), absolutePath);
+                LOG.trace("Not ignoring file error {} for {}", e.getMessage(), absolutePath);
                 if (e instanceof GenericFileOperationFailedException) {
                     throw (GenericFileOperationFailedException) e;
                 } else {

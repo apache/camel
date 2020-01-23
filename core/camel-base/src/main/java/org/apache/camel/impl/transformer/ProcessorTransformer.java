@@ -25,6 +25,8 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Transformer} implementation which leverages {@link Processor} to perform transformation.
@@ -32,6 +34,8 @@ import org.apache.camel.util.ObjectHelper;
  * {@see Transformer}
  */
 public class ProcessorTransformer extends Transformer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ProcessorTransformer.class);
 
     private Processor processor;
     private String transformerString;
@@ -54,13 +58,13 @@ public class ProcessorTransformer extends Transformer {
             Object input = message.getBody();
             Class<?> fromClass = context.getClassResolver().resolveClass(from.getName());
             if (!fromClass.isAssignableFrom(input.getClass())) {
-                log.debug("Converting to '{}'", fromClass.getName());
+                LOG.debug("Converting to: {}", fromClass.getName());
                 input = context.getTypeConverter().mandatoryConvertTo(fromClass, input);
                 message.setBody(input);
             }
         }
         
-        log.debug("Sending to transform processor '{}'", processor);
+        LOG.debug("Sending to transform processor: {}", processor);
         DefaultExchange transformExchange = new DefaultExchange(exchange);
         transformExchange.setIn(message);
         transformExchange.setProperties(exchange.getProperties());
@@ -71,7 +75,7 @@ public class ProcessorTransformer extends Transformer {
             Object answerBody = answer.getBody();
             Class<?> toClass = context.getClassResolver().resolveClass(to.getName());
             if (!toClass.isAssignableFrom(answerBody.getClass())) {
-                log.debug("Converting to '{}'", toClass.getName());
+                LOG.debug("Converting to: {}", toClass.getName());
                 answerBody = context.getTypeConverter().mandatoryConvertTo(toClass, answerBody);
                 answer.setBody(answerBody);
             }

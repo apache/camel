@@ -35,7 +35,10 @@ import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of the <a
@@ -46,6 +49,8 @@ import org.apache.camel.support.service.ServiceHelper;
  * @see org.apache.camel.spi.IdempotentRepository
  */
 public class IdempotentConsumer extends AsyncProcessorSupport implements CamelContextAware, Navigate<Processor>, IdAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(IdempotentConsumer.class);
 
     private CamelContext camelContext;
     private String id;
@@ -140,7 +145,7 @@ public class IdempotentConsumer extends AsyncProcessorSupport implements CamelCo
 
                 if (skipDuplicate) {
                     // if we should skip duplicate then we are done
-                    log.debug("Ignoring duplicate message with id: {} for exchange: {}", messageId, exchange);
+                    LOG.debug("Ignoring duplicate message with id: {} for exchange: {}", messageId, exchange);
                     callback.done(true);
                     return true;
                 }

@@ -28,11 +28,15 @@ import org.apache.camel.Consumer;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default {@link ScheduledBatchPollingConsumer}.
  */
 public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implements ScheduledPollConsumerScheduler {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultScheduledPollConsumerScheduler.class);
 
     private CamelContext camelContext;
     private Consumer consumer;
@@ -137,16 +141,16 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
         // only schedule task if we have not already done that
         if (futures.size() == 0) {
             if (isUseFixedDelay()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Scheduling poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Scheduling poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
                             new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(Locale.ENGLISH), consumer.getEndpoint()});
                 }
                 for (int i = 0; i < concurrentTasks; i++) {
                     futures.add(scheduledExecutorService.scheduleWithFixedDelay(task, getInitialDelay(), getDelay(), getTimeUnit()));
                 }
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("Scheduling poll (fixed rate) with initialDelay: {}, delay: {} ({}) for: {}",
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Scheduling poll (fixed rate) with initialDelay: {}, delay: {} ({}) for: {}",
                             new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(Locale.ENGLISH), consumer.getEndpoint()});
                 }
                 for (int i = 0; i < concurrentTasks; i++) {
@@ -180,7 +184,7 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
     @Override
     protected void doStop() throws Exception {
         if (isSchedulerStarted()) {
-            log.debug("This consumer is stopping, so cancelling scheduled task: {}", futures);
+            LOG.debug("This consumer is stopping, so cancelling scheduled task: {}", futures);
             for (ScheduledFuture<?> future : futures) {
                 future.cancel(true);
             }

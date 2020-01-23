@@ -32,11 +32,15 @@ import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implements try/catch/finally type processing
  */
 public class TryProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TryProcessor.class);
 
     protected String id;
     protected String routeId;
@@ -90,13 +94,13 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
                 // process the next processor
                 Processor processor = processors.next();
                 AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);
-                log.trace("Processing exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                LOG.trace("Processing exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                 async.process(exchange, doneSync -> exchange.getContext().getReactiveExecutor().schedule(this));
             } else {
                 ExchangeHelper.prepareOutToIn(exchange);
                 exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
                 exchange.setProperty(Exchange.EXCEPTION_HANDLED, lastHandled);
-                log.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                 callback.done(false);
             }
         }
@@ -112,7 +116,7 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
         if (stop != null) {
             boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
             if (doStop) {
-                log.debug("Exchange is marked to stop routing: {}", exchange);
+                LOG.debug("Exchange is marked to stop routing: {}", exchange);
                 return false;
             }
         }

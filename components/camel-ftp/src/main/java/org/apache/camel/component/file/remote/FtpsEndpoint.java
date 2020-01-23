@@ -28,6 +28,7 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -36,6 +37,8 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPSClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The ftps (FTP secure SSL/TLS) component is used for uploading or downloading files from FTP servers.
@@ -46,6 +49,8 @@ import org.apache.commons.net.ftp.FTPSClient;
         excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService")
 @ManagedResource(description = "Managed FtpsEndpoint")
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
+    private static final Logger LOG = LoggerFactory.getLogger(FtpsEndpoint.class);
+
     @UriParam
     protected FtpsConfiguration configuration;
     @UriParam(label = "security")
@@ -119,7 +124,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
                 try {
                     keyStore.load(keyStoreFileInputStream, password.toCharArray());
                 } finally {
-                    IOHelper.close(keyStoreFileInputStream, "keyStore", log);
+                    IOHelper.close(keyStoreFileInputStream, "keyStore", LOG);
                 }
     
                 KeyManagerFactory keyMgrFactory = KeyManagerFactory.getInstance(algorithm);
@@ -142,7 +147,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
                 try {
                     trustStore.load(trustStoreFileInputStream, password.toCharArray());
                 } finally {
-                    IOHelper.close(trustStoreFileInputStream, "trustStore", log);
+                    IOHelper.close(trustStoreFileInputStream, "trustStore", LOG);
                 }
     
                 TrustManagerFactory trustMgrFactory = TrustManagerFactory.getInstance(algorithm);
@@ -206,8 +211,8 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             client.setDataTimeout(dataTimeout);
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Created FTPSClient[connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Created FTPSClient[connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
                             + ", receiveDataSocketBufferSize: {}, sendDataSocketBufferSize: {}]: {}",
                     client.getConnectTimeout(), getSoTimeout(), dataTimeout, client.getBufferSize(),
                     client.getReceiveDataSocketBufferSize(), client.getSendDataSocketBufferSize(), client);

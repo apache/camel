@@ -52,6 +52,7 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -89,6 +90,8 @@ import org.slf4j.LoggerFactory;
  * The added advices can implement {@link Ordered} to control in which order the advices are executed.
  */
 public class CamelInternalProcessor extends DelegateAsyncProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CamelInternalProcessor.class);
 
     private static final Object[] EMPTY_STATES = new Object[0];
 
@@ -134,6 +137,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean process(Exchange exchange, AsyncCallback originalCallback) {
         // ----------------------------------------------------------
         // CAMEL END USER - READ ME FOR DEBUGGING TIPS
@@ -193,7 +197,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 // CAMEL END USER - DEBUG ME HERE +++ START +++
                 // ----------------------------------------------------------
                 // callback must be called
-                exchange.getContext().getReactiveExecutor().schedule(originalCallback);
+                if (originalCallback != null) {
+                    exchange.getContext().getReactiveExecutor().schedule(originalCallback);
+                }
                 // ----------------------------------------------------------
                 // CAMEL END USER - DEBUG ME HERE +++ END +++
                 // ----------------------------------------------------------
@@ -202,11 +208,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         if (exchange.isTransacted()) {
             // must be synchronized for transacted exchanges
-            if (log.isTraceEnabled()) {
+            if (LOG.isTraceEnabled()) {
                 if (exchange.isTransacted()) {
-                    log.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+                    LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
                 } else {
-                    log.trace("Synchronous UnitOfWork Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+                    LOG.trace("Synchronous UnitOfWork Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
                 }
             }
             // ----------------------------------------------------------
@@ -225,35 +231,38 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         } else {
             final UnitOfWork uow = exchange.getUnitOfWork();
 
-            // allow unit of work to wrap callback in case it need to do some special work
-            // for example the MDCUnitOfWork
+            // do uow before processing and if a value is returned the the uow wants to be processed after
+            // was well in the same thread
             AsyncCallback async = callback;
-            if (uow != null) {
-                async = uow.beforeProcess(processor, exchange, callback);
+            boolean beforeAndAfter = uow != null && uow.isBeforeAfterProcess();
+            if (beforeAndAfter) {
+                async = uow.beforeProcess(processor, exchange, async);
             }
 
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ START +++
             // ----------------------------------------------------------
-            if (log.isTraceEnabled()) {
-                log.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
             }
             processor.process(exchange, async);
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------
 
-            exchange.getContext().getReactiveExecutor().schedule(() -> {
-                // execute any after processor work (in current thread, not in the callback)
-                if (uow != null) {
+            // optimize to only do after uow processing if really needed
+            if (beforeAndAfter) {
+                exchange.getContext().getReactiveExecutor().schedule(() -> {
+                    // execute any after processor work (in current thread, not in the callback)
                     uow.afterProcess(processor, exchange, callback, false);
-                }
+                });
+            }
 
-                if (log.isTraceEnabled()) {
-                    log.trace("Exchange processed and is continued routed asynchronously for exchangeId: {} -> {}",
-                             exchange.getExchangeId(), exchange);
-                }
-            });
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Exchange processed and is continued routed asynchronously for exchangeId: {} -> {}",
+                        exchange.getExchangeId(), exchange);
+            }
+            // must return false
             return false;
         }
     }
@@ -271,7 +280,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         if (stop != null) {
             boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
             if (doStop) {
-                log.debug("Exchange is marked to stop routing: {}", exchange);
+                LOG.debug("Exchange is marked to stop routing: {}", exchange);
                 return false;
             }
         }
@@ -280,7 +289,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         boolean forceShutdown = exchange.getContext().getShutdownStrategy().forceShutdown(this);
         if (forceShutdown) {
             String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: " + exchange;
-            log.debug(msg);
+            LOG.debug(msg);
             if (exchange.getException() == null) {
                 exchange.setException(new RejectedExecutionException(msg));
             }

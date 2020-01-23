@@ -52,7 +52,6 @@ public class CMComponent extends DefaultComponent {
         setProperties(endpoint, parameters);
 
         // Validate configuration
-        log.debug("Validating uri based configuration");
         final Set<ConstraintViolation<CMConfiguration>> constraintViolations = getValidator().validate(endpoint.getConfiguration());
         if (constraintViolations.size() > 0) {
             final StringBuffer msg = new StringBuffer();

@@ -109,12 +109,7 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
 
         // wrap in nested pipeline so this appears as one processor
         // (threads definition does this as well)
-        return new Pipeline(routeContext.getCamelContext(), pipe) {
-            @Override
-            public String toString() {
-                return "RecipientList[" + expression + "]";
-            }
-        };
+        return new Pipeline(routeContext.getCamelContext(), pipe);
     }
 
     private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {

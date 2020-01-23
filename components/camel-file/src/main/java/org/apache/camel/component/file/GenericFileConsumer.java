@@ -38,11 +38,15 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class for file consumers.
  */
 public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GenericFileConsumer.class);
 
     protected GenericFileEndpoint<T> endpoint;
     protected GenericFileOperations<T> operations;
@@ -113,7 +117,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // before we poll is there anything we need to check?
         // such as are we connected to the FTP Server still?
         if (!prePollCheck()) {
-            log.debug("Skipping poll as pre poll check returned false");
+            LOG.debug("Skipping poll as pre poll check returned false");
             return 0;
         }
 
@@ -129,19 +133,19 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         } catch (Exception e) {
             // during poll directory we add files to the in progress repository, in case of any exception thrown after this work
             // we must then drain the in progress files before rethrowing the exception
-            log.debug("Error occurred during poll directory: {} due {}. Removing {} files marked as in-progress.", name, e.getMessage(), files.size());
+            LOG.debug("Error occurred during poll directory: {} due {}. Removing {} files marked as in-progress.", name, e.getMessage(), files.size());
             removeExcessiveInProgressFiles(files);
             throw e;
         }
 
         long delta = stop.taken();
-        if (log.isDebugEnabled()) {
-            log.debug("Took {} to poll: {}", TimeUtils.printDuration(delta), name);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Took {} to poll: {}", TimeUtils.printDuration(delta), name);
         }
 
         // log if we hit the limit
         if (limitHit) {
-            log.debug("Limiting maximum messages to poll at {} files as there were more messages in this poll.", maxMessagesPerPoll);
+            LOG.debug("Limiting maximum messages to poll at {} files as there were more messages in this poll.", maxMessagesPerPoll);
         }
 
         // sort files using file comparator if provided
@@ -172,7 +176,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // we are not eager limiting, but we have configured a limit, so cut the list of files
         if (!eagerLimitMaxMessagesPerPoll && maxMessagesPerPoll > 0) {
             if (files.size() > maxMessagesPerPoll) {
-                log.debug("Limiting maximum messages to poll at {} files as there were more messages in this poll.", maxMessagesPerPoll);
+                LOG.debug("Limiting maximum messages to poll at {} files as there were more messages in this poll.", maxMessagesPerPoll);
                 // must first remove excessive files from the in progress repository
                 removeExcessiveInProgressFiles(q, maxMessagesPerPoll);
             }
@@ -181,7 +185,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // consume files one by one
         int total = exchanges.size();
         if (total > 0) {
-            log.debug("Total {} files to consume", total);
+            LOG.debug("Total {} files to consume", total);
         }
 
         int polledMessages = processBatch(CastUtils.cast(q));
@@ -198,7 +202,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            log.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.", maxMessagesPerPoll, total);
+            LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.", maxMessagesPerPoll, total);
             total = maxMessagesPerPoll;
         }
 
@@ -350,7 +354,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      */
     protected boolean processExchange(final Exchange exchange) {
         GenericFile<T> file = getExchangeFileProperty(exchange);
-        log.trace("Processing file: {}", file);
+        LOG.trace("Processing file: {}", file);
 
         // must extract the absolute name before the begin strategy as the file could potentially be pre moved
         // and then the file name would be changed
@@ -368,7 +372,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         if (!begin) {
             // no something was wrong, so we need to abort and remove the file from the in progress list
             Exception abortCause = null;
-            log.debug("{} cannot begin processing file: {}", endpoint, file);
+            LOG.debug("{} cannot begin processing file: {}", endpoint, file);
             try {
                 // abort
                 processStrategy.abort(operations, endpoint, exchange, file);
@@ -403,7 +407,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             
             if (isRetrieveFile()) {
                 // retrieve the file using the stream
-                log.trace("Retrieving file: {} from: {}", name, endpoint);
+                LOG.trace("Retrieving file: {} from: {}", name, endpoint);
     
                 // retrieve the file and check it was a success
                 boolean retrieved;
@@ -417,7 +421,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
                 if (!retrieved) {
                     if (ignoreCannotRetrieveFile(name, exchange, cause)) {
-                        log.trace("Cannot retrieve file {} maybe it does not exists. Ignoring.", name);
+                        LOG.trace("Cannot retrieve file {} maybe it does not exists. Ignoring.", name);
                         // remove file from the in progress list as we could not retrieve it, but should ignore
                         endpoint.getInProgressRepository().remove(absoluteFileName);
                         return false;
@@ -433,9 +437,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
                     }
                 }
     
-                log.trace("Retrieved file: {} from: {}", name, endpoint);                
+                LOG.trace("Retrieved file: {} from: {}", name, endpoint);
             } else {
-                log.trace("Skipped retrieval of file: {} from: {}", name, endpoint);
+                LOG.trace("Skipped retrieval of file: {} from: {}", name, endpoint);
                 exchange.getIn().setBody(null);
             }
 
@@ -443,7 +447,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             // (for instance to move the file after we have processed it)
             exchange.adapt(ExtendedExchange.class).addOnCompletion(new GenericFileOnCompletion<>(endpoint, operations, processStrategy, target, absoluteFileName));
 
-            log.debug("About to process file: {} using exchange: {}", target, exchange);
+            LOG.debug("About to process file: {} using exchange: {}", target, exchange);
 
             if (endpoint.isSynchronous()) {
                 // process synchronously
@@ -495,7 +499,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      */
     protected boolean customProcessExchange(final Exchange exchange, final Processor processor) {
         GenericFile<T> file = getExchangeFileProperty(exchange);
-        log.trace("Custom processing file: {}", file);
+        LOG.trace("Custom processing file: {}", file);
 
         // must extract the absolute name before the begin strategy as the file could potentially be pre moved
         // and then the file name would be changed
@@ -505,8 +509,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             // process using the custom processor
             processor.process(exchange);
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug(endpoint + " error custom processing: " + file + " due to: " + e.getMessage() + ". This exception will be ignored.", e);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(endpoint + " error custom processing: " + file + " due to: " + e.getMessage() + ". This exception will be ignored.", e);
             }
             handleException(e);
         } finally {
@@ -531,7 +535,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         String absoluteFilePath = file.getAbsoluteFilePath();
 
         if (!isMatched(file, isDirectory, files)) {
-            log.trace("File did not match. Will skip this file: {}", file);
+            LOG.trace("File did not match. Will skip this file: {}", file);
             return false;
         }
 
@@ -542,8 +546,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         // check if file is already in progress
         if (endpoint.getInProgressRepository().contains(absoluteFilePath)) {
-            if (log.isTraceEnabled()) {
-                log.trace("Skipping as file is already in progress: {}", file.getFileName());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Skipping as file is already in progress: {}", file.getFileName());
             }
             return false;
         }
@@ -555,10 +559,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             if (endpoint.getIdempotentKey() != null) {
                 Exchange dummy = endpoint.createExchange(file);
                 key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
-                log.trace("Evaluated idempotentKey: {} for file: {}", key, file);
+                LOG.trace("Evaluated idempotentKey: {} for file: {}", key, file);
             }
             if (key != null && endpoint.getIdempotentRepository().contains(key)) {
-                log.trace("This consumer is idempotent and the file has been consumed before matching idempotentKey: {}. Will skip this file: {}", key, file);
+                LOG.trace("This consumer is idempotent and the file has been consumed before matching idempotentKey: {}. Will skip this file: {}", key, file);
                 return false;
             }
         }
@@ -661,7 +665,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
             // is it a done file name?
             if (endpoint.isDoneFile(file.getFileNameOnly())) {
-                log.trace("Skipping done file: {}", file);
+                LOG.trace("Skipping done file: {}", file);
                 return false;
             }
 

@@ -31,8 +31,12 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HdfsProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HdfsProducer.class);
 
     private final HdfsConfiguration config;
     private final StringBuilder hdfsPath;
@@ -109,12 +113,12 @@ public class HdfsProducer extends DefaultProducer {
             Optional<SplitStrategy> idleStrategy = tryFindIdleStrategy(config.getSplitStrategies());
             if (idleStrategy.isPresent()) {
                 scheduler = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "HdfsIdleCheck");
-                log.debug("Creating IdleCheck task scheduled to run every {} millis", config.getCheckIdleInterval());
+                LOG.debug("Creating IdleCheck task scheduled to run every {} millis", config.getCheckIdleInterval());
                 scheduler.scheduleAtFixedRate(new IdleCheck(idleStrategy.get()), config.getCheckIdleInterval(), config.getCheckIdleInterval(), TimeUnit.MILLISECONDS);
             }
         } catch (Exception e) {
-            log.warn("Failed to start the HDFS producer. Caused by: [{}]", e.getMessage());
-            log.debug("", e);
+            LOG.warn("Failed to start the HDFS producer. Caused by: [{}]", e.getMessage());
+            LOG.debug("", e);
             throw new RuntimeCamelException(e);
         } finally {
             HdfsComponent.setJAASConfiguration(auth);
@@ -135,18 +139,18 @@ public class HdfsProducer extends DefaultProducer {
 
         // if we are starting up then log at info level, and if runtime then log at debug level to not flood the log
         if (onStartup) {
-            log.info("Connecting to hdfs file-system {} (may take a while if connection is not available)", hdfsFsDescription);
+            LOG.info("Connecting to hdfs file-system {} (may take a while if connection is not available)", hdfsFsDescription);
         } else {
-            log.debug("Connecting to hdfs file-system {} (may take a while if connection is not available)", hdfsFsDescription);
+            LOG.debug("Connecting to hdfs file-system {} (may take a while if connection is not available)", hdfsFsDescription);
         }
 
         HdfsInfoFactory hdfsInfoFactory = new HdfsInfoFactory(config);
         HdfsOutputStream answer = HdfsOutputStream.createOutputStream(actualPath.toString(), hdfsInfoFactory);
 
         if (onStartup) {
-            log.info("Connected to hdfs file-system {}", hdfsFsDescription);
+            LOG.info("Connected to hdfs file-system {}", hdfsFsDescription);
         } else {
-            log.debug("Connected to hdfs file-system {}", hdfsFsDescription);
+            LOG.debug("Connected to hdfs file-system {}", hdfsFsDescription);
         }
 
         return answer;
@@ -169,7 +173,7 @@ public class HdfsProducer extends DefaultProducer {
             scheduler = null;
         }
         if (oStream != null) {
-            IOHelper.close(oStream, "output stream", log);
+            IOHelper.close(oStream, "output stream", LOG);
             oStream = null;
         }
     }
@@ -193,7 +197,7 @@ public class HdfsProducer extends DefaultProducer {
         // if an explicit filename is specified, close any existing stream and append the filename to the hdfsPath
         if (exchange.getIn().getHeader(Exchange.FILE_NAME) != null) {
             if (oStream != null) {
-                IOHelper.close(oStream, "output stream", log);
+                IOHelper.close(oStream, "output stream", LOG);
             }
             StringBuilder actualPath = getHdfsPathUsingFileNameHeader(exchange);
             oStream = HdfsOutputStream.createOutputStream(actualPath.toString(), hdfsInfoFactory);
@@ -204,14 +208,14 @@ public class HdfsProducer extends DefaultProducer {
 
         if (isSplitRequired(config.getSplitStrategies())) {
             if (oStream != null) {
-                IOHelper.close(oStream, "output stream", log);
+                IOHelper.close(oStream, "output stream", LOG);
             }
             StringBuilder actualPath = newFileName();
             oStream = HdfsOutputStream.createOutputStream(actualPath.toString(), hdfsInfoFactory);
         }
 
         String path = oStream.getActualPath();
-        log.trace("Writing body to hdfs-file {}", path);
+        LOG.trace("Writing body to hdfs-file {}", path);
         oStream.append(key, body, exchange);
 
         idle.set(false);
@@ -227,7 +231,7 @@ public class HdfsProducer extends DefaultProducer {
         // if no idle checker then we need to explicit close the stream after usage
         if (close) {
             try {
-                HdfsProducer.this.log.trace("Closing stream");
+                LOG.trace("Closing stream");
                 oStream.close();
                 oStream = null;
             } catch (IOException e) {
@@ -235,14 +239,11 @@ public class HdfsProducer extends DefaultProducer {
             }
         }
 
-        log.debug("Wrote body to hdfs-file {}", path);
+        LOG.debug("Wrote body to hdfs-file {}", path);
     }
 
     /**
      * helper method to construct the hdfsPath from the CamelFileName String or Expression
-     *
-     * @param exchange
-     * @return
      */
     private StringBuilder getHdfsPathUsingFileNameHeader(Exchange exchange) {
         StringBuilder actualPath = new StringBuilder(hdfsPath);
@@ -288,12 +289,12 @@ public class HdfsProducer extends DefaultProducer {
                 return;
             }
 
-            HdfsProducer.this.log.trace("IdleCheck running");
+            LOG.trace("IdleCheck running");
 
             if (System.currentTimeMillis() - oStream.getLastAccess() > strategy.value && !idle.get() && !oStream.isBusy().get()) {
                 idle.set(true);
                 try {
-                    HdfsProducer.this.log.trace("Closing stream as idle");
+                    LOG.trace("Closing stream as idle");
                     oStream.close();
                 } catch (IOException e) {
                     // ignore

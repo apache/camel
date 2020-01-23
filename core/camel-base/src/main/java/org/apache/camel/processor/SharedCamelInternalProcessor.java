@@ -185,11 +185,12 @@ public class SharedCamelInternalProcessor {
         } else {
             final UnitOfWork uow = exchange.getUnitOfWork();
 
-            // allow unit of work to wrap callback in case it need to do some special work
-            // for example the MDCUnitOfWork
+            // do uow before processing and if a value is returned the the uow wants to be processed after
+            // was well in the same thread
             AsyncCallback async = callback;
-            if (uow != null) {
-                async = uow.beforeProcess(processor, exchange, callback);
+            boolean beforeAndAfter = uow.isBeforeAfterProcess();
+            if (beforeAndAfter) {
+                async = uow.beforeProcess(processor, exchange, async);
             }
 
             // ----------------------------------------------------------
@@ -203,17 +204,18 @@ public class SharedCamelInternalProcessor {
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------
 
-            exchange.getContext().getReactiveExecutor().schedule(() -> {
-                // execute any after processor work (in current thread, not in the callback)
-                if (uow != null) {
+            // optimize to only do after uow processing if really needed
+            if (beforeAndAfter) {
+                exchange.getContext().getReactiveExecutor().schedule(() -> {
+                    // execute any after processor work (in current thread, not in the callback)
                     uow.afterProcess(processor, exchange, callback, sync);
-                }
+                });
+            }
 
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Exchange processed and is continued routed asynchronously for exchangeId: {} -> {}",
-                            exchange.getExchangeId(), exchange);
-                }
-            });
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Exchange processed and is continued routed asynchronously for exchangeId: {} -> {}",
+                        exchange.getExchangeId(), exchange);
+            }
             return sync;
         }
     }
@@ -251,7 +253,7 @@ public class SharedCamelInternalProcessor {
 
             // we should call after in reverse order
             try {
-                for (int i = advices.size() - 1, j = states.length - 1; i >= 0; i--) {
+                for (int i = advices != null ? advices.size() - 1 : -1, j = states.length - 1; i >= 0; i--) {
                     CamelInternalProcessorAdvice task = advices.get(i);
                     Object state = null;
                     if (task.hasState()) {
@@ -269,7 +271,9 @@ public class SharedCamelInternalProcessor {
                 // CAMEL END USER - DEBUG ME HERE +++ START +++
                 // ----------------------------------------------------------
                 // callback must be called
-                exchange.getContext().getReactiveExecutor().schedule(callback);
+                if (callback != null) {
+                    exchange.getContext().getReactiveExecutor().schedule(callback);
+                }
                 // ----------------------------------------------------------
                 // CAMEL END USER - DEBUG ME HERE +++ END +++
                 // ----------------------------------------------------------

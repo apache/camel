@@ -25,6 +25,8 @@ public class SimpleMockTest extends ContextTestSupport {
 
     @Test
     public void testSimple() throws Exception {
+        assertEquals(1, context.getRoutesSize());
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
@@ -35,6 +37,8 @@ public class SimpleMockTest extends ContextTestSupport {
 
     @Test
     public void testSimpleTwoMessages() throws Exception {
+        assertEquals(1, context.getRoutesSize());
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World", "Bye World");
 

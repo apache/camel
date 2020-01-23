@@ -36,6 +36,8 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/throttler.html">Throttler</a>
@@ -58,6 +60,8 @@ import org.apache.camel.util.ObjectHelper;
  * maxRequestsPerPeriod have been allowed to be acquired.
  */
 public class Throttler extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Throttler.class);
 
     private static final String DEFAULT_KEY = "CamelThrottlerDefaultKey";
 
@@ -102,7 +106,7 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         long queuedStart = 0;
-        if (log.isTraceEnabled()) {
+        if (LOG.isTraceEnabled()) {
             queuedStart = exchange.getProperty(PROPERTY_EXCHANGE_QUEUED_TIMESTAMP, 0L, Long.class);
             exchange.removeProperty(PROPERTY_EXCHANGE_QUEUED_TIMESTAMP);
         }
@@ -131,41 +135,41 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
                 } else {
                     // delegate to async pool
                     if (isAsyncDelayed() && !exchange.isTransacted() && state == State.SYNC) {
-                        log.debug("Throttle rate exceeded but AsyncDelayed enabled, so queueing for async processing, exchangeId: {}", exchange.getExchangeId());
+                        LOG.debug("Throttle rate exceeded but AsyncDelayed enabled, so queueing for async processing, exchangeId: {}", exchange.getExchangeId());
                         return processAsynchronously(exchange, callback, throttlingState);
                     }
 
                     // block waiting for a permit
                     long start = 0;
                     long elapsed = 0;
-                    if (log.isTraceEnabled()) {
+                    if (LOG.isTraceEnabled()) {
                         start = System.currentTimeMillis();
                     }
                     permit = throttlingState.take();
-                    if (log.isTraceEnabled()) {
+                    if (LOG.isTraceEnabled()) {
                         elapsed = System.currentTimeMillis() - start;
                     }
                     throttlingState.enqueue(permit, exchange);
 
                     if (state == State.ASYNC) {
-                        if (log.isTraceEnabled()) {
+                        if (LOG.isTraceEnabled()) {
                             long queuedTime = start - queuedStart;
-                            log.trace("Queued for {}ms, Throttled for {}ms, exchangeId: {}", queuedTime, elapsed, exchange.getExchangeId());
+                            LOG.trace("Queued for {}ms, Throttled for {}ms, exchangeId: {}", queuedTime, elapsed, exchange.getExchangeId());
                         }
                     } else {
-                        log.trace("Throttled for {}ms, exchangeId: {}", elapsed, exchange.getExchangeId());
+                        LOG.trace("Throttled for {}ms, exchangeId: {}", elapsed, exchange.getExchangeId());
                     }
                 }
             } else {
                 throttlingState.enqueue(permit, exchange);
 
                 if (state == State.ASYNC) {
-                    if (log.isTraceEnabled()) {
+                    if (LOG.isTraceEnabled()) {
                         long queuedTime = System.currentTimeMillis() - queuedStart;
-                        log.trace("Queued for {}ms, No throttling applied (throttle cleared while queued), for exchangeId: {}", queuedTime, exchange.getExchangeId());
+                        LOG.trace("Queued for {}ms, No throttling applied (throttle cleared while queued), for exchangeId: {}", queuedTime, exchange.getExchangeId());
                     }
                 } else {
-                    log.trace("No throttling applied to exchangeId: {}", exchange.getExchangeId());
+                    LOG.trace("No throttling applied to exchangeId: {}", exchange.getExchangeId());
                 }
             }
 
@@ -177,7 +181,7 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
             boolean forceShutdown = exchange.getContext().getShutdownStrategy().forceShutdown(this);
             if (forceShutdown) {
                 String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: " + exchange;
-                log.debug(msg);
+                LOG.debug(msg);
                 exchange.setException(new RejectedExecutionException(msg, e));
             } else {
                 exchange.setException(e);
@@ -198,7 +202,7 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
      */
     protected boolean processAsynchronously(final Exchange exchange, final AsyncCallback callback, ThrottlingState throttlingState) {
         try {
-            if (log.isTraceEnabled()) {
+            if (LOG.isTraceEnabled()) {
                 exchange.setProperty(PROPERTY_EXCHANGE_QUEUED_TIMESTAMP, System.currentTimeMillis());
             }
             exchange.setProperty(PROPERTY_EXCHANGE_STATE, State.ASYNC);
@@ -207,7 +211,7 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
             return false;
         } catch (final RejectedExecutionException e) {
             if (isCallerRunsWhenRejected()) {
-                log.debug("AsyncExecutor is full, rejected exchange will run in the current thread, exchangeId: {}", exchange.getExchangeId());
+                LOG.debug("AsyncExecutor is full, rejected exchange will run in the current thread, exchangeId: {}", exchange.getExchangeId());
                 exchange.setProperty(PROPERTY_EXCHANGE_STATE, State.ASYNC_REJECTED);
                 return process(exchange, callback);
             }
@@ -278,11 +282,11 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
                     prev.cancel(false);
                 }
                 // try and incur the least amount of overhead while releasing permits back to the queue
-                if (log.isTraceEnabled()) {
-                    log.trace("Permit released, for exchangeId: {}", exchange.getExchangeId());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Permit released, for exchangeId: {}", exchange.getExchangeId());
                 }
             } catch (RejectedExecutionException e) {
-                log.debug("Throttling queue cleaning rejected", e);
+                LOG.debug("Throttling queue cleaning rejected", e);
             }
         }
 
@@ -310,9 +314,9 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
                         while (delta > 0) {
                             delayQueue.take();
                             delta--;
-                            log.trace("Permit discarded due to throttling rate decrease, triggered by ExchangeId: {}", exchange.getExchangeId());
+                            LOG.trace("Permit discarded due to throttling rate decrease, triggered by ExchangeId: {}", exchange.getExchangeId());
                         }
-                        log.debug("Throttle rate decreased from {} to {}, triggered by ExchangeId: {}", throttleRate, newThrottle, exchange.getExchangeId());
+                        LOG.debug("Throttle rate decreased from {} to {}, triggered by ExchangeId: {}", throttleRate, newThrottle, exchange.getExchangeId());
 
                         // increase
                     } else if (newThrottle > throttleRate) {
@@ -321,9 +325,9 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
                             delayQueue.put(new ThrottlePermit(-1));
                         }
                         if (throttleRate == 0) {
-                            log.debug("Initial throttle rate set to {}, triggered by ExchangeId: {}", newThrottle, exchange.getExchangeId());
+                            LOG.debug("Initial throttle rate set to {}, triggered by ExchangeId: {}", newThrottle, exchange.getExchangeId());
                         } else {
-                            log.debug("Throttle rate increase from {} to {}, triggered by ExchangeId: {}", throttleRate, newThrottle, exchange.getExchangeId());
+                            LOG.debug("Throttle rate increase from {} to {}, triggered by ExchangeId: {}", throttleRate, newThrottle, exchange.getExchangeId());
                         }
                     }
                     throttleRate = newThrottle;

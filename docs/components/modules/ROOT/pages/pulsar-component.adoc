@@ -8,10 +8,6 @@
 *Both producer and consumer is supported*
 // HEADER END
 
-*Since Camel 2.24*
-
-
-
 Maven users will need to add the following dependency to
 their `pom.xml` for this component.
 
@@ -79,7 +75,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (27 parameters):
+=== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -93,6 +89,7 @@ with the following path and query parameters:
 | *consumerNamePrefix* (consumer) | Prefix to add to consumer names when a SHARED or FAILOVER subscription is used | cons | String
 | *consumerQueueSize* (consumer) | Size of the consumer queue - defaults to 10 | 10 | int
 | *numberOfConsumers* (consumer) | Number of consumers - defaults to 1 | 1 | int
+| *subscriptionInitialPosition* (consumer) | Control the initial position in the topic of a newly created subscription. Default is latest message. | LATEST | SubscriptionInitialPosition
 | *subscriptionName* (consumer) | Name of the subscription to use | subs | String
 | *subscriptionType* (consumer) | Type of the subscription EXCLUSIVESHAREDFAILOVER, defaults to EXCLUSIVE | EXCLUSIVE | SubscriptionType
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler

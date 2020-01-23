@@ -64,7 +64,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected static final int DEFAULT_IDEMPOTENT_CACHE_SIZE = 1000;
     protected static final int DEFAULT_IN_PROGRESS_CACHE_SIZE = 50000;
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(GenericFileEndpoint.class);
 
     // common options
 
@@ -261,7 +261,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
             try {
                 ServiceHelper.stopService(consumer);
             } catch (Exception e) {
-                log.debug("Error stopping consumer used for browsing exchanges. This exception will be ignored", e);
+                LOG.debug("Error stopping consumer used for browsing exchanges. This exception will be ignored", e);
             }
         }
 
@@ -276,29 +276,29 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         Class<?> factory = null;
         try {
             FactoryFinder finder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder("META-INF/services/org/apache/camel/component/");
-            log.trace("Using FactoryFinder: {}", finder);
+            LOG.trace("Using FactoryFinder: {}", finder);
             factory = finder.findClass(getScheme(), "strategy.factory.", CamelContext.class).orElse(null);
         } catch (IOException e) {
-            log.trace("No strategy factory defined in 'META-INF/services/org/apache/camel/component/'", e);
+            LOG.trace("No strategy factory defined in 'META-INF/services/org/apache/camel/component/'", e);
         }
 
         if (factory == null) {
             // use default
             try {
-                log.trace("Using ClassResolver to resolve class: {}", DEFAULT_STRATEGYFACTORY_CLASS);
+                LOG.trace("Using ClassResolver to resolve class: {}", DEFAULT_STRATEGYFACTORY_CLASS);
                 factory = this.getCamelContext().getClassResolver().resolveClass(DEFAULT_STRATEGYFACTORY_CLASS);
             } catch (Exception e) {
-                log.trace("Cannot load class: {}", DEFAULT_STRATEGYFACTORY_CLASS, e);
+                LOG.trace("Cannot load class: {}", DEFAULT_STRATEGYFACTORY_CLASS, e);
             }
             // fallback and us this class loader
             try {
-                if (log.isTraceEnabled()) {
-                    log.trace("Using classloader: {} to resolve class: {}", this.getClass().getClassLoader(), DEFAULT_STRATEGYFACTORY_CLASS);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Using classloader: {} to resolve class: {}", this.getClass().getClassLoader(), DEFAULT_STRATEGYFACTORY_CLASS);
                 }
                 factory = this.getCamelContext().getClassResolver().resolveClass(DEFAULT_STRATEGYFACTORY_CLASS, this.getClass().getClassLoader());
             } catch (Exception e) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Cannot load class: {} using classloader: " + this.getClass().getClassLoader(), DEFAULT_STRATEGYFACTORY_CLASS, e);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Cannot load class: {} using classloader: " + this.getClass().getClassLoader(), DEFAULT_STRATEGYFACTORY_CLASS, e);
                 }
             }
 
@@ -310,7 +310,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         try {
             Method factoryMethod = factory.getMethod("createGenericFileProcessStrategy", CamelContext.class, Map.class);
             Map<String, Object> params = getParamsAsMap();
-            log.debug("Parameters for Generic file process strategy {}", params);
+            LOG.debug("Parameters for Generic file process strategy {}", params);
             return (GenericFileProcessStrategy<T>) ObjectHelper.invokeMethod(factoryMethod, null, getCamelContext(), params);
         } catch (NoSuchMethodException e) {
             throw new TypeNotPresentException(factory.getSimpleName() + ".createGenericFileProcessStrategy method not found", e);

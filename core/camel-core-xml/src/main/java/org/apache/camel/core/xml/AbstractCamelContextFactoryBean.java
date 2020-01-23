@@ -824,6 +824,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract Boolean getLoadTypeConverters();
 
+    public abstract Boolean getInflightRepositoryBrowseEnabled();
+
     public abstract Boolean getTypeConverterStatisticsEnabled();
 
     public abstract LoggingLevel getTypeConverterExistsLoggingLevel();
@@ -960,6 +962,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getTypeConverterStatisticsEnabled() != null) {
             context.setTypeConverterStatisticsEnabled(getTypeConverterStatisticsEnabled());
+        }
+        if (getInflightRepositoryBrowseEnabled() != null) {
+            context.getInflightRepository().setInflightBrowseEnabled(getInflightRepositoryBrowseEnabled());
         }
         if (getTypeConverterExists() != null) {
             context.getTypeConverterRegistry().setTypeConverterExists(getTypeConverterExists());

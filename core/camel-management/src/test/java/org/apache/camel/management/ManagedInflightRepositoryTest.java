@@ -20,6 +20,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -55,11 +56,6 @@ public class ManagedInflightRepositoryTest extends ManagementTestSupport {
 
                             Integer routeSize = (Integer) mbeanServer.invoke(name, "size", new Object[]{"foo"}, new String[]{"java.lang.String"});
                             assertEquals(1, routeSize.intValue());
-
-                            TabularData data = (TabularData) mbeanServer.invoke(name, "browse", null, null);
-                            assertNotNull(data);
-
-                            assertEquals(1, data.size());
                         }).id("myProcessor")
                         .to("mock:result");
             }

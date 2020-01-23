@@ -1287,7 +1287,8 @@ public interface InfinispanEndpointBuilderFactory {
         COMMAND_RETRY,
         ROLLING_UPGRADE,
         REMOTE_ITERATION,
-        SKIP_SIZE_OPTIMIZATION;
+        SKIP_SIZE_OPTIMIZATION,
+        IGNORE_TRANSACTION;
     }
 
     public interface InfinispanBuilders {

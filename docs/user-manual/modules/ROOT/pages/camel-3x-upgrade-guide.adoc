@@ -105,7 +105,47 @@ Camel a bit more time, and hence added 15 seconds so the default is 45 seconds.
 The message history is now default disabled (due to optimize core for lower footprint out of the box).
 See the xref:message-history.adoc[Message History] documentation for how to enabled message history.
 
+=== Inflight Repository
+
+The inflight repository now does no longer allow browsing each individual exchange (due to optimize core for lower footprint out of the box).
+To enable browsing then you can turn this on via:
+
+[source,java]
+----
+    context.getInflightRepository().setInflightBrowseEnabled(true);
+----
+
+And in XML DSL:
+
+[source,xml]
+----
+<camelContext inflightRepositoryBrowseEnabled="true">
+
+</camelContext>
+----
+
 === API changes
+
+==== log changed to private static LOG
+
+The `ServiceSupport` class has changed its logging from instance to static, which means any inherited class that
+uses `log` would need to change the code to compile. This may happen in custom Camel components.
+
+Before you may have:
+
+[source,java]
+----
+    log.debug("Sending message to foobar service: {}", messageId);
+----
+
+You then need to migrate the logging to also be static:
+
+[source,java]
+----
+    private static final Logger LOG = LoggerFactory.getLogger(FooBarProducer.class);
+
+    LOG.debug("Sending message to foobar service: {}", messageId);
+----
 
 ==== Exchange
 
@@ -130,6 +170,11 @@ You can use these methods by adapting to the extended exchange as shown below:
 ----
 exchange.adapt(ExtendedExchange.class).addOnCompletion(...);
 ----
+
+==== UnitOfWork
+
+For advanced Camel users whom implement custom `UnitOfWork` should implement the new `isBeforeAfterProcess()' method and return true of false,
+whether Camel should invoke the before and after processor methods.
 
 ==== Cookies
 

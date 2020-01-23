@@ -365,6 +365,34 @@ public interface ClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * Timeout in millis to wait for client to establish a connected
+         * connection.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10000
+         * Group: data
+         */
+        default ClientEndpointConsumerBuilder connectionTimeout(
+                int connectionTimeout) {
+            doSetProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+        /**
+         * Timeout in millis to wait for client to establish a connected
+         * connection.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10000
+         * Group: data
+         */
+        default ClientEndpointConsumerBuilder connectionTimeout(
+                String connectionTimeout) {
+            doSetProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+        /**
          * Whether background scan transmissions should be ignored.
          * 
          * The option is a: <code>boolean</code> type.
@@ -913,6 +941,34 @@ public interface ClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * Timeout in millis to wait for client to establish a connected
+         * connection.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10000
+         * Group: data
+         */
+        default ClientEndpointProducerBuilder connectionTimeout(
+                int connectionTimeout) {
+            doSetProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+        /**
+         * Timeout in millis to wait for client to establish a connected
+         * connection.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10000
+         * Group: data
+         */
+        default ClientEndpointProducerBuilder connectionTimeout(
+                String connectionTimeout) {
+            doSetProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+        /**
          * Whether background scan transmissions should be ignored.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1350,6 +1406,32 @@ public interface ClientEndpointBuilderFactory {
         default ClientEndpointBuilder causeSourceAddress(
                 String causeSourceAddress) {
             doSetProperty("causeSourceAddress", causeSourceAddress);
+            return this;
+        }
+        /**
+         * Timeout in millis to wait for client to establish a connected
+         * connection.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10000
+         * Group: data
+         */
+        default ClientEndpointBuilder connectionTimeout(int connectionTimeout) {
+            doSetProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+        /**
+         * Timeout in millis to wait for client to establish a connected
+         * connection.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10000
+         * Group: data
+         */
+        default ClientEndpointBuilder connectionTimeout(String connectionTimeout) {
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**

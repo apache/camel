@@ -40,8 +40,8 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
     private final ThreadLocal<Worker> workers = ThreadLocal.withInitial(new Supplier<Worker>() {
         @Override
         public Worker get() {
-            createdWorkers.incrementAndGet();
-            return new Worker(DefaultReactiveExecutor.this);
+            int number = createdWorkers.incrementAndGet();
+            return new Worker(number, DefaultReactiveExecutor.this);
         }
     });
 
@@ -92,17 +92,22 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
 
     @Override
     protected void doStop() throws Exception {
-        // noop
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Stopping DefaultReactiveExecutor [createdWorkers: {}, runningWorkers: {}, pendingTasks: {}]",
+                    getCreatedWorkers(), getRunningWorkers(), getPendingTasks());
+        }
     }
 
     private static class Worker {
 
+        private final int number;
         private final DefaultReactiveExecutor executor;
         private volatile Deque<Runnable> queue = new ArrayDeque<>();
         private volatile Deque<Deque<Runnable>> back;
         private volatile boolean running;
 
-        public Worker(DefaultReactiveExecutor executor) {
+        public Worker(int number, DefaultReactiveExecutor executor) {
+            this.number = number;
             this.executor = executor;
         }
 
@@ -131,10 +136,10 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                 executor.runningWorkers.incrementAndGet();
                 try {
                     for (;;) {
-                        final Runnable polled = queue.poll();
+                        final Runnable polled = queue.pollFirst();
                         if (polled == null) {
                             if (back != null && !back.isEmpty()) {
-                                queue = back.poll();
+                                queue = back.pollFirst();
                                 continue;
                             } else {
                                 break;
@@ -143,7 +148,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                         try {
                             executor.pendingTasks.decrementAndGet();
                             if (LOG.isTraceEnabled()) {
-                                LOG.trace("Running: {}", runnable);
+                                LOG.trace("Worker #{} running: {}", number, runnable);
                             }
                             polled.run();
                         } catch (Throwable t) {
@@ -162,7 +167,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
         }
 
         boolean executeFromQueue() {
-            final Runnable polled = queue != null ? queue.poll() : null;
+            final Runnable polled = queue != null ? queue.pollFirst() : null;
             if (polled == null) {
                 return false;
             }

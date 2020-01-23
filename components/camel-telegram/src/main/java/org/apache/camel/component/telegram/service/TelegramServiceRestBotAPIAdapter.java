@@ -42,6 +42,7 @@ import org.apache.camel.component.telegram.model.EditMessageReplyMarkupMessage;
 import org.apache.camel.component.telegram.model.EditMessageTextMessage;
 import org.apache.camel.component.telegram.model.MessageResult;
 import org.apache.camel.component.telegram.model.MessageResultGameScores;
+import org.apache.camel.component.telegram.model.OutgoingAnswerInlineQuery;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
 import org.apache.camel.component.telegram.model.OutgoingCallbackQueryMessage;
 import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
@@ -126,6 +127,8 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
                 new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/setGameScore"));
         m.put(OutgoingGetGameHighScoresMessage.class, new OutgoingPlainMessageHandler(
                 asyncHttpClient, bufferSize, mapper, baseUri + "/getGameHighScores", MessageResultGameScores.class));
+        m.put(OutgoingAnswerInlineQuery.class, new OutgoingPlainMessageHandler(
+            asyncHttpClient, bufferSize, mapper, baseUri + "/answerInlineQuery"));
         this.handlers = m;
     }
 

@@ -28,12 +28,16 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The stream: component provides access to the system-in, system-out and system-err streams as well as allowing streaming of file.
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "stream", title = "Stream", syntax = "stream:kind", label = "file,system")
 public class StreamEndpoint extends DefaultEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(StreamEndpoint.class);
 
     private transient Charset charset;
 
@@ -305,7 +309,7 @@ public class StreamEndpoint extends DefaultEndpoint {
     Charset loadCharset() {
         if (encoding == null) {
             encoding = Charset.defaultCharset().name();
-            log.debug("No encoding parameter using default charset: {}", encoding);
+            LOG.debug("No encoding parameter using default charset: {}", encoding);
         }
         if (!Charset.isSupported(encoding)) {
             throw new IllegalArgumentException("The encoding: " + encoding + " is not supported");

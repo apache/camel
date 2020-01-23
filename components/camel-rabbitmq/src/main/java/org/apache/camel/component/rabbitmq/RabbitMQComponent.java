@@ -28,6 +28,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.PropertiesHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component("rabbitmq")
 public class RabbitMQComponent extends DefaultComponent {
@@ -36,6 +38,8 @@ public class RabbitMQComponent extends DefaultComponent {
     public static final String EXCHANGE_ARG_PREFIX = "exchange.";
     public static final String QUEUE_ARG_PREFIX = "queue.";
     public static final String BINDING_ARG_PREFIX = "binding.";
+
+    private static final Logger LOG = LoggerFactory.getLogger(RabbitMQComponent.class);
 
     @Metadata(label = "common")
     private String hostname;
@@ -153,7 +157,7 @@ public class RabbitMQComponent extends DefaultComponent {
         String exchangeName = remaining;
 
         if (remaining.contains(":") || remaining.contains("/")) {
-            log.warn("The old syntax rabbitmq://hostname:port/exchangeName is deprecated. You should configure the hostname on the component or ConnectionFactory");
+            LOG.warn("The old syntax rabbitmq://hostname:port/exchangeName is deprecated. You should configure the hostname on the component or ConnectionFactory");
             try {
                 URI u = new URI("http://" + remaining);
                 host = u.getHost();
@@ -181,7 +185,7 @@ public class RabbitMQComponent extends DefaultComponent {
                 if (name == null) {
                     name = "anonymous";
                 }
-                log.info("Auto-detected single instance: {} of type ConnectionFactory in Registry to be used as ConnectionFactory when creating endpoint: {}", name, uri);
+                LOG.info("Auto-detected single instance: {} of type ConnectionFactory in Registry to be used as ConnectionFactory when creating endpoint: {}", name, uri);
             }
         }
 
@@ -243,8 +247,8 @@ public class RabbitMQComponent extends DefaultComponent {
         endpoint.setAllowNullHeaders(isAllowNullHeaders());
         setProperties(endpoint, params);
 
-        if (log.isDebugEnabled()) {
-            log.debug("Creating RabbitMQEndpoint with host {}:{} and exchangeName: {}",
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating RabbitMQEndpoint with host {}:{} and exchangeName: {}",
                     new Object[]{endpoint.getHostname(), endpoint.getPortNumber(), endpoint.getExchangeName()});
         }
 
