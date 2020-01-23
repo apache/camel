@@ -308,7 +308,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
 
         Flux.just(1, 2, 3)
             .flatMap(e -> crs.to("bean:hello", e))
-            .map(e -> e.getOut())
+            .map(e -> e.getMessage())
             .map(e -> e.getBody(String.class))
             .doOnNext(res -> values.add(res))
             .doOnNext(res -> latch.countDown())
@@ -346,7 +346,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
 
         Flux.just(1, 2, 3)
             .flatMap(fun)
-            .map(e -> e.getOut())
+            .map(e -> e.getMessage())
             .map(e -> e.getBody(String.class))
             .doOnNext(res -> values.add(res))
             .doOnNext(res -> latch.countDown())
