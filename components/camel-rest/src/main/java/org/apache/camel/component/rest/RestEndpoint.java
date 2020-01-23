@@ -50,12 +50,12 @@ import static org.apache.camel.support.RestProducerFactoryHelper.setupComponent;
 @UriEndpoint(firstVersion = "2.14.0", scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate", label = "core,rest", lenientProperties = true)
 public class RestEndpoint extends DefaultEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RestEndpoint.class);
-
     public static final String[] DEFAULT_REST_CONSUMER_COMPONENTS = new String[]{"coap", "netty-http", "jetty", "servlet", "spark-java", "undertow"};
     public static final String[] DEFAULT_REST_PRODUCER_COMPONENTS = new String[]{"http", "netty-http", "undertow"};
     public static final String DEFAULT_API_COMPONENT_NAME = "openapi";
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/rest/";
+
+    private static final Logger LOG = LoggerFactory.getLogger(RestEndpoint.class);
 
     @UriPath(label = "common", enums = "get,post,put,delete,patch,head,trace,connect,options") @Metadata(required = true)
     private String method;
