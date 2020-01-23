@@ -20,6 +20,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -44,6 +45,8 @@ public class ManagedInflightRepositoryTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.getInflightRepository().setInflightExchangeEnabled(true);
+
                 from("direct:start").routeId("foo")
                         .to("mock:a")
                         .process(exchange -> {

@@ -34,6 +34,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean shutdownNowOnTimeout = true;
     private boolean shutdownRoutesInReverseOrder = true;
     private boolean shutdownLogInflightExchangesOnTimeout = true;
+    private boolean inflightRepositoryExchangeEnabled;
     private String fileConfigurations;
     private boolean jmxEnabled = true;
     private int producerTemplateCacheSize = 1000;
@@ -190,9 +191,24 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Sets whether to log information about the inflight Exchanges which are still running
      * during a shutdown which didn't complete without the given timeout.
+     *
+     * This requires to enable the option inflightRepositoryExchangeEnabled.
      */
     public void setShutdownLogInflightExchangesOnTimeout(boolean shutdownLogInflightExchangesOnTimeout) {
         this.shutdownLogInflightExchangesOnTimeout = shutdownLogInflightExchangesOnTimeout;
+    }
+
+    public boolean isInflightRepositoryExchangeEnabled() {
+        return inflightRepositoryExchangeEnabled;
+    }
+
+    /**
+     * Sets whether the inflight repository should track each inflight exchange.
+     *
+     * This is by default disabled as there is a very slight performance overhead when enabled.
+     */
+    public void setInflightRepositoryExchangeEnabled(boolean inflightRepositoryExchangeEnabled) {
+        this.inflightRepositoryExchangeEnabled = inflightRepositoryExchangeEnabled;
     }
 
     public String getFileConfigurations() {
@@ -937,9 +953,21 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Sets whether to log information about the inflight Exchanges which are still running
      * during a shutdown which didn't complete without the given timeout.
+     *
+     * This requires to enable the option inflightRepositoryExchangeEnabled.
      */
     public T withShutdownLogInflightExchangesOnTimeout(boolean shutdownLogInflightExchangesOnTimeout) {
         this.shutdownLogInflightExchangesOnTimeout = shutdownLogInflightExchangesOnTimeout;
+        return (T) this;
+    }
+
+    /**
+     * Sets whether the inflight repository should track each inflight exchange.
+     *
+     * This is by default disabled as there is a very slight performance overhead when enabled.
+     */
+    public T withInflightRepositoryExchangeEnabled(boolean inflightRepositoryExchangeEnabled) {
+        this.inflightRepositoryExchangeEnabled = inflightRepositoryExchangeEnabled;
         return (T) this;
     }
 
