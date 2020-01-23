@@ -44,11 +44,9 @@ public class NettyHttpEndpointUriEncodingIssueTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty-http:http://localhost:{{port}}/myapp/mytest?urlDecodeHeaders=true").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String columns = exchange.getIn().getHeader("columns", String.class);
-                        exchange.getOut().setBody("We got " + columns + " columns");
-                    }
+                from("netty-http:http://localhost:{{port}}/myapp/mytest?urlDecodeHeaders=true").process(exchange -> {
+                    String columns = exchange.getIn().getHeader("columns", String.class);
+                    exchange.getMessage().setBody("We got " + columns + " columns");
                 });
             }
         };

@@ -17,7 +17,6 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -48,11 +47,7 @@ public class NettyHttpRedirectNoLocationTest extends BaseNettyTest {
                 nextPort = getNextPort();
 
                 from("netty-http:http://localhost:" + nextPort + "/test")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 302);
-                            }
-                        });
+                        .process(exchange -> exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 302));
             }
         };
     }

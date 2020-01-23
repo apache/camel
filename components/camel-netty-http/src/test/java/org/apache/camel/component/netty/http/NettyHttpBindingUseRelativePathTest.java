@@ -27,40 +27,28 @@ public class NettyHttpBindingUseRelativePathTest extends BaseNettyTest {
 
     @Test
     public void testSendToNettyWithPath() throws Exception {
-        Exchange exchange = template.request("netty-http:http://localhost:{{port}}/mypath", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST);
-            }
-        });
+        Exchange exchange = template.request("netty-http:http://localhost:{{port}}/mypath", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST));
 
         // convert the response to a String
-        String body = exchange.getOut().getBody(String.class);
+        String body = exchange.getMessage().getBody(String.class);
         assertEquals("Request message is OK", body);
     }
 
     @Test
     public void testSendToNettyWithoutPath() throws Exception {
-        Exchange exchange = template.request("netty-http:http://localhost:{{port}}", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST);
-            }
-        });
+        Exchange exchange = template.request("netty-http:http://localhost:{{port}}", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST));
 
         // convert the response to a String
-        String body = exchange.getOut().getBody(String.class);
+        String body = exchange.getMessage().getBody(String.class);
         assertEquals("Request message is OK", body);
     }
 
     @Test
     public void testSendToNettyWithoutPath2() throws Exception {
-        Exchange exchange = template.request("netty-http:http://localhost:{{port}}/", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST);
-            }
-        });
+        Exchange exchange = template.request("netty-http:http://localhost:{{port}}/", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST));
 
         // convert the response to a String
-        String body = exchange.getOut().getBody(String.class);
+        String body = exchange.getMessage().getBody(String.class);
         assertEquals("Request message is OK", body);
     }
 
@@ -68,34 +56,30 @@ public class NettyHttpBindingUseRelativePathTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("netty-http:http://localhost:{{port}}/mypath").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        assertEquals("Get a wrong form parameter from the message header", "localhost:" + getPort(), exchange.getIn().getHeader("host"));
+                from("netty-http:http://localhost:{{port}}/mypath").process(exchange -> {
+                    assertEquals("Get a wrong form parameter from the message header", "localhost:" + getPort(), exchange.getIn().getHeader("host"));
 
-                        NettyHttpMessage in = (NettyHttpMessage) exchange.getIn();
-                        FullHttpRequest request = in.getHttpRequest();
-                        assertEquals("Relative path not used in POST", "/mypath", request.uri());
+                    NettyHttpMessage in = (NettyHttpMessage) exchange.getIn();
+                    FullHttpRequest request = in.getHttpRequest();
+                    assertEquals("Relative path not used in POST", "/mypath", request.uri());
 
-                        // send a response
-                        exchange.getOut().getHeaders().clear();
-                        exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "text/plain");
-                        exchange.getOut().setBody("Request message is OK");
-                    }
+                    // send a response
+                    exchange.getMessage().getHeaders().clear();
+                    exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                    exchange.getMessage().setBody("Request message is OK");
                 });
 
-                from("netty-http:http://localhost:{{port}}").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        assertEquals("Get a wrong form parameter from the message header", "localhost:" + getPort(), exchange.getIn().getHeader("host"));
+                from("netty-http:http://localhost:{{port}}").process(exchange -> {
+                    assertEquals("Get a wrong form parameter from the message header", "localhost:" + getPort(), exchange.getIn().getHeader("host"));
 
-                        NettyHttpMessage in = (NettyHttpMessage) exchange.getIn();
-                        FullHttpRequest request = in.getHttpRequest();
-                        assertEquals("Relative path not used in POST", "/", request.uri());
+                    NettyHttpMessage in = (NettyHttpMessage) exchange.getIn();
+                    FullHttpRequest request = in.getHttpRequest();
+                    assertEquals("Relative path not used in POST", "/", request.uri());
 
-                        // send a response
-                        exchange.getOut().getHeaders().clear();
-                        exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "text/plain");
-                        exchange.getOut().setBody("Request message is OK");
-                    }
+                    // send a response
+                    exchange.getMessage().getHeaders().clear();
+                    exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                    exchange.getMessage().setBody("Request message is OK");
                 });
             }
         };
