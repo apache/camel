@@ -101,7 +101,7 @@ echo
 echo "cd ${SITE_DIR}/${VERSION}/camel-website/"
 echo "git status"
 echo "git add <schema-${VERSION}-qualifier>.xsd"
-echo "git commit -m \"Add XML schemas for camel-${VERSION}\""
+echo "git commit -m \"Add XML schemas for Camel ${VERSION}\""
 echo
 echo "cd ${SITE_DIR}/${VERSION}/manual/"
 echo "svn status"
