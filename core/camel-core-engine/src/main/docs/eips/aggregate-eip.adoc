@@ -221,7 +221,7 @@ completion predicates / sizes / timeouts etc, and complete the group.
 
 For example the following logic (from an unit test) will complete the
 group if the message body size is larger than 5. This is done by setting
-the property `Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP` to `true`.
+the exchange property `Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP` to `true`.
 
 [source,java]
 ----
@@ -278,12 +278,12 @@ setting the property `Exchange.AGGREGATION_COMPLETE_ALL_GROUPS` to `true`.
 == Manually Force the Completion of All Aggregated Exchanges Immediately
 
 You can manually trigger completion of all current aggregated exchanges
-by sending an exchange containing the property
+by sending an exchange containing the exchange property
 `Exchange.AGGREGATION_COMPLETE_ALL_GROUPS` set to `true`. The message is
 considered a signal message only, the message headers/contents will not
 be processed otherwise.
 
-You can alternatively set the header
+You can alternatively set the exchange property
 `Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE` to `true` to trigger
 completion of all groups after processing the current message.
 
