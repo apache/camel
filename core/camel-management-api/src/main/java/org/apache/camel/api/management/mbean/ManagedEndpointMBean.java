@@ -29,7 +29,7 @@ public interface ManagedEndpointMBean {
     @ManagedAttribute(description = "Endpoint URI", mask = true)
     String getEndpointUri();
 
-    @ManagedAttribute(description = "Endpoint Base URI (no query parameters)")
+    @ManagedAttribute(description = "Endpoint Base URI (no query parameters)", mask = true)
     String getEndpointBaseUri();
 
     @ManagedAttribute(description = "Singleton")
