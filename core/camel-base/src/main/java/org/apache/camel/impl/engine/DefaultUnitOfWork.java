@@ -60,6 +60,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private String id;
     private final Logger log;
     private final CamelContext context;
+    private RouteContext prevRouteContext;
     private RouteContext routeContext;
     private List<Synchronization> synchronizations;
     private Message originalInMessage;
@@ -285,13 +286,15 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     @Override
     public void pushRouteContext(RouteContext routeContext) {
+        this.prevRouteContext = this.routeContext;
         this.routeContext = routeContext;
     }
 
     @Override
     public RouteContext popRouteContext() {
         RouteContext answer = this.routeContext;
-        this.routeContext = null;
+        this.routeContext = this.prevRouteContext;
+        this.prevRouteContext = null;
         return answer;
     }
 
