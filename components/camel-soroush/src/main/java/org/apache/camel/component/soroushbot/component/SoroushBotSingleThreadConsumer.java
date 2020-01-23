@@ -24,6 +24,8 @@ import org.apache.camel.Processor;
  * every message will be processed in order of their arrival time
  * this consumer support both Sync and Async processors.
  */
+
+//CHECKSTYLE:OFF
 public class SoroushBotSingleThreadConsumer extends SoroushBotAbstractConsumer {
 
     public SoroushBotSingleThreadConsumer(SoroushBotEndpoint endpoint, Processor processor) {
