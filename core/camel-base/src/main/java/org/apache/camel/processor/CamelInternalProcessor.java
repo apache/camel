@@ -581,7 +581,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
      * Advice to inject new {@link UnitOfWork} to the {@link Exchange} if needed, and as well to ensure
      * the {@link UnitOfWork} is done and stopped.
      */
-    public static class UnitOfWorkProcessorAdvice implements CamelInternalProcessorAdvice<UnitOfWork> {
+    public static class UnitOfWorkProcessorAdvice implements CamelInternalProcessorAdvice<Object[]> {
 
         private final RouteContext routeContext;
         private String routeId;
@@ -596,7 +596,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
 
         @Override
-        public UnitOfWork before(Exchange exchange) throws Exception {
+        public Object[] before(Exchange exchange) throws Exception {
             // if the exchange doesn't have from route id set, then set it if it originated
             // from this unit of work
             if (routeContext != null && exchange.getFromRouteId() == null) {
@@ -618,19 +618,24 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             }
 
             // for any exchange we should push/pop route context so we can keep track of which route we are routing
+            RouteContext prevRouteContext = null;
             if (routeContext != null) {
                 UnitOfWork existing = exchange.getUnitOfWork();
                 if (existing != null) {
+                    prevRouteContext = existing.getRouteContext();
                     existing.pushRouteContext(routeContext);
                 }
             }
 
-            return created;
+            return new Object[]{created, prevRouteContext};
         }
 
         @Override
-        public void after(Exchange exchange, UnitOfWork uow) throws Exception {
+        public void after(Exchange exchange, Object[] arr) throws Exception {
             UnitOfWork existing = exchange.getUnitOfWork();
+
+            UnitOfWork uow = (UnitOfWork) arr[0];
+            RouteContext prevRouteContext = (RouteContext) arr[1];
 
             // execute done on uow if we created it, and the consumer is not doing it
             if (uow != null) {
@@ -639,7 +644,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
             // after UoW is done lets pop the route context which must be done on every existing UoW
             if (routeContext != null && existing != null) {
-                existing.popRouteContext();
+                existing.pushRouteContext(prevRouteContext);
             }
         }
 

@@ -1066,6 +1066,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     @Override
+    public int getRoutesSize() {
+        return routes.size();
+    }
+
+    @Override
     public Route getRoute(String id) {
         if (id != null) {
             for (Route route : getRoutes()) {

@@ -163,11 +163,19 @@ public interface UnitOfWork extends Service {
      * Notice that an {@link Exchange} can be routed through multiple routes and thus the
      * {@link org.apache.camel.spi.RouteContext} can change over time.
      *
-     * @return the route context
-     * @see #pushRouteContext(RouteContext)
-     * @see #popRouteContext()
+     * @return the route context, maybe be <tt>null</tt> if not routed through a route currently.
      */
     RouteContext getRouteContext();
+
+    /**
+     * Sets the {@link RouteContext} that this {@link UnitOfWork} currently is being routed through.
+     * <p/>
+     * Notice that an {@link Exchange} can be routed through multiple routes and thus the
+     * {@link org.apache.camel.spi.RouteContext} can change over time.
+     *
+     * @param routeContext  the route context, or <tt>null</tt> if no longer roted through a route.
+     */
+    void setRouteContext(RouteContext routeContext);
 
     /**
      * Pushes the {@link RouteContext} that this {@link UnitOfWork} currently is being routed through.
@@ -177,6 +185,7 @@ public interface UnitOfWork extends Service {
      *
      * @param routeContext the route context
      */
+    @Deprecated
     void pushRouteContext(RouteContext routeContext);
 
     /**
@@ -185,6 +194,7 @@ public interface UnitOfWork extends Service {
      *
      * @return the route context or <tt>null</tt> if none existed
      */
+    @Deprecated
     RouteContext popRouteContext();
 
     /**
