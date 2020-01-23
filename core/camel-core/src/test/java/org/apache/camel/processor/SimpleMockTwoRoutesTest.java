@@ -17,15 +17,17 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-public class SimpleMockTest extends ContextTestSupport {
+public class SimpleMockTwoRoutesTest extends ContextTestSupport {
 
     @Test
     public void testSimple() throws Exception {
-        assertEquals(1, context.getRoutesSize());
+        assertEquals(2, context.getRoutesSize());
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -37,7 +39,7 @@ public class SimpleMockTest extends ContextTestSupport {
 
     @Test
     public void testSimpleTwoMessages() throws Exception {
-        assertEquals(1, context.getRoutesSize());
+        assertEquals(2, context.getRoutesSize());
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World", "Bye World");
@@ -53,7 +55,33 @@ public class SimpleMockTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("log:foo").to("log:bar").to("mock:result");
+                from("direct:start").routeId("foo")
+                        .to("log:foo")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                assertEquals("foo", exchange.getUnitOfWork().getRouteContext().getRouteId());
+                            }
+                        })
+                        .to("mock:foo")
+                        .to("direct:bar")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                assertEquals("foo", exchange.getUnitOfWork().getRouteContext().getRouteId());
+                            }
+                        })
+                        .to("mock:result");
+
+                from("direct:bar").routeId("bar")
+                        .to("log:bar")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                assertEquals("bar", exchange.getUnitOfWork().getRouteContext().getRouteId());
+                            }
+                        })
+                        .to("mock:bar");
             }
         };
     }

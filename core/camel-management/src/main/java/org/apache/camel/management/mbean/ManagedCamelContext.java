@@ -180,7 +180,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     @Override
     public Integer getTotalRoutes() {
-        return context.getRoutes().size();
+        return context.getRoutesSize();
     }
 
     @Override

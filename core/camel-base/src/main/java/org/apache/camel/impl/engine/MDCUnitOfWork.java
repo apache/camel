@@ -94,24 +94,16 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     @Override
     public void pushRouteContext(RouteContext routeContext) {
         super.pushRouteContext(routeContext);
-        MDC.put(MDC_ROUTE_ID, routeContext.getRouteId());
+        if (routeContext != null) {
+            MDC.put(MDC_ROUTE_ID, routeContext.getRouteId());
+        } else {
+            MDC.remove(MDC_ROUTE_ID);
+        }
     }
 
     @Override
     public RouteContext popRouteContext() {
-        RouteContext answer = super.popRouteContext();
-
-        // restore old route id back again after we have popped
-        RouteContext previous = getRouteContext();
-        if (previous != null) {
-            // restore old route id back again
-            MDC.put(MDC_ROUTE_ID, previous.getRouteId());
-        } else {
-            // not running in route, so clear (should ideally not happen)
-            MDC.remove(MDC_ROUTE_ID);
-        }
-
-        return answer;
+        return super.popRouteContext();
     }
 
     @Override
