@@ -2959,6 +2959,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             if (route.getConsumer() != null) {
                 // use basic endpoint uri to not log verbose details or potential sensitive data
                 String uri = route.getEndpoint().getEndpointBaseUri();
+                uri = URISupport.sanitizeUri(uri);
                 LOG.info("Route: {} is {}, was consuming from: {}", route.getId(), state, uri);
             } else {
                 LOG.info("Route: {} is {}.", route.getId(), state);
@@ -3197,6 +3198,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                     ServiceHelper.resumeService(consumer);
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = endpoint.getEndpointBaseUri();
+                    uri = URISupport.sanitizeUri(uri);
                     LOG.info("Route: {} resumed and consuming from: {}", route.getId(), uri);
                 } else {
                     // when starting we should invoke the lifecycle strategies
@@ -3213,6 +3215,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = endpoint.getEndpointBaseUri();
+                    uri = URISupport.sanitizeUri(uri);
                     LOG.info("Route: {} started and consuming from: {}", route.getId(), uri);
                 }
 

@@ -53,6 +53,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -593,11 +594,13 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         deferredConsumers.add(new ShutdownDeferredConsumer(order.getRoute(), consumer));
                         // use basic endpoint uri to not log verbose details or potential sensitive data
                         String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
+                        uri = URISupport.sanitizeUri(uri);
                         LOG.debug("Route: {} suspended and shutdown deferred, was consuming from: {}", order.getRoute().getId(), uri);
                     } else if (shutdown) {
                         shutdownNow(order.getRoute().getId(), consumer);
                         // use basic endpoint uri to not log verbose details or potential sensitive data
                         String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
+                        uri = URISupport.sanitizeUri(uri);
                         LOG.info("Route: {} shutdown complete, was consuming from: {}", order.getRoute().getId(), uri);
                     } else {
                         // we will stop it later, but for now it must run to be able to help all inflight messages
@@ -690,11 +693,13 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                     suspendNow(deferred.getRoute().getId(), consumer);
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = deferred.getRoute().getEndpoint().getEndpointBaseUri();
+                    uri = URISupport.sanitizeUri(uri);
                     LOG.info("Route: {} suspend complete, was consuming from: {}", deferred.getRoute().getId(), uri);
                 } else {
                     shutdownNow(deferred.getRoute().getId(), consumer);
                     // use basic endpoint uri to not log verbose details or potential sensitive data
                     String uri = deferred.getRoute().getEndpoint().getEndpointBaseUri();
+                    uri = URISupport.sanitizeUri(uri);
                     LOG.info("Route: {} shutdown complete, was consuming from: {}", deferred.getRoute().getId(), uri);
                 }
             }
