@@ -24,6 +24,8 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.translate.TranslateClient;
 import software.amazon.awssdk.services.translate.model.TranslateTextRequest;
@@ -36,6 +38,7 @@ import software.amazon.awssdk.services.translate.model.TranslateTextResponse;
  */
 public class Translate2Producer extends DefaultProducer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(Translate2Producer.class);
     private transient String translateProducerToString;
 
     public Translate2Producer(Endpoint endpoint) {
@@ -116,7 +119,7 @@ public class Translate2Producer extends DefaultProducer {
         try {
             result = translateClient.translateText(request.build());
         } catch (AwsServiceException ase) {
-            log.trace("Translate Text command returned the error code {}", ase.getMessage());
+            LOG.trace("Translate Text command returned the error code {}", ase.getMessage());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

@@ -77,6 +77,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
     // Note that the Entity itself is not serializable, so don't share this object among different VMs!
     public static final String XRAY_TRACE_ENTITY = "Camel-AWS-XRay-Trace-Entity";
 
+    private static final Logger LOG = LoggerFactory.getLogger(XRayTracer.class);
 
     private static Map<String, SegmentDecorator> decorators = new HashMap<>();
 
@@ -128,13 +129,13 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
         }
 
         if (null == tracingStrategy) {
-            log.info("No tracing strategy available. Defaulting to no-op strategy");
+            LOG.info("No tracing strategy available. Defaulting to no-op strategy");
             tracingStrategy = new NoopTracingStrategy();
         }
 
         camelContext.adapt(ExtendedCamelContext.class).addInterceptStrategy(tracingStrategy);
 
-        log.debug("Starting XRay tracer");
+        LOG.debug("Starting XRay tracer");
     }
 
     @Override
@@ -144,7 +145,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
         ServiceHelper.stopAndShutdownService(eventNotifier);
 
         camelContext.getRoutePolicyFactories().remove(this);
-        log.debug("XRay tracer stopped");
+        LOG.debug("XRay tracer stopped");
     }
 
     /**
@@ -155,7 +156,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
     public void init(CamelContext camelContext) {
         if (!camelContext.hasService(this)) {
             try {
-                log.debug("Initializing XRay tracer");
+                LOG.debug("Initializing XRay tracer");
                 // start this service eager so we init before Camel is starting up
                 camelContext.addService(this, true, true);
             } catch (Exception e) {
@@ -218,7 +219,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
         if (!excludePatterns.isEmpty()) {
             for (String pattern : excludePatterns) {
                 if (pattern.equals(routeId)) {
-                    log.debug("Ignoring route with ID {}", routeId);
+                    LOG.debug("Ignoring route with ID {}", routeId);
                     return true;
                 }
             }
@@ -266,7 +267,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
 
             if (event instanceof ExchangeSendingEvent) {
                 ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
-                log.trace("-> {} - target: {} (routeId: {})",
+                LOG.trace("-> {} - target: {} (routeId: {})",
                         event.getClass().getSimpleName(), ese.getEndpoint(),
                         ese.getExchange().getFromRouteId());
 
@@ -288,21 +289,21 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                     try {
                         Subsegment subsegment = AWSXRay.beginSubsegment(name);
                         sd.pre(subsegment, ese.getExchange(), ese.getEndpoint());
-                        log.trace("Creating new subsegment with ID {} and name {} (parent {}, references: {})",
+                        LOG.trace("Creating new subsegment with ID {} and name {} (parent {}, references: {})",
                                 subsegment.getId(), subsegment.getName(),
                                 subsegment.getParentSegment().getId(), subsegment.getParentSegment().getReferenceCount());
                         ese.getExchange().setProperty(CURRENT_SEGMENT, subsegment);
                     } catch (AlreadyEmittedException aeEx) {
-                        log.warn("Ignoring starting of subsegment " + name + " as its parent segment"
+                        LOG.warn("Ignoring starting of subsegment " + name + " as its parent segment"
                                 + " was already emitted to AWS.");
                     }
                 } else {
-                    log.trace("Ignoring creation of XRay subsegment as no segment exists in the current thread");
+                    LOG.trace("Ignoring creation of XRay subsegment as no segment exists in the current thread");
                 }
 
             } else if (event instanceof ExchangeSentEvent) {
                 ExchangeSentEvent ese = (ExchangeSentEvent) event;
-                log.trace("-> {} - target: {} (routeId: {})",
+                LOG.trace("-> {} - target: {} (routeId: {})",
                         event.getClass().getSimpleName(), ese.getEndpoint(), ese.getExchange().getFromRouteId());
 
                 Entity entity = getTraceEntityFromExchange(ese.getExchange());
@@ -313,17 +314,17 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                         Subsegment subsegment = (Subsegment) entity;
                         sd.post(subsegment, ese.getExchange(), ese.getEndpoint());
                         subsegment.close();
-                        log.trace("Closing down subsegment with ID {} and name {}",
+                        LOG.trace("Closing down subsegment with ID {} and name {}",
                                 subsegment.getId(), subsegment.getName());
-                        log.trace("Setting trace entity for exchange {} to {}", ese.getExchange(), subsegment.getParent());
+                        LOG.trace("Setting trace entity for exchange {} to {}", ese.getExchange(), subsegment.getParent());
                         ese.getExchange().setProperty(CURRENT_SEGMENT, subsegment.getParent());
                     } catch (AlreadyEmittedException aeEx) {
-                        log.warn("Ignoring close of subsegment " + entity.getName()
+                        LOG.warn("Ignoring close of subsegment " + entity.getName()
                                 + " as its parent segment was already emitted to AWS");
                     }
                 }
             } else {
-                log.trace("Received event {} from source {}", event, event.getSource());
+                LOG.trace("Received event {} from source {}", event, event.getSource());
             }
         }
 
@@ -370,7 +371,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                 return;
             }
 
-            log.trace("=> RoutePolicy-Begin: Route: {} - RouteId: {}", routeId, route.getId());
+            LOG.trace("=> RoutePolicy-Begin: Route: {} - RouteId: {}", routeId, route.getId());
 
             Entity entity = getTraceEntityFromExchange(exchange);
             boolean createSegment = entity == null || !Objects.equals(entity.getName(), routeId);
@@ -391,19 +392,19 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                 segment.setParent(entity);
                 segment.setTraceId(traceID);
                 sd.pre(segment, exchange, route.getEndpoint());
-                log.trace("Created new XRay segment {} with name {}", segment.getId(), segment.getName());
+                LOG.trace("Created new XRay segment {} with name {}", segment.getId(), segment.getName());
                 exchange.setProperty(CURRENT_SEGMENT, segment);
             } else {
                 String segmentName = entity.getId();
                 try {
                     Subsegment subsegment = AWSXRay.beginSubsegment(route.getId());
                     sd.pre(subsegment, exchange, route.getEndpoint());
-                    log.trace("Creating new subsegment with ID {} and name {} (parent {}, references: {})",
+                    LOG.trace("Creating new subsegment with ID {} and name {} (parent {}, references: {})",
                             subsegment.getId(), subsegment.getName(),
                             subsegment.getParentSegment().getId(), subsegment.getParentSegment().getReferenceCount());
                     exchange.setProperty(CURRENT_SEGMENT, subsegment);
                 } catch (AlreadyEmittedException aeEx) {
-                    log.warn("Ignoring opening of subsegment " + route.getId() + " as its parent segment "
+                    LOG.warn("Ignoring opening of subsegment " + route.getId() + " as its parent segment "
                             + segmentName + " was already emitted before.");
                 }
             }
@@ -416,7 +417,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                 return;
             }
 
-            log.trace("=> RoutePolicy-Done: Route: {} - RouteId: {}", routeId, route.getId());
+            LOG.trace("=> RoutePolicy-Done: Route: {} - RouteId: {}", routeId, route.getId());
 
             Entity entity = getTraceEntityFromExchange(exchange);
             AWSXRay.setTraceEntity(entity);
@@ -424,14 +425,14 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                 SegmentDecorator sd = getSegmentDecorator(route.getEndpoint());
                 sd.post(entity, exchange, route.getEndpoint());
                 entity.close();
-                log.trace("Closing down (sub)segment {} with name {} (parent {}, references: {})",
+                LOG.trace("Closing down (sub)segment {} with name {} (parent {}, references: {})",
                         entity.getId(), entity.getName(),
                         entity.getParentSegment().getId(), entity.getParentSegment().getReferenceCount());
                 exchange.setProperty(CURRENT_SEGMENT, entity.getParent());
             } catch (AlreadyEmittedException aeEx) {
-                log.warn("Ignoring closing of (sub)segment {} as the segment was already emitted.", route.getId());
+                LOG.warn("Ignoring closing of (sub)segment {} as the segment was already emitted.", route.getId());
             } catch (Exception e) {
-                log.warn("Error closing entity");
+                LOG.warn("Error closing entity");
             } finally {
                 AWSXRay.setTraceEntity(null);
             }

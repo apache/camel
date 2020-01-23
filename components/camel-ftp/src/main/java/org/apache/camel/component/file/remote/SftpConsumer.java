@@ -32,11 +32,15 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Secure FTP consumer
  */
 public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SftpConsumer.class);
 
     private String endpointPath;
 
@@ -55,13 +59,13 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
         try {
             super.doStart();
             if (endpoint.isAutoCreate()) {
-                log.debug("Auto creating directory: {}", endpoint.getConfiguration().getDirectory());
+                LOG.debug("Auto creating directory: {}", endpoint.getConfiguration().getDirectory());
                 try {
                     connectIfNecessary();
                     operations.buildDirectory(endpoint.getConfiguration().getDirectory(), true);
                 } catch (GenericFileOperationFailedException e) {
                     // log a WARN as we want to start the consumer.
-                    log.warn("Error auto creating directory: " + endpoint.getConfiguration().getDirectory()
+                    LOG.warn("Error auto creating directory: " + endpoint.getConfiguration().getDirectory()
                             + " due " + e.getMessage() + ". This exception is ignored.", e);
                 }
             }
@@ -103,7 +107,7 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
 
     @Override
     protected boolean doPollDirectory(String absolutePath, String dirName, List<GenericFile<SftpRemoteFile>> fileList, int depth) {
-        log.trace("doPollDirectory from absolutePath: {}, dirName: {}", absolutePath, dirName);
+        LOG.trace("doPollDirectory from absolutePath: {}, dirName: {}", absolutePath, dirName);
 
         depth++;
 
@@ -121,7 +125,7 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
                 dir = absolutePath;
             }
 
-            log.trace("Polling directory: {}", dir);
+            LOG.trace("Polling directory: {}", dir);
             if (isUseList()) {
                 if (isStepwise()) {
                     files = operations.listFiles();
@@ -140,7 +144,7 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
             }
         } catch (GenericFileOperationFailedException e) {
             if (ignoreCannotRetrieveFile(null, null, e)) {
-                log.debug("Cannot list files in directory {} due directory does not exists or file permission error.", dir);
+                LOG.debug("Cannot list files in directory {} due directory does not exists or file permission error.", dir);
             } else {
                 throw e;
             }
@@ -148,11 +152,11 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
 
         if (files == null || files.isEmpty()) {
             // no files in this directory to poll
-            log.trace("No files found in directory: {}", dir);
+            LOG.trace("No files found in directory: {}", dir);
             return true;
         } else {
             // we found some files
-            log.trace("Found {} in directory: {}", files.size(), dir);
+            LOG.trace("Found {} in directory: {}", files.size(), dir);
         }
         
         if (getEndpoint().isPreSort()) {
@@ -161,8 +165,8 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
 
         for (SftpRemoteFile file : files) {
 
-            if (log.isTraceEnabled()) {
-                log.trace("SftpFile[fileName={}, longName={}, dir={}]", file.getFilename(), file.getLongname(), file.isDirectory());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("SftpFile[fileName={}, longName={}, dir={}]", file.getFilename(), file.getLongname(), file.isDirectory());
             }
 
             // check if we can continue polling in files
@@ -205,7 +209,7 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
             }
         }
 
-        log.trace("Done file: {} does not exist", doneFileName);
+        LOG.trace("Done file: {} does not exist", doneFileName);
         return false;
     }
 

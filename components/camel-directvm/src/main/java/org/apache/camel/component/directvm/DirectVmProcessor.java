@@ -22,12 +22,12 @@ import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
-*
-*/
 public final class DirectVmProcessor extends DelegateAsyncProcessor {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DirectVmProcessor.class);
     private final DirectVmEndpoint endpoint;
 
     public DirectVmProcessor(Processor processor, DirectVmEndpoint endpoint) {
@@ -46,7 +46,7 @@ public final class DirectVmProcessor extends DelegateAsyncProcessor {
             // set TCCL to application context class loader if given
             ClassLoader appClassLoader = endpoint.getCamelContext().getApplicationContextClassLoader();
             if (appClassLoader != null) {
-                log.trace("Setting Thread ContextClassLoader to {}", appClassLoader);
+                LOG.trace("Setting Thread ContextClassLoader to {}", appClassLoader);
                 Thread.currentThread().setContextClassLoader(appClassLoader);
                 changed = true;
             }
@@ -58,7 +58,7 @@ public final class DirectVmProcessor extends DelegateAsyncProcessor {
                     try {
                         // restore TCCL if it was changed during processing
                         if (chgd) {
-                            log.trace("Restoring Thread ContextClassLoader to {}", current);
+                            LOG.trace("Restoring Thread ContextClassLoader to {}", current);
                             Thread.currentThread().setContextClassLoader(current);
                         }
                         // make sure to copy results back
@@ -72,7 +72,7 @@ public final class DirectVmProcessor extends DelegateAsyncProcessor {
         } finally {
             // restore TCCL if it was changed during processing
             if (changed) {
-                log.trace("Restoring Thread ContextClassLoader to {}", current);
+                LOG.trace("Restoring Thread ContextClassLoader to {}", current);
                 Thread.currentThread().setContextClassLoader(current);
             }
         }

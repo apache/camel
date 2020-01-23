@@ -41,11 +41,15 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents gRPC server consumer implementation
  */
 public class GrpcConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumer.class);
 
     protected final GrpcConfiguration configuration;
     protected final GrpcEndpoint endpoint;
@@ -66,17 +70,17 @@ public class GrpcConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         if (server == null) {
-            log.info("Starting the gRPC server");
+            LOG.info("Starting the gRPC server");
             initializeServer();
             server.start();
-            log.info("gRPC server started and listening on port: {}", server.getPort());
+            LOG.info("gRPC server started and listening on port: {}", server.getPort());
         }
     }
 
     @Override
     protected void doStop() throws Exception {
         if (server != null) {
-            log.debug("Terminating gRPC server");
+            LOG.debug("Terminating gRPC server");
             server.shutdown().shutdownNow();
             server = null;
         }
@@ -98,7 +102,7 @@ public class GrpcConsumer extends DefaultConsumer {
         }
 
         if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
-            log.debug("Building gRPC server on {}:{}", configuration.getHost(), configuration.getPort());
+            LOG.debug("Building gRPC server on {}:{}", configuration.getHost(), configuration.getPort());
             serverBuilder = NettyServerBuilder.forAddress(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         } else {
             throw new IllegalArgumentException("No server start properties (host, port) specified");
@@ -170,7 +174,7 @@ public class GrpcConsumer extends DefaultConsumer {
             });
             return false;
         } else {
-            log.warn("Consumer not ready to process exchanges. The exchange {} will be discarded", exchange);
+            LOG.warn("Consumer not ready to process exchanges. The exchange {} will be discarded", exchange);
             callback.done(true);
             return true;
         }

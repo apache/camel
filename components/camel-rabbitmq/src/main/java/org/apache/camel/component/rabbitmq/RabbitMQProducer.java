@@ -37,8 +37,13 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.pool.ObjectPool;
 import org.apache.commons.pool.impl.GenericObjectPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RabbitMQProducer extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RabbitMQProducer.class);
+
     private static final String GENERATED_CORRELATION_ID_PREFIX = "Camel-";
 
     private Connection conn;
@@ -79,7 +84,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
             channel = channelPool.borrowObject();
         }
         if (!channel.isOpen()) {
-            log.warn("Got a closed channel from the pool. Invalidating and borrowing a new one from the pool.");
+            LOG.warn("Got a closed channel from the pool. Invalidating and borrowing a new one from the pool.");
             channelPool.invalidateObject(channel);
             // Reconnect if another thread hasn't yet
             checkConnectionAndChannelPool();
@@ -98,11 +103,11 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
      * @throws Exception
      */
     private synchronized void openConnectionAndChannelPool() throws Exception {
-        log.trace("Creating connection...");
+        LOG.trace("Creating connection...");
         this.conn = getEndpoint().connect(executorService);
-        log.debug("Created connection: {}", conn);
+        LOG.debug("Created connection: {}", conn);
 
-        log.trace("Creating channel pool...");
+        LOG.trace("Creating channel pool...");
         channelPool = new GenericObjectPool<>(new PoolableChannelFactory(this.conn), getEndpoint().getChannelPoolMaxSize(),
                 GenericObjectPool.WHEN_EXHAUSTED_BLOCK, getEndpoint().getChannelPoolMaxWait());
         attemptDeclaration();
@@ -126,7 +131,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
      */
     private synchronized void checkConnectionAndChannelPool() throws Exception {
         if (this.conn == null || !this.conn.isOpen()) {
-            log.info("Reconnecting to RabbitMQ");
+            LOG.info("Reconnecting to RabbitMQ");
             try {
                 closeConnectionAndChannel();
             } catch (Exception e) {
@@ -142,7 +147,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         try {
             openConnectionAndChannelPool();
         } catch (IOException e) {
-            log.warn("Failed to create connection. It will attempt to connect again when publishing a message.", e);
+            LOG.warn("Failed to create connection. It will attempt to connect again when publishing a message.", e);
         }
     }
 
@@ -160,7 +165,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
             }
         }
         if (conn != null) {
-            log.debug("Closing connection: {} with timeout: {} ms.", conn, closeTimeout);
+            LOG.debug("Closing connection: {} with timeout: {} ms.", conn, closeTimeout);
             conn.close(closeTimeout);
             conn = null;
         }
@@ -226,7 +231,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         if (exchangeName == null || getEndpoint().isBridgeEndpoint()) {
             exchangeName = getEndpoint().getExchangeName();
         } else {
-            log.debug("Overriding header: {} detected sending message to exchange: {}", RabbitMQConstants.EXCHANGE_OVERRIDE_NAME, exchangeName);
+            LOG.debug("Overriding header: {} detected sending message to exchange: {}", RabbitMQConstants.EXCHANGE_OVERRIDE_NAME, exchangeName);
         }
 
         String key = in.getHeader(RabbitMQConstants.ROUTING_KEY, String.class);
@@ -237,7 +242,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         if (ObjectHelper.isEmpty(key) && ObjectHelper.isEmpty(exchangeName)) {
             throw new IllegalArgumentException("ExchangeName and RoutingKey is not provided in the endpoint: " + getEndpoint());
         }
-        log.debug("Registering reply for {}", correlationId);
+        LOG.debug("Registering reply for {}", correlationId);
 
         replyManager.registerReply(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
         try {
@@ -257,7 +262,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         if (exchangeName == null || getEndpoint().isBridgeEndpoint()) {
             exchangeName = getEndpoint().getExchangeName();
         } else {
-            log.debug("Overriding header: {} detected sending message to exchange: {}", RabbitMQConstants.EXCHANGE_OVERRIDE_NAME, exchangeName);
+            LOG.debug("Overriding header: {} detected sending message to exchange: {}", RabbitMQConstants.EXCHANGE_OVERRIDE_NAME, exchangeName);
         }
 
         String key = exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY, String.class);
@@ -309,7 +314,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
                 if (started.get()) {
                     return;
                 }
-                log.debug("Starting reply manager");
+                LOG.debug("Starting reply manager");
                 // must use the classloader from the application context when creating reply manager,
                 // as it should inherit the classloader from app context and not the current which may be
                 // a different classloader
@@ -333,7 +338,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
                         throw new IllegalArgumentException("Specifying replyTo " + getEndpoint().getReplyTo() + " is currently not supported.");
                     } else {
                         replyManager = createReplyManager();
-                        log.debug("Using RabbitMQReplyManager: {} to process replies from temporary queue", replyManager);
+                        LOG.debug("Using RabbitMQReplyManager: {} to process replies from temporary queue", replyManager);
                     }
                 } catch (Exception e) {
                     throw new FailedToCreateProducerException(getEndpoint(), e);
@@ -348,8 +353,8 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
     protected void unInitReplyManager() {
         try {
             if (replyManager != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Stopping RabbitMQReplyManager: {} from processing replies from: {}", replyManager,
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Stopping RabbitMQReplyManager: {} from processing replies from: {}", replyManager,
                                     getEndpoint().getReplyTo() != null ? getEndpoint().getReplyTo() : "temporary queue");
                 }
                 ServiceHelper.stopService(replyManager);
@@ -369,7 +374,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         String name = "RabbitMQReplyManagerTimeoutChecker[" + getEndpoint().getExchangeName() + "]";
         ScheduledExecutorService replyManagerExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(name, name);
         replyManager.setScheduledExecutorService(replyManagerExecutorService);
-        log.debug("Staring ReplyManager: {}", name);
+        LOG.debug("Staring ReplyManager: {}", name);
         ServiceHelper.startService(replyManager);
 
         return replyManager;

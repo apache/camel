@@ -25,10 +25,15 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultMessage;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static java.util.Objects.requireNonNull;
 
 public class MiloClientConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MiloClientConsumer.class);
 
     private final MiloClientConnection connection;
 
@@ -66,14 +71,14 @@ public class MiloClientConsumer extends DefaultConsumer {
     }
 
     private void handleValueUpdate(final DataValue value) {
-        log.debug("Handle item update - {} = {}", node, value);
+        LOG.debug("Handle item update - {} = {}", node, value);
 
         final Exchange exchange = getEndpoint().createExchange();
         exchange.setIn(mapMessage(value));
         try {
             getAsyncProcessor().process(exchange);
         } catch (final Exception e) {
-            log.debug("Failed to process message", e);
+            LOG.debug("Failed to process message", e);
         }
     }
 

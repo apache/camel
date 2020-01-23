@@ -37,13 +37,17 @@ import org.asynchttpclient.Realm;
 import org.asynchttpclient.Realm.Builder;
 import org.asynchttpclient.cookie.CookieStore;
 import org.asynchttpclient.cookie.ThreadSafeCookieStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *  To call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>
  */
 @Component("ahc")
 public class AhcComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
-    
+
+    private static final Logger LOG = LoggerFactory.getLogger(AhcComponent.class);
+
     private static final String CLIENT_CONFIG_PREFIX = "clientConfig.";
     private static final String CLIENT_REALM_CONFIG_PREFIX = "clientConfig.realm.";
 
@@ -88,12 +92,12 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
                     ? new DefaultAsyncHttpClientConfig.Builder() : AhcComponent.cloneConfig(endpoint.getClientConfig());
             
             if (endpoint.getClient() != null) {
-                log.warn("The user explicitly set an AsyncHttpClient instance on the component or "
+                LOG.warn("The user explicitly set an AsyncHttpClient instance on the component or "
                          + "endpoint, but this endpoint URI contains client configuration parameters.  "
                          + "Are you sure that this is what was intended?  The AsyncHttpClient will be used"
                          + " and the URI parameters will be ignored.");
             } else if (endpoint.getClientConfig() != null) {
-                log.warn("The user explicitly set an AsyncHttpClientConfig instance on the component or "
+                LOG.warn("The user explicitly set an AsyncHttpClientConfig instance on the component or "
                          + "endpoint, but this endpoint URI contains client configuration parameters.  "
                          + "Are you sure that this is what was intended?  The URI parameters will be applied"
                          + " to a clone of the supplied AsyncHttpClientConfig in order to prevent unintended modification"

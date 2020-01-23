@@ -22,8 +22,12 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ScheduledPollConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SchedulerConsumer extends ScheduledPollConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SchedulerConsumer.class);
 
     public SchedulerConsumer(SchedulerEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -46,8 +50,8 @@ public class SchedulerConsumer extends ScheduledPollConsumer {
         Date now = new Date();
         exchange.setProperty(Exchange.TIMER_FIRED_TIME, now);
 
-        if (log.isTraceEnabled()) {
-            log.trace("Timer {} is firing", getEndpoint().getName());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Timer {} is firing", getEndpoint().getName());
         }
 
         if (!getEndpoint().isSynchronous()) {

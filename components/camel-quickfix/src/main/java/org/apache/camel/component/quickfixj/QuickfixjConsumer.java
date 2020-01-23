@@ -22,10 +22,14 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 import org.quickfixj.QFJException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import quickfix.Session;
 import quickfix.SessionID;
 
 public class QuickfixjConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(QuickfixjConsumer.class);
 
     public QuickfixjConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -54,7 +58,7 @@ public class QuickfixjConsumer extends DefaultConsumer {
         Message camelMessage = exchange.getOut();
         quickfix.Message quickfixjMessage = camelMessage.getBody(quickfix.Message.class);
 
-        log.debug("Sending FIX message reply: {}", quickfixjMessage);
+        LOG.debug("Sending FIX message reply: {}", quickfixjMessage);
 
         SessionID messageSessionID = exchange.getIn().getHeader("SessionID", SessionID.class);
 

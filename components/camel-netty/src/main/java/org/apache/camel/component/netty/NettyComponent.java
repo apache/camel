@@ -33,9 +33,13 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component("netty")
 public class NettyComponent extends DefaultComponent implements SSLContextParametersAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(NettyComponent.class);
 
     @Metadata(label = "advanced")
     private NettyConfiguration configuration;
@@ -174,7 +178,7 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
             // and therefore we use math.max to find the highest value
             int threads = Math.max(maximumPoolSize, netty + 1);
             executorService = NettyHelper.createExecutorGroup(getCamelContext(), "NettyConsumerExecutorGroup", threads);
-            log.info("Creating shared NettyConsumerExecutorGroup with {} threads", threads);
+            LOG.info("Creating shared NettyConsumerExecutorGroup with {} threads", threads);
         }
 
         super.doStart();

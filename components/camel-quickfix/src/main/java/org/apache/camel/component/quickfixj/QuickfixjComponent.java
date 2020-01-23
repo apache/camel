@@ -26,6 +26,8 @@ import org.apache.camel.StartupListener;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import quickfix.LogFactory;
 import quickfix.MessageFactory;
 import quickfix.MessageStoreFactory;
@@ -33,6 +35,8 @@ import quickfix.SessionSettings;
 
 @Component("quickfix")
 public class QuickfixjComponent extends DefaultComponent implements StartupListener {
+
+    private static final Logger LOG = LoggerFactory.getLogger(QuickfixjComponent.class);
 
     private static final String PARAMETER_LAZY_CREATE_ENGINE = "lazyCreateEngine";
 
@@ -135,10 +139,10 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
 
     private void startQuickfixjEngine(QuickfixjEngine engine) throws Exception {
         if (!engine.isLazy()) {
-            log.info("Starting QuickFIX/J engine: {}", engine.getUri());
+            LOG.info("Starting QuickFIX/J engine: {}", engine.getUri());
             engine.start();
         } else {
-            log.info("QuickFIX/J engine: {} will start lazily", engine.getUri());
+            LOG.info("QuickFIX/J engine: {} will start lazily", engine.getUri());
         }
     }
 

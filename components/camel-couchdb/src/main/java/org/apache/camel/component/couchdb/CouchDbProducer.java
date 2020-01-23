@@ -25,8 +25,12 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.lightcouch.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CouchDbProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CouchDbProducer.class);
 
     private final CouchDbClientWrapper couchClient;
 
@@ -45,8 +49,8 @@ public class CouchDbProducer extends DefaultProducer {
                 throw new CouchDbException("Could not save document [unknown reason]", exchange);
             }
 
-            if (log.isTraceEnabled()) {
-                log.trace("Document saved [_id={}, _rev={}]", save.getId(), save.getRev());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Document saved [_id={}, _rev={}]", save.getId(), save.getRev());
             }
             exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_REV, save.getRev());
             exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_ID, save.getId());
@@ -57,8 +61,8 @@ public class CouchDbProducer extends DefaultProducer {
                     throw new CouchDbException("Could not delete document [unknown reason]", exchange);
                 }
 
-                if (log.isTraceEnabled()) {
-                    log.trace("Document saved [_id={}, _rev={}]", delete.getId(), delete.getRev());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Document saved [_id={}, _rev={}]", delete.getId(), delete.getRev());
                 }
                 exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_REV, delete.getRev());
                 exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_ID, delete.getId());
@@ -70,8 +74,8 @@ public class CouchDbProducer extends DefaultProducer {
                 }
                 Object response = getElement(docId);
 
-                if (log.isTraceEnabled()) {
-                    log.trace("Document retrieved [_id={}]", docId);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Document retrieved [_id={}]", docId);
                 }
                 
                 exchange.getIn().setBody(response);

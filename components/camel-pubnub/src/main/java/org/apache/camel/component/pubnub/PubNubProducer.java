@@ -33,11 +33,15 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The PubNub producer.
  */
 public class PubNubProducer extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PubNubProducer.class);
 
     private final PubNubEndpoint endpoint;
     private final PubNubConfiguration pubnubConfiguration;
@@ -53,7 +57,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
 
         Operation operation = getOperation(exchange);
 
-        log.debug("Executing {} operation", operation);
+        LOG.debug("Executing {} operation", operation);
         try {
             switch (operation) {
             case PUBLISH: {
@@ -101,7 +105,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
         if (ObjectHelper.isEmpty(body)) {
             throw new RuntimeException("Can not publish empty message");
         }
-        log.debug("Sending message [{}] to channel [{}]", body, getChannel(exchange));
+        LOG.debug("Sending message [{}] to channel [{}]", body, getChannel(exchange));
         endpoint.getPubnub()
             .publish()
             .message(body)
@@ -124,7 +128,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
             exchange.setException(new CamelException("Can not fire empty message"));
             callback.done(true);
         }
-        log.debug("Sending message [{}] to channel [{}]", body, getChannel(exchange));
+        LOG.debug("Sending message [{}] to channel [{}]", body, getChannel(exchange));
         endpoint.getPubnub()
             .fire()
             .message(body)
@@ -147,7 +151,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
             .async(new PNCallback<PNHistoryResult>() {
                 @Override
                 public void onResponse(PNHistoryResult result, PNStatus status) {
-                    log.debug("Got history message [{}]", result);
+                    LOG.debug("Got history message [{}]", result);
                     processMessage(exchange, callback, status, result.getMessages());
                 }
             });
@@ -159,7 +163,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
             exchange.setException(new CamelException("Can not publish empty message"));
             callback.done(true);
         }
-        log.debug("Sending setState [{}] to channel [{}]", body, getChannel(exchange));
+        LOG.debug("Sending setState [{}] to channel [{}]", body, getChannel(exchange));
         endpoint.getPubnub()
             .setPresenceState()
             .channels(Arrays.asList(getChannel(exchange)))
@@ -167,7 +171,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
             .uuid(getUUID(exchange))
             .async(new PNCallback<PNSetStateResult>() {
                 public void onResponse(PNSetStateResult result, PNStatus status) {
-                    log.debug("Got setState responsee [{}]", result);
+                    LOG.debug("Got setState responsee [{}]", result);
                     processMessage(exchange, callback, status, result);
                 }
             });
@@ -181,7 +185,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
             .async(new PNCallback<PNGetStateResult>() {
                 @Override
                 public void onResponse(PNGetStateResult result, PNStatus status) {
-                    log.debug("Got state [{}]", result.getStateByUUID());
+                    LOG.debug("Got state [{}]", result.getStateByUUID());
                     processMessage(exchange, callback, status, result);
                 }
             });
@@ -196,7 +200,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
             .async(new PNCallback<PNHereNowResult>() {
                 @Override
                 public void onResponse(PNHereNowResult result, PNStatus status) {
-                    log.debug("Got herNow message [{}]", result);
+                    LOG.debug("Got herNow message [{}]", result);
                     processMessage(exchange, callback, status, result);
                 }
             });
@@ -209,7 +213,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
             .async(new PNCallback<PNWhereNowResult>() {
                 @Override
                 public void onResponse(PNWhereNowResult result, PNStatus status) {
-                    log.debug("Got whereNow message [{}]", result.getChannels());
+                    LOG.debug("Got whereNow message [{}]", result.getChannels());
                     processMessage(exchange, callback, status, result.getChannels());
                 }
             });

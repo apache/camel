@@ -37,6 +37,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The ftp component is used for uploading or downloading files from FTP servers.
@@ -47,6 +49,9 @@ import org.apache.commons.net.ftp.FTPFile;
         excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService")
 @ManagedResource(description = "Managed FtpEndpoint")
 public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FtpEndpoint.class);
+
     protected int soTimeout;
     protected int dataTimeout;
 
@@ -153,7 +158,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
             }
             int min = getCamelContext().getTypeConverter().mandatoryConvertTo(int.class, parts[0]);
             int max = getCamelContext().getTypeConverter().mandatoryConvertTo(int.class, parts[1]);
-            log.debug("Using active port range: {}-{}", min, max);
+            LOG.debug("Using active port range: {}-{}", min, max);
             client.setActivePortRange(min, max);
         }
 
@@ -186,8 +191,8 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
             client.setDataTimeout(dataTimeout);
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Created FTPClient[connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Created FTPClient[connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
                             + ", receiveDataSocketBufferSize: {}, sendDataSocketBufferSize: {}]: {}",
                     client.getConnectTimeout(), getSoTimeout(), dataTimeout, client.getBufferSize(),
                     client.getReceiveDataSocketBufferSize(), client.getSendDataSocketBufferSize(), client);

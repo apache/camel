@@ -34,11 +34,15 @@ import org.apache.camel.util.StringHelper;
 import org.fusesource.hawtbuf.Buffer;
 import org.iq80.leveldb.DBIterator;
 import org.iq80.leveldb.WriteBatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An instance of {@link org.apache.camel.spi.AggregationRepository} which is backed by a {@link LevelDBFile}.
  */
 public class LevelDBAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LevelDBAggregationRepository.class);
 
     private LevelDBFile levelDBFile;
     private String persistentFileName;
@@ -97,7 +101,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
     @Override
     public Exchange add(final CamelContext camelContext, final String key, final Exchange exchange) {
-        log.debug("Adding key [{}] -> {}", key, exchange);
+        LOG.debug("Adding key [{}] -> {}", key, exchange);
         try {
             byte[] lDbKey = keyBuilder(repositoryName, key);
             final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
@@ -107,9 +111,9 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
                 rc = levelDBFile.getDb().get(lDbKey);
             }
 
-            log.trace("Adding key index {} for repository {}", key, repositoryName);
+            LOG.trace("Adding key index {} for repository {}", key, repositoryName);
             levelDBFile.getDb().put(lDbKey, exchangeBuffer.toByteArray(), levelDBFile.getWriteOptions());
-            log.trace("Added key index {}", key);
+            LOG.trace("Added key index {}", key);
 
             if (rc == null) {
                 return null;
@@ -132,7 +136,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
         try {
             byte[] lDbKey = keyBuilder(repositoryName, key);
-            log.trace("Getting key index {}", key);
+            LOG.trace("Getting key index {}", key);
             byte[] rc = levelDBFile.getDb().get(lDbKey);
 
             if (rc != null) {
@@ -142,13 +146,13 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             throw new RuntimeException("Error getting key " + key + " from repository " + repositoryName, e);
         }
 
-        log.debug("Getting key  [{}] -> {}", key, answer);
+        LOG.debug("Getting key  [{}] -> {}", key, answer);
         return answer;
     }
 
     @Override
     public void remove(final CamelContext camelContext, final String key, final Exchange exchange) {
-        log.debug("Removing key [{}]", key);
+        LOG.debug("Removing key [{}]", key);
 
         try {
             byte[] lDbKey = keyBuilder(repositoryName, key);
@@ -162,12 +166,12 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
                 WriteBatch batch = levelDBFile.getDb().createWriteBatch();
                 try {
                     batch.delete(lDbKey);
-                    log.trace("Removed key index {} -> {}", key, new Buffer(rc));
+                    LOG.trace("Removed key index {} -> {}", key, new Buffer(rc));
 
                     // add exchange to confirmed index
                     byte[] confirmedLDBKey = keyBuilder(getRepositoryNameCompleted(), exchangeId);
                     batch.put(confirmedLDBKey, exchangeBuffer.toByteArray());
-                    log.trace("Added confirm index {} for repository {}", exchangeId, getRepositoryNameCompleted());
+                    LOG.trace("Added confirm index {} for repository {}", exchangeId, getRepositoryNameCompleted());
 
                     levelDBFile.getDb().write(batch, levelDBFile.getWriteOptions());
                 } finally {
@@ -182,7 +186,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
     @Override
     public void confirm(final CamelContext camelContext, final String exchangeId) {
-        log.debug("Confirming exchangeId [{}]", exchangeId);
+        LOG.debug("Confirming exchangeId [{}]", exchangeId);
 
         byte[] confirmedLDBKey = keyBuilder(getRepositoryNameCompleted(), exchangeId);
 
@@ -190,7 +194,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
         if (rc != null) {
             levelDBFile.getDb().delete(confirmedLDBKey);
-            log.trace("Removed confirm index {} -> {}", exchangeId, new Buffer(rc));
+            LOG.trace("Removed confirm index {} -> {}", exchangeId, new Buffer(rc));
         }
     }
 
@@ -220,7 +224,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
                 String key = keyBuffer.substring(prefix.length());
 
-                log.trace("getKey [{}]", key);
+                LOG.trace("getKey [{}]", key);
                 keys.add(key);
             }
         } finally {
@@ -253,7 +257,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
                 }
                 String exchangeId = keyBuffer.substring(prefix.length());
 
-                log.trace("Scan exchangeId [{}]", exchangeId);
+                LOG.trace("Scan exchangeId [{}]", exchangeId);
                 answer.add(exchangeId);
             }
         } finally {
@@ -262,10 +266,10 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         }
 
         if (answer.size() == 0) {
-            log.trace("Scanned and found no exchange to recover.");
+            LOG.trace("Scanned and found no exchange to recover.");
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Scanned and found {} exchange(s) to recover (note some of them may already be in progress).", answer.size());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Scanned and found {} exchange(s) to recover (note some of them may already be in progress).", answer.size());
             }
         }
         return answer;
@@ -288,7 +292,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             throw new RuntimeException("Error recovering exchangeId " + exchangeId + " from repository " + repositoryName, e);
         }
 
-        log.debug("Recovering exchangeId [{}] -> {}", exchangeId, answer);
+        LOG.debug("Recovering exchangeId [{}] -> {}", exchangeId, answer);
         return answer;
     }
 
@@ -309,7 +313,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             IOHelper.close(it);
         }
 
-        log.debug("Size of repository [{}] -> {}", repositoryName, count);
+        LOG.debug("Size of repository [{}] -> {}", repositoryName, count);
         return count;
     }
 
@@ -429,14 +433,14 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         int completed = size(getRepositoryNameCompleted());
 
         if (current > 0) {
-            log.info("On startup there are " + current + " aggregate exchanges (not completed) in repository: " + getRepositoryName());
+            LOG.info("On startup there are " + current + " aggregate exchanges (not completed) in repository: " + getRepositoryName());
         } else {
-            log.info("On startup there are no existing aggregate exchanges (not completed) in repository: " + getRepositoryName());
+            LOG.info("On startup there are no existing aggregate exchanges (not completed) in repository: " + getRepositoryName());
         }
         if (completed > 0) {
-            log.warn("On startup there are " + completed + " completed exchanges to be recovered in repository: " + getRepositoryNameCompleted());
+            LOG.warn("On startup there are " + completed + " completed exchanges to be recovered in repository: " + getRepositoryNameCompleted());
         } else {
-            log.info("On startup there are no completed exchanges to be recovered in repository: " + getRepositoryNameCompleted());
+            LOG.info("On startup there are no completed exchanges to be recovered in repository: " + getRepositoryNameCompleted());
         }
     }
 

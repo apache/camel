@@ -19,11 +19,15 @@ package org.apache.camel.component.direct;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The direct producer.
  */
 public class DirectProducer extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DirectProducer.class);
 
     private final DirectEndpoint endpoint;
 
@@ -39,7 +43,7 @@ public class DirectProducer extends DefaultAsyncProducer {
             if (endpoint.isFailIfNoConsumers()) {
                 throw new DirectConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
             } else {
-                log.debug("message ignored, no consumers available on endpoint: {}", endpoint);
+                LOG.debug("message ignored, no consumers available on endpoint: {}", endpoint);
             }
         } else {
             consumer.getProcessor().process(exchange);
@@ -54,7 +58,7 @@ public class DirectProducer extends DefaultAsyncProducer {
                 if (endpoint.isFailIfNoConsumers()) {
                     exchange.setException(new DirectConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange));
                 } else {
-                    log.debug("message ignored, no consumers available on endpoint: {}", endpoint);
+                    LOG.debug("message ignored, no consumers available on endpoint: {}", endpoint);
                 }
                 callback.done(true);
                 return true;

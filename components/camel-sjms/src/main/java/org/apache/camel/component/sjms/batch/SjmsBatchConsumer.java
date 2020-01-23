@@ -359,10 +359,10 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                 consumer.close();
             } catch (JMSException ex2) {
                 // only include stacktrace in debug logging
-                if (log.isDebugEnabled()) {
-                    log.debug("Exception caught closing consumer", ex2);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Exception caught closing consumer", ex2);
                 }
-                log.warn("Exception caught closing consumer: {}. This exception is ignored.", ex2.getMessage());
+                LOG.warn("Exception caught closing consumer: {}. This exception is ignored.", ex2.getMessage());
             }
         }
 
@@ -371,10 +371,10 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                 session.close();
             } catch (JMSException ex2) {
                 // only include stacktrace in debug logging
-                if (log.isDebugEnabled()) {
-                    log.debug("Exception caught closing session", ex2);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Exception caught closing session", ex2);
                 }
-                log.warn("Exception caught closing session: {}. This exception is ignored.", ex2.getMessage());
+                LOG.warn("Exception caught closing session: {}. This exception is ignored.", ex2.getMessage());
             }
         }
 
@@ -537,7 +537,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
          */
         private void processEmptyMessage() {
             Exchange exchange = getEndpoint().createExchange();
-            log.debug("Sending empty message as there were no messages from polling: {}", getEndpoint());
+            LOG.debug("Sending empty message as there were no messages from polling: {}", getEndpoint());
             try {
                 getProcessor().process(exchange);
             } catch (Exception e) {

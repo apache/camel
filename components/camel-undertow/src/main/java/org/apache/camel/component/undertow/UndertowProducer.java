@@ -44,6 +44,8 @@ import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xnio.OptionMap;
 import org.xnio.Xnio;
 import org.xnio.XnioWorker;
@@ -59,6 +61,8 @@ import org.xnio.ssl.XnioSsl;
  * may be changed too.
  */
 public class UndertowProducer extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UndertowProducer.class);
 
     private UndertowClient client;
     private final UndertowEndpoint endpoint;
@@ -168,8 +172,8 @@ public class UndertowProducer extends DefaultAsyncProducer {
             }
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Executing http {} method: {}", method, pathAndQuery);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Executing http {} method: {}", method, pathAndQuery);
         }
 
         // when connect succeeds or fails UndertowClientCallback will
@@ -247,7 +251,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
             this.webSocketHandler = (CamelWebSocketHandler) endpoint.getComponent().registerEndpoint(endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), new CamelWebSocketHandler());
         }
 
-        log.debug("Created worker: {} with options: {}", worker, options);
+        LOG.debug("Created worker: {} with options: {}", worker, options);
     }
 
     @Override
@@ -259,7 +263,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
         }
 
         if (worker != null && !worker.isShutdown()) {
-            log.debug("Shutting down worker: {}", worker);
+            LOG.debug("Shutting down worker: {}", worker);
             worker.shutdown();
         }
     }

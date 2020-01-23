@@ -32,11 +32,15 @@ import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.NettyProducer;
 import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HTTP based {@link NettyProducer}.
  */
 public class NettyHttpProducer extends NettyProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(NettyHttpProducer.class);
 
     public NettyHttpProducer(NettyHttpEndpoint nettyEndpoint, NettyConfiguration configuration) {
         super(nettyEndpoint, configuration);
@@ -123,7 +127,7 @@ public class NettyHttpProducer extends NettyProducer {
                                 @Override
                                 public void onDone(Exchange exchange) {
                                     if (response.refCnt() > 0) {
-                                        log.debug("Releasing Netty HttpResonse ByteBuf");
+                                        LOG.debug("Releasing Netty HttpResonse ByteBuf");
                                         ReferenceCountUtil.release(response);
                                     }
                                 }
@@ -132,7 +136,7 @@ public class NettyHttpProducer extends NettyProducer {
                             // the actual url is stored on the IN message in the getRequestBody method as its accessed on-demand
                             String actualUrl = exchange.getIn().getHeader(Exchange.HTTP_URL, String.class);
                             int code = response.status() != null ? response.status().code() : -1;
-                            log.debug("Http responseCode: {}", code);
+                            LOG.debug("Http responseCode: {}", code);
 
                             // if there was a http error code then check if we should throw an exception
                             boolean ok = NettyHttpHelper.isStatusCodeOk(code, configuration.getOkStatusCodeRange());

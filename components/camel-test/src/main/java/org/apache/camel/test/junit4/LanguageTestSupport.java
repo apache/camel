@@ -19,11 +19,15 @@ package org.apache.camel.test.junit4;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.spi.Language;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A useful base class for testing the language plugins in Camel
  */
 public abstract class LanguageTestSupport extends ExchangeTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LanguageTestSupport.class);
 
     protected abstract String getLanguageName();
 
@@ -85,7 +89,7 @@ public abstract class LanguageTestSupport extends ExchangeTestSupport {
         } else {
             value = expression.evaluate(exchange, Object.class);
         }
-        log.debug("Evaluated expression: {} on exchange: {} result: {}", expression, exchange, value);
+        LOG.debug("Evaluated expression: {} on exchange: {} result: {}", expression, exchange, value);
 
         assertTrue("Expression: " + expression + " on Exchange: " + exchange,
                    expectedValue.equals(value) || orThisExpectedValue.equals(value));

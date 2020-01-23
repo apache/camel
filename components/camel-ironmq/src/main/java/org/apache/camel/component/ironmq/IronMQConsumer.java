@@ -31,11 +31,15 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The IronMQ consumer.
  */
 public class IronMQConsumer extends ScheduledBatchPollingConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(IronMQConsumer.class);
 
     private final io.iron.ironmq.Queue ironQueue;
     
@@ -51,15 +55,15 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
         pendingExchanges = 0;
         try {
             Messages messages = null;
-            log.trace("Receiving messages with request [messagePerPoll {}, timeout {}]...", getMaxMessagesPerPoll(), getEndpoint().getConfiguration().getTimeout());
+            LOG.trace("Receiving messages with request [messagePerPoll {}, timeout {}]...", getMaxMessagesPerPoll(), getEndpoint().getConfiguration().getTimeout());
             messages = this.ironQueue.reserve(getMaxMessagesPerPoll(), getEndpoint().getConfiguration().getTimeout(), getEndpoint().getConfiguration().getWait());
-            log.trace("Received {} messages", messages.getSize());
+            LOG.trace("Received {} messages", messages.getSize());
 
             Queue<Exchange> exchanges = createExchanges(messages.getMessages());
             int noProcessed = processBatch(CastUtils.cast(exchanges));
             // delete all processed messages in one batch;
             if (getEndpoint().getConfiguration().isBatchDelete()) {
-                log.trace("Batch deleting {} messages", messages.getSize());
+                LOG.trace("Batch deleting {} messages", messages.getSize());
                 this.ironQueue.deleteMessages(messages);
             }
             return noProcessed;
@@ -69,7 +73,7 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
     }
 
     protected Queue<Exchange> createExchanges(Message[] messages) {
-        log.trace("Received {} messages in this poll", messages.length);
+        LOG.trace("Received {} messages in this poll", messages.length);
 
         Queue<Exchange> answer = new LinkedList<>();
         for (Message message : messages) {
@@ -116,7 +120,7 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
                 });
             }
 
-            log.trace("Processing exchange [{}]...", exchange);
+            LOG.trace("Processing exchange [{}]...", exchange);
 
             getProcessor().process(exchange);
         }
@@ -131,9 +135,9 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
      */
     protected void processCommit(Exchange exchange, String messageid, String reservationId) {
         try {
-            log.trace("Deleting message with messageId {} and reservationId {}...", messageid, reservationId);
+            LOG.trace("Deleting message with messageId {} and reservationId {}...", messageid, reservationId);
             this.ironQueue.deleteMessage(messageid, reservationId);
-            log.trace("Message deleted");
+            LOG.trace("Message deleted");
         } catch (Exception e) {
             getExceptionHandler().handleException("Error occurred during delete of message. This exception is ignored.", exchange, e);
         }
@@ -147,9 +151,9 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
     protected void processRollback(Exchange exchange) {
         Exception cause = exchange.getException();
         if (cause != null) {
-            log.warn("Exchange failed, so rolling back message status: {}", exchange, cause);
+            LOG.warn("Exchange failed, so rolling back message status: {}", exchange, cause);
         } else {
-            log.warn("Exchange failed, so rolling back message status: {}", exchange);
+            LOG.warn("Exchange failed, so rolling back message status: {}", exchange);
         }
     }
 

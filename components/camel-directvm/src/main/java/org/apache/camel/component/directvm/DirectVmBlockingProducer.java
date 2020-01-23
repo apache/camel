@@ -20,6 +20,8 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The direct producer.
@@ -36,6 +38,8 @@ import org.apache.camel.util.StopWatch;
  * will happen concurrently.
  */
 public class DirectVmBlockingProducer extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DirectVmBlockingProducer.class);
 
     private final DirectVmEndpoint endpoint;
 
@@ -85,8 +89,8 @@ public class DirectVmBlockingProducer extends DefaultAsyncProducer {
         while (!done) {
             // sleep a bit to give chance for the consumer to be ready
             Thread.sleep(500);
-            if (log.isDebugEnabled()) {
-                log.debug("Waited {} for consumer to be ready", watch.taken());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Waited {} for consumer to be ready", watch.taken());
             }
 
             answer = endpoint.getConsumer();

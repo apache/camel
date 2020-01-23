@@ -47,11 +47,15 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The CMIS producer.
  */
 public class CMISProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CMISProducer.class);
 
     private final CMISSessionFacadeFactory sessionFacadeFactory;
     private CMISSessionFacade sessionFacade;
@@ -294,7 +298,7 @@ public class CMISProducer extends DefaultProducer {
             }
 
             try {
-                log.info("Moving document from " + sourceFolder.getName() + " to " + targetFolder.getName());
+                LOG.info("Moving document from " + sourceFolder.getName() + " to " + targetFolder.getName());
                 return  document.move(sourceFolder, targetFolder);
             } catch (Exception e) {
                 throw new CamelCmisException("Cannot move document to folder " + targetFolder.getName() + " : " + e.getMessage(), e);
@@ -511,7 +515,7 @@ public class CMISProducer extends DefaultProducer {
         if (!cmisProperties.containsKey(PropertyIds.OBJECT_TYPE_ID)) {
             cmisProperties.put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
         }
-        log.debug("Creating folder with properties: {}", cmisProperties);
+        LOG.debug("Creating folder with properties: {}", cmisProperties);
         return parentFolder.createFolder(cmisProperties);
     }
 
@@ -524,7 +528,7 @@ public class CMISProducer extends DefaultProducer {
         if (getSessionFacade().isObjectTypeVersionable((String) cmisProperties.get(PropertyIds.OBJECT_TYPE_ID))) {
             versioningState = VersioningState.MAJOR;
         }
-        log.debug("Creating document with properties: {}", cmisProperties);
+        LOG.debug("Creating document with properties: {}", cmisProperties);
 
         return parentFolder.createDocument(cmisProperties, contentStream, versioningState);
     }

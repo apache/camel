@@ -28,11 +28,15 @@ import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Producer for the Disruptor component.
  */
 public class DisruptorProducer extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DisruptorProducer.class);
 
     private final WaitForTaskToComplete waitForTaskToComplete;
     private final long timeout;
@@ -87,13 +91,13 @@ public class DisruptorProducer extends DefaultAsyncProducer {
                 public void onDone(final Exchange response) {
                     // check for timeout, which then already would have invoked the latch
                     if (latch.getCount() == 0) {
-                        if (log.isTraceEnabled()) {
-                            log.trace("{}. Timeout occurred so response will be ignored: {}", this,
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("{}. Timeout occurred so response will be ignored: {}", this,
                                     response.getMessage());
                         }
                     } else {
-                        if (log.isTraceEnabled()) {
-                            log.trace("{} with response: {}", this,
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("{} with response: {}", this,
                                     response.getMessage());
                         }
                         try {
@@ -121,8 +125,8 @@ public class DisruptorProducer extends DefaultAsyncProducer {
             doPublish(copy);
 
             if (timeout > 0) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Waiting for task to complete using timeout (ms): {} at [{}]", timeout,
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Waiting for task to complete using timeout (ms): {} at [{}]", timeout,
                             endpoint.getEndpointUri());
                 }
                 // lets see if we can get the task done before the timeout
@@ -150,8 +154,8 @@ public class DisruptorProducer extends DefaultAsyncProducer {
                     latch.countDown();
                 }
             } else {
-                if (log.isTraceEnabled()) {
-                    log.trace("Waiting for task to complete (blocking) at [{}]", endpoint.getEndpointUri());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Waiting for task to complete (blocking) at [{}]", endpoint.getEndpointUri());
                 }
                 // no timeout then wait until its done
                 try {
@@ -174,7 +178,7 @@ public class DisruptorProducer extends DefaultAsyncProducer {
     }
 
     private void doPublish(Exchange exchange) {
-        log.trace("Publishing Exchange to disruptor ringbuffer: {}", exchange);
+        LOG.trace("Publishing Exchange to disruptor ringbuffer: {}", exchange);
 
         try {
             if (blockWhenFull) {

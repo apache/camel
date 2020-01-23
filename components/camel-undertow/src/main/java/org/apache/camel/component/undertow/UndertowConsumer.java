@@ -52,12 +52,15 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Undertow consumer which is also an Undertow HttpHandler implementation to handle incoming request.
  */
 public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Suspendable {
 
+    private static final Logger LOG = LoggerFactory.getLogger(UndertowConsumer.class);
     private CamelWebSocketHandler webSocketHandler;
 
     public UndertowConsumer(UndertowEndpoint endpoint, Processor processor) {
@@ -172,18 +175,14 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         } finally {
             doneUoW(camelExchange);
         }
-
-        
     }
 
-    
-    
     private void sendResponse(HttpServerExchange httpExchange, Exchange camelExchange) throws IOException, NoTypeConversionAvailableException {
         Object body = getResponseBody(httpExchange, camelExchange);
 
         if (body == null) {
             String message = httpExchange.getStatusCode() == 500 ? "Exception" : "No response available";
-            log.trace("No payload to send as reply for exchange: {}", camelExchange);
+            LOG.trace("No payload to send as reply for exchange: {}", camelExchange);
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
             httpExchange.getResponseSender().send(message);
             return;

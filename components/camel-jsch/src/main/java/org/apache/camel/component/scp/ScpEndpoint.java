@@ -75,7 +75,7 @@ public class ScpEndpoint extends RemoteFileEndpoint<ScpFile> {
     
     @Override
     public Expression getTempFileName() {
-        log.debug("Creation of temporary files not supported by the scp: protocol.");
+        // creation of temporary files not supported by the scp: protocol
         return null;
     }
 }

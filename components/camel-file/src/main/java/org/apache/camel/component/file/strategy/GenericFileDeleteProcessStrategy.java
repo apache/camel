@@ -22,8 +22,12 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.support.ExchangeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrategySupport<T> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GenericFileDeleteProcessStrategy.class);
 
     private GenericFileRenamer<T> failureRenamer;
     private GenericFileRenamer<T> beginRenamer;
@@ -81,7 +85,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
                 if (!exits) {
                     deleted = true;
                 } else {
-                    log.trace("File was not deleted at this attempt will try again in 1 sec.: {}", file);
+                    LOG.trace("File was not deleted at this attempt will try again in 1 sec.: {}", file);
                     // sleep a bit and try again
                     Thread.sleep(1000);
                 }

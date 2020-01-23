@@ -36,11 +36,15 @@ import org.apache.camel.support.ScheduledPollConsumer;
 import org.postgresql.PGConnection;
 import org.postgresql.replication.PGReplicationStream;
 import org.postgresql.replication.fluent.logical.ChainedLogicalStreamBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The pg-replication-slot consumer.
  */
 public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PgReplicationSlotConsumer.class);
 
     private final PgReplicationSlotEndpoint endpoint;
 
@@ -115,7 +119,7 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
             // If the cause of the exception is that connection is lost, we'll try to reconnect so in the next poll a
             // new connection will be available.
             if (e.getCause() instanceof SocketException) {
-                log.info("Connection to PosgreSQL server has been lost, trying to reconnect.");
+                LOG.info("Connection to PosgreSQL server has been lost, trying to reconnect.");
                 this.connect();
             }
             throw e;
@@ -130,10 +134,10 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
         final long delay = this.endpoint.getStatusInterval();
         ScheduledFuture<?> scheduledFuture = this.scheduledExecutor.scheduleAtFixedRate(() -> {
             try {
-                log.debug("Processing took too long. Sending status update to avoid disconnect.");
+                LOG.debug("Processing took too long. Sending status update to avoid disconnect.");
                 stream.forceUpdateStatus();
             } catch (SQLException e) {
-                log.error(e.getMessage(), e);
+                LOG.error(e.getMessage(), e);
             }
         }, delay, delay, TimeUnit.SECONDS);
 
@@ -207,7 +211,7 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
         }
 
         if (isSlotActive()) {
-            log.debug(String.format("Slot: %s is active. Waiting for it to be available.", this.endpoint.getSlot()));
+            LOG.debug(String.format("Slot: %s is active. Waiting for it to be available.", this.endpoint.getSlot()));
             return null;
         }
 

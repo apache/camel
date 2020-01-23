@@ -21,11 +21,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Direct-VM producer.
  */
 public class DirectVmProducer extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DirectVmProducer.class);
 
     private DirectVmEndpoint endpoint;
 
@@ -43,7 +47,7 @@ public class DirectVmProducer extends DefaultAsyncProducer {
             if (endpoint.isFailIfNoConsumers()) {
                 exchange.setException(new DirectVmConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange));
             } else {
-                log.debug("message ignored, no consumers available on endpoint: {}", endpoint);
+                LOG.debug("message ignored, no consumers available on endpoint: {}", endpoint);
             }
             callback.done(true);
             return true;

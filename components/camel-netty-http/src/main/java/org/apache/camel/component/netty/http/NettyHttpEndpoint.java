@@ -37,6 +37,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Netty HTTP server and client using the Netty 4.x library.
@@ -46,6 +48,8 @@ import org.apache.camel.util.StringHelper;
         excludeProperties = "textline,delimiter,autoAppendDelimiter,decoderMaxLineLength,encoding,allowDefaultCodec,udpConnectionlessSending,networkInterface"
                 + ",clientMode,reconnect,reconnectInterval,useByteBuf,udpByteArrayCodec,broadcast,correlationManager")
 public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
 
     @UriParam
     private NettyHttpConfiguration configuration;
@@ -85,13 +89,13 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
 
         if (nettySharedHttpServer != null) {
             answer.setNettyServerBootstrapFactory(nettySharedHttpServer.getServerBootstrapFactory());
-            log.info("NettyHttpConsumer: {} is using NettySharedHttpServer on port: {}", answer, nettySharedHttpServer.getPort());
+            LOG.info("NettyHttpConsumer: {} is using NettySharedHttpServer on port: {}", answer, nettySharedHttpServer.getPort());
         } else {
             // reuse pipeline factory for the same address
             HttpServerBootstrapFactory factory = getComponent().getOrCreateHttpNettyServerBootstrapFactory(answer);
             // force using our server bootstrap factory
             answer.setNettyServerBootstrapFactory(factory);
-            log.debug("Created NettyHttpConsumer: {} using HttpServerBootstrapFactory: {}", answer, factory);
+            LOG.debug("Created NettyHttpConsumer: {} using HttpServerBootstrapFactory: {}", answer, factory);
         }
         return answer;
     }
@@ -262,7 +266,7 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
                 // setup default JAAS authenticator if none was configured
                 JAASSecurityAuthenticator jaas = new JAASSecurityAuthenticator();
                 jaas.setName(securityConfiguration.getRealm());
-                log.info("No SecurityAuthenticator configured, using JAASSecurityAuthenticator as authenticator: {}", jaas);
+                LOG.info("No SecurityAuthenticator configured, using JAASSecurityAuthenticator as authenticator: {}", jaas);
                 securityConfiguration.setSecurityAuthenticator(jaas);
             }
         }

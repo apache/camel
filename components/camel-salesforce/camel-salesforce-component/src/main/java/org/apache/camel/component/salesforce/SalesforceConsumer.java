@@ -35,6 +35,8 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Salesforce consumer.
@@ -54,6 +56,8 @@ public class SalesforceConsumer extends DefaultConsumer {
             return PUSH_TOPIC;
         }
     }
+
+    private static final Logger LOG = LoggerFactory.getLogger(SalesforceConsumer.class);
 
     private static final String CREATED_DATE_PROPERTY = "createdDate";
     private static final String EVENT_PROPERTY = "event";
@@ -112,7 +116,7 @@ public class SalesforceConsumer extends DefaultConsumer {
                     throw new IllegalArgumentException(String.format("SObject Class not found %s", className));
                 }
             } else {
-                log.warn("Property sObjectName or sObjectClass NOT set, messages will be of type java.lang.Map");
+                LOG.warn("Property sObjectName or sObjectClass NOT set, messages will be of type java.lang.Map");
                 sObjectClass = null;
             }
         }
@@ -129,8 +133,8 @@ public class SalesforceConsumer extends DefaultConsumer {
     }
 
     public void processMessage(final ClientSessionChannel channel, final Message message) {
-        if (log.isDebugEnabled()) {
-            log.debug("Received event {} on channel {}", channel.getId(), channel.getChannelId());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Received event {} on channel {}", channel.getId(), channel.getChannelId());
         }
 
         final Exchange exchange = endpoint.createExchange();
@@ -155,8 +159,8 @@ public class SalesforceConsumer extends DefaultConsumer {
                 @Override
                 public void done(boolean doneSync) {
                     // noop
-                    if (log.isTraceEnabled()) {
-                        log.trace("Done processing event: {} {}", channel.getId(), doneSync ? "synchronously" : "asynchronously");
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Done processing event: {} {}", channel.getId(), doneSync ? "synchronously" : "asynchronously");
                     }
                 }
             });
@@ -261,7 +265,7 @@ public class SalesforceConsumer extends DefaultConsumer {
         try {
 
             final String sObjectString = objectMapper.writeValueAsString(sObject);
-            log.debug("Received SObject: {}", sObjectString);
+            LOG.debug("Received SObject: {}", sObjectString);
 
             if (rawPayload) {
                 // return sobject string as exchange body

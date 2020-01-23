@@ -126,11 +126,8 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
-            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                @Override
-                public void done(boolean doneSync) {
-                    log.trace("Processing exchange done");
-                }
+            getAsyncProcessor().process(exchange, doneSync -> {
+                // noop
             });
         }
         return total;

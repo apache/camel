@@ -35,6 +35,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.EndpointHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Transforms the message using a XSLT template using Saxon.
@@ -42,6 +44,9 @@ import org.apache.camel.support.EndpointHelper;
 @ManagedResource(description = "Managed XsltSaxonEndpoint")
 @UriEndpoint(firstVersion = "3.0.0", scheme = "xslt-saxon", title = "XSLT Saxon", syntax = "xslt-saxon:resourceUri", producerOnly = true, label = "core,transformation")
 public class XsltSaxonEndpoint extends XsltEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(XsltSaxonEndpoint.class);
+
     @UriParam(label = "advanced")
     private Configuration saxonConfiguration;
     @Metadata(label = "advanced")
@@ -129,7 +134,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         final ClassResolver resolver = ctx.getClassResolver();
         final Injector injector = ctx.getInjector();
 
-        log.debug("{} using schema resource: {}", this, getResourceUri());
+        LOG.debug("{} using schema resource: {}", this, getResourceUri());
 
         final XsltSaxonBuilder xslt = injector.newInstance(XsltSaxonBuilder.class);
 
@@ -141,7 +146,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
             } else {
                 // provide the class loader of this component to work in OSGi environments
                 Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(getTransformerFactoryClass(), TransformerFactory.class, XsltSaxonComponent.class.getClassLoader());
-                log.debug("Using TransformerFactoryClass {}", factoryClass);
+                LOG.debug("Using TransformerFactoryClass {}", factoryClass);
                 factory = injector.newInstance(factoryClass);
             }
         }
@@ -154,7 +159,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         }
 
         if (factory != null) {
-            log.debug("Using TransformerFactory {}", factory);
+            LOG.debug("Using TransformerFactory {}", factory);
             xslt.setTransformerFactory(factory);
         }
         if (getResultHandlerFactory() != null) {
