@@ -60,11 +60,11 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint implements BrowsableEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GenericFileEndpoint.class);
-
     protected static final String DEFAULT_STRATEGYFACTORY_CLASS = "org.apache.camel.component.file.strategy.GenericFileProcessStrategyFactory";
     protected static final int DEFAULT_IDEMPOTENT_CACHE_SIZE = 1000;
     protected static final int DEFAULT_IN_PROGRESS_CACHE_SIZE = 50000;
+
+    private static final Logger LOG = LoggerFactory.getLogger(GenericFileEndpoint.class);
 
     // common options
 
