@@ -42,12 +42,12 @@ import org.slf4j.LoggerFactory;
  */
 public class OsgiCamelContextPublisher extends EventNotifierSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OsgiCamelContextPublisher.class);
-
     public static final String CONTEXT_SYMBOLIC_NAME_PROPERTY = "camel.context.symbolicname";
     public static final String CONTEXT_VERSION_PROPERTY = "camel.context.version";
     public static final String CONTEXT_NAME_PROPERTY = "camel.context.name";
     public static final String CONTEXT_MANAGEMENT_NAME_PROPERTY = "camel.context.managementname";
+
+    private static final Logger LOG = LoggerFactory.getLogger(OsgiCamelContextPublisher.class);
 
     private final BundleContext bundleContext;
     private final Map<CamelContext, ServiceRegistration<?>> registrations 
