@@ -107,6 +107,27 @@ See the xref:message-history.adoc[Message History] documentation for how to enab
 
 === API changes
 
+==== log changed to private static LOG
+
+The `ServiceSupport` class has changed its logging from instance to static, which means any inherited class that
+uses `log` would need to change the code to compile. This may happen in custom Camel components.
+
+Before you may have:
+
+[source,java]
+----
+    log.debug("Sending message to foobar service: {}", messageId);
+----
+
+You then need to migrate the logging to also be static:
+
+[source,java]
+----
+    private static final Logger LOG = LoggerFactory.getLogger(FooBarProducer.class);
+
+    LOG.debug("Sending message to foobar service: {}", messageId);
+----
+
 ==== Exchange
 
 The `Exchange` API has been modified slightly as part of an optimization effort.
