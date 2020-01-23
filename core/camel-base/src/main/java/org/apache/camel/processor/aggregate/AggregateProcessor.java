@@ -90,8 +90,6 @@ import org.slf4j.LoggerFactory;
  */
 public class AggregateProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, ShutdownPrepared, ShutdownAware, IdAware, RouteIdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AggregateProcessor.class);
-
     public static final String AGGREGATE_TIMEOUT_CHECKER = "AggregateTimeoutChecker";
     public static final String AGGREGATE_OPTIMISTIC_LOCKING_EXECUTOR = "AggregateOptimisticLockingExecutor";
 
@@ -102,6 +100,8 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
     public static final String COMPLETED_BY_INTERVAL = "interval";
     public static final String COMPLETED_BY_TIMEOUT = "timeout";
     public static final String COMPLETED_BY_FORCE = "force";
+
+    private static final Logger LOG = LoggerFactory.getLogger(AggregateProcessor.class);
 
     private volatile Lock lock;
     private final AtomicBoolean aggregateRepositoryWarned = new AtomicBoolean();
@@ -434,7 +434,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
     private Object removeFlagCompleteAllGroups(Exchange exchange) {
         Object removedHeader = exchange.getIn().removeHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS);
         Object removedProp = exchange.removeProperty(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS);
-        return removedHeader == null ? removedProp: removedHeader;
+        return removedHeader == null ? removedProp : removedHeader;
     }
 
     private Boolean isCompleteAllGroups(Exchange exchange) {
