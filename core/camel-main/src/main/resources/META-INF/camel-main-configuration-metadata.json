@@ -176,6 +176,12 @@
 			"defaultValue":true
 		},
 		{
+			"name":"camel.main.inflight-repository-exchange-enabled",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets whether the inflight repository should track each inflight exchange. This is by default disabled as there is a very slight performance overhead when enabled."
+		},
+		{
 			"name":"camel.main.java-routes-exclude-pattern",
 			"type":"java.lang.String",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
@@ -293,7 +299,7 @@
 			"name":"camel.main.shutdown-log-inflight-exchanges-on-timeout",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
-			"description":"Sets whether to log information about the inflight Exchanges which are still running during a shutdown which didn't complete without the given timeout.",
+			"description":"Sets whether to log information about the inflight Exchanges which are still running during a shutdown which didn't complete without the given timeout. This requires to enable the option inflightRepositoryExchangeEnabled.",
 			"defaultValue":true
 		},
 		{

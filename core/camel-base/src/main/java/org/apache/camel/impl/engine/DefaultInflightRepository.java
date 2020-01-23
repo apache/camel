@@ -44,17 +44,27 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultInflightRepository.class);
 
+    private final AtomicInteger size = new AtomicInteger();
     private final ConcurrentMap<String, Exchange> inflight = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, AtomicInteger> routeCount = new ConcurrentHashMap<>();
+    private boolean inflightExchangeEnabled;
 
     @Override
     public void add(Exchange exchange) {
-        inflight.put(exchange.getExchangeId(), exchange);
+        size.incrementAndGet();
+
+        if (inflightExchangeEnabled) {
+            inflight.put(exchange.getExchangeId(), exchange);
+        }
     }
 
     @Override
     public void remove(Exchange exchange) {
-        inflight.remove(exchange.getExchangeId());
+        size.decrementAndGet();
+
+        if (inflightExchangeEnabled) {
+            inflight.remove(exchange.getExchangeId());
+        }
     }
 
     @Override
@@ -75,7 +85,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public int size() {
-        return inflight.size();
+        return size.get();
     }
 
     @Override
@@ -95,6 +105,16 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     }
 
     @Override
+    public boolean isInflightExchangeEnabled() {
+        return inflightExchangeEnabled;
+    }
+
+    @Override
+    public void setInflightExchangeEnabled(boolean inflightExchangeEnabled) {
+        this.inflightExchangeEnabled = inflightExchangeEnabled;
+    }
+
+    @Override
     public Collection<InflightExchange> browse() {
         return browse(null, -1, false);
     }
@@ -111,6 +131,10 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public Collection<InflightExchange> browse(String fromRouteId, int limit, boolean sortByLongestDuration) {
+        if (!inflightExchangeEnabled) {
+            return Collections.emptyList();
+        }
+
         Stream<Exchange> values;
         if (fromRouteId == null) {
             // all values
@@ -144,6 +168,10 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public InflightExchange oldest(String fromRouteId) {
+        if (!inflightExchangeEnabled) {
+            return null;
+        }
+
         Stream<Exchange> values;
 
         if (fromRouteId == null) {

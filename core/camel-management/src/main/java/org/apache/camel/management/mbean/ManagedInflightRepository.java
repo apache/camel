@@ -54,6 +54,11 @@ public class ManagedInflightRepository extends ManagedService implements Managed
     }
 
     @Override
+    public boolean isInflightExchangeEnabled() {
+        return inflightRepository.isInflightExchangeEnabled();
+    }
+
+    @Override
     public int size(String routeId) {
         return inflightRepository.size(routeId);
     }

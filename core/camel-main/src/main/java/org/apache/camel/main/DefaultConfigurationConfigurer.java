@@ -107,6 +107,8 @@ public final class DefaultConfigurationConfigurer {
         camelContext.getShutdownStrategy().setShutdownRoutesInReverseOrder(config.isShutdownRoutesInReverseOrder());
         camelContext.getShutdownStrategy().setLogInflightExchangesOnTimeout(config.isShutdownLogInflightExchangesOnTimeout());
 
+        camelContext.getInflightRepository().setInflightExchangeEnabled(config.isInflightRepositoryExchangeEnabled());
+
         if (config.getLogDebugMaxChars() != 0) {
             camelContext.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "" + config.getLogDebugMaxChars());
         }
