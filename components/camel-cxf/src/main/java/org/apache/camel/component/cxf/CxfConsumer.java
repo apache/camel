@@ -22,8 +22,6 @@ import java.util.Map;
 
 import javax.xml.ws.WebFault;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import org.apache.camel.AsyncCallback;
@@ -50,6 +48,8 @@ import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.ContextUtils;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Consumer of exchanges for a service in CXF.  CxfConsumer acts a CXF
