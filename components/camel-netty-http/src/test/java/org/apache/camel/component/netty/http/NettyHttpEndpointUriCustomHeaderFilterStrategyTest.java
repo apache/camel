@@ -38,7 +38,7 @@ public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNett
 
         assertMockEndpointsSatisfied();
 
-        String date = out.getOut().getHeader("sub-date", String.class);
+        String date = out.getMessage().getHeader("sub-date", String.class);
         assertNull(date);
     }
 

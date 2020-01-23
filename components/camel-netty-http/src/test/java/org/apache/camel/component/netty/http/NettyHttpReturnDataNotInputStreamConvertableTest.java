@@ -35,11 +35,7 @@ public class NettyHttpReturnDataNotInputStreamConvertableTest extends BaseNettyT
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://localhost:{{port}}/test")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setBody(new MyResponseBean());
-                            }
-                        });
+                        .process(exchange -> exchange.getMessage().setBody(new MyResponseBean()));
             }
         };
     }

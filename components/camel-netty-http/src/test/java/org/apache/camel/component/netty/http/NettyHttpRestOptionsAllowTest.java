@@ -30,16 +30,13 @@ public class NettyHttpRestOptionsAllowTest extends BaseNettyTest {
 
     @Test
     public void shouldGetAllowMethods() throws Exception {
-        Exchange response = template.request("netty-http:http://localhost:{{port}}/myapp", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.OPTIONS);
-                exchange.getIn().setBody("");
-            }
+        Exchange response = template.request("netty-http:http://localhost:{{port}}/myapp", exchange -> {
+            exchange.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.OPTIONS);
+            exchange.getIn().setBody("");
         });
-        String body = response.getOut().getBody(String.class);
-        String allowHeader = (String) response.getOut().getHeader("Allow");
-        int code = (int) response.getOut().getHeader(HTTP_RESPONSE_CODE);
+        String body = response.getMessage().getBody(String.class);
+        String allowHeader = (String) response.getMessage().getHeader("Allow");
+        int code = (int) response.getMessage().getHeader(HTTP_RESPONSE_CODE);
         assertEquals(ALLOW_METHODS, allowHeader);
         assertEquals(200, code);
         assertEquals("", body);

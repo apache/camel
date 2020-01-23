@@ -38,21 +38,16 @@ public class NettyHttpProducerSimpleTest extends BaseNettyTest {
     public void testHttpSimpleExchange() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
 
-        Exchange out = template.request("netty-http:http://localhost:{{port}}/foo", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Hello World");
-            }
-        });
+        Exchange out = template.request("netty-http:http://localhost:{{port}}/foo", exchange -> exchange.getIn().setBody("Hello World"));
         assertNotNull(out);
         assertTrue(out.hasOut());
 
-        NettyHttpMessage response = out.getOut(NettyHttpMessage.class);
+        NettyHttpMessage response = out.getMessage(NettyHttpMessage.class);
         assertNotNull(response);
         assertEquals(200, response.getHttpResponse().status().code());
 
         // we can also get the response as body
-        HttpResponse body = out.getOut().getBody(HttpResponse.class);
+        HttpResponse body = out.getMessage().getBody(HttpResponse.class);
         assertNotNull(body);
         assertEquals(200, body.status().code());
 

@@ -47,14 +47,12 @@ public class RestNettyProducerVerbUpperCaseTest extends BaseNettyTest {
                         .get("{id}/basic")
                         .route()
                         .to("mock:input")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
-                                assertEquals("GET", method);
+                        .process(exchange -> {
+                            String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
+                            assertEquals("GET", method);
 
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Donald Duck");
-                            }
+                            String id = exchange.getIn().getHeader("id", String.class);
+                            exchange.getMessage().setBody(id + ";Donald Duck");
                         });
             }
         };
