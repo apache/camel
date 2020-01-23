@@ -40,13 +40,12 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "2.13.0", scheme = "jgroups", title = "JGroups", syntax = "jgroups:clusterName", label = "clustering,messaging")
 public class JGroupsEndpoint extends DefaultEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JGroupsEndpoint.class);
-
     public static final String HEADER_JGROUPS_ORIGINAL_MESSAGE = "JGROUPS_ORIGINAL_MESSAGE";
     public static final String HEADER_JGROUPS_SRC = "JGROUPS_SRC";
     public static final String HEADER_JGROUPS_DEST = "JGROUPS_DEST";
     public static final String HEADER_JGROUPS_CHANNEL_ADDRESS = "JGROUPS_CHANNEL_ADDRESS";
 
+    private static final Logger LOG = LoggerFactory.getLogger(JGroupsEndpoint.class);
     private AtomicInteger connectCount = new AtomicInteger(0);
 
     private JChannel channel;
