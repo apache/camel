@@ -43,8 +43,6 @@ import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.handler.Handler;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -115,6 +113,8 @@ import org.apache.cxf.service.model.MessagePartInfo;
 import org.apache.cxf.staxutils.StaxSource;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.apache.cxf.wsdl.WSDLManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The cxf component is used for SOAP WebServices using Apache CXF.
