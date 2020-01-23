@@ -551,6 +551,12 @@ The component is capable of detecting the presence of an AmazonS3 bean into the 
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter, like the example above.
 This may be really useful for smarter configuration of the endpoint.
 
+== Moving stuff between a bucket and another bucket
+
+Some users like to consume stuff from a bucket and move the content in a different one without using the copyObject feature of this component.
+If this is case for you, don't forget to remove the bucketName header from the incoming exchange of the consumer, otherwise the file will be always overwritten on the same 
+original bucket.
+
 == Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
