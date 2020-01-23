@@ -4286,6 +4286,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin-version}</version>
                 <configuration>
+                    <argLine>-XX:+ExitOnOutOfMemoryError</argLine>
                     <!--forkMode>pertest</forkMode -->
                     <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
                     <childDelegation>false</childDelegation>
