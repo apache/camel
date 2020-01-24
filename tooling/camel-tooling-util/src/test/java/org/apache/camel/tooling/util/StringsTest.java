@@ -16,13 +16,33 @@
  */
 package org.apache.camel.tooling.util;
 
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.apache.camel.tooling.util.Strings.asTitle;
 import static org.apache.camel.tooling.util.Strings.between;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class StringsTest {
+
+    static Stream<Arguments> getClassShortNameTypeVarations() {
+        return Stream.of(arguments("String", "String"), arguments("String", "java.lang.String"), arguments("List", "List<String>"), arguments("List", "java.util.List<String>"),
+                arguments("List", "List<java.lang.String>"), arguments("List", "java.util.List.List<org.apache.camel.Exchange>"),
+                arguments("List", "java.util.List<Map<String,Integer>>"), arguments("List", "java.util.List<Map<java.lang.String,Integer>>"),
+                arguments("List", "java.util.List<Map<String,java.lang.Integer>>"), arguments("List", "java.util.List<Map<java.lang.String,java.lang.Integer>>"),
+                arguments("List", "java.util.List<java.util.Map<java.lang.String,java.lang.Integer>>"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("getClassShortNameTypeVarations")
+    public void getClassShortName(String expectedBaseClassName, String className) {
+        assertEquals(expectedBaseClassName, Strings.getClassShortName(className));
+    }
 
     @Test
     public void testBetween() {
