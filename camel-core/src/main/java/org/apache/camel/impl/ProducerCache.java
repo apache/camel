@@ -353,7 +353,7 @@ public class ProducerCache extends ServiceSupport {
         T answer = null;
 
         // get the producer and we do not mind if its pooled as we can handle returning it back to the pool
-        Producer producer = doGetProducer(endpoint, true);
+        Producer producer = acquireProducer(endpoint);
 
         if (producer == null) {
             if (isStopped()) {
@@ -372,17 +372,11 @@ public class ProducerCache extends ServiceSupport {
                 exchange.setException(e);
             }
         } finally {
-            if (producer instanceof ServicePoolAware) {
-                // release back to the pool
-                pool.release(endpoint, producer);
-            } else if (!producer.isSingleton()) {
-                // stop and shutdown non-singleton producers as we should not leak resources
-                try {
-                    ServiceHelper.stopAndShutdownService(producer);
-                } catch (Exception e) {
-                    // ignore and continue
-                    LOG.warn("Error stopping/shutting down producer: {}", producer, e);
-                }
+            try {
+                releaseProducer(endpoint, producer);
+            } catch (Exception e) {
+                // ignore and continue
+                LOG.warn("Error stopping/shutting down producer: " + producer, e);
             }
         }
 
@@ -407,7 +401,7 @@ public class ProducerCache extends ServiceSupport {
         Producer target;
         try {
             // get the producer and we do not mind if its pooled as we can handle returning it back to the pool
-            target = doGetProducer(endpoint, true);
+            target = acquireProducer(endpoint);
 
             if (target == null) {
                 if (isStopped()) {
@@ -450,17 +444,11 @@ public class ProducerCache extends ServiceSupport {
                         EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
                     }
 
-                    if (producer instanceof ServicePoolAware) {
-                        // release back to the pool
-                        pool.release(endpoint, producer);
-                    } else if (!producer.isSingleton()) {
-                        // stop and shutdown non-singleton producers as we should not leak resources
-                        try {
-                            ServiceHelper.stopAndShutdownService(producer);
-                        } catch (Exception e) {
-                            // ignore and continue
-                            LOG.warn("Error stopping/shutting down producer: {}", producer, e);
-                        }
+                    try {
+                        releaseProducer(endpoint, producer);
+                    } catch (Exception e) {
+                        // ignore and continue
+                        LOG.warn("Error stopping/shutting down producer: " + producer, e);
                     }
                 } finally {
                     callback.done(doneSync);
