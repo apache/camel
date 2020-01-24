@@ -1282,6 +1282,9 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      */
     void setHeadersMapFactory(HeadersMapFactory factory);
 
+    /**
+     * Gets the {@link ReactiveExecutor} to use.
+     */
     ReactiveExecutor getReactiveExecutor();
 
     /**
