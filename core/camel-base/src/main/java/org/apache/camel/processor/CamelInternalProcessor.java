@@ -287,13 +287,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
      * Strategy to determine if we should continue processing the {@link Exchange}.
      */
     private boolean continueProcessing(Exchange exchange) {
-        Object stop = exchange.getProperty(Exchange.ROUTE_STOP);
-        if (stop != null) {
-            boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
-            if (doStop) {
-                LOG.debug("Exchange is marked to stop routing: {}", exchange);
-                return false;
-            }
+        if (exchange.isRouteStop()) {
+            LOG.debug("Exchange is marked to stop routing: {}", exchange);
+            return false;
         }
 
         // determine if we can still run, or the camel context is forcing a shutdown

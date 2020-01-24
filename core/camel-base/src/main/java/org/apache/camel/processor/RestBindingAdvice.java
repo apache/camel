@@ -159,7 +159,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
         if ("OPTIONS".equalsIgnoreCase(method)) {
             // for OPTIONS methods then we should not route at all as its part of CORS
-            exchange.setProperty(Exchange.ROUTE_STOP, true);
+            exchange.setRouteStop(true);
             return true;
         }
         return false;
@@ -211,7 +211,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                 // set empty response body as http error code indicate the problem
                 exchange.getMessage().setBody(null);
                 // stop routing and return
-                exchange.setProperty(Exchange.ROUTE_STOP, true);
+                exchange.setRouteStop(true);
                 return;
             }
 
@@ -223,7 +223,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                 // set empty response body as http error code indicate the problem
                 exchange.getMessage().setBody(null);
                 // stop routing and return
-                exchange.setProperty(Exchange.ROUTE_STOP, true);
+                exchange.setRouteStop(true);
                 return;
             }
         }
@@ -278,7 +278,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                     exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
                     exchange.getMessage().setBody("The request body is missing.");
                     // stop routing and return
-                    exchange.setProperty(Exchange.ROUTE_STOP, true);
+                    exchange.setRouteStop(true);
                     return;
                 }
             }
@@ -287,7 +287,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                 exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
                 exchange.getMessage().setBody("Some of the required query parameters are missing.");
                 // stop routing and return
-                exchange.setProperty(Exchange.ROUTE_STOP, true);
+                exchange.setRouteStop(true);
                 return;
             }
             if (requiredHeaders != null && !exchange.getIn().getHeaders().keySet().containsAll(requiredHeaders)) {
@@ -295,7 +295,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                 exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
                 exchange.getMessage().setBody("Some of the required HTTP headers are missing.");
                 // stop routing and return
-                exchange.setProperty(Exchange.ROUTE_STOP, true);
+                exchange.setRouteStop(true);
                 return;
             }
         }

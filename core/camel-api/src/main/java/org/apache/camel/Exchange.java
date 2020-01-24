@@ -209,6 +209,7 @@ public interface Exchange {
     String REST_HTTP_QUERY         = "CamelRestHttpQuery";
     String ROLLBACK_ONLY           = "CamelRollbackOnly";
     String ROLLBACK_ONLY_LAST      = "CamelRollbackOnlyLast";
+    @Deprecated
     String ROUTE_STOP              = "CamelRouteStop";
 
     String REUSE_SCRIPT_ENGINE = "CamelReuseScripteEngine";
@@ -518,6 +519,18 @@ public interface Exchange {
      * Returns true if this exchange is transacted
      */
     boolean isTransacted();
+
+    /**
+     * Returns true if this exchange is marked to stop and not continue routing.
+     */
+    boolean isRouteStop();
+
+    /**
+     * Sets whether this exchange is marked to stop and not continue routing.
+     *
+     * @param routeStop <tt>true</tt> to stop routing
+     */
+    void setRouteStop(boolean routeStop);
 
     /**
      * Returns true if this exchange is an external initiated redelivered message (such as a JMS broker).

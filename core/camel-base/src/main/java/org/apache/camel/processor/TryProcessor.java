@@ -119,13 +119,9 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
     }
 
     protected boolean continueRouting(Iterator<Processor> it, Exchange exchange) {
-        Object stop = exchange.getProperty(Exchange.ROUTE_STOP);
-        if (stop != null) {
-            boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
-            if (doStop) {
-                LOG.debug("Exchange is marked to stop routing: {}", exchange);
-                return false;
-            }
+        if (exchange.isRouteStop()) {
+            LOG.debug("Exchange is marked to stop routing: {}", exchange);
+            return false;
         }
 
         // continue if there are more processors to route
