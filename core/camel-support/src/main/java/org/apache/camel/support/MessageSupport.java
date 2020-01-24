@@ -284,14 +284,12 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
      * Allow implementations to auto-create a messageId
      */
     protected String createMessageId() {
-        String uuid = null;
         if (exchange != null) {
-            uuid = exchange.getContext().getUuidGenerator().generateUuid();
+            // optimize and reuse exchange id
+            return exchange.getExchangeId();
+        } else {
+            return null;
         }
-        // fall back to the simple UUID generator
-        if (uuid == null) {
-            uuid = new SimpleUuidGenerator().generateUuid();
-        }
-        return uuid;
     }
+
 }
