@@ -21,12 +21,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.tooling.util.PackageHelper.JSON_SUFIX;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PackageHelperTest {
 
@@ -41,8 +41,8 @@ public class PackageHelperTest {
         Map<String, File> jsonFiles = jsons.stream().collect(Collectors.toMap(
                 file -> file.getName().replace(JSON_SUFIX, ""), file -> file));
 
-        assertTrue("Files a.json must be found", jsonFiles.containsKey("a"));
-        assertTrue("Files b.json must be found", jsonFiles.containsKey("b"));
-        assertFalse("File c.txt must not be found", jsonFiles.containsKey("c"));
+        assertTrue(jsonFiles.containsKey("a"), "Files a.json must be found");
+        assertTrue(jsonFiles.containsKey("b"), "Files b.json must be found");
+        assertFalse(jsonFiles.containsKey("c"), "File c.txt must not be found");
     }
 }

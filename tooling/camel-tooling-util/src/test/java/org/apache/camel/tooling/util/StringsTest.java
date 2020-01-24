@@ -16,11 +16,11 @@
  */
 package org.apache.camel.tooling.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.tooling.util.Strings.asTitle;
 import static org.apache.camel.tooling.util.Strings.between;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StringsTest {
 
