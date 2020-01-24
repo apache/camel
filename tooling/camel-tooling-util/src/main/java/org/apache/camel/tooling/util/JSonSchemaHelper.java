@@ -352,7 +352,7 @@ public final class JSonSchemaHelper {
                 Map<?, ?> row = output.getMap(key);
                 if (key.equals(group)) {
                     if (parseProperties) {
-                        // flattern each entry in the row with name as they key, and its value as the content (its a map also)
+                        // flatten each entry in the row with name as they key, and its value as the content (its a map also)
                         for (Object obj : row.entrySet()) {
                             Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
                             Map<String, String> newRow = new LinkedHashMap<>();
