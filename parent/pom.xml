@@ -405,8 +405,8 @@
         <kafka-bundle-version>2.4.0_1</kafka-bundle-version>
         <karaf4-version>4.2.8</karaf4-version>
         <kie-version>7.31.0.Final</kie-version>
-        <kubernetes-client-version>4.7.0</kubernetes-client-version>
-        <kubernetes-model-version>4.7.0</kubernetes-model-version>
+        <kubernetes-client-version>4.7.1</kubernetes-client-version>
+        <kubernetes-model-version>4.7.1</kubernetes-model-version>
 	<kudu-version>1.10.0</kudu-version>
         <kxml2-bundle-version>2.3.0_3</kxml2-bundle-version>
         <leveldbjni-version>1.8</leveldbjni-version>
