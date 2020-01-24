@@ -110,13 +110,6 @@ public interface UnitOfWork extends Service {
     void afterRoute(Exchange exchange, Route route);
 
     /**
-     * Returns the unique ID of this unit of work, lazily creating one if it does not yet have one
-     *
-     * @return the unique ID
-     */
-    String getId();
-
-    /**
      * Gets the original IN {@link Message} this Unit of Work was started with.
      * <p/>
      * The original message is only returned if the option {@link org.apache.camel.RuntimeConfiguration#isAllowUseOriginalMessage()}
