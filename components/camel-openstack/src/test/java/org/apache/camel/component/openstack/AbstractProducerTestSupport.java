@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.engine.DefaultHeadersMapFactory;
@@ -42,7 +43,7 @@ public abstract class AbstractProducerTestSupport {
     protected Exchange exchange;
 
     @Mock
-    protected CamelContext camelContext;
+    protected ExtendedCamelContext camelContext;
 
     protected Message msg;
 
@@ -52,6 +53,7 @@ public abstract class AbstractProducerTestSupport {
     public void before() throws IOException {
         msg = new DefaultMessage(camelContext);
         when(exchange.getIn()).thenReturn(msg);
-        when(camelContext.getHeadersMapFactory()).thenReturn(new DefaultHeadersMapFactory());
+        when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(camelContext);
+        when(camelContext.adapt(ExtendedCamelContext.class).getHeadersMapFactory()).thenReturn(new DefaultHeadersMapFactory());
     }
 }

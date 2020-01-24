@@ -38,6 +38,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Handler;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
@@ -548,7 +549,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             expectedMinimumMessageCount(1);
         }
         if (expectedHeaderValues == null) {
-            expectedHeaderValues = getCamelContext().getHeadersMapFactory().newMap();
+            expectedHeaderValues = getCamelContext().adapt(ExtendedCamelContext.class).getHeadersMapFactory().newMap();
             // we just wants to expects to be called once
             expects(new AssertionTask() {
                 @Override
@@ -1565,7 +1566,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
         if (expectedHeaderValues != null) {
             if (actualHeaderValues == null) {
-                actualHeaderValues = getCamelContext().getHeadersMapFactory().newMap();
+                actualHeaderValues = getCamelContext().adapt(ExtendedCamelContext.class).getHeadersMapFactory().newMap();
             }
             if (in.hasHeaders()) {
                 actualHeaderValues.putAll(in.getHeaders());
@@ -1574,7 +1575,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
         if (expectedPropertyValues != null) {
             if (actualPropertyValues == null) {
-                actualPropertyValues = getCamelContext().getHeadersMapFactory().newMap();
+                actualPropertyValues = getCamelContext().adapt(ExtendedCamelContext.class).getHeadersMapFactory().newMap();
             }
             actualPropertyValues.putAll(copy.getProperties());
         }

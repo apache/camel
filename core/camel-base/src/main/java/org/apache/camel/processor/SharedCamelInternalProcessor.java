@@ -81,7 +81,7 @@ public class SharedCamelInternalProcessor {
 
     public SharedCamelInternalProcessor(CamelContext camelContext, CamelInternalProcessorAdvice... advices) {
         this.camelContext = camelContext;
-        this.reactiveExecutor = camelContext.getReactiveExecutor();
+        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
         this.awaitManager = camelContext.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
         this.shutdownStrategy = camelContext.getShutdownStrategy();
 

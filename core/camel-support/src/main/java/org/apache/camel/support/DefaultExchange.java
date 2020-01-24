@@ -29,6 +29,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
@@ -132,7 +133,7 @@ public final class DefaultExchange implements ExtendedExchange {
             return null;
         }
 
-        return context.getHeadersMapFactory().newMap(headers);
+        return context.adapt(ExtendedCamelContext.class).getHeadersMapFactory().newMap(headers);
     }
 
     @SuppressWarnings("unchecked")
