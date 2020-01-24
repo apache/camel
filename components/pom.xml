@@ -352,6 +352,7 @@
         <module>camel-websocket</module>
         <module>camel-weka</module>
         <module>camel-wordpress</module>
+        <module>camel-workday</module>
         <module>camel-xchange</module>
         <module>camel-xj</module>
         <module>camel-xmlsecurity</module>
