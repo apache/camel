@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -173,6 +174,10 @@ public abstract class BaseRouteService extends ChildServiceSupport {
                     }
                     if (service instanceof RouteIdAware) {
                         ((RouteIdAware) service).setRouteId(route.getId());
+                    }
+                    // inject camel context
+                    if (service instanceof CamelContextAware) {
+                        ((CamelContextAware) service).setCamelContext(camelContext);
                     }
 
                     if (service instanceof Consumer) {

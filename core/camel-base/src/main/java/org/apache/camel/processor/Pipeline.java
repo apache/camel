@@ -30,6 +30,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
@@ -50,12 +51,14 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
     private static final Logger LOG = LoggerFactory.getLogger(Pipeline.class);
 
     private final CamelContext camelContext;
+    private final ReactiveExecutor reactiveExecutor;
     private List<AsyncProcessor> processors;
     private String id;
     private String routeId;
 
     public Pipeline(CamelContext camelContext, Collection<Processor> processors) {
         this.camelContext = camelContext;
+        this.reactiveExecutor = camelContext.getReactiveExecutor();
         this.processors = processors.stream().map(AsyncProcessorConverterHelper::convert).collect(Collectors.toList());
     }
 
@@ -88,9 +91,9 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (exchange.isTransacted()) {
-            camelContext.getReactiveExecutor().scheduleSync(() -> Pipeline.this.doProcess(exchange, callback, processors, new AtomicInteger(), true));
+            reactiveExecutor.scheduleSync(() -> Pipeline.this.doProcess(exchange, callback, processors, new AtomicInteger(), true));
         } else {
-            camelContext.getReactiveExecutor().scheduleMain(() -> Pipeline.this.doProcess(exchange, callback, processors, new AtomicInteger(), true));
+            reactiveExecutor.scheduleMain(() -> Pipeline.this.doProcess(exchange, callback, processors, new AtomicInteger(), true));
         }
         return false;
     }
@@ -108,7 +111,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
             AsyncProcessor processor = processors.get(index.getAndIncrement());
 
             processor.process(exchange, doneSync ->
-                    camelContext.getReactiveExecutor().schedule(() -> doProcess(exchange, callback, processors, index, false)));
+                    reactiveExecutor.schedule(() -> doProcess(exchange, callback, processors, index, false)));
         } else {
             ExchangeHelper.copyResults(exchange, exchange);
 
@@ -119,7 +122,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
                 LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
             }
 
-            camelContext.getReactiveExecutor().schedule(callback);
+            reactiveExecutor.schedule(callback);
         }
     }
 

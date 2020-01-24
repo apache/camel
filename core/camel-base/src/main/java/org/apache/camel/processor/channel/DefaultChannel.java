@@ -133,6 +133,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
     @Override
     protected void doStart() throws Exception {
+        super.doStart();
         // the output has now been created, so assign the output as the processor
         setProcessor(getOutput());
         ServiceHelper.startService(errorHandler, output);
@@ -140,6 +141,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
     @Override
     protected void doStop() throws Exception {
+        super.doStop();
         if (isRouteScoped()) {
             // only stop services if not context scoped (as context scoped is reused by others)
             ServiceHelper.stopService(output, errorHandler);
@@ -148,6 +150,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
     @Override
     protected void doShutdown() throws Exception {
+        super.doShutdown();
         ServiceHelper.stopAndShutdownServices(output, errorHandler);
     }
 

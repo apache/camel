@@ -24,6 +24,7 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
@@ -31,6 +32,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
+import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
@@ -70,10 +72,17 @@ public class SharedCamelInternalProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(SharedCamelInternalProcessor.class);
     private static final Object[] EMPTY_STATES = new Object[0];
+    private final CamelContext camelContext;
+    private final ReactiveExecutor reactiveExecutor;
+    private final AsyncProcessorAwaitManager awaitManager;
     private final List<CamelInternalProcessorAdvice> advices;
     private byte statefulAdvices;
 
-    public SharedCamelInternalProcessor(CamelInternalProcessorAdvice... advices) {
+    public SharedCamelInternalProcessor(CamelContext camelContext, CamelInternalProcessorAdvice... advices) {
+        this.camelContext = camelContext;
+        this.reactiveExecutor = camelContext.getReactiveExecutor();
+        this.awaitManager = camelContext.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
+
         if (advices != null) {
             this.advices = new ArrayList<>(advices.length);
             for (CamelInternalProcessorAdvice advice : advices) {
@@ -93,7 +102,6 @@ public class SharedCamelInternalProcessor {
      * Synchronous API
      */
     public void process(Exchange exchange, AsyncProcessor processor, Processor resultProcessor) {
-        final AsyncProcessorAwaitManager awaitManager = exchange.getContext().adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
         awaitManager.process(new AsyncProcessor() {
             @Override
             public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -206,7 +214,7 @@ public class SharedCamelInternalProcessor {
 
             // optimize to only do after uow processing if really needed
             if (beforeAndAfter) {
-                exchange.getContext().getReactiveExecutor().schedule(() -> {
+                reactiveExecutor.schedule(() -> {
                     // execute any after processor work (in current thread, not in the callback)
                     uow.afterProcess(processor, exchange, callback, sync);
                 });
@@ -272,7 +280,7 @@ public class SharedCamelInternalProcessor {
                 // ----------------------------------------------------------
                 // callback must be called
                 if (callback != null) {
-                    exchange.getContext().getReactiveExecutor().schedule(callback);
+                    reactiveExecutor.schedule(callback);
                 }
                 // ----------------------------------------------------------
                 // CAMEL END USER - DEBUG ME HERE +++ END +++
