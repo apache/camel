@@ -176,7 +176,7 @@ public class DefaultRouteContext implements RouteContext {
             Processor target = new Pipeline(getCamelContext(), eventDrivenProcessors);
 
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
-            CamelInternalProcessor internal = new CamelInternalProcessor(target);
+            CamelInternalProcessor internal = new CamelInternalProcessor(getCamelContext(), target);
             internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(this));
 
             // and then optionally add route policy processor if a custom policy is set

@@ -289,7 +289,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     protected Channel wrapChannel(RouteContext routeContext, Processor processor, ProcessorDefinition<?> child, Boolean inheritErrorHandler) throws Exception {
         // put a channel in between this and each output to control the route
         // flow logic
-        DefaultChannel channel = new DefaultChannel();
+        DefaultChannel channel = new DefaultChannel(routeContext.getCamelContext());
 
         // add interceptor strategies to the channel must be in this order:
         // camel context, route context, local

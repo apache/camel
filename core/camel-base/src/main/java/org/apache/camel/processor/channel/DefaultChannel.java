@@ -70,6 +70,10 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
     private RouteContext routeContext;
     private boolean routeScoped = true;
 
+    public DefaultChannel(CamelContext camelContext) {
+        super(camelContext);
+    }
+
     @Override
     public Processor getOutput() {
         // the errorHandler is already decorated with interceptors
@@ -133,7 +137,8 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
+        // do not call super as we want to be in control here of the lifecycle
+
         // the output has now been created, so assign the output as the processor
         setProcessor(getOutput());
         ServiceHelper.startService(errorHandler, output);
@@ -141,7 +146,8 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
+        // do not call super as we want to be in control here of the lifecycle
+
         if (isRouteScoped()) {
             // only stop services if not context scoped (as context scoped is reused by others)
             ServiceHelper.stopService(output, errorHandler);
@@ -150,7 +156,8 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
     @Override
     protected void doShutdown() throws Exception {
-        super.doShutdown();
+        // do not call super as we want to be in control here of the lifecycle
+
         ServiceHelper.stopAndShutdownServices(output, errorHandler);
     }
 
