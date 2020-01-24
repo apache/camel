@@ -47,6 +47,7 @@ import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.Tracer;
@@ -99,6 +100,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements Ca
 
     private CamelContext camelContext;
     private ReactiveExecutor reactiveExecutor;
+    private ShutdownStrategy shutdownStrategy;
     private final List<CamelInternalProcessorAdvice<?>> advices = new ArrayList<>();
     private byte statefulAdvices;
 
@@ -124,6 +126,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements Ca
         // optimize to preset reactive executor
         if (camelContext != null) {
             reactiveExecutor = camelContext.getReactiveExecutor();
+            shutdownStrategy = camelContext.getShutdownStrategy();
         }
     }
 
@@ -181,8 +184,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements Ca
             return true;
         }
 
+        // TODO: should not be needed
         if (reactiveExecutor == null) {
             reactiveExecutor = exchange.getContext().getReactiveExecutor();
+        }
+        if (shutdownStrategy == null) {
+            shutdownStrategy = exchange.getContext().getShutdownStrategy();
         }
 
         // optimise to use object array for states, and only for the number of advices that keep state
@@ -312,7 +319,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements Ca
         }
 
         // determine if we can still run, or the camel context is forcing a shutdown
-        boolean forceShutdown = exchange.getContext().getShutdownStrategy().forceShutdown(this);
+        boolean forceShutdown = shutdownStrategy.forceShutdown(this);
         if (forceShutdown) {
             String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: " + exchange;
             LOG.debug(msg);

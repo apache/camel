@@ -42,6 +42,7 @@ import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ShutdownPrepared;
+import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
@@ -73,6 +74,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected final CamelContext camelContext;
     protected final ReactiveExecutor reactiveExecutor;
     protected final AsyncProcessorAwaitManager awaitManager;
+    protected final ShutdownStrategy shutdownStrategy;
     protected final Processor deadLetter;
     protected final String deadLetterUri;
     protected final boolean deadLetterHandleNewException;
@@ -102,6 +104,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         this.camelContext = camelContext;
         this.reactiveExecutor = camelContext.getReactiveExecutor();
         this.awaitManager = camelContext.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
+        this.shutdownStrategy = camelContext.getShutdownStrategy();
         this.redeliveryProcessor = redeliveryProcessor;
         this.deadLetter = deadLetter;
         this.output = output;
@@ -494,7 +497,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
         protected boolean isRunAllowed() {
             // if camel context is forcing a shutdown then do not allow running
-            boolean forceShutdown = camelContext.getShutdownStrategy().forceShutdown(RedeliveryErrorHandler.this);
+            boolean forceShutdown = shutdownStrategy.forceShutdown(RedeliveryErrorHandler.this);
             if (forceShutdown) {
                 LOG.trace("isRunAllowed() -> false (Run not allowed as ShutdownStrategy is forcing shutting down)");
                 return false;

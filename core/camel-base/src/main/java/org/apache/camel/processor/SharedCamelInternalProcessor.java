@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.RejectedExecutionException;
@@ -34,6 +33,7 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
@@ -75,6 +75,7 @@ public class SharedCamelInternalProcessor {
     private final CamelContext camelContext;
     private final ReactiveExecutor reactiveExecutor;
     private final AsyncProcessorAwaitManager awaitManager;
+    private final ShutdownStrategy shutdownStrategy;
     private final List<CamelInternalProcessorAdvice> advices;
     private byte statefulAdvices;
 
@@ -82,6 +83,7 @@ public class SharedCamelInternalProcessor {
         this.camelContext = camelContext;
         this.reactiveExecutor = camelContext.getReactiveExecutor();
         this.awaitManager = camelContext.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
+        this.shutdownStrategy = camelContext.getShutdownStrategy();
 
         if (advices != null) {
             this.advices = new ArrayList<>(advices.length);
@@ -304,7 +306,7 @@ public class SharedCamelInternalProcessor {
 
         // determine if we can still run, or the camel context is forcing a shutdown
         if (processor instanceof Service) {
-            boolean forceShutdown = exchange.getContext().getShutdownStrategy().forceShutdown((Service) processor);
+            boolean forceShutdown = shutdownStrategy.forceShutdown((Service) processor);
             if (forceShutdown) {
                 String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: " + exchange;
                 LOG.debug(msg);
