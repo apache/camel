@@ -353,7 +353,7 @@ public class ProducerCache extends ServiceSupport {
         T answer = null;
 
         // get the producer and we do not mind if its pooled as we can handle returning it back to the pool
-        Producer producer =  acquireProducer(endpoint);
+        Producer producer = acquireProducer(endpoint);
 
         if (producer == null) {
             if (isStopped()) {
@@ -401,7 +401,7 @@ public class ProducerCache extends ServiceSupport {
         Producer target;
         try {
             // get the producer and we do not mind if its pooled as we can handle returning it back to the pool
-            target = target = acquireProducer(endpoint);
+            target = acquireProducer(endpoint);
 
             if (target == null) {
                 if (isStopped()) {
