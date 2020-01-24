@@ -39,6 +39,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.UnitOfWork;
@@ -70,6 +71,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected final AtomicInteger redeliverySleepCounter = new AtomicInteger();
     protected ScheduledExecutorService executorService;
     protected final CamelContext camelContext;
+    protected final ReactiveExecutor reactiveExecutor;
     protected final AsyncProcessorAwaitManager awaitManager;
     protected final Processor deadLetter;
     protected final String deadLetterUri;
@@ -98,6 +100,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         ObjectHelper.notNull(redeliveryPolicy, "RedeliveryPolicy", this);
 
         this.camelContext = camelContext;
+        this.reactiveExecutor = camelContext.getReactiveExecutor();
         this.awaitManager = camelContext.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
         this.redeliveryProcessor = redeliveryProcessor;
         this.deadLetter = deadLetter;
@@ -160,9 +163,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         RedeliveryState state = new RedeliveryState(exchange, callback);
         // Run it
         if (exchange.isTransacted()) {
-            camelContext.getReactiveExecutor().scheduleSync(state);
+            reactiveExecutor.scheduleSync(state);
         } else {
-            camelContext.getReactiveExecutor().scheduleMain(state);
+            reactiveExecutor.scheduleMain(state);
         }
         return false;
     }
@@ -440,7 +443,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                         if (LOG.isTraceEnabled()) {
                             LOG.trace("Scheduling redelivery task to run in {} millis for exchangeId: {}", redeliveryDelay, exchange.getExchangeId());
                         }
-                        executorService.schedule(() -> camelContext.getReactiveExecutor().schedule(this::redeliver), redeliveryDelay, TimeUnit.MILLISECONDS);
+                        executorService.schedule(() -> reactiveExecutor.schedule(this::redeliver), redeliveryDelay, TimeUnit.MILLISECONDS);
 
                     } else {
                         // async delayed redelivery was disabled or we are transacted so we must be synchronous
@@ -456,9 +459,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                                 // mark the exchange as redelivery exhausted so the failure processor / dead letter channel can process the exchange
                                 exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
                                 // jump to start of loop which then detects that we are failed and exhausted
-                                camelContext.getReactiveExecutor().schedule(this);
+                                reactiveExecutor.schedule(this);
                             } else {
-                                camelContext.getReactiveExecutor().schedule(this::redeliver);
+                                reactiveExecutor.schedule(this::redeliver);
                             }
                         } catch (InterruptedException e) {
                             redeliverySleepCounter.decrementAndGet();
@@ -467,12 +470,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                             // mark the exchange to stop continue routing when interrupted
                             // as we do not want to continue routing (for example a task has been cancelled)
                             exchange.setProperty(Exchange.ROUTE_STOP, Boolean.TRUE);
-                            camelContext.getReactiveExecutor().schedule(callback);
+                            reactiveExecutor.schedule(callback);
                         }
                     }
                 } else {
                     // execute the task immediately
-                    camelContext.getReactiveExecutor().schedule(this::redeliver);
+                    reactiveExecutor.schedule(this::redeliver);
                 }
             } else {
                 // Simple delivery
@@ -480,10 +483,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     // only process if the exchange hasn't failed
                     // and it has not been handled by the error processor
                     if (isDone(exchange)) {
-                        camelContext.getReactiveExecutor().schedule(callback);
+                        reactiveExecutor.schedule(callback);
                     } else {
                         // error occurred so loop back around which we do by invoking the processAsyncErrorHandler
-                        camelContext.getReactiveExecutor().schedule(this);
+                        reactiveExecutor.schedule(this);
                     }
                 });
             }
@@ -561,11 +564,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 // only process if the exchange hasn't failed
                 // and it has not been handled by the error processor
                 if (isDone(exchange)) {
-                    camelContext.getReactiveExecutor().schedule(callback);
+                    reactiveExecutor.schedule(callback);
                     return;
                 } else {
                     // error occurred so loop back around which we do by invoking the processAsyncErrorHandler
-                    camelContext.getReactiveExecutor().schedule(this);
+                    reactiveExecutor.schedule(this);
                 }
             });
         }
@@ -851,7 +854,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                         EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, deadLetterChannel, deadLetterUri);
                     } finally {
                         // if the fault was handled asynchronously, this should be reflected in the callback as well
-                        camelContext.getReactiveExecutor().schedule(callback);
+                        reactiveExecutor.schedule(callback);
                     }
                 });
             } else {
@@ -870,7 +873,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     prepareExchangeAfterFailure(exchange, isDeadLetterChannel, shouldHandle, shouldContinue);
                 } finally {
                     // callback we are done
-                    camelContext.getReactiveExecutor().schedule(callback);
+                    reactiveExecutor.schedule(callback);
                 }
             }
 

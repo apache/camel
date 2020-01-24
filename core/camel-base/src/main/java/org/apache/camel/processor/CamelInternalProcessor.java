@@ -24,6 +24,7 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
@@ -43,6 +44,7 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ManagementInterceptStrategy.InstrumentationProcessor;
 import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.StreamCachingStrategy;
@@ -89,12 +91,14 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * The added advices can implement {@link Ordered} to control in which order the advices are executed.
  */
-public class CamelInternalProcessor extends DelegateAsyncProcessor {
+public class CamelInternalProcessor extends DelegateAsyncProcessor implements CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelInternalProcessor.class);
 
     private static final Object[] EMPTY_STATES = new Object[0];
 
+    private CamelContext camelContext;
+    private ReactiveExecutor reactiveExecutor;
     private final List<CamelInternalProcessorAdvice<?>> advices = new ArrayList<>();
     private byte statefulAdvices;
 
@@ -103,6 +107,24 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
     public CamelInternalProcessor(Processor processor) {
         super(processor);
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        // optimize to preset reactive executor
+        if (camelContext != null) {
+            reactiveExecutor = camelContext.getReactiveExecutor();
+        }
     }
 
     /**
@@ -159,6 +181,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             return true;
         }
 
+        if (reactiveExecutor == null) {
+            reactiveExecutor = exchange.getContext().getReactiveExecutor();
+        }
+
         // optimise to use object array for states, and only for the number of advices that keep state
         final Object[] states = statefulAdvices > 0 ? new Object[statefulAdvices] : EMPTY_STATES;
         // optimise for loop using index access to avoid creating iterator object
@@ -198,7 +224,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 // ----------------------------------------------------------
                 // callback must be called
                 if (originalCallback != null) {
-                    exchange.getContext().getReactiveExecutor().schedule(originalCallback);
+                    reactiveExecutor.schedule(originalCallback);
                 }
                 // ----------------------------------------------------------
                 // CAMEL END USER - DEBUG ME HERE +++ END +++
@@ -252,7 +278,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
             // optimize to only do after uow processing if really needed
             if (beforeAndAfter) {
-                exchange.getContext().getReactiveExecutor().schedule(() -> {
+                reactiveExecutor.schedule(() -> {
                     // execute any after processor work (in current thread, not in the callback)
                     uow.afterProcess(processor, exchange, callback, false);
                 });
