@@ -1,6 +1,8 @@
+[[file-watch-component]]
 = File Watch Component
 
 *Since Camel 3.0*
+
 *Since Camel 3.0*
 
 
