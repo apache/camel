@@ -24,6 +24,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.tooling.util.PackageHelper;
+import org.apache.camel.tooling.util.Strings;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -34,9 +36,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-
-import static org.apache.camel.tooling.util.Strings.between;
-import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 
 /**
  * Creates the Maven catalog for the Camel archetypes
@@ -84,7 +83,7 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
 
     public static void generateArchetypeCatalog(Log log, MavenProject project, MavenProjectHelper projectHelper, File outDir) throws MojoExecutionException, IOException {
 
-        File archetypes = findCamelDirectory(project.getBasedir(), "archetypes");
+        File archetypes = PackageHelper.findCamelDirectory(project.getBasedir(), "archetypes");
         if (archetypes == null || !archetypes.exists()) {
             throw new MojoExecutionException("Cannot find directory: archetypes");
         }
@@ -126,16 +125,16 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
                 }
                 if (parent) {
                     // grab version from parent
-                    String version = between(line, "<version>", "</version>");
+                    String version = Strings.between(line, "<version>", "</version>");
                     if (version != null) {
                         model.setVersion(version);
                     }
                     continue;
                 }
 
-                String groupId = between(line, "<groupId>", "</groupId>");
-                String artifactId = between(line, "<artifactId>", "</artifactId>");
-                String description = between(line, "<description>", "</description>");
+                String groupId = Strings.between(line, "<groupId>", "</groupId>");
+                String artifactId = Strings.between(line, "<artifactId>", "</artifactId>");
+                String description = Strings.between(line, "<description>", "</description>");
 
                 if (groupId != null && model.getGroupId() == null) {
                     model.setGroupId(groupId);

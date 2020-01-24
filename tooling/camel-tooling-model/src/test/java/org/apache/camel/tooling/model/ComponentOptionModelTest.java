@@ -14,14 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tools.apt.model;
+package org.apache.camel.tooling.model;
 
-public interface PropertyOption {
+import org.apache.camel.tooling.model.ComponentModel;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-    String getName();
+public class ComponentOptionModelTest {
 
-    String getType();
+    ComponentModel.ComponentOptionModel componentOptionModelUnderTest;
 
-    String getConfigurationField();
+    @BeforeEach
+    public void setup() {
+        componentOptionModelUnderTest = new ComponentModel.ComponentOptionModel();
+    }
 
+    @Test
+    public void getShortTypeShouldSucceed() {
+        componentOptionModelUnderTest.setJavaType("java.util.concurrent.BlockingQueue<org.apache.camel.Exchange>");
+        Assertions.assertEquals("BlockingQueue", componentOptionModelUnderTest.getShortJavaType());
+    }
 }

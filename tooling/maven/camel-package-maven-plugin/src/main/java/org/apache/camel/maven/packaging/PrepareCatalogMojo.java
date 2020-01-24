@@ -51,8 +51,6 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.OptionsBuilder;
 
-import static org.apache.camel.tooling.util.PackageHelper.loadText;
-
 /**
  * Prepares the camel catalog to include component, data format, and eip
  * descriptors, and generates a report.
@@ -261,7 +259,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
             try {
                 // check if we have a label as we want the eip to include labels
-                String text = loadText(file);
+                String text = PackageHelper.loadText(file);
                 // just do a basic label check
                 if (text.contains("\"label\": \"\"")) {
                     missingLabels.add(file);
@@ -306,7 +304,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             List<String> models = new ArrayList<>();
             // sort the names
             for (String name : names) {
-                if (name.endsWith(".json")) {
+                if (name.endsWith(PackageHelper.JSON_SUFIX)) {
                     // strip out .json from the name
                     String modelName = name.substring(0, name.length() - 5);
                     models.add(modelName);
@@ -435,7 +433,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             // check if we have a component label as we want the components to
             // include labels
             try {
-                String text = loadText(file);
+                String text = PackageHelper.loadText(file);
                 String name = asComponentName(file);
                 Matcher matcher = LABEL_PATTERN.matcher(text);
                 // grab the label, and remember it in the used labels
@@ -581,7 +579,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             // check if we have a label as we want the data format to include
             // labels
             try {
-                String text = loadText(file);
+                String text = PackageHelper.loadText(file);
                 String name = asComponentName(file);
                 Matcher matcher = LABEL_PATTERN.matcher(text);
                 // grab the label, and remember it in the used labels
@@ -683,7 +681,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             // check if we have a label as we want the data format to include
             // labels
             try {
-                String text = loadText(file);
+                String text = PackageHelper.loadText(file);
                 String name = asComponentName(file);
                 Matcher matcher = LABEL_PATTERN.matcher(text);
                 // grab the label, and remember it in the used labels
@@ -791,7 +789,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
             // check if we have a label as we want the other to include labels
             try {
-                String text = loadText(file);
+                String text = PackageHelper.loadText(file);
                 String name = asComponentName(file);
                 Matcher matcher = LABEL_PATTERN.matcher(text);
                 // grab the label, and remember it in the used labels
@@ -1383,7 +1381,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     private static String asComponentName(File file) {
         String name = file.getName();
-        if (name.endsWith(".json") || name.endsWith(".adoc")) {
+        if (name.endsWith(PackageHelper.JSON_SUFIX) || name.endsWith(".adoc")) {
             return name.substring(0, name.length() - 5);
         }
         return name;
@@ -1396,7 +1394,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 // skip files in root dirs as Camel does not store information
                 // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
-                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(".json");
+                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(PackageHelper.JSON_SUFIX);
                 boolean componentFile = !rootDir && file.isFile() && file.getName().equals("component.properties");
                 if (jsonFile) {
                     found.add(file);
@@ -1416,7 +1414,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 // skip files in root dirs as Camel does not store information
                 // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
-                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(".json");
+                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(PackageHelper.JSON_SUFIX);
                 boolean dataFormatFile = !rootDir && file.isFile() && file.getName().equals("dataformat.properties");
                 if (jsonFile) {
                     found.add(file);
@@ -1436,7 +1434,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 // skip files in root dirs as Camel does not store information
                 // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
-                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(".json");
+                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(PackageHelper.JSON_SUFIX);
                 boolean languageFile = !rootDir && file.isFile() && file.getName().equals("language.properties");
                 if (jsonFile) {
                     found.add(file);
@@ -1456,7 +1454,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 // skip files in root dirs as Camel does not store information
                 // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
-                boolean jsonFile = rootDir && file.isFile() && file.getName().endsWith(".json");
+                boolean jsonFile = rootDir && file.isFile() && file.getName().endsWith(PackageHelper.JSON_SUFIX);
                 boolean otherFile = !rootDir && file.isFile() && file.getName().equals("other.properties");
                 if (jsonFile) {
                     found.add(file);
@@ -1495,11 +1493,11 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 // components there
                 return false;
             }
-            if (pathname.isFile() && pathname.getName().endsWith(".json")) {
+            if (pathname.isFile() && pathname.getName().endsWith(PackageHelper.JSON_SUFIX)) {
                 // must be a components json file
                 try {
-                    String json = loadText(pathname);
-                    return json != null && json.contains("\"kind\": \"component\"");
+                    String json = PackageHelper.loadText(pathname);
+                    return "component".equals(PackageHelper.getSchemaKind(json));
                 } catch (IOException e) {
                     // ignore
                 }
@@ -1517,11 +1515,11 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 // components there
                 return false;
             }
-            if (pathname.isFile() && pathname.getName().endsWith(".json")) {
+            if (pathname.isFile() && pathname.getName().endsWith(PackageHelper.JSON_SUFIX)) {
                 // must be a dataformat json file
                 try {
-                    String json = loadText(pathname);
-                    return json != null && json.contains("\"kind\": \"dataformat\"");
+                    String json = PackageHelper.loadText(pathname);
+                    return "dataformat".equals(PackageHelper.getSchemaKind(json));
                 } catch (IOException e) {
                     // ignore
                 }
@@ -1539,11 +1537,11 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 // components there
                 return false;
             }
-            if (pathname.isFile() && pathname.getName().endsWith(".json")) {
+            if (pathname.isFile() && pathname.getName().endsWith(PackageHelper.JSON_SUFIX)) {
                 // must be a language json file
                 try {
-                    String json = loadText(pathname);
-                    return json != null && json.contains("\"kind\": \"language\"");
+                    String json = PackageHelper.loadText(pathname);
+                    return "language".equals(PackageHelper.getSchemaKind(json));
                 } catch (IOException e) {
                     // ignore
                 }
@@ -1556,11 +1554,11 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         @Override
         public boolean accept(File pathname) {
-            if (pathname.isFile() && pathname.getName().endsWith(".json")) {
+            if (pathname.isFile() && pathname.getName().endsWith(PackageHelper.JSON_SUFIX)) {
                 // must be a language json file
                 try {
-                    String json = loadText(pathname);
-                    return json != null && json.contains("\"kind\": \"other\"");
+                    String json = PackageHelper.loadText(pathname);
+                    return "other".equals(PackageHelper.getSchemaKind(json));
                 } catch (IOException e) {
                     // ignore
                 }
@@ -1581,9 +1579,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<String> answer;
         Path all = outDir.resolve(outFile);
         try {
-            answer = Files.list(outDir).filter(p -> p.getFileName().toString().endsWith(".json")).map(p -> p.getFileName().toString())
+            answer = Files.list(outDir).filter(p -> p.getFileName().toString().endsWith(PackageHelper.JSON_SUFIX)).map(p -> p.getFileName().toString())
                 // strip out .json from the name
-                .map(n -> n.substring(0, n.length() - ".json".length())).sorted().collect(LinkedHashSet::new, LinkedHashSet::add, LinkedHashSet::addAll);
+                .map(n -> n.substring(0, n.length() - PackageHelper.JSON_SUFIX.length())).sorted().collect(LinkedHashSet::new, LinkedHashSet::add, LinkedHashSet::addAll);
             String data = String.join("\n", answer) + "\n";
             FileUtil.updateFile(all, data);
             return answer;

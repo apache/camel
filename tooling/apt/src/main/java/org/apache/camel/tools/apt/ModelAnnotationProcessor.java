@@ -16,6 +16,7 @@
  */
 package org.apache.camel.tools.apt;
 
+import java.io.Writer;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -23,10 +24,12 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.annotation.processing.Messager;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
 import javax.tools.Diagnostic.Kind;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -98,7 +101,20 @@ public class ModelAnnotationProcessor extends AbstractCamelAnnotationProcessor {
 
         if (!propertyPlaceholderDefinitions.isEmpty()) {
             messager.printMessage(Kind.WARNING, String.format("Generating placeholder definitions helper for %d definitions", propertyPlaceholderDefinitions.size()));
-            PropertyPlaceholderGenerator.generatePropertyPlaceholderDefinitionsHelper(processingEnv, roundEnv, propertyPlaceholderDefinitions);
+            generatePropertyPlaceholderDefinitionsHelper(processingEnv, propertyPlaceholderDefinitions);
+        }
+    }
+
+    private void generatePropertyPlaceholderDefinitionsHelper(ProcessingEnvironment processingEnv,
+                                                              Set<String> propertyPlaceholderDefinitions) {
+
+        String fqn = "org.apache.camel.model.placeholder.DefinitionPropertiesPlaceholderProviderHelper";
+
+        try (Writer w = processingEnv.getFiler().createSourceFile(fqn).openWriter()) {
+            PropertyPlaceholderGenerator.generatePropertyPlaceholderDefinitionsHelper(propertyPlaceholderDefinitions, w);
+        } catch (Exception e) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Unable to generate source code file: " + fqn + ": " + e.getMessage());
+            AnnotationProcessorHelper.dumpExceptionToErrorFile("camel-apt-error.log", "Unable to generate source code file: " + fqn, e);
         }
     }
 

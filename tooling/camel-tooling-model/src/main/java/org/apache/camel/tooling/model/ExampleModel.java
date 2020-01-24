@@ -14,16 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.maven.packaging.model;
+package org.apache.camel.tooling.model;
 
 public class ExampleModel {
 
-    private String fileName;
-    private String title;
-    private String category = "";
-    private String description = "";
-    private String readmeFileName = "readme.md";
-    private String deprecated;
+    protected String fileName;
+    protected String title;
+    protected String category = "";
+    protected String description = "";
+    protected String readmeFileName = "readme.md";
+    protected String deprecated;
 
     public String getFileName() {
         return fileName;
