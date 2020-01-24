@@ -22,9 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.tooling.util.JSonSchemaHelper;
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
-
-import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 /**
  * Validation helper for validating components, data formats and languages
@@ -42,11 +41,12 @@ public final class ValidateHelper {
      */
     public static void validate(File file, ErrorDetail errorDetail) {
         try {
-            String json = loadText(file);
+            String json = PackageHelper.loadText(file);
 
-            boolean isComponent = json.contains("\"kind\": \"component\"");
-            boolean isDataFormat = json.contains("\"kind\": \"dataformat\"");
-            boolean isLanguage = json.contains("\"kind\": \"language\"");
+            String kind = PackageHelper.getSchemaKind(json);
+            boolean isComponent = "component".equals(kind);
+            boolean isDataFormat = "dataformat".equals(kind);
+            boolean isLanguage = "language".equals(kind);
 
             // only check these kind
             if (!isComponent && !isDataFormat && !isLanguage) {
@@ -114,8 +114,7 @@ public final class ValidateHelper {
                 if (doc == null || doc.isEmpty()) {
                     errorDetail.addMissingEndpointDoc(key);
                 }
-                String kind = row.get("kind");
-                if ("path".equals(kind)) {
+                if ("path".equals(row.get("kind"))) {
                     path = true;
                 }
             }

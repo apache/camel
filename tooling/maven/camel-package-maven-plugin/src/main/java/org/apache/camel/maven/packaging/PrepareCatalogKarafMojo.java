@@ -36,6 +36,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.tooling.util.FileUtil;
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -44,9 +45,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-
-import static org.apache.camel.tooling.util.PackageHelper.loadText;
-import static org.w3c.dom.Node.ELEMENT_NODE;
 
 /**
  * Prepares the Karaf provider camel catalog to include component it supports
@@ -338,7 +336,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                 // skip files in root dirs as Camel does not store information
                 // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
-                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(".json");
+                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(PackageHelper.JSON_SUFIX);
                 boolean componentFile = !rootDir && file.isFile() && file.getName().equals("component.properties");
                 if (jsonFile) {
                     found.add(file);
@@ -358,7 +356,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                 // skip files in root dirs as Camel does not store information
                 // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
-                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(".json");
+                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(PackageHelper.JSON_SUFIX);
                 boolean dataFormatFile = !rootDir && file.isFile() && file.getName().equals("dataformat.properties");
                 if (jsonFile) {
                     found.add(file);
@@ -378,7 +376,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                 // skip files in root dirs as Camel does not store information
                 // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
-                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(".json");
+                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(PackageHelper.JSON_SUFIX);
                 boolean languageFile = !rootDir && file.isFile() && file.getName().equals("language.properties");
                 if (jsonFile) {
                     found.add(file);
@@ -398,7 +396,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                 // skip files in root dirs as Camel does not store information
                 // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
-                boolean jsonFile = rootDir && file.isFile() && file.getName().endsWith(".json");
+                boolean jsonFile = rootDir && file.isFile() && file.getName().endsWith(PackageHelper.JSON_SUFIX);
                 boolean otherFile = !rootDir && file.isFile() && file.getName().equals("other.properties");
                 if (jsonFile) {
                     found.add(file);
@@ -420,11 +418,11 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                 // components there
                 return false;
             }
-            if (pathname.isFile() && pathname.getName().endsWith(".json")) {
+            if (pathname.isFile() && pathname.getName().endsWith(PackageHelper.JSON_SUFIX)) {
                 // must be a components json file
                 try {
-                    String json = loadText(pathname);
-                    return json.contains("\"kind\": \"component\"");
+                    String json = PackageHelper.loadText(pathname);
+                    return "component".equals(PackageHelper.getSchemaKind(json));
                 } catch (IOException e) {
                     // ignore
                 }
@@ -442,11 +440,11 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                 // components there
                 return false;
             }
-            if (pathname.isFile() && pathname.getName().endsWith(".json")) {
+            if (pathname.isFile() && pathname.getName().endsWith(PackageHelper.JSON_SUFIX)) {
                 // must be a dataformat json file
                 try {
-                    String json = loadText(pathname);
-                    return json.contains("\"kind\": \"dataformat\"");
+                    String json = PackageHelper.loadText(pathname);
+                    return "dataformat".equals(PackageHelper.getSchemaKind(json));
                 } catch (IOException e) {
                     // ignore
                 }
@@ -464,11 +462,11 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                 // components there
                 return false;
             }
-            if (pathname.isFile() && pathname.getName().endsWith(".json")) {
+            if (pathname.isFile() && pathname.getName().endsWith(PackageHelper.JSON_SUFIX)) {
                 // must be a language json file
                 try {
-                    String json = loadText(pathname);
-                    return json.contains("\"kind\": \"language\"");
+                    String json = PackageHelper.loadText(pathname);
+                    return "language".equals(PackageHelper.getSchemaKind(json));
                 } catch (IOException e) {
                     // ignore
                 }
@@ -481,11 +479,11 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
 
         @Override
         public boolean accept(File pathname) {
-            if (pathname.isFile() && pathname.getName().endsWith(".json")) {
+            if (pathname.isFile() && pathname.getName().endsWith(PackageHelper.JSON_SUFIX)) {
                 // must be a language json file
                 try {
-                    String json = loadText(pathname);
-                    return json.contains("\"kind\": \"other\"");
+                    String json = PackageHelper.loadText(pathname);
+                    return "other".equals(PackageHelper.getSchemaKind(json));
                 } catch (IOException e) {
                     // ignore
                 }
@@ -508,9 +506,9 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
     public static Set<String> generateJsonList(Path outDir, String outFile) throws MojoFailureException {
         Path all = outDir.resolve(outFile);
         try {
-            Set<String> answer = Files.list(outDir).filter(p -> p.getFileName().toString().endsWith(".json")).map(p -> p.getFileName().toString())
+            Set<String> answer = Files.list(outDir).filter(p -> p.getFileName().toString().endsWith(PackageHelper.JSON_SUFIX)).map(p -> p.getFileName().toString())
                 // strip out .json from the name
-                .map(n -> n.substring(0, n.length() - ".json".length())).sorted().collect(LinkedHashSet::new, LinkedHashSet::add, LinkedHashSet::addAll);
+                .map(n -> n.substring(0, n.length() - PackageHelper.JSON_SUFIX.length())).sorted().collect(LinkedHashSet::new, LinkedHashSet::add, LinkedHashSet::addAll);
             String data = String.join("\n", answer) + "\n";
             FileUtil.updateFile(all, data);
             return answer;
@@ -542,7 +540,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
             NodeList children = dom.getElementsByTagName("features");
             for (int i = 0; i < children.getLength(); i++) {
                 Node child = children.item(i);
-                if (child.getNodeType() == ELEMENT_NODE) {
+                if (child.getNodeType() == Node.ELEMENT_NODE) {
                     NodeList children2 = child.getChildNodes();
                     for (int j = 0; j < children2.getLength(); j++) {
                         Node child2 = children2.item(j);

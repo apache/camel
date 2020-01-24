@@ -14,34 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.maven.packaging.model;
+package org.apache.camel.tooling.model;
+
+import java.util.List;
 
 import org.apache.camel.tooling.util.Strings;
 
-import static org.apache.camel.tooling.util.Strings.wrapCamelCaseWords;
+@SuppressWarnings("unused")
+public abstract class BaseOptionModel {
 
-public class EndpointOptionModel {
+    protected String name;
 
-    private String name;
-    private String displayName;
-    private String kind;
-    private String group;
-    private String label;
-    private String required;
-    private String type;
-    private String javaType;
-    private String enums;
-    private String prefix;
-    private String multiValue;
-    private String deprecated;
-    private String deprecationNote;
-    private String secret;
-    private String defaultValue;
-    private String description;
-    private String enumValues;
+    protected String kind;
+    protected String displayName;
+    protected String group;
+    protected String label;
+    protected boolean required;
+    protected String type;
+    protected String javaType;
+    protected List<String> enums;
+    protected List<String> oneOfs;
+    protected String prefix;
+    protected String optionalPrefix;
+    protected boolean multiValue;
+    protected boolean deprecated;
+    protected String deprecationNote;
+    protected boolean secret;
+    protected Object defaultValue;
+    protected String defaultValueNote;
+    protected boolean asPredicate;
+    protected String configurationClass;
+    protected String configurationField;
+    protected String description;
 
-    // special for documentation rendering
-    private boolean newGroup;
+    // todo: move this as a helper method
+    protected boolean newGroup; // special for documentation rendering
 
     public String getName() {
         return name;
@@ -51,20 +58,20 @@ public class EndpointOptionModel {
         this.name = name;
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
     public String getKind() {
         return kind;
     }
 
     public void setKind(String kind) {
         this.kind = kind;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public String getGroup() {
@@ -83,11 +90,11 @@ public class EndpointOptionModel {
         this.label = label;
     }
 
-    public String getRequired() {
+    public boolean isRequired() {
         return required;
     }
 
-    public void setRequired(String required) {
+    public void setRequired(boolean required) {
         this.required = required;
     }
 
@@ -107,12 +114,20 @@ public class EndpointOptionModel {
         this.javaType = javaType;
     }
 
-    public String getEnums() {
+    public List<String> getEnums() {
         return enums;
     }
 
-    public void setEnums(String enums) {
+    public void setEnums(List<String> enums) {
         this.enums = enums;
+    }
+
+    public List<String> getOneOfs() {
+        return oneOfs;
+    }
+
+    public void setOneOfs(List<String> oneOfs) {
+        this.oneOfs = oneOfs;
     }
 
     public String getPrefix() {
@@ -123,23 +138,27 @@ public class EndpointOptionModel {
         this.prefix = prefix;
     }
 
-    public String getMultiValue() {
+    public String getOptionalPrefix() {
+        return optionalPrefix;
+    }
+
+    public void setOptionalPrefix(String optionalPrefix) {
+        this.optionalPrefix = optionalPrefix;
+    }
+
+    public boolean isMultiValue() {
         return multiValue;
     }
 
-    public void setMultiValue(String multiValue) {
+    public void setMultiValue(boolean multiValue) {
         this.multiValue = multiValue;
     }
 
     public boolean isDeprecated() {
-        return "true".equals(deprecated);
-    }
-
-    public String getDeprecated() {
         return deprecated;
     }
 
-    public void setDeprecated(String deprecated) {
+    public void setDeprecated(boolean deprecated) {
         this.deprecated = deprecated;
     }
 
@@ -151,20 +170,52 @@ public class EndpointOptionModel {
         this.deprecationNote = deprecationNote;
     }
 
-    public String getSecret() {
+    public boolean isSecret() {
         return secret;
     }
 
-    public void setSecret(String secret) {
+    public void setSecret(boolean secret) {
         this.secret = secret;
     }
 
-    public String getDefaultValue() {
+    public Object getDefaultValue() {
         return defaultValue;
     }
 
-    public void setDefaultValue(String defaultValue) {
+    public void setDefaultValue(Object defaultValue) {
         this.defaultValue = defaultValue;
+    }
+
+    public String getDefaultValueNote() {
+        return defaultValueNote;
+    }
+
+    public void setDefaultValueNote(String defaultValueNote) {
+        this.defaultValueNote = defaultValueNote;
+    }
+
+    public boolean isAsPredicate() {
+        return asPredicate;
+    }
+
+    public void setAsPredicate(boolean asPredicate) {
+        this.asPredicate = asPredicate;
+    }
+
+    public String getConfigurationClass() {
+        return configurationClass;
+    }
+
+    public void setConfigurationClass(String configurationClass) {
+        this.configurationClass = configurationClass;
+    }
+
+    public String getConfigurationField() {
+        return configurationField;
+    }
+
+    public void setConfigurationField(String configurationField) {
+        this.configurationField = configurationField;
     }
 
     public String getDescription() {
@@ -175,36 +226,12 @@ public class EndpointOptionModel {
         this.description = description;
     }
 
-    public String getEnumValues() {
-        return enumValues;
-    }
-
-    public void setEnumValues(String enumValues) {
-        this.enumValues = enumValues;
-    }
-
     public boolean isNewGroup() {
         return newGroup;
     }
 
     public void setNewGroup(boolean newGroup) {
         this.newGroup = newGroup;
-    }
-
-    public String getShortJavaType() {
-        return Strings.getClassShortName(javaType);
-    }
-
-    @Deprecated
-    public String getShortJavaType(int watermark) {
-
-        String text = Strings.getClassShortName(javaType);
-
-        // if its some kind of java object then lets wrap it as its long
-        if ("object".equals(type)) {
-            text = wrapCamelCaseWords(text, watermark, " ");
-        }
-        return text;
     }
 
     public String getShortGroup() {
@@ -214,22 +241,32 @@ public class EndpointOptionModel {
         return group;
     }
 
-    public String getShortDefaultValue(int watermark) {
-        if (defaultValue.isEmpty()) {
-            return "";
+    public String getShortJavaType() {
+        return Strings.getClassShortName(javaType);
+    }
+
+    @Deprecated
+    public String getShortJavaType(int watermark) {
+        String text = Strings.getClassShortName(type);
+        // if its some kind of java object then lets wrap it as its long
+        if ("object".equals(type)) {
+            text = Strings.wrapCamelCaseWords(text, watermark, " ");
         }
-        String text = defaultValue;
+        return text;
+    }
+
+    public String getShortDefaultValue(int watermark) {
+        String text = defaultValue != null ? defaultValue.toString() : "";
         if (text.endsWith("<T>")) {
             text = text.substring(0, text.length() - 3);
         } else if (text.endsWith("<T>>")) {
             text = text.substring(0, text.length() - 4);
         }
-
         return text;
     }
 
     public String getShortName(int watermark) {
-        String text = wrapCamelCaseWords(name, watermark, " ");
+        String text = Strings.wrapCamelCaseWords(name, watermark, " ");
         // ensure the option name starts with lower-case
         return Character.toLowerCase(text.charAt(0)) + text.substring(1);
     }

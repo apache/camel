@@ -45,4 +45,10 @@ public class PackageHelperTest {
         assertTrue(jsonFiles.containsKey("b"), "Files b.json must be found");
         assertFalse(jsonFiles.containsKey("c"), "File c.txt must not be found");
     }
+
+    @Test
+    public void testGetSchemaKind() throws Exception {
+        String json = PackageHelper.loadText(ResourceUtils.getResourceAsFile("json/aop.json"));
+        assertEquals("model", PackageHelper.getSchemaKind(json));
+    }
 }
