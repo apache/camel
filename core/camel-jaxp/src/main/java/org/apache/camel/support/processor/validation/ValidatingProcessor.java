@@ -37,8 +37,6 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.ls.LSResourceResolver;
 
@@ -53,6 +51,8 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.builder.xml.XMLConverterHelper;
 import org.apache.camel.util.IOHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.support.processor.validation.SchemaReader.ACCESS_EXTERNAL_DTD;
 
