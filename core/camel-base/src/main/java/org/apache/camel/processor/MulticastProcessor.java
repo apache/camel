@@ -43,6 +43,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -50,6 +51,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.UnitOfWork;
@@ -145,6 +147,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
     protected final Processor onPrepare;
     private final CamelContext camelContext;
+    private final ReactiveExecutor reactiveExecutor;
     private String id;
     private String routeId;
     private Collection<Processor> processors;
@@ -182,6 +185,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
                               boolean parallelAggregate, boolean stopOnAggregateException) {
         notNull(camelContext, "camelContext");
         this.camelContext = camelContext;
+        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
         this.processors = processors;
         this.aggregationStrategy = aggregationStrategy;
         this.executorService = executorService;
@@ -246,12 +250,12 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
         MulticastState state = new MulticastState(exchange, pairs, callback);
         if (isParallelProcessing()) {
-            executorService.submit(() -> exchange.getContext().getReactiveExecutor().schedule(state));
+            executorService.submit(() -> reactiveExecutor.schedule(state));
         } else {
             if (exchange.isTransacted()) {
-                exchange.getContext().getReactiveExecutor().scheduleSync(state);
+                reactiveExecutor.scheduleSync(state);
             } else {
-                exchange.getContext().getReactiveExecutor().scheduleMain(state);
+                reactiveExecutor.scheduleMain(state);
             }
         }
 
@@ -263,9 +267,9 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
     protected void schedule(Runnable runnable) {
         if (isParallelProcessing()) {
-            executorService.submit(() -> camelContext.getReactiveExecutor().schedule(runnable));
+            executorService.submit(() -> reactiveExecutor.schedule(runnable));
         } else {
-            camelContext.getReactiveExecutor().schedule(runnable);
+            reactiveExecutor.schedule(runnable);
         }
     }
 
@@ -552,7 +556,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             original.setProperty(Exchange.REDELIVERY_EXHAUSTED, exhaust);
         }
 
-        camelContext.getReactiveExecutor().schedule(callback);
+        reactiveExecutor.schedule(callback);
     }
 
     /**

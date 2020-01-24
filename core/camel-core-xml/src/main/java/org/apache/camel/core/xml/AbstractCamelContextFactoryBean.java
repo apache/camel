@@ -260,7 +260,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         HeadersMapFactory headersMapFactory = getBeanForType(HeadersMapFactory.class);
         if (headersMapFactory != null) {
             LOG.info("Using custom HeadersMapFactory: {}", headersMapFactory);
-            getContext().setHeadersMapFactory(headersMapFactory);
+            getContext().adapt(ExtendedCamelContext.class).setHeadersMapFactory(headersMapFactory);
         }
         JSonSchemaResolver jsonSchemaResolver = getBeanForType(JSonSchemaResolver.class);
         if (jsonSchemaResolver != null) {
@@ -1231,7 +1231,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         ReactiveExecutor reactiveExecutor = getBeanForType(ReactiveExecutor.class);
         if (reactiveExecutor != null) {
             // already logged in CamelContext
-            getContext().setReactiveExecutor(reactiveExecutor);
+            getContext().adapt(ExtendedCamelContext.class).setReactiveExecutor(reactiveExecutor);
         }
     }
 }

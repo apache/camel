@@ -55,7 +55,6 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -106,14 +105,14 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
     public CamelInternalProcessor(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.reactiveExecutor = camelContext.getReactiveExecutor();
+        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
         this.shutdownStrategy = camelContext.getShutdownStrategy();
     }
 
     public CamelInternalProcessor(CamelContext camelContext, Processor processor) {
         super(processor);
         this.camelContext = camelContext;
-        this.reactiveExecutor = camelContext.getReactiveExecutor();
+        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
         this.shutdownStrategy = camelContext.getShutdownStrategy();
     }
 

@@ -26,6 +26,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
@@ -58,7 +59,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
 
     public Pipeline(CamelContext camelContext, Collection<Processor> processors) {
         this.camelContext = camelContext;
-        this.reactiveExecutor = camelContext.getReactiveExecutor();
+        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
         this.processors = processors.stream().map(AsyncProcessorConverterHelper::convert).collect(Collectors.toList());
     }
 
