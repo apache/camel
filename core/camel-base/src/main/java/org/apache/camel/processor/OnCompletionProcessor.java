@@ -147,7 +147,8 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         // must remember some properties which we cannot use during onCompletion processing
         // as otherwise we may cause issues
         // but keep the caused exception stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
-        Object stop = exchange.removeProperty(Exchange.ROUTE_STOP);
+        boolean stop = exchange.isRouteStop();
+        exchange.setRouteStop(false);
         Object failureHandled = exchange.removeProperty(Exchange.FAILURE_HANDLED);
         Object errorhandlerHandled = exchange.removeProperty(Exchange.ERRORHANDLER_HANDLED);
         Object rollbackOnly = exchange.removeProperty(Exchange.ROLLBACK_ONLY);
@@ -164,9 +165,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
             exchange.setException(e);
         } finally {
             // restore the options
-            if (stop != null) {
-                exchange.setProperty(Exchange.ROUTE_STOP, stop);
-            }
+            exchange.setRouteStop(stop);
             if (failureHandled != null) {
                 exchange.setProperty(Exchange.FAILURE_HANDLED, failureHandled);
             }

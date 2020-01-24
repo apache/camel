@@ -128,15 +128,11 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
     }
 
     protected boolean continueRouting(List<AsyncProcessor> list, AtomicInteger index, Exchange exchange) {
-        Object stop = exchange.getProperty(Exchange.ROUTE_STOP);
-        if (stop != null) {
-            boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
-            if (doStop) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("ExchangeId: {} is marked to stop routing: {}", exchange.getExchangeId(), exchange);
-                }
-                return false;
+        if (exchange.isRouteStop()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("ExchangeId: {} is marked to stop routing: {}", exchange.getExchangeId(), exchange);
             }
+            return false;
         }
         // continue if there are more processors to route
         boolean answer = index.get() < list.size();

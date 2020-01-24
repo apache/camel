@@ -57,6 +57,7 @@ public final class DefaultExchange implements ExtendedExchange {
     private Boolean externalRedelivered;
     private String historyNodeId;
     private String historyNodeLabel;
+    private boolean routeStop;
 
     public DefaultExchange(CamelContext context) {
         this(context, ExchangePattern.InOnly);
@@ -119,6 +120,7 @@ public final class DefaultExchange implements ExtendedExchange {
         }
 
         exchange.setException(getException());
+        exchange.setRouteStop(isRouteStop());
 
         // copy properties after body as body may trigger lazy init
         if (hasProperties()) {
@@ -464,6 +466,16 @@ public final class DefaultExchange implements ExtendedExchange {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public boolean isRouteStop() {
+        return routeStop;
+    }
+
+    @Override
+    public void setRouteStop(boolean routeStop) {
+        this.routeStop = routeStop;
     }
 
     @Override

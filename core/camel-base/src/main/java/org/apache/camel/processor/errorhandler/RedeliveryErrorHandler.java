@@ -300,7 +300,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         if (ExchangeHelper.isInterrupted(exchange)) {
             // mark the exchange to stop continue routing when interrupted
             // as we do not want to continue routing (for example a task has been cancelled)
-            exchange.setProperty(Exchange.ROUTE_STOP, Boolean.TRUE);
+            exchange.setRouteStop(true);
             answer = true;
         }
 
@@ -472,7 +472,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                             exchange.setException(e);
                             // mark the exchange to stop continue routing when interrupted
                             // as we do not want to continue routing (for example a task has been cancelled)
-                            exchange.setProperty(Exchange.ROUTE_STOP, Boolean.TRUE);
+                            exchange.setRouteStop(true);
                             reactiveExecutor.schedule(callback);
                         }
                     }

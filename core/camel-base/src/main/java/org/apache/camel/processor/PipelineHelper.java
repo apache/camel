@@ -63,15 +63,11 @@ public final class PipelineHelper {
         }
 
         // check for stop
-        Object stop = exchange.getProperty(Exchange.ROUTE_STOP);
-        if (stop != null) {
-            boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, exchange, stop);
-            if (doStop) {
-                if (log.isDebugEnabled()) {
-                    log.debug("ExchangeId: {} is marked to stop routing: {}", exchange.getExchangeId(), exchange);
-                }
-                return false;
+        if (exchange.isRouteStop()) {
+            if (log.isDebugEnabled()) {
+                log.debug("ExchangeId: {} is marked to stop routing: {}", exchange.getExchangeId(), exchange);
             }
+            return false;
         }
 
         return true;
