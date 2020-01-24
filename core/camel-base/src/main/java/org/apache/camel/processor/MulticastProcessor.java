@@ -765,7 +765,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
      * @return the unit of work processor
      */
     protected Processor createUnitOfWorkProcessor(RouteContext routeContext, Processor processor, Exchange exchange) {
-        CamelInternalProcessor internal = new CamelInternalProcessor(processor);
+        CamelInternalProcessor internal = new CamelInternalProcessor(exchange.getContext(), processor);
 
         // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
         UnitOfWork parent = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class);

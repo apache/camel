@@ -33,6 +33,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
+import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationVetoable;
@@ -60,6 +61,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private String id;
     private final Logger log;
     private final CamelContext context;
+    private final InflightRepository inflightRepository;
     private RouteContext prevRouteContext;
     private RouteContext routeContext;
     private List<Synchronization> synchronizations;
@@ -76,6 +78,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             log.trace("UnitOfWork created for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
         }
         context = exchange.getContext();
+        inflightRepository = exchange.getContext().getInflightRepository();
 
         if (context.isAllowUseOriginalMessage()) {
             // special for JmsMessage as it can cause it to loose headers later.
@@ -112,7 +115,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
 
         // register to inflight registry
-        context.getInflightRepository().add(exchange);
+        inflightRepository.add(exchange);
     }
 
     UnitOfWork newInstance(Exchange exchange) {
@@ -206,9 +209,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations, log);
 
         // unregister from inflight registry, before signalling we are done
-        if (exchange.getContext() != null) {
-            exchange.getContext().getInflightRepository().remove(exchange);
-        }
+        inflightRepository.remove(exchange);
 
         // then fire event to signal the exchange is done
         try {

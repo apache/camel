@@ -92,42 +92,29 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * The added advices can implement {@link Ordered} to control in which order the advices are executed.
  */
-public class CamelInternalProcessor extends DelegateAsyncProcessor implements CamelContextAware {
+public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelInternalProcessor.class);
 
     private static final Object[] EMPTY_STATES = new Object[0];
 
-    private CamelContext camelContext;
-    private ReactiveExecutor reactiveExecutor;
-    private ShutdownStrategy shutdownStrategy;
+    private final CamelContext camelContext;
+    private final ReactiveExecutor reactiveExecutor;
+    private final ShutdownStrategy shutdownStrategy;
     private final List<CamelInternalProcessorAdvice<?>> advices = new ArrayList<>();
     private byte statefulAdvices;
 
-    public CamelInternalProcessor() {
-    }
-
-    public CamelInternalProcessor(Processor processor) {
-        super(processor);
-    }
-
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    public void setCamelContext(CamelContext camelContext) {
+    public CamelInternalProcessor(CamelContext camelContext) {
         this.camelContext = camelContext;
+        this.reactiveExecutor = camelContext.getReactiveExecutor();
+        this.shutdownStrategy = camelContext.getShutdownStrategy();
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
-        // optimize to preset reactive executor
-        if (camelContext != null) {
-            reactiveExecutor = camelContext.getReactiveExecutor();
-            shutdownStrategy = camelContext.getShutdownStrategy();
-        }
+    public CamelInternalProcessor(CamelContext camelContext, Processor processor) {
+        super(processor);
+        this.camelContext = camelContext;
+        this.reactiveExecutor = camelContext.getReactiveExecutor();
+        this.shutdownStrategy = camelContext.getShutdownStrategy();
     }
 
     /**
@@ -182,14 +169,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements Ca
             // no processor or we should not continue then we are done
             originalCallback.done(true);
             return true;
-        }
-
-        // TODO: should not be needed
-        if (reactiveExecutor == null) {
-            reactiveExecutor = exchange.getContext().getReactiveExecutor();
-        }
-        if (shutdownStrategy == null) {
-            shutdownStrategy = exchange.getContext().getShutdownStrategy();
         }
 
         // optimise to use object array for states, and only for the number of advices that keep state
