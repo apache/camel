@@ -244,14 +244,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     }
 
     @Override
-    public String getId() {
-        if (id == null) {
-            id = context.getUuidGenerator().generateUuid();
-        }
-        return id;
-    }
-
-    @Override
     public Message getOriginalInMessage() {
         if (originalInMessage == null && !context.isAllowUseOriginalMessage()) {
             throw new IllegalStateException("AllowUseOriginalMessage is disabled. Cannot access the original message.");
