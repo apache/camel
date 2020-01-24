@@ -23,7 +23,7 @@ class ComponentDslGeneratorTest {
         final String json = PackageHelper.loadText(new File(Objects.requireNonNull(getClass().getClassLoader().getResource("json/test_component.json")).getFile()));
         final ComponentModel componentModel = ComponentModel.generateComponentModelFromJsonString(json);
 
-        final ComponentDslGenerator componentDslGenerator = ComponentDslGenerator.createDslJavaClassFromComponentModel(componentModel, getClass().getClassLoader());
+        final ComponentDslGenerator componentDslGenerator = ComponentDslGenerator.generateClass(componentModel, getClass().getClassLoader(), "org.apache.camel.builder.component.dsl");
 
         System.out.println(componentDslGenerator.toString());
     }

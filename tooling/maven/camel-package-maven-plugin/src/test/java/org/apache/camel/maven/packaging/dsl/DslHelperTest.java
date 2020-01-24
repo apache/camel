@@ -13,7 +13,7 @@ class DslHelperTest {
 
     @Test
     public void testLoadAllJavaFiles() {
-        final List<File> files = DslHelper.loadAllJavaFiles(new File("/Users/oalsafi/Work/Apache/camel/core/camel-componentdsl/src/main/java"), ComponentDslGenerator.COMPONENT_DSL_PACKAGE_NAME + ".dsl");
+        final List<File> files = DslHelper.loadAllJavaFiles(new File("/Users/oalsafi/Work/Apache/camel/core/camel-componentdsl/src/main/java"), "org.apache.camel.builder.component.dsl");
         files.forEach(file -> {
             System.out.println(Strings.before(file.getName(), "."));
         });

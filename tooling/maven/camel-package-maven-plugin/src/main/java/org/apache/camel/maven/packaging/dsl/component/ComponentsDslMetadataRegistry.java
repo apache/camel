@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -20,7 +19,10 @@ import org.apache.camel.tooling.util.Strings;
 
 import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
-public class ComponentDslMetadataGenerator {
+/**
+ * Metadata components registry, used to keep track of the components generated DSLs in order to sync the pom file and relevant main builder factory file
+ */
+public class ComponentsDslMetadataRegistry {
 
     private Map<String, ComponentModel> componentsCache;
     private Set<String> componentsDslFactories;
@@ -28,7 +30,7 @@ public class ComponentDslMetadataGenerator {
 
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public ComponentDslMetadataGenerator(final File componentDslDir, final File metadataFile) {
+    public ComponentsDslMetadataRegistry(final File componentDslDir, final File metadataFile) {
         // First: Load the content of the metadata file into memory
         componentsCache = loadMetadataFileIntoMap(metadataFile);
         componentsDslFactories = loadComponentsFactoriesFromDir(componentDslDir);
@@ -73,26 +75,6 @@ public class ComponentDslMetadataGenerator {
         });
 
         componentsNamesToRemoveFromCache.forEach(componentFactoryName -> componentsCache.remove(componentFactoryName));
-    }
-
-    private Map<String, Object> convertComponentModelToMap(final ComponentModel componentModel) {
-        final Map<java.lang.String, java.lang.Object> componentMap = new HashMap<>();
-
-        componentMap.put("schema", componentModel.getScheme());
-        componentMap.put("title", componentModel.getTitle());
-        componentMap.put("description", componentModel.getDescription());
-        componentMap.put("label", componentModel.getLabel());
-        componentMap.put("deprecated", componentModel.getDeprecated());
-        componentMap.put("deprecationNote", componentModel.getDeprecationNote());
-        componentMap.put("consumerOnly", componentModel.getConsumerOnly());
-        componentMap.put("producerOnly", componentModel.getConsumerOnly());
-        componentMap.put("javaType", componentModel.getJavaType());
-        componentMap.put("firstVersion", componentModel.getFirstVersion());
-        componentMap.put("groupId", componentModel.getGroupId());
-        componentMap.put("artifactId", componentModel.getArtifactId());
-        componentMap.put("version", componentModel.getVersion());
-
-        return componentMap;
     }
 
     private void writeCacheIntoMetadataFile() {

@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.text.CaseUtils;
+
 public final class DslHelper {
     private DslHelper(){}
 
@@ -26,5 +28,25 @@ public final class DslHelper {
                 .filter(file -> file.isFile() && file.getName().endsWith(".java") && file.exists())
                 .sorted()
                 .collect(Collectors.toList());
+    }
+
+    public static String toCamelCaseLower(final String schema) {
+        String convertedText = CaseUtils.toCamelCase(schema, false, '-');
+        if (convertedText != null) {
+            switch (convertedText) {
+                case "class":
+                    convertedText = "clas";
+                    break;
+                case "package":
+                    convertedText = "packag";
+                    break;
+                case "rest":
+                    convertedText = "restEndpoint";
+                    break;
+                default:
+                    break;
+            }
+        }
+        return convertedText;
     }
 }

@@ -5,6 +5,10 @@ import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.camel.tooling.util.srcgen.Method;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * DSL Generator class that generates component specific builder interface that contains the fluent methods, placed as inner
+ * of the main component builder factory. E.g: KafkaComponentBuilderFactory.KafkaComponentBuilder
+ */
 public class ComponentDslInnerBuilderGenerator {
     private static final String BUILDER_SUFFIX = "Builder";
 
@@ -22,40 +26,31 @@ public class ComponentDslInnerBuilderGenerator {
         return new ComponentDslInnerBuilderGenerator(javaClass, componentModel);
     }
 
-    public String getClassName() {
+    public static String getExpectedGeneratedInterfaceName(final ComponentModel componentModel) {
         return componentModel.getShortJavaType() + BUILDER_SUFFIX;
+    }
+
+    public String getGeneratedInterfaceName() {
+        return getExpectedGeneratedInterfaceName(componentModel);
     }
 
     private void generateJavaClass() {
         setClassNameAndType();
-        setDefaultMethods();
         setFluentMethodsFromComponentOptions();
     }
 
     private void setClassNameAndType() {
-        javaClass.setName(getClassName())
+        javaClass.setName(getGeneratedInterfaceName())
                 .setPackagePrivate()
                 .setClass(false)
                 .extendSuperType("ComponentBuilder");
-    }
-
-    private void setDefaultMethods() {
-        final Method method = javaClass.addMethod();
-        method.setDefault()
-                .setReturnType(getClassName())
-                .setName("withComponentName")
-                .addParameter(String.class, "name")
-                .setBody(
-                        "doSetComponentName(name);",
-                        "return this;"
-                );
     }
 
     private void setFluentMethodsFromComponentOptions() {
         componentModel.getComponentOptions().forEach(componentOptionModel -> {
             final Method method = javaClass.addMethod();
             method.setDefault()
-                    .setReturnType(getClassName())
+                    .setReturnType(getGeneratedInterfaceName())
                     .setName("set" + StringUtils.capitalize(componentOptionModel.getName()))
                     .addParameter(componentOptionModel.getJavaType(), componentOptionModel.getName())
                     .setBody(

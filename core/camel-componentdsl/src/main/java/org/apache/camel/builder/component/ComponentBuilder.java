@@ -39,17 +39,6 @@ public interface ComponentBuilder {
     Component build(CamelContext context);
 
     /**
-     * Returns the component name. This API is only intended for Camel.
-     */
-    String getName();
-
-    /**
-     * Adds a name to this component. This API is only intended for Camel
-     * internally.
-     */
-    void doSetComponentName(String name);
-
-    /**
      * Adds an option to this component. This API is only intended for Camel
      * internally.
      */

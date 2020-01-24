@@ -12,10 +12,6 @@ public interface DebeziumMySqlComponentBuilderFactory {
     }
 
     interface DebeziumMySqlComponentBuilder extends ComponentBuilder {
-        default DebeziumMySqlComponentBuilder withComponentName(String name) {
-            doSetComponentName(name);
-            return this;
-        }
         default DebeziumMySqlComponentBuilder setConfiguration(
                 org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration configuration) {
             doSetProperty("configuration", configuration);
@@ -38,9 +34,6 @@ public interface DebeziumMySqlComponentBuilderFactory {
                 AbstractComponentBuilder
             implements
                 DebeziumMySqlComponentBuilder {
-        public DebeziumMySqlComponentBuilderImpl() {
-            super("debezium-mysql");
-        }
         @Override
         protected Component buildConcreteComponent() {
             return new DebeziumMySqlComponent();

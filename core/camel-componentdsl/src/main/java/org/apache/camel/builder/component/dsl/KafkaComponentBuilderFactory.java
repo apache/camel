@@ -12,10 +12,6 @@ public interface KafkaComponentBuilderFactory {
     }
 
     interface KafkaComponentBuilder extends ComponentBuilder {
-        default KafkaComponentBuilder withComponentName(String name) {
-            doSetComponentName(name);
-            return this;
-        }
         default KafkaComponentBuilder setConfiguration(
                 org.apache.camel.component.kafka.KafkaConfiguration configuration) {
             doSetProperty("configuration", configuration);
@@ -72,9 +68,6 @@ public interface KafkaComponentBuilderFactory {
                 AbstractComponentBuilder
             implements
                 KafkaComponentBuilder {
-        public KafkaComponentBuilderImpl() {
-            super("kafka");
-        }
         @Override
         protected Component buildConcreteComponent() {
             return new KafkaComponent();

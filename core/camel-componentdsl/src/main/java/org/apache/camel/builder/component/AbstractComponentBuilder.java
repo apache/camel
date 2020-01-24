@@ -5,18 +5,17 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 
 public abstract class AbstractComponentBuilder {
-    private String name;
     private final Map<String, Object> properties = new LinkedHashMap<>();
-
-    protected AbstractComponentBuilder(final String name) {
-        this.name = name;
-    }
 
     public Component build() {
         final Component component = buildConcreteComponent();
+        if (component.getCamelContext() == null) {
+            component.setCamelContext(new DefaultCamelContext());
+        }
         component.init();
 
         final GeneratedPropertyConfigurer propertyConfigurer = (GeneratedPropertyConfigurer) component.getComponentPropertyConfigurer();
@@ -38,16 +37,8 @@ public abstract class AbstractComponentBuilder {
         return component;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public void doSetProperty(final String key, final Object value) {
         properties.put(key, value);
-    }
-
-    public void doSetComponentName(final String name) {
-        this.name = name;
     }
 
     protected abstract Component buildConcreteComponent();

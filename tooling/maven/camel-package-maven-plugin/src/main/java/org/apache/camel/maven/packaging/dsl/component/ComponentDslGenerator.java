@@ -2,30 +2,40 @@ package org.apache.camel.maven.packaging.dsl.component;
 
 import java.util.Objects;
 
+import org.apache.camel.maven.packaging.dsl.DslHelper;
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
-import org.apache.commons.text.CaseUtils;
 
+/**
+ * DSL Generator class that generates main component specific builder factory, e.g: KafkaComponentBuilderFactory
+ */
 public class ComponentDslGenerator {
-    public static final String COMPONENT_DSL_PACKAGE_NAME = "org.apache.camel.builder.component";
-
     private static final String BUILDER_FACTORY_SUFFIX = "BuilderFactory";
 
     private final ComponentModel componentModel;
+    private final String packageName;
     private JavaClass javaClass;
-    private ComponentDslGenerator(final ComponentModel componentModel, final ClassLoader classLoader) {
+    private ComponentDslInnerBuilderGenerator componentDslInnerBuilderGenerator;
+    private ComponentDslInnerImplBuilderGenerator componentDslInnerImplBuilderGenerator;
+
+    private ComponentDslGenerator(final ComponentModel componentModel, final ClassLoader classLoader, final String packageName) {
         this.componentModel = componentModel;
+        this.packageName = packageName;
 
         javaClass = new JavaClass(classLoader);
         // generate java class
         generateJavaClass();
     }
 
-    public static ComponentDslGenerator createDslJavaClassFromComponentModel(final ComponentModel componentModel, final ClassLoader classLoader) {
+    public static ComponentDslGenerator generateClass(final ComponentModel componentModel, final ClassLoader classLoader, final String componentDslPackageName) {
         Objects.requireNonNull(componentModel);
         Objects.requireNonNull(classLoader);
 
-        return new ComponentDslGenerator(componentModel, classLoader);
+        return new ComponentDslGenerator(componentModel, classLoader, componentDslPackageName);
+    }
+
+    public static String getExpectedGeneratedClassName(final ComponentModel componentModel) {
+        return componentModel.getShortJavaType() + BUILDER_FACTORY_SUFFIX;
     }
 
     public String printClassAsString() {
@@ -38,26 +48,34 @@ public class ComponentDslGenerator {
     }
 
     public String getGeneratedClassName() {
-        return componentModel.getShortJavaType() + BUILDER_FACTORY_SUFFIX;
+        return getExpectedGeneratedClassName(componentModel);
+    }
+
+    public ComponentDslInnerBuilderGenerator getComponentDslInnerBuilderGenerator() {
+        return componentDslInnerBuilderGenerator;
+    }
+
+    public ComponentDslInnerImplBuilderGenerator getComponentDslInnerImplBuilderGenerator() {
+        return componentDslInnerImplBuilderGenerator;
     }
 
     private void generateJavaClass() {
         setPackage();
         setImports();
         setBuilderFactoryClassNameAndType();
-        final String innerBuilderInterfaceName = ComponentDslInnerBuilderGenerator.generateClass(javaClass.addNestedType(), componentModel).getClassName();
-        final String innerBuilderImplName = ComponentDslInnerImplBuilderGenerator.generateClass(javaClass.addNestedType(), componentModel).getBuilderImplClassName();
-        setDslEntryMethod(innerBuilderInterfaceName, innerBuilderImplName);
+        componentDslInnerBuilderGenerator = ComponentDslInnerBuilderGenerator.generateClass(javaClass.addNestedType(), componentModel);
+        componentDslInnerImplBuilderGenerator = ComponentDslInnerImplBuilderGenerator.generateClass(javaClass.addNestedType(), componentModel, componentDslInnerBuilderGenerator.getGeneratedInterfaceName());
+        setDslEntryMethod(componentDslInnerBuilderGenerator.getGeneratedInterfaceName(), componentDslInnerImplBuilderGenerator.getGeneratedClassName());
     }
 
     private void setPackage() {
-        javaClass.setPackage(COMPONENT_DSL_PACKAGE_NAME + ".dsl");
+        javaClass.setPackage(packageName + ".dsl");
     }
 
     private void setImports() {
         javaClass.addImport("org.apache.camel.Component");
-        javaClass.addImport("org.apache.camel.builder.component.AbstractComponentBuilder");
-        javaClass.addImport("org.apache.camel.builder.component.ComponentBuilder");
+        javaClass.addImport(packageName + ".AbstractComponentBuilder");
+        javaClass.addImport(packageName + ".ComponentBuilder");
         javaClass.addImport(componentModel.getJavaType());
     }
 
@@ -71,8 +89,7 @@ public class ComponentDslGenerator {
         javaClass.addMethod()
                 .setStatic()
                 .setReturnType(innerBuilderInterfaceName)
-                .setName(CaseUtils.toCamelCase(componentModel.getScheme(), false, '-'))
+                .setName(DslHelper.toCamelCaseLower(componentModel.getScheme()))
                 .setBody(String.format("return new %s();", innerBuilderImplName));
-
     }
 }

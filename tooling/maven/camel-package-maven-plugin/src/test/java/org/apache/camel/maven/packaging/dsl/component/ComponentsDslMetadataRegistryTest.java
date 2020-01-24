@@ -8,9 +8,7 @@ import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class ComponentDslMetadataGeneratorTest {
+class ComponentsDslMetadataRegistryTest {
 
     @Test
     public void testJson() throws IOException {
@@ -19,11 +17,11 @@ class ComponentDslMetadataGeneratorTest {
         final File componentsDir = new File("/Users/oalsafi/Work/Apache/camel/core/camel-componentdsl/src/main/java/org/apache/camel/builder/component/dsl");
 
         final ComponentModel componentModel = ComponentModel.generateComponentModelFromJsonString(json);
-        final ComponentDslMetadataGenerator componentDslMetadataGenerator = new ComponentDslMetadataGenerator(componentsDir, metadata);
+        final ComponentsDslMetadataRegistry componentsDslMetadataRegistry = new ComponentsDslMetadataRegistry(componentsDir, metadata);
 
-        componentDslMetadataGenerator.addComponentToMetadataAndSyncMetadataFile(componentModel, "KafkaComponentBuilderFsactory");
+        componentsDslMetadataRegistry.addComponentToMetadataAndSyncMetadataFile(componentModel, "KafkaComponentBuilderFsactory");
 
-        System.out.println(componentDslMetadataGenerator.getComponentCacheFromMemory());
+        System.out.println(componentsDslMetadataRegistry.getComponentCacheFromMemory());
 
     }
 

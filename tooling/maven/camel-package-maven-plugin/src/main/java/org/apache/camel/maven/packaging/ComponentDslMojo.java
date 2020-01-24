@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -13,12 +14,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.apache.camel.maven.packaging.dsl.component.ComponentBuilderFactoryGenerator;
 import org.apache.camel.maven.packaging.dsl.component.ComponentDslGenerator;
-import org.apache.camel.maven.packaging.dsl.component.ComponentDslMetadataGenerator;
+import org.apache.camel.maven.packaging.dsl.component.ComponentsDslMetadataRegistry;
 import org.apache.camel.maven.packaging.model.ComponentModel;
-import org.apache.camel.maven.packaging.model.ComponentOptionModel;
-import org.apache.camel.maven.packaging.model.EndpointOptionModel;
-import org.apache.camel.tooling.util.JSonSchemaHelper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -31,7 +30,6 @@ import org.apache.maven.project.MavenProject;
 
 import static org.apache.camel.tooling.util.JSonSchemaHelper.getSafeValue;
 import static org.apache.camel.tooling.util.PackageHelper.*;
-import static org.apache.camel.tooling.util.Strings.between;
 
 /**
  * Generate Endpoint DSL source files for Components.
@@ -75,10 +73,10 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
     protected File outputResourcesDir;
 
     /**
-     * The package where to generate component factories
+     * The package where to the main DSL component package is
      */
     @Parameter(defaultValue = "org.apache.camel.builder.component")
-    protected String endpointFactoriesPackageName;
+    protected String componentsDslPackageName;
 
     /**
      * The package where to generate component DSL specific factories
@@ -201,14 +199,20 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
     }
 
     private void createComponentDsl(final ComponentModel model) throws MojoExecutionException {
-        final ComponentDslGenerator componentDslGenerator = ComponentDslGenerator.createDslJavaClassFromComponentModel(model, projectClassLoader);
+        final ComponentDslGenerator componentDslGenerator = ComponentDslGenerator.generateClass(model, projectClassLoader, componentsDslPackageName);
         Path target = outputJavaDir.toPath().resolve(componentsDslFactoriesPackageName.replace('.', '/')).resolve(componentDslGenerator.getGeneratedClassName() + ".java");
         updateResource(buildContext, target, componentDslGenerator.printClassAsString());
 
-        final ComponentDslMetadataGenerator componentDslMetadataGenerator = new ComponentDslMetadataGenerator(outputJavaDir.toPath().resolve(componentsDslFactoriesPackageName.replace('.', '/')).toFile(), outputResourcesDir.toPath().resolve("metadata.json").toFile());
-        componentDslMetadataGenerator.addComponentToMetadataAndSyncMetadataFile(model, componentDslGenerator.getGeneratedClassName());
+        final ComponentsDslMetadataRegistry componentsDslMetadataRegistry = new ComponentsDslMetadataRegistry(outputJavaDir.toPath().resolve(componentsDslFactoriesPackageName.replace('.', '/')).toFile(), outputResourcesDir.toPath().resolve("metadata.json").toFile());
+        componentsDslMetadataRegistry.addComponentToMetadataAndSyncMetadataFile(model, componentDslGenerator.getGeneratedClassName());
 
-        syncPomFile(componentDslPom,componentDslMetadataGenerator.getComponentCacheFromMemory());
+        final Set<ComponentModel> componentCachedModels = new HashSet<>(componentsDslMetadataRegistry.getComponentCacheFromMemory().values());
+
+        final ComponentBuilderFactoryGenerator componentBuilderFactoryGenerator = ComponentBuilderFactoryGenerator.generateClass(componentCachedModels, projectClassLoader, componentsDslPackageName);
+        Path target2 = outputJavaDir.toPath().resolve(componentsDslPackageName.replace('.', '/')).resolve(componentBuilderFactoryGenerator.getGeneratedClassName() + ".java");
+        updateResource(buildContext, target2, componentBuilderFactoryGenerator.printClassAsString());
+
+        syncPomFile(componentDslPom, componentsDslMetadataRegistry.getComponentCacheFromMemory());
     }
 
     private void findComponentNames(File dir, Set<String> componentNames) {
