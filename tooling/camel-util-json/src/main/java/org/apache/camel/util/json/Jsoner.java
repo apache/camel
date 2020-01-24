@@ -619,6 +619,10 @@ public final class Jsoner {
      * @since 2.2.0 to allow pretty printing with spaces instead of tabs.
      */
     public static String prettyPrint(final String printable, final int spaces) {
+        return prettyPrint(printable, spaces, Integer.MAX_VALUE);
+    }
+
+    public static String prettyPrint(final String printable, final int spaces, final int depth) {
         if ((spaces > 10) || (spaces < 2)) {
             throw new IllegalArgumentException("Indentation with spaces must be between 2 and 10.");
         }
@@ -626,7 +630,7 @@ public final class Jsoner {
         for (int i = 0; i < spaces; i++) {
             indentation.append(" ");
         }
-        return Jsoner.prettyPrint(printable, indentation.toString());
+        return Jsoner.prettyPrint(printable, indentation.toString(), depth);
     }
 
     /**
@@ -642,6 +646,10 @@ public final class Jsoner {
      *         JSON. It will return null if printable isn't a JSON string.
      */
     private static String prettyPrint(final String printable, final String indentation) {
+        return prettyPrint(printable, indentation, Integer.MAX_VALUE);
+    }
+
+    private static String prettyPrint(final String printable, final String indentation, final int depth) {
         final Yylex lexer = new Yylex(new StringReader(printable));
         Yytoken lexed;
         final StringBuilder returnable = new StringBuilder();
@@ -651,32 +659,43 @@ public final class Jsoner {
                 lexed = Jsoner.lexNextToken(lexer);
                 switch (lexed.getType()) {
                 case COLON:
-                    returnable.append(":");
+                    returnable.append(": ");
                     break;
                 case COMMA:
                     returnable.append(lexed.getValue());
-                    returnable.append("\n");
-                    for (int i = 0; i < level; i++) {
-                        returnable.append(indentation);
+                    if (level <= depth) {
+                        returnable.append("\n");
+                        for (int i = 0; i < level; i++) {
+                            returnable.append(indentation);
+                        }
+                    } else {
+                        returnable.append(" ");
                     }
                     break;
                 case END:
+                    returnable.append("\n");
                     break;
                 case LEFT_BRACE:
                 case LEFT_SQUARE:
                     returnable.append(lexed.getValue());
-                    returnable.append("\n");
-                    level++;
-                    for (int i = 0; i < level; i++) {
-                        returnable.append(indentation);
+                    if (++level <= depth) {
+                        returnable.append("\n");
+                        for (int i = 0; i < level; i++) {
+                            returnable.append(indentation);
+                        }
+                    } else {
+                        returnable.append(" ");
                     }
                     break;
                 case RIGHT_BRACE:
                 case RIGHT_SQUARE:
-                    returnable.append("\n");
-                    level--;
-                    for (int i = 0; i < level; i++) {
-                        returnable.append(indentation);
+                    if (level-- <= depth) {
+                        returnable.append("\n");
+                        for (int i = 0; i < level; i++) {
+                            returnable.append(indentation);
+                        }
+                    } else {
+                        returnable.append(" ");
                     }
                     returnable.append(lexed.getValue());
                     break;
