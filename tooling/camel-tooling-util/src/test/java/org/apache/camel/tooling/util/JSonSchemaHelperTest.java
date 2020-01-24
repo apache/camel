@@ -16,8 +16,9 @@
  */
 package org.apache.camel.tooling.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JSonSchemaHelperTest {
 
@@ -72,12 +73,12 @@ public class JSonSchemaHelperTest {
     public void testSanitizeJavaDoc() throws Exception {
         String s = "* more memory. The total size is provided in the {@link org.apache.camel.Exchange#SPLIT_SIZE} header.";
         String s2 = JSonSchemaHelper.sanitizeDescription(s, false);
-        Assert.assertEquals("more memory. The total size is provided in the org.apache.camel.Exchange#SPLIT_SIZE header.", s2);
+        assertEquals("more memory. The total size is provided in the org.apache.camel.Exchange#SPLIT_SIZE header.", s2);
 
         String out = JSonSchemaHelper.sanitizeDescription(JAVADOC, false);
-        Assert.assertEquals(EXPECTED_OUT, out);
+        assertEquals(EXPECTED_OUT, out);
 
         String out2 = JSonSchemaHelper.sanitizeDescription(JAVADOC2, false);
-        Assert.assertEquals(EXPECTED_OUT2, out2);
+        assertEquals(EXPECTED_OUT2, out2);
     }
 }
