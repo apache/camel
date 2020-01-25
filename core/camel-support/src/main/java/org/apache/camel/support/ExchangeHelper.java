@@ -681,8 +681,7 @@ public final class ExchangeHelper {
      */
     public static boolean hasExceptionBeenHandledByErrorHandler(Exchange exchange) {
         // TODO: optimize this
-        return false;
-//        return Boolean.TRUE.equals(exchange.getProperty(Exchange.ERRORHANDLER_HANDLED));
+        return Boolean.TRUE.equals(exchange.getProperty(Exchange.ERRORHANDLER_HANDLED));
     }
 
     /**
