@@ -151,8 +151,10 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         exchange.setRouteStop(false);
         Object failureHandled = exchange.removeProperty(Exchange.FAILURE_HANDLED);
         Object errorhandlerHandled = exchange.removeProperty(Exchange.ERRORHANDLER_HANDLED);
-        Object rollbackOnly = exchange.removeProperty(Exchange.ROLLBACK_ONLY);
-        Object rollbackOnlyLast = exchange.removeProperty(Exchange.ROLLBACK_ONLY_LAST);
+        boolean rollbackOnly = exchange.isRollbackOnly();
+        exchange.setRollbackOnly(false);
+        boolean rollbackOnlyLast = exchange.isRollbackOnlyLast();
+        exchange.setRollbackOnlyLast(false);
         // and we should not be regarded as exhausted as we are in a onCompletion block
         Object exhausted = exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
 
@@ -172,12 +174,8 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
             if (errorhandlerHandled != null) {
                 exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, errorhandlerHandled);
             }
-            if (rollbackOnly != null) {
-                exchange.setProperty(Exchange.ROLLBACK_ONLY, rollbackOnly);
-            }
-            if (rollbackOnlyLast != null) {
-                exchange.setProperty(Exchange.ROLLBACK_ONLY_LAST, rollbackOnlyLast);
-            }
+            exchange.setRollbackOnly(rollbackOnly);
+            exchange.setRollbackOnlyLast(rollbackOnlyLast);
             if (exhausted != null) {
                 exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, exhausted);
             }

@@ -157,8 +157,9 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         }
 
         // if it was a local rollback only then remove its marker so outer transaction wont see the marker
-        Boolean onlyLast = (Boolean) exchange.removeProperty(Exchange.ROLLBACK_ONLY_LAST);
-        if (onlyLast != null && onlyLast) {
+        boolean onlyLast = exchange.isRollbackOnlyLast();
+        exchange.setRollbackOnlyLast(false);
+        if (onlyLast) {
             // we only want this logged at debug level
             if (LOG.isDebugEnabled()) {
                 // log exception if there was a cause exception so we have the stack trace

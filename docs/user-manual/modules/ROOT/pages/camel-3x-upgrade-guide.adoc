@@ -191,8 +191,8 @@ The package `org.apache.camel.http.common.cookie` is renamed to `org.apache.came
 
 ==== Exchange.ROUTE_STOP
 
-To signal an `Exchange` to stop continue routing has changed from setting the exchange property `Echange.ROUTE_STOP` to true.
-Instead you should now use the `setRouteStop` method on the `Exchange` API
+To signal an `Exchange` to stop continue routing has changed from setting the exchange property `Exchange.ROUTE_STOP` to true.
+Instead you should now use the `setRouteStop` method on the `Exchange` API.
 
 [source,java]
 ----
@@ -205,6 +205,22 @@ Should now be:
     exchange.setRouteStop(true);
 ----
 
+==== Exchange.ROLLBACK_ONLY and Exchange.ROLLBACK_ONLY_LAST
+
+To signal an `Exchange` to rollback a transaction has changed from setting the exchange property `Exchange.ROLLBACK_ONLY` to true.
+Instead you should now use the `setRollbackOnly` method on the `Exchange` API (the same for rollback only last).
+
+[source,java]
+----
+    exchange.setProperty(Exchange.ROLLBACK_ONLY, Boolean.TRUE);
+----
+
+Should now be:
+
+[source,java]
+----
+    exchange.setRollbackOnly(true);
+----
 
 ==== Java DSL
 

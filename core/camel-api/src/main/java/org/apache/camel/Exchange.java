@@ -207,7 +207,9 @@ public interface Exchange {
     String REDELIVERY_DELAY        = "CamelRedeliveryDelay";
     String REST_HTTP_URI           = "CamelRestHttpUri";
     String REST_HTTP_QUERY         = "CamelRestHttpQuery";
+    @Deprecated
     String ROLLBACK_ONLY           = "CamelRollbackOnly";
+    @Deprecated
     String ROLLBACK_ONLY_LAST      = "CamelRollbackOnlyLast";
     @Deprecated
     String ROUTE_STOP              = "CamelRouteStop";
@@ -547,6 +549,21 @@ public interface Exchange {
      * Returns true if this exchange is marked for rollback
      */
     boolean isRollbackOnly();
+
+    /**
+     * Sets whether to mark this exchange for rollback
+     */
+    void setRollbackOnly(boolean rollbackOnly);
+
+    /**
+     * Returns true if this exchange is marked for rollback (only last transaction section)
+     */
+    boolean isRollbackOnlyLast();
+
+    /**
+     * Sets whether to mark this exchange for rollback (only last transaction section)
+     */
+    void setRollbackOnlyLast(boolean rollbackOnlyLast);
 
     /**
      * Returns the container so that a processor can resolve endpoints from URIs

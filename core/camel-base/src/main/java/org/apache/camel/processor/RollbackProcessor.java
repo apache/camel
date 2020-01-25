@@ -47,10 +47,10 @@ public class RollbackProcessor extends AsyncProcessorSupport implements Traceabl
         if (isMarkRollbackOnlyLast()) {
             // only mark the last route (current) as rollback
             // this is needed when you have multiple transactions in play
-            exchange.setProperty(Exchange.ROLLBACK_ONLY_LAST, Boolean.TRUE);
+            exchange.setRollbackOnlyLast(true);
         } else {
             // default to mark the entire route as rollback
-            exchange.setProperty(Exchange.ROLLBACK_ONLY, Boolean.TRUE);
+            exchange.setRollbackOnly(true);
         }
 
         if (markRollbackOnly || markRollbackOnlyLast) {
