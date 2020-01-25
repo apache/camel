@@ -17,6 +17,9 @@
 package org.apache.camel.tooling.util;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -32,23 +35,26 @@ public class PackageHelperTest {
 
     @Test
     public void testFileToString() throws Exception {
-        assertEquals("dk19i21)@+#(OR\n", PackageHelper.loadText(ResourceUtils.getResourceAsFile("filecontent/a.txt")));
+        File file = ResourceUtils.getResourceAsFile("filecontent/a.txt");
+        assertEquals("dk19i21)@+#(OR\n", PackageHelper.loadText(file));
     }
 
     @Test
     public void testFindJsonFiles() throws Exception {
-        Set<File> jsons = PackageHelper.findJsonFiles(ResourceUtils.getResourceAsFile("json"));
-        Map<String, File> jsonFiles = jsons.stream().collect(Collectors.toMap(
-                file -> file.getName().replace(JSON_SUFIX, ""), file -> file));
+        Path dir = ResourceUtils.getResourceAsFile("json").toPath();
+        List<String> jsonFiles = PackageHelper.findJsonFiles(dir)
+                .map(PackageHelper::asName)
+                .collect(Collectors.toList());
 
-        assertTrue(jsonFiles.containsKey("a"), "Files a.json must be found");
-        assertTrue(jsonFiles.containsKey("b"), "Files b.json must be found");
-        assertFalse(jsonFiles.containsKey("c"), "File c.txt must not be found");
+        assertTrue(jsonFiles.contains("a"), "Files a.json must be found");
+        assertTrue(jsonFiles.contains("b"), "Files b.json must be found");
+        assertFalse(jsonFiles.contains("c"), "File c.txt must not be found");
     }
 
     @Test
     public void testGetSchemaKind() throws Exception {
-        String json = PackageHelper.loadText(ResourceUtils.getResourceAsFile("json/aop.json"));
+        File file = ResourceUtils.getResourceAsFile("json/aop.json");
+        String json = PackageHelper.loadText(file);
         assertEquals("model", PackageHelper.getSchemaKind(json));
     }
 }
