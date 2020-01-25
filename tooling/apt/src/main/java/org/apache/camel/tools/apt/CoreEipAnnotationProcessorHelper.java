@@ -46,7 +46,6 @@ import javax.xml.bind.annotation.XmlValue;
 
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.tooling.util.JSonSchemaHelper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tooling.model.EipModel;
@@ -233,7 +232,7 @@ public class CoreEipAnnotationProcessorHelper {
                 if (doc != null) {
                     // need to sanitize the description first (we only want a
                     // summary)
-                    doc = JSonSchemaHelper.sanitizeDescription(doc, true);
+                    doc = AnnotationProcessorHelper.sanitizeDescription(doc, true);
                     // the javadoc may actually be empty, so only change the doc
                     // if we got something
                     if (!Strings.isNullOrEmpty(doc)) {
@@ -1045,10 +1044,10 @@ public class CoreEipAnnotationProcessorHelper {
         option.setRequired(required);
         option.setDefaultValue("java.lang.Boolean".equals(type) && !Strings.isNullOrEmpty(defaultValue )
                 ? Boolean.parseBoolean(defaultValue) : defaultValue);
-        option.setDescription(JSonSchemaHelper.sanitizeDescription(description, false));
+        option.setDescription(AnnotationProcessorHelper.sanitizeDescription(description, false));
         option.setDeprecated(deprecated);
         option.setDeprecationNote(Strings.isNullOrEmpty(deprecationNote) ? null : deprecationNote);
-        option.setType(JSonSchemaHelper.getType(type, enumType));
+        option.setType(AnnotationProcessorHelper.getType(type, enumType));
         option.setJavaType(type);
         option.setEnums(enums != null && !enums.isEmpty() ? new ArrayList<>(enums) : null);
         option.setOneOfs(oneOfs != null && !oneOfs.isEmpty() ? new ArrayList<>(oneOfs) : null);

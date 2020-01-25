@@ -41,7 +41,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.tooling.util.JSonSchemaHelper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tooling.model.EipModel;
@@ -128,7 +127,7 @@ public class SpringAnnotationProcessorHelper {
                 if (doc != null) {
                     // need to sanitize the description first (we only want a
                     // summary)
-                    doc = JSonSchemaHelper.sanitizeDescription(doc, true);
+                    doc = AnnotationProcessorHelper.sanitizeDescription(doc, true);
                     // the javadoc may actually be empty, so only change the doc
                     // if we got something
                     if (!Strings.isNullOrEmpty(doc)) {
@@ -470,10 +469,10 @@ public class SpringAnnotationProcessorHelper {
         option.setKind(kind);
         option.setRequired(required);
         option.setDefaultValue(defaultValue);
-        option.setDescription(JSonSchemaHelper.sanitizeDescription(description, false));
+        option.setDescription(AnnotationProcessorHelper.sanitizeDescription(description, false));
         option.setDeprecated(deprecated);
         option.setDeprecationNote(deprecationNote);
-        option.setType(JSonSchemaHelper.getType(type, enumType));
+        option.setType(AnnotationProcessorHelper.getType(type, enumType));
         option.setJavaType(type);
         option.setEnums(enums != null && !enums.isEmpty() ? new ArrayList<>(enums) : null);
         option.setOneOfs(oneOfs != null && !oneOfs.isEmpty() ? new ArrayList<>(oneOfs) : null);

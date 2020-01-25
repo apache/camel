@@ -59,7 +59,6 @@ import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.ComponentOptionModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
-import org.apache.camel.tooling.util.JSonSchemaHelper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tools.apt.helper.EndpointHelper;
@@ -218,7 +217,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                     .findFirst().orElse(null);
         }
         // as its json we need to sanitize the docs
-        doc = JSonSchemaHelper.sanitizeDescription(doc, false);
+        doc = AnnotationProcessorHelper.sanitizeDescription(doc, false);
         option.setDescription(doc);
 
         if (isNullOrEmpty(doc)) {
@@ -380,7 +379,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             String doc = elementUtils.getDocComment(typeElement);
             if (doc != null) {
                 // need to sanitize the description first (we only want a summary)
-                doc = JSonSchemaHelper.sanitizeDescription(doc, true);
+                doc = AnnotationProcessorHelper.sanitizeDescription(doc, true);
                 // the javadoc may actually be empty, so only change the doc if we got something
                 if (!Strings.isNullOrEmpty(doc)) {
                     model.setDescription(doc);
@@ -522,7 +521,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                     option.setKind("property");
                     option.setName(name);
                     option.setDisplayName(displayName);
-                    option.setType(JSonSchemaHelper.getType(fieldTypeName, false));
+                    option.setType(AnnotationProcessorHelper.getType(fieldTypeName, false));
                     option.setJavaType(fieldTypeName);
                     option.setRequired(required);
                     option.setDefaultValue(defaultValue);
@@ -649,7 +648,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                     option.setKind("path");
                     option.setName(name);
                     option.setDisplayName(displayName);
-                    option.setType(JSonSchemaHelper.getType(fieldTypeName, false));
+                    option.setType(AnnotationProcessorHelper.getType(fieldTypeName, false));
                     option.setJavaType(fieldTypeName);
                     option.setRequired(required);
                     option.setDefaultValue(defaultValue);
@@ -763,7 +762,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                         option.setKind("parameter");
                         option.setName(name);
                         option.setDisplayName(displayName);
-                        option.setType(JSonSchemaHelper.getType(fieldTypeName, false));
+                        option.setType(AnnotationProcessorHelper.getType(fieldTypeName, false));
                         option.setJavaType(fieldTypeName);
                         option.setRequired(required);
                         option.setDefaultValue(defaultValue);

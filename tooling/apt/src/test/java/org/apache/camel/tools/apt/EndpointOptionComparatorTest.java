@@ -23,7 +23,8 @@ import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tools.apt.helper.EndpointHelper;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class EndpointOptionComparatorTest {
 
@@ -56,10 +57,10 @@ public class EndpointOptionComparatorTest {
         // then by label into the groups
         list.sort(EndpointHelper.createGroupAndLabelComparator());
 
-        assertEquals("first", list.get(0).getName()); // common
-        assertEquals("second", list.get(1).getName()); // common
-        assertEquals("synchronous", list.get(2).getName()); // advanced
-        assertEquals("country", list.get(3).getName()); // filter
+        Assertions.assertEquals("first", list.get(0).getName()); // common
+        Assertions.assertEquals("second", list.get(1).getName()); // common
+        Assertions.assertEquals("synchronous", list.get(2).getName()); // advanced
+        Assertions.assertEquals("country", list.get(3).getName()); // filter
     }
 
     public static class EndpointOptionModel extends BaseOptionModel {
