@@ -144,7 +144,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         DomFinder domFinder = new DomFinder(document, xPath);
         DocumentationEnricher documentationEnricher = new DocumentationEnricher(document);
 
-        // include schema files from camel-core, camel-corem-xml and from camel-spring
+        // include schema files from camel-core, camel-core-xml and from camel-spring
         File rootDir = new File(camelCoreDir, pathToModelDir);
         Map<String, File> jsonFiles = PackageHelper.findJsonFiles(rootDir);
         File rootDir2 = new File(camelCoreXmlDir, pathToCoreXmlModelDir);
