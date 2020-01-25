@@ -25,6 +25,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.telegram.model.OutgoingGameMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
+import org.apache.camel.component.telegram.model.ReplyKeyboardMarkup;
 import org.apache.camel.component.telegram.util.TelegramMockRoutes;
 import org.apache.camel.component.telegram.util.TelegramMockRoutes.MockProcessor;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
@@ -183,8 +184,8 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
         final OutgoingTextMessage message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
         assertEquals("my-id", message.getChatId());
         assertEquals("Hello", message.getText());
-        assertEquals(2, message.getReplyKeyboardMarkup().getKeyboard().size());
-        assertEquals(true, message.getReplyKeyboardMarkup().getOneTimeKeyboard());
+        assertEquals(2, ((ReplyKeyboardMarkup)message.getReplyMarkup()).getKeyboard().size());
+        assertEquals(true, ((ReplyKeyboardMarkup)message.getReplyMarkup()).getOneTimeKeyboard());
         assertNull(message.getParseMode());
     }
 

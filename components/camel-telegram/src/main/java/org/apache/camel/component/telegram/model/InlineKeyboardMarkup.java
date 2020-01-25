@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * This object represents an inline keyboard that appears right next to the message it belongs to.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class InlineKeyboardMarkup implements Serializable {
+public class InlineKeyboardMarkup implements Serializable, ReplyMarkup {
 
     private static final long serialVersionUID = -8608993809697387977L;
 
