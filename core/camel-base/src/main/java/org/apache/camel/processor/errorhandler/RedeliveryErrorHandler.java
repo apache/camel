@@ -1115,7 +1115,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
          */
         private boolean isExhausted(Exchange exchange) {
             // if marked as rollback only then do not continue/redeliver
-            boolean exhausted = exchange.getProperty(Exchange.REDELIVERY_EXHAUSTED, false, Boolean.class);
+            boolean exhausted = ExchangeHelper.isRedeliveryExhausted(exchange);
             if (exhausted) {
                 LOG.trace("This exchange is marked as redelivery exhausted: {}", exchange);
                 return true;
