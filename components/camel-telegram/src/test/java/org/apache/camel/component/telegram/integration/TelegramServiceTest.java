@@ -129,7 +129,7 @@ public class TelegramServiceTest extends TelegramTestSupport {
             .oneTimeKeyboard(true)
             .build();
 
-        msg.setReplyKeyboardMarkup(replyMarkup);
+        msg.setReplyMarkup(replyMarkup);
 
         template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
     }
@@ -144,7 +144,7 @@ public class TelegramServiceTest extends TelegramTestSupport {
             .removeKeyboard(true)
             .build();
 
-        msg.setReplyKeyboardMarkup(replyMarkup);
+        msg.setReplyMarkup(replyMarkup);
 
         template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
     }
