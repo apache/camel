@@ -30,6 +30,7 @@ import java.util.TreeSet;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.tooling.util.PackageHelper;
@@ -122,7 +123,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             List<ComponentModel> models = new ArrayList<>();
             for (File file : componentFiles) {
                 String json = PackageHelper.loadText(file);
-                ComponentModel model = ComponentModel.generateComponentModel(json);
+                ComponentModel model = JsonMapper.generateComponentModel(json);
 
                 // filter out alternative schemas which reuses documentation
                 boolean add = true;
@@ -184,7 +185,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             List<OtherModel> models = new ArrayList<>();
             for (File file : otherFiles) {
                 String json = PackageHelper.loadText(file);
-                OtherModel model = OtherModel.generateOtherModel(json);
+                OtherModel model = JsonMapper.generateOtherModel(json);
                 models.add(model);
             }
 
@@ -229,7 +230,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             List<DataFormatModel> models = new ArrayList<>();
             for (File file : dataFormatFiles) {
                 String json = PackageHelper.loadText(file);
-                DataFormatModel model = DataFormatModel.generateDataFormatModel(json);
+                DataFormatModel model = JsonMapper.generateDataFormatModel(json);
 
                 // special for bindy as we have one common file
                 if (model.getName().startsWith("bindy")) {
@@ -280,7 +281,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             List<LanguageModel> models = new ArrayList<>();
             for (File file : languageFiles) {
                 String json = PackageHelper.loadText(file);
-                LanguageModel model = LanguageModel.generateLanguageModel(json);
+                LanguageModel model = JsonMapper.generateLanguageModel(json);
                 models.add(model);
             }
 

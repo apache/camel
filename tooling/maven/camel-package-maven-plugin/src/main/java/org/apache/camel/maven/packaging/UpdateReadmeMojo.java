@@ -35,6 +35,7 @@ import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
@@ -256,7 +257,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
                 if (json != null) {
                     File file = new File(docDir, languageName + "-language.adoc");
 
-                    LanguageModel model = LanguageModel.generateLanguageModel(json);
+                    LanguageModel model = JsonMapper.generateLanguageModel(json);
                     // skip option named id
                     model.getOptions().removeIf(opt -> Objects.equals(opt.getName(), "id")
                                                     || Objects.equals(opt.getName(), "expression"));
@@ -327,7 +328,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
             for (File jsonFile : jsonFiles) {
                 String json = loadEipJson(jsonFile);
                 if (json != null) {
-                    EipModel model = EipModel.generateEipModel(json);
+                    EipModel model = JsonMapper.generateEipModel(json);
                     // skip option named id/description/expression/outputs
                     model.getOptions().removeIf(option -> "id".equals(option.getName())
                             || "description".equals(option.getName())
@@ -722,7 +723,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
     }
 
     private static ComponentModel generateComponentModel(String json) {
-        ComponentModel component = ComponentModel.generateComponentModel(json);
+        ComponentModel component = JsonMapper.generateComponentModel(json);
         Stream.concat(component.getComponentOptions().stream(),
                       component.getEndpointOptions().stream())
                 .filter(BaseOptionModel::isRequired)
@@ -747,7 +748,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
     }
 
     private static DataFormatModel generateDataFormatModel(String json) {
-        DataFormatModel model = DataFormatModel.generateDataFormatModel(json);
+        DataFormatModel model = JsonMapper.generateDataFormatModel(json);
         // skip option named id
         model.getOptions().removeIf(opt -> Objects.equals(opt.getName(), "id"));
         // enhance description for deprecated options

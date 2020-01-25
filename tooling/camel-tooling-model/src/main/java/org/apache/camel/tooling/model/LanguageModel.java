@@ -29,55 +29,16 @@ public class LanguageModel extends BaseModel<LanguageModel.LanguageOptionModel> 
     protected String artifactId;
     protected String version;
 
-    public static LanguageModel generateLanguageModel(String json) {
-        JsonObject obj = deserialize(json);
-        JsonObject mobj = (JsonObject) obj.get("language");
-        LanguageModel model = new LanguageModel();
-        parseModel(mobj, model);
-        model.setModelName(mobj.getString("modelName"));
-        model.setModelJavaType(mobj.getString("modelJavaType"));
-        model.setGroupId(mobj.getString("groupId"));
-        model.setArtifactId(mobj.getString("artifactId"));
-        model.setVersion(mobj.getString("version"));
-        JsonObject mprp = (JsonObject) obj.get("properties");
-        for (Map.Entry<String, Object> entry : mprp.entrySet()) {
-            JsonObject mp = (JsonObject) entry.getValue();
-            LanguageOptionModel option = new LanguageOptionModel();
-            parseOption(mp, option, entry.getKey());
-            model.addOption(option);
-        }
-        return model;
-    }
-
-    public static String createParameterJsonSchema(LanguageModel model) {
-        JsonObject obj = new JsonObject();
-        obj.put("kind", model.getKind());
-        obj.put("name", model.getName());
-        obj.put("modelName", model.getModelName());
-        obj.put("title", model.getTitle());
-        obj.put("description", model.getDescription());
-        obj.put("deprecated", model.isDeprecated());
-        obj.put("deprecationNote", model.getDeprecationNote());
-        obj.put("firstVersion", model.getFirstVersion());
-        obj.put("label", model.getLabel());
-        obj.put("javaType", model.getJavaType());
-        obj.put("modelJavaType", model.getModelJavaType());
-        obj.put("groupId", model.getGroupId());
-        obj.put("artifactId", model.getArtifactId());
-        obj.put("version", model.getVersion());
-        obj.entrySet().removeIf(e -> e.getValue() == null);
-        JsonObject wrapper = new JsonObject();
-        wrapper.put("language", obj);
-        wrapper.put("properties", asJsonObject(model.getOptions()));
-        return Jsoner.prettyPrint(Jsoner.serialize(wrapper), 2, 2);
-    }
-
     public static class LanguageOptionModel extends BaseOptionModel {
 
     }
 
     public LanguageModel() {
-        setKind("language");
+    }
+
+    @Override
+    public String getKind() {
+        return "language";
     }
 
     public String getModelName() {

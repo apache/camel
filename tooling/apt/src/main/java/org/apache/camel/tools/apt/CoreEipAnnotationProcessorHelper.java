@@ -46,6 +46,7 @@ import javax.xml.bind.annotation.XmlValue;
 
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tooling.model.EipModel;
@@ -162,7 +163,7 @@ public class CoreEipAnnotationProcessorHelper {
         }
 
         // write json schema file
-        String json = EipModel.createParameterJsonSchema(eipModel);
+        String json = JsonMapper.createParameterJsonSchema(eipModel);
         writer.println(json);
 
         // generate property placeholder provider java source code

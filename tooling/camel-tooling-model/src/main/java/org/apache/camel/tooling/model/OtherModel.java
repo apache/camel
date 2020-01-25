@@ -25,38 +25,12 @@ public class OtherModel extends BaseModel<BaseOptionModel> {
     protected String artifactId;
     protected String version;
 
-    public static OtherModel generateOtherModel(String json) {
-        JsonObject obj = deserialize(json);
-        JsonObject mobj = (JsonObject) obj.get("other");
-        OtherModel model = new OtherModel();
-        parseModel(mobj, model);
-        model.setGroupId(mobj.getString("groupId"));
-        model.setArtifactId(mobj.getString("artifactId"));
-        model.setVersion(mobj.getString("version"));
-        return model;
-    }
-
-    public static String createJsonSchema(OtherModel model) {
-        JsonObject obj = new JsonObject();
-        obj.put("kind", "other");
-        obj.put("name", model.getName());
-        obj.put("title", model.getTitle());
-        obj.put("description", model.getDescription());
-        obj.put("deprecated", model.isDeprecated());
-        obj.put("deprecationNote", model.getDeprecationNote());
-        obj.put("firstVersion", model.getFirstVersion());
-        obj.put("label", model.getLabel());
-        obj.put("groupId", model.getGroupId());
-        obj.put("artifactId", model.getArtifactId());
-        obj.put("version", model.getVersion());
-        obj.entrySet().removeIf(e -> e.getValue() == null);
-        JsonObject wrapper = new JsonObject();
-        wrapper.put("other", obj);
-        return Jsoner.prettyPrint(Jsoner.serialize(wrapper), 2, 2);
-    }
-
     public OtherModel() {
-        setKind("other");
+    }
+
+    @Override
+    public String getKind() {
+        return "other";
     }
 
     public String getGroupId() {

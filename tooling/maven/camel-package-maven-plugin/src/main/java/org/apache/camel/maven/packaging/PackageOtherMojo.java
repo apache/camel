@@ -20,6 +20,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Collections;
 
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
@@ -114,7 +115,7 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
                 log.debug("Model: " + otherModel);
             }
 
-            String schema = OtherModel.createJsonSchema(otherModel);
+            String schema = JsonMapper.createJsonSchema(otherModel);
 
             // write this to the directory
             Path out = schemaOutDir.toPath().resolve(name + PackageHelper.JSON_SUFIX);

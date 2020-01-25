@@ -29,6 +29,7 @@ import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.DataFormatModel.DataFormatOptionModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -140,7 +141,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                         if (log.isDebugEnabled()) {
                             log.debug("Model: " + dataFormatModel);
                         }
-                        String schema = DataFormatModel.createParameterJsonSchema(dataFormatModel);
+                        String schema = JsonMapper.createParameterJsonSchema(dataFormatModel);
                         if (log.isDebugEnabled()) {
                             log.debug("JSon schema:\n" + schema);
                         }
@@ -187,9 +188,8 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
     }
 
     private static DataFormatModel extractDataFormatModel(MavenProject project, String json, String name, String javaType) {
-        EipModel def = EipModel.generateEipModel(json);
+        EipModel def = JsonMapper.generateEipModel(json);
         DataFormatModel model = new DataFormatModel();
-        model.setKind("dataformat");
         model.setName(name);
         model.setTitle(asModelTitle(name, def.getTitle()));
         model.setDescription(def.getDescription());

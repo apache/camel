@@ -28,7 +28,6 @@ import org.apache.camel.util.json.Jsoner;
 
 public abstract class BaseModel<O extends BaseOptionModel> {
 
-    protected String kind;
     protected String name;
     protected String title;
     protected String description;
@@ -43,13 +42,7 @@ public abstract class BaseModel<O extends BaseOptionModel> {
         return (m1, m2) -> m1.getTitle().compareToIgnoreCase(m2.getTitle());
     }
 
-    public String getKind() {
-        return kind;
-    }
-
-    public void setKind(String kind) {
-        this.kind = kind;
-    }
+    public abstract String getKind();
 
     public String getName() {
         return name;
@@ -128,91 +121,7 @@ public abstract class BaseModel<O extends BaseOptionModel> {
     }
 
     public String getFirstVersionShort() {
-        return Strings.cutLastZeroDigit(firstVersion);
-    }
-
-    public static void parseModel(JsonObject mobj, BaseModel<?> model) {
-        model.setTitle(mobj.getString("title"));
-        model.setName(mobj.getString("name"));
-        model.setDescription(mobj.getString("description"));
-        model.setFirstVersion(mobj.getString("firstVersion"));
-        model.setLabel(mobj.getString("label"));
-        model.setDeprecated(mobj.getBooleanOrDefault("deprecated", false));
-        model.setDeprecationNote(mobj.getString("label"));
-        model.setJavaType(mobj.getString("javaType"));
-    }
-
-    public static void parseOption(JsonObject mp, BaseOptionModel option, String name) {
-        option.setName(name);
-        option.setKind(mp.getString("kind"));
-        option.setDisplayName(mp.getString("displayName"));
-        option.setGroup(mp.getString("group"));
-        option.setLabel(mp.getString("label"));
-        option.setRequired(mp.getBooleanOrDefault("required", false));
-        option.setType(mp.getString("type"));
-        option.setJavaType(mp.getString("javaType"));
-        option.setEnums(asStringList(mp.getCollection("enum")));
-        option.setOneOfs(asStringList(mp.getCollection("oneOf")));
-        option.setPrefix(mp.getString("prefix"));
-        option.setOptionalPrefix(mp.getString("optionalPrefix"));
-        option.setMultiValue(mp.getBooleanOrDefault("multiValue", false));
-        option.setDeprecated(mp.getBooleanOrDefault("deprecated", false));
-        option.setDeprecationNote(mp.getString("deprecationNote"));
-        option.setSecret(mp.getBooleanOrDefault("secret", false));
-        option.setDefaultValue(mp.get("defaultValue"));
-        option.setAsPredicate(mp.getBooleanOrDefault("asPredicate", false));
-        option.setConfigurationClass(mp.getString("configurationClass"));
-        option.setConfigurationField(mp.getString("configurationField"));
-        option.setDescription(mp.getString("description"));
-    }
-
-    public static JsonObject asJsonObject(List<? extends BaseOptionModel> options) {
-        JsonObject json = new JsonObject();
-        options.forEach(option -> json.put(option.getName(), asJsonObject(option)));
-        return json;
-    }
-
-    public static JsonObject asJsonObject(BaseOptionModel option) {
-        JsonObject prop = new JsonObject();
-        prop.put("kind", option.getKind());
-        prop.put("displayName", option.getDisplayName());
-        prop.put("group", option.getGroup());
-        prop.put("label", option.getLabel());
-        prop.put("required", option.isRequired());
-        prop.put("type", option.getType());
-        prop.put("javaType", option.getJavaType());
-        prop.put("enums", option.getEnums());
-        prop.put("oneOfs", option.getOneOfs());
-        prop.put("prefix", option.getPrefix());
-        prop.put("optionalPrefix", option.getOptionalPrefix());
-        prop.put("multiValue", option.isMultiValue());
-        prop.put("deprecated", option.isDeprecated());
-        prop.put("deprecationNote", option.getDeprecationNote());
-        prop.put("secret", option.isSecret());
-        prop.put("defaultValue", option.getDefaultValue());
-        prop.put("asPredicate", option.isAsPredicate());
-        prop.put("configurationClass", option.getConfigurationClass());
-        prop.put("configurationField", option.getConfigurationField());
-        prop.put("description", option.getDescription());
-        prop.entrySet().removeIf(e -> e.getValue() == null);
-        return prop;
-    }
-
-    protected static JsonObject deserialize(String json) {
-        try {
-            return (JsonObject) Jsoner.deserialize(json);
-        } catch (Exception e) {
-            // wrap parsing exceptions as runtime
-            throw new RuntimeException("Cannot parse json", e);
-        }
-    }
-
-    protected static List<String> asStringList(Collection<?> col) {
-        if (col != null) {
-            return col.stream().map(Object::toString).collect(Collectors.toList());
-        } else {
-            return null;
-        }
+        return !Strings.isNullOrEmpty(firstVersion) ? Strings.cutLastZeroDigit(firstVersion) : "";
     }
 
 }
