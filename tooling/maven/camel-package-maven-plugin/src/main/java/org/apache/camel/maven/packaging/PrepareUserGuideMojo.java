@@ -183,37 +183,36 @@ public class PrepareUserGuideMojo extends AbstractMojo {
             }
         }
 
-        try {
-            List<OtherModel> models = new ArrayList<>();
-            for (File file : otherFiles) {
-                String json =  PackageHelper.loadText(file);
+        List<OtherModel> models = new ArrayList<>();
+        for (File file : otherFiles) {
+            try {
+                String json = PackageHelper.loadText(file);
                 OtherModel model = JsonMapper.generateOtherModel(json);
                 models.add(model);
+            } catch (Exception e) {
+                throw new MojoFailureException("Error reading file: " + file, e);
             }
+        }
 
-            // sort the models
-            models.sort(BaseModel.compareTitle());
+        // sort the models
+        models.sort(BaseModel.compareTitle());
 
-            // the summary file has the TOC
-            File file = new File(userGuideDir, "SUMMARY.md");
+        // the summary file has the TOC
+        File file = new File(userGuideDir, "SUMMARY.md");
 
-            // update core components
-            StringBuilder other = new StringBuilder();
-            other.append("* Miscellaneous Components\n");
-            for (OtherModel model : models) {
-                String line = "\t* " + link(model) + "\n";
-                other.append(line);
-            }
-            boolean updated = updateOthers(file, other.toString());
+        // update core components
+        StringBuilder other = new StringBuilder();
+        other.append("* Miscellaneous Components\n");
+        for (OtherModel model : models) {
+            String line = "\t* " + link(model) + "\n";
+            other.append(line);
+        }
+        boolean updated = updateOthers(file, other.toString());
 
-            if (updated) {
-                getLog().info("Updated user guide file: " + file);
-            } else {
-                getLog().debug("No changes to user guide file: " + file);
-            }
-
-        } catch (IOException e) {
-            throw new MojoFailureException("Error due " + e.getMessage(), e);
+        if (updated) {
+            getLog().info("Updated user guide file: " + file);
+        } else {
+            getLog().debug("No changes to user guide file: " + file);
         }
     }
 

@@ -18,7 +18,6 @@ package org.apache.camel.tooling.util;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -26,7 +25,6 @@ import java.io.LineNumberReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -71,7 +69,7 @@ public final class PackageHelper {
     }
 
     public static String loadText(File file) throws IOException {
-        return loadText(new FileInputStream(file));
+        return loadText(file.toPath());
     }
 
     public static String loadText(Path file) throws IOException {
@@ -112,20 +110,20 @@ public final class PackageHelper {
         return answer;
     }
 
-    public static Set<File> findJsonFiles(File rootDir) {
-        return findJsonFiles(rootDir, new HashSet<>());
-    }
-
     public static Set<File> findJsonFiles(File rootDir, Set<File> files) {
         findJsonFiles(rootDir.toPath()).forEach(p -> files.add(p.toFile()));
         return files;
     }
 
     public static Stream<Path> findJsonFiles(Path rootDir) {
+        return walk(rootDir)
+            .filter(p -> p.getFileName().toString().endsWith(JSON_SUFIX));
+    }
+
+    public static Stream<Path> walk(Path rootDir) {
         try {
             if (Files.isDirectory(rootDir)) {
-                return Files.walk(rootDir)
-                        .filter(p -> p.getFileName().toString().endsWith(JSON_SUFIX));
+                return Files.walk(rootDir);
             } else {
                 return Stream.empty();
             }
@@ -141,7 +139,7 @@ public final class PackageHelper {
     public static String asName(Path file) {
         String name = file.getFileName().toString();
         if (name.endsWith(JSON_SUFIX)) {
-            return name.substring(0, name.length() - 5);
+            return name.substring(0, name.length() - JSON_SUFIX.length());
         }
         return name;
     }
