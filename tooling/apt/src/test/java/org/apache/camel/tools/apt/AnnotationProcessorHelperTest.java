@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tooling.util;
+package org.apache.camel.tools.apt;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public class JSonSchemaHelperTest {
+public class AnnotationProcessorHelperTest {
 
     private static final String JAVADOC = ""
         + "     * When in streaming mode, then the splitter splits the original message on-demand, and each splitted\n"
@@ -72,13 +71,13 @@ public class JSonSchemaHelperTest {
     @Test
     public void testSanitizeJavaDoc() throws Exception {
         String s = "* more memory. The total size is provided in the {@link org.apache.camel.Exchange#SPLIT_SIZE} header.";
-        String s2 = JSonSchemaHelper.sanitizeDescription(s, false);
-        assertEquals("more memory. The total size is provided in the org.apache.camel.Exchange#SPLIT_SIZE header.", s2);
+        String s2 = AnnotationProcessorHelper.sanitizeDescription(s, false);
+        Assertions.assertEquals("more memory. The total size is provided in the org.apache.camel.Exchange#SPLIT_SIZE header.", s2);
 
-        String out = JSonSchemaHelper.sanitizeDescription(JAVADOC, false);
-        assertEquals(EXPECTED_OUT, out);
+        String out = AnnotationProcessorHelper.sanitizeDescription(JAVADOC, false);
+        Assertions.assertEquals(EXPECTED_OUT, out);
 
-        String out2 = JSonSchemaHelper.sanitizeDescription(JAVADOC2, false);
-        assertEquals(EXPECTED_OUT2, out2);
+        String out2 = AnnotationProcessorHelper.sanitizeDescription(JAVADOC2, false);
+        Assertions.assertEquals(EXPECTED_OUT2, out2);
     }
 }
