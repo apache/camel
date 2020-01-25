@@ -220,11 +220,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         if (exchange.isTransacted()) {
             // must be synchronized for transacted exchanges
             if (LOG.isTraceEnabled()) {
-                if (exchange.isTransacted()) {
-                    LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
-                } else {
-                    LOG.trace("Synchronous UnitOfWork Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
-                }
+                LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
             }
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ START +++
