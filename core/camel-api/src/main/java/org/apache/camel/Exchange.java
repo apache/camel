@@ -303,6 +303,7 @@ public interface Exchange {
      * @return the value of the given property or <tt>defaultValue</tt> if there is no
      *         property for the given name
      */
+    @Deprecated
     Object getProperty(String name, Object defaultValue);
 
     /**

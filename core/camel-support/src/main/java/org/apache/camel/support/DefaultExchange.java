@@ -202,7 +202,10 @@ public final class DefaultExchange implements ExtendedExchange {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getProperty(String name, Object defaultValue, Class<T> type) {
-        Object value = getProperty(name, defaultValue);
+        Object value = getProperty(name);
+        if (value == null) {
+            value = defaultValue;
+        }
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
             if (boolean.class == type) {
