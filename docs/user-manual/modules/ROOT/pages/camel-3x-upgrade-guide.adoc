@@ -189,6 +189,23 @@ The method `getId` has been removed.
 Cookies from `camel-http-common` has been moved into a new `camel-http-base` JAR.
 The package `org.apache.camel.http.common.cookie` is renamed to `org.apache.camel.http.base.cookie`.
 
+==== Exchange.ROUTE_STOP
+
+To signal an `Exchange` to stop continue routing has changed from setting the exchange property `Echange.ROUTE_STOP` to true.
+Instead you should now use the `setRouteStop` method on the `Exchange` API
+
+[source,java]
+----
+    exchange.setProperty(Exchange.ROUTE_STOP, Boolean.TRUE);
+----
+
+Should now be:
+[source,java]
+----
+    exchange.setRouteStop(true);
+----
+
+
 ==== Java DSL
 
 The Java DSL has been revisited and the following methods have been removed:
