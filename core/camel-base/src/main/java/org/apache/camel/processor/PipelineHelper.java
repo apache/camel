@@ -41,7 +41,7 @@ public final class PipelineHelper {
     public static boolean continueProcessing(Exchange exchange, String message, Logger log) {
         // check for error if so we should break out
         boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(exchange);
-        if (exchange.isFailed() || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast() || exceptionHandled) {
+        if (exceptionHandled || exchange.isFailed() || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
             // The Exchange.ERRORHANDLED_HANDLED property is only set if satisfactory handling was done
             // by the error handler. It's still an exception, the exchange still failed.
             if (log.isDebugEnabled()) {
