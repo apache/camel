@@ -65,7 +65,8 @@ public final class UnitOfWorkHelper {
         }
 
         // remove uow from exchange as its done
-        exchange.adapt(ExtendedExchange.class).setUnitOfWork(null);
+        ExtendedExchange ee = (ExtendedExchange) exchange;
+        ee.setUnitOfWork(null);
     }
 
     public static void doneSynchronizations(Exchange exchange, List<Synchronization> synchronizations, Logger log) {
