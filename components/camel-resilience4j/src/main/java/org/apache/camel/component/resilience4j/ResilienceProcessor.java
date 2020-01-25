@@ -479,7 +479,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements CamelC
             // give the rest of the pipeline another chance
             exchange.setProperty(Exchange.EXCEPTION_HANDLED, true);
             exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exchange.getException());
-            exchange.removeProperty(Exchange.ROUTE_STOP);
+            exchange.setRouteStop(false);
             exchange.setException(null);
             // and we should not be regarded as exhausted as we are in a try ..
             // catch block
