@@ -680,6 +680,7 @@ public final class ExchangeHelper {
      * @return <tt>true</tt> if handled already by error handler, <tt>false</tt> otherwise
      */
     public static boolean hasExceptionBeenHandledByErrorHandler(Exchange exchange) {
+        // TODO: optimize this
         return Boolean.TRUE.equals(exchange.getProperty(Exchange.ERRORHANDLER_HANDLED));
     }
 
