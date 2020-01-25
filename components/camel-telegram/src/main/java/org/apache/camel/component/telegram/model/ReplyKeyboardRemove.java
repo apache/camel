@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.telegram.model;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.io.Serializable;
 
 /**
  * Upon receiving a message with this object, Telegram clients will remove the current custom keyboard and display
