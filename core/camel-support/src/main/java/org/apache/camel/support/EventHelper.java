@@ -514,11 +514,6 @@ public final class EventHelper {
     }
 
     public static boolean notifyExchangeCreated(CamelContext context, Exchange exchange) {
-        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
-            // do not generate events for an notify event
-            return false;
-        }
-
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;
@@ -531,6 +526,11 @@ public final class EventHelper {
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
+            return false;
+        }
+
+        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+            // do not generate events for an notify event
             return false;
         }
 
@@ -560,11 +560,6 @@ public final class EventHelper {
     }
 
     public static boolean notifyExchangeDone(CamelContext context, Exchange exchange) {
-        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
-            // do not generate events for an notify event
-            return false;
-        }
-
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;
@@ -577,6 +572,11 @@ public final class EventHelper {
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
+            return false;
+        }
+
+        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+            // do not generate events for an notify event
             return false;
         }
 
@@ -606,11 +606,6 @@ public final class EventHelper {
     }
 
     public static boolean notifyExchangeFailed(CamelContext context, Exchange exchange) {
-        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
-            // do not generate events for an notify event
-            return false;
-        }
-
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;
@@ -623,6 +618,11 @@ public final class EventHelper {
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
+            return false;
+        }
+
+        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+            // do not generate events for an notify event
             return false;
         }
 
@@ -653,11 +653,6 @@ public final class EventHelper {
 
     public static boolean notifyExchangeFailureHandling(CamelContext context, Exchange exchange, Processor failureHandler,
                                                         boolean deadLetterChannel, String deadLetterUri) {
-        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
-            // do not generate events for an notify event
-            return false;
-        }
-
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;
@@ -670,6 +665,11 @@ public final class EventHelper {
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
+            return false;
+        }
+
+        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+            // do not generate events for an notify event
             return false;
         }
 
@@ -700,11 +700,6 @@ public final class EventHelper {
 
     public static boolean notifyExchangeFailureHandled(CamelContext context, Exchange exchange, Processor failureHandler,
                                                        boolean deadLetterChannel, String deadLetterUri) {
-        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
-            // do not generate events for an notify event
-            return false;
-        }
-
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;
@@ -717,6 +712,11 @@ public final class EventHelper {
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
+            return false;
+        }
+
+        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+            // do not generate events for an notify event
             return false;
         }
 
@@ -746,11 +746,6 @@ public final class EventHelper {
     }
 
     public static boolean notifyExchangeRedelivery(CamelContext context, Exchange exchange, int attempt) {
-        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
-            // do not generate events for an notify event
-            return false;
-        }
-
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;
@@ -763,6 +758,11 @@ public final class EventHelper {
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
+            return false;
+        }
+
+        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+            // do not generate events for an notify event
             return false;
         }
 
@@ -792,11 +792,6 @@ public final class EventHelper {
     }
 
     public static boolean notifyExchangeSending(CamelContext context, Exchange exchange, Endpoint endpoint) {
-        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
-            // do not generate events for an notify event
-            return false;
-        }
-
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;
@@ -809,6 +804,11 @@ public final class EventHelper {
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
+            return false;
+        }
+
+        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+            // do not generate events for an notify event
             return false;
         }
 
@@ -838,11 +838,6 @@ public final class EventHelper {
     }
 
     public static boolean notifyExchangeSent(CamelContext context, Exchange exchange, Endpoint endpoint, long timeTaken) {
-        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
-            // do not generate events for an notify event
-            return false;
-        }
-
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;
@@ -855,6 +850,11 @@ public final class EventHelper {
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
+            return false;
+        }
+
+        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+            // do not generate events for an notify event
             return false;
         }
 
