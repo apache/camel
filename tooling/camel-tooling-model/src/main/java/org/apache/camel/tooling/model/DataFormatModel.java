@@ -29,55 +29,16 @@ public class DataFormatModel extends BaseModel<DataFormatModel.DataFormatOptionM
     protected String artifactId;
     protected String version;
 
-    public static DataFormatModel generateDataFormatModel(String json) {
-        JsonObject obj = deserialize(json);
-        JsonObject mobj = (JsonObject) obj.get("dataformat");
-        DataFormatModel model = new DataFormatModel();
-        parseModel(mobj, model);
-        model.setModelName(mobj.getString("modelName"));
-        model.setModelJavaType(mobj.getString("modelJavaType"));
-        model.setGroupId(mobj.getString("groupId"));
-        model.setArtifactId(mobj.getString("artifactId"));
-        model.setVersion(mobj.getString("version"));
-        JsonObject mprp = (JsonObject) obj.get("properties");
-        for (Map.Entry<String, Object> entry : mprp.entrySet()) {
-            JsonObject mp = (JsonObject) entry.getValue();
-            DataFormatOptionModel option = new DataFormatOptionModel();
-            parseOption(mp, option, entry.getKey());
-            model.addOption(option);
-        }
-        return model;
-    }
-
-    public static String createParameterJsonSchema(DataFormatModel model) {
-        JsonObject obj = new JsonObject();
-        obj.put("kind", model.getKind());
-        obj.put("name", model.getName());
-        obj.put("modelName", model.getModelName());
-        obj.put("title", model.getTitle());
-        obj.put("description", model.getDescription());
-        obj.put("deprecated", model.isDeprecated());
-        obj.put("deprecationNote", model.getDeprecationNote());
-        obj.put("firstVersion", model.getFirstVersion());
-        obj.put("label", model.getLabel());
-        obj.put("javaType", model.getJavaType());
-        obj.put("modelJavaType", model.getModelJavaType());
-        obj.put("groupId", model.getGroupId());
-        obj.put("artifactId", model.getArtifactId());
-        obj.put("version", model.getVersion());
-        obj.entrySet().removeIf(e -> e.getValue() == null);
-        JsonObject wrapper = new JsonObject();
-        wrapper.put("dataformat", obj);
-        wrapper.put("properties", asJsonObject(model.getOptions()));
-        return Jsoner.prettyPrint(Jsoner.serialize(wrapper), 2, 2);
-    }
-
     public static class DataFormatOptionModel extends BaseOptionModel {
 
     }
 
     public DataFormatModel() {
-        setKind("dataformat");
+    }
+
+    @Override
+    public String getKind() {
+        return "dataformat";
     }
 
     public String getModelName() {

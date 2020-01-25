@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.LanguageModel.LanguageOptionModel;
 import org.apache.camel.tooling.util.PackageHelper;
@@ -138,7 +139,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         }
 
                         // build json schema for the data format
-                        String schema = LanguageModel.createParameterJsonSchema(languageModel);
+                        String schema = JsonMapper.createParameterJsonSchema(languageModel);
                         if (log.isDebugEnabled()) {
                             log.debug("JSon schema\n" + schema);
                         }
@@ -174,9 +175,8 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
     }
 
     protected static LanguageModel extractLanguageModel(MavenProject project, String json, String name, String javaType) {
-        EipModel def = EipModel.generateEipModel(json);
+        EipModel def = JsonMapper.generateEipModel(json);
         LanguageModel model = new LanguageModel();
-        model.setKind("language");
         model.setName(name);
         model.setTitle(asTitle(name, def.getTitle()));
         model.setDescription(asDescription(name, def.getDescription()));

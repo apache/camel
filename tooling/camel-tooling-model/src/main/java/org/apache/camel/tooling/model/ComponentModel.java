@@ -42,74 +42,12 @@ public class ComponentModel extends BaseModel<ComponentModel.ComponentOptionMode
 
     protected final List<EndpointOptionModel> endpointOptions = new ArrayList<>();
 
-    public static ComponentModel generateComponentModel(String json) {
-        JsonObject obj = deserialize(json);
-        JsonObject mobj = (JsonObject) obj.get("component");
-        ComponentModel model = new ComponentModel();
-        parseModel(mobj, model);
-        model.setScheme(mobj.getString("scheme"));
-        model.setExtendsScheme(mobj.getString("extendsScheme"));
-        model.setAlternativeSchemes(mobj.getString("alternativeSchemes"));
-        model.setSyntax(mobj.getString("syntax"));
-        model.setAlternativeSyntax(mobj.getString("alternativeSyntax"));
-        model.setAsync(mobj.getBooleanOrDefault("async", false));
-        model.setConsumerOnly(mobj.getBooleanOrDefault("consumerOnly", false));
-        model.setProducerOnly(mobj.getBooleanOrDefault("producerOnly", false));
-        model.setLenientProperties(mobj.getBooleanOrDefault("lenientProperties", false));
-        model.setGroupId(mobj.getString("groupId"));
-        model.setArtifactId(mobj.getString("artifactId"));
-        model.setVersion(mobj.getString("version"));
-        JsonObject mcprp = (JsonObject) obj.get("componentProperties");
-        for (Map.Entry<String, Object> entry : mcprp.entrySet()) {
-            JsonObject mp = (JsonObject) entry.getValue();
-            ComponentOptionModel option = new ComponentOptionModel();
-            parseOption(mp, option, entry.getKey());
-            model.addComponentOption(option);
-        }
-        JsonObject mprp = (JsonObject) obj.get("properties");
-        for (Map.Entry<String, Object> entry : mprp.entrySet()) {
-            JsonObject mp = (JsonObject) entry.getValue();
-            EndpointOptionModel option = new EndpointOptionModel();
-            parseOption(mp, option, entry.getKey());
-            model.addEndpointOption(option);
-        }
-        return model;
-    }
-
-    public static String createParameterJsonSchema(ComponentModel model) {
-        JsonObject obj = new JsonObject();
-        obj.put("kind", model.getKind());
-        obj.put("name", model.getName());
-        obj.put("scheme", model.getScheme());
-        obj.put("extendsScheme", model.getExtendsScheme());
-        obj.put("alternativeSchemes", model.getAlternativeSchemes());
-        obj.put("syntax", model.getSyntax());
-        obj.put("alternativeSyntax", model.getAlternativeSyntax());
-        obj.put("title", model.getTitle());
-        obj.put("description", model.getDescription());
-        obj.put("label", model.getLabel());
-        obj.put("deprecated", model.isDeprecated());
-        obj.put("deprecationNote", model.getDeprecationNote());
-        obj.put("async", model.isAsync());
-        obj.put("consumerOnly", model.isConsumerOnly());
-        obj.put("producerOnly", model.isProducerOnly());
-        obj.put("lenientProperties", model.isLenientProperties());
-        obj.put("javaType", model.getJavaType());
-        obj.put("firstVersion", model.getFirstVersion());
-        obj.put("verifiers", model.getVerifiers());
-        obj.put("groupId", model.getGroupId());
-        obj.put("artifactId", model.getArtifactId());
-        obj.put("version", model.getVersion());
-        obj.entrySet().removeIf(e -> e.getValue() == null);
-        JsonObject wrapper = new JsonObject();
-        wrapper.put("component", obj);
-        wrapper.put("componentProperties", asJsonObject(model.getComponentOptions()));
-        wrapper.put("properties", asJsonObject(model.getEndpointOptions()));
-        return Jsoner.prettyPrint(Jsoner.serialize(wrapper), 2, 2);
-    }
-
     public ComponentModel() {
-        setKind("component");
+    }
+
+    @Override
+    public String getKind() {
+        return "component";
     }
 
     public String getScheme() {

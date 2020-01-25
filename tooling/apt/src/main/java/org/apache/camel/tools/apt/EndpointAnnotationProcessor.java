@@ -54,11 +54,11 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.ComponentOptionModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tools.apt.helper.EndpointHelper;
@@ -158,7 +158,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                 res = processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH,
                         packageName, parentScheme + PackageHelper.JSON_SUFIX);
                 String json = res.getCharContent(false).toString();
-                parentData = ComponentModel.generateComponentModel(json);
+                parentData = JsonMapper.generateComponentModel(json);
             } catch (Exception e) {
                 // ignore
                 if (!Objects.equals(parentScheme, extendsScheme)) {
@@ -184,7 +184,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             generateComponentConfigurer(roundEnv, uriEndpoint, scheme, schemes, componentModel);
         }
 
-        String json = ComponentModel.createParameterJsonSchema(componentModel);
+        String json = JsonMapper.createParameterJsonSchema(componentModel);
         writer.println(json);
         generateEndpointConfigurer(roundEnv, classElement, uriEndpoint, scheme, schemes, componentModel);
     }
@@ -222,7 +222,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
 
         if (isNullOrEmpty(doc)) {
             throw new IllegalStateException("Empty doc for option: " + option.getName() + ", parent options:\n" +
-                    (parentOptions != null ? Jsoner.serialize(BaseModel.asJsonObject(parentOptions)) : "<null>"));
+                    (parentOptions != null ? Jsoner.serialize(JsonMapper.asJsonObject(parentOptions)) : "<null>"));
         }
     }
 

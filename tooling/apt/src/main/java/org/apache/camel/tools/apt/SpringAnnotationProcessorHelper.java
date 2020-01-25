@@ -41,6 +41,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tooling.model.EipModel;
@@ -95,7 +96,7 @@ public class SpringAnnotationProcessorHelper {
         findClassProperties(processingEnv, writer, roundEnv, eipOptions, classElement, classElement, "", modelName);
 
         eipOptions.forEach(eipModel::addOption);
-        String json = EipModel.createParameterJsonSchema(eipModel);
+        String json = JsonMapper.createParameterJsonSchema(eipModel);
         writer.println(json);
     }
 

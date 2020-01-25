@@ -45,6 +45,7 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tooling.util.srcgen.GenericType;
@@ -211,7 +212,7 @@ public class EndpointDslMojo extends AbstractMojo {
             for (String componentName : componentNames) {
                 String json = loadComponentJson(jsonFiles, componentName);
                 if (json != null) {
-                    ComponentModel model = ComponentModel.generateComponentModel(json);
+                    ComponentModel model = JsonMapper.generateComponentModel(json);
                     allModels.add(model);
                 }
             }
