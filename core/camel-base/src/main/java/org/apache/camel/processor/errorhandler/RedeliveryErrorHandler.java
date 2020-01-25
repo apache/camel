@@ -582,7 +582,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // we continue so clear any exceptions
             exchange.setException(null);
             // clear rollback flags
-            exchange.setProperty(Exchange.ROLLBACK_ONLY, null);
+            exchange.setRollbackOnly(false);
             // reset cached streams so they can be read again
             MessageHelper.resetStreamCache(exchange.getIn());
 
@@ -613,7 +613,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             exchange.setException(null);
 
             // clear rollback flags
-            exchange.setProperty(Exchange.ROLLBACK_ONLY, null);
+            exchange.setRollbackOnly(false);
 
             // TODO: We may want to store these as state on RedeliveryData so we keep them in case end user messes with Exchange
             // and then put these on the exchange when doing a redelivery / fault processor
@@ -783,7 +783,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
 
                 // and remove traces of rollback only and uow exhausted markers
-                exchange.removeProperty(Exchange.ROLLBACK_ONLY);
+                exchange.setRollbackOnly(false);
                 exchange.removeProperty(Exchange.UNIT_OF_WORK_EXHAUSTED);
 
                 handled = true;
@@ -981,7 +981,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 return;
             }
 
-            if (!exchange.isRollbackOnly()) {
+            if (!exchange.isRollbackOnly() && !exchange.isRollbackOnlyLast()) {
                 if (newException && !currentRedeliveryPolicy.isLogNewException()) {
                     // do not log new exception
                     return;
@@ -1024,7 +1024,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             LoggingLevel newLogLevel;
             boolean logStackTrace;
-            if (exchange.isRollbackOnly()) {
+            if (exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
                 newLogLevel = currentRedeliveryPolicy.getRetriesExhaustedLogLevel();
                 logStackTrace = currentRedeliveryPolicy.isLogStackTrace();
             } else if (shouldRedeliver) {
@@ -1058,7 +1058,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 } else {
                     logger.log(msg, newLogLevel);
                 }
-            } else if (exchange.isRollbackOnly()) {
+            } else if (exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
                 String msg = "Rollback " + ExchangeHelper.logIds(exchange);
                 Throwable cause = exchange.getException() != null ? exchange.getException() : exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
                 if (cause != null) {
@@ -1122,7 +1122,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             }
 
             // if marked as rollback only then do not continue/redeliver
-            boolean rollbackOnly = exchange.getProperty(Exchange.ROLLBACK_ONLY, false, Boolean.class);
+            boolean rollbackOnly = exchange.isRollbackOnly();
             if (rollbackOnly) {
                 LOG.trace("This exchange is marked as rollback only, so forcing it to be exhausted: {}", exchange);
                 return true;

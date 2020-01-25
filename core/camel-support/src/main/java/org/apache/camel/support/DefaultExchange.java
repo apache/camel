@@ -58,6 +58,8 @@ public final class DefaultExchange implements ExtendedExchange {
     private String historyNodeId;
     private String historyNodeLabel;
     private boolean routeStop;
+    private boolean rollbackOnly;
+    private boolean rollbackOnlyLast;
 
     public DefaultExchange(CamelContext context) {
         this(context, ExchangePattern.InOnly);
@@ -121,6 +123,8 @@ public final class DefaultExchange implements ExtendedExchange {
 
         exchange.setException(getException());
         exchange.setRouteStop(isRouteStop());
+        exchange.setRollbackOnly(isRollbackOnly());
+        exchange.setRollbackOnlyLast(isRollbackOnlyLast());
 
         // copy properties after body as body may trigger lazy init
         if (hasProperties()) {
@@ -475,7 +479,7 @@ public final class DefaultExchange implements ExtendedExchange {
 
     @Override
     public void setRouteStop(boolean routeStop) {
-        this.routeStop = routeStop;
+        this. routeStop = routeStop;
     }
 
     @Override
@@ -498,7 +502,22 @@ public final class DefaultExchange implements ExtendedExchange {
 
     @Override
     public boolean isRollbackOnly() {
-        return Boolean.TRUE.equals(getProperty(Exchange.ROLLBACK_ONLY)) || Boolean.TRUE.equals(getProperty(Exchange.ROLLBACK_ONLY_LAST));
+        return rollbackOnly;
+    }
+
+    @Override
+    public void setRollbackOnly(boolean rollbackOnly) {
+        this.rollbackOnly = rollbackOnly;
+    }
+
+    @Override
+    public boolean isRollbackOnlyLast() {
+        return rollbackOnlyLast;
+    }
+
+    @Override
+    public void setRollbackOnlyLast(boolean rollbackOnlyLast) {
+        this.rollbackOnlyLast = rollbackOnlyLast;
     }
 
     @Override
