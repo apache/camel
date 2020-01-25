@@ -299,6 +299,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             fillCommonMediaParts(builder, message);
             buildMediaPart(builder, "photo", message.getFilenameWithExtension(), message.getPhoto());
             buildTextPart(builder, "caption", message.getCaption());
+            buildTextPart(builder, "reply_markup", message.getReplyMarkupJson());
         }
 
     }

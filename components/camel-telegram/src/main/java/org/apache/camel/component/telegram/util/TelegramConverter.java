@@ -28,6 +28,7 @@ import org.apache.camel.component.telegram.model.OutgoingMessage;
 import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
+import org.apache.camel.component.telegram.model.ReplyMarkup;
 import org.apache.camel.component.telegram.model.Update;
 
 /**
@@ -98,7 +99,6 @@ public final class TelegramConverter {
         }
         }
 
-
         return result;
     }
 
@@ -130,11 +130,13 @@ public final class TelegramConverter {
         case PHOTO_PNG: {
             OutgoingPhotoMessage img = new OutgoingPhotoMessage();
             String caption = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
+            ReplyMarkup replyMarkup = (ReplyMarkup) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP);
             String fileName = "photo." + type.getFileExtension();
 
             img.setCaption(caption);
             img.setFilenameWithExtension(fileName);
             img.setPhoto(message);
+            img.setReplyMarkup(replyMarkup);
 
             result = img;
             break;

@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.telegram.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Upon receiving a message with this object, Telegram clients will display a reply interface to the user
@@ -36,11 +35,14 @@ public class ForceReply implements Serializable, ReplyMarkup {
     @JsonProperty("force_reply")
     private Boolean forceReply;
 
-    private Boolean selective;
+    private Boolean selective = false;
 
     public ForceReply(Boolean forceReply, Boolean selective) {
         this.forceReply = forceReply;
         this.selective = selective;
+    }
+
+    public ForceReply() {
     }
 
     public ForceReply(Boolean forceReply) {
