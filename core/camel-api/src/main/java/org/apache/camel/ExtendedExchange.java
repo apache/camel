@@ -100,4 +100,9 @@ public interface ExtendedExchange extends Exchange {
      */
     String getHistoryNodeLabel();
 
+    /**
+     * Sets whether the exchange is routed in a transaction.
+     */
+    void setTransacted(boolean transacted);
+
 }

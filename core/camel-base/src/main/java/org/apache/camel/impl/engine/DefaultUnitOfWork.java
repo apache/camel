@@ -59,6 +59,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     //   requires API changes and thus is best kept for future Camel work
 
     private String id;
+    private final Exchange exchange;
     private final Logger log;
     private final CamelContext context;
     private final InflightRepository inflightRepository;
@@ -73,7 +74,8 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     }
 
     protected DefaultUnitOfWork(Exchange exchange, Logger logger) {
-        log = logger;
+        this.exchange = exchange;
+        this.log = logger;
         if (log.isTraceEnabled()) {
             log.trace("UnitOfWork created for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
         }
@@ -264,12 +266,16 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     @Override
     public void beginTransactedBy(Object key) {
+        exchange.adapt(ExtendedExchange.class).setTransacted(true);
         getTransactedBy().add(key);
     }
 
     @Override
     public void endTransactedBy(Object key) {
         getTransactedBy().remove(key);
+        // we may still be transacted even if we end this section of transaction
+        boolean transacted = isTransacted();
+        exchange.adapt(ExtendedExchange.class).setTransacted(transacted);
     }
 
     @Override

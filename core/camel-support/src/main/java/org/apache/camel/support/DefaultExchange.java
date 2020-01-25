@@ -57,6 +57,7 @@ public final class DefaultExchange implements ExtendedExchange {
     private Boolean externalRedelivered;
     private String historyNodeId;
     private String historyNodeLabel;
+    private boolean transacted;
     private boolean routeStop;
     private boolean rollbackOnly;
     private boolean rollbackOnlyLast;
@@ -467,12 +468,12 @@ public final class DefaultExchange implements ExtendedExchange {
 
     @Override
     public boolean isTransacted() {
-        UnitOfWork uow = getUnitOfWork();
-        if (uow != null) {
-            return uow.isTransacted();
-        } else {
-            return false;
-        }
+        return transacted;
+    }
+
+    @Override
+    public void setTransacted(boolean transacted) {
+        this.transacted = true;
     }
 
     @Override
