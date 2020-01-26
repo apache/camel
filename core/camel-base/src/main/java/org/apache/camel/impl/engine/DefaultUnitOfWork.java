@@ -109,11 +109,13 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
         
         // fire event
-        try {
-            EventHelper.notifyExchangeCreated(context, exchange);
-        } catch (Throwable e) {
-            // must catch exceptions to ensure the exchange is not failing due to notification event failed
-            log.warn("Exception occurred during event notification. This exception will be ignored.", e);
+        if (context.isEventNotificationApplicable()) {
+            try {
+                EventHelper.notifyExchangeCreated(context, exchange);
+            } catch (Throwable e) {
+                // must catch exceptions to ensure the exchange is not failing due to notification event failed
+                log.warn("Exception occurred during event notification. This exception will be ignored.", e);
+            }
         }
 
         // register to inflight registry
@@ -213,16 +215,18 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         // unregister from inflight registry, before signalling we are done
         inflightRepository.remove(exchange);
 
-        // then fire event to signal the exchange is done
-        try {
-            if (failed) {
-                EventHelper.notifyExchangeFailed(exchange.getContext(), exchange);
-            } else {
-                EventHelper.notifyExchangeDone(exchange.getContext(), exchange);
+        if (context.isEventNotificationApplicable()) {
+            // then fire event to signal the exchange is done
+            try {
+                if (failed) {
+                    EventHelper.notifyExchangeFailed(exchange.getContext(), exchange);
+                } else {
+                    EventHelper.notifyExchangeDone(exchange.getContext(), exchange);
+                }
+            } catch (Throwable e) {
+                // must catch exceptions to ensure synchronizations is also invoked
+                log.warn("Exception occurred during event notification. This exception will be ignored.", e);
             }
-        } catch (Throwable e) {
-            // must catch exceptions to ensure synchronizations is also invoked
-            log.warn("Exception occurred during event notification. This exception will be ignored.", e);
         }
     }
 

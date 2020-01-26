@@ -45,6 +45,28 @@ public final class EventHelper {
     private EventHelper() {
     }
 
+    /**
+     * Checks whether event notifications is applicable or not
+     */
+    public static boolean eventsApplicable(CamelContext context) {
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return false;
+        }
+
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return false;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return false;
+        }
+
+        return true;
+    }
+
     public static boolean notifyCamelContextStarting(CamelContext context) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
