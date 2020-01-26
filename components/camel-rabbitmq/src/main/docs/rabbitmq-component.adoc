@@ -446,7 +446,9 @@ For example declaring a method in Spring
 ----
 @Bean(name = "bindArgs")
 public Map<String, Object> bindArgsBuilder() {
-    return Collections.singletonMap("foo", "bar");
+    return new HashMap<String, Object>() {{
+        put("binding.foo", "bar");
+    }};
 }
 ----
 
