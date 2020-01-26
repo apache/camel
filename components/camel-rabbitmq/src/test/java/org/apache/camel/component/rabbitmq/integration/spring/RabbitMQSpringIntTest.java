@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rabbitmq;
+package org.apache.camel.component.rabbitmq.integration.spring;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
@@ -27,33 +27,40 @@ import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import static org.junit.Assert.assertEquals;
+import org.springframework.context.support.AbstractApplicationContext;
 
 /**
  * Test RabbitMQ component with Spring DSL
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration
-public class RabbitMQSpringIntTest {
+public class RabbitMQSpringIntTest extends AbstractRabbitMQSpringIntTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQSpringIntTest.class);
 
     @Produce("direct:rabbitMQ")
     protected ProducerTemplate template;
-    @Autowired
+
     private ConnectionFactory connectionFactory;
     private Connection connection;
     private Channel channel;
+
+    @Override
+    protected String getConfigLocation() {
+        return "classpath:/RabbitMQSpringIntTest-context.xml";
+    }
+
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        AbstractApplicationContext applicationContext = super.createApplicationContext();
+
+        connectionFactory = (ConnectionFactory) applicationContext.getBean("customConnectionFactory");
+        return applicationContext;
+    }
 
     private boolean isConnectionOpened() {
         return connection != null && connection.isOpen();
@@ -102,6 +109,7 @@ public class RabbitMQSpringIntTest {
         }
     }
 
+
     private static final class LastDeliveryConsumer extends DefaultConsumer {
         private byte[] lastBody;
 
@@ -118,6 +126,7 @@ public class RabbitMQSpringIntTest {
         public byte[] getLastBody() {
             return lastBody;
         }
+
         public String getLastBodyAsString() {
             return lastBody == null ? null : new String(lastBody);
         }

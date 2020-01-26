@@ -19,12 +19,17 @@ package org.apache.camel.component.rabbitmq.qpid;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.camel.component.rabbitmq.RabbitMQProducerIntTest;
+import org.apache.camel.component.rabbitmq.integration.RabbitMQProducerIntTest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 
 public class RabbitMQProducerQpidTest extends RabbitMQProducerIntTest {
+    @Override
+    public boolean isStartDocker() {
+        return false;
+    }
+
     @BeforeClass
     public static void startBroker() throws Exception {
         systemLauncher.startup(createQpidSystemConfig());

@@ -4,6 +4,10 @@ Integration testing
 The camel-rabbitmq component has both unit tests and integration tests.
 
 The integration tests requires a running RabbitMQ broker.
+All integration tests run docker container with RabbitMQ automatically.
+
+The integration tests with Qpid could be run via Maven (disabled by default):
+    mvn test -P qpid-itest
 
 The broker can be run via Docker:
 
@@ -14,8 +18,3 @@ Or to install RabbitMQ as standalone and then configure it:
     rabbitmq-server
     rabbitmqctl add_user cameltest cameltest
     rabbitmqctl set_permissions -p / cameltest ".*" ".*" ".*"
-
-The integration tests can be run via Maven:
-
-    mvn test -P itest
-

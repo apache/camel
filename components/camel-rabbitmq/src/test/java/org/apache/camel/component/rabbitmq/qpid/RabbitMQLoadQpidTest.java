@@ -16,11 +16,16 @@
  */
 package org.apache.camel.component.rabbitmq.qpid;
 
-import org.apache.camel.component.rabbitmq.RabbitMQLoadIntTest;
+import org.apache.camel.component.rabbitmq.integration.RabbitMQLoadIntTest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 public class RabbitMQLoadQpidTest extends RabbitMQLoadIntTest {
+    @Override
+    public boolean isStartDocker() {
+        return false;
+    }
+
     @BeforeClass
     public static void startBroker() throws Exception {
         systemLauncher.startup(createQpidSystemConfig());
