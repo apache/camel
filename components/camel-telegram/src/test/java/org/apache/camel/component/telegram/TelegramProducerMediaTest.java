@@ -224,6 +224,7 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
         Exchange ex = endpoint.createExchange();
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION, "Video");
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.VIDEO.name());
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP, new ForceReply(true));
         byte[] video = TelegramTestUtil.createSampleVideo();
         ex.getIn().setBody(video);
 
@@ -234,6 +235,7 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
         assertTrue(contains(message, video));
         assertMultipartFilename(message, "video", "video.mp4");
         assertMultipartText(message, "caption", "Video");
+        assertMultipartText(message, "reply_markup", new ForceReply(true).toJson());
     }
 
     @Test

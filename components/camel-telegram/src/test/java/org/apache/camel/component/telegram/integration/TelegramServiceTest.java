@@ -272,9 +272,7 @@ public class TelegramServiceTest extends TelegramTestSupport {
         ReplyMarkup replyMarkup = InlineKeyboardMarkup.builder()
             .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
                 .url("https://camel.apache.org").build())).build();
-        msg.setReplyMarkup(
-            replyMarkup
-        );
+        msg.setReplyMarkup(replyMarkup);
 
         MessageResult result = sendMessage(msg);
         Assertions.assertTrue(result.isOk());
@@ -305,7 +303,13 @@ public class TelegramServiceTest extends TelegramTestSupport {
         msg.setWidth(90);
         msg.setHeight(50);
 
-        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        ReplyMarkup replyMarkup = InlineKeyboardMarkup.builder()
+            .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
+                .url("https://camel.apache.org").build())).build();
+        msg.setReplyMarkup(replyMarkup);
+
+        MessageResult result = sendMessage(msg);
+        Assertions.assertTrue(result.isOk());
     }
 
     @Test

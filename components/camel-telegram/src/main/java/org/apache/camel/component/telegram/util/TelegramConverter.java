@@ -158,11 +158,13 @@ public final class TelegramConverter {
         case VIDEO: {
             OutgoingVideoMessage video = new OutgoingVideoMessage();
             String title = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
+            ReplyMarkup replyMarkup = (ReplyMarkup) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP);
             String fileName = "video." + type.getFileExtension();
 
             video.setCaption(title);
             video.setFilenameWithExtension(fileName);
             video.setVideo(message);
+            video.setReplyMarkup(replyMarkup);
 
             result = video;
             break;
