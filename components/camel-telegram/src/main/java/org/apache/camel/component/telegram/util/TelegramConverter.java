@@ -172,10 +172,12 @@ public final class TelegramConverter {
             // this can be any file
             OutgoingDocumentMessage document = new OutgoingDocumentMessage();
             String title = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
+            ReplyMarkup replyMarkup = (ReplyMarkup) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP);
 
             document.setCaption(title);
             document.setFilenameWithExtension("file");
             document.setDocument(message);
+            document.setReplyMarkup(replyMarkup);
 
             result = document;
             break;

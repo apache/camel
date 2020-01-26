@@ -329,8 +329,15 @@ public class TelegramServiceTest extends TelegramTestSupport {
         msg.setChatId(chatId);
         msg.setFilenameWithExtension("file.txt");
         msg.setCaption("A document");
+        ReplyMarkup replyMarkup = InlineKeyboardMarkup.builder()
+            .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
+                .url("https://camel.apache.org").build())).build();
+        msg.setReplyMarkup(
+            replyMarkup
+        );
 
-        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        MessageResult result = sendMessage(msg);
+        Assertions.assertTrue(result.isOk());
     }
 
     @Test
