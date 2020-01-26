@@ -14,24 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.telegram;
+package org.apache.camel.component.telegram.model;
 
-/**
- * Useful constants for the Telegram component.
- */
-public final class TelegramConstants {
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-    public static final String TELEGRAM_CHAT_ID = "CamelTelegramChatId";
+public interface ReplyMarkup {
 
-    public static final String TELEGRAM_MEDIA_TYPE = "CamelTelegramMediaType";
-
-    public static final String TELEGRAM_MEDIA_TITLE_CAPTION = "CamelTelegramMediaTitleCaption";
-
-    public static final String TELEGRAM_MEDIA_MARKUP = "CamelTelegramMediaMarkup";
-
-    public static final String TELEGRAM_PARSE_MODE = "CamelTelegramParseMode";
-
-    private TelegramConstants() {
+    default String toJson() {
+        try {
+            return new ObjectMapper().writeValueAsString(this);
+        } catch (final JsonProcessingException e) {
+            throw new RuntimeException("Object conversion failed.");
+        }
     }
-
 }

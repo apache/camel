@@ -28,6 +28,7 @@ import org.apache.camel.component.telegram.model.OutgoingMessage;
 import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
+import org.apache.camel.component.telegram.model.ReplyMarkup;
 import org.apache.camel.component.telegram.model.Update;
 
 /**
@@ -98,7 +99,6 @@ public final class TelegramConverter {
         }
         }
 
-
         return result;
     }
 
@@ -130,11 +130,13 @@ public final class TelegramConverter {
         case PHOTO_PNG: {
             OutgoingPhotoMessage img = new OutgoingPhotoMessage();
             String caption = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
+            ReplyMarkup replyMarkup = (ReplyMarkup) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP);
             String fileName = "photo." + type.getFileExtension();
 
             img.setCaption(caption);
             img.setFilenameWithExtension(fileName);
             img.setPhoto(message);
+            img.setReplyMarkup(replyMarkup);
 
             result = img;
             break;
@@ -142,11 +144,13 @@ public final class TelegramConverter {
         case AUDIO: {
             OutgoingAudioMessage audio = new OutgoingAudioMessage();
             String title = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
+            ReplyMarkup replyMarkup = (ReplyMarkup) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP);
             String fileName = "audio." + type.getFileExtension();
 
             audio.setTitle(title);
             audio.setFilenameWithExtension(fileName);
             audio.setAudio(message);
+            audio.setReplyMarkup(replyMarkup);
 
             result = audio;
             break;
@@ -154,11 +158,13 @@ public final class TelegramConverter {
         case VIDEO: {
             OutgoingVideoMessage video = new OutgoingVideoMessage();
             String title = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
+            ReplyMarkup replyMarkup = (ReplyMarkup) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP);
             String fileName = "video." + type.getFileExtension();
 
             video.setCaption(title);
             video.setFilenameWithExtension(fileName);
             video.setVideo(message);
+            video.setReplyMarkup(replyMarkup);
 
             result = video;
             break;
@@ -168,10 +174,12 @@ public final class TelegramConverter {
             // this can be any file
             OutgoingDocumentMessage document = new OutgoingDocumentMessage();
             String title = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
+            ReplyMarkup replyMarkup = (ReplyMarkup) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP);
 
             document.setCaption(title);
             document.setFilenameWithExtension("file");
             document.setDocument(message);
+            document.setReplyMarkup(replyMarkup);
 
             result = document;
             break;
