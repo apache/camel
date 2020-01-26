@@ -268,6 +268,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             buildTextPart(builder, "duration", message.getDurationSeconds());
             buildTextPart(builder, "width", message.getWidth());
             buildTextPart(builder, "height", message.getHeight());
+            buildTextPart(builder, "reply_markup", message.replyMarkupJson());
         }
 
     }
