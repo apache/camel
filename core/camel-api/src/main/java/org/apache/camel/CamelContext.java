@@ -215,6 +215,12 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      */
     Date getStartDate();
 
+    /**
+     * Whether event notification is applicable (possible).
+     * This API is used internally in Camel as optimization.
+     */
+    boolean isEventNotificationApplicable();
+
     // Service Methods
     //-----------------------------------------------------------------------
 

@@ -558,7 +558,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             }
 
             // emmit event we are doing redelivery
-            EventHelper.notifyExchangeRedelivery(exchange.getContext(), exchange, redeliveryCounter);
+            if (camelContext.isEventNotificationApplicable()) {
+                EventHelper.notifyExchangeRedelivery(exchange.getContext(), exchange, redeliveryCounter);
+            }
 
             // process the exchange (also redelivery)
             outputAsync.process(exchange, doneSync -> {
@@ -845,7 +847,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 // fire event as we had a failure processor to handle it, which there is a event for
                 final boolean deadLetterChannel = processor == deadLetter;
 
-                EventHelper.notifyExchangeFailureHandling(exchange.getContext(), exchange, processor, deadLetterChannel, deadLetterUri);
+                if (camelContext.isEventNotificationApplicable()) {
+                    EventHelper.notifyExchangeFailureHandling(exchange.getContext(), exchange, processor, deadLetterChannel, deadLetterUri);
+                }
 
                 // the failure processor could also be asynchronous
                 AsyncProcessor afp = AsyncProcessorConverterHelper.convert(processor);
@@ -854,7 +858,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     try {
                         prepareExchangeAfterFailure(exchange, isDeadLetterChannel, shouldHandle, shouldContinue);
                         // fire event as we had a failure processor to handle it, which there is a event for
-                        EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, deadLetterChannel, deadLetterUri);
+                        if (camelContext.isEventNotificationApplicable()) {
+                            EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, deadLetterChannel, deadLetterUri);
+                        }
                     } finally {
                         // if the fault was handled asynchronously, this should be reflected in the callback as well
                         reactiveExecutor.schedule(callback);

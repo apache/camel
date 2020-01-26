@@ -136,7 +136,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
 
             final Exchange target = configureExchange(exchange, pattern);
 
-            final boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);
+            final boolean sending = camelContext.isEventNotificationApplicable() && EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);
             // record timing for sending the exchange using the producer
             StopWatch watch;
             if (sending) {
