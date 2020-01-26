@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
@@ -31,6 +32,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
 import org.junit.Test;
 
 public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
@@ -53,7 +55,11 @@ public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
     private Endpoint headersExchangeWithQueueDefiniedInline;
     
     @BindToRegistry("args")
-    private Map<String, Object> bindingArgs = new HashMap<>();
+    private Map<String, Object> bindingArgs = new HashMap<String, Object>() {
+        {
+            put("binding.foo", "bar");
+        }
+    };
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -121,14 +127,20 @@ public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
      */
     @Test
     public void sentMessageIsReceivedWithHeadersRouting() throws InterruptedException, IOException, TimeoutException {
-        //should only be one message that makes it through because only
-        //one has the correct header set
+        // Should only be one message that makes it through,
+        // because only one has the correct header set
         to.expectedMessageCount(1);
 
         Channel channel = connection().createChannel();
         channel.basicPublish(HEADERS_EXCHANGE, "", propertiesWithHeader("foo", "bar"), MSG.getBytes());
         channel.basicPublish(HEADERS_EXCHANGE, "", null, MSG.getBytes());
         channel.basicPublish(HEADERS_EXCHANGE, "", propertiesWithHeader("foo", "bra"), MSG.getBytes());
+
+        // Only one message should be received, waiting for some other messages
+        Awaitility.await()
+                .during(1000, TimeUnit.MILLISECONDS)
+                .atMost(2000, TimeUnit.MILLISECONDS)
+                .until(() -> to.getReceivedCounter() >= 1);
 
         to.assertIsSatisfied();
     }
