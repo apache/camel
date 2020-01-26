@@ -106,8 +106,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
         boolean stop = exchange.isRouteStop();
         boolean more = index.get() < size;
 
-        if (!stop && more &&
-                (first || continueProcessing(exchange, "so breaking out of pipeline", LOG))) {
+        if (!stop && more && (first || continueProcessing(exchange, "so breaking out of pipeline", LOG))) {
 
             // prepare for next run
             ExchangeHelper.prepareOutToIn(exchange);

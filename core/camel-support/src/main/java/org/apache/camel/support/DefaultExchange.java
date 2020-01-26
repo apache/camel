@@ -483,7 +483,7 @@ public final class DefaultExchange implements ExtendedExchange {
 
     @Override
     public void setRouteStop(boolean routeStop) {
-        this. routeStop = routeStop;
+        this.routeStop = routeStop;
     }
 
     @Override
