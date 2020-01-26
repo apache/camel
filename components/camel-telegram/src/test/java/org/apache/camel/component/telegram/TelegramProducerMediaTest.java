@@ -244,6 +244,7 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
         Exchange ex = endpoint.createExchange();
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION, "Document");
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.DOCUMENT);
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP, new ForceReply(true));
         byte[] document = TelegramTestUtil.createSampleDocument();
         ex.getIn().setBody(document);
 
@@ -254,6 +255,7 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
         assertTrue(contains(message, document));
         assertMultipartFilename(message, "document", "file");
         assertMultipartText(message, "caption", "Document");
+        assertMultipartText(message, "reply_markup", new ForceReply(true).toJson());
     }
 
     @Test
