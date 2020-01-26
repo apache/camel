@@ -19,6 +19,7 @@ package org.apache.camel.component.stomp;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
@@ -192,13 +193,23 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
         }
     }
 
+    private void populateCustomHeadersToStompFrames(final StompFrame frame) {
+        Properties customHeaders = configuration.getCustomHeaders();
+        if(customHeaders!=null) {
+            for (Object key : customHeaders.keySet()) {
+                frame.addHeader(StompFrame.encodeHeader(key.toString()), StompFrame.encodeHeader(customHeaders.get(key).toString()));
+            }
+        }
+    }
+
     void addConsumer(final StompConsumer consumer) {
+        final StompFrame frame = new StompFrame(SUBSCRIBE);
+        populateCustomHeadersToStompFrames(frame);
+        frame.addHeader(DESTINATION, StompFrame.encodeHeader(destination));
+        frame.addHeader(ID, consumer.id);
         connection.getDispatchQueue().execute(new Task() {
             @Override
             public void run() {
-                StompFrame frame = new StompFrame(SUBSCRIBE);
-                frame.addHeader(DESTINATION, StompFrame.encodeHeader(destination));
-                frame.addHeader(ID, consumer.id);
                 connection.send(frame, null);
             }
         });
