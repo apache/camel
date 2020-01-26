@@ -121,7 +121,7 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
     }
 
     @Test
-    public void testRouteWithAudioAndReplyKeyboardRemove() throws IOException {
+    public void testRouteWithJpgAndReplyKeyboardRemove() throws IOException {
         final MockProcessor<byte[]> mockProcessor = getMockRoutes().getMock("sendPhoto");
         mockProcessor.clearRecordedMessages();
 
@@ -145,7 +145,7 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
     }
 
     @Test
-    public void testRouteWithPhotoAndInlineKeyboardMarkup() throws IOException {
+    public void testRouteWithJpgAndInlineKeyboardMarkup() throws IOException {
         final MockProcessor<byte[]> mockProcessor = getMockRoutes().getMock("sendPhoto");
         mockProcessor.clearRecordedMessages();
 
@@ -191,6 +191,29 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
         assertTrue(contains(message, audio));
         assertMultipartFilename(message, "audio", "audio.mp3");
         assertMultipartText(message, "title", "Audio");
+    }
+
+    @Test
+    public void testRouteWithAudioAndReplyMarkup() throws Exception {
+        final MockProcessor<byte[]> mockProcessor = getMockRoutes().getMock("sendAudio");
+        mockProcessor.clearRecordedMessages();
+
+        Exchange ex = endpoint.createExchange();
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION, "Audio");
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.AUDIO);
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP, new ForceReply(true));
+        byte[] audio = TelegramTestUtil.createSampleAudio();
+        ex.getIn().setBody(audio);
+
+        template.send(endpoint, ex);
+
+        final byte[] message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+
+        assertMultipartText(message, "chat_id", "my-id");
+        assertTrue(contains(message, audio));
+        assertMultipartFilename(message, "audio", "audio.mp3");
+        assertMultipartText(message, "title", "Audio");
+        assertMultipartText(message, "reply_markup", new ForceReply(true).toJson());
     }
 
     @Test

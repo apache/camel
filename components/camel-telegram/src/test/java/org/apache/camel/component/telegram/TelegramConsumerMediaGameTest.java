@@ -47,7 +47,7 @@ public class TelegramConsumerMediaGameTest extends TelegramTestSupport {
         IncomingMessage msg = mediaExchange.getIn().getBody(IncomingMessage.class);
 
         IncomingGame game = msg.getGame();
-        InlineKeyboardMarkup inlineKeyboardMarkup = msg.getReplyMarkup();
+        InlineKeyboardMarkup inlineKeyboardMarkup = (InlineKeyboardMarkup)msg.getReplyMarkup();
 
         Assertions.assertNotNull(game);
         Assertions.assertEquals("test_game", game.getTitle());

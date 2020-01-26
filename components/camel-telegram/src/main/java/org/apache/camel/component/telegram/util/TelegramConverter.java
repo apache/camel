@@ -144,11 +144,13 @@ public final class TelegramConverter {
         case AUDIO: {
             OutgoingAudioMessage audio = new OutgoingAudioMessage();
             String title = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
+            ReplyMarkup replyMarkup = (ReplyMarkup) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP);
             String fileName = "audio." + type.getFileExtension();
 
             audio.setTitle(title);
             audio.setFilenameWithExtension(fileName);
             audio.setAudio(message);
+            audio.setReplyMarkup(replyMarkup);
 
             result = audio;
             break;

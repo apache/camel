@@ -49,6 +49,7 @@ import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
 import org.apache.camel.component.telegram.model.ReplyKeyboardMarkup;
 import org.apache.camel.component.telegram.model.ReplyKeyboardRemove;
+import org.apache.camel.component.telegram.model.ReplyMarkup;
 import org.apache.camel.component.telegram.util.TelegramApiConfig;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
@@ -268,8 +269,15 @@ public class TelegramServiceTest extends TelegramTestSupport {
         msg.setTitle("Audio");
         msg.setDurationSeconds(5);
         msg.setPerformer("Myself");
+        ReplyMarkup replyMarkup = InlineKeyboardMarkup.builder()
+            .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
+                .url("https://camel.apache.org").build())).build();
+        msg.setReplyMarkup(
+            replyMarkup
+        );
 
-        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        MessageResult result = sendMessage(msg);
+        Assertions.assertTrue(result.isOk());
     }
 
     @Test
@@ -579,7 +587,8 @@ public class TelegramServiceTest extends TelegramTestSupport {
         MessageResult incomingMessage = sendMessage(editMessageReplyMarkupMessage);
         Assertions.assertTrue(incomingMessage.isOk());
 
-        Assertions.assertEquals(buttonOptionOneI, incomingMessage.getMessage().getReplyMarkup().getInlineKeyboard()
+        Assertions.assertEquals(buttonOptionOneI,
+            ((InlineKeyboardMarkup)incomingMessage.getMessage().getReplyMarkup()).getInlineKeyboard()
         .get(0).get(0));
     }
 
@@ -668,6 +677,6 @@ public class TelegramServiceTest extends TelegramTestSupport {
     }
 
     private <T extends MessageResult> T sendMessage(OutgoingMessage outgoingMessage) {
-        return (T) template.requestBody(String.format("telegram://bots?chatId=%s", chatId), outgoingMessage);
+        return (T) template.requestBody(String.format("telegram://bots?chatId=%s", "288482186"), outgoingMessage);
     }
 }
