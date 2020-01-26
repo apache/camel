@@ -71,7 +71,7 @@ public class OutgoingPhotoMessage extends OutgoingMessage {
         this.replyMarkup = replyMarkup;
     }
 
-    public String getReplyMarkupJson() {
+    public String replyMarkupJson() {
         return replyMarkup == null ? null : replyMarkup.toJson();
     }
 
