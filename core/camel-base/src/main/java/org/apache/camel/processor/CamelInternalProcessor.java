@@ -60,6 +60,7 @@ import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -595,6 +596,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             if (routeContext != null) {
                 this.routeId = routeContext.getRouteId();
                 this.uowFactory = routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory();
+                // optimize uow factory to initialize it early and once per advice
+                this.uowFactory.afterPropertiesConfigured(routeContext.getCamelContext());
             }
         }
 
