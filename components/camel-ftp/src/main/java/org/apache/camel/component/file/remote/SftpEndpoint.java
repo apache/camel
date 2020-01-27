@@ -29,7 +29,10 @@ import org.apache.camel.spi.UriParam;
  */
 @UriEndpoint(firstVersion = "1.1.0", scheme = "sftp", extendsScheme = "file", title = "SFTP",
         syntax = "sftp:host:port/directoryName", label = "file",
-        excludeProperties = "appendChars,binary,passiveMode,bufferSize,siteCommand")
+        excludeProperties = "appendChars,binary,passiveMode,bufferSize,siteCommand," +
+                "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist," +
+                "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail," +
+                "renameUsingCopy")
 public class SftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
 
     @UriParam
