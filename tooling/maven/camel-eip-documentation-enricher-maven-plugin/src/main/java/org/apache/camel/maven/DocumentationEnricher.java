@@ -63,7 +63,8 @@ public class DocumentationEnricher {
     }
 
     private void addElementDocumentation(Element item, File jsonFile) throws IOException {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema(Constants.MODEL_ATTRIBUTE_NAME, PackageHelper.fileToString(jsonFile), false);
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema(Constants.MODEL_ATTRIBUTE_NAME,
+                PackageHelper.loadText(jsonFile), false);
         for (Map<String, String> row : rows) {
             if (row.containsKey(Constants.DESCRIPTION_ATTRIBUTE_NAME)) {
                 String descriptionText = row.get(Constants.DESCRIPTION_ATTRIBUTE_NAME);
@@ -84,7 +85,8 @@ public class DocumentationEnricher {
         String defaultValueText = null;
         String deprecatedText = null;
 
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema(Constants.PROPERTIES_ATTRIBUTE_NAME, PackageHelper.fileToString(jsonFile), true);
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema(Constants.PROPERTIES_ATTRIBUTE_NAME,
+                PackageHelper.loadText(jsonFile), true);
         for (Map<String, String> row : rows) {
             if (name.equals(row.get(Constants.NAME_ATTRIBUTE_NAME))) {
                 descriptionText = row.get(Constants.DESCRIPTION_ATTRIBUTE_NAME);

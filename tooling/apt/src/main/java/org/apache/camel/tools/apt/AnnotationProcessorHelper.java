@@ -17,14 +17,18 @@
 package org.apache.camel.tools.apt;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -45,6 +49,8 @@ import javax.tools.Diagnostic;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
+import org.apache.camel.tooling.util.Strings;
+
 import static org.apache.camel.tooling.util.Strings.canonicalClassName;
 import static org.apache.camel.tooling.util.Strings.isNullOrEmpty;
 
@@ -52,6 +58,8 @@ import static org.apache.camel.tooling.util.Strings.isNullOrEmpty;
  * Abstract class for Camel apt plugins.
  */
 public final class AnnotationProcessorHelper {
+
+    private static final String VALID_CHARS = ".,-='/\\!&%():;#${}";
 
     private AnnotationProcessorHelper() {
     }
@@ -359,5 +367,163 @@ public final class AnnotationProcessorHelper {
         } catch (Throwable t) {
             // ignore
         }
+    }
+
+    /**
+     * Gets the JSon schema type.
+     *
+     * @param   type the java type
+     * @return  the json schema type, is never null, but returns <tt>object</tt> as the generic type
+     */
+    public static String getType(String type, boolean enumType) {
+        if (enumType) {
+            return "enum";
+        } else if (type == null) {
+            // return generic type for unknown type
+            return "object";
+        } else if (type.equals(URI.class.getName()) || type.equals(URL.class.getName())) {
+            return "string";
+        } else if (type.equals(File.class.getName())) {
+            return "string";
+        } else if (type.equals(Date.class.getName())) {
+            return "string";
+        } else if (type.startsWith("java.lang.Class")) {
+            return "string";
+        } else if (type.startsWith("java.util.List") || type.startsWith("java.util.Collection")) {
+            return "array";
+        }
+
+        String primitive = getPrimitiveType(type);
+        if (primitive != null) {
+            return primitive;
+        }
+
+        return "object";
+    }
+
+    /**
+     * Gets the JSon schema primitive type.
+     *
+     * @param   name the java type
+     * @return  the json schema primitive type, or <tt>null</tt> if not a primitive
+     */
+    public static String getPrimitiveType(String name) {
+        // special for byte[] or Object[] as its common to use
+        if ("java.lang.byte[]".equals(name) || "byte[]".equals(name)) {
+            return "string";
+        } else if ("java.lang.Byte[]".equals(name) || "Byte[]".equals(name)) {
+            return "array";
+        } else if ("java.lang.Object[]".equals(name) || "Object[]".equals(name)) {
+            return "array";
+        } else if ("java.lang.String[]".equals(name) || "String[]".equals(name)) {
+            return "array";
+        } else if ("java.lang.Character".equals(name) || "Character".equals(name) || "char".equals(name)) {
+            return "string";
+        } else if ("java.lang.String".equals(name) || "String".equals(name)) {
+            return "string";
+        } else if ("java.lang.Boolean".equals(name) || "Boolean".equals(name) || "boolean".equals(name)) {
+            return "boolean";
+        } else if ("java.lang.Integer".equals(name) || "Integer".equals(name) || "int".equals(name)) {
+            return "integer";
+        } else if ("java.lang.Long".equals(name) || "Long".equals(name) || "long".equals(name)) {
+            return "integer";
+        } else if ("java.lang.Short".equals(name) || "Short".equals(name) || "short".equals(name)) {
+            return "integer";
+        } else if ("java.lang.Byte".equals(name) || "Byte".equals(name) || "byte".equals(name)) {
+            return "integer";
+        } else if ("java.lang.Float".equals(name) || "Float".equals(name) || "float".equals(name)) {
+            return "number";
+        } else if ("java.lang.Double".equals(name) || "Double".equals(name) || "double".equals(name)) {
+            return "number";
+        }
+
+        return null;
+    }
+
+    /**
+     * Sanitizes the javadoc to removed invalid characters so it can be used as json description
+     *
+     * @param javadoc  the javadoc
+     * @return the text that is valid as json
+     */
+    public static String sanitizeDescription(String javadoc, boolean summary) {
+        if (isNullOrEmpty(javadoc)) {
+            return null;
+        }
+
+        // lets just use what java accepts as identifiers
+        StringBuilder sb = new StringBuilder();
+
+        // split into lines
+        String[] lines = javadoc.split("\n");
+
+        boolean first = true;
+        for (String line : lines) {
+            line = line.trim();
+
+            if (line.startsWith("**")) {
+                continue;
+            }
+            // remove leading javadoc *
+            if (line.startsWith("*")) {
+                line = line.substring(1);
+                line = line.trim();
+            }
+
+            // terminate if we reach @param, @return or @deprecated as we only want the javadoc summary
+            if (line.startsWith("@param") || line.startsWith("@return") || line.startsWith("@deprecated")) {
+                break;
+            }
+
+            // skip lines that are javadoc references
+            if (line.startsWith("@")) {
+                continue;
+            }
+
+            // remove all XML tags
+            line = line.replaceAll("<.*?>", "");
+
+            // remove all inlined javadoc links, eg such as {@link org.apache.camel.spi.Registry}
+            // use #? to remove leading # in case its a local reference
+            line = line.replaceAll("\\{\\@\\w+\\s#?([\\w.#(\\d,)]+)\\}", "$1");
+
+            // we are starting from a new line, so add a whitespace
+            if (!first) {
+                sb.append(' ');
+            }
+
+            // create a new line
+            StringBuilder cb = new StringBuilder();
+            for (char c : line.toCharArray()) {
+                if (Character.isJavaIdentifierPart(c) || VALID_CHARS.indexOf(c) != -1) {
+                    cb.append(c);
+                } else if (Character.isWhitespace(c)) {
+                    // always use space as whitespace, also for line feeds etc
+                    cb.append(' ');
+                }
+            }
+
+            // append data
+            String s = cb.toString().trim();
+            sb.append(s);
+
+            boolean empty = isNullOrEmpty(s);
+            boolean endWithDot = s.endsWith(".");
+            boolean haveText = sb.length() > 0;
+
+            if (haveText && summary && (empty || endWithDot)) {
+                // if we only want a summary, then skip at first empty line we encounter, or if the sentence ends with a dot
+                break;
+            }
+
+            first = false;
+        }
+
+        String s = sb.toString();
+        // remove double whitespaces, and trim
+        s = s.replaceAll("\\s+", " ");
+        // unescape http links
+        s = s.replaceAll("\\\\(http:|https:)", "$1");
+        return s.trim();
     }
 }

@@ -6,7 +6,7 @@ Number of Miscellaneous Components: @{others.size} in @{numberOfArtifacts} JAR a
 |===
 | Component | Since | Description
 @foreach{row : others}
-| xref:${row.name}.adoc[@{row.title}] (@{row.artifactId}) | @{row.firstVersionShort} | @if{row.deprecated == "true"}*deprecated* @end{}@{util.escape(row.description)}
+| xref:${row.name}.adoc[@{row.title}] (@{row.artifactId}) | @{row.firstVersionShort} | @if{row.deprecated}*deprecated* @end{}@{util.escape(row.description)}
 @end{}|===
 
 @end{}

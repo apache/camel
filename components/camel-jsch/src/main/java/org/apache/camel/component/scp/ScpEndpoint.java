@@ -32,7 +32,10 @@ import org.apache.camel.spi.UriParam;
         syntax = "scp:host:port/directoryName", producerOnly = true, label = "file",
         excludeProperties = "appendChars,binary,charset,doneFileName,download,fastExistsCheck,fileExist,moveExisting,passiveMode"
                 + ",separator,tempFileName,tempPrefix,eagerDeleteTargetFile,keepLastModified,sendNoop"
-                + ",maximumReconnectAttempts,reconnectDelay,autoCreate,bufferSize,siteCommand,stepwise,throwExceptionOnConnectFailed")
+                + ",maximumReconnectAttempts,reconnectDelay,autoCreate,bufferSize,siteCommand,stepwise,throwExceptionOnConnectFailed"
+                + ",transferLoggingIntervalSeconds,transferLoggingLevel,transferLoggingVerbose,resumeDownload"
+                + ",handleDirectoryParserAbsoluteResult,activePortRange,ftpClient,ftpClientConfig"
+                + ",ftpClientConfigParameters,ftpClientParameters,account")
 public class ScpEndpoint extends RemoteFileEndpoint<ScpFile> {
 
     @UriParam

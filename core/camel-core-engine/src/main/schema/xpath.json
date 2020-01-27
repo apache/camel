@@ -1,5 +1,5 @@
 {
- "model": {
+  "model": {
     "kind": "model",
     "name": "xpath",
     "title": "XPath",
@@ -14,7 +14,7 @@
   "properties": {
     "expression": { "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The expression value in your chosen language syntax" },
     "documentType": { "kind": "attribute", "displayName": "Document Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Name of class for document type The default value is org.w3c.dom.Document" },
-    "resultType": { "kind": "attribute", "displayName": "Result Type", "required": false, "type": "string", "javaType": "java.lang.String", "enum": [ "BOOLEAN", "NODE", "NODESET", "NUMBER", "STRING" ], "deprecated": false, "secret": false, "defaultValue": "NODESET", "description": "Sets the class name of the result type (type from output) The default result type is NodeSet" },
+    "resultType": { "kind": "attribute", "displayName": "Result Type", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "BOOLEAN", "NODE", "NODESET", "NUMBER", "STRING" ], "deprecated": false, "secret": false, "defaultValue": "NODESET", "description": "Sets the class name of the result type (type from output) The default result type is NodeSet" },
     "saxon": { "kind": "attribute", "displayName": "Saxon", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether to use Saxon." },
     "factoryRef": { "kind": "attribute", "displayName": "Factory Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "References to a custom XPathFactory to lookup in the registry" },
     "objectModel": { "kind": "attribute", "displayName": "Object Model", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The XPath object model to use" },

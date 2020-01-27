@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -32,11 +33,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-
-import static org.apache.camel.tooling.util.PackageHelper.after;
-import static org.apache.camel.tooling.util.PackageHelper.loadText;
-import static org.apache.camel.tooling.util.PackageHelper.writeText;
-import static org.apache.camel.tooling.util.Strings.between;
 
 /**
  * Prepares the parent/pom.xml to keep the Camel artifacts up-to-date.
@@ -131,10 +127,10 @@ public class PrepareParentPomMojo extends AbstractMojo {
     }
 
     private String asArtifactId(File pom) throws IOException {
-        String text = loadText(pom);
-        text = after(text, "</parent>");
+        String text = PackageHelper.loadText(pom);
+        text = Strings.after(text, "</parent>");
         if (text != null) {
-            text = between(text, "<artifactId>", "</artifactId>");
+            text = Strings.between(text, "<artifactId>", "</artifactId>");
             return text;
         }
         return null;
@@ -149,9 +145,9 @@ public class PrepareParentPomMojo extends AbstractMojo {
         }
 
         try {
-            String text = loadText(file);
+            String text = PackageHelper.loadText(file);
 
-            String existing = between(text, start, end);
+            String existing = Strings.between(text, start, end);
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
@@ -162,7 +158,7 @@ public class PrepareParentPomMojo extends AbstractMojo {
                     String before = Strings.before(text, start);
                     String after = Strings.after(text, end);
                     text = before + start + "\n      " + changed + "\n      " + end + after;
-                    writeText(file, text);
+                    PackageHelper.writeText(file, text);
                     return true;
                 }
             } else {

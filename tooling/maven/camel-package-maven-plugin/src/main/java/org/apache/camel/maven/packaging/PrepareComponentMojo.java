@@ -28,11 +28,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import static org.apache.camel.maven.packaging.PackageComponentMojo.prepareComponent;
-import static org.apache.camel.maven.packaging.PackageDataFormatMojo.prepareDataFormat;
-import static org.apache.camel.maven.packaging.PackageLanguageMojo.prepareLanguage;
-import static org.apache.camel.maven.packaging.PackageOtherMojo.prepareOthers;
-
 /**
  * Prepares a Camel component analyzing if the maven module contains Camel
  * <ul>
@@ -52,6 +47,12 @@ public class PrepareComponentMojo extends AbstractMojo {
      */
     @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
+
+    /**
+     * The output directory for generated components file
+     */
+    @Parameter(defaultValue = "${project.build.directory}/src/main/java")
+    protected File configurerOutDir;
 
     /**
      * The output directory for generated components file
@@ -113,12 +114,12 @@ public class PrepareComponentMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         int count = 0;
-        count += prepareComponent(getLog(), project, projectHelper, buildDir, componentOutDir, buildContext);
-        count += prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, schemaOutDir, buildContext);
-        count += prepareLanguage(getLog(), project, projectHelper, buildDir, languageOutDir, schemaOutDir, buildContext);
+        count += PackageComponentMojo.prepareComponent(getLog(), project, projectHelper, buildDir, componentOutDir, buildContext);
+        count += PackageDataFormatMojo.prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, configurerOutDir, schemaOutDir, buildContext);
+        count += PackageLanguageMojo.prepareLanguage(getLog(), project, projectHelper, buildDir, languageOutDir, schemaOutDir, buildContext);
         if (count == 0) {
             // okay its not any of the above then its other
-            prepareOthers(getLog(), project, projectHelper, otherOutDir, schemaOutDir, buildContext);
+            PackageOtherMojo.prepareOthers(getLog(), project, projectHelper, otherOutDir, schemaOutDir, buildContext);
         }
     }
 

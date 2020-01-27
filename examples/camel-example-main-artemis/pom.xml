@@ -38,14 +38,6 @@
 
     <dependencies>
 
-        <!-- to have spring boot tooling support in IDEA you need spring-boot JARs on the classpath -->
-<!--
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring-boot-starter</artifactId>
-        </dependency>
--->
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>

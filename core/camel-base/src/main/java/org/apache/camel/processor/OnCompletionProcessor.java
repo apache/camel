@@ -23,6 +23,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Ordered;
 import org.apache.camel.Predicate;
@@ -144,22 +145,24 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
      * @param exchange the exchange
      */
     protected static void doProcess(Processor processor, Exchange exchange) {
+        ExtendedExchange ee = (ExtendedExchange) exchange;
         // must remember some properties which we cannot use during onCompletion processing
         // as otherwise we may cause issues
         // but keep the caused exception stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
-        boolean stop = exchange.isRouteStop();
-        exchange.setRouteStop(false);
-        Object failureHandled = exchange.removeProperty(Exchange.FAILURE_HANDLED);
-        Object errorhandlerHandled = exchange.removeProperty(Exchange.ERRORHANDLER_HANDLED);
-        boolean rollbackOnly = exchange.isRollbackOnly();
-        exchange.setRollbackOnly(false);
-        boolean rollbackOnlyLast = exchange.isRollbackOnlyLast();
-        exchange.setRollbackOnlyLast(false);
+        boolean stop = ee.isRouteStop();
+        ee.setRouteStop(false);
+        Object failureHandled = ee.removeProperty(Exchange.FAILURE_HANDLED);
+        Object errorhandlerHandled = ee.removeProperty(Exchange.ERRORHANDLER_HANDLED);
+        boolean rollbackOnly = ee.isRollbackOnly();
+        ee.setRollbackOnly(false);
+        boolean rollbackOnlyLast = ee.isRollbackOnlyLast();
+        ee.setRollbackOnlyLast(false);
         // and we should not be regarded as exhausted as we are in a onCompletion block
-        Object exhausted = exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
+        boolean exhausted = ee.adapt(ExtendedExchange.class).isRedeliveryExhausted();
+        ee.setRedeliveryExhausted(false);
 
-        Exception cause = exchange.getException();
-        exchange.setException(null);
+        Exception cause = ee.getException();
+        ee.setException(null);
 
         try {
             processor.process(exchange);
@@ -167,20 +170,18 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
             exchange.setException(e);
         } finally {
             // restore the options
-            exchange.setRouteStop(stop);
+            ee.setRouteStop(stop);
             if (failureHandled != null) {
-                exchange.setProperty(Exchange.FAILURE_HANDLED, failureHandled);
+                ee.setProperty(Exchange.FAILURE_HANDLED, failureHandled);
             }
             if (errorhandlerHandled != null) {
-                exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, errorhandlerHandled);
+                ee.setProperty(Exchange.ERRORHANDLER_HANDLED, errorhandlerHandled);
             }
-            exchange.setRollbackOnly(rollbackOnly);
-            exchange.setRollbackOnlyLast(rollbackOnlyLast);
-            if (exhausted != null) {
-                exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, exhausted);
-            }
+            ee.setRollbackOnly(rollbackOnly);
+            ee.setRollbackOnlyLast(rollbackOnlyLast);
+            ee.setRedeliveryExhausted(exhausted);
             if (cause != null) {
-                exchange.setException(cause);
+                ee.setException(cause);
             }
         }
     }

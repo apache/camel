@@ -21,10 +21,13 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.tooling.util.JSonSchemaHelper;
+import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.EipModel.EipOptionModel;
+import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.LanguageModel.LanguageOptionModel;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -34,11 +37,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
-
-import static org.apache.camel.tooling.util.PackageHelper.after;
-import static org.apache.camel.tooling.util.PackageHelper.findCamelCoreDirectory;
-import static org.apache.camel.tooling.util.PackageHelper.loadText;
-import static org.apache.camel.tooling.util.PackageHelper.parseAsMap;
 
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor
@@ -126,68 +124,28 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         // and create json schema model file for this language
         try {
             if (apacheCamel && count > 0) {
-                File core = findCamelCoreDirectory(project.getBasedir());
+                File core = PackageHelper.findCamelCoreDirectory(project.getBasedir());
                 if (core != null) {
                     for (Map.Entry<String, String> entry : javaTypes.entrySet()) {
                         String name = entry.getKey();
                         String javaType = entry.getValue();
                         String modelName = asModelName(name);
 
-                        LanguageModel languageModel = new LanguageModel();
-                        languageModel.setName(name);
-                        languageModel.setTitle("");
-                        languageModel.setModelName(modelName);
-                        languageModel.setLabel("");
-                        languageModel.setDescription("");
-                        languageModel.setJavaType(javaType);
-                        languageModel.setGroupId(project.getGroupId());
-                        languageModel.setArtifactId(project.getArtifactId());
-                        languageModel.setVersion(project.getVersion());
+                        String json = PackageHelper.loadText(new File(core, "src/main/schema/" + modelName + PackageHelper.JSON_SUFIX));
 
-                        String json = loadText(new File(core, "src/main/schema/" + modelName + ".json"));
-                        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
-                        for (Map<String, String> row : rows) {
-                            if (row.containsKey("title")) {
-                                // title may be special for some
-                                // languages
-                                String title = asTitle(name, row.get("title"));
-                                languageModel.setTitle(title);
-                            }
-                            if (row.containsKey("description")) {
-                                // description may be special for some
-                                // languages
-                                String desc = asDescription(name, row.get("description"));
-                                languageModel.setDescription(desc);
-                            }
-                            if (row.containsKey("label")) {
-                                languageModel.setLabel(row.get("label"));
-                            }
-                            if (row.containsKey("deprecated")) {
-                                languageModel.setDeprecated(row.get("deprecated"));
-                            }
-                            if (row.containsKey("deprecationNote")) {
-                                languageModel.setDeprecationNote(row.get("deprecationNote"));
-                            }
-                            if (row.containsKey("javaType")) {
-                                languageModel.setModelJavaType(row.get("javaType"));
-                            }
-                            if (row.containsKey("firstVersion")) {
-                                languageModel.setFirstVersion(row.get("firstVersion"));
-                            }
-                        }
+                        LanguageModel languageModel = extractLanguageModel(project, json, name, javaType);
                         if (log.isDebugEnabled()) {
                             log.debug("Model: " + languageModel);
                         }
 
                         // build json schema for the data format
-                        String properties = after(json, "  \"properties\": {");
-                        String schema = createParameterJsonSchema(languageModel, properties);
+                        String schema = JsonMapper.createParameterJsonSchema(languageModel);
                         if (log.isDebugEnabled()) {
                             log.debug("JSon schema\n" + schema);
                         }
 
                         // write this to the directory
-                        Path out = schemaOutDir.toPath().resolve(schemaSubDirectory(languageModel.getJavaType())).resolve(name + ".json");
+                        Path out = schemaOutDir.toPath().resolve(schemaSubDirectory(languageModel.getJavaType())).resolve(name + PackageHelper.JSON_SUFIX);
                         updateResource(buildContext, out, schema);
 
                         if (log.isDebugEnabled()) {
@@ -216,6 +174,52 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         return count;
     }
 
+    protected static LanguageModel extractLanguageModel(MavenProject project, String json, String name, String javaType) {
+        EipModel def = JsonMapper.generateEipModel(json);
+        LanguageModel model = new LanguageModel();
+        model.setName(name);
+        model.setTitle(asTitle(name, def.getTitle()));
+        model.setDescription(asDescription(name, def.getDescription()));
+        model.setFirstVersion(def.getFirstVersion());
+        model.setLabel(def.getLabel());
+        model.setDeprecated(def.isDeprecated());
+        model.setDeprecationNote(def.getDeprecationNote());
+        model.setJavaType(javaType);
+        model.setModelName(def.getName());
+        model.setModelJavaType(def.getJavaType());
+        model.setGroupId(project.getGroupId());
+        model.setArtifactId(project.getArtifactId());
+        model.setVersion(project.getVersion());
+
+        for (EipOptionModel opt : def.getOptions()) {
+            LanguageOptionModel option = new LanguageOptionModel();
+            option.setName(opt.getName());
+            option.setKind(opt.getKind());
+            option.setDisplayName(opt.getDisplayName());
+            option.setGroup(opt.getGroup());
+            option.setLabel(opt.getLabel());
+            option.setRequired(opt.isRequired());
+            option.setType(opt.getType());
+            option.setJavaType(opt.getJavaType());
+            option.setEnums(opt.getEnums());
+            option.setOneOfs(opt.getOneOfs());
+            option.setPrefix(opt.getPrefix());
+            option.setOptionalPrefix(opt.getOptionalPrefix());
+            option.setMultiValue(opt.isMultiValue());
+            option.setDeprecated(opt.isDeprecated());
+            option.setDeprecationNote(opt.getDeprecationNote());
+            option.setSecret(opt.isSecret());
+            option.setDefaultValue(opt.getDefaultValue());
+            option.setDefaultValueNote(opt.getDefaultValueNote());
+            option.setAsPredicate(opt.isAsPredicate());
+            option.setConfigurationClass(opt.getConfigurationClass());
+            option.setConfigurationField(opt.getConfigurationField());
+            option.setDescription(opt.getDescription());
+            model.addOption(option);
+        }
+        return model;
+    }
+
     private static String readClassFromCamelResource(File file, StringBuilder buffer, BuildContext buildContext) throws MojoExecutionException {
         // skip directories as there may be a sub .resolver directory such as in
         // camel-script
@@ -240,8 +244,8 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
 
         // find out the javaType for each data format
         try {
-            String text = loadText(file);
-            Map<String, String> map = parseAsMap(text);
+            String text = PackageHelper.loadText(file);
+            Map<String, String> map = PackageHelper.parseAsMap(text);
             return map.get("class");
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to read file " + file + ". Reason: " + e, e);
@@ -278,166 +282,6 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         int idx = javaType.lastIndexOf('.');
         String pckName = javaType.substring(0, idx);
         return pckName.replace('.', '/');
-    }
-
-    private static String createParameterJsonSchema(LanguageModel languageModel, String schema) {
-        StringBuilder buffer = new StringBuilder("{");
-        // language model
-        buffer.append("\n \"language\": {");
-        buffer.append("\n    \"name\": \"").append(languageModel.getName()).append("\",");
-        buffer.append("\n    \"kind\": \"").append("language").append("\",");
-        buffer.append("\n    \"modelName\": \"").append(languageModel.getModelName()).append("\",");
-        if (languageModel.getTitle() != null) {
-            buffer.append("\n    \"title\": \"").append(languageModel.getTitle()).append("\",");
-        }
-        if (languageModel.getDescription() != null) {
-            buffer.append("\n    \"description\": \"").append(languageModel.getDescription()).append("\",");
-        }
-        boolean deprecated = "true".equals(languageModel.getDeprecated());
-        buffer.append("\n    \"deprecated\": ").append(deprecated).append(",");
-        if (languageModel.getFirstVersion() != null) {
-            buffer.append("\n    \"firstVersion\": \"").append(languageModel.getFirstVersion()).append("\",");
-        }
-        buffer.append("\n    \"label\": \"").append(languageModel.getLabel()).append("\",");
-        buffer.append("\n    \"javaType\": \"").append(languageModel.getJavaType()).append("\",");
-        if (languageModel.getModelJavaType() != null) {
-            buffer.append("\n    \"modelJavaType\": \"").append(languageModel.getModelJavaType()).append("\",");
-        }
-        buffer.append("\n    \"groupId\": \"").append(languageModel.getGroupId()).append("\",");
-        buffer.append("\n    \"artifactId\": \"").append(languageModel.getArtifactId()).append("\",");
-        buffer.append("\n    \"version\": \"").append(languageModel.getVersion()).append("\"");
-        buffer.append("\n  },");
-
-        buffer.append("\n  \"properties\": {");
-        buffer.append(schema);
-        return buffer.toString();
-    }
-
-    private static class LanguageModel {
-        private String name;
-        private String title;
-        private String modelName;
-        private String description;
-        private String firstVersion;
-        private String label;
-        private String deprecated;
-        private String deprecationNote;
-        private String javaType;
-        private String modelJavaType;
-        private String groupId;
-        private String artifactId;
-        private String version;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public String getModelName() {
-            return modelName;
-        }
-
-        public void setModelName(String modelName) {
-            this.modelName = modelName;
-        }
-
-        public String getModelJavaType() {
-            return modelJavaType;
-        }
-
-        public void setModelJavaType(String modelJavaType) {
-            this.modelJavaType = modelJavaType;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
-        public String getFirstVersion() {
-            return firstVersion;
-        }
-
-        public void setFirstVersion(String firstVersion) {
-            this.firstVersion = firstVersion;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public void setLabel(String label) {
-            this.label = label;
-        }
-
-        public String getDeprecated() {
-            return deprecated;
-        }
-
-        public void setDeprecated(String deprecated) {
-            this.deprecated = deprecated;
-        }
-
-        public String getDeprecationNote() {
-            return deprecationNote;
-        }
-
-        public void setDeprecationNote(String deprecationNote) {
-            this.deprecationNote = deprecationNote;
-        }
-
-        public String getJavaType() {
-            return javaType;
-        }
-
-        public void setJavaType(String javaType) {
-            this.javaType = javaType;
-        }
-
-        public String getGroupId() {
-            return groupId;
-        }
-
-        public void setGroupId(String groupId) {
-            this.groupId = groupId;
-        }
-
-        public String getArtifactId() {
-            return artifactId;
-        }
-
-        public void setArtifactId(String artifactId) {
-            this.artifactId = artifactId;
-        }
-
-        public String getVersion() {
-            return version;
-        }
-
-        public void setVersion(String version) {
-            this.version = version;
-        }
-
-        @Override
-        public String toString() {
-            return "LanguageModel[" + "name='" + name + '\'' + ", modelName='" + modelName + '\'' + ", title='" + title + '\'' + ", description='" + description + '\''
-                   + ", label='" + label + '\'' + ", javaType='" + javaType + '\'' + ", modelJavaType='" + modelJavaType + '\'' + ", groupId='" + groupId + '\'' + ", artifactId='"
-                   + artifactId + '\'' + ", version='" + version + '\'' + ']';
-        }
     }
 
 }
