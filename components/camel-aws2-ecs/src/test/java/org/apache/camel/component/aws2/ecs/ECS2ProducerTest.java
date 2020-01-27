@@ -29,7 +29,7 @@ import software.amazon.awssdk.services.ecs.model.DeleteClusterResponse;
 import software.amazon.awssdk.services.ecs.model.DescribeClustersResponse;
 import software.amazon.awssdk.services.ecs.model.ListClustersResponse;
 
-public class ECSProducerTest extends CamelTestSupport {
+public class ECS2ProducerTest extends CamelTestSupport {
 
     @BindToRegistry("amazonEcsClient")
     AmazonECSClientMock clientMock = new AmazonECSClientMock();
