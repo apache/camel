@@ -24,7 +24,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.ecs.model.ListClustersResponse;
 
 @Ignore("This test must be manually started, you need to specify AWS Credentials")
