@@ -16,11 +16,9 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -58,24 +56,24 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     //   SubUnitOfWork into a general parent/child unit of work concept. However this
     //   requires API changes and thus is best kept for future Camel work
 
-    private String id;
     private final Exchange exchange;
-    private final Logger log;
     private final CamelContext context;
     private final InflightRepository inflightRepository;
+    private Logger log;
     private RouteContext prevRouteContext;
     private RouteContext routeContext;
     private List<Synchronization> synchronizations;
     private Message originalInMessage;
     private Set<Object> transactedBy;
 
-    public DefaultUnitOfWork(Exchange exchange) {
-        this(exchange, LOG);
+    protected DefaultUnitOfWork(Exchange exchange, Logger logger) {
+        this(exchange);
+        this.log = logger;
     }
 
-    protected DefaultUnitOfWork(Exchange exchange, Logger logger) {
+    public DefaultUnitOfWork(Exchange exchange) {
         this.exchange = exchange;
-        this.log = logger;
+        this.log = LOG;
         if (log.isTraceEnabled()) {
             log.trace("UnitOfWork created for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
         }
@@ -319,7 +317,8 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     private Set<Object> getTransactedBy() {
         if (transactedBy == null) {
-            transactedBy = new LinkedHashSet<>();
+            // no need to take up so much space so use a lille set
+            transactedBy = new HashSet<>(4);
         }
         return transactedBy;
     }
