@@ -302,7 +302,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
         @Override
         public String toString() {
-            return "MulticastTask[" + original.getExchangeId() + "," + MulticastProcessor.this + "]";
+            return "MulticastTask";
         }
 
         @Override

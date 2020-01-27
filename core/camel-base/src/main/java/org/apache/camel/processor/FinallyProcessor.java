@@ -115,7 +115,9 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
                 if (!doneSync) {
                     // signal callback to continue routing async
                     ExchangeHelper.prepareOutToIn(exchange);
-                    LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                    }
                 }
             } finally {
                 // callback must always be called

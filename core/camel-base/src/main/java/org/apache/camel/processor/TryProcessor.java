@@ -101,20 +101,24 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
                 // process the next processor
                 Processor processor = processors.next();
                 AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);
-                LOG.trace("Processing exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                }
                 async.process(exchange, doneSync -> reactiveExecutor.schedule(this));
             } else {
                 ExchangeHelper.prepareOutToIn(exchange);
                 exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
                 exchange.setProperty(Exchange.EXCEPTION_HANDLED, lastHandled);
-                LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                }
                 callback.done(false);
             }
         }
 
         @Override
         public String toString() {
-            return "TryState[" + exchange.getExchangeId() + "]";
+            return "TryState";
         }
     }
 
