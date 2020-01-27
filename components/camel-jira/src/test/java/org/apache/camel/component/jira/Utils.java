@@ -121,7 +121,7 @@ public final class Utils {
 
     public static Comment newComment(long issueId, int newCommentId, String comment) {
         DateTime now = DateTime.now();
-        Long id = Long.parseLong(issueId + "0" + newCommentId);
+        long id = Long.parseLong(issueId + "0" + newCommentId);
         URI selfUri = URI.create(TEST_JIRA_URL + "/rest/api/latest/issue/" + issueId + "/comment");
         return new Comment(selfUri, comment, null, null, now, null, null, id);
     }

@@ -1,18 +1,26 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.jira.producer;
 
-import static org.apache.camel.component.jira.JiraConstants.CHILD_ISSUE_KEY;
-import static org.apache.camel.component.jira.JiraConstants.JIRA;
-import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
-import static org.apache.camel.component.jira.JiraConstants.LINK_TYPE;
-import static org.apache.camel.component.jira.JiraConstants.PARENT_ISSUE_KEY;
-import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
-import static org.apache.camel.component.jira.Utils.createIssue;
-import static org.apache.camel.component.jira.Utils.createIssueWithLinks;
-import static org.apache.camel.component.jira.Utils.newIssueLink;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
@@ -36,11 +44,19 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import static org.apache.camel.component.jira.JiraConstants.CHILD_ISSUE_KEY;
+import static org.apache.camel.component.jira.JiraConstants.JIRA;
+import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
+import static org.apache.camel.component.jira.JiraConstants.LINK_TYPE;
+import static org.apache.camel.component.jira.JiraConstants.PARENT_ISSUE_KEY;
+import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
+import static org.apache.camel.component.jira.Utils.createIssue;
+import static org.apache.camel.component.jira.Utils.createIssueWithLinks;
+import static org.apache.camel.component.jira.Utils.newIssueLink;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddIssueLinkProducerTest extends CamelTestSupport {
