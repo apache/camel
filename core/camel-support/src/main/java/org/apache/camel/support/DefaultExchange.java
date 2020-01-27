@@ -62,6 +62,7 @@ public final class DefaultExchange implements ExtendedExchange {
     private boolean rollbackOnly;
     private boolean rollbackOnlyLast;
     private boolean notifyEvent;
+    private boolean interrupted;
 
     public DefaultExchange(CamelContext context) {
         this(context, ExchangePattern.InOnly);
@@ -411,7 +412,7 @@ public final class DefaultExchange implements ExtendedExchange {
         }
         if (t instanceof InterruptedException) {
             // mark the exchange as interrupted due to the interrupt exception
-            setProperty(Exchange.INTERRUPTED, Boolean.TRUE);
+            setInterrupted(true);
         }
     }
 
@@ -626,6 +627,16 @@ public final class DefaultExchange implements ExtendedExchange {
     @Override
     public void setNotifyEvent(boolean notifyEvent) {
         this.notifyEvent = notifyEvent;
+    }
+
+    @Override
+    public boolean isInterrupted() {
+        return interrupted;
+    }
+
+    @Override
+    public void setInterrupted(boolean interrupted) {
+        this.interrupted = interrupted;
     }
 
     /**

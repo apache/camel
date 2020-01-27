@@ -603,17 +603,6 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Checks whether the exchange {@link UnitOfWork} has been interrupted during processing
-     *
-     * @param exchange  the exchange
-     * @return <tt>true</tt> if interrupted, <tt>false</tt> otherwise
-     */
-    public static boolean isInterrupted(Exchange exchange) {
-        Object value = exchange.getProperty(Exchange.INTERRUPTED);
-        return value != null && Boolean.TRUE == value;
-    }
-
-    /**
      * Check whether or not stream caching is enabled for the given route or globally.
      *
      * @param exchange  the exchange
