@@ -54,7 +54,6 @@ with the following path and query parameters:
 | *timelineType* | *Required* The timeline type to produce/consume. |  | TimelineType
 |===
 
-The timelineType can be one of: public, home, user, mentions or retweetsofme.
 
 === Query Parameters (45 parameters):
 
