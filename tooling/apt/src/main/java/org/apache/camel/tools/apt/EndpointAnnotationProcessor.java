@@ -129,12 +129,13 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
 
     protected void writeJSonSchemeAndPropertyConfigurer(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint,
                                                         String title, String scheme, String extendsScheme, String label, String[] schemes) {
+        String parentScheme = isNullOrEmpty(extendsScheme) ? null : extendsScheme;
+
         // gather component information
-        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, classElement, title, scheme, extendsScheme, label, schemes);
+        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, classElement, title, scheme, parentScheme, label, schemes);
 
         // get endpoint information which is divided into paths and options (though there should really only be one path)
         ComponentModel parentData = null;
-        String parentScheme = isNullOrEmpty(extendsScheme) ? null : extendsScheme;
         TypeMirror superclass = classElement.getSuperclass();
         if (superclass != null) {
             String superClassName = Strings.canonicalClassName(superclass.toString());
@@ -267,11 +268,11 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         String fqClassName = packageName + "." + className;
 
         if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
-            generateExtendConfigurer(processingEnv, parent, packageName, className, fqClassName, componentModel.getScheme() + "-component");
+            generateExtendConfigurer(processingEnv, parent, packageName, className, fqClassName, componentModel.getScheme());
         } else if (uriEndpoint.generateConfigurer() && !componentModel.getComponentOptions().isEmpty()) {
             // only generate this once for the first scheme
             if (schemes == null || schemes[0].equals(scheme)) {
-                generatePropertyConfigurer(processingEnv, parent, packageName, className, fqClassName, componentClassName, componentModel.getScheme() + "-component", componentModel.getComponentOptions());
+                generatePropertyConfigurer(processingEnv, parent, packageName, className, fqClassName, componentClassName, componentModel.getScheme(), componentModel.getComponentOptions());
             }
         }
     }

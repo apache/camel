@@ -105,7 +105,7 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
             PropertyBindingException pbe = assertIsInstanceOf(PropertyBindingException.class, e.getCause().getCause());
             assertEquals("chmod", pbe.getPropertyName());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, pbe.getCause());
-            assertEquals("chmod option [abc] is not valid", iae.getMessage());
+            assertEquals("Could not find a suitable setter for property: chmod as there isn't a setter method with same type: java.lang.String nor type conversion possible: chmod option [abc] is not valid", iae.getMessage());
         }
     }
 

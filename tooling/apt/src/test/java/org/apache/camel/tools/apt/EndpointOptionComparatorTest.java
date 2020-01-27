@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tools.apt.helper.EndpointHelper;
-import org.junit.Test;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

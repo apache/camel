@@ -427,13 +427,10 @@ public final class JSonSchemaHelper {
 
     public static String stripOptionalPrefixFromName(List<Map<String, String>> rows, String name) {
         for (Map<String, String> row : rows) {
-            String optionalPrefix = null;
             boolean found = false;
-            if (row.containsKey("optionalPrefix")) {
-                optionalPrefix = row.get("optionalPrefix");
-            }
             if (row.containsKey("name")) {
-                if (optionalPrefix != null && name.startsWith(optionalPrefix)) {
+                String optionalPrefix = row.get("optionalPrefix");
+                if (optionalPrefix != null && !optionalPrefix.isEmpty() && name.startsWith(optionalPrefix)) {
                     name = name.substring(optionalPrefix.length());
                     // try again
                     return stripOptionalPrefixFromName(rows, name);
