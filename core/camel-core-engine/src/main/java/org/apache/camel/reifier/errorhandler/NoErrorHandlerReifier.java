@@ -19,6 +19,7 @@ package org.apache.camel.reifier.errorhandler;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.spi.RouteContext;
@@ -38,7 +39,7 @@ public class NoErrorHandlerReifier extends ErrorHandlerReifier<NoErrorHandlerBui
                 return super.process(exchange, new AsyncCallback() {
                     @Override
                     public void done(boolean doneSync) {
-                        exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
+                        exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
                         callback.done(doneSync);
                     }
                 });

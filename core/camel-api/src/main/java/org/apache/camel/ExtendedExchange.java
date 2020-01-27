@@ -118,4 +118,14 @@ public interface ExtendedExchange extends Exchange {
      */
     void setInterrupted(boolean interrupted);
 
+    /**
+     * Whether the exchange has exhausted (attempted all) its redeliveries and still failed.
+     */
+    boolean isRedeliveryExhausted();
+
+    /**
+     * Used to signal that this exchange has exhausted (attempted all) its redeliveries and still failed.
+     */
+    void setRedeliveryExhausted(boolean redeliveryExhausted);
+
 }

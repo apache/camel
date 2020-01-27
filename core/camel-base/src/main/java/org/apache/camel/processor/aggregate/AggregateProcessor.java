@@ -1381,7 +1381,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                                 try {
                                     // set redelivery counter
                                     exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, data.redeliveryCounter);
-                                    exchange.getIn().setHeader(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
+                                    exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(true);
                                     deadLetterProducerTemplate.send(recoverable.getDeadLetterUri(), exchange);
                                 } catch (Throwable e) {
                                     exchange.setException(e);
