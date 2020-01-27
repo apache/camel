@@ -265,15 +265,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     }
 
     /**
-     * Strategy whether the exchange has an exception that we should try to handle.
-     * <p/>
-     * Standard implementations should just look for an exception.
-     */
-    protected boolean shouldHandleException(Exchange exchange) {
-        return exchange.getException() != null;
-    }
-
-    /**
      * Strategy to determine if the exchange is done so we can continue
      */
     protected boolean isDone(Exchange exchange) {
@@ -404,8 +395,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             }
 
             // did previous processing cause an exception?
-            boolean handle = shouldHandleException(exchange);
-            if (handle) {
+            if (exchange.getException() != null) {
                 handleException();
                 onExceptionOccurred();
             }
