@@ -44,6 +44,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -528,7 +529,8 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         // also we would need to know if any error handler has attempted redelivery and exhausted
         boolean stoppedOnException = false;
         boolean exception = false;
-        boolean exhaust = forceExhaust || subExchange != null && (subExchange.getException() != null || ExchangeHelper.isRedeliveryExhausted(subExchange));
+        ExtendedExchange see = (ExtendedExchange) subExchange;
+        boolean exhaust = forceExhaust || see != null && (see.getException() != null || see.isRedeliveryExhausted());
         if (original.getException() != null || subExchange != null && subExchange.getException() != null) {
             // there was an exception and we stopped
             stoppedOnException = isStopOnException();
@@ -553,7 +555,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             // multicast uses error handling on its output processors and they have tried to redeliver
             // so we shall signal back to the other error handlers that we are exhausted and they should not
             // also try to redeliver as we would then do that twice
-            original.setProperty(Exchange.REDELIVERY_EXHAUSTED, exhaust);
+            original.adapt(ExtendedExchange.class).setRedeliveryExhausted(exhaust);
         }
 
         reactiveExecutor.schedule(callback);

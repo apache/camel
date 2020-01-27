@@ -268,7 +268,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
      * Strategy to determine if the exchange is done so we can continue
      */
     protected boolean isDone(Exchange exchange) {
-        if (((ExtendedExchange) exchange).isInterrupted()) {
+        ExtendedExchange ee = (ExtendedExchange) exchange;
+        if (ee.isInterrupted()) {
             // mark the exchange to stop continue routing when interrupted
             // as we do not want to continue routing (for example a task has been cancelled)
             if (LOG.isTraceEnabled()) {
@@ -283,7 +284,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // or we are exhausted
         boolean answer = exchange.getException() == null
             || ExchangeHelper.isFailureHandled(exchange)
-            || ExchangeHelper.isRedeliveryExhausted(exchange);
+            || ee.isRedeliveryExhausted();
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Is exchangeId: {} done? {}", exchange.getExchangeId(), answer);
@@ -442,7 +443,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                                 // the task was rejected
                                 exchange.setException(new RejectedExecutionException("Redelivery not allowed while stopping"));
                                 // mark the exchange as redelivery exhausted so the failure processor / dead letter channel can process the exchange
-                                exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
+                                exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(true);
                                 // jump to start of loop which then detects that we are failed and exhausted
                                 reactiveExecutor.schedule(this);
                             } else {
@@ -766,7 +767,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 exchange.getIn().removeHeader(Exchange.REDELIVERED);
                 exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
                 exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
-                exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
+                exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
 
                 // and remove traces of rollback only and uow exhausted markers
                 exchange.setRollbackOnly(false);
@@ -1104,15 +1105,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
          * @return <tt>false</tt> to continue/redeliver, or <tt>true</tt> to exhaust.
          */
         private boolean isExhausted(Exchange exchange) {
+            ExtendedExchange ee = (ExtendedExchange) exchange;
             // if marked as rollback only then do not continue/redeliver
-            boolean exhausted = ExchangeHelper.isRedeliveryExhausted(exchange);
+            boolean exhausted = ee.isRedeliveryExhausted();
             if (exhausted) {
                 LOG.trace("This exchange is marked as redelivery exhausted: {}", exchange);
                 return true;
             }
 
             // if marked as rollback only then do not continue/redeliver
-            boolean rollbackOnly = exchange.isRollbackOnly();
+            boolean rollbackOnly = ee.isRollbackOnly();
             if (rollbackOnly) {
                 LOG.trace("This exchange is marked as rollback only, so forcing it to be exhausted: {}", exchange);
                 return true;

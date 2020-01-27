@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
@@ -40,7 +41,7 @@ public class NoErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
                 return super.process(exchange, new AsyncCallback() {
                     @Override
                     public void done(boolean doneSync) {
-                        exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
+                        exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
                         callback.done(doneSync);
                     }
                 });

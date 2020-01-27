@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.UnitOfWork;
@@ -69,7 +70,7 @@ public class BridgeExceptionHandlerToErrorHandler implements ExceptionHandler {
         // and the message
         exchange.getIn().setBody(message);
         // and mark as redelivery exhausted as we cannot do redeliveries
-        exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
+        exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(true);
 
         // wrap in UoW
         UnitOfWork uow = null;
