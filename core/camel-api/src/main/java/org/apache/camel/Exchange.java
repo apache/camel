@@ -166,6 +166,7 @@ public interface Exchange {
 
     String INTERCEPTED_ENDPOINT = "CamelInterceptedEndpoint";
     String INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED = "CamelInterceptSendToEndpointWhenMatched";
+    @Deprecated
     String INTERRUPTED = "CamelInterrupted";
 
     String LANGUAGE_SCRIPT          = "CamelLanguageScript";

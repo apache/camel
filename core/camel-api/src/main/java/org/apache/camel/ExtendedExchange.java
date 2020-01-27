@@ -108,4 +108,14 @@ public interface ExtendedExchange extends Exchange {
      */
     void setNotifyEvent(boolean notifyEvent);
 
+    /**
+     * Whether the exchange was interrupted (InterruptException) during routing.
+     */
+    boolean isInterrupted();
+
+    /**
+     * Used to signal that this exchange was interrupted (InterruptException) during routing.
+     */
+    void setInterrupted(boolean interrupted);
+
 }

@@ -30,6 +30,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
 import org.apache.camel.Navigate;
@@ -276,35 +277,26 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
      * Strategy to determine if the exchange is done so we can continue
      */
     protected boolean isDone(Exchange exchange) {
-        boolean answer = isCancelledOrInterrupted(exchange);
+        if (((ExtendedExchange) exchange).isInterrupted()) {
+            // mark the exchange to stop continue routing when interrupted
+            // as we do not want to continue routing (for example a task has been cancelled)
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Is exchangeId: {} interrupted? true", exchange.getExchangeId());
+            }
+            exchange.setRouteStop(true);
+            return true;
+        }
 
         // only done if the exchange hasn't failed
         // and it has not been handled by the failure processor
         // or we are exhausted
-        if (!answer) {
-            answer = exchange.getException() == null
-                || ExchangeHelper.isFailureHandled(exchange)
-                || ExchangeHelper.isRedeliveryExhausted(exchange);
+        boolean answer = exchange.getException() == null
+            || ExchangeHelper.isFailureHandled(exchange)
+            || ExchangeHelper.isRedeliveryExhausted(exchange);
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Is exchangeId: {} done? {}", exchange.getExchangeId(), answer);
         }
-
-        LOG.trace("Is exchangeId: {} done? {}", exchange.getExchangeId(), answer);
-        return answer;
-    }
-
-    /**
-     * Strategy to determine if the exchange was cancelled or interrupted
-     */
-    protected boolean isCancelledOrInterrupted(Exchange exchange) {
-        boolean answer = false;
-
-        if (ExchangeHelper.isInterrupted(exchange)) {
-            // mark the exchange to stop continue routing when interrupted
-            // as we do not want to continue routing (for example a task has been cancelled)
-            exchange.setRouteStop(true);
-            answer = true;
-        }
-
-        LOG.trace("Is exchangeId: {} interrupted? {}", exchange.getExchangeId(), answer);
         return answer;
     }
 
@@ -386,14 +378,14 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             // do a defensive copy of the original Exchange, which is needed for redelivery so we can ensure the
             // original Exchange is being redelivered, and not a mutated Exchange
-            this.original = defensiveCopyExchangeIfNeeded(exchange);
+            this.original = redeliveryEnabled ? defensiveCopyExchangeIfNeeded(exchange) : null;
             this.exchange = exchange;
             this.callback = callback;
         }
 
         @Override
         public String toString() {
-            return "Step[" + exchange.getExchangeId() + "," + RedeliveryErrorHandler.this + "]";
+            return "RedeliveryState";
         }
 
         /**
@@ -564,7 +556,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             // process the exchange (also redelivery)
             outputAsync.process(exchange, doneSync -> {
-                LOG.trace("Redelivering exchangeId: {}", exchange.getExchangeId());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Redelivering exchangeId: {}", exchange.getExchangeId());
+                }
 
                 // only process if the exchange hasn't failed
                 // and it has not been handled by the error processor
