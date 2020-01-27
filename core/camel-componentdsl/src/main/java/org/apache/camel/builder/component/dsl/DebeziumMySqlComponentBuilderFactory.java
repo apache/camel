@@ -49,7 +49,9 @@ public interface DebeziumMySqlComponentBuilderFactory {
     /**
      * Builder for the Debezium MySQL Connector component.
      */
-    interface DebeziumMySqlComponentBuilder extends ComponentBuilder {
+    interface DebeziumMySqlComponentBuilder
+            extends
+                ComponentBuilder<DebeziumMySqlComponent> {
         /**
          * Allow pre-configured Configurations to be set.
          * 
@@ -100,11 +102,11 @@ public interface DebeziumMySqlComponentBuilderFactory {
 
     class DebeziumMySqlComponentBuilderImpl
             extends
-                AbstractComponentBuilder
+                AbstractComponentBuilder<DebeziumMySqlComponent>
             implements
                 DebeziumMySqlComponentBuilder {
         @Override
-        protected Component buildConcreteComponent() {
+        protected DebeziumMySqlComponent buildConcreteComponent() {
             return new DebeziumMySqlComponent();
         }
     }

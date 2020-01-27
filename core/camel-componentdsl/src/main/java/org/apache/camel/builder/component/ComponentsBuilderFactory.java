@@ -28,17 +28,28 @@ import javax.annotation.Generated;
 public interface ComponentsBuilderFactory {
 
     /**
-     * Debezium MySQL Connector (camel-debezium-mysql)
-     * Represents a Debezium MySQL endpoint which is used to capture changes in
-     * MySQL database so that that applications can see those changes and
-     * respond to them.
+     * Kafka (camel-kafka)
+     * The kafka component allows messages to be sent to (or consumed from)
+     * Apache Kafka brokers.
      * 
-     * Category: database,sql,mysql
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-debezium-mysql
+     * Category: messaging
+     * Since: 2.13
+     * Maven coordinates: org.apache.camel:camel-kafka
      */
-    static org.apache.camel.builder.component.dsl.DebeziumMySqlComponentBuilderFactory.DebeziumMySqlComponentBuilder debeziumMysql() {
-        return org.apache.camel.builder.component.dsl.DebeziumMySqlComponentBuilderFactory.debeziumMysql();
+    static org.apache.camel.builder.component.dsl.KafkaComponentBuilderFactory.KafkaComponentBuilder kafka() {
+        return org.apache.camel.builder.component.dsl.KafkaComponentBuilderFactory.kafka();
+    }
+    /**
+     * Micrometer (camel-micrometer)
+     * To collect various metrics directly from Camel routes using the
+     * Micrometer library.
+     * 
+     * Category: monitoring
+     * Since: 2.22
+     * Maven coordinates: org.apache.camel:camel-micrometer
+     */
+    static org.apache.camel.builder.component.dsl.MicrometerComponentBuilderFactory.MicrometerComponentBuilder micrometer() {
+        return org.apache.camel.builder.component.dsl.MicrometerComponentBuilderFactory.micrometer();
     }
     /**
      * Timer (camel-timer)
@@ -53,15 +64,16 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.TimerComponentBuilderFactory.timer();
     }
     /**
-     * Kafka (camel-kafka)
-     * The kafka component allows messages to be sent to (or consumed from)
-     * Apache Kafka brokers.
+     * Debezium MySQL Connector (camel-debezium-mysql)
+     * Represents a Debezium MySQL endpoint which is used to capture changes in
+     * MySQL database so that that applications can see those changes and
+     * respond to them.
      * 
-     * Category: messaging
-     * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-kafka
+     * Category: database,sql,mysql
+     * Since: 3.0
+     * Maven coordinates: org.apache.camel:camel-debezium-mysql
      */
-    static org.apache.camel.builder.component.dsl.KafkaComponentBuilderFactory.KafkaComponentBuilder kafka() {
-        return org.apache.camel.builder.component.dsl.KafkaComponentBuilderFactory.kafka();
+    static org.apache.camel.builder.component.dsl.DebeziumMySqlComponentBuilderFactory.DebeziumMySqlComponentBuilder debeziumMysql() {
+        return org.apache.camel.builder.component.dsl.DebeziumMySqlComponentBuilderFactory.debeziumMysql();
     }
 }

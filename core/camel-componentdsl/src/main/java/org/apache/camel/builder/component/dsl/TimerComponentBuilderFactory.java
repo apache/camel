@@ -47,7 +47,7 @@ public interface TimerComponentBuilderFactory {
     /**
      * Builder for the Timer component.
      */
-    interface TimerComponentBuilder extends ComponentBuilder {
+    interface TimerComponentBuilder extends ComponentBuilder<TimerComponent> {
         /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
@@ -85,11 +85,11 @@ public interface TimerComponentBuilderFactory {
 
     class TimerComponentBuilderImpl
             extends
-                AbstractComponentBuilder
+                AbstractComponentBuilder<TimerComponent>
             implements
                 TimerComponentBuilder {
         @Override
-        protected Component buildConcreteComponent() {
+        protected TimerComponent buildConcreteComponent() {
             return new TimerComponent();
         }
     }

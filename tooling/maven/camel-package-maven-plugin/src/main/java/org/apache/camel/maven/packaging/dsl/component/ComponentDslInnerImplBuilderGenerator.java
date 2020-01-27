@@ -40,14 +40,14 @@ public class ComponentDslInnerImplBuilderGenerator {
         javaClass.setName(getGeneratedClassName())
                 .setPackagePrivate()
                 .setStatic(false)
-                .extendSuperType("AbstractComponentBuilder")
+                .extendSuperType(String.format("AbstractComponentBuilder<%s>", componentModel.getShortJavaType()))
                 .implementInterface(classBuilderName);
     }
 
     private void setMethods() {
         javaClass.addMethod()
                 .setProtected()
-                .setReturnType("Component")
+                .setReturnType(componentModel.getShortJavaType())
                 .setName("buildConcreteComponent")
                 .setBody(String.format("return new %s();", componentModel.getShortJavaType()))
                 .addAnnotation(Override.class);

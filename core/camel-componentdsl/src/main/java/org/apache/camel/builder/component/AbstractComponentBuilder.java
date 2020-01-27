@@ -8,11 +8,11 @@ import org.apache.camel.Component;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 
-public abstract class AbstractComponentBuilder {
+public abstract class AbstractComponentBuilder<C extends Component> {
     private final Map<String, Object> properties = new LinkedHashMap<>();
 
-    public Component build() {
-        final Component component = buildConcreteComponent();
+    public C build() {
+        final C component = buildConcreteComponent();
         if (component.getCamelContext() == null) {
             component.setCamelContext(new DefaultCamelContext());
         }
@@ -25,8 +25,8 @@ public abstract class AbstractComponentBuilder {
         return component;
     }
 
-    public Component build(final CamelContext context) {
-        final Component component = buildConcreteComponent();
+    public C build(final CamelContext context) {
+        final C component = buildConcreteComponent();
         component.setCamelContext(context);
         component.init();
 
@@ -41,7 +41,7 @@ public abstract class AbstractComponentBuilder {
         properties.put(key, value);
     }
 
-    protected abstract Component buildConcreteComponent();
+    protected abstract C buildConcreteComponent();
 
     private void configureComponentProperties(final Component component, final GeneratedPropertyConfigurer propertyConfigurer) {
         final CamelContext context = component.getCamelContext();

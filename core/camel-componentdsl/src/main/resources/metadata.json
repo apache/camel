@@ -43,6 +43,28 @@
     "endpointPathOptions": [],
     "endpointOptions": []
   },
+  "MicrometerComponentBuilderFactory": {
+    "kind": "component",
+    "scheme": "micrometer",
+    "syntax": "micrometer:metricsType:metricsName",
+    "alternativeSyntax": "",
+    "alternativeSchemes": "",
+    "title": "Micrometer",
+    "description": "To collect various metrics directly from Camel routes using the Micrometer library.",
+    "firstVersion": "2.22.0",
+    "label": "monitoring",
+    "deprecated": "false",
+    "deprecationNote": "",
+    "consumerOnly": "false",
+    "producerOnly": "true",
+    "javaType": "org.apache.camel.component.micrometer.MicrometerComponent",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-micrometer",
+    "version": "3.1.0-SNAPSHOT",
+    "componentOptions": [],
+    "endpointPathOptions": [],
+    "endpointOptions": []
+  },
   "TimerComponentBuilderFactory": {
     "kind": "component",
     "scheme": "timer",

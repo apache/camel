@@ -22,13 +22,13 @@ import org.apache.camel.Component;
 /**
  * Type-safe component DSL for building Camel components
  */
-public interface ComponentBuilder {
+public interface ComponentBuilder <C extends Component> {
     /**
      * Builds a component using the default {@link CamelContext}.
      *
      * @return a built {@link Component}
      */
-    Component build();
+    C build();
 
     /**
      * Builds a component using a provided {@link CamelContext}.
@@ -36,7 +36,7 @@ public interface ComponentBuilder {
      * @param context the camel context
      * @return a built {@link Component}
      */
-    Component build(CamelContext context);
+    C build(CamelContext context);
 
     /**
      * Adds an option to this component. This API is only intended for Camel

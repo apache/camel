@@ -49,7 +49,7 @@ public class ComponentDslInnerBuilderGenerator {
         javaClass.setName(getGeneratedInterfaceName())
                 .setPackagePrivate()
                 .setClass(false)
-                .extendSuperType("ComponentBuilder");
+                .extendSuperType(String.format("ComponentBuilder<%s>", componentModel.getShortJavaType()));
     }
 
     private void setFluentMethodsFromComponentOptions() {

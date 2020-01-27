@@ -47,7 +47,7 @@ public interface KafkaComponentBuilderFactory {
     /**
      * Builder for the Kafka component.
      */
-    interface KafkaComponentBuilder extends ComponentBuilder {
+    interface KafkaComponentBuilder extends ComponentBuilder<KafkaComponent> {
         /**
          * Allows to pre-configure the Kafka component with common options that
          * the endpoints will reuse.
@@ -219,11 +219,11 @@ public interface KafkaComponentBuilderFactory {
 
     class KafkaComponentBuilderImpl
             extends
-                AbstractComponentBuilder
+                AbstractComponentBuilder<KafkaComponent>
             implements
                 KafkaComponentBuilder {
         @Override
-        protected Component buildConcreteComponent() {
+        protected KafkaComponent buildConcreteComponent() {
             return new KafkaComponent();
         }
     }
