@@ -147,7 +147,9 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
             }
         }
 
-        LOG.trace("Should failover: {} for exchangeId: {}", answer, exchange.getExchangeId());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Should failover: {} for exchangeId: {}", answer, exchange.getExchangeId());
+        }
 
         return answer;
     }
@@ -201,7 +203,9 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 lastGoodIndex.set(index);
                 // and copy the current result to original so it will contain this result of this eip
                 ExchangeHelper.copyResults(exchange, copy);
-                LOG.debug("Failover complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Failover complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                }
                 callback.done(false);
                 return;
             }

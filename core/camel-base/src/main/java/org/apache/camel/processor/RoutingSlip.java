@@ -258,13 +258,17 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
             current = prepareExchangeForRoutingSlip(current, endpoint);
             
             if (!sync) {
-                LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
+                }
                 // the remainder of the routing slip will be completed async
                 // so we break out now, then the callback will be invoked which then continue routing from where we left here
                 return false;
             }
 
-            LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
+            }
 
             // we ignore some kind of exceptions and allow us to continue
             if (isIgnoreInvalidEndpoints()) {
@@ -287,7 +291,9 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         // logging nextExchange as it contains the exchange that might have altered the payload and since
         // we are logging the completion if will be confusing if we log the original instead
         // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
-        LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), current);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), current);
+        }
 
         // copy results back to the original exchange
         ExchangeHelper.copyResults(exchange, current);
@@ -350,7 +356,9 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
                                       final AsyncCallback originalCallback, final RoutingSlipIterator iter) {
 
         // this does the actual processing so log at trace level
-        LOG.trace("Processing exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Processing exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+        }
 
         // routing slip callback which are used when
         // - routing slip was routed asynchronously
@@ -424,7 +432,9 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
                             current = prepareExchangeForRoutingSlip(current, endpoint1);
 
                             if (!sync) {
-                                LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", original.getExchangeId());
+                                if (LOG.isTraceEnabled()) {
+                                    LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", original.getExchangeId());
+                                }
                                 return;
                             }
                         }
@@ -432,7 +442,9 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
                         // logging nextExchange as it contains the exchange that might have altered the payload and since
                         // we are logging the completion if will be confusing if we log the original instead
                         // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
-                        LOG.trace("Processing complete for exchangeId: {} >>> {}", original.getExchangeId(), current);
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Processing complete for exchangeId: {} >>> {}", original.getExchangeId(), current);
+                        }
 
                         // copy results back to the original exchange
                         ExchangeHelper.copyResults(original, current);

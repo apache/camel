@@ -96,20 +96,26 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
             }
         } while (reactiveExecutor.executeFromQueue());
 
-        LOG.trace("Waiting for asynchronous callback before continuing for exchangeId: {} -> {}",
-                exchange.getExchangeId(), exchange);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Waiting for asynchronous callback before continuing for exchangeId: {} -> {}",
+                    exchange.getExchangeId(), exchange);
+        }
         try {
             if (statistics.isStatisticsEnabled()) {
                 blockedCounter.incrementAndGet();
             }
             inflight.put(exchange, new AwaitThreadEntry(Thread.currentThread(), exchange, latch));
             latch.await();
-            LOG.trace("Asynchronous callback received, will continue routing exchangeId: {} -> {}",
-                    exchange.getExchangeId(), exchange);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Asynchronous callback received, will continue routing exchangeId: {} -> {}",
+                        exchange.getExchangeId(), exchange);
+            }
 
         } catch (InterruptedException e) {
-            LOG.trace("Interrupted while waiting for callback, will continue routing exchangeId: {} -> {}",
-                    exchange.getExchangeId(), exchange);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Interrupted while waiting for callback, will continue routing exchangeId: {} -> {}",
+                        exchange.getExchangeId(), exchange);
+            }
             exchange.setException(e);
         } finally {
             AwaitThread thread = inflight.remove(exchange);
@@ -134,7 +140,9 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
     }
 
     public void countDown(Exchange exchange, CountDownLatch latch) {
-        LOG.trace("Asynchronous callback received for exchangeId: {}", exchange.getExchangeId());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Asynchronous callback received for exchangeId: {}", exchange.getExchangeId());
+        }
         latch.countDown();
     }
 

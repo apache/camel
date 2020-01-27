@@ -254,13 +254,17 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         });
 
         if (!sync) {
-            LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
+            }
             // the remainder of the routing slip will be completed async
             // so we break out now, then the callback will be invoked which then continue routing from where we left here
             return false;
         }
 
-        LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
+        }
 
         if (watch != null) {
             // emit event that the exchange was sent to the endpoint

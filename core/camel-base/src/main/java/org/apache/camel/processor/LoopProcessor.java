@@ -129,11 +129,15 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                 } else {
                     // we are done so prepare the result
                     ExchangeHelper.copyResults(exchange, current);
-                    LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                    }
                     callback.done(false);
                 }
             } catch (Exception e) {
-                LOG.trace("Processing failed for exchangeId: {} >>> {}", exchange.getExchangeId(), e.getMessage());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing failed for exchangeId: {} >>> {}", exchange.getExchangeId(), e.getMessage());
+                }
                 exchange.setException(e);
                 callback.done(false);
             }
@@ -141,7 +145,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
 
         @Override
         public String toString() {
-            return "LoopState[" + exchange.getExchangeId() + "]";
+            return "LoopState";
         }
     }
 
