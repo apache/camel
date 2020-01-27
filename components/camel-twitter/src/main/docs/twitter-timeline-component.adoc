@@ -108,6 +108,9 @@ with the following path and query parameters:
 | *consumerSecret* (security) | The consumer secret. Can also be configured on the TwitterComponent level instead. |  | String
 |===
 // endpoint options: END
+
+The timelineType can be one of: public, home, user, mentions or retweetsofme.
+
 // spring-boot-auto-configure options: START
 == Spring Boot Auto-Configuration
 
