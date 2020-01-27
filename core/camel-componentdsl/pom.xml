@@ -84,18 +84,6 @@
 			<scope>provided</scope>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-micrometer</artifactId>
-			<scope>provided</scope>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-timer</artifactId>
-			<scope>provided</scope>
-			<version>${project.version}</version>
-		</dependency>
 		<!-- END: camel components import -->
 		<!-- testing -->
         <dependency>

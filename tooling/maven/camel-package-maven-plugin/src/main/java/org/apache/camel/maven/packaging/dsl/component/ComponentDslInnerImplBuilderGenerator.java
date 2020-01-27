@@ -1,6 +1,6 @@
 package org.apache.camel.maven.packaging.dsl.component;
 
-import org.apache.camel.maven.packaging.model.ComponentModel;
+import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 
 /**

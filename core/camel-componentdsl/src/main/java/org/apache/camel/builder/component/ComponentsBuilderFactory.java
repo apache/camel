@@ -40,30 +40,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.KafkaComponentBuilderFactory.kafka();
     }
     /**
-     * Micrometer (camel-micrometer)
-     * To collect various metrics directly from Camel routes using the
-     * Micrometer library.
-     * 
-     * Category: monitoring
-     * Since: 2.22
-     * Maven coordinates: org.apache.camel:camel-micrometer
-     */
-    static org.apache.camel.builder.component.dsl.MicrometerComponentBuilderFactory.MicrometerComponentBuilder micrometer() {
-        return org.apache.camel.builder.component.dsl.MicrometerComponentBuilderFactory.micrometer();
-    }
-    /**
-     * Timer (camel-timer)
-     * The timer component is used for generating message exchanges when a timer
-     * fires.
-     * 
-     * Category: core,scheduling
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-timer
-     */
-    static org.apache.camel.builder.component.dsl.TimerComponentBuilderFactory.TimerComponentBuilder timer() {
-        return org.apache.camel.builder.component.dsl.TimerComponentBuilderFactory.timer();
-    }
-    /**
      * Debezium MySQL Connector (camel-debezium-mysql)
      * Represents a Debezium MySQL endpoint which is used to capture changes in
      * MySQL database so that that applications can see those changes and

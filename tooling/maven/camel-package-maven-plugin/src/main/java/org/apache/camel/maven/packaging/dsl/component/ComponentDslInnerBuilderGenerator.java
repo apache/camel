@@ -1,7 +1,6 @@
 package org.apache.camel.maven.packaging.dsl.component;
 
-import org.apache.camel.maven.packaging.model.ComponentModel;
-import org.apache.camel.maven.packaging.model.ComponentOptionModel;
+import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.camel.tooling.util.srcgen.Method;
 import org.apache.commons.lang3.StringUtils;
@@ -63,16 +62,14 @@ public class ComponentDslInnerBuilderGenerator {
                             String.format("doSetProperty(\"%s\", %s);", componentOptionModel.getName(), componentOptionModel.getName()),
                             "return this;"
                     );
-            if (componentOptionModel.getDeprecated().equals("true")) {
+            if (componentOptionModel.isDeprecated()) {
                 method.addAnnotation(Deprecated.class);
             }
-            if (!componentOptionModel.getDeprecated().isEmpty()) {
-                method.getJavaDoc().setFullText(generateOptionDescription(componentOptionModel));
-            }
+            method.getJavaDoc().setFullText(generateOptionDescription(componentOptionModel));
         });
     }
 
-    private String generateOptionDescription(final ComponentOptionModel componentOptionModel) {
+    private String generateOptionDescription(final ComponentModel.ComponentOptionModel componentOptionModel) {
         String desc = componentOptionModel.getDescription();
         if (!desc.endsWith(".")) {
             desc += ".";
@@ -80,11 +77,11 @@ public class ComponentDslInnerBuilderGenerator {
         desc += "\n";
         desc += "\nThe option is a: <code>" + componentOptionModel.getJavaType() + "</code> type.";
         desc += "\n";
-        if ("parameter".equals(componentOptionModel.getKind()) && "true".equals(componentOptionModel.getRequired())) {
+        if ("parameter".equals(componentOptionModel.getKind()) && componentOptionModel.isRequired()) {
             desc += "\nRequired: true";
         }
         // include default value (if any)
-        if (!componentOptionModel.getDefaultValue().isEmpty()) {
+        if (componentOptionModel.getDefaultValue() != null) {
             desc += "\nDefault: " + componentOptionModel.getDefaultValue();
         }
         desc += "\nGroup: " + componentOptionModel.getGroup();

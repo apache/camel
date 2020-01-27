@@ -6,9 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.camel.maven.packaging.model.ComponentModel;
-import org.apache.camel.maven.packaging.model.EndpointOptionModel;
-import org.apache.camel.tooling.util.Strings;
+import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.commons.text.CaseUtils;
 
 public final class DslHelper {
@@ -70,30 +68,30 @@ public final class DslHelper {
         desc += "\n";
         desc += "\nSyntax: <code>" + componentModel.getSyntax() + "</code>";
 
-        for (EndpointOptionModel option : componentModel.getEndpointOptions()) {
+        for (ComponentModel.EndpointOptionModel option : componentModel.getEndpointOptions()) {
             if ("path".equals(option.getKind())) {
                 desc += "\n";
                 desc += "\nPath parameter: " + option.getName();
-                if ("true".equals(option.getRequired())) {
+                if (option.isRequired()) {
                     desc += " (required)";
                 }
-                if ("true".equals(option.getDeprecated())) {
+                if (option.isDeprecated()) {
                     desc += " <strong>deprecated</strong>";
                 }
                 desc += "\n" + option.getDescription();
-                if (!Strings.isEmpty(option.getDefaultValue())) {
+                if (option.getDefaultValue() != null) {
                     desc += "\nDefault value: " + option.getDefaultValue();
                 }
-                if (!Strings.isEmpty(option.getEnumValues())) {
-                    desc += "\nThe value can be one of: " + wrapEnumValues(option.getEnumValues());
+                if (option.getEnums() != null && !option.getEnums().isEmpty()) {
+                    desc += "\nThe value can be one of: " + wrapEnumValues(option.getEnums());
                 }
             }
         }
         return desc;
     }
 
-    private static String wrapEnumValues(String enumValues) {
+    private static String wrapEnumValues(List<String> enumValues) {
         // comma to space so we can wrap words (which uses space)
-        return enumValues.replace(",", ", ");
+        return String.join(", ", enumValues);
     }
 }

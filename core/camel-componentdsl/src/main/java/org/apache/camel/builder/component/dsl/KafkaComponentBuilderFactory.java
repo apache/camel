@@ -56,6 +56,7 @@ public interface KafkaComponentBuilderFactory {
          * <code>org.apache.camel.component.kafka.KafkaConfiguration</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default KafkaComponentBuilder setConfiguration(
@@ -71,6 +72,7 @@ public interface KafkaComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KafkaComponentBuilder setBrokers(java.lang.String brokers) {
@@ -87,6 +89,7 @@ public interface KafkaComponentBuilderFactory {
          * The option is a: <code>java.util.concurrent.ExecutorService</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default KafkaComponentBuilder setWorkerPool(
@@ -154,6 +157,7 @@ public interface KafkaComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.kafka.KafkaManualCommitFactory</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default KafkaComponentBuilder setKafkaManualCommitFactory(

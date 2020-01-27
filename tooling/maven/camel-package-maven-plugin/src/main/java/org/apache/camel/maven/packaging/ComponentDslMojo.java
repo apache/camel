@@ -3,6 +3,7 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -17,7 +18,8 @@ import java.util.stream.Collectors;
 import org.apache.camel.maven.packaging.dsl.component.ComponentsBuilderFactoryGenerator;
 import org.apache.camel.maven.packaging.dsl.component.ComponentDslBuilderFactoryGenerator;
 import org.apache.camel.maven.packaging.dsl.component.ComponentsDslMetadataRegistry;
-import org.apache.camel.maven.packaging.model.ComponentModel;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -28,7 +30,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
-import static org.apache.camel.tooling.util.JSonSchemaHelper.getSafeValue;
 import static org.apache.camel.tooling.util.PackageHelper.*;
 
 /**
@@ -94,8 +95,17 @@ public class ComponentDslMojo extends AbstractDslMojo {
             componentsMetadata =  outputResourcesDir.toPath().resolve("metadata.json").toFile();
         }
 
-        Map<File, Supplier<String>> files = PackageHelper.findJsonFiles(buildDir, p -> p.isDirectory() || p.getName().endsWith(".json")).values().stream()
-                .collect(Collectors.toMap(Function.identity(), s -> cache(() -> loadJson(s))));
+        Map<File, Supplier<String>> files;
+
+        try {
+            files = Files.find(
+                    buildDir.toPath(),
+                    Integer.MAX_VALUE,
+                    (p, a) -> a.isRegularFile() && p.toFile().getName().endsWith(PackageHelper.JSON_SUFIX))
+                    .collect(Collectors.toMap(Path::toFile, s -> cache(() -> loadJson(s.toFile()))));
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
 
         executeComponent(files);
 
@@ -114,7 +124,7 @@ public class ComponentDslMojo extends AbstractDslMojo {
             for (String componentName : componentNames) {
                 String json = loadComponentJson(jsonFiles, componentName);
                 if (json != null) {
-                    ComponentModel model = ComponentModel.generateComponentModelFromJsonString(json);
+                    ComponentModel model = JsonMapper.generateComponentModel(json);
                     allModels.add(model);
                 }
             }

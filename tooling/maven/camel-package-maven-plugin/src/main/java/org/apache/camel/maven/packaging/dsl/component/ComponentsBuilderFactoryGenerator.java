@@ -7,7 +7,7 @@ import javax.annotation.Generated;
 
 import org.apache.camel.maven.packaging.ComponentDslMojo;
 import org.apache.camel.maven.packaging.dsl.DslHelper;
-import org.apache.camel.maven.packaging.model.ComponentModel;
+import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.camel.tooling.util.srcgen.Method;
 
@@ -95,7 +95,7 @@ public class ComponentsBuilderFactoryGenerator {
                                     ComponentDslBuilderFactoryGenerator.getExpectedGeneratedClassName(componentModel),
                                     DslHelper.toCamelCaseLower(componentModel.getScheme())));
 
-            if (componentModel.getDeprecated().equals("true")) {
+            if (componentModel.isDeprecated()) {
                 componentEntryMethod.addAnnotation(Deprecated.class);
             }
 

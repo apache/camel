@@ -58,6 +58,7 @@ public interface DebeziumMySqlComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default DebeziumMySqlComponentBuilder setConfiguration(

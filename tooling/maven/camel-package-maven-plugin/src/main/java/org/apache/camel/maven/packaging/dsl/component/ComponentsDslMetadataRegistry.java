@@ -3,7 +3,6 @@ package org.apache.camel.maven.packaging.dsl.component;
 import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -13,7 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.apache.camel.maven.packaging.dsl.DslHelper;
-import org.apache.camel.maven.packaging.model.ComponentModel;
+import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.tooling.util.Strings;
 
@@ -47,21 +46,16 @@ public class ComponentsDslMetadataRegistry {
                 .collect(Collectors.toSet());
     }
 
-    public void syncMetadataFile() {
-        syncMetadataFileWithGeneratedDslComponents();
-        writeCacheIntoMetadataFile();
-    }
-
     public void addComponentToMetadataAndSyncMetadataFile(final ComponentModel componentModel, final String key) {
-        // first we remove unwanted endpoints options and component options
-        componentModel.setComponentOptions(Collections.emptyList());
-        componentModel.setEndpointOptions(Collections.emptyList());
-        componentModel.setEndpointPathOptions(Collections.emptyList());
-
         // put the component into the cache
-        componentsCache.put(key, componentModel);
+        componentsCache.put(key, new ModifiedComponentModel(componentModel));
 
         syncMetadataFile();
+    }
+
+    private void syncMetadataFile() {
+        syncMetadataFileWithGeneratedDslComponents();
+        writeCacheIntoMetadataFile();
     }
 
     private void syncMetadataFileWithGeneratedDslComponents() {
@@ -95,6 +89,32 @@ public class ComponentsDslMetadataRegistry {
             return loadText(file);
         } catch (IOException e) {
             throw new IOError(e);
+        }
+    }
+
+    private static class ModifiedComponentModel extends ComponentModel {
+        public ModifiedComponentModel(final ComponentModel componentModel) {
+            name = componentModel.getName();
+            title = componentModel.getTitle();
+            description = componentModel.getDescription();
+            firstVersion = componentModel.getFirstVersion();
+            javaType = componentModel.getJavaType();
+            label = componentModel.getLabel();
+            deprecated = componentModel.isDeprecated();
+            deprecationNote = componentModel.getDeprecationNote();
+            scheme = componentModel.getScheme();
+            extendsScheme = componentModel.getExtendsScheme();
+            alternativeSchemes = componentModel.getAlternativeSchemes();
+            syntax = componentModel.getSyntax();
+            alternativeSyntax = componentModel.getAlternativeSyntax();
+            async = componentModel.isAsync();
+            consumerOnly = componentModel.isConsumerOnly();
+            producerOnly = componentModel.isProducerOnly();
+            lenientProperties = componentModel.isLenientProperties();
+            verifiers = componentModel.getVerifiers();
+            groupId = componentModel.getGroupId();
+            artifactId = componentModel.getArtifactId();
+            version = componentModel.getVersion();
         }
     }
 
