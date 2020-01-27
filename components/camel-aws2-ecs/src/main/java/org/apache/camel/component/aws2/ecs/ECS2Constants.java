@@ -17,7 +17,7 @@
 package org.apache.camel.component.aws2.ecs;
 
 /**
- * Constants used in Camel AWS ECS module
+ * Constants used in Camel AWS2 ECS module
  */
 public interface ECS2Constants {
     String OPERATION = "CamelAwsECSOperation";

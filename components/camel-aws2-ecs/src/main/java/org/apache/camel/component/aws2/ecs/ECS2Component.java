@@ -27,7 +27,7 @@ import org.apache.camel.support.DefaultComponent;
 import software.amazon.awssdk.services.ecs.EcsClient;
 
 /**
- * For working with Amazon ECS.
+ * For working with Amazon ECS SDK v2.
  */
 @Component("aws2-ecs")
 public class ECS2Component extends DefaultComponent {

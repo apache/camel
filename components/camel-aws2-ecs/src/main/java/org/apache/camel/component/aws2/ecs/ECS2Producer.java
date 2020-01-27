@@ -37,7 +37,7 @@ import software.amazon.awssdk.services.ecs.model.ListClustersRequest.Builder;
 import software.amazon.awssdk.services.ecs.model.ListClustersResponse;
 
 /**
- * A Producer which sends messages to the Amazon ECS Service
+ * A Producer which sends messages to the Amazon ECS Service SDK v2
  * <a href="http://aws.amazon.com/ecs/">AWS ECS</a>
  */
 public class ECS2Producer extends DefaultProducer {

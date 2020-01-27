@@ -35,7 +35,7 @@ import software.amazon.awssdk.services.ecs.EcsClient;
 import software.amazon.awssdk.services.ecs.EcsClientBuilder;
 
 /**
- * The aws-ecs is used for managing Amazon ECS
+ * The aws2-ecs is used for managing Amazon ECS
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ecs", title = "AWS2 ECS", syntax = "aws2-ecs:label", producerOnly = true, label = "cloud,management")
 public class ECS2Endpoint extends ScheduledPollEndpoint {
