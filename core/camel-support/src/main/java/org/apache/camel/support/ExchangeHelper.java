@@ -255,8 +255,8 @@ public final class ExchangeHelper {
             copy.getIn().setMessageId(null);
         }
         // do not share the unit of work
-        ExtendedExchange ee = (ExtendedExchange) exchange;
-        ee.setUnitOfWork(null);
+        ExtendedExchange ce = (ExtendedExchange) copy;
+        ce.setUnitOfWork(null);
 
         // do not reuse the message id
         // hand over on completion to the copy if we got any
