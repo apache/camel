@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 310 in 248 JAR artifacts (1 deprecated)
+Number of Components: 311 in 249 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -87,6 +87,8 @@ Number of Components: 310 in 248 JAR artifacts (1 deprecated)
 | xref:aws-sdb-component.adoc[AWS SimpleDB] (camel-aws-sdb) | 2.9 | The aws-sdb component is for storing and retrieving data from/to Amazon's SDB service.
 
 | xref:aws-translate-component.adoc[AWS Translate] (camel-aws-translate) | 3.0 | The aws-translate component is used for managing Amazon Translate
+
+| xref:aws2-ecs-component.adoc[AWS2 ECS] (camel-aws2-ecs) | 3.1 | The aws-ecs is used for managing Amazon ECS
 
 | xref:azure-blob-component.adoc[Azure Storage Blob Service] (camel-azure) | 2.19 | The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.
 
