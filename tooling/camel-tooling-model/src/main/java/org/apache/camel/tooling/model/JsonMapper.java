@@ -379,8 +379,8 @@ public class JsonMapper {
         prop.put("required", option.isRequired());
         prop.put("type", option.getType());
         prop.put("javaType", option.getJavaType());
-        prop.put("enums", option.getEnums());
-        prop.put("oneOfs", option.getOneOfs());
+        prop.put("enum", option.getEnums());
+        prop.put("oneOf", option.getOneOfs());
         prop.put("prefix", option.getPrefix());
         prop.put("optionalPrefix", option.getOptionalPrefix());
         prop.put("multiValue", option.isMultiValue());
@@ -393,6 +393,8 @@ public class JsonMapper {
         prop.put("configurationField", option.getConfigurationField());
         prop.put("description", option.getDescription());
         prop.entrySet().removeIf(e -> e.getValue() == null);
+        prop.remove("prefix", "");
+        prop.remove("optionalPrefix", "");
         prop.remove("multiValue", Boolean.FALSE);
         prop.remove("asPredicate", Boolean.FALSE);
         return prop;
