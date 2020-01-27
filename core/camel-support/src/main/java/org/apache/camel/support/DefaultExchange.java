@@ -61,6 +61,7 @@ public final class DefaultExchange implements ExtendedExchange {
     private boolean routeStop;
     private boolean rollbackOnly;
     private boolean rollbackOnlyLast;
+    private boolean notifyEvent;
 
     public DefaultExchange(CamelContext context) {
         this(context, ExchangePattern.InOnly);
@@ -126,6 +127,7 @@ public final class DefaultExchange implements ExtendedExchange {
         exchange.setRouteStop(isRouteStop());
         exchange.setRollbackOnly(isRollbackOnly());
         exchange.setRollbackOnlyLast(isRollbackOnlyLast());
+        exchange.setNotifyEvent(isNotifyEvent());
 
         // copy properties after body as body may trigger lazy init
         if (hasProperties()) {
@@ -614,6 +616,16 @@ public final class DefaultExchange implements ExtendedExchange {
     @Override
     public void setHistoryNodeLabel(String historyNodeLabel) {
         this.historyNodeLabel = historyNodeLabel;
+    }
+
+    @Override
+    public boolean isNotifyEvent() {
+        return notifyEvent;
+    }
+
+    @Override
+    public void setNotifyEvent(boolean notifyEvent) {
+        this.notifyEvent = notifyEvent;
     }
 
     /**

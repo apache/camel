@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
@@ -551,7 +552,7 @@ public final class EventHelper {
             return false;
         }
 
-        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+        if (((ExtendedExchange) exchange).isNotifyEvent()) {
             // do not generate events for an notify event
             return false;
         }
@@ -597,7 +598,7 @@ public final class EventHelper {
             return false;
         }
 
-        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+        if (((ExtendedExchange) exchange).isNotifyEvent()) {
             // do not generate events for an notify event
             return false;
         }
@@ -643,7 +644,7 @@ public final class EventHelper {
             return false;
         }
 
-        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+        if (((ExtendedExchange) exchange).isNotifyEvent()) {
             // do not generate events for an notify event
             return false;
         }
@@ -690,7 +691,7 @@ public final class EventHelper {
             return false;
         }
 
-        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+        if (((ExtendedExchange) exchange).isNotifyEvent()) {
             // do not generate events for an notify event
             return false;
         }
@@ -737,7 +738,7 @@ public final class EventHelper {
             return false;
         }
 
-        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+        if (((ExtendedExchange) exchange).isNotifyEvent()) {
             // do not generate events for an notify event
             return false;
         }
@@ -783,7 +784,7 @@ public final class EventHelper {
             return false;
         }
 
-        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+        if (((ExtendedExchange) exchange).isNotifyEvent()) {
             // do not generate events for an notify event
             return false;
         }
@@ -829,7 +830,7 @@ public final class EventHelper {
             return false;
         }
 
-        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+        if (((ExtendedExchange) exchange).isNotifyEvent()) {
             // do not generate events for an notify event
             return false;
         }
@@ -875,7 +876,7 @@ public final class EventHelper {
             return false;
         }
 
-        if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
+        if (((ExtendedExchange) exchange).isNotifyEvent()) {
             // do not generate events for an notify event
             return false;
         }
