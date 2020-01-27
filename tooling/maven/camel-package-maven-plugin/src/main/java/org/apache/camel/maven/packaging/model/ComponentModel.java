@@ -106,10 +106,6 @@ public class ComponentModel {
                 groupId, artifactId, version, componentOptions, endpointPathOptions, endpointOptions);
     }
 
-    private static String castValueToStringFromMap(final Map<String, Object> input, final String key) {
-        return input.get(key).toString();
-    }
-
     public String getKind() {
         return kind;
     }

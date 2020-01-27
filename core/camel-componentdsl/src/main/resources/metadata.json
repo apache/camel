@@ -42,5 +42,27 @@
     "componentOptions": [],
     "endpointPathOptions": [],
     "endpointOptions": []
+  },
+  "TimerComponentBuilderFactory": {
+    "kind": "component",
+    "scheme": "timer",
+    "syntax": "timer:timerName",
+    "alternativeSyntax": "",
+    "alternativeSchemes": "",
+    "title": "Timer",
+    "description": "The timer component is used for generating message exchanges when a timer fires.",
+    "firstVersion": "1.0.0",
+    "label": "core,scheduling",
+    "deprecated": "false",
+    "deprecationNote": "",
+    "consumerOnly": "true",
+    "producerOnly": "false",
+    "javaType": "org.apache.camel.component.timer.TimerComponent",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-timer",
+    "version": "3.1.0-SNAPSHOT",
+    "componentOptions": [],
+    "endpointPathOptions": [],
+    "endpointOptions": []
   }
 }

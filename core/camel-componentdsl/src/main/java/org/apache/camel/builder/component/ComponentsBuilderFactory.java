@@ -41,6 +41,18 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.DebeziumMySqlComponentBuilderFactory.debeziumMysql();
     }
     /**
+     * Timer (camel-timer)
+     * The timer component is used for generating message exchanges when a timer
+     * fires.
+     * 
+     * Category: core,scheduling
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-timer
+     */
+    static org.apache.camel.builder.component.dsl.TimerComponentBuilderFactory.TimerComponentBuilder timer() {
+        return org.apache.camel.builder.component.dsl.TimerComponentBuilderFactory.timer();
+    }
+    /**
      * Kafka (camel-kafka)
      * The kafka component allows messages to be sent to (or consumed from)
      * Apache Kafka brokers.
