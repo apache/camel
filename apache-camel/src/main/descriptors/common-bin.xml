@@ -78,6 +78,7 @@
         <include>org.apache.camel:camel-aws-swf</include>
         <include>org.apache.camel:camel-aws-translate</include>
         <include>org.apache.camel:camel-aws-xray</include>
+        <include>org.apache.camel:camel-aws2-ecs</include>
         <include>org.apache.camel:camel-aws2-translate</include>
         <include>org.apache.camel:camel-azure</include>
         <include>org.apache.camel:camel-barcode</include>
