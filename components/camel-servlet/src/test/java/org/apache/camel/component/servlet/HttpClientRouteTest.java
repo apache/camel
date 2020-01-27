@@ -28,9 +28,7 @@ import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.Exchange;
-import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.FailedToStartRouteException;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -135,60 +133,50 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
         public void configure() throws Exception {
             errorHandler(noErrorHandler());
             // START SNIPPET: route
-            from("servlet:hello?matchOnUriPrefix=true").process(new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
-                    String path = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
-                    path = path.substring(path.lastIndexOf("/"));
+            from("servlet:hello?matchOnUriPrefix=true").process(exchange -> {
+                String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+                String path = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
+                path = path.substring(path.lastIndexOf("/"));
 
-                    assertEquals("Get a wrong content type", CONTENT_TYPE, contentType);
-                    // assert camel http header
-                    String charsetEncoding = exchange.getIn().getHeader(Exchange.HTTP_CHARACTER_ENCODING, String.class);
-                    assertEquals("Get a wrong charset name from the message heaer", "UTF-8", charsetEncoding);
-                    // assert exchange charset
-                    assertEquals("Get a wrong charset naem from the exchange property", "UTF-8", exchange.getProperty(Exchange.CHARSET_NAME));
-                    exchange.getOut().setHeader(Exchange.CONTENT_TYPE, contentType + "; charset=UTF-8");
-                    exchange.getOut().setHeader("PATH", path);
-                    exchange.getOut().setBody("<b>Hello World</b>");
-                }
+                assertEquals("Get a wrong content type", CONTENT_TYPE, contentType);
+                // assert camel http header
+                String charsetEncoding = exchange.getIn().getHeader(Exchange.HTTP_CHARACTER_ENCODING, String.class);
+                assertEquals("Get a wrong charset name from the message heaer", "UTF-8", charsetEncoding);
+                // assert exchange charset
+                assertEquals("Get a wrong charset naem from the exchange property", "UTF-8", exchange.getProperty(Exchange.CHARSET_NAME));
+                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, contentType + "; charset=UTF-8");
+                exchange.getMessage().setHeader("PATH", path);
+                exchange.getMessage().setBody("<b>Hello World</b>");
             });
             // END SNIPPET: route
             
-            from("servlet:testHttpMethodRestrict?httpMethodRestrict=POST").process(new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    String request = exchange.getIn().getBody(String.class);
-                    exchange.getOut().setBody(request);
-                }
+            from("servlet:testHttpMethodRestrict?httpMethodRestrict=POST").process(exchange -> {
+                String request = exchange.getIn().getBody(String.class);
+                exchange.getMessage().setBody(request);
             });
 
             from("servlet:testConverter?matchOnUriPrefix=true")
                     .convertBodyTo(String.class)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            HttpServletRequest request = exchange.getIn(HttpServletRequest.class);
-                            assertNotNull("We should get request object here", request);
-                            HttpServletResponse response = exchange.getIn(HttpServletResponse.class);
-                            assertNotNull("We should get response object here", response);
-                            String s = exchange.getIn().getBody(String.class);
-                            assertEquals("<request> hello world </request>", s);
-                        }
+                    .process(exchange -> {
+                        HttpServletRequest request = exchange.getIn(HttpServletRequest.class);
+                        assertNotNull("We should get request object here", request);
+                        HttpServletResponse response = exchange.getIn(HttpServletResponse.class);
+                        assertNotNull("We should get response object here", response);
+                        String s = exchange.getIn().getBody(String.class);
+                        assertEquals("<request> hello world </request>", s);
                     }).transform(constant("Bye World"));
 
             from("servlet:testUnicodeWithStringResponse?matchOnUriPrefix=true")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
-                            exchange.getOut().setHeader(Exchange.CONTENT_TYPE, contentType + "; charset=UTF-8");
-                        }
+                    .process(exchange -> {
+                        String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+                        exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, contentType + "; charset=UTF-8");
                     })
                     .transform(constant(UNICODE_TEXT));
 
             from("servlet:testUnicodeWithObjectResponse?matchOnUriPrefix=true")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
-                            exchange.getOut().setHeader(Exchange.CONTENT_TYPE, contentType + "; charset=UTF-8");
-                        }
+                    .process(exchange -> {
+                        String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+                        exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, contentType + "; charset=UTF-8");
                     })
                     .transform(constant(new Object() {
                         @Override
