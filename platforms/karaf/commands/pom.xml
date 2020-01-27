@@ -79,6 +79,7 @@
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-bundle-plugin</artifactId>
+                <version>${camel-bundle-plugin-version}</version>
                 <configuration>
                     <instructions>
                         <Import-Package>
@@ -93,6 +94,15 @@
                         <Karaf-Commands>*</Karaf-Commands>
                     </instructions>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
