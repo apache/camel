@@ -17,14 +17,13 @@
 package org.apache.camel.tools.apt;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tools.apt.helper.EndpointHelper;
-import org.apache.camel.tools.apt.model.EndpointOption;
-import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class EndpointOptionComparatorTest {
 
@@ -39,27 +38,54 @@ public class EndpointOptionComparatorTest {
         String group3 = EndpointHelper.labelAsGroupName(label3, false, false);
         String group4 = EndpointHelper.labelAsGroupName(label4, false, false);
 
-        EndpointOption op1 = new EndpointOption("first", "First", "string", true, "", "", "blah", null, null, false,
-            false, null, false, group1, label1, false, null, null, null);
-        EndpointOption op2 = new EndpointOption("synchronous", "Synchronous", "string", true, "", "", "blah", null, null, false,
-            false, null, false, group2, label2, false, null, null, null);
-        EndpointOption op3 = new EndpointOption("second", "Second", "string", true, "", "", "blah", null, null, false,
-            false, null, false, group3, label3, false, null, null, null);
-        EndpointOption op4 = new EndpointOption("country", "Country", "string", true, "", "", "blah", null, null, false,
-            false, null, false, group4, label4, false, null, null, null);
+        EndpointOptionModel op1 = new EndpointOptionModel("first", "First", "string", true, "", "", "blah", null, false,
+            false, null, false, group1, label1, null, null, null);
+        EndpointOptionModel op2 = new EndpointOptionModel("synchronous", "Synchronous", "string", true, "", "blah", null, null, false,
+            false, null, false, group2, label2, null, null, null);
+        EndpointOptionModel op3 = new EndpointOptionModel("second", "Second", "string", true, "", "blah", null, null, false,
+            false, null, false, group3, label3, null, null, null);
+        EndpointOptionModel op4 = new EndpointOptionModel("country", "Country", "string", true, "", "blah", null, null, false,
+            false, null, false, group4, label4, null, null, null);
 
-        List<EndpointOption> list = new ArrayList<>();
+        List<EndpointOptionModel> list = new ArrayList<>();
         list.add(op1);
         list.add(op2);
         list.add(op3);
         list.add(op4);
 
         // then by label into the groups
-        Collections.sort(list, EndpointHelper.createGroupAndLabelComparator());
+        list.sort(EndpointHelper.createGroupAndLabelComparator());
 
-        assertEquals("first", list.get(0).getName()); // common
-        assertEquals("second", list.get(1).getName()); // common
-        assertEquals("synchronous", list.get(2).getName()); // advanced
-        assertEquals("country", list.get(3).getName()); // filter
+        Assertions.assertEquals("first", list.get(0).getName()); // common
+        Assertions.assertEquals("second", list.get(1).getName()); // common
+        Assertions.assertEquals("synchronous", list.get(2).getName()); // advanced
+        Assertions.assertEquals("country", list.get(3).getName()); // filter
+    }
+
+    public static class EndpointOptionModel extends BaseOptionModel {
+        public EndpointOptionModel(String name, String displayName, String type, boolean required, String defaultValue,
+                                   String description, String optionalPrefix, String prefix,
+                                   boolean multiValue, boolean deprecated, String deprecationNote, boolean secret,
+                                   String group, String label, List<String> enums,
+                                   String configurationClass, String nestedFieldName) {
+            this.name = name;
+            this.displayName = displayName;
+            this.type = type;
+            this.required = required;
+            this.defaultValue = defaultValue;
+            this.description = description;
+            this.optionalPrefix = optionalPrefix;
+            this.prefix = prefix;
+            this.multiValue = multiValue;
+            this.deprecated = deprecated;
+            this.deprecationNote = deprecationNote;
+            this.secret = secret;
+            this.group = group;
+            this.label = label;
+            this.enums = enums;
+            this.configurationClass = configurationClass;
+            this.configurationField = nestedFieldName;
+        }
+
     }
 }

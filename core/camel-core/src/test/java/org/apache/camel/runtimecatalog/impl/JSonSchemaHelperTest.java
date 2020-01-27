@@ -32,7 +32,7 @@ public class JSonSchemaHelperTest extends ContextTestSupport {
         assertNotNull(json);
 
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
-        assertEquals(17, rows.size());
+        assertEquals(16, rows.size());
 
         // should preserve order
         assertEquals("kind", rows.get(0).keySet().iterator().next());
@@ -42,16 +42,15 @@ public class JSonSchemaHelperTest extends ContextTestSupport {
         assertEquals("description", rows.get(4).keySet().iterator().next());
         assertEquals("label", rows.get(5).keySet().iterator().next());
         assertEquals("deprecated", rows.get(6).keySet().iterator().next());
-        assertEquals("deprecationNote", rows.get(7).keySet().iterator().next());
-        assertEquals("async", rows.get(8).keySet().iterator().next());
-        assertEquals("consumerOnly", rows.get(9).keySet().iterator().next());
-        assertEquals("producerOnly", rows.get(10).keySet().iterator().next());
-        assertEquals("lenientProperties", rows.get(11).keySet().iterator().next());
-        assertEquals("javaType", rows.get(12).keySet().iterator().next());
-        assertEquals("firstVersion", rows.get(13).keySet().iterator().next());
-        assertEquals("groupId", rows.get(14).keySet().iterator().next());
-        assertEquals("artifactId", rows.get(15).keySet().iterator().next());
-        assertEquals("version", rows.get(16).keySet().iterator().next());
+        assertEquals("async", rows.get(7).keySet().iterator().next());
+        assertEquals("consumerOnly", rows.get(8).keySet().iterator().next());
+        assertEquals("producerOnly", rows.get(9).keySet().iterator().next());
+        assertEquals("lenientProperties", rows.get(10).keySet().iterator().next());
+        assertEquals("javaType", rows.get(11).keySet().iterator().next());
+        assertEquals("firstVersion", rows.get(12).keySet().iterator().next());
+        assertEquals("groupId", rows.get(13).keySet().iterator().next());
+        assertEquals("artifactId", rows.get(14).keySet().iterator().next());
+        assertEquals("version", rows.get(15).keySet().iterator().next());
 
         rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
         assertEquals(8, rows.size());

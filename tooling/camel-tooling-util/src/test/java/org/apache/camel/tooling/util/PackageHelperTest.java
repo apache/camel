@@ -17,27 +17,44 @@
 package org.apache.camel.tooling.util;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.apache.camel.tooling.util.PackageHelper.JSON_SUFIX;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PackageHelperTest {
 
     @Test
     public void testFileToString() throws Exception {
-        assertEquals("dk19i21)@+#(OR", PackageHelper.fileToString(ResourceUtils.getResourceAsFile("filecontent/a.txt")));
+        File file = ResourceUtils.getResourceAsFile("filecontent/a.txt");
+        assertEquals("dk19i21)@+#(OR\n", PackageHelper.loadText(file));
     }
 
     @Test
     public void testFindJsonFiles() throws Exception {
-        Map<String, File> jsonFiles = PackageHelper.findJsonFiles(ResourceUtils.getResourceAsFile("json"));
+        Path dir = ResourceUtils.getResourceAsFile("json").toPath();
+        List<String> jsonFiles = PackageHelper.findJsonFiles(dir)
+                .map(PackageHelper::asName)
+                .collect(Collectors.toList());
 
-        assertTrue("Files a.json must be found", jsonFiles.containsKey("a"));
-        assertTrue("Files b.json must be found", jsonFiles.containsKey("b"));
-        assertFalse("File c.txt must not be found", jsonFiles.containsKey("c"));
+        assertTrue(jsonFiles.contains("a"), "Files a.json must be found");
+        assertTrue(jsonFiles.contains("b"), "Files b.json must be found");
+        assertFalse(jsonFiles.contains("c"), "File c.txt must not be found");
+    }
+
+    @Test
+    public void testGetSchemaKind() throws Exception {
+        File file = ResourceUtils.getResourceAsFile("json/aop.json");
+        String json = PackageHelper.loadText(file);
+        assertEquals("model", PackageHelper.getSchemaKind(json));
     }
 }

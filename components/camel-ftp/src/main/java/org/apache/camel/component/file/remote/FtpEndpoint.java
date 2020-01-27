@@ -46,7 +46,11 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "1.1.0", scheme = "ftp", extendsScheme = "file", title = "FTP",
         syntax = "ftp:host:port/directoryName", alternativeSyntax = "ftp:username:password@host:port/directoryName",
         label = "file",
-        excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService")
+        excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize," +
+                "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService," +
+                "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist," +
+                "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail," +
+                "renameUsingCopy")
 @ManagedResource(description = "Managed FtpEndpoint")
 public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
 
