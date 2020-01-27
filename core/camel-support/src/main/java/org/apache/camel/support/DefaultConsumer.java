@@ -44,7 +44,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
     private transient String consumerToString;
     private final Endpoint endpoint;
     private final Processor processor;
-    private volatile AsyncProcessor asyncProcessor;
+    private final AsyncProcessor asyncProcessor;
     private ExceptionHandler exceptionHandler;
     private Route route;
     private String routeId;
@@ -52,6 +52,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
     public DefaultConsumer(Endpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
         this.processor = processor;
+        this.asyncProcessor = AsyncProcessorConverterHelper.convert(processor);
         this.exceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), getClass());
     }
 
@@ -136,13 +137,6 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
      * it will be adapted so that it does.
      */
     public AsyncProcessor getAsyncProcessor() {
-        if (asyncProcessor == null) {
-            synchronized (this) {
-                if (asyncProcessor == null) {
-                    asyncProcessor = AsyncProcessorConverterHelper.convert(processor);
-                }
-            }
-        }
         return asyncProcessor;
     }
 
