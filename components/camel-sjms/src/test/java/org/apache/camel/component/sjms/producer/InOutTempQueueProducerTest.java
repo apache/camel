@@ -26,7 +26,6 @@ import javax.jms.MessageProducer;
 import javax.jms.TextMessage;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.Test;
 
@@ -62,18 +61,14 @@ public class InOutTempQueueProducerTest extends JmsTestSupport {
         final String responseText = "How are you";
         mc.setMessageListener(new MyMessageListener(requestText, responseText));
         final String correlationId = UUID.randomUUID().toString().replace("-", "");
-        Exchange exchange = template.request("sjms:queue:" + queueName + "?exchangePattern=InOut", new Processor() {
-            
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(requestText);
-                exchange.getIn().setHeader("JMSCorrelationID", correlationId);
-            }
+        Exchange exchange = template.request("sjms:queue:" + queueName + "?exchangePattern=InOut", exchange1 -> {
+            exchange1.getIn().setBody(requestText);
+            exchange1.getIn().setHeader("JMSCorrelationID", correlationId);
         });
         assertNotNull(exchange);
         assertTrue(exchange.getIn().getBody() instanceof String);
-        assertEquals(responseText, exchange.getOut().getBody());
-        assertEquals(correlationId, exchange.getOut().getHeader("JMSCorrelationID", String.class));
+        assertEquals(responseText, exchange.getMessage().getBody());
+        assertEquals(correlationId, exchange.getMessage().getHeader("JMSCorrelationID", String.class));
         mc.close();
 
     }
