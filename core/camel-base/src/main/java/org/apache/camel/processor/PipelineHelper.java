@@ -41,13 +41,13 @@ public final class PipelineHelper {
     public static boolean continueProcessing(Exchange exchange, String message, Logger log) {
         // check for error if so we should break out
         boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(exchange);
-        if (exchange.isFailed() || exchange.isRollbackOnly() || exceptionHandled) {
+        if (exceptionHandled || exchange.isFailed() || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
             // The Exchange.ERRORHANDLED_HANDLED property is only set if satisfactory handling was done
             // by the error handler. It's still an exception, the exchange still failed.
             if (log.isDebugEnabled()) {
                 StringBuilder sb = new StringBuilder();
                 sb.append("Message exchange has failed: ").append(message).append(" for exchange: ").append(exchange);
-                if (exchange.isRollbackOnly()) {
+                if (exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
                     sb.append(" Marked as rollback only.");
                 }
                 if (exchange.getException() != null) {
@@ -63,15 +63,11 @@ public final class PipelineHelper {
         }
 
         // check for stop
-        Object stop = exchange.getProperty(Exchange.ROUTE_STOP);
-        if (stop != null) {
-            boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, exchange, stop);
-            if (doStop) {
-                if (log.isDebugEnabled()) {
-                    log.debug("ExchangeId: {} is marked to stop routing: {}", exchange.getExchangeId(), exchange);
-                }
-                return false;
+        if (exchange.isRouteStop()) {
+            if (log.isDebugEnabled()) {
+                log.debug("ExchangeId: {} is marked to stop routing: {}", exchange.getExchangeId(), exchange);
             }
+            return false;
         }
 
         return true;

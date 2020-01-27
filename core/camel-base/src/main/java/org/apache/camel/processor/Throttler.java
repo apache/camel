@@ -135,7 +135,9 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
                 } else {
                     // delegate to async pool
                     if (isAsyncDelayed() && !exchange.isTransacted() && state == State.SYNC) {
-                        LOG.debug("Throttle rate exceeded but AsyncDelayed enabled, so queueing for async processing, exchangeId: {}", exchange.getExchangeId());
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Throttle rate exceeded but AsyncDelayed enabled, so queueing for async processing, exchangeId: {}", exchange.getExchangeId());
+                        }
                         return processAsynchronously(exchange, callback, throttlingState);
                     }
 
@@ -154,10 +156,14 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
                     if (state == State.ASYNC) {
                         if (LOG.isTraceEnabled()) {
                             long queuedTime = start - queuedStart;
-                            LOG.trace("Queued for {}ms, Throttled for {}ms, exchangeId: {}", queuedTime, elapsed, exchange.getExchangeId());
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace("Queued for {}ms, Throttled for {}ms, exchangeId: {}", queuedTime, elapsed, exchange.getExchangeId());
+                            }
                         }
                     } else {
-                        LOG.trace("Throttled for {}ms, exchangeId: {}", elapsed, exchange.getExchangeId());
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Throttled for {}ms, exchangeId: {}", elapsed, exchange.getExchangeId());
+                        }
                     }
                 }
             } else {
@@ -169,7 +175,9 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
                         LOG.trace("Queued for {}ms, No throttling applied (throttle cleared while queued), for exchangeId: {}", queuedTime, exchange.getExchangeId());
                     }
                 } else {
-                    LOG.trace("No throttling applied to exchangeId: {}", exchange.getExchangeId());
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("No throttling applied to exchangeId: {}", exchange.getExchangeId());
+                    }
                 }
             }
 
@@ -211,7 +219,9 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
             return false;
         } catch (final RejectedExecutionException e) {
             if (isCallerRunsWhenRejected()) {
-                LOG.debug("AsyncExecutor is full, rejected exchange will run in the current thread, exchangeId: {}", exchange.getExchangeId());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("AsyncExecutor is full, rejected exchange will run in the current thread, exchangeId: {}", exchange.getExchangeId());
+                }
                 exchange.setProperty(PROPERTY_EXCHANGE_STATE, State.ASYNC_REJECTED);
                 return process(exchange, callback);
             }
@@ -314,9 +324,13 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
                         while (delta > 0) {
                             delayQueue.take();
                             delta--;
-                            LOG.trace("Permit discarded due to throttling rate decrease, triggered by ExchangeId: {}", exchange.getExchangeId());
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace("Permit discarded due to throttling rate decrease, triggered by ExchangeId: {}", exchange.getExchangeId());
+                            }
                         }
-                        LOG.debug("Throttle rate decreased from {} to {}, triggered by ExchangeId: {}", throttleRate, newThrottle, exchange.getExchangeId());
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Throttle rate decreased from {} to {}, triggered by ExchangeId: {}", throttleRate, newThrottle, exchange.getExchangeId());
+                        }
 
                         // increase
                     } else if (newThrottle > throttleRate) {
@@ -325,9 +339,13 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
                             delayQueue.put(new ThrottlePermit(-1));
                         }
                         if (throttleRate == 0) {
-                            LOG.debug("Initial throttle rate set to {}, triggered by ExchangeId: {}", newThrottle, exchange.getExchangeId());
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Initial throttle rate set to {}, triggered by ExchangeId: {}", newThrottle, exchange.getExchangeId());
+                            }
                         } else {
-                            LOG.debug("Throttle rate increase from {} to {}, triggered by ExchangeId: {}", throttleRate, newThrottle, exchange.getExchangeId());
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Throttle rate increase from {} to {}, triggered by ExchangeId: {}", throttleRate, newThrottle, exchange.getExchangeId());
+                            }
                         }
                     }
                     throttleRate = newThrottle;

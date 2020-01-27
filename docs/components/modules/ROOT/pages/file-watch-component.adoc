@@ -1,8 +1,11 @@
 [[file-watch-component]]
-= file-watch Component
+= File Watch Component
 :page-source: components/camel-file-watch/src/main/docs/file-watch-component.adoc
 
 *Since Camel 3.0*
+
+*Since Camel 3.0*
+
 
 // HEADER START
 *Only consumer is supported*
@@ -13,7 +16,7 @@ This component can be used to watch file modification events in folder. It is ba
 == URI Options
 
 // component options: START
-The file-watch component supports 7 options, which are listed below.
+The File Watch component supports 7 options, which are listed below.
 
 
 
@@ -32,7 +35,7 @@ The file-watch component supports 7 options, which are listed below.
 
 
 // endpoint options: START
-The file-watch endpoint is configured using URI syntax:
+The File Watch endpoint is configured using URI syntax:
 
 ----
 file-watch:path

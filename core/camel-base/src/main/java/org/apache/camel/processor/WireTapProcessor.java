@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -44,6 +45,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +63,7 @@ public class WireTapProcessor extends AsyncProcessorSupport implements Traceable
     private final String uri;
     private final boolean dynamicUri;
     private final Processor processor;
+    private final AsyncProcessor asyncProcessor;
     private final ExchangePattern exchangePattern;
     private final ExecutorService executorService;
     private volatile boolean shutdownExecutorService;
@@ -78,6 +81,7 @@ public class WireTapProcessor extends AsyncProcessorSupport implements Traceable
         this.dynamicProcessor = dynamicProcessor;
         this.uri = dynamicProcessor.getUri();
         this.processor = processor;
+        this.asyncProcessor = AsyncProcessorConverterHelper.convert(processor);
         this.exchangePattern = exchangePattern;
         ObjectHelper.notNull(executorService, "executorService");
         this.executorService = executorService;
@@ -167,9 +171,10 @@ public class WireTapProcessor extends AsyncProcessorSupport implements Traceable
         executorService.submit(() -> {
             taskCount.increment();
             LOG.debug(">>>> (wiretap) {} {}", uri, wireTapExchange);
-            AsyncProcessorConverterHelper.convert(processor).process(wireTapExchange, doneSync -> {
+            asyncProcessor.process(wireTapExchange, doneSync -> {
                 if (wireTapExchange.getException() != null) {
-                    LOG.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + uri + ". This exception will be ignored.", wireTapExchange.getException());
+                    String u = URISupport.sanitizeUri(uri);
+                    LOG.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + u + ". This exception will be ignored.", wireTapExchange.getException());
                 }
                 taskCount.decrement();
             });
@@ -179,7 +184,6 @@ public class WireTapProcessor extends AsyncProcessorSupport implements Traceable
         callback.done(true);
         return true;
     }
-
 
     protected Exchange configureExchange(Exchange exchange, ExchangePattern pattern) throws IOException {
         Exchange answer;

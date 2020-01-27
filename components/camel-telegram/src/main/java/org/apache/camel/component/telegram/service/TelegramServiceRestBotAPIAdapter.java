@@ -248,6 +248,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             buildTextPart(builder, "title", message.getTitle());
             buildTextPart(builder, "duration", message.getDurationSeconds());
             buildTextPart(builder, "performer", message.getPerformer());
+            buildTextPart(builder, "reply_markup", message.replyMarkupJson());
         }
 
     }
@@ -267,6 +268,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             buildTextPart(builder, "duration", message.getDurationSeconds());
             buildTextPart(builder, "width", message.getWidth());
             buildTextPart(builder, "height", message.getHeight());
+            buildTextPart(builder, "reply_markup", message.replyMarkupJson());
         }
 
     }
@@ -283,6 +285,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             fillCommonMediaParts(builder, message);
             buildMediaPart(builder, "document", message.getFilenameWithExtension(), message.getDocument());
             buildTextPart(builder, "caption", message.getCaption());
+            buildTextPart(builder, "reply_markup", message.replyMarkupJson());
         }
 
     }
@@ -299,6 +302,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             fillCommonMediaParts(builder, message);
             buildMediaPart(builder, "photo", message.getFilenameWithExtension(), message.getPhoto());
             buildTextPart(builder, "caption", message.getCaption());
+            buildTextPart(builder, "reply_markup", message.replyMarkupJson());
         }
 
     }

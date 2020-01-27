@@ -17,13 +17,16 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
@@ -42,12 +45,16 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
 
     private String id;
     private String routeId;
+    private final CamelContext camelContext;
+    private final ReactiveExecutor reactiveExecutor;
     private final Expression expression;
     private final Predicate predicate;
     private final boolean copy;
 
-    public LoopProcessor(Processor processor, Expression expression, Predicate predicate, boolean copy) {
+    public LoopProcessor(CamelContext camelContext, Processor processor, Expression expression, Predicate predicate, boolean copy) {
         super(processor);
+        this.camelContext = camelContext;
+        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
         this.expression = expression;
         this.predicate = predicate;
         this.copy = copy;
@@ -59,9 +66,9 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
             LoopState state = new LoopState(exchange, callback);
 
             if (exchange.isTransacted()) {
-                exchange.getContext().getReactiveExecutor().scheduleSync(state);
+                reactiveExecutor.scheduleSync(state);
             } else {
-                exchange.getContext().getReactiveExecutor().scheduleMain(state);
+                reactiveExecutor.scheduleMain(state);
             }
             return false;
         } catch (Exception e) {
@@ -117,16 +124,20 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                     processor.process(current, doneSync -> {
                         // increment counter after done
                         index++;
-                        exchange.getContext().getReactiveExecutor().schedule(this);
+                        reactiveExecutor.schedule(this);
                     });
                 } else {
                     // we are done so prepare the result
                     ExchangeHelper.copyResults(exchange, current);
-                    LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                    }
                     callback.done(false);
                 }
             } catch (Exception e) {
-                LOG.trace("Processing failed for exchangeId: {} >>> {}", exchange.getExchangeId(), e.getMessage());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing failed for exchangeId: {} >>> {}", exchange.getExchangeId(), e.getMessage());
+                }
                 exchange.setException(e);
                 callback.done(false);
             }
@@ -134,7 +145,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
 
         @Override
         public String toString() {
-            return "LoopState[" + exchange.getExchangeId() + "]";
+            return "LoopState";
         }
     }
 

@@ -22,11 +22,14 @@ import java.util.List;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
@@ -42,13 +45,17 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
 
     private static final Logger LOG = LoggerFactory.getLogger(TryProcessor.class);
 
+    protected final CamelContext camelContext;
+    protected final ReactiveExecutor reactiveExecutor;
     protected String id;
     protected String routeId;
     protected final Processor tryProcessor;
     protected final List<Processor> catchClauses;
     protected final Processor finallyProcessor;
 
-    public TryProcessor(Processor tryProcessor, List<Processor> catchClauses, Processor finallyProcessor) {
+    public TryProcessor(CamelContext camelContext, Processor tryProcessor, List<Processor> catchClauses, Processor finallyProcessor) {
+        this.camelContext = camelContext;
+        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
         this.tryProcessor = tryProcessor;
         this.catchClauses = catchClauses;
         this.finallyProcessor = finallyProcessor;
@@ -66,7 +73,7 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        exchange.getContext().getReactiveExecutor().schedule(new TryState(exchange, callback));
+        reactiveExecutor.schedule(new TryState(exchange, callback));
         return false;
     }
 
@@ -94,31 +101,31 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
                 // process the next processor
                 Processor processor = processors.next();
                 AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);
-                LOG.trace("Processing exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
-                async.process(exchange, doneSync -> exchange.getContext().getReactiveExecutor().schedule(this));
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                }
+                async.process(exchange, doneSync -> reactiveExecutor.schedule(this));
             } else {
                 ExchangeHelper.prepareOutToIn(exchange);
                 exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
                 exchange.setProperty(Exchange.EXCEPTION_HANDLED, lastHandled);
-                LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                }
                 callback.done(false);
             }
         }
 
         @Override
         public String toString() {
-            return "TryState[" + exchange.getExchangeId() + "]";
+            return "TryState";
         }
     }
 
     protected boolean continueRouting(Iterator<Processor> it, Exchange exchange) {
-        Object stop = exchange.getProperty(Exchange.ROUTE_STOP);
-        if (stop != null) {
-            boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
-            if (doStop) {
-                LOG.debug("Exchange is marked to stop routing: {}", exchange);
-                return false;
-            }
+        if (exchange.isRouteStop()) {
+            LOG.debug("Exchange is marked to stop routing: {}", exchange);
+            return false;
         }
 
         // continue if there are more processors to route

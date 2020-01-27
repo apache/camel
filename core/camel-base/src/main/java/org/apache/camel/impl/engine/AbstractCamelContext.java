@@ -262,6 +262,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private volatile ScheduledExecutorService errorHandlerExecutorService;
     private volatile BeanIntrospection beanIntrospection;
     private volatile Tracer tracer;
+    private volatile boolean eventNotificationApplicable;
     private final DeferServiceFactory deferServiceFactory = new DefaultDeferServiceFactory();
     private final AnnotationBasedProcessorFactory annotationBasedProcessorFactory = new DefaultAnnotationBasedProcessorFactory();
 
@@ -2156,6 +2157,16 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     @Override
+    public boolean isEventNotificationApplicable() {
+        return eventNotificationApplicable;
+    }
+
+    @Override
+    public void setEventNotificationApplicable(boolean eventNotificationApplicable) {
+        this.eventNotificationApplicable = eventNotificationApplicable;
+    }
+
+    @Override
     public String getVersion() {
         if (version == null) {
             synchronized (lock) {
@@ -2307,6 +2318,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             ServiceHelper.startService(this.routeController);
 
             doNotStartRoutesOnFirstStart = !firstStartDone && !isAutoStartup();
+
+            // optimize - before starting routes lets check if event notifications is possible
+            eventNotificationApplicable = EventHelper.eventsApplicable(this);
 
             // if the context was configured with auto startup = false, and we
             // are already started,

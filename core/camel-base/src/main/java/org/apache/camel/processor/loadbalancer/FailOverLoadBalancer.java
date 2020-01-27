@@ -25,6 +25,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Traceable;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ExchangeHelper;
@@ -146,7 +147,9 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
             }
         }
 
-        LOG.trace("Should failover: {} for exchangeId: {}", answer, exchange.getExchangeId());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Should failover: {} for exchangeId: {}", answer, exchange.getExchangeId());
+        }
 
         return answer;
     }
@@ -164,7 +167,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         AsyncProcessor[] processors = doGetProcessors();
-        exchange.getContext().getReactiveExecutor().schedule(new State(exchange, callback, processors)::run);
+        exchange.getContext().adapt(ExtendedCamelContext.class).getReactiveExecutor().schedule(new State(exchange, callback, processors)::run);
         return false;
     }
 
@@ -200,7 +203,9 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 lastGoodIndex.set(index);
                 // and copy the current result to original so it will contain this result of this eip
                 ExchangeHelper.copyResults(exchange, copy);
-                LOG.debug("Failover complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Failover complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                }
                 callback.done(false);
                 return;
             }
@@ -251,7 +256,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
 
             // process the exchange
             LOG.debug("Processing failover at attempt {} for {}", attempts, copy);
-            processor.process(copy, doneSync -> exchange.getContext().getReactiveExecutor().schedule(this::run));
+            processor.process(copy, doneSync -> exchange.getContext().adapt(ExtendedCamelContext.class).getReactiveExecutor().schedule(this::run));
         }
 
     }

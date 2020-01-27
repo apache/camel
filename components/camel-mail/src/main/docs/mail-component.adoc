@@ -742,3 +742,12 @@ builder.unseen().body(Op.not, "Spam").subject(Op.not, "Spam")
 SearchTerm term = builder.build();
 --------------------------------------------------------------
 
+
+== Polling Optimization
+
+*Since Camel 3.1*
+
+The parameter maxMessagePerPoll and fetchSize allow you to restrict the number message that should be processed for each poll.
+These parameters should help to prevent bad performance when working with folders that contain a lot of messages.
+In previous versions these parameters have been evaluated too late, so that big mailboxes could still cause performance problems.
+With Camel 3.1 these parameters are evaluated earlier during the poll to avoid these problems.

@@ -29,6 +29,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
@@ -56,6 +57,12 @@ public final class DefaultExchange implements ExtendedExchange {
     private Boolean externalRedelivered;
     private String historyNodeId;
     private String historyNodeLabel;
+    private boolean transacted;
+    private boolean routeStop;
+    private boolean rollbackOnly;
+    private boolean rollbackOnlyLast;
+    private boolean notifyEvent;
+    private boolean interrupted;
 
     public DefaultExchange(CamelContext context) {
         this(context, ExchangePattern.InOnly);
@@ -118,6 +125,10 @@ public final class DefaultExchange implements ExtendedExchange {
         }
 
         exchange.setException(getException());
+        exchange.setRouteStop(isRouteStop());
+        exchange.setRollbackOnly(isRollbackOnly());
+        exchange.setRollbackOnlyLast(isRollbackOnlyLast());
+        exchange.setNotifyEvent(isNotifyEvent());
 
         // copy properties after body as body may trigger lazy init
         if (hasProperties()) {
@@ -132,7 +143,7 @@ public final class DefaultExchange implements ExtendedExchange {
             return null;
         }
 
-        return context.getHeadersMapFactory().newMap(headers);
+        return context.adapt(ExtendedCamelContext.class).getHeadersMapFactory().newMap(headers);
     }
 
     @SuppressWarnings("unchecked")
@@ -195,7 +206,10 @@ public final class DefaultExchange implements ExtendedExchange {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getProperty(String name, Object defaultValue, Class<T> type) {
-        Object value = getProperty(name, defaultValue);
+        Object value = getProperty(name);
+        if (value == null) {
+            value = defaultValue;
+        }
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
             if (boolean.class == type) {
@@ -398,7 +412,7 @@ public final class DefaultExchange implements ExtendedExchange {
         }
         if (t instanceof InterruptedException) {
             // mark the exchange as interrupted due to the interrupt exception
-            setProperty(Exchange.INTERRUPTED, Boolean.TRUE);
+            setInterrupted(true);
         }
     }
 
@@ -457,12 +471,22 @@ public final class DefaultExchange implements ExtendedExchange {
 
     @Override
     public boolean isTransacted() {
-        UnitOfWork uow = getUnitOfWork();
-        if (uow != null) {
-            return uow.isTransacted();
-        } else {
-            return false;
-        }
+        return transacted;
+    }
+
+    @Override
+    public void setTransacted(boolean transacted) {
+        this.transacted = true;
+    }
+
+    @Override
+    public boolean isRouteStop() {
+        return routeStop;
+    }
+
+    @Override
+    public void setRouteStop(boolean routeStop) {
+        this.routeStop = routeStop;
     }
 
     @Override
@@ -485,7 +509,22 @@ public final class DefaultExchange implements ExtendedExchange {
 
     @Override
     public boolean isRollbackOnly() {
-        return Boolean.TRUE.equals(getProperty(Exchange.ROLLBACK_ONLY)) || Boolean.TRUE.equals(getProperty(Exchange.ROLLBACK_ONLY_LAST));
+        return rollbackOnly;
+    }
+
+    @Override
+    public void setRollbackOnly(boolean rollbackOnly) {
+        this.rollbackOnly = rollbackOnly;
+    }
+
+    @Override
+    public boolean isRollbackOnlyLast() {
+        return rollbackOnlyLast;
+    }
+
+    @Override
+    public void setRollbackOnlyLast(boolean rollbackOnlyLast) {
+        this.rollbackOnlyLast = rollbackOnlyLast;
     }
 
     @Override
@@ -578,6 +617,26 @@ public final class DefaultExchange implements ExtendedExchange {
     @Override
     public void setHistoryNodeLabel(String historyNodeLabel) {
         this.historyNodeLabel = historyNodeLabel;
+    }
+
+    @Override
+    public boolean isNotifyEvent() {
+        return notifyEvent;
+    }
+
+    @Override
+    public void setNotifyEvent(boolean notifyEvent) {
+        this.notifyEvent = notifyEvent;
+    }
+
+    @Override
+    public boolean isInterrupted() {
+        return interrupted;
+    }
+
+    @Override
+    public void setInterrupted(boolean interrupted) {
+        this.interrupted = interrupted;
     }
 
     /**

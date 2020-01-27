@@ -25,7 +25,6 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.ExecutorServiceManager;
-import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Language;
@@ -34,7 +33,6 @@ import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
@@ -216,6 +214,12 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * Gets the date and time Camel was started up.
      */
     Date getStartDate();
+
+    /**
+     * Whether event notification is applicable (possible).
+     * This API is used internally in Camel as optimization.
+     */
+    boolean isEventNotificationApplicable();
 
     // Service Methods
     //-----------------------------------------------------------------------
@@ -1271,22 +1275,5 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * Gets the global SSL context parameters if configured.
      */
     SSLContextParameters getSSLContextParameters();
-
-    /**
-     * Gets the {@link HeadersMapFactory} to use.
-     */
-    HeadersMapFactory getHeadersMapFactory();
-
-    /**
-     * Sets a custom {@link HeadersMapFactory} to be used.
-     */
-    void setHeadersMapFactory(HeadersMapFactory factory);
-
-    ReactiveExecutor getReactiveExecutor();
-
-    /**
-     * Sets a custom {@link ReactiveExecutor} to be used.
-     */
-    void setReactiveExecutor(ReactiveExecutor reactiveExecutor);
 
 }

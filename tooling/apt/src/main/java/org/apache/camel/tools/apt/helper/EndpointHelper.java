@@ -17,10 +17,10 @@
 package org.apache.camel.tools.apt.helper;
 
 import java.util.Comparator;
+import java.util.Objects;
 
+import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.util.Strings;
-import org.apache.camel.tools.apt.model.EndpointOption;
-import org.apache.camel.tools.apt.model.EndpointPath;
 
 public final class EndpointHelper {
 
@@ -70,7 +70,7 @@ public final class EndpointHelper {
     /**
      * A comparator to sort the endpoint/component options according to group and label.
      */
-    public static EndpointOptionGroupAndLabelComparator createGroupAndLabelComparator() {
+    public static Comparator<BaseOptionModel> createGroupAndLabelComparator() {
         return new EndpointOptionGroupAndLabelComparator();
     }
 
@@ -79,8 +79,34 @@ public final class EndpointHelper {
      *
      * @param syntax the endpoint uri syntax
      */
-    public static EndpointPathComparator createPathComparator(String syntax) {
+    public static Comparator<BaseOptionModel> createPathComparator(String syntax) {
         return new EndpointPathComparator(syntax);
+    }
+
+    /**
+     * A comparator to sort endpoints options: first paths according to the path comparator,
+     * then parameters according to their group and label.
+     *
+     * @param syntax the endpoint uri syntax
+     */
+    public static Comparator<BaseOptionModel> createOverallComparator(String syntax) {
+        Comparator<BaseOptionModel> pathComparator = createPathComparator(syntax);
+        Comparator<BaseOptionModel> groupAndLabelComparator = createGroupAndLabelComparator();
+        return (o1, o2) -> {
+            if (Objects.equals("path", o1.getKind())) {
+                if (Objects.equals("path", o2.getKind())) {
+                    return pathComparator.compare(o1, o2);
+                } else {
+                    return -1;
+                }
+            } else {
+                if (Objects.equals("path", o2.getKind())) {
+                    return +1;
+                } else {
+                    return groupAndLabelComparator.compare(o1, o2);
+                }
+            }
+        };
     }
 
     /**
@@ -96,10 +122,10 @@ public final class EndpointHelper {
      *     <li>... and the rest sorted by a..z</li>
      * </ul>
      */
-    private static final class EndpointOptionGroupAndLabelComparator implements Comparator<EndpointOption> {
+    private static final class EndpointOptionGroupAndLabelComparator implements Comparator<BaseOptionModel> {
 
         @Override
-        public int compare(EndpointOption o1, EndpointOption o2) {
+        public int compare(BaseOptionModel o1, BaseOptionModel o2) {
             String name1 = o1.getName();
             String name2 = o2.getName();
             String label1 = o1.getLabel() != null ? o1.getLabel() : "common";
@@ -131,24 +157,18 @@ public final class EndpointHelper {
     }
 
     private static int groupScore(String group) {
-        if ("common".equals(group)) {
-            return 1;
-        } else if ("common (advanced)".equals(group)) {
-            return 2;
-        } else if ("consumer".equals(group)) {
-            return 3;
-        } else if ("consumer (advanced)".equals(group)) {
-            return 4;
-        } else if ("producer".equals(group)) {
-            return 5;
-        } else if ("producer (advanced)".equals(group)) {
-            return 6;
-        } else {
-            return 9;
+        switch (group) {
+            case "common":              return 1;
+            case "common (advanced)":   return 2;
+            case "consumer":            return 3;
+            case "consumer (advanced)": return 4;
+            case "producer":            return 5;
+            case "producer (advanced)": return 6;
+            default:                    return 9;
         }
     }
 
-    private static final class EndpointPathComparator implements Comparator<EndpointPath> {
+    private static final class EndpointPathComparator implements Comparator<BaseOptionModel> {
 
         private final String syntax;
 
@@ -157,7 +177,7 @@ public final class EndpointHelper {
         }
 
         @Override
-        public int compare(EndpointPath path1, EndpointPath path2) {
+        public int compare(BaseOptionModel path1, BaseOptionModel path2) {
             int pos1 = syntax != null ? syntax.indexOf(path1.getName()) : -1;
             int pos2 = syntax != null ? syntax.indexOf(path2.getName()) : -1;
 

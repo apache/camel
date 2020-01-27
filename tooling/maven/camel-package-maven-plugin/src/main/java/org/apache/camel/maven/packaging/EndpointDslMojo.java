@@ -39,14 +39,13 @@ import java.util.stream.Collectors;
 import javax.annotation.Generated;
 
 import org.apache.camel.maven.packaging.generics.GenericsUtil;
-import org.apache.camel.maven.packaging.model.ComponentModel;
-import org.apache.camel.maven.packaging.model.ComponentOptionModel;
-import org.apache.camel.maven.packaging.model.EndpointOptionModel;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.tooling.util.JSonSchemaHelper;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tooling.util.srcgen.GenericType;
@@ -61,11 +60,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-
-import static org.apache.camel.maven.packaging.AbstractGeneratorMojo.updateResource;
-import static org.apache.camel.tooling.util.JSonSchemaHelper.getSafeValue;
-import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
-import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 /**
  * Generate Endpoint DSL source files for Components.
@@ -147,7 +141,7 @@ public class EndpointDslMojo extends AbstractMojo {
         }
 
         if (outputDir == null) {
-            outputDir = findCamelDirectory(baseDir, "core/camel-endpointdsl/src/main/java");
+            outputDir = PackageHelper.findCamelDirectory(baseDir, "core/camel-endpointdsl/src/main/java");
         }
 
         Map<File, Supplier<String>> files;
@@ -185,7 +179,7 @@ public class EndpointDslMojo extends AbstractMojo {
 
     private static String loadJson(File file) {
         try {
-            return loadText(file);
+            return PackageHelper.loadText(file);
         } catch (IOException e) {
             throw new IOError(e);
         }
@@ -218,7 +212,7 @@ public class EndpointDslMojo extends AbstractMojo {
             for (String componentName : componentNames) {
                 String json = loadComponentJson(jsonFiles, componentName);
                 if (json != null) {
-                    ComponentModel model = generateComponentModel(componentName, json);
+                    ComponentModel model = JsonMapper.generateComponentModel(json);
                     allModels.add(model);
                 }
             }
@@ -261,7 +255,7 @@ public class EndpointDslMojo extends AbstractMojo {
 
         boolean hasAdvanced = false;
         for (EndpointOptionModel option : model.getEndpointOptions()) {
-            if (option.getLabel().contains("advanced")) {
+            if (option.getLabel() != null && option.getLabel().contains("advanced")) {
                 hasAdvanced = true;
                 break;
             }
@@ -385,21 +379,22 @@ public class EndpointDslMojo extends AbstractMojo {
             }
 
             List<JavaClass> targets = new ArrayList<>();
-            if (option.getLabel() != null) {
-                if (option.getLabel().contains("producer")) {
-                    if (option.getLabel().contains("advanced")) {
+            String label = option.getLabel() != null ? option.getLabel() : "";
+            if (label != null) {
+                if (label.contains("producer")) {
+                    if (label.contains("advanced")) {
                         targets.add(advancedProducerClass != null ? advancedProducerClass : advancedBuilderClass);
                     } else {
                         targets.add(producerClass != null ? producerClass : builderClass);
                     }
-                } else if (option.getLabel().contains("consumer")) {
-                    if (option.getLabel().contains("advanced")) {
+                } else if (label.contains("consumer")) {
+                    if (label.contains("advanced")) {
                         targets.add(advancedConsumerClass != null ? advancedConsumerClass : advancedBuilderClass);
                     } else {
                         targets.add(consumerClass != null ? consumerClass : builderClass);
                     }
                 } else {
-                    if (option.getLabel().contains("advanced")) {
+                    if (label.contains("advanced")) {
                         targets.add(advancedConsumerClass);
                         targets.add(advancedProducerClass);
                         targets.add(advancedBuilderClass);
@@ -434,7 +429,7 @@ public class EndpointDslMojo extends AbstractMojo {
                             "doSetProperty(\"" + option.getName() + "\", " + option.getName() + ");",
                             "return this;\n");
 
-                if ("true".equals(option.getDeprecated())) {
+                if (option.isDeprecated()) {
                     fluent.addAnnotation(Deprecated.class);
                 }
                 if (!Strings.isEmpty(option.getDescription())) {
@@ -449,11 +444,11 @@ public class EndpointDslMojo extends AbstractMojo {
                     // context-path and not as individual options
                     // so lets only mark query parameters that are required as
                     // required
-                    if ("parameter".equals(option.getKind()) && "true".equals(option.getRequired())) {
+                    if ("parameter".equals(option.getKind()) && option.isRequired()) {
                         desc += "\nRequired: true";
                     }
                     // include default value (if any)
-                    if (!option.getDefaultValue().isEmpty()) {
+                    if (option.getDefaultValue() != null) {
                         desc += "\nDefault: " + option.getDefaultValue();
                     }
                     desc += "\nGroup: " + option.getGroup();
@@ -470,7 +465,7 @@ public class EndpointDslMojo extends AbstractMojo {
                             "doSetProperty(\"" + option.getName() + "\", " + option.getName() + ");",
                             "return this;\n");
 
-                    if ("true".equals(option.getDeprecated())) {
+                    if (option.isDeprecated()) {
                         fluent.addAnnotation(Deprecated.class);
                     }
                     if (!Strings.isEmpty(option.getDescription())) {
@@ -485,11 +480,11 @@ public class EndpointDslMojo extends AbstractMojo {
                         // entire context-path and not as individual options
                         // so lets only mark query parameters that are required
                         // as required
-                        if ("parameter".equals(option.getKind()) && "true".equals(option.getRequired())) {
+                        if ("parameter".equals(option.getKind()) && option.isRequired()) {
                             desc += "\nRequired: true";
                         }
                         // include default value (if any)
-                        if (!option.getDefaultValue().isEmpty()) {
+                        if (option.getDefaultValue() != null) {
                             desc += "\nDefault: " + option.getDefaultValue();
                         }
                         desc += "\nGroup: " + option.getGroup();
@@ -700,27 +695,28 @@ public class EndpointDslMojo extends AbstractMojo {
             if ("path".equals(option.getKind())) {
                 desc += "\n";
                 desc += "\nPath parameter: " + option.getName();
-                if ("true".equals(option.getRequired())) {
+                if (option.isRequired()) {
                     desc += " (required)";
                 }
-                if ("true".equals(option.getDeprecated())) {
+                if (option.isDeprecated()) {
                     desc += " <strong>deprecated</strong>";
                 }
                 desc += "\n" + option.getDescription();
-                if (!Strings.isEmpty(option.getDefaultValue())) {
+                if (option.getDefaultValue() != null) {
                     desc += "\nDefault value: " + option.getDefaultValue();
                 }
-                if (!Strings.isEmpty(option.getEnumValues())) {
-                    desc += "\nThe value can be one of: " + wrapEnumValues(option.getEnumValues());
+                // TODO: default value note ?
+                if (option.getEnums() != null && !option.getEnums().isEmpty()) {
+                    desc += "\nThe value can be one of: " + wrapEnumValues(option.getEnums());
                 }
             }
         }
         return desc;
     }
 
-    private String wrapEnumValues(String enumValues) {
+    private String wrapEnumValues(List<String> enumValues) {
         // comma to space so we can wrap words (which uses space)
-        return enumValues.replace(",", ", ");
+        return String.join(", ", enumValues);
     }
 
     private String getComponentNameFromType(String type) {
@@ -822,7 +818,7 @@ public class EndpointDslMojo extends AbstractMojo {
         return optionClass;
     }
 
-    private GenericType getType(JavaClass javaClass, Map<String, JavaClass> enumClasses, String enums, String type) {
+    private GenericType getType(JavaClass javaClass, Map<String, JavaClass> enumClasses, List<String> enums, String type) {
         type = type.trim();
         // Check if this is an array
         if (type.endsWith("[]")) {
@@ -938,75 +934,14 @@ public class EndpointDslMojo extends AbstractMojo {
 
     private static String loadJsonOfType(Map<File, Supplier<String>> jsonFiles, String modelName, String type) {
         for (Map.Entry<File, Supplier<String>> entry : jsonFiles.entrySet()) {
-            if (entry.getKey().getName().equals(modelName + ".json")) {
+            if (entry.getKey().getName().equals(modelName + PackageHelper.JSON_SUFIX)) {
                 String json = entry.getValue().get();
-                if (json.contains("\"kind\": \"" + type + "\"")) {
+                if ("type".equals(PackageHelper.getSchemaKind(json))) {
                     return json;
                 }
             }
         }
         return null;
-    }
-
-    private static ComponentModel generateComponentModel(String componentName, String json) {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
-
-        ComponentModel component = new ComponentModel();
-        component.setScheme(getSafeValue("scheme", rows));
-        component.setSyntax(getSafeValue("syntax", rows));
-        component.setAlternativeSyntax(getSafeValue("alternativeSyntax", rows));
-        component.setTitle(getSafeValue("title", rows));
-        component.setDescription(getSafeValue("description", rows));
-        component.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
-        component.setLabel(getSafeValue("label", rows));
-        component.setDeprecated(getSafeValue("deprecated", rows));
-        component.setDeprecationNote(getSafeValue("deprecationNote", rows));
-        component.setConsumerOnly(getSafeValue("consumerOnly", rows));
-        component.setProducerOnly(getSafeValue("producerOnly", rows));
-        component.setJavaType(getSafeValue("javaType", rows));
-        component.setGroupId(getSafeValue("groupId", rows));
-        component.setArtifactId(getSafeValue("artifactId", rows));
-        component.setVersion(getSafeValue("version", rows));
-
-        rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
-        for (Map<String, String> row : rows) {
-            ComponentOptionModel option = new ComponentOptionModel();
-            option.setName(getSafeValue("name", row));
-            option.setDisplayName(getSafeValue("displayName", row));
-            option.setKind(getSafeValue("kind", row));
-            option.setType(getSafeValue("type", row));
-            option.setJavaType(getSafeValue("javaType", row));
-            option.setDeprecated(getSafeValue("deprecated", row));
-            option.setDeprecationNote(getSafeValue("deprecationNote", row));
-            option.setDescription(getSafeValue("description", row));
-            option.setDefaultValue(getSafeValue("defaultValue", row));
-            option.setEnums(getSafeValue("enum", row));
-            component.addComponentOption(option);
-        }
-
-        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
-        for (Map<String, String> row : rows) {
-            EndpointOptionModel option = new EndpointOptionModel();
-            option.setName(getSafeValue("name", row));
-            option.setDisplayName(getSafeValue("displayName", row));
-            option.setKind(getSafeValue("kind", row));
-            option.setGroup(getSafeValue("group", row));
-            option.setLabel(getSafeValue("label", row));
-            option.setRequired(getSafeValue("required", row));
-            option.setType(getSafeValue("type", row));
-            option.setJavaType(getSafeValue("javaType", row));
-            option.setEnums(getSafeValue("enum", row));
-            option.setPrefix(getSafeValue("prefix", row));
-            option.setMultiValue(getSafeValue("multiValue", row));
-            option.setDeprecated(getSafeValue("deprecated", row));
-            option.setDeprecationNote(getSafeValue("deprecationNote", row));
-            option.setDefaultValue(getSafeValue("defaultValue", row));
-            option.setDescription(getSafeValue("description", row));
-            option.setEnumValues(getSafeValue("enum", row));
-            component.addEndpointOption(option);
-        }
-
-        return component;
     }
 
     private void findComponentNames(File dir, Set<String> componentNames) {
@@ -1040,12 +975,12 @@ public class EndpointDslMojo extends AbstractMojo {
         try {
             String header;
             try (InputStream is = getClass().getClassLoader().getResourceAsStream("license-header-java.txt")) {
-                header = loadText(is);
+                header = PackageHelper.loadText(is);
             }
             String code = header + source;
             getLog().debug("Source code generated:\n" + code);
 
-            updateResource(null, target, code);
+            AbstractGeneratorMojo.updateResource(null, target, code);
         } catch (Exception e) {
             throw new MojoFailureException("IOError with file " + target, e);
         }

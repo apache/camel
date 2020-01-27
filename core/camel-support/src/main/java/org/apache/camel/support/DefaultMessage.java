@@ -23,6 +23,7 @@ import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.util.ObjectHelper;
 
@@ -212,11 +213,11 @@ public class DefaultMessage extends MessageSupport {
     public void setHeaders(Map<String, Object> headers) {
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
 
-        if (getCamelContext().getHeadersMapFactory().isInstanceOf(headers)) {
+        if (getCamelContext().adapt(ExtendedCamelContext.class).getHeadersMapFactory().isInstanceOf(headers)) {
             this.headers = headers;
         } else {
             // create a new map
-            this.headers = getCamelContext().getHeadersMapFactory().newMap(headers);
+            this.headers = getCamelContext().adapt(ExtendedCamelContext.class).getHeadersMapFactory().newMap(headers);
         }
     }
 
@@ -247,7 +248,7 @@ public class DefaultMessage extends MessageSupport {
     protected Map<String, Object> createHeaders() {
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
 
-        Map<String, Object> map = getCamelContext().getHeadersMapFactory().newMap();
+        Map<String, Object> map = getCamelContext().adapt(ExtendedCamelContext.class).getHeadersMapFactory().newMap();
         populateInitialHeaders(map);
         return map;
     }

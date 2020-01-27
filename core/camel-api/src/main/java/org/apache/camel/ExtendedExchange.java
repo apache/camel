@@ -22,24 +22,20 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 
 /**
- * Extended {@link Exchange} which contains the methods and APIs that are not primary intended for Camel end users
- * but for SPI, custom components, or more advanced used-cases with Camel.
+ * Extended {@link Exchange} which contains the methods and APIs that are not intended for Camel end users
+ * but used internally by Camel for optimization purposes, SPI, custom components, or more advanced used-cases with Camel.
  */
 public interface ExtendedExchange extends Exchange {
 
     /**
      * Sets the endpoint which originated this message exchange. This method
      * should typically only be called by {@link Endpoint} implementations
-     *
-     * @param fromEndpoint the endpoint which is originating this message exchange
      */
     void setFromEndpoint(Endpoint fromEndpoint);
 
     /**
      * Sets the route id which originated this message exchange. This method
      * should typically only be called by the internal framework.
-     *
-     * @param fromRouteId the from route id
      */
     void setFromRouteId(String fromRouteId);
 
@@ -68,15 +64,11 @@ public interface ExtendedExchange extends Exchange {
 
     /**
      * Handover all the on completions from this exchange to the target exchange.
-     *
-     * @param target the target exchange
      */
     void handoverCompletions(Exchange target);
 
     /**
      * Handover all the on completions from this exchange
-     *
-     * @return the on completions
      */
     List<Synchronization> handoverCompletions();
 
@@ -99,5 +91,31 @@ public interface ExtendedExchange extends Exchange {
      * Gets the history node label (the current processor that will process the exchange)
      */
     String getHistoryNodeLabel();
+
+    /**
+     * Sets whether the exchange is routed in a transaction.
+     */
+    void setTransacted(boolean transacted);
+
+    /**
+     * Whether the exchange is currently used as event notification.
+     */
+    boolean isNotifyEvent();
+
+    /**
+     * Sets whether the exchange is currently used as event notification and if so then this should not
+     * generate additional events.
+     */
+    void setNotifyEvent(boolean notifyEvent);
+
+    /**
+     * Whether the exchange was interrupted (InterruptException) during routing.
+     */
+    boolean isInterrupted();
+
+    /**
+     * Used to signal that this exchange was interrupted (InterruptException) during routing.
+     */
+    void setInterrupted(boolean interrupted);
 
 }

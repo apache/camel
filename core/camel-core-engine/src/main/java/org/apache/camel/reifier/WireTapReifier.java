@@ -54,7 +54,7 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         Processor target = wrapInErrorHandler(routeContext, dynamicTo);
 
         // and wrap in unit of work
-        CamelInternalProcessor internal = new CamelInternalProcessor(target);
+        CamelInternalProcessor internal = new CamelInternalProcessor(routeContext.getCamelContext(), target);
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
 
         // is true by default

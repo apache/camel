@@ -63,9 +63,6 @@ public final class UnitOfWorkHelper {
             LOG.warn("Exception occurred during stopping UnitOfWork for Exchange: " + exchange
                     + ". This exception will be ignored.", e);
         }
-
-        // remove uow from exchange as its done
-        exchange.adapt(ExtendedExchange.class).setUnitOfWork(null);
     }
 
     public static void doneSynchronizations(Exchange exchange, List<Synchronization> synchronizations, Logger log) {
