@@ -104,7 +104,7 @@ public class ECS2Producer extends DefaultProducer {
         }
         ListClustersResponse result;
         try {
-        	ListClustersRequest request = builder.build();
+            ListClustersRequest request = builder.build();
             result = ecsClient.listClusters(request);
         } catch (AwsServiceException ase) {
             LOG.trace("List Clusters command returned the error code {}", ase.getMessage());
@@ -113,16 +113,16 @@ public class ECS2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void createCluster(EcsClient ecsClient, Exchange exchange) {
-    	CreateClusterRequest.Builder builder = CreateClusterRequest.builder();
+        CreateClusterRequest.Builder builder = CreateClusterRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(ECS2Constants.CLUSTER_NAME))) {
             String name = exchange.getIn().getHeader(ECS2Constants.CLUSTER_NAME, String.class);
             builder.clusterName(name);
         }
         CreateClusterResponse result;
         try {
-        	CreateClusterRequest request = builder.build();
+            CreateClusterRequest request = builder.build();
             result = ecsClient.createCluster(request);
         } catch (AwsServiceException ase) {
             LOG.trace("Create Cluster command returned the error code {}", ase.getMessage());
@@ -131,16 +131,16 @@ public class ECS2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void describeCluster(EcsClient ecsClient, Exchange exchange) {
         DescribeClustersRequest.Builder builder = DescribeClustersRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(ECS2Constants.CLUSTER_NAME))) {
             String clusterName = exchange.getIn().getHeader(ECS2Constants.CLUSTER_NAME, String.class);
             builder.clusters(clusterName);
-        } 
+        }
         DescribeClustersResponse result;
         try {
-        	DescribeClustersRequest request = builder.build();
+            DescribeClustersRequest request = builder.build();
             result = ecsClient.describeClusters(request);
         } catch (AwsServiceException ase) {
             LOG.trace("Describe Clusters command returned the error code {}", ase.getMessage());
@@ -149,7 +149,7 @@ public class ECS2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void deleteCluster(EcsClient ecsClient, Exchange exchange) {
         DeleteClusterRequest.Builder builder = DeleteClusterRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(ECS2Constants.CLUSTER_NAME))) {
@@ -160,7 +160,7 @@ public class ECS2Producer extends DefaultProducer {
         }
         DeleteClusterResponse result;
         try {
-        	DeleteClusterRequest request = builder.build();
+            DeleteClusterRequest request = builder.build();
             result = ecsClient.deleteCluster(request);
         } catch (AwsServiceException ase) {
             LOG.trace("Delete Cluster command returned the error code {}", ase.getMessage());
@@ -169,7 +169,7 @@ public class ECS2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }

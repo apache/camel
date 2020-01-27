@@ -33,7 +33,7 @@ public class ECSComponentClientRegistryTest extends CamelTestSupport {
 
         assertNotNull(endpoint.getConfiguration().getEcsClient());
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalECSClientMisconfiguration() throws Exception {
 

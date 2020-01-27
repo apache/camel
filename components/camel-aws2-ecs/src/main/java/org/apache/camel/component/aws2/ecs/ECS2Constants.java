@@ -20,7 +20,7 @@ package org.apache.camel.component.aws2.ecs;
  * Constants used in Camel AWS ECS module
  */
 public interface ECS2Constants {
-    String OPERATION                = "CamelAwsECSOperation";
-    String MAX_RESULTS              = "CamelAwsECSMaxResults";
-    String CLUSTER_NAME             = "CamelAwsECSClusterName";
+    String OPERATION = "CamelAwsECSOperation";
+    String MAX_RESULTS = "CamelAwsECSMaxResults";
+    String CLUSTER_NAME = "CamelAwsECSClusterName";
 }

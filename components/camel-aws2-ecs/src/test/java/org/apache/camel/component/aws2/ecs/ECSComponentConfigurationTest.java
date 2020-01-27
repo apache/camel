@@ -26,18 +26,17 @@ import software.amazon.awssdk.regions.Region;
 
 public class ECSComponentConfigurationTest extends CamelTestSupport {
 
-    
     @Test
     public void createEndpointWithComponentElements() throws Exception {
         ECS2Component component = context.getComponent("aws2-ecs", ECS2Component.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         ECS2Endpoint endpoint = (ECS2Endpoint)component.createEndpoint("aws2-ecs://label");
-        
+
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
         assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
     }
-    
+
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
         ECS2Component component = context.getComponent("aws2-ecs", ECS2Component.class);
@@ -45,20 +44,21 @@ public class ECSComponentConfigurationTest extends CamelTestSupport {
         component.setSecretKey("YYY");
         component.setRegion(Region.US_WEST_1.toString());
         ECS2Endpoint endpoint = (ECS2Endpoint)component.createEndpoint("aws2-ecs://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
-        
+
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
     }
-    
+
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
         ECS2Component component = context.getComponent("aws2-ecs", ECS2Component.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Region.US_WEST_1.toString());
-        ECS2Endpoint endpoint = (ECS2Endpoint)component.createEndpoint("aws2-ecs://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
-        
+        ECS2Endpoint endpoint = (ECS2Endpoint)component
+            .createEndpoint("aws2-ecs://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
+
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
@@ -66,5 +66,5 @@ public class ECSComponentConfigurationTest extends CamelTestSupport {
         assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
         assertEquals(Integer.valueOf(9000), endpoint.getConfiguration().getProxyPort());
     }
-    
+
 }

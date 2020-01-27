@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
 import software.amazon.awssdk.services.ecs.EcsClient;
 import software.amazon.awssdk.services.ecs.model.Cluster;
 import software.amazon.awssdk.services.ecs.model.CreateClusterRequest;
@@ -36,10 +35,10 @@ public class AmazonECSClientMock implements EcsClient {
 
     public AmazonECSClientMock() {
     }
-    
+
     @Override
     public CreateClusterResponse createCluster(CreateClusterRequest request) {
-    	CreateClusterResponse.Builder res = CreateClusterResponse.builder();
+        CreateClusterResponse.Builder res = CreateClusterResponse.builder();
         Cluster cluster = Cluster.builder().clusterName("Test").build();
         res.cluster(cluster);
         return res.build();
@@ -47,7 +46,7 @@ public class AmazonECSClientMock implements EcsClient {
 
     @Override
     public DeleteClusterResponse deleteCluster(DeleteClusterRequest request) {
-    	DeleteClusterResponse.Builder res = DeleteClusterResponse.builder();
+        DeleteClusterResponse.Builder res = DeleteClusterResponse.builder();
         Cluster cluster = Cluster.builder().clusterName("Test").status("INACTIVE").build();
         res.cluster(cluster);
         return res.build();
@@ -55,30 +54,30 @@ public class AmazonECSClientMock implements EcsClient {
 
     @Override
     public DescribeClustersResponse describeClusters(DescribeClustersRequest request) {
-    	DescribeClustersResponse.Builder res = DescribeClustersResponse.builder();
+        DescribeClustersResponse.Builder res = DescribeClustersResponse.builder();
         Cluster cluster = Cluster.builder().clusterName("Test").status("INACTIVE").build();
         res.clusters(Collections.singleton(cluster));
-        return res.build();        
+        return res.build();
     }
 
     @Override
     public ListClustersResponse listClusters(ListClustersRequest request) {
-    	ListClustersResponse.Builder res = ListClustersResponse.builder();
+        ListClustersResponse.Builder res = ListClustersResponse.builder();
         List<String> list = new ArrayList<>();
         list.add("Test");
         res.clusterArns(list);
         return res.build();
     }
 
-	@Override
-	public String serviceName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String serviceName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public void close() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
+
+    }
 }
