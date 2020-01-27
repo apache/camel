@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.engine;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.UnitOfWorkFactory;
@@ -25,15 +26,24 @@ import org.apache.camel.spi.UnitOfWorkFactory;
  */
 public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
 
+    private boolean usedMDCLogging;
+    private String mdcLoggingKeysPattern;
+
     @Override
     public UnitOfWork createUnitOfWork(Exchange exchange) {
         UnitOfWork answer;
-        if (exchange.getContext().isUseMDCLogging()) {
-            answer = new MDCUnitOfWork(exchange, exchange.getContext().getMDCLoggingKeysPattern());
+        if (usedMDCLogging) {
+            answer = new MDCUnitOfWork(exchange, mdcLoggingKeysPattern);
         } else {
             answer = new DefaultUnitOfWork(exchange);
         }
         return answer;
+    }
+
+    @Override
+    public void afterPropertiesConfigured(CamelContext camelContext) {
+        usedMDCLogging = camelContext.isUseMDCLogging() != null && camelContext.isUseMDCLogging();
+        mdcLoggingKeysPattern = camelContext.getMDCLoggingKeysPattern();
     }
 
 }
