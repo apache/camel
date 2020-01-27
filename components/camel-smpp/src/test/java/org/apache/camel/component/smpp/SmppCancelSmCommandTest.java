@@ -54,7 +54,7 @@ public class SmppCancelSmCommandTest {
         
         verify(session).cancelShortMessage("", "1", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1616", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1717");
         
-        assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
+        assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
     }
     
     @Test
@@ -74,6 +74,6 @@ public class SmppCancelSmCommandTest {
         
         verify(session).cancelShortMessage("XXX", "1", TypeOfNumber.NATIONAL, NumberingPlanIndicator.NATIONAL, "1818", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.INTERNET, "1919");
         
-        assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
+        assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
     }
 }
