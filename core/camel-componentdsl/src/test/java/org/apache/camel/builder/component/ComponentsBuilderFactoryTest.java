@@ -2,7 +2,6 @@ package org.apache.camel.builder.component;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.kafka.KafkaComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.timer.TimerComponent;
 import org.junit.Test;
@@ -11,7 +10,7 @@ public class ComponentsBuilderFactoryTest extends ContextTestSupport {
 
     @Test
     public void testIfCreateComponentCorrectly() {
-        final TimerComponent timerComponent = (TimerComponent) ComponentsBuilderFactory.timer().build();
+        final TimerComponent timerComponent = ComponentsBuilderFactory.timer().build();
         assertNotNull(timerComponent);
     }
 
