@@ -28,7 +28,7 @@ import software.amazon.awssdk.services.ecs.model.DeleteClusterResponse;
 import software.amazon.awssdk.services.ecs.model.DescribeClustersResponse;
 import software.amazon.awssdk.services.ecs.model.ListClustersResponse;
 
-public class ECSProducerSpringTest extends CamelSpringTestSupport {
+public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;

@@ -21,7 +21,7 @@ import org.junit.Test;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 
-public class ECSComponentConfigurationTest extends CamelTestSupport {
+public class ECS2ComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithComponentElements() throws Exception {

@@ -25,7 +25,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ECSComponentVerifierExtensionTest extends CamelTestSupport {
+public class ECS2ComponentVerifierExtensionTest extends CamelTestSupport {
 
     // *************************************************
     // Tests (parameters)

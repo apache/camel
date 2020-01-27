@@ -19,7 +19,7 @@ package org.apache.camel.component.aws2.ecs;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class ECSComponentClientRegistryTest extends CamelTestSupport {
+public class ECS2ComponentClientRegistryTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithMinimalECSClientConfiguration() throws Exception {
