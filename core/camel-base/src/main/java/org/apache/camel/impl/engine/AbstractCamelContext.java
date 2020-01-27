@@ -2162,6 +2162,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     @Override
+    public void setEventNotificationApplicable(boolean eventNotificationApplicable) {
+        this.eventNotificationApplicable = eventNotificationApplicable;
+    }
+
+    @Override
     public String getVersion() {
         if (version == null) {
             synchronized (lock) {
@@ -2313,6 +2318,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             ServiceHelper.startService(this.routeController);
 
             doNotStartRoutesOnFirstStart = !firstStartDone && !isAutoStartup();
+
+            // optimize - before starting routes lets check if event notifications is possible
+            eventNotificationApplicable = EventHelper.eventsApplicable(this);
 
             // if the context was configured with auto startup = false, and we
             // are already started,
@@ -2570,9 +2578,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
         // start components
         startServices(components.values());
-
-        // optimize - before starting routes lets check if event notifications is possible
-        eventNotificationApplicable = EventHelper.eventsApplicable(this);
 
         // start the route definitions before the routes is started
         startRouteDefinitions();
