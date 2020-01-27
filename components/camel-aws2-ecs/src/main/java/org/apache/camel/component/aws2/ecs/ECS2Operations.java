@@ -18,8 +18,5 @@ package org.apache.camel.component.aws2.ecs;
 
 public enum ECS2Operations {
 
-    listClusters,
-    describeCluster,
-    createCluster,
-    deleteCluster
+    listClusters, describeCluster, createCluster, deleteCluster
 }

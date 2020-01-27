@@ -32,10 +32,10 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ECSProducerSpringTest extends CamelSpringTestSupport {
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint mock;
-    
+
     @Test
     public void kmsListClustersTest() throws Exception {
 
@@ -48,12 +48,12 @@ public class ECSProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
-        ListClustersResponse resultGet = (ListClustersResponse) exchange.getIn().getBody();
+
+        ListClustersResponse resultGet = (ListClustersResponse)exchange.getIn().getBody();
         assertEquals(1, resultGet.clusterArns().size());
         assertEquals("Test", resultGet.clusterArns().get(0));
     }
-    
+
     @Test
     public void ecsCreateClusterTest() throws Exception {
 
@@ -67,11 +67,11 @@ public class ECSProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
-        CreateClusterResponse resultGet = (CreateClusterResponse) exchange.getIn().getBody();
+
+        CreateClusterResponse resultGet = (CreateClusterResponse)exchange.getIn().getBody();
         assertEquals("Test", resultGet.cluster().clusterName());
     }
-    
+
     @Test
     public void eksDescribeClusterTest() throws Exception {
 
@@ -85,11 +85,11 @@ public class ECSProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         DescribeClustersResponse resultGet = exchange.getIn().getBody(DescribeClustersResponse.class);
         assertEquals("Test", resultGet.clusters().get(0).clusterName());
     }
-    
+
     @Test
     public void eksDeleteClusterTest() throws Exception {
 
@@ -103,7 +103,7 @@ public class ECSProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         DeleteClusterResponse resultGet = exchange.getIn().getBody(DeleteClusterResponse.class);
         assertEquals("Test", resultGet.cluster().clusterName());
     }

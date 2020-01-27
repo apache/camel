@@ -39,16 +39,16 @@ public class ECS2Component extends DefaultComponent {
     private String secretKey;
     @Metadata
     private String region;
-    @Metadata(label = "advanced")    
+    @Metadata(label = "advanced")
     private ECS2Configuration configuration;
-    
+
     public ECS2Component() {
         this(null);
     }
-    
+
     public ECS2Component(CamelContext context) {
         super(context);
-        
+
         registerExtension(new ECS2ComponentVerifierExtension());
     }
 
@@ -64,10 +64,10 @@ public class ECS2Component extends DefaultComponent {
         if (configuration.getEcsClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon ecs client or accessKey and secretKey must be specified");
         }
-      
+
         return endpoint;
     }
-    
+
     public ECS2Configuration getConfiguration() {
         return configuration;
     }
@@ -100,7 +100,7 @@ public class ECS2Component extends DefaultComponent {
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
-    
+
     public String getRegion() {
         return region;
     }

@@ -67,7 +67,7 @@ public class ECS2Endpoint extends ScheduledPollEndpoint {
 
         ecsClient = configuration.getEcsClient() != null ? configuration.getEcsClient() : createECSClient();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getEcsClient())) {
