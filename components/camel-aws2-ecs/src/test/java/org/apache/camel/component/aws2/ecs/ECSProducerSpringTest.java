@@ -16,20 +16,17 @@
  */
 package org.apache.camel.component.aws2.ecs;
 
-import software.amazon.awssdk.services.ecs.model.CreateClusterResponse;
-import software.amazon.awssdk.services.ecs.model.DeleteClusterResponse;
-import software.amazon.awssdk.services.ecs.model.DescribeClustersResponse;
-import software.amazon.awssdk.services.ecs.model.ListClustersResponse;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.aws2.ecs.ECS2Constants;
-import org.apache.camel.component.aws2.ecs.ECS2Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import software.amazon.awssdk.services.ecs.model.CreateClusterResponse;
+import software.amazon.awssdk.services.ecs.model.DeleteClusterResponse;
+import software.amazon.awssdk.services.ecs.model.DescribeClustersResponse;
+import software.amazon.awssdk.services.ecs.model.ListClustersResponse;
 
 public class ECSProducerSpringTest extends CamelSpringTestSupport {
 
