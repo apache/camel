@@ -22,9 +22,7 @@ import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
@@ -53,12 +51,7 @@ public class SjmsDestinationCreationStrategyTest extends JmsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sjms:queue:inout?prefillPool=false&exchangePattern=InOut").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody("response");
-                    }
-                });
+                from("sjms:queue:inout?prefillPool=false&exchangePattern=InOut").process(exchange -> exchange.getMessage().setBody("response"));
             }
         };
     }
