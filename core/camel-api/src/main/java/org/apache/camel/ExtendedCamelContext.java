@@ -380,4 +380,9 @@ public interface ExtendedCamelContext extends CamelContext {
      * Sets a custom {@link ReactiveExecutor} to be used.
      */
     void setReactiveExecutor(ReactiveExecutor reactiveExecutor);
+
+    /**
+     * Used as internal optimization in Camel to flag whether event notification is applicable or not.
+     */
+    void setEventNotificationApplicable(boolean eventNotificationApplicable);
 }
