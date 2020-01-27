@@ -21,8 +21,6 @@ import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.component.servlet.ServletRestHttpBinding;
@@ -54,11 +52,9 @@ public class RestServletGetTest extends ServletCamelRouterTestSupport {
                 restConfiguration().component("servlet").host("localhost").endpointProperty("httpBinding", "#myBinding");
 
                 // use the rest DSL to define the rest services
-                rest("/users/").get("{id}/basic").route().to("mock:input").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String id = exchange.getIn().getHeader("id", String.class);
-                        exchange.getOut().setBody(id + ";Donald Duck");
-                    }
+                rest("/users/").get("{id}/basic").route().to("mock:input").process(exchange -> {
+                    String id = exchange.getIn().getHeader("id", String.class);
+                    exchange.getMessage().setBody(id + ";Donald Duck");
                 });
             }
         };
