@@ -372,7 +372,7 @@
         <jool-version>0.9.12</jool-version>
         <!-- cannot upgrade jooq: https://github.com/jOOQ/jOOQ/issues/9670 -->
         <jooq-version>3.11.12</jooq-version>
-        <johnzon-version>1.2.2</johnzon-version>
+        <johnzon-version>1.2.3</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
         <josql-bundle-version>1.5_5</josql-bundle-version>
         <jsendnsca-version>2.1.1</jsendnsca-version>
