@@ -1,6 +1,7 @@
 package org.apache.camel.maven.packaging.dsl.component;
 
 import org.apache.camel.maven.packaging.model.ComponentModel;
+import org.apache.camel.maven.packaging.model.ComponentOptionModel;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.camel.tooling.util.srcgen.Method;
 import org.apache.commons.lang3.StringUtils;
@@ -35,8 +36,13 @@ public class ComponentDslInnerBuilderGenerator {
     }
 
     private void generateJavaClass() {
+        setJavaDoc();
         setClassNameAndType();
         setFluentMethodsFromComponentOptions();
+    }
+
+    private void setJavaDoc() {
+        javaClass.getJavaDoc().setText("Builder for the " + componentModel.getTitle() + " component.");
     }
 
     private void setClassNameAndType() {
@@ -57,6 +63,32 @@ public class ComponentDslInnerBuilderGenerator {
                             String.format("doSetProperty(\"%s\", %s);", componentOptionModel.getName(), componentOptionModel.getName()),
                             "return this;"
                     );
+            if (componentOptionModel.getDeprecated().equals("true")) {
+                method.addAnnotation(Deprecated.class);
+            }
+            if (!componentOptionModel.getDeprecated().isEmpty()) {
+                method.getJavaDoc().setFullText(generateOptionDescription(componentOptionModel));
+            }
         });
+    }
+
+    private String generateOptionDescription(final ComponentOptionModel componentOptionModel) {
+        String desc = componentOptionModel.getDescription();
+        if (!desc.endsWith(".")) {
+            desc += ".";
+        }
+        desc += "\n";
+        desc += "\nThe option is a: <code>" + componentOptionModel.getJavaType() + "</code> type.";
+        desc += "\n";
+        if ("parameter".equals(componentOptionModel.getKind()) && "true".equals(componentOptionModel.getRequired())) {
+            desc += "\nRequired: true";
+        }
+        // include default value (if any)
+        if (!componentOptionModel.getDefaultValue().isEmpty()) {
+            desc += "\nDefault: " + componentOptionModel.getDefaultValue();
+        }
+        desc += "\nGroup: " + componentOptionModel.getGroup();
+
+        return desc;
     }
 }

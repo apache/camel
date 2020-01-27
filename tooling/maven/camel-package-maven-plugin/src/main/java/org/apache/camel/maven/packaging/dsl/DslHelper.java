@@ -6,6 +6,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.camel.maven.packaging.model.ComponentModel;
+import org.apache.camel.maven.packaging.model.EndpointOptionModel;
+import org.apache.camel.tooling.util.Strings;
 import org.apache.commons.text.CaseUtils;
 
 public final class DslHelper {
@@ -48,5 +51,49 @@ public final class DslHelper {
             }
         }
         return convertedText;
+    }
+
+    public static String getMainDescriptionWithoutPathOptions(final ComponentModel componentModel) {
+        String desc = componentModel.getTitle() + " (" + componentModel.getArtifactId() + ")";
+        desc += "\n" + componentModel.getDescription();
+        desc += "\n";
+        desc += "\nCategory: " + componentModel.getLabel();
+        desc += "\nSince: " + componentModel.getFirstVersionShort();
+        desc += "\nMaven coordinates: " + componentModel.getGroupId() + ":" + componentModel.getArtifactId();
+
+        return desc;
+    }
+
+    public static String getMainDescription(final ComponentModel componentModel) {
+        String desc = getMainDescriptionWithoutPathOptions(componentModel);
+        // include javadoc for all path parameters and mark which are required
+        desc += "\n";
+        desc += "\nSyntax: <code>" + componentModel.getSyntax() + "</code>";
+
+        for (EndpointOptionModel option : componentModel.getEndpointOptions()) {
+            if ("path".equals(option.getKind())) {
+                desc += "\n";
+                desc += "\nPath parameter: " + option.getName();
+                if ("true".equals(option.getRequired())) {
+                    desc += " (required)";
+                }
+                if ("true".equals(option.getDeprecated())) {
+                    desc += " <strong>deprecated</strong>";
+                }
+                desc += "\n" + option.getDescription();
+                if (!Strings.isEmpty(option.getDefaultValue())) {
+                    desc += "\nDefault value: " + option.getDefaultValue();
+                }
+                if (!Strings.isEmpty(option.getEnumValues())) {
+                    desc += "\nThe value can be one of: " + wrapEnumValues(option.getEnumValues());
+                }
+            }
+        }
+        return desc;
+    }
+
+    private static String wrapEnumValues(String enumValues) {
+        // comma to space so we can wrap words (which uses space)
+        return enumValues.replace(",", ", ");
     }
 }

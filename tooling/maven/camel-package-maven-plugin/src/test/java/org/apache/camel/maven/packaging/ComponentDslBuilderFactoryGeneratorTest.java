@@ -9,23 +9,23 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.apache.camel.maven.packaging.dsl.component.ComponentDslGenerator;
+import org.apache.camel.maven.packaging.dsl.component.ComponentDslBuilderFactoryGenerator;
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
-class ComponentDslGeneratorTest {
+class ComponentDslBuilderFactoryGeneratorTest {
 
     @Test
     public void testIfCreateJavaClassCorrectly() throws IOException {
         final String json = PackageHelper.loadText(new File(Objects.requireNonNull(getClass().getClassLoader().getResource("json/test_component.json")).getFile()));
         final ComponentModel componentModel = ComponentModel.generateComponentModelFromJsonString(json);
 
-        final ComponentDslGenerator componentDslGenerator = ComponentDslGenerator.generateClass(componentModel, getClass().getClassLoader(), "org.apache.camel.builder.component.dsl");
+        final ComponentDslBuilderFactoryGenerator componentDslBuilderFactoryGenerator = ComponentDslBuilderFactoryGenerator.generateClass(componentModel, getClass().getClassLoader(), "org.apache.camel.builder.component.dsl");
 
-        System.out.println(componentDslGenerator.toString());
+        System.out.println(componentDslBuilderFactoryGenerator.toString());
     }
 
     @Test
