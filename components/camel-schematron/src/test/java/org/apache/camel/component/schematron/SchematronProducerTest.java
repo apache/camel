@@ -64,7 +64,7 @@ public class SchematronProducerTest extends CamelTestSupport {
         producer.process(exc);
 
         // assert
-        assertTrue(exc.getOut().getHeader(Constants.VALIDATION_STATUS).equals(Constants.SUCCESS));
+        assertTrue(exc.getMessage().getHeader(Constants.VALIDATION_STATUS).equals(Constants.SUCCESS));
     }
 
     @Test
@@ -76,7 +76,7 @@ public class SchematronProducerTest extends CamelTestSupport {
         producer.process(exc);
 
         // assert
-        assertTrue(exc.getOut().getHeader(Constants.VALIDATION_STATUS).equals(Constants.FAILED));
+        assertTrue(exc.getMessage().getHeader(Constants.VALIDATION_STATUS).equals(Constants.FAILED));
 
     }
 
@@ -89,7 +89,7 @@ public class SchematronProducerTest extends CamelTestSupport {
         producer.process(exc);
 
         // assert
-        assertTrue(exc.getOut().getHeader(Constants.VALIDATION_STATUS).equals(Constants.SUCCESS));
+        assertTrue(exc.getMessage().getHeader(Constants.VALIDATION_STATUS).equals(Constants.SUCCESS));
     }
 
     @Test
@@ -101,7 +101,7 @@ public class SchematronProducerTest extends CamelTestSupport {
         producer.process(exc);
 
         // assert
-        assertTrue(exc.getOut().getHeader(Constants.VALIDATION_STATUS).equals(Constants.FAILED));
+        assertTrue(exc.getMessage().getHeader(Constants.VALIDATION_STATUS).equals(Constants.FAILED));
 
     }
 
