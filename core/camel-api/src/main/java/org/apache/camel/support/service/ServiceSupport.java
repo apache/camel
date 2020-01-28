@@ -307,7 +307,7 @@ public abstract class ServiceSupport implements StatefulService {
 
     @Override
     public boolean isStopped() {
-        return status == NEW || status == INITIALIZED || status == BUILDED || status == STOPPED || status == SHUTTINGDOWN || status == SHUTDOWN || status == FAILED;
+        return status < STARTING || status >= STOPPED;
     }
 
     @Override
@@ -322,7 +322,7 @@ public abstract class ServiceSupport implements StatefulService {
 
     @Override
     public boolean isRunAllowed() {
-        return isStartingOrStarted() || isSuspendingOrSuspended();
+        return status >= STARTING && status <= SUSPENDED;
     }
 
     public boolean isShutdown() {
@@ -333,21 +333,21 @@ public abstract class ServiceSupport implements StatefulService {
      * Is the service in progress of being stopped or already stopped
      */
     public boolean isStoppingOrStopped() {
-        return isStopping() || isStopped();
+        return status < STARTING || status > SUSPENDED;
     }
 
     /**
      * Is the service in progress of being suspended or already suspended
      */
     public boolean isSuspendingOrSuspended() {
-        return isSuspending() || isSuspended();
+        return status == SUSPENDING || status == SUSPENDED;
     }
 
     /**
      * Is the service in progress of being suspended or already suspended
      */
     public boolean isStartingOrStarted() {
-        return isStarting() || isStarted();
+        return status == STARTING || status == STARTED;
     }
 
     /**
