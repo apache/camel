@@ -435,17 +435,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             LOG.debug("Using backoff[multiplier={}, idleThreshold={}, errorThreshold={}] on {}", backoffMultiplier, backoffIdleThreshold, backoffErrorThreshold, getEndpoint());
         }
 
-        if (scheduler == null) {
-            DefaultScheduledPollConsumerScheduler scheduler = new DefaultScheduledPollConsumerScheduler(scheduledExecutorService);
-            scheduler.setDelay(delay);
-            scheduler.setInitialDelay(initialDelay);
-            scheduler.setTimeUnit(timeUnit);
-            scheduler.setUseFixedDelay(useFixedDelay);
-            this.scheduler = scheduler;
-        }
-        scheduler.setCamelContext(getEndpoint().getCamelContext());
-        scheduler.onInit(this);
-
         // configure scheduler with options from this consumer
         if (schedulerProperties != null && !schedulerProperties.isEmpty()) {
             // need to use a copy in case the consumer is restarted so we keep the properties
@@ -459,13 +448,23 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             }
         }
 
-        ObjectHelper.notNull(scheduler, "scheduler", this);
         ObjectHelper.notNull(pollStrategy, "pollStrategy", this);
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        if (scheduler == null) {
+            DefaultScheduledPollConsumerScheduler scheduler = new DefaultScheduledPollConsumerScheduler(scheduledExecutorService);
+            scheduler.setDelay(delay);
+            scheduler.setInitialDelay(initialDelay);
+            scheduler.setTimeUnit(timeUnit);
+            scheduler.setUseFixedDelay(useFixedDelay);
+            this.scheduler = scheduler;
+        }
+        scheduler.setCamelContext(getEndpoint().getCamelContext());
+        scheduler.onInit(this);
 
         if (scheduler != null) {
             scheduler.scheduleTask(this);
