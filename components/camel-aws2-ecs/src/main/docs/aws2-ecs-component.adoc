@@ -1,7 +1,8 @@
-[[aws2-ecs-component]]
-= AWS2 ECS Component
+= AWS 2 ECS Component
 
 *Since Camel 3.1*
+*Since Camel 3.1*
+
 
 // HEADER START
 *Only producer is supported*
@@ -30,7 +31,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS2 ECS component supports 6 options, which are listed below.
+The AWS 2 ECS component supports 6 options, which are listed below.
 
 
 
@@ -50,7 +51,7 @@ The AWS2 ECS component supports 6 options, which are listed below.
 
 
 // endpoint options: START
-The AWS2 ECS endpoint is configured using URI syntax:
+The AWS 2 ECS endpoint is configured using URI syntax:
 
 ----
 aws2-ecs:label
