@@ -18,11 +18,15 @@
 package org.apache.camel.component.workday.auth;
 
 import org.apache.camel.component.workday.WorkdayConfiguration;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 
@@ -49,48 +53,42 @@ public class AuthClientForIntegration implements AutheticationClient {
     }
 
     @Override
-    public void configure(HttpClient httpClient, HttpMethodBase method) {
+    public void configure(CloseableHttpClient httpClient, HttpRequestBase method) throws IOException {
 
         String bearerToken = getBearerToken(httpClient);
-        method.addRequestHeader(AUTHORIZATION_HEADER, "Bearer " + bearerToken);
+        method.addHeader(AUTHORIZATION_HEADER, "Bearer " + bearerToken);
 
     }
 
-    protected String getBearerToken(HttpClient httpClient) {
+    protected String getBearerToken(CloseableHttpClient httpClient) throws IOException {
 
         String tokenUrl = String.format(BASE_TOKEN_ENDPOINT,
                 workdayConfiguration.getHost(),
                 workdayConfiguration.getTenant());
 
-        PostMethod postMethod = createPostMethod(tokenUrl);
+        HttpPost httpPost = createPostMethod(tokenUrl);
 
-        try {
-            int statusCode = httpClient.executeMethod(postMethod);
+        CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
 
-            if (statusCode != HttpStatus.SC_OK) {
-                throw new IllegalStateException("Got the invalid http status value '" + postMethod.getStatusLine() + "' as the result of the Token Request '" + tokenUrl + "'");
-            }
-
-            String response = postMethod.getResponseBodyAsString();
-            return parseResponse(response);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            postMethod.releaseConnection();
+        if (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+            throw new IllegalStateException("Got the invalid http status value '" + httpResponse.getStatusLine() + "' as the result of the Token Request '" + tokenUrl + "'");
         }
 
-        return null;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        httpResponse.getEntity().writeTo(baos);
+        return parseResponse(baos.toString());
     }
 
-    private PostMethod createPostMethod(String tokenUrl) {
+    private HttpPost createPostMethod(String tokenUrl) {
 
-        PostMethod postMethod = new PostMethod(tokenUrl);
-        postMethod.addParameter(GRANT_TYPE, REFRESH_TOKEN);
-        postMethod.addParameter(REFRESH_TOKEN, workdayConfiguration.getTokenRefresh());
+        HttpEntity httpEntity = MultipartEntityBuilder.create()
+                .addTextBody(GRANT_TYPE, REFRESH_TOKEN)
+                .addTextBody(REFRESH_TOKEN, workdayConfiguration.getTokenRefresh())
+                .build();
 
-        postMethod.addRequestHeader(CONTENT_TYPE_HEADER, CONTENT_TYPE);
-        postMethod.addRequestHeader(AUTHORIZATION_HEADER, "Basic " +
+        HttpPost postMethod = new HttpPost(tokenUrl);
+        postMethod.addHeader(CONTENT_TYPE_HEADER, CONTENT_TYPE);
+        postMethod.addHeader(AUTHORIZATION_HEADER, "Basic " +
                 new String(Base64.getEncoder().encode((workdayConfiguration.getClientId() + ":" + workdayConfiguration.getClientSecret()).getBytes())));
 
         return postMethod;
