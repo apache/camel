@@ -62,6 +62,7 @@
                         <id>generate</id>
                         <phase>process-classes</phase>
                         <goals>
+                            <goal>jandex</goal>
                             <goal>generate-xml-parser</goal>
                         </goals>
                     </execution>

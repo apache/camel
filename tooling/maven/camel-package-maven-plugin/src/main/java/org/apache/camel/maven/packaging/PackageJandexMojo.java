@@ -49,7 +49,7 @@ public class PackageJandexMojo extends AbstractMojo {
     /**
      * The name of the index file. Default's to 'target/classes/META-INF/jandex.idx'
      */
-    @Parameter(defaultValue = "${project.build.directory}/META-INF/jandex.idx")
+    @Parameter(defaultValue = "${project.build.directory}/classes/META-INF/jandex.idx")
     private File index;
 
     @Parameter(defaultValue = "${showStaleFiles}")

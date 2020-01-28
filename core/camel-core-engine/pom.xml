@@ -136,6 +136,7 @@
                     <execution>
                         <id>generate</id>
                         <goals>
+                            <goal>jandex</goal>
                             <goal>generate-jaxb-list</goal>
                             <goal>generate-eips-list</goal>
                             <goal>generate-components-list</goal>
