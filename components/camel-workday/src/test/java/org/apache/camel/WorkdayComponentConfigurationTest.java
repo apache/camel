@@ -21,7 +21,7 @@ public class WorkdayComponentConfigurationTest extends CamelTestSupport {
                 "&tokenRefresh=88689ab63cda" +
                 "&format=json");
 
-        WorkdayConfiguration workdayConfiguration = workdayComponent.getWorkdayConfiguration();
+        WorkdayConfiguration workdayConfiguration = workdayEndpoint.getWorkdayConfiguration();
 
         assertEquals(workdayConfiguration.getHost(),"impl.workday.com");
         assertEquals(workdayConfiguration.getTenant(),"camel");

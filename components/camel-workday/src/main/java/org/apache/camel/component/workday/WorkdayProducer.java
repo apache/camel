@@ -20,9 +20,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.workday.auth.AuthClientForIntegration;
 import org.apache.camel.component.workday.auth.AutheticationClient;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +52,7 @@ public class WorkdayProducer extends DefaultProducer {
         this.workdayUri = workdayUri;
         this.component = (WorkdayComponent)this.endpoint.getComponent();
         this.autheticationClient = new AuthClientForIntegration(
-                this.component.getWorkdayConfiguration()
+                this.endpoint.getWorkdayConfiguration()
             );
     }
 
@@ -60,30 +63,28 @@ public class WorkdayProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
 
-        HttpClient httpClient = this.component.getHttpClient();
+        PoolingHttpClientConnectionManager httpClientConnectionManager = endpoint
+                .getWorkdayConfiguration().getHttpConnectionManager();
+        CloseableHttpClient httpClient = HttpClientBuilder.create()
+                .setConnectionManager(httpClientConnectionManager).build();
 
-        GetMethod getMethod  = new GetMethod(workdayUri);
-        this.autheticationClient.configure(httpClient, getMethod);
+        HttpGet httpGet = new HttpGet(this.workdayUri);
+        this.autheticationClient.configure(httpClient, httpGet);
 
-        try {
-            int statusCode = httpClient.executeMethod(getMethod);
+        CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
 
-            if (statusCode != HttpStatus.SC_OK) {
-                throw new IllegalStateException("Got the invalid http status value '" + getMethod.getStatusLine() + "' as the result of the RAAS '" + workdayUri + "'");
-            }
-
-            String report = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, getMethod.getResponseBodyAsStream());
-
-            if ("".equals(report)) {
-                throw new IllegalStateException("Got the unexpected value '" + report + "' as the result of the report '" + workdayUri + "'");
-            }
-
-            exchange.getIn().setBody(report);
-            exchange.getIn().setHeader(WORKDAY_RAAS_HEADER , workdayUri);
-
-        } finally {
-            getMethod.releaseConnection();
+        if (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+            throw new IllegalStateException("Got the invalid http status value '" + httpResponse.getStatusLine() + "' as the result of the RAAS '" + workdayUri + "'");
         }
+
+        String report = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, httpResponse.getEntity().getContent());
+
+        if (report.isEmpty()) {
+            throw new IllegalStateException("Got the unexpected value '" + report + "' as the result of the report '" + workdayUri + "'");
+        }
+
+        exchange.getIn().setBody(report);
+        exchange.getIn().setHeader(WORKDAY_RAAS_HEADER , workdayUri);
     }
 
 }

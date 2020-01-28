@@ -22,11 +22,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 
 /**
  * Represents the component that manages {@link WorkdayEndpoint}.
@@ -36,42 +32,21 @@ public class WorkdayComponent extends DefaultComponent {
 
     public static final String RAAS_ENDPOINT_URL = "https://%s/ccx/service/customreport2/%s%s";
 
-    private HttpClient httpClient;
-
-    @Metadata(label="advanced")
-    private WorkdayConfiguration workdayConfiguration;
-
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        WorkdayConfiguration workdayConfiguration = new WorkdayConfiguration();
 
-        setProperties(workdayConfiguration, parameters);
-        this.httpClient = createHttpClient(workdayConfiguration);
-        this.workdayConfiguration = workdayConfiguration;
-
-        Endpoint endpoint = new WorkdayEndpoint(uri, this);
+        WorkdayEndpoint endpoint = new WorkdayEndpoint(uri, this);
         setProperties(endpoint, parameters);
 
         return endpoint;
-    }
-
-    private HttpClient createHttpClient(WorkdayConfiguration configuration) {
-
-        HttpConnectionManager connectionManager = configuration.getHttpConnectionManager();
-
-        if (connectionManager == null) {
-            connectionManager = new MultiThreadedHttpConnectionManager();
-        }
-        HttpClient httpClient = new HttpClient(connectionManager);
-
-        return httpClient;
     }
 
     @Override
     protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters) throws Exception {
 
         WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint)endpoint;
+        WorkdayConfiguration workdayConfiguration = workdayEndpoint.getWorkdayConfiguration();
 
-        validateRequiredParameters();
+        validateRequiredParameters(workdayConfiguration);
 
         StringBuilder stringBuilder = new StringBuilder(remaining);
         stringBuilder.append("?");
@@ -98,7 +73,7 @@ public class WorkdayComponent extends DefaultComponent {
 
     }
 
-    protected void validateRequiredParameters() {
+    protected void validateRequiredParameters(WorkdayConfiguration workdayConfiguration) {
 
         if(workdayConfiguration.getHost() == null ||
                 workdayConfiguration.getTenant() == null ||
@@ -108,13 +83,5 @@ public class WorkdayComponent extends DefaultComponent {
 
             throw new ResolveEndpointFailedException("The parameters host, tenant, clientId, clientSecret and tokenRefresh are required.");
         }
-    }
-
-    public HttpClient getHttpClient() {
-        return httpClient;
-    }
-
-    public WorkdayConfiguration getWorkdayConfiguration() {
-        return workdayConfiguration;
     }
 }

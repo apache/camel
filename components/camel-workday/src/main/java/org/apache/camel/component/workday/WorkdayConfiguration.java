@@ -18,10 +18,10 @@
 package org.apache.camel.component.workday;
 
 import org.apache.camel.spi.Metadata;
-import org.apache.commons.httpclient.HttpConnectionManager;
 
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriParam;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 @UriParams
 public class WorkdayConfiguration {
@@ -50,7 +50,7 @@ public class WorkdayConfiguration {
     private String format = "json";
 
     @UriParam(label = "advanced")
-    private HttpConnectionManager httpConnectionManager;
+    private PoolingHttpClientConnectionManager httpConnectionManager;
 
     public String getClientId() {
         return clientId;
@@ -100,11 +100,11 @@ public class WorkdayConfiguration {
         this.format = format;
     }
 
-    public HttpConnectionManager getHttpConnectionManager() {
+    public PoolingHttpClientConnectionManager getHttpConnectionManager() {
         return httpConnectionManager;
     }
 
-    public void setHttpConnectionManager(HttpConnectionManager httpConnectionManager) {
+    public void setHttpConnectionManager(PoolingHttpClientConnectionManager httpConnectionManager) {
         this.httpConnectionManager = httpConnectionManager;
     }
 
