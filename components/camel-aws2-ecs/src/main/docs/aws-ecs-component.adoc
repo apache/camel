@@ -16,6 +16,11 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon ECS. More information is available at
 https://aws.amazon.com/ecs/[Amazon ECS].
 
+[NOTE]
+====
+The AWS2 ECS component is not supported in OSGI
+====
+
 == URI Format
 
 [source,java]
@@ -87,45 +92,8 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+
 // spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-aws-ecs-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 15 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.aws-ecs.access-key* | Amazon AWS Access Key |  | String
-| *camel.component.aws-ecs.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.aws-ecs.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.aws-ecs.configuration.access-key* | Amazon AWS Access Key |  | String
-| *camel.component.aws-ecs.configuration.ecs-client* | To use a existing configured AWS ECS as client |  | AmazonECS
-| *camel.component.aws-ecs.configuration.operation* | The operation to perform |  | ECSOperations
-| *camel.component.aws-ecs.configuration.proxy-host* | To define a proxy host when instantiating the ECS client |  | String
-| *camel.component.aws-ecs.configuration.proxy-port* | To define a proxy port when instantiating the ECS client |  | Integer
-| *camel.component.aws-ecs.configuration.proxy-protocol* | To define a proxy protocol when instantiating the ECS client |  | Protocol
-| *camel.component.aws-ecs.configuration.region* | The region in which ECS client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
-| *camel.component.aws-ecs.configuration.secret-key* | Amazon AWS Secret Key |  | String
-| *camel.component.aws-ecs.enabled* | Whether to enable auto configuration of the aws-ecs component. This is enabled by default. |  | Boolean
-| *camel.component.aws-ecs.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-| *camel.component.aws-ecs.region* | The region in which ECS client needs to work |  | String
-| *camel.component.aws-ecs.secret-key* | Amazon AWS Secret Key |  | String
-|===
 // spring-boot-auto-configure options: END
 
 
@@ -154,7 +122,7 @@ the https://aws.amazon.com/ecs/[Amazon ECS] service.
 
 === ECS Producer operations
 
-Camel-AWS ECS component provides the following operation on the producer side:
+Camel-AWS2 ECS component provides the following operation on the producer side:
 
 - listClusters
 - createCluster
