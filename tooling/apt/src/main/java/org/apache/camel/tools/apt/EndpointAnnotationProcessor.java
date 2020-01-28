@@ -268,11 +268,11 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         String fqClassName = packageName + "." + className;
 
         if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
-            generateExtendConfigurer(processingEnv, parent, packageName, className, fqClassName, componentModel.getScheme());
+            generateExtendConfigurer(processingEnv, parent, packageName, className, fqClassName, componentModel.getScheme() + "-component");
         } else if (uriEndpoint.generateConfigurer() && !componentModel.getComponentOptions().isEmpty()) {
             // only generate this once for the first scheme
             if (schemes == null || schemes[0].equals(scheme)) {
-                generatePropertyConfigurer(processingEnv, parent, packageName, className, fqClassName, componentClassName, componentModel.getScheme(), componentModel.getComponentOptions());
+                generatePropertyConfigurer(processingEnv, parent, packageName, className, fqClassName, componentClassName, componentModel.getScheme() + "-component", componentModel.getComponentOptions());
             }
         }
     }
@@ -857,7 +857,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         String psn = pfqn.substring(pfqn.lastIndexOf('.') + 1);
         try (Writer w = processingEnv.getFiler().createSourceFile(fqn, parent).openWriter()) {
             PropertyConfigurerGenerator.generateExtendConfigurer(pn, cn, pfqn, psn, w);
-            generateMetaInfConfigurer(processingEnv, scheme + "-component", fqn);
+            generateMetaInfConfigurer(processingEnv, scheme, fqn);
         } catch (Exception e) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Unable to generate source code file: " + fqn + ": " + e.getMessage());
             AnnotationProcessorHelper.dumpExceptionToErrorFile("camel-apt-error.log", "Unable to generate source code file: " + fqn, e);
@@ -870,7 +870,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
 
         try (Writer w = processingEnv.getFiler().createSourceFile(fqn, parent).openWriter()) {
             PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, options, w);
-            generateMetaInfConfigurer(processingEnv, scheme + "-component", fqn);
+            generateMetaInfConfigurer(processingEnv, scheme, fqn);
         } catch (Exception e) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Unable to generate source code file: " + fqn + ": " + e.getMessage());
             AnnotationProcessorHelper.dumpExceptionToErrorFile("camel-apt-error.log", "Unable to generate source code file: " + fqn, e);
