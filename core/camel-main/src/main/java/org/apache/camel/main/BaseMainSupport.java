@@ -511,15 +511,6 @@ public abstract class BaseMainSupport extends ServiceSupport {
             pc.setOverrideProperties(overrideProperties);
         }
 
-        if (mainConfigurationProperties.getDurationMaxMessages() > 0 || mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
-            // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
-            EventNotifier notifier = new MainDurationEventNotifier(camelContext, mainConfigurationProperties.getDurationMaxMessages(),
-                    mainConfigurationProperties.getDurationMaxIdleSeconds(), completed, latch, true);
-            // register our event notifier
-            ServiceHelper.startService(notifier);
-            camelContext.getManagementStrategy().addEventNotifier(notifier);
-        }
-
         // gathers the properties (key=value) that was auto-configured
         final Map<String, String> autoConfiguredProperties = new LinkedHashMap<>();
 
@@ -561,6 +552,15 @@ public abstract class BaseMainSupport extends ServiceSupport {
                     LOG.info("\t{}={}", k, v);
                 }
             });
+        }
+
+        if (mainConfigurationProperties.getDurationMaxMessages() > 0 || mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
+            // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
+            EventNotifier notifier = new MainDurationEventNotifier(camelContext, mainConfigurationProperties.getDurationMaxMessages(),
+                mainConfigurationProperties.getDurationMaxIdleSeconds(), completed, latch, true);
+            // register our event notifier
+            ServiceHelper.startService(notifier);
+            camelContext.getManagementStrategy().addEventNotifier(notifier);
         }
 
         // try to load the route builders

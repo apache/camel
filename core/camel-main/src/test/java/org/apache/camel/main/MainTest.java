@@ -16,9 +16,12 @@
  */
 package org.apache.camel.main;
 
+import java.util.Properties;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.ManagementStrategy;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -112,6 +115,23 @@ public class MainTest extends Assert {
 
         CamelContext camelContext = main.getCamelContext();
         assertFalse("Tracing should be disabled", camelContext.isTracing());
+
+        main.stop();
+    }
+
+    @Test
+    public void testLifecycleConfiguration() throws Exception {
+        Properties properties = new Properties();
+        properties.setProperty("camel.main.duration-max-messages", "1");
+
+        Main main = new Main();
+        main.setOverrideProperties(properties);
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        ManagementStrategy strategy = camelContext.getManagementStrategy();
+
+        assertTrue(strategy.getEventNotifiers().stream().anyMatch(n -> n instanceof MainDurationEventNotifier));
 
         main.stop();
     }
