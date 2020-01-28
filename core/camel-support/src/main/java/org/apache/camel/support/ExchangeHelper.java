@@ -295,7 +295,7 @@ public final class ExchangeHelper {
      * @param source the source exchange which is not modified
      */
     public static void copyResults(Exchange target, Exchange source) {
-        doCopyResults(target, source, false);
+        doCopyResults((ExtendedExchange) target, (ExtendedExchange) source, false);
     }
 
     /**
@@ -306,10 +306,10 @@ public final class ExchangeHelper {
      * @param source source exchange.
      */
     public static void copyResultsPreservePattern(Exchange target, Exchange source) {
-        doCopyResults(target, source, true);
+        doCopyResults((ExtendedExchange) target, (ExtendedExchange) source, true);
     }
 
-    private static void doCopyResults(Exchange result, Exchange source, boolean preserverPattern) {
+    private static void doCopyResults(ExtendedExchange result, ExtendedExchange source, boolean preserverPattern) {
         if (result == source) {
             // we just need to ensure MEP is as expected (eg copy result to OUT if out capable)
             // and the result is not failed
@@ -356,6 +356,13 @@ public final class ExchangeHelper {
             result.getProperties().putAll(source.getProperties());
         }
 
+        // copy over state
+        result.setRouteStop(source.isRouteStop());
+        result.setRollbackOnly(source.isRollbackOnly());
+        result.setRollbackOnlyLast(source.isRollbackOnlyLast());
+        result.setNotifyEvent(source.isNotifyEvent());
+        result.setRedeliveryExhausted(source.isRedeliveryExhausted());
+        result.setErrorHandlerHandled(source.getErrorHandlerHandled());
         result.setException(source.getException());
     }
 
@@ -661,8 +668,9 @@ public final class ExchangeHelper {
      * @return <tt>true</tt> if handled already by error handler, <tt>false</tt> otherwise
      */
     public static boolean hasExceptionBeenHandledByErrorHandler(Exchange exchange) {
-        // TODO: optimize this
-        return Boolean.TRUE.equals(exchange.getProperty(Exchange.ERRORHANDLER_HANDLED));
+        ExtendedExchange ee = (ExtendedExchange) exchange;
+        Boolean handled = ee.getErrorHandlerHandled();
+        return handled != null && handled;
     }
 
     /**

@@ -64,6 +64,7 @@ public final class DefaultExchange implements ExtendedExchange {
     private boolean notifyEvent;
     private boolean interrupted;
     private boolean redeliveryExhausted;
+    private Boolean errorHandlerHandled;
 
     public DefaultExchange(CamelContext context) {
         this(context, ExchangePattern.InOnly);
@@ -131,6 +132,7 @@ public final class DefaultExchange implements ExtendedExchange {
         exchange.setRollbackOnlyLast(rollbackOnlyLast);
         exchange.setNotifyEvent(notifyEvent);
         exchange.setRedeliveryExhausted(redeliveryExhausted);
+        exchange.setErrorHandlerHandled(errorHandlerHandled);
 
         // copy properties after body as body may trigger lazy init
         if (hasProperties()) {
@@ -653,6 +655,15 @@ public final class DefaultExchange implements ExtendedExchange {
     @Override
     public void setRedeliveryExhausted(boolean redeliveryExhausted) {
         this.redeliveryExhausted = redeliveryExhausted;
+    }
+
+    public Boolean getErrorHandlerHandled() {
+        return errorHandlerHandled;
+    }
+
+    @Override
+    public void setErrorHandlerHandled(Boolean errorHandlerHandled) {
+        this.errorHandlerHandled = errorHandlerHandled;
     }
 
     /**

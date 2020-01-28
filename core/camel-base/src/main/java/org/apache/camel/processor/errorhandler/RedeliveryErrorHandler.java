@@ -889,15 +889,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         protected void prepareExchangeAfterFailure(final Exchange exchange, final boolean isDeadLetterChannel,
                                                    final boolean shouldHandle, final boolean shouldContinue) {
 
+            ExtendedExchange ee = (ExtendedExchange) exchange;
             Exception newException = exchange.getException();
 
             // we could not process the exchange so we let the failure processor handled it
             ExchangeHelper.setFailureHandled(exchange);
 
             // honor if already set a handling
-            boolean alreadySet = exchange.getProperty(Exchange.ERRORHANDLER_HANDLED) != null;
+            boolean alreadySet = ee.getErrorHandlerHandled() != null;
             if (alreadySet) {
-                boolean handled = exchange.getProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.class);
+                boolean handled = ee.getErrorHandlerHandled() != null && ee.getErrorHandlerHandled();
                 LOG.trace("This exchange has already been marked for handling: {}", handled);
                 if (!handled) {
                     // exception not handled, put exception back in the exchange
@@ -915,7 +916,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 prepareExchangeForContinue(exchange, isDeadLetterChannel);
             } else if (shouldHandle) {
                 LOG.trace("This exchange is handled so its marked as not failed: {}", exchange);
-                exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.TRUE);
+                ee.setErrorHandlerHandled(true);
             } else {
                 // okay the redelivery policy are not explicit set to true, so we should allow to check for some
                 // special situations when using dead letter channel
@@ -941,7 +942,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
                     if (handled) {
                         LOG.trace("This exchange is handled so its marked as not failed: {}", exchange);
-                        exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.TRUE);
+                        ee.setErrorHandlerHandled(true);
                         return;
                     }
                 }
@@ -952,17 +953,19 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         }
 
         private void prepareExchangeAfterFailureNotHandled(Exchange exchange) {
-            LOG.trace("This exchange is not handled or continued so its marked as failed: {}", exchange);
+            ExtendedExchange ee = (ExtendedExchange) exchange;
+
+            LOG.trace("This exchange is not handled or continued so its marked as failed: {}", ee);
             // exception not handled, put exception back in the exchange
-            exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.FALSE);
-            exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
+            ee.setErrorHandlerHandled(false);
+            ee.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
             // and put failure endpoint back as well
-            exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+            ee.setProperty(Exchange.FAILURE_ENDPOINT, ee.getProperty(Exchange.TO_ENDPOINT));
             // and store the route id so we know in which route we failed
-            UnitOfWork uow = exchange.getUnitOfWork();
+            UnitOfWork uow = ee.getUnitOfWork();
             RouteContext rc = uow != null ? uow.getRouteContext() : null;
             if (rc != null) {
-                exchange.setProperty(Exchange.FAILURE_ROUTE_ID, rc.getRouteId());
+                ee.setProperty(Exchange.FAILURE_ROUTE_ID, rc.getRouteId());
             }
         }
 

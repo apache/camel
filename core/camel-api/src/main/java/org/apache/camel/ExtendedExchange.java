@@ -128,4 +128,10 @@ public interface ExtendedExchange extends Exchange {
      */
     void setRedeliveryExhausted(boolean redeliveryExhausted);
 
+    // TODO: javadoc
+
+    Boolean getErrorHandlerHandled();
+
+    void setErrorHandlerHandled(Boolean errorHandlerHandled);
+
 }

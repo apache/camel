@@ -20,6 +20,7 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
@@ -120,8 +121,8 @@ public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport imp
             if (newExchange.getProperty(Exchange.FAILURE_ROUTE_ID) != null) {
                 answer.setProperty(Exchange.FAILURE_ROUTE_ID, newExchange.getProperty(Exchange.FAILURE_ROUTE_ID));
             }
-            if (newExchange.getProperty(Exchange.ERRORHANDLER_HANDLED) != null) {
-                answer.setProperty(Exchange.ERRORHANDLER_HANDLED, newExchange.getProperty(Exchange.ERRORHANDLER_HANDLED));
+            if (newExchange.adapt(ExtendedExchange.class).getErrorHandlerHandled() != null) {
+                answer.adapt(ExtendedExchange.class).setErrorHandlerHandled(newExchange.adapt(ExtendedExchange.class).getErrorHandlerHandled());
             }
             if (newExchange.getProperty(Exchange.FAILURE_HANDLED) != null) {
                 answer.setProperty(Exchange.FAILURE_HANDLED, newExchange.getProperty(Exchange.FAILURE_HANDLED));
