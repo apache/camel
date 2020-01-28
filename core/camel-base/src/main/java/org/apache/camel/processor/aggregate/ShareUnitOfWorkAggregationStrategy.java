@@ -24,8 +24,6 @@ import org.apache.camel.ExtendedExchange;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
-import static org.apache.camel.support.ExchangeHelper.hasExceptionBeenHandledByErrorHandler;
-
 /**
  * An {@link AggregationStrategy} which are used when the option <tt>shareUnitOfWork</tt> is enabled
  * on EIPs such as multicast, splitter or recipientList.
@@ -106,9 +104,9 @@ public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport imp
     }
 
     protected void propagateFailure(Exchange answer, Exchange newExchange) {
+        ExtendedExchange nee = (ExtendedExchange) newExchange;
         // if new exchange failed then propagate all the error related properties to the answer
-        boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(newExchange);
-        if (exceptionHandled || newExchange.isFailed() || newExchange.isRollbackOnly() || newExchange.isRollbackOnlyLast()) {
+        if (nee.isFailed() || nee.isRollbackOnly() || nee.isRollbackOnlyLast() || nee.isErrorHandlerHandled()) {
             if (newExchange.getException() != null) {
                 answer.setException(newExchange.getException());
             }

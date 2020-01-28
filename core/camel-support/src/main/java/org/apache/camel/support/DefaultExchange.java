@@ -662,6 +662,11 @@ public final class DefaultExchange implements ExtendedExchange {
     }
 
     @Override
+    public boolean isErrorHandlerHandled() {
+        return errorHandlerHandled != null && errorHandlerHandled;
+    }
+
+    @Override
     public void setErrorHandlerHandled(Boolean errorHandlerHandled) {
         this.errorHandlerHandled = errorHandlerHandled;
     }
