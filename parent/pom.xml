@@ -2430,6 +2430,11 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-workday</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xchange</artifactId>
         <version>${project.version}</version>

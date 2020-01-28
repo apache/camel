@@ -20,21 +20,25 @@ import org.apache.camel.Consumer;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.*;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.PropertyBindingSupport;
+
+import java.util.Map;
 
 /**
  * Represents a camel-workday endpoint.
  */
 
-@UriEndpoint(firstVersion = "3.0.0-SNAPSHOT", scheme = "workday-raas", title = "Workday", syntax="workday-raas:uri", label="hcm")
+@UriEndpoint(firstVersion = "3.1.0-SNAPSHOT", scheme = "workday-raas", title = "Workday", syntax="workday-raas:uri", label="hcm")
 public class WorkdayEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "The partial URL for RAAS report.")
     @Metadata(required = true)
     private String uri;
+
+    @UriParam
+    private WorkdayConfiguration workdayConfiguration;
 
     public WorkdayEndpoint() {
     }
@@ -50,7 +54,22 @@ public class WorkdayEndpoint extends DefaultEndpoint {
 
     public Consumer createConsumer(Processor processor) throws Exception {
 
-        throw new NoSuchEndpointException("Workday producer is not implemented.");
+        throw new NoSuchEndpointException("Workday consumer is not implemented.");
+    }
+
+    @Override
+    public void configureProperties(Map<String, Object> options) {
+        super.configureProperties(options);
+
+        try {
+            if(this.workdayConfiguration == null) {
+                this.workdayConfiguration = new WorkdayConfiguration();
+            }
+
+            PropertyBindingSupport.bindProperties(getCamelContext(), this.workdayConfiguration, options);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
     }
 
     @Override
@@ -64,5 +83,13 @@ public class WorkdayEndpoint extends DefaultEndpoint {
 
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+    public WorkdayConfiguration getWorkdayConfiguration() {
+        return workdayConfiguration;
+    }
+
+    public void setWorkdayConfiguration(WorkdayConfiguration workdayConfiguration) {
+        this.workdayConfiguration = workdayConfiguration;
     }
 }
