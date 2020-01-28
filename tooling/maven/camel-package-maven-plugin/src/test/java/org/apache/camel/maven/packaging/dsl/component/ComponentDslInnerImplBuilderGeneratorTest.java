@@ -23,37 +23,28 @@ import java.util.Objects;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
+import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ComponentDslBuilderFactoryGeneratorTest {
+class ComponentDslInnerImplBuilderGeneratorTest {
 
     @Test
-    public void testIfCreateJavaClassCorrectly() throws IOException {
+    public void testIfCreatesImplClassCorrectly() throws IOException {
         final String json = PackageHelper.loadText(new File(Objects.requireNonNull(getClass().getClassLoader().getResource("json/test_component.json")).getFile()));
         final ComponentModel componentModel = JsonMapper.generateComponentModel(json);
 
-        final ComponentDslBuilderFactoryGenerator componentDslBuilderFactoryGenerator = ComponentDslBuilderFactoryGenerator.generateClass(componentModel, getClass().getClassLoader(), "org.apache.camel.builder.component");
+        final JavaClass javaClass = new JavaClass();
+        javaClass.setName("TestClass");
 
-        assertEquals("KafkaComponentBuilderFactory", componentDslBuilderFactoryGenerator.getGeneratedClassName());
+        final ComponentDslInnerImplBuilderGenerator componentDslInnerImplBuilderGenerator = ComponentDslInnerImplBuilderGenerator.generateClass(javaClass, componentModel, "KafkaComponentBuilder");
 
-        final String classCode = componentDslBuilderFactoryGenerator.printClassAsString();
+        // test for naming
+        assertEquals("KafkaComponentBuilderImpl", componentDslInnerImplBuilderGenerator.getGeneratedClassName());
 
-        // check for the package name
-        assertTrue(classCode.contains("package org.apache.camel.builder.component.dsl;"));
-
-        // check for the imports
-        assertTrue(classCode.contains("import javax.annotation.Generated;"));
-        assertTrue(classCode.contains("import org.apache.camel.builder.component.AbstractComponentBuilder;"));
-        assertTrue(classCode.contains("import org.apache.camel.builder.component.ComponentBuilder;"));
-        assertTrue(classCode.contains("import org.apache.camel.component.kafka.KafkaComponent;"));
-
-        // check for naming
-        assertTrue(classCode.contains("public interface KafkaComponentBuilderFactory"));
-
-        assertTrue(classCode.contains("static KafkaComponentBuilder kafka()"));
+        assertTrue(javaClass.printClass().contains("protected KafkaComponent buildConcreteComponent()"));
+        assertTrue(javaClass.printClass().contains("return new KafkaComponent();"));
     }
-
 }

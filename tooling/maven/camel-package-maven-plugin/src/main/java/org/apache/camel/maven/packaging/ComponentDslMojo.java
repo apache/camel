@@ -1,7 +1,22 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.io.IOError;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,12 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.apache.camel.maven.packaging.dsl.component.ComponentsBuilderFactoryGenerator;
 import org.apache.camel.maven.packaging.dsl.component.ComponentDslBuilderFactoryGenerator;
+import org.apache.camel.maven.packaging.dsl.component.ComponentsBuilderFactoryGenerator;
 import org.apache.camel.maven.packaging.dsl.component.ComponentsDslMetadataRegistry;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.JsonMapper;
@@ -28,9 +42,9 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
 
-import static org.apache.camel.tooling.util.PackageHelper.*;
+import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
+import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 /**
  * Generate Endpoint DSL source files for Components.
@@ -88,21 +102,17 @@ public class ComponentDslMojo extends AbstractDslMojo {
         if (outputResourcesDir == null) {
             outputResourcesDir = findCamelDirectory(baseDir, "core/camel-componentdsl/src/main/resources");
         }
-        if(componentDslPom == null) {
+        if (componentDslPom == null) {
             componentDslPom = findCamelDirectory(baseDir, "core/camel-componentdsl").toPath().resolve("pom.xml").toFile();
         }
         if (componentsMetadata == null) {
-            componentsMetadata =  outputResourcesDir.toPath().resolve("metadata.json").toFile();
+            componentsMetadata = outputResourcesDir.toPath().resolve("metadata.json").toFile();
         }
 
         Map<File, Supplier<String>> files;
 
         try {
-            files = Files.find(
-                    buildDir.toPath(),
-                    Integer.MAX_VALUE,
-                    (p, a) -> a.isRegularFile() && p.toFile().getName().endsWith(PackageHelper.JSON_SUFIX))
-                    .collect(Collectors.toMap(Path::toFile, s -> cache(() -> loadJson(s.toFile()))));
+            files = Files.find(buildDir.toPath(), Integer.MAX_VALUE, (p, a) -> a.isRegularFile() && p.toFile().getName().endsWith(PackageHelper.JSON_SUFIX)).collect(Collectors.toMap(Path::toFile, s -> cache(() -> loadJson(s.toFile()))));
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -213,11 +223,11 @@ public class ComponentDslMojo extends AbstractDslMojo {
     }
 
     private String generateDependencyModule(final ComponentModel model) {
-        return  "\t\t<dependency>\n" +
-                "\t\t\t<groupId>" + model.getGroupId() + "</groupId>\n" +
-                "\t\t\t<artifactId>" + model.getArtifactId() + "</artifactId>\n" +
-                "\t\t\t<scope>provided</scope>\n" +
-                "\t\t\t<version>${project.version}</version>\n" +
-                "\t\t</dependency>\n";
+        return "\t\t<dependency>\n"
+                + "\t\t\t<groupId>" + model.getGroupId() + "</groupId>\n"
+                + "\t\t\t<artifactId>" + model.getArtifactId() + "</artifactId>\n"
+                + "\t\t\t<scope>provided</scope>\n"
+                + "\t\t\t<version>${project.version}</version>\n"
+                + "\t\t</dependency>\n";
     }
 }

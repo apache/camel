@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.maven.packaging.dsl.component;
 
 import org.apache.camel.tooling.model.ComponentModel;
@@ -9,11 +25,11 @@ import org.apache.commons.lang3.StringUtils;
  * DSL Generator class that generates component specific builder interface that contains the fluent methods, placed as inner
  * of the main component builder factory. E.g: KafkaComponentBuilderFactory.KafkaComponentBuilder
  */
-public class ComponentDslInnerBuilderGenerator {
+public final class ComponentDslInnerBuilderGenerator {
     private static final String BUILDER_SUFFIX = "Builder";
 
-    final private JavaClass javaClass;
-    final private ComponentModel componentModel;
+    private final JavaClass javaClass;
+    private final ComponentModel componentModel;
 
     private ComponentDslInnerBuilderGenerator(final JavaClass javaClass, final ComponentModel componentModel) {
         this.javaClass = javaClass;
@@ -58,10 +74,7 @@ public class ComponentDslInnerBuilderGenerator {
                     .setReturnType(getGeneratedInterfaceName())
                     .setName("set" + StringUtils.capitalize(componentOptionModel.getName()))
                     .addParameter(componentOptionModel.getJavaType(), componentOptionModel.getName())
-                    .setBody(
-                            String.format("doSetProperty(\"%s\", %s);", componentOptionModel.getName(), componentOptionModel.getName()),
-                            "return this;"
-                    );
+                    .setBody(String.format("doSetProperty(\"%s\", %s);", componentOptionModel.getName(), componentOptionModel.getName()), "return this;");
             if (componentOptionModel.isDeprecated()) {
                 method.addAnnotation(Deprecated.class);
             }
