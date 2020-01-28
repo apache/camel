@@ -1,6 +1,8 @@
+[[aws2-ecs-component]]
 = AWS 2 ECS Component
 
 *Since Camel 3.1*
+
 *Since Camel 3.1*
 
 
