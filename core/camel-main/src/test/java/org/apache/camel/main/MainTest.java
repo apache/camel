@@ -16,11 +16,16 @@
  */
 package org.apache.camel.main;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.ManagementStrategy;
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.apache.camel.util.CollectionHelper.propertiesOf;
 
 public class MainTest extends Assert {
 
@@ -112,6 +117,30 @@ public class MainTest extends Assert {
 
         CamelContext camelContext = main.getCamelContext();
         assertFalse("Tracing should be disabled", camelContext.isTracing());
+
+        main.stop();
+    }
+
+    @Test
+    public void testLifecycleConfiguration() throws Exception {
+        AtomicInteger durationMaxMessages = new AtomicInteger();
+
+        Main main = new Main() {
+            @Override
+            protected void configureLifecycle(CamelContext camelContext) throws Exception {
+                durationMaxMessages.set(configure().getDurationMaxMessages());
+                super.configureLifecycle(camelContext);
+            }
+        };
+
+        main.setOverrideProperties(propertiesOf("camel.main.duration-max-messages", "1"));
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        ManagementStrategy strategy = camelContext.getManagementStrategy();
+
+        assertEquals("DurationMaxMessages should be set to 1", 1, durationMaxMessages.get());
+        assertTrue(strategy.getEventNotifiers().stream().anyMatch(n -> n instanceof MainDurationEventNotifier));
 
         main.stop();
     }
