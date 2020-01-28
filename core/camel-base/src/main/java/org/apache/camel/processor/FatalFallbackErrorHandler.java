@@ -21,6 +21,7 @@ import java.util.Deque;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.slf4j.Logger;
@@ -68,7 +69,7 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
             // mark this exchange as already been error handler handled (just by having this property)
             // the false value mean the caught exception will be kept on the exchange, causing the
             // exception to be propagated back to the caller, and to break out routing
-            exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, false);
+            exchange.adapt(ExtendedExchange.class).setErrorHandlerHandled(false);
             exchange.setProperty(Exchange.ERRORHANDLER_CIRCUIT_DETECTED, true);
             callback.done(true);
             return true;
@@ -132,12 +133,12 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                         if (deadLetterChannel) {
                             // special for dead letter channel as we want to let it determine what to do, depending how
                             // it has been configured
-                            exchange.removeProperty(Exchange.ERRORHANDLER_HANDLED);
+                            exchange.adapt(ExtendedExchange.class).setErrorHandlerHandled(null);
                         } else {
                             // mark this exchange as already been error handler handled (just by having this property)
                             // the false value mean the caught exception will be kept on the exchange, causing the
                             // exception to be propagated back to the caller, and to break out routing
-                            exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, false);
+                            exchange.adapt(ExtendedExchange.class).setErrorHandlerHandled(false);
                         }
                     }
                 } finally {
