@@ -19,6 +19,7 @@ package org.apache.camel.component.rest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.apache.camel.Component;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
@@ -29,7 +30,8 @@ import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
-import org.apache.camel.support.JSonSchemaHelper;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
 
@@ -87,10 +89,11 @@ public class RestComponentVerifierExtension extends DefaultComponentVerifierExte
                     final ComponentVerifierExtension verifier = extension.get();
                     final RuntimeCamelCatalog catalog = getCamelContext().getExtension(RuntimeCamelCatalog.class);
                     final String json = catalog.componentJSonSchema("rest");
+                    final ComponentModel model = JsonMapper.generateComponentModel(json);
                     final Map<String, Object> restParameters = new HashMap<>(parameters);
-
-                    for (Map<String, String> m : JSonSchemaHelper.parseJsonSchema("componentProperties", json, true)) {
-                        String name = m.get("name");
+                    Stream.concat(model.getComponentOptions().stream(),
+                                  model.getOptions().stream()).forEach(o -> {
+                        String name = o.getName();
                         Object val = restParameters.remove(name);
                         if (val != null) {
                             // Add rest prefix to properties belonging to the rest
@@ -98,17 +101,7 @@ public class RestComponentVerifierExtension extends DefaultComponentVerifierExte
                             // to validate rest-related stuffs.
                             restParameters.put("rest." + name, parameters.get(name));
                         }
-                    }
-                    for (Map<String, String> m : JSonSchemaHelper.parseJsonSchema("properties", json, true)) {
-                        String name = m.get("name");
-                        Object val = restParameters.remove(name);
-                        if (val != null) {
-                            // Add rest prefix to properties belonging to the rest
-                            // component so the underlying component know we want
-                            // to validate rest-related stuffs.
-                            restParameters.put("rest." + name, parameters.get(name));
-                        }
-                    }
+                    });
 
                     // restParameters now should contains rest-component related
                     // properties with "rest." prefix and all the remaining can
@@ -140,9 +133,10 @@ public class RestComponentVerifierExtension extends DefaultComponentVerifierExte
         }
     }
 
+    @SuppressWarnings("unchecked")
     private Component getTransportComponent(String componentName) throws Exception {
         return Suppliers.firstMatching(
-            comp -> comp != null && (comp instanceof RestConsumerFactory || comp instanceof RestProducerFactory),
+            comp -> comp instanceof RestConsumerFactory || comp instanceof RestProducerFactory,
             () -> getCamelContext().getRegistry().lookupByNameAndType(componentName, Component.class),
             () -> getCamelContext().getComponent(componentName, true, false)
         ).orElse(null);

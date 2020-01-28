@@ -68,6 +68,7 @@ import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformersDefinition;
 import org.apache.camel.model.validator.ValidatorsDefinition;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.StringHelper;
@@ -130,6 +131,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute
     private String threadNamePattern;
     @XmlAttribute
+    @Metadata(defaultValue = "true")
     private Boolean useBlueprintPropertyResolver;
     @XmlAttribute
     private ShutdownRoute shutdownRoute;
@@ -940,6 +942,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         return useBlueprintPropertyResolver;
     }
 
+    /**
+     * Whether to automatic detect OSGi Blueprint property placeholder service in use,
+     * and bridge with Camel property placeholder.
+     * When enabled this allows you to only setup OSGi Blueprint property placeholder
+     * and Camel can use the properties in the <camelContext>.
+     */
     public void setUseBlueprintPropertyResolver(Boolean useBlueprintPropertyResolver) {
         this.useBlueprintPropertyResolver = useBlueprintPropertyResolver;
     }

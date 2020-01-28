@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.maven;
+package org.apache.camel.tooling.util;
 
-public final class PrepareHelper {
+import static org.apache.camel.tooling.util.Strings.isNullOrEmpty;
+
+public class JavadocHelper {
 
     private static final String VALID_CHARS = ".,-='/\\!&%():;#${}";
-
-    private PrepareHelper() {
-    }
 
     /**
      * Sanitizes the javadoc to removed invalid characters so it can be used as json description
@@ -30,7 +29,7 @@ public final class PrepareHelper {
      * @return the text that is valid as json
      */
     public static String sanitizeDescription(String javadoc, boolean summary) {
-        if (javadoc == null || javadoc.trim().isEmpty()) {
+        if (isNullOrEmpty(javadoc)) {
             return null;
         }
 
@@ -90,7 +89,7 @@ public final class PrepareHelper {
             String s = cb.toString().trim();
             sb.append(s);
 
-            boolean empty = s.isEmpty();
+            boolean empty = isNullOrEmpty(s);
             boolean endWithDot = s.endsWith(".");
             boolean haveText = sb.length() > 0;
 
@@ -102,10 +101,11 @@ public final class PrepareHelper {
             first = false;
         }
 
-        // remove double whitespaces, and trim
         String s = sb.toString();
+        // remove double whitespaces, and trim
         s = s.replaceAll("\\s+", " ");
+        // unescape http links
+        s = s.replaceAll("\\\\(http:|https:)", "$1");
         return s.trim();
     }
-
 }

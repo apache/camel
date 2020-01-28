@@ -17,15 +17,11 @@
 package org.apache.camel.commands;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.support.JSonSchemaHelper;
-import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.commands.internal.MatchUtil.matchWildcard;
-import static org.apache.camel.commands.internal.RegexUtil.wildcardAsRegex;
+import org.apache.camel.commands.internal.MatchUtil;
+import org.apache.camel.commands.internal.RegexUtil;
 
 /**
  * Abstract {@link org.apache.camel.commands.CamelController} that implementators should extend.
@@ -38,42 +34,14 @@ public abstract class AbstractCamelController implements CamelController {
 
         List<Map<String, String>> context = getCamelContexts();
         if (filter != null) {
-            filter = wildcardAsRegex(filter);
+            filter = RegexUtil.wildcardAsRegex(filter);
         } else {
             filter = "*";
         }
         for (Map<String, String> entry : context) {
             String name = entry.get("name");
-            if (name.equalsIgnoreCase(filter) || matchWildcard(name, filter) || name.matches(filter)) {
+            if (name.equalsIgnoreCase(filter) || MatchUtil.matchWildcard(name, filter) || name.matches(filter)) {
                 answer.add(entry);
-            }
-        }
-
-        return answer;
-    }
-
-    protected Map<String, Object> loadProperties(String json, String group, Map<String, Object> answer) {
-        List<Map<String, String>> kv = JSonSchemaHelper.parseJsonSchema(group, json, true);
-        if (kv.isEmpty()) {
-            return answer;
-        }
-
-        Map<String, Object> groupkv = new LinkedHashMap<>();
-        answer.put(group, groupkv);
-
-        for (Map<String, String> map : kv) {
-            boolean first = true;
-            Map<String, Object> properties = new LinkedHashMap<>();
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                if (first) {
-                    if (!ObjectHelper.equal(entry.getKey(), "name")) {
-                        throw new IllegalStateException("First entry should be the property name");
-                    }
-                    groupkv.put(entry.getValue(), properties);
-                    first = false;
-                } else {
-                    properties.put(entry.getKey(), entry.getValue());
-                }
             }
         }
 

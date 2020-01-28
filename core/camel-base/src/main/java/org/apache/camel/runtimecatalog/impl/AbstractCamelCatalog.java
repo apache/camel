@@ -22,15 +22,16 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -39,18 +40,21 @@ import org.apache.camel.runtimecatalog.ConfigurationPropertiesValidationResult;
 import org.apache.camel.runtimecatalog.EndpointValidationResult;
 import org.apache.camel.runtimecatalog.JSonSchemaResolver;
 import org.apache.camel.runtimecatalog.LanguageValidationResult;
-
-import static org.apache.camel.runtimecatalog.impl.CatalogHelper.after;
-import static org.apache.camel.runtimecatalog.impl.CatalogHelper.before;
-import static org.apache.camel.runtimecatalog.impl.URISupport.createQueryString;
-import static org.apache.camel.runtimecatalog.impl.URISupport.isEmpty;
-import static org.apache.camel.runtimecatalog.impl.URISupport.normalizeUri;
-import static org.apache.camel.runtimecatalog.impl.URISupport.stripQuery;
-import static org.apache.camel.support.JSonSchemaHelper.*;
+import org.apache.camel.tooling.model.BaseModel;
+import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.MainModel;
+import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.tooling.util.Strings;
 
 /**
  * Base class for both the runtime RuntimeCamelCatalog from camel-core and the complete CamelCatalog from camel-catalog.
  */
+@SuppressWarnings("unused")
 public abstract class AbstractCamelCatalog {
 
     // CHECKSTYLE:OFF
@@ -61,6 +65,64 @@ public abstract class AbstractCamelCatalog {
 
     private SuggestionStrategy suggestionStrategy;
     private JSonSchemaResolver jsonSchemaResolver;
+
+    public String componentJSonSchema(String name) {
+        return jsonSchemaResolver.getComponentJSonSchema(name);
+    }
+
+    public String modelJSonSchema(String name) {
+        return getJSonSchemaResolver().getModelJSonSchema(name);
+    }
+
+    public EipModel eipModel(String name) {
+        String json = modelJSonSchema(name);
+        return json != null ? JsonMapper.generateEipModel(json) : null;
+    }
+
+    public ComponentModel componentModel(String name) {
+        String json = componentJSonSchema(name);
+        return json != null ? JsonMapper.generateComponentModel(json) : null;
+    }
+
+    public String dataFormatJSonSchema(String name) {
+        return getJSonSchemaResolver().getDataFormatJSonSchema(name);
+    }
+
+    public DataFormatModel dataFormatModel(String name) {
+        String json = dataFormatJSonSchema(name);
+        return json != null ? JsonMapper.generateDataFormatModel(json) : null;
+    }
+
+    public String languageJSonSchema(String name) {
+        // if we try to look method then its in the bean.json file
+        if ("method".equals(name)) {
+            name = "bean";
+        }
+        return getJSonSchemaResolver().getLanguageJSonSchema(name);
+    }
+
+    public LanguageModel languageModel(String name) {
+        String json = languageJSonSchema(name);
+        return json != null ? JsonMapper.generateLanguageModel(json) : null;
+    }
+
+    public String otherJSonSchema(String name) {
+        return getJSonSchemaResolver().getOtherJSonSchema(name);
+    }
+
+    public OtherModel otherModel(String name) {
+        String json = otherJSonSchema(name);
+        return json != null ? JsonMapper.generateOtherModel(json) : null;
+    }
+
+    public String mainJSonSchema() {
+        return getJSonSchemaResolver().getMainJsonSchema();
+    }
+
+    public MainModel mainModel() {
+        String json = mainJSonSchema();
+        return json != null ? JsonMapper.generateMainModel(json) : null;
+    }
 
     public SuggestionStrategy getSuggestionStrategy() {
         return suggestionStrategy;
@@ -91,29 +153,30 @@ public abstract class AbstractCamelCatalog {
     }
 
     public EndpointValidationResult validateProperties(String scheme, Map<String, String> properties) {
+        boolean lenient = Boolean.getBoolean(properties.getOrDefault("lenient", "false"));
+        return validateProperties(scheme, properties, lenient, false, false);
+    }
+
+    private EndpointValidationResult validateProperties(String scheme, Map<String, String> properties,
+                                                          boolean lenient, boolean consumerOnly,
+                                                          boolean producerOnly) {
         EndpointValidationResult result = new EndpointValidationResult(scheme);
 
-        String json = jsonSchemaResolver.getComponentJSonSchema(scheme);
-        List<Map<String, String>> rows = parseJsonSchema("properties", json, true);
-        List<Map<String, String>> componentProps = parseJsonSchema("componentProperties", json, true);
+        ComponentModel model = componentModel(scheme);
+        Map<String, BaseOptionModel> rows = new HashMap<>();
+        model.getComponentOptions().forEach(o -> rows.put(o.getName(), o));
+        // endpoint options have higher priority so overwrite component options
+        model.getEndpointOptions().forEach(o -> rows.put(o.getName(), o));
 
-        // endpoint options have higher priority so remove those from component
-        // that may clash
-        componentProps.stream()
-            .filter(c -> rows.stream().noneMatch(e -> Objects.equals(e.get("name"), c.get("name"))))
-            .forEach(rows::add);
-
-        boolean lenient = Boolean.getBoolean(properties.getOrDefault("lenient", "false"));
 
         // the dataformat component refers to a data format so lets add the properties for the selected
         // data format to the list of rows
         if ("dataformat".equals(scheme)) {
             String dfName = properties.get("name");
             if (dfName != null) {
-                String dfJson = jsonSchemaResolver.getDataFormatJSonSchema(dfName);
-                List<Map<String, String>> dfRows = parseJsonSchema("properties", dfJson, true);
-                if (!dfRows.isEmpty()) {
-                    rows.addAll(dfRows);
+                DataFormatModel dfModel = dataFormatModel(dfName);
+                if (dfModel != null) {
+                    dfModel.getOptions().forEach(o -> rows.put(o.getName(), o));
                 }
             }
         }
@@ -121,30 +184,21 @@ public abstract class AbstractCamelCatalog {
         for (Map.Entry<String, String> property : properties.entrySet()) {
             String value = property.getValue();
             String originalName = property.getKey();
-            String name = property.getKey();
             // the name may be using an optional prefix, so lets strip that because the options
             // in the schema are listed without the prefix
-            name = stripOptionalPrefixFromName(rows, name);
+            String name = stripOptionalPrefixFromName(rows, originalName);
             // the name may be using a prefix, so lets see if we can find the real property name
             String propertyName = getPropertyNameFromNameWithPrefix(rows, name);
             if (propertyName != null) {
                 name = propertyName;
             }
-
-            String prefix = getPropertyPrefix(rows, name);
-            String kind = getPropertyKind(rows, name);
-            boolean namePlaceholder = name.startsWith("{{") && name.endsWith("}}");
-            boolean valuePlaceholder = value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
-            boolean lookup = value.startsWith("#") && value.length() > 1;
-            // we cannot evaluate multi values as strict as the others, as we don't know their expected types
-            boolean multiValue = prefix != null && originalName.startsWith(prefix) && isPropertyMultiValue(rows, name);
-
-            Map<String, String> row = getRow(rows, name);
+            BaseOptionModel row = rows.get(name);
             if (row == null) {
                 // unknown option
 
                 // only add as error if the component is not lenient properties, or not stub component
                 // and the name is not a property placeholder for one or more values
+                boolean namePlaceholder = name.startsWith("{{") && name.endsWith("}}");
                 if (!namePlaceholder && !"stub".equals(scheme)) {
                     if (lenient) {
                         // as if we are lenient then the option is a dynamic extra option which we cannot validate
@@ -153,7 +207,7 @@ public abstract class AbstractCamelCatalog {
                         // its unknown
                         result.addUnknown(name);
                         if (suggestionStrategy != null) {
-                            String[] suggestions = suggestionStrategy.suggestEndpointOptions(getNames(rows), name);
+                            String[] suggestions = suggestionStrategy.suggestEndpointOptions(rows.keySet(), name);
                             if (suggestions != null) {
                                 result.addUnknownSuggestions(name, suggestions);
                             }
@@ -161,50 +215,52 @@ public abstract class AbstractCamelCatalog {
                     }
                 }
             } else {
-                /* TODO: we may need to add something in the properties to know if they are related to a producer or consumer
-                if ("parameter".equals(kind)) {
+                if ("parameter".equals(row.getKind())) {
                     // consumer only or producer only mode for parameters
+                    String label = row.getLabel();
                     if (consumerOnly) {
-                        boolean producer = isPropertyProducerOnly(rows, name);
-                        if (producer) {
+                        if (label != null && label.contains("producer")) {
                             // the option is only for producer so you cannot use it in consumer mode
                             result.addNotConsumerOnly(name);
                         }
                     } else if (producerOnly) {
-                        boolean consumer = isPropertyConsumerOnly(rows, name);
-                        if (consumer) {
+                        if (label != null && label.contains("consumer")) {
                             // the option is only for consumer so you cannot use it in producer mode
                             result.addNotProducerOnly(name);
                         }
                     }
                 }
-                */
+
+                String prefix = row.getPrefix();
+                boolean valuePlaceholder = value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
+                boolean lookup = value.startsWith("#") && value.length() > 1;
+                // we cannot evaluate multi values as strict as the others, as we don't know their expected types
+                boolean multiValue = prefix != null && originalName.startsWith(prefix)
+                        && row.isMultiValue();
 
                 // default value
-                String defaultValue = getPropertyDefaultValue(rows, name);
+                Object defaultValue = row.getDefaultValue();
                 if (defaultValue != null) {
-                    result.addDefaultValue(name, defaultValue);
+                    result.addDefaultValue(name, defaultValue.toString());
                 }
 
                 // is required but the value is empty
-                boolean required = isPropertyRequired(rows, name);
-                if (required && isEmpty(value)) {
+                if (row.isRequired() && URISupport.isEmpty(value)) {
                     result.addRequired(name);
                 }
 
                 // is the option deprecated
-                boolean deprecated = isPropertyDeprecated(rows, name);
+                boolean deprecated = row.isDeprecated();
                 if (deprecated) {
                     result.addDeprecated(name);
                 }
 
                 // is enum but the value is not within the enum range
                 // but we can only check if the value is not a placeholder
-                String enums = getPropertyEnum(rows, name);
+                List<String> enums = row.getEnums();
                 if (!multiValue && !valuePlaceholder && !lookup && enums != null) {
-                    String[] choices = enums.split(",");
                     boolean found = false;
-                    for (String s : choices) {
+                    for (String s : enums) {
                         if (value.equalsIgnoreCase(s)) {
                             found = true;
                             break;
@@ -212,9 +268,9 @@ public abstract class AbstractCamelCatalog {
                     }
                     if (!found) {
                         result.addInvalidEnum(name, value);
-                        result.addInvalidEnumChoices(name, choices);
+                        result.addInvalidEnumChoices(name, enums.toArray(new String[0]));
                         if (suggestionStrategy != null) {
-                            Set<String> names = new LinkedHashSet<>(Arrays.asList(choices));
+                            Set<String> names = new LinkedHashSet<>(enums);
                             String[] suggestions = suggestionStrategy.suggestEndpointOptions(names, value);
                             if (suggestions != null) {
                                 result.addInvalidEnumSuggestions(name, suggestions);
@@ -225,7 +281,7 @@ public abstract class AbstractCamelCatalog {
                 }
 
                 // is reference lookup of bean (not applicable for @UriPath, enums, or multi-valued)
-                if (!multiValue && enums == null && !"path".equals(kind) && isPropertyObject(rows, name)) {
+                if (!multiValue && enums == null && !"path".equals(row.getKind()) && "object".equals(row.getType())) {
                     // must start with # and be at least 2 characters
                     if (!value.startsWith("#") || value.length() <= 1) {
                         result.addInvalidReference(name, value);
@@ -233,7 +289,7 @@ public abstract class AbstractCamelCatalog {
                 }
 
                 // is boolean
-                if (!multiValue && !valuePlaceholder && !lookup && isPropertyBoolean(rows, name)) {
+                if (!multiValue && !valuePlaceholder && !lookup && "boolean".equals(row.getType())) {
                     // value must be a boolean
                     boolean bool = "true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value);
                     if (!bool) {
@@ -242,7 +298,7 @@ public abstract class AbstractCamelCatalog {
                 }
 
                 // is integer
-                if (!multiValue && !valuePlaceholder && !lookup && isPropertyInteger(rows, name)) {
+                if (!multiValue && !valuePlaceholder && !lookup && "integer".equals(row.getType())) {
                     // value must be an integer
                     boolean valid = validateInteger(value);
                     if (!valid) {
@@ -251,7 +307,7 @@ public abstract class AbstractCamelCatalog {
                 }
 
                 // is number
-                if (!multiValue && !valuePlaceholder && !lookup && isPropertyNumber(rows, name)) {
+                if (!multiValue && !valuePlaceholder && !lookup && "number".equals(row.getType())) {
                     // value must be an number
                     boolean valid = false;
                     try {
@@ -267,15 +323,14 @@ public abstract class AbstractCamelCatalog {
         }
 
         // now check if all required values are there, and that a default value does not exists
-        for (Map<String, String> row : rows) {
-            String name = row.get("name");
-            boolean required = isPropertyRequired(rows, name);
-            if (required) {
-                String value = properties.get(name);
-                if (isEmpty(value)) {
-                    value = getPropertyDefaultValue(rows, name);
+        for (BaseOptionModel row : rows.values()) {
+            if (row.isRequired()) {
+                String name = row.getName();
+                Object value = properties.get(name);
+                if (URISupport.isEmpty(value)) {
+                    value = row.getDefaultValue();
                 }
-                if (isEmpty(value)) {
+                if (URISupport.isEmpty(value)) {
                     result.addRequired(name);
                 }
             }
@@ -285,25 +340,12 @@ public abstract class AbstractCamelCatalog {
     }
 
     public EndpointValidationResult validateEndpointProperties(String uri, boolean ignoreLenientProperties, boolean consumerOnly, boolean producerOnly) {
-        EndpointValidationResult result = new EndpointValidationResult(uri);
-
-        Map<String, String> properties;
-        List<Map<String, String>> rows;
-        boolean lenientProperties;
-        String scheme;
-
         try {
-            String json = null;
-
-            // parse the uri
-            URI u = normalizeUri(uri);
-            scheme = u.getScheme();
-
-            if (scheme != null) {
-                json = jsonSchemaResolver.getComponentJSonSchema(scheme);
-            }
-            if (json == null) {
-                // if the uri starts with a placeholder then we are also incapable of parsing it as we wasn't able to resolve the component name
+            URI u = URISupport.normalizeUri(uri);
+            String scheme = u.getScheme();
+            ComponentModel model = componentModel(scheme);
+            if (model == null) {
+                EndpointValidationResult result = new EndpointValidationResult(uri);
                 if (uri.startsWith("{{")) {
                     result.addIncapable(uri);
                 } else if (scheme != null) {
@@ -313,234 +355,35 @@ public abstract class AbstractCamelCatalog {
                 }
                 return result;
             }
-
-            rows = parseJsonSchema("component", json, false);
-
-            // is the component capable of both consumer and producer?
-            boolean canConsumeAndProduce = false;
-            if (!isComponentConsumerOnly(rows) && !isComponentProducerOnly(rows)) {
-                canConsumeAndProduce = true;
-            }
-
-            if (canConsumeAndProduce && consumerOnly) {
+            Map<String, String> properties = endpointProperties(uri);
+            boolean lenient;
+            if (!model.isConsumerOnly() && !model.isProducerOnly() && consumerOnly) {
                 // lenient properties is not support in consumer only mode if the component can do both of them
-                lenientProperties = false;
+                lenient = false;
             } else {
                 // only enable lenient properties if we should not ignore
-                lenientProperties = !ignoreLenientProperties && isComponentLenientProperties(rows);
+                lenient = !ignoreLenientProperties && model.isLenientProperties();
             }
-            rows = parseJsonSchema("properties", json, true);
-            properties = endpointProperties(uri);
+            return validateProperties(scheme, properties, lenient, consumerOnly, producerOnly);
         } catch (URISyntaxException e) {
-            if (uri.startsWith("{{")) {
-                // if the uri starts with a placeholder then we are also incapable of parsing it as we wasn't able to resolve the component name
-                result.addIncapable(uri);
-            } else {
-                result.addSyntaxError(e.getMessage());
-            }
-
+            EndpointValidationResult result = new EndpointValidationResult(uri);
+            result.addSyntaxError(e.getMessage());
             return result;
         }
-
-        // the dataformat component refers to a data format so lets add the properties for the selected
-        // data format to the list of rows
-        if ("dataformat".equals(scheme)) {
-            String dfName = properties.get("name");
-            if (dfName != null) {
-                String dfJson = jsonSchemaResolver.getDataFormatJSonSchema(dfName);
-                List<Map<String, String>> dfRows = parseJsonSchema("properties", dfJson, true);
-                if (!dfRows.isEmpty()) {
-                    rows.addAll(dfRows);
-                }
-            }
-        }
-
-        for (Map.Entry<String, String> property : properties.entrySet()) {
-            String value = property.getValue();
-            String originalName = property.getKey();
-            String name = property.getKey();
-            // the name may be using an optional prefix, so lets strip that because the options
-            // in the schema are listed without the prefix
-            name = stripOptionalPrefixFromName(rows, name);
-            // the name may be using a prefix, so lets see if we can find the real property name
-            String propertyName = getPropertyNameFromNameWithPrefix(rows, name);
-            if (propertyName != null) {
-                name = propertyName;
-            }
-
-            String prefix = getPropertyPrefix(rows, name);
-            String kind = getPropertyKind(rows, name);
-            boolean namePlaceholder = name.startsWith("{{") && name.endsWith("}}");
-            boolean valuePlaceholder = value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
-            boolean lookup = value.startsWith("#") && value.length() > 1;
-            // we cannot evaluate multi values as strict as the others, as we don't know their expected types
-            boolean mulitValue = prefix != null && originalName.startsWith(prefix) && isPropertyMultiValue(rows, name);
-
-            Map<String, String> row = getRow(rows, name);
-            if (row == null) {
-                // unknown option
-
-                // only add as error if the component is not lenient properties, or not stub component
-                // and the name is not a property placeholder for one or more values
-                if (!namePlaceholder && !"stub".equals(scheme)) {
-                    if (lenientProperties) {
-                        // as if we are lenient then the option is a dynamic extra option which we cannot validate
-                        result.addLenient(name);
-                    } else {
-                        // its unknown
-                        result.addUnknown(name);
-                        if (suggestionStrategy != null) {
-                            String[] suggestions = suggestionStrategy.suggestEndpointOptions(getNames(rows), name);
-                            if (suggestions != null) {
-                                result.addUnknownSuggestions(name, suggestions);
-                            }
-                        }
-                    }
-                }
-            } else {
-                if ("parameter".equals(kind)) {
-                    // consumer only or producer only mode for parameters
-                    if (consumerOnly) {
-                        boolean producer = isPropertyProducerOnly(rows, name);
-                        if (producer) {
-                            // the option is only for producer so you cannot use it in consumer mode
-                            result.addNotConsumerOnly(name);
-                        }
-                    } else if (producerOnly) {
-                        boolean consumer = isPropertyConsumerOnly(rows, name);
-                        if (consumer) {
-                            // the option is only for consumer so you cannot use it in producer mode
-                            result.addNotProducerOnly(name);
-                        }
-                    }
-                }
-
-                // default value
-                String defaultValue = getPropertyDefaultValue(rows, name);
-                if (defaultValue != null) {
-                    result.addDefaultValue(name, defaultValue);
-                }
-
-                // is required but the value is empty
-                boolean required = isPropertyRequired(rows, name);
-                if (required && isEmpty(value)) {
-                    result.addRequired(name);
-                }
-
-                // is the option deprecated
-                boolean deprecated = isPropertyDeprecated(rows, name);
-                if (deprecated) {
-                    result.addDeprecated(name);
-                }
-
-                // is enum but the value is not within the enum range
-                // but we can only check if the value is not a placeholder
-                String enums = getPropertyEnum(rows, name);
-                if (!mulitValue && !valuePlaceholder && !lookup && enums != null) {
-                    String[] choices = enums.split(",");
-                    boolean found = false;
-                    for (String s : choices) {
-                        if (value.equalsIgnoreCase(s)) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        result.addInvalidEnum(name, value);
-                        result.addInvalidEnumChoices(name, choices);
-                        if (suggestionStrategy != null) {
-                            Set<String> names = new LinkedHashSet<>(Arrays.asList(choices));
-                            String[] suggestions = suggestionStrategy.suggestEndpointOptions(names, value);
-                            if (suggestions != null) {
-                                result.addInvalidEnumSuggestions(name, suggestions);
-                            }
-                        }
-
-                    }
-                }
-
-                // is reference lookup of bean (not applicable for @UriPath, enums, or multi-valued)
-                if (!mulitValue && enums == null && !"path".equals(kind) && isPropertyObject(rows, name)) {
-                    // must start with # and be at least 2 characters
-                    if (!value.startsWith("#") || value.length() <= 1) {
-                        result.addInvalidReference(name, value);
-                    }
-                }
-
-                // is boolean
-                if (!mulitValue && !valuePlaceholder && !lookup && isPropertyBoolean(rows, name)) {
-                    // value must be a boolean
-                    boolean bool = "true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value);
-                    if (!bool) {
-                        result.addInvalidBoolean(name, value);
-                    }
-                }
-
-                // is integer
-                if (!mulitValue && !valuePlaceholder && !lookup && isPropertyInteger(rows, name)) {
-                    // value must be an integer
-                    boolean valid = validateInteger(value);
-                    if (!valid) {
-                        result.addInvalidInteger(name, value);
-                    }
-                }
-
-                // is number
-                if (!mulitValue && !valuePlaceholder && !lookup && isPropertyNumber(rows, name)) {
-                    // value must be an number
-                    boolean valid = false;
-                    try {
-                        valid = !Double.valueOf(value).isNaN() || !Float.valueOf(value).isNaN();
-                    } catch (Exception e) {
-                        // ignore
-                    }
-                    if (!valid) {
-                        result.addInvalidNumber(name, value);
-                    }
-                }
-            }
-        }
-
-        // now check if all required values are there, and that a default value does not exists
-        for (Map<String, String> row : rows) {
-            String name = row.get("name");
-            boolean required = isPropertyRequired(rows, name);
-            if (required) {
-                String value = properties.get(name);
-                if (isEmpty(value)) {
-                    value = getPropertyDefaultValue(rows, name);
-                }
-                if (isEmpty(value)) {
-                    result.addRequired(name);
-                }
-            }
-        }
-
-        return result;
     }
 
     public Map<String, String> endpointProperties(String uri) throws URISyntaxException {
         // need to normalize uri first
-        URI u = normalizeUri(uri);
+        URI u = URISupport.normalizeUri(uri);
         String scheme = u.getScheme();
 
-        String json = jsonSchemaResolver.getComponentJSonSchema(scheme);
-        if (json == null) {
+        // grab the syntax
+        ComponentModel model = componentModel(scheme);
+        if (model == null) {
             throw new IllegalArgumentException("Cannot find endpoint with scheme " + scheme);
         }
-
-        // grab the syntax
-        String syntax = null;
-        String alternativeSyntax = null;
-        List<Map<String, String>> rows = parseJsonSchema("component", json, false);
-        for (Map<String, String> row : rows) {
-            if (row.containsKey("syntax")) {
-                syntax = row.get("syntax");
-            }
-            if (row.containsKey("alternativeSyntax")) {
-                alternativeSyntax = row.get("alternativeSyntax");
-            }
-        }
+        String syntax = model.getSyntax();
+        String alternativeSyntax = model.getAlternativeSyntax();
         if (syntax == null) {
             throw new IllegalArgumentException("Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
         }
@@ -551,7 +394,7 @@ public abstract class AbstractCamelCatalog {
         Map<String, String> userInfoOptions = new LinkedHashMap<>();
         if (alternativeSyntax != null && alternativeSyntax.contains("@")) {
             // clip the scheme from the syntax
-            alternativeSyntax = after(alternativeSyntax, ":");
+            alternativeSyntax = CatalogHelper.after(alternativeSyntax, ":");
             // trim so only userinfo
             int idx = alternativeSyntax.indexOf("@");
             String fields = alternativeSyntax.substring(0, idx);
@@ -586,10 +429,10 @@ public abstract class AbstractCamelCatalog {
         }
 
         // clip the scheme from the syntax
-        syntax = after(syntax, ":");
+        syntax = CatalogHelper.after(syntax, ":");
         // clip the scheme from the uri
-        uri = after(uri, ":");
-        String uriPath = stripQuery(uri);
+        uri = CatalogHelper.after(uri, ":");
+        String uriPath = URISupport.stripQuery(uri);
 
         // strip user info from uri path
         if (!userInfoOptions.isEmpty()) {
@@ -659,8 +502,6 @@ public abstract class AbstractCamelCatalog {
             word2.add(option);
         }
 
-        rows = parseJsonSchema("properties", json, true);
-
         boolean defaultValueAdded = false;
 
         // now parse the uri to know which part isw what
@@ -671,14 +512,16 @@ public abstract class AbstractCamelCatalog {
             options.putAll(userInfoOptions);
         }
 
+        Map<String, BaseOptionModel> rows = new HashMap<>();
+        model.getComponentOptions().forEach(o -> rows.put(o.getName(), o));
+        model.getEndpointOptions().forEach(o -> rows.put(o.getName(), o));
+
         // word contains the syntax path elements
         Iterator<String> it = word2.iterator();
         for (int i = 0; i < word.size(); i++) {
             String key = word.get(i);
-
+            BaseOptionModel option = rows.get(key);
             boolean allOptions = word.size() == word2.size();
-            boolean required = isPropertyRequired(rows, key);
-            String defaultValue = getPropertyDefaultValue(rows, key);
 
             // we have all options so no problem
             if (allOptions) {
@@ -686,21 +529,21 @@ public abstract class AbstractCamelCatalog {
                 options.put(key, value);
             } else {
                 // we have a little problem as we do not not have all options
-                if (!required) {
-                    String value = null;
+                if (!option.isRequired()) {
+                    Object value = null;
 
                     boolean last = i == word.size() - 1;
                     if (last) {
                         // if its the last value then use it instead of the default value
                         value = it.hasNext() ? it.next() : null;
                         if (value != null) {
-                            options.put(key, value);
+                            options.put(key, value.toString());
                         } else {
-                            value = defaultValue;
+                            value = option.getDefaultValue();
                         }
                     }
                     if (value != null) {
-                        options.put(key, value);
+                        options.put(key, value.toString());
                         defaultValueAdded = true;
                     }
                 } else {
@@ -718,13 +561,13 @@ public abstract class AbstractCamelCatalog {
         for (Map.Entry<String, String> entry : options.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-
+            BaseOptionModel row = rows.get(key);
             if (defaultValueAdded) {
-                boolean required = isPropertyRequired(rows, key);
-                String defaultValue = getPropertyDefaultValue(rows, key);
+                boolean required = row.isRequired();
+                Object defaultValue = row.getDefaultValue();
 
                 if (!required && defaultValue != null) {
-                    if (defaultValue.equals(value)) {
+                    if (defaultValue.toString().equals(value)) {
                         continue;
                     }
                 }
@@ -742,10 +585,9 @@ public abstract class AbstractCamelCatalog {
             Map.Entry<String, Object> entry = parameters.entrySet().iterator().next();
             String key = entry.getKey();
             String value = entry.getValue() != null ? entry.getValue().toString() : "";
-
-            boolean multiValued = isPropertyMultiValue(rows, key);
-            if (multiValued) {
-                String prefix = getPropertyPrefix(rows, key);
+            BaseOptionModel row = rows.get(key);
+            if (row != null && row.isMultiValue()) {
+                String prefix = row.getPrefix();
                 if (prefix != null) {
                     // extra all the multi valued options
                     Map<String, Object> values = URISupport.extractProperties(parameters, prefix);
@@ -772,21 +614,22 @@ public abstract class AbstractCamelCatalog {
         // need to normalize uri first
 
         // parse the uri
-        URI u = normalizeUri(uri);
+        URI u = URISupport.normalizeUri(uri);
         String scheme = u.getScheme();
 
-        String json = jsonSchemaResolver.getComponentJSonSchema(scheme);
-        if (json == null) {
+        ComponentModel model = componentModel(scheme);
+        if (model == null) {
             throw new IllegalArgumentException("Cannot find endpoint with scheme " + scheme);
         }
-
-        List<Map<String, String>> rows = parseJsonSchema("properties", json, true);
+        Map<String, BaseOptionModel> rows = new HashMap<>();
+        model.getComponentOptions().forEach(o -> rows.put(o.getName(), o));
+        model.getEndpointOptions().forEach(o -> rows.put(o.getName(), o));
 
         // now parse the uri parameters
         Map<String, Object> parameters = URISupport.parseParameters(u);
 
         // all the known options
-        Set<String> names = getNames(rows);
+        Set<String> names = rows.keySet();
 
         Map<String, String> answer = new LinkedHashMap<>();
 
@@ -800,7 +643,7 @@ public abstract class AbstractCamelCatalog {
             if (dot != -1) {
                 String prefix = key.substring(0, dot + 1); // include dot in prefix
                 String option = getPropertyNameFromNameWithPrefix(rows, prefix);
-                if (option == null || !isPropertyMultiValue(rows, option)) {
+                if (option == null || !rows.get(option).isMultiValue()) {
                     answer.put(key, value);
                 }
             } else if (!names.contains(key)) {
@@ -830,20 +673,12 @@ public abstract class AbstractCamelCatalog {
     }
 
     String doAsEndpointUri(String scheme, Map<String, String> properties, String ampersand, boolean encode) throws URISyntaxException {
-        String json = jsonSchemaResolver.getComponentJSonSchema(scheme);
-        if (json == null) {
+        // grab the syntax
+        ComponentModel model = componentModel(scheme);
+        if (model == null) {
             throw new IllegalArgumentException("Cannot find endpoint with scheme " + scheme);
         }
-
-        // grab the syntax
-        String originalSyntax = null;
-        List<Map<String, String>> rows = parseJsonSchema("component", json, false);
-        for (Map<String, String> row : rows) {
-            if (row.containsKey("syntax")) {
-                originalSyntax = row.get("syntax");
-                break;
-            }
-        }
+        String originalSyntax = model.getSyntax();
         if (originalSyntax == null) {
             throw new IllegalArgumentException("Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
         }
@@ -851,12 +686,14 @@ public abstract class AbstractCamelCatalog {
         // do any properties filtering which can be needed for some special components
         properties = filterProperties(scheme, properties);
 
-        rows = parseJsonSchema("properties", json, true);
+        Map<String, BaseOptionModel> rows = new HashMap<>();
+        model.getComponentOptions().forEach(o -> rows.put(o.getName(), o));
+        model.getEndpointOptions().forEach(o -> rows.put(o.getName(), o));
 
         // clip the scheme from the syntax
         String syntax = "";
         if (originalSyntax.contains(":")) {
-            originalSyntax = after(originalSyntax, ":");
+            originalSyntax = CatalogHelper.after(originalSyntax, ":");
         }
 
         // build at first according to syntax (use a tree map as we want the uri options sorted)
@@ -886,7 +723,7 @@ public abstract class AbstractCamelCatalog {
                 boolean hasQuestionmark = sb.toString().contains("?");
                 // the last option may already contain a ? char, if so we should use & instead of ?
                 sb.append(hasQuestionmark ? ampersand : '?');
-                String query = createQueryString(copy, ampersand, encode);
+                String query = URISupport.createQueryString(copy, ampersand, encode);
                 sb.append(query);
             }
         } else {
@@ -934,11 +771,10 @@ public abstract class AbstractCamelCatalog {
                 boolean contains = properties.containsKey(key);
                 if (!contains) {
                     // if the key are similar we have no explicit value and can try to find a default value if the option is required
-                    if (isPropertyRequired(rows, key)) {
-                        String value = getPropertyDefaultValue(rows, key);
-                        if (value != null) {
-                            properties.put(key, value);
-                            key2 = value;
+                    if (rows.get(key).isRequired()) {
+                        Object value = rows.get(key).getDefaultValue();
+                        if (!URISupport.isEmpty(value)) {
+                            properties.put(key, key2 = value.toString());
                         }
                     }
                 }
@@ -971,7 +807,7 @@ public abstract class AbstractCamelCatalog {
             if (!copy.isEmpty()) {
                 // the last option may already contain a ? char, if so we should use & instead of ?
                 sb.append(hasQuestionmark ? ampersand : '?');
-                String query = createQueryString(copy, ampersand, encode);
+                String query = URISupport.createQueryString(copy, ampersand, encode);
                 sb.append(query);
             }
         }
@@ -1018,9 +854,9 @@ public abstract class AbstractCamelCatalog {
     }
 
     public ConfigurationPropertiesValidationResult validateConfigurationProperty(String line) {
-        String longKey = before(line, "=");
+        String longKey = CatalogHelper.before(line, "=");
         String key = longKey;
-        String value = after(line, "=");
+        String value = CatalogHelper.after(line, "=");
 
         ConfigurationPropertiesValidationResult result = new ConfigurationPropertiesValidationResult();
         boolean accept = acceptConfigurationPropertyKey(key);
@@ -1030,43 +866,33 @@ public abstract class AbstractCamelCatalog {
         } else {
             result.setAccepted(true);
         }
+        // skip camel.
+        key = key.substring("camel.".length());
 
-        boolean component = key.startsWith("camel.component.");
-        boolean dataformat = key.startsWith("camel.dataformat.");
-        boolean language = key.startsWith("camel.language.");
-        boolean main = key.startsWith("camel.main.") || key.startsWith("camel.hystrix.") | key.startsWith("camel.resilience4j.") || key.startsWith("camel.rest.");
-        if (component || dataformat || language) {
-            String group;
-            if (component) {
-                key = key.substring(16);
-                group = "componentProperties";
-            } else if (dataformat) {
-                key = key.substring(17);
-                group = "properties";
-            } else {
-                key = key.substring(15);
-                group = "properties";
-            }
-            if (!key.contains(".")) {
-                result.addIncapable(key);
-                return result;
-            }
-            String name = before(key, ".");
-            String option = after(key, ".");
-            if (name != null && option != null && value != null) {
-                String json;
-                if (component) {
-                    json = jsonSchemaResolver.getComponentJSonSchema(name);
-                } else if (dataformat) {
-                    json = jsonSchemaResolver.getDataFormatJSonSchema(name);
-                } else {
-                    json = jsonSchemaResolver.getLanguageJSonSchema(name);
-                }
-                if (json == null) {
-                    result.addUnknownComponent(name);
-                    return result;
-                }
-                List<Map<String, String>> rows = parseJsonSchema(group, json, true);
+        Function<String, ? extends BaseModel<?>> loader = null;
+        if (key.startsWith("component.")) {
+            key = key.substring("component.".length());
+            loader = this::componentModel;
+        } else if (key.startsWith("dataformat.")) {
+            key = key.substring("dataformat.".length());
+            loader = this::dataFormatModel;
+        } else if (key.startsWith("language.")) {
+            key = key.substring("language.".length());
+            loader = this::languageModel;
+        }
+        if (loader != null) {
+            int idx = key.indexOf('.');
+            String name = key.substring(0, idx);
+            String option = key.substring(idx + 1);
+
+             if (value != null) {
+                BaseModel<?> model = loader.apply(name);
+                 if (model == null) {
+                     result.addUnknownComponent(name);
+                     return result;
+                 }
+                Map<String, BaseOptionModel> rows = new HashMap<>();
+                model.getOptions().forEach(o -> rows.put(o.getName(), o));
 
                 // lower case option and remove dash
                 String nOption = option.replace("-", "").toLowerCase(Locale.US);
@@ -1086,25 +912,27 @@ public abstract class AbstractCamelCatalog {
                 }
                 doValidateConfigurationProperty(result, rows, name, value, longKey, nOption, suffix);
             }
-        } else if (main) {
-            // skip camel.
-            key = key.substring(6);
-            String name = before(key, ".");
-            String option = after(key, ".");
-            if (name != null && option != null && value != null) {
-                String json = jsonSchemaResolver.getMainJsonSchema();
-                if (json == null) {
+        } else if (key.startsWith("main.")
+                || key.startsWith("hystrix.")
+                || key.startsWith("resilience4j.")
+                || key.startsWith("rest.")) {
+            int idx = key.indexOf('.');
+            String name = key.substring(0, idx);
+            String option = key.substring(idx + 1);
+            if (value != null) {
+                MainModel model = mainModel();
+                if (model == null) {
                     result.addIncapable("camel-main not detected on classpath");
                     return result;
                 }
-                List<Map<String, String>> rows = parseMainJsonSchema(json);
+                Map<String, BaseOptionModel> rows = new HashMap<>();
+                model.getOptions().forEach(o -> rows.put(dashToCamelCase(o.getName()), o));
 
                 // lower case option and remove dash
                 String nOption = longKey.replace("-", "").toLowerCase(Locale.US);
 
                 // look for suffix or array index after 2nd dot
-                int secondDot = nOption.indexOf('.');
-                secondDot = nOption.indexOf('.', secondDot + 1) + 1;
+                int secondDot = nOption.indexOf('.', nOption.indexOf('.') + 1) + 1;
 
                 String suffix = null;
                 int posDot = nOption.indexOf('.', secondDot);
@@ -1128,19 +956,19 @@ public abstract class AbstractCamelCatalog {
         return result;
     }
 
-    private void doValidateConfigurationProperty(ConfigurationPropertiesValidationResult result, List<Map<String, String>> rows,
+    private void doValidateConfigurationProperty(ConfigurationPropertiesValidationResult result,
+                                                 Map<String, BaseOptionModel> rows,
                                                  String name, String value, String longKey,
                                                  String lookupKey, String suffix) {
 
         // find option
-        String rowKey = rows.stream()
-                .map(e -> e.get("name"))
+        String rowKey = rows.keySet().stream()
                 .filter(n -> n.toLowerCase(Locale.US).equals(lookupKey)).findFirst().orElse(null);
         if (rowKey == null) {
             // unknown option
             result.addUnknown(longKey);
             if (suggestionStrategy != null) {
-                String[] suggestions = suggestionStrategy.suggestEndpointOptions(getNames(rows), name);
+                String[] suggestions = suggestionStrategy.suggestEndpointOptions(rows.keySet(), name);
                 if (suggestions != null) {
                     result.addUnknownSuggestions(name, suggestions);
                 }
@@ -1150,12 +978,13 @@ public abstract class AbstractCamelCatalog {
             boolean lookup = value.startsWith("#") && value.length() > 1;
 
             // deprecated
-            if (!optionPlaceholder && !lookup && isPropertyDeprecated(rows, rowKey)) {
+            BaseOptionModel row = rows.get(rowKey);
+            if (!optionPlaceholder && !lookup && row.isDeprecated()) {
                 result.addDeprecated(longKey);
             }
 
             // is boolean
-            if (!optionPlaceholder && !lookup && isPropertyBoolean(rows, rowKey)) {
+            if (!optionPlaceholder && !lookup && "boolean".equals(row.getType())) {
                 // value must be a boolean
                 boolean bool = "true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value);
                 if (!bool) {
@@ -1164,7 +993,7 @@ public abstract class AbstractCamelCatalog {
             }
 
             // is integer
-            if (!optionPlaceholder && !lookup && isPropertyInteger(rows, rowKey)) {
+            if (!optionPlaceholder && !lookup && "integer".equals(row.getType())) {
                 // value must be an integer
                 boolean valid = validateInteger(value);
                 if (!valid) {
@@ -1173,7 +1002,7 @@ public abstract class AbstractCamelCatalog {
             }
 
             // is number
-            if (!optionPlaceholder && !lookup && isPropertyNumber(rows, rowKey)) {
+            if (!optionPlaceholder && !lookup && "number".equals(row.getType())) {
                 // value must be an number
                 boolean valid = false;
                 try {
@@ -1187,11 +1016,10 @@ public abstract class AbstractCamelCatalog {
             }
 
             // is enum
-            String enums = getPropertyEnum(rows, rowKey);
+            List<String> enums = row.getEnums();
             if (!optionPlaceholder && !lookup && enums != null) {
-                String[] choices = enums.split(",");
                 boolean found = false;
-                for (String s : choices) {
+                for (String s : enums) {
                     if (value.equalsIgnoreCase(s)) {
                         found = true;
                         break;
@@ -1199,10 +1027,9 @@ public abstract class AbstractCamelCatalog {
                 }
                 if (!found) {
                     result.addInvalidEnum(longKey, value);
-                    result.addInvalidEnumChoices(longKey, choices);
+                    result.addInvalidEnumChoices(longKey, enums.toArray(new String[0]));
                     if (suggestionStrategy != null) {
-                        Set<String> names = new LinkedHashSet<>();
-                        names.addAll(Arrays.asList(choices));
+                        Set<String> names = new LinkedHashSet<>(enums);
                         String[] suggestions = suggestionStrategy.suggestEndpointOptions(names, value);
                         if (suggestions != null) {
                             result.addInvalidEnumSuggestions(longKey, suggestions);
@@ -1211,7 +1038,7 @@ public abstract class AbstractCamelCatalog {
                 }
             }
 
-            String javaType = getPropertyJavaType(rows, rowKey);
+            String javaType = row.getJavaType();
             if (!optionPlaceholder && !lookup && javaType != null
                     && (javaType.startsWith("java.util.Map") || javaType.startsWith("java.util.Properties"))) {
                 // there must be a valid suffix
@@ -1221,14 +1048,14 @@ public abstract class AbstractCamelCatalog {
                     result.addInvalidMap(longKey, value);
                 }
             }
-            if (!optionPlaceholder && !lookup && javaType != null && isPropertyArray(rows, rowKey)) {
+            if (!optionPlaceholder && !lookup && javaType != null && "array".equals(row.getType())) {
                 // there must be a suffix and it must be using [] style
                 if (suffix == null || suffix.isEmpty() || suffix.equals(".")) {
                     result.addInvalidArray(longKey, value);
                 } else if (!suffix.startsWith("[") && !suffix.contains("]")) {
                     result.addInvalidArray(longKey, value);
                 } else {
-                    String index = before(suffix.substring(1), "]");
+                    String index = CatalogHelper.before(suffix.substring(1), "]");
                     // value must be an integer
                     boolean valid = validateInteger(index);
                     if (!valid) {
@@ -1244,12 +1071,12 @@ public abstract class AbstractCamelCatalog {
             return false;
         }
         return key.startsWith("camel.component.")
-                || key.startsWith("camel.dataformat.")
-                || key.startsWith("camel.language.")
-                || key.startsWith("camel.main.")
-                || key.startsWith("camel.hystrix.")
-                || key.startsWith("camel.resilience4j.")
-                || key.startsWith("camel.rest.");
+            || key.startsWith("camel.dataformat.")
+            || key.startsWith("camel.language.")
+            || key.startsWith("camel.main.")
+            || key.startsWith("camel.hystrix.")
+            || key.startsWith("camel.resilience4j.")
+            || key.startsWith("camel.rest.");
     }
 
     private LanguageValidationResult doValidateSimple(ClassLoader classLoader, String simple, boolean predicate) {
@@ -1365,20 +1192,12 @@ public abstract class AbstractCamelCatalog {
 
         LanguageValidationResult answer = new LanguageValidationResult(text);
 
-        String json = jsonSchemaResolver.getLanguageJSonSchema(language);
-        if (json == null) {
+        LanguageModel model = languageModel(language);
+        if (model == null) {
             answer.setError("Unknown language " + language);
             return answer;
         }
-
-        List<Map<String, String>> rows = parseJsonSchema("language", json, false);
-        String className = null;
-        for (Map<String, String> row : rows) {
-            if (row.containsKey("javaType")) {
-                className = row.get("javaType");
-            }
-        }
-
+        String className = model.getJavaType();
         if (className == null) {
             answer.setError("Cannot find javaType for language " + language);
             return answer;
@@ -1456,6 +1275,63 @@ public abstract class AbstractCamelCatalog {
             }
         }
         return valid;
+    }
+
+    private static String stripOptionalPrefixFromName(Map<String, BaseOptionModel> rows, String name) {
+        for (BaseOptionModel row : rows.values()) {
+            String optionalPrefix = row.getOptionalPrefix();
+            if (!Strings.isNullOrEmpty(optionalPrefix) && name.startsWith(optionalPrefix)) {
+                // try again
+                return stripOptionalPrefixFromName(rows, name.substring(optionalPrefix.length()));
+            } else {
+                if (name.equalsIgnoreCase(row.getName())) {
+                    break;
+                }
+            }
+        }
+        return name;
+    }
+
+    private static String getPropertyNameFromNameWithPrefix(Map<String, BaseOptionModel> rows, String name) {
+        for (BaseOptionModel row : rows.values()) {
+            String prefix = row.getPrefix();
+            if (!Strings.isNullOrEmpty(prefix) && name.startsWith(prefix)) {
+                return row.getName();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Converts the string from dash format into camel case (hello-great-world -> helloGreatWorld)
+     *
+     * @param text  the string
+     * @return the string camel cased
+     */
+    private static String dashToCamelCase(String text) {
+        if (text == null) {
+            return null;
+        }
+        int length = text.length();
+        if (length == 0) {
+            return text;
+        }
+        if (text.indexOf('-') == -1) {
+            return text;
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c == '-') {
+                i++;
+                sb.append(Character.toUpperCase(text.charAt(i)));
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 
     // CHECKSTYLE:ON

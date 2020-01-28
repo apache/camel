@@ -14,22 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main.parser;
+package org.apache.camel.maven.packaging;
 
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.apache.camel.tooling.model.MainModel;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MyConfigurationParserTest extends TestCase {
+public class PrepareCamelMainMojoTest {
 
     @Test
     public void testMyParser() throws Exception {
-        String fileName = "src/test/java/org/apache/camel/main/parser/MyConfiguration.java";
+        String fileName = "src/test/java/org/apache/camel/packaging/MyConfiguration.java";
 
-        MainConfigurationParser parser = new MainConfigurationParser();
-        List<ConfigurationModel> list = parser.parseConfigurationSource(fileName);
+        List<MainModel.MainOptionModel> list = PrepareCamelMainMojo.parseConfigurationSource(fileName);
         assertNotNull(list);
         assertEquals(40, list.size());
 

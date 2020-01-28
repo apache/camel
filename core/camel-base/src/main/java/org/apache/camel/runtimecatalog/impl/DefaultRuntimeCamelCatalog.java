@@ -18,9 +18,16 @@ package org.apache.camel.runtimecatalog.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.MainModel;
+import org.apache.camel.tooling.model.OtherModel;
 
 /**
  * Default {@link RuntimeCamelCatalog}.
@@ -63,75 +70,76 @@ public class DefaultRuntimeCamelCatalog extends AbstractCamelCatalog implements 
 
     @Override
     public String modelJSonSchema(String name) {
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("model-" + name);
-        }
+        return cache("eip-" + name, name, super::modelJSonSchema);
+    }
 
-        if (answer == null) {
-            answer = getJSonSchemaResolver().getModelJSonSchema(name);
-            if (caching) {
-                cache.put("model-" + name, answer);
-            }
-        }
-
-        return answer;
+    @Override
+    public EipModel eipModel(String name) {
+        return cache("eip-model-" + name, name, super::eipModel);
     }
 
     @Override
     public String componentJSonSchema(String name) {
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("component-" + name);
-        }
+        return cache("component-" + name, name, super::componentJSonSchema);
+    }
 
-        if (answer == null) {
-            answer = getJSonSchemaResolver().getComponentJSonSchema(name);
-            if (caching) {
-                cache.put("component-" + name, answer);
-            }
-        }
-
-        return answer;
+    @Override
+    public ComponentModel componentModel(String name) {
+        return cache("component-model-" + name, name, super::componentModel);
     }
 
     @Override
     public String dataFormatJSonSchema(String name) {
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("dataformat-" + name);
-        }
+        return cache("dataformat-" + name, name, super::dataFormatJSonSchema);
+    }
 
-        if (answer == null) {
-            answer = getJSonSchemaResolver().getDataFormatJSonSchema(name);
-            if (caching) {
-                cache.put("dataformat-" + name, answer);
-            }
-        }
-
-        return answer;
+    @Override
+    public DataFormatModel dataFormatModel(String name) {
+        return cache("dataformat-model-" + name, name, super::dataFormatModel);
     }
 
     @Override
     public String languageJSonSchema(String name) {
-        // if we try to look method then its in the bean.json file
-        if ("method".equals(name)) {
-            name = "bean";
-        }
+        return cache("language-" + name, name, super::languageJSonSchema);
+    }
 
-        String answer = null;
+    @Override
+    public LanguageModel languageModel(String name) {
+        return cache("language-model-" + name, name, super::languageModel);
+    }
+
+    @Override
+    public String otherJSonSchema(String name) {
+        return cache("other-" + name, name, super::otherJSonSchema);
+    }
+
+    @Override
+    public OtherModel otherModel(String name) {
+        return cache("other-model-" + name, name, super::otherModel);
+    }
+
+    public String mainJSonSchema() {
+        return cache("main", "main", k -> super.mainJSonSchema());
+    }
+
+    public MainModel mainModel() {
+        return cache("main-model", "main-model", k -> super.mainModel());
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T cache(String key, String name, Function<String, T> loader) {
         if (caching) {
-            answer = (String) cache.get("language-" + name);
-        }
-
-        if (answer == null) {
-            answer = getJSonSchemaResolver().getLanguageJSonSchema(name);
-            if (caching) {
-                cache.put("language-" + name, answer);
+            T t = (T) cache.get(key);
+            if (t == null) {
+                t = loader.apply(name);
+                if (t != null) {
+                    cache.put(key, t);
+                }
             }
+            return t;
+        } else {
+            return loader.apply(name);
         }
-
-        return answer;
     }
 
 }
