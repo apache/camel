@@ -444,7 +444,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             }
         }
 
-        Path all = componentsOutDir.resolve("../models.properties");
+        Path all = componentsOutDir.resolve("../components.properties");
         Set<String> componentNames = jsonFiles.stream()
                 .map(PrepareCatalogMojo::asComponentName)
                 .collect(Collectors.toCollection(TreeSet::new));
