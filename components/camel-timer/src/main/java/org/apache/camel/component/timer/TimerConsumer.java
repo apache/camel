@@ -146,9 +146,8 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
      * Whether the timer task is allow to run or not
      */
     protected boolean isTaskRunAllowed() {
-        // only allow running the timer task if we can run and are not suspended,
-        // and CamelContext must have been fully started
-        return endpoint.getCamelContext().getStatus().isStarted() && isRunAllowed() && !isSuspended();
+        // only run if we are started
+        return isStarted();
     }
 
     protected void configureTask(TimerTask task, Timer timer) {
