@@ -435,19 +435,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             LOG.debug("Using backoff[multiplier={}, idleThreshold={}, errorThreshold={}] on {}", backoffMultiplier, backoffIdleThreshold, backoffErrorThreshold, getEndpoint());
         }
 
-        // configure scheduler with options from this consumer
-        if (schedulerProperties != null && !schedulerProperties.isEmpty()) {
-            // need to use a copy in case the consumer is restarted so we keep the properties
-            Map<String, Object> copy = new LinkedHashMap<>(schedulerProperties);
-            PropertyBindingSupport.build().bind(getEndpoint().getCamelContext(), scheduler, copy);
-            if (copy.size() > 0) {
-                throw new FailedToCreateConsumerException(getEndpoint(), "There are " + copy.size()
-                        + " scheduler parameters that couldn't be set on the endpoint."
-                        + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
-                        + " Unknown parameters=[" + copy + "]");
-            }
-        }
-
         ObjectHelper.notNull(pollStrategy, "pollStrategy", this);
     }
 
@@ -463,7 +450,22 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             scheduler.setUseFixedDelay(useFixedDelay);
             this.scheduler = scheduler;
         }
+        ObjectHelper.notNull(scheduler, "scheduler", this);
         scheduler.setCamelContext(getEndpoint().getCamelContext());
+
+        // configure scheduler with options from this consumer
+        if (schedulerProperties != null && !schedulerProperties.isEmpty()) {
+            // need to use a copy in case the consumer is restarted so we keep the properties
+            Map<String, Object> copy = new LinkedHashMap<>(schedulerProperties);
+            PropertyBindingSupport.build().bind(getEndpoint().getCamelContext(), scheduler, copy);
+            if (copy.size() > 0) {
+                throw new FailedToCreateConsumerException(getEndpoint(), "There are " + copy.size()
+                        + " scheduler parameters that couldn't be set on the endpoint."
+                        + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
+                        + " Unknown parameters=[" + copy + "]");
+            }
+        }
+
         scheduler.onInit(this);
 
         if (scheduler != null) {
