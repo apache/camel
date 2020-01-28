@@ -788,7 +788,8 @@ public interface JiraEndpointBuilderFactory {
          * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
          * Watchers. See this class javadoc description for more information.
          * The value can be one of: ADDCOMMENT, ADDISSUE, ATTACH, DELETEISSUE,
-         * NEWISSUES, NEWCOMMENTS, UPDATEISSUE, TRANSITIONISSUE, WATCHERS
+         * NEWISSUES, NEWCOMMENTS, UPDATEISSUE, TRANSITIONISSUE, WATCHERS,
+         * ADDISSUELINK, ADDWORKLOG, FETCHISSUE, FETCHCOMMENTS
          */
         default JiraEndpointBuilder jira(String path) {
             return JiraEndpointBuilderFactory.jira(path);
@@ -809,7 +810,8 @@ public interface JiraEndpointBuilderFactory {
      * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
      * Watchers. See this class javadoc description for more information.
      * The value can be one of: ADDCOMMENT, ADDISSUE, ATTACH, DELETEISSUE,
-     * NEWISSUES, NEWCOMMENTS, UPDATEISSUE, TRANSITIONISSUE, WATCHERS
+     * NEWISSUES, NEWCOMMENTS, UPDATEISSUE, TRANSITIONISSUE, WATCHERS,
+     * ADDISSUELINK, ADDWORKLOG, FETCHISSUE, FETCHCOMMENTS
      */
     static JiraEndpointBuilder jira(String path) {
         class JiraEndpointBuilderImpl extends AbstractEndpointBuilder implements JiraEndpointBuilder, AdvancedJiraEndpointBuilder {
