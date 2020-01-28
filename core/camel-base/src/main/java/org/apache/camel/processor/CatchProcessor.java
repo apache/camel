@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
@@ -102,7 +103,7 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
         exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
         exchange.setException(null);
         // and we should not be regarded as exhausted as we are in a try .. catch block
-        exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
+        exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("The exception is handled for the exception: {} caused by: {}",
@@ -118,7 +119,7 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
                 EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, false, null);
 
                 // always clear redelivery exhausted in a catch clause
-                exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
+                exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
 
                 if (!doneSync) {
                     // signal callback to continue routing async

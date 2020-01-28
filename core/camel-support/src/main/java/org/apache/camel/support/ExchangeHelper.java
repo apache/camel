@@ -585,16 +585,6 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Checks whether the exchange is redelivery exhausted
-     *
-     * @param exchange  the exchange
-     * @return <tt>true</tt> if exhausted, <tt>false</tt> otherwise
-     */
-    public static boolean isRedeliveryExhausted(Exchange exchange) {
-        return exchange.getProperty(Exchange.REDELIVERY_EXHAUSTED, false, Boolean.class);
-    }
-
-    /**
      * Checks whether the exchange {@link UnitOfWork} is redelivered
      *
      * @param exchange  the exchange

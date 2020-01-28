@@ -205,6 +205,7 @@ public interface Exchange {
     String REDELIVERED             = "CamelRedelivered";
     String REDELIVERY_COUNTER      = "CamelRedeliveryCounter";
     String REDELIVERY_MAX_COUNTER  = "CamelRedeliveryMaxCounter";
+    @Deprecated
     String REDELIVERY_EXHAUSTED    = "CamelRedeliveryExhausted";
     String REDELIVERY_DELAY        = "CamelRedeliveryDelay";
     String REST_HTTP_URI           = "CamelRestHttpUri";

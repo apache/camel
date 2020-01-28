@@ -2259,7 +2259,6 @@
   <feature name='camel-smpp' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.jsmpp/jsmpp/${jsmpp-version}</bundle>
-    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-smpp/${project.version}</bundle>
   </feature>
   <feature name='camel-snakeyaml' version='${project.version}' start-level='50'>

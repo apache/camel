@@ -63,6 +63,7 @@ public final class DefaultExchange implements ExtendedExchange {
     private boolean rollbackOnlyLast;
     private boolean notifyEvent;
     private boolean interrupted;
+    private boolean redeliveryExhausted;
 
     public DefaultExchange(CamelContext context) {
         this(context, ExchangePattern.InOnly);
@@ -124,11 +125,12 @@ public final class DefaultExchange implements ExtendedExchange {
             }
         }
 
-        exchange.setException(getException());
-        exchange.setRouteStop(isRouteStop());
-        exchange.setRollbackOnly(isRollbackOnly());
-        exchange.setRollbackOnlyLast(isRollbackOnlyLast());
-        exchange.setNotifyEvent(isNotifyEvent());
+        exchange.setException(exception);
+        exchange.setRouteStop(routeStop);
+        exchange.setRollbackOnly(rollbackOnly);
+        exchange.setRollbackOnlyLast(rollbackOnlyLast);
+        exchange.setNotifyEvent(notifyEvent);
+        exchange.setRedeliveryExhausted(redeliveryExhausted);
 
         // copy properties after body as body may trigger lazy init
         if (hasProperties()) {
@@ -229,13 +231,17 @@ public final class DefaultExchange implements ExtendedExchange {
 
     @Override
     public void setProperty(String name, Object value) {
+        if (properties == null) {
+            properties = createProperties();
+        }
+
         if (value != null) {
             // avoid the NullPointException
-            getProperties().put(name, value);
+            properties.put(name, value);
         } else {
             // if the value is null, we just remove the key from the map
             if (name != null) {
-                getProperties().remove(name);
+                properties.remove(name);
             }
         }
     }
@@ -245,7 +251,7 @@ public final class DefaultExchange implements ExtendedExchange {
         if (!hasProperties()) {
             return null;
         }
-        return getProperties().remove(name);
+        return properties.remove(name);
     }
 
     @Override
@@ -637,6 +643,16 @@ public final class DefaultExchange implements ExtendedExchange {
     @Override
     public void setInterrupted(boolean interrupted) {
         this.interrupted = interrupted;
+    }
+
+    @Override
+    public boolean isRedeliveryExhausted() {
+        return redeliveryExhausted;
+    }
+
+    @Override
+    public void setRedeliveryExhausted(boolean redeliveryExhausted) {
+        this.redeliveryExhausted = redeliveryExhausted;
     }
 
     /**

@@ -19,6 +19,8 @@ package org.apache.camel.generator.openapi;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.processing.Filer;
 
@@ -161,7 +163,7 @@ public abstract class RestDslGenerator<G> {
             if (((Oas30Document)openapi).getServers() != null 
                 && ((Oas30Document)openapi).getServers().get(0) != null) {
                 try {
-                    URL serverUrl = new URL(((Oas30Document)openapi).getServers().get(0).url);
+                    URL serverUrl = new URL(parseVariables(((Oas30Document)openapi).getServers().get(0).url, (Oas30Server)((Oas30Document)openapi).getServers().get(0)));
                     host = serverUrl.getHost();
                 
                 } catch (MalformedURLException e) {
@@ -187,7 +189,7 @@ public abstract class RestDslGenerator<G> {
                     }
                     if (basePath == null) {
                         // parse server url as fallback
-                        URL serverUrl = new URL(((Oas30Document)openapi).getServers().get(0).url);
+                        URL serverUrl = new URL(parseVariables(((Oas30Document)openapi).getServers().get(0).url, server));
                         basePath = serverUrl.getPath();
                         if (basePath.indexOf("//") == 0) {
                             // strip off the first "/" if double "/" exists
@@ -207,5 +209,19 @@ public abstract class RestDslGenerator<G> {
         }
         return basePath;
         
+    }
+ 
+    public static String parseVariables(String url, Oas30Server server) {
+        Pattern p = Pattern.compile("\\{(.*?)\\}");
+        Matcher m = p.matcher(url);
+        while (m.find()) {
+           
+            String var = m.group(1);
+            if (server != null && server.variables != null && server.variables.get(var) != null) {
+                String varValue = server.variables.get(var).default_;
+                url = url.replace("{" + var + "}", varValue);
+            }
+        }
+        return url;
     }
 }

@@ -28,9 +28,13 @@ import org.apache.camel.component.jira.consumer.NewIssuesConsumer;
 import org.apache.camel.component.jira.oauth.JiraOAuthAuthenticationHandler;
 import org.apache.camel.component.jira.oauth.OAuthAsynchronousJiraRestClientFactory;
 import org.apache.camel.component.jira.producer.AddCommentProducer;
+import org.apache.camel.component.jira.producer.AddIssueLinkProducer;
 import org.apache.camel.component.jira.producer.AddIssueProducer;
+import org.apache.camel.component.jira.producer.AddWorkLogProducer;
 import org.apache.camel.component.jira.producer.AttachFileProducer;
 import org.apache.camel.component.jira.producer.DeleteIssueProducer;
+import org.apache.camel.component.jira.producer.FetchCommentsProducer;
+import org.apache.camel.component.jira.producer.FetchIssueProducer;
 import org.apache.camel.component.jira.producer.TransitionIssueProducer;
 import org.apache.camel.component.jira.producer.UpdateIssueProducer;
 import org.apache.camel.component.jira.producer.WatcherProducer;
@@ -133,6 +137,14 @@ public class JiraEndpoint extends DefaultEndpoint {
             return new UpdateIssueProducer(this);
         case TRANSITIONISSUE:
             return new TransitionIssueProducer(this);
+        case ADDISSUELINK:
+            return new AddIssueLinkProducer(this);
+        case ADDWORKLOG:
+            return new AddWorkLogProducer(this);
+        case FETCHISSUE:
+            return new FetchIssueProducer(this);
+        case FETCHCOMMENTS:
+            return new FetchCommentsProducer(this);
         default:
             throw new IllegalArgumentException("Producer does not support type: " + type);
         }
