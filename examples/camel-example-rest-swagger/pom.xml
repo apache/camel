@@ -63,8 +63,9 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-undertow-starter</artifactId>
+       <groupId>org.apache.camel</groupId>
+       <artifactId>camel-http-starter</artifactId>
+       <version>${project.version}</version>
     </dependency>
 
     <dependency>

@@ -17,12 +17,12 @@ The example by default uses the PetStore demo hosted on swagger.io and
 invokes the `getInventory` operation. You can make it call any API
 that you have Swagger specification for and any operation with simple
 arguments, for instance this retrives a pet from the PetStore demo with
-ID `9584`:
+ID `14`:
 
     $ java -jar target/camel-example-rest-swagger-*.jar \
-        --swagger=http://petstore.swagger.io/v2/swagger.json \
+        --swagger=https://petstore.swagger.io/v2/swagger.json \
         --operation=getPetById \
-        --petId=9584
+        --petId=14
 
 ## More information
 
