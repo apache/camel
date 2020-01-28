@@ -571,6 +571,12 @@ public abstract class BaseMainSupport extends ServiceSupport {
 
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
         configurePropertiesService(camelContext);
+
+        // allow to do configuration before its started
+        for (MainListener listener : listeners) {
+            listener.beforeConfigure(this);
+        }
+
         configureLifecycle(camelContext);
         autoconfigure(camelContext);
         configureRoutes(camelContext);
