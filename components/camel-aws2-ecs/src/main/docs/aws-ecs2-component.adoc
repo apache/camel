@@ -1,4 +1,4 @@
-[[aws-ecs-component]]
+[[aws2-ecs-component]]
 = AWS ECS Component
 
 *Since Camel 3.0*
@@ -25,7 +25,7 @@ The AWS2 ECS component is not supported in OSGI
 
 [source,java]
 -------------------------
-aws-ecs://label[?options]
+aws2-ecs://label[?options]
 -------------------------
 
 You can append query options to the URI in the following format,
@@ -155,7 +155,7 @@ Maven users will need to add the following dependency to their pom.xml.
 ---------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-aws-ecs</artifactId>
+    <artifactId>camel-aws2-ecs</artifactId>
     <version>${camel-version}</version>
 </dependency>
 ---------------------------------------
