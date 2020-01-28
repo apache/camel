@@ -581,7 +581,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             }
         }
 
-        Path all = languagesOutDir.resolve("../dataformats.properties");
+        Path all = languagesOutDir.resolve("../languages.properties");
         Set<String> languagesNames = jsonFiles.stream()
                 .map(PrepareCatalogMojo::asComponentName)
                 .collect(Collectors.toCollection(TreeSet::new));
