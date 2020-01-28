@@ -21,14 +21,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.catalog.JSonSchemaHelper;
 import org.apache.camel.parser.model.CamelNodeDetails;
 import org.apache.camel.parser.model.CamelNodeDetailsFactory;
 import org.apache.camel.parser.roaster.StatementFieldSource;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Block;
@@ -190,32 +189,12 @@ public final class CamelJavaTreeParserHelper {
 
     private boolean hasOutput(String name) {
         String json = camelCatalog.modelJSonSchema(name);
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
-        return isModelOutput(rows);
-    }
-
-    private static boolean isModelOutput(List<Map<String, String>> rows) {
-        for (Map<String, String> row : rows) {
-            if (row.containsKey("output")) {
-                return "true".equals(row.get("output"));
-            }
-        }
-        return false;
+        return JsonMapper.generateEipModel(json).isOutput();
     }
 
     private boolean hasInput(String name) {
         String json = camelCatalog.modelJSonSchema(name);
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
-        return isModelInput(rows);
-    }
-
-    private static boolean isModelInput(List<Map<String, String>> rows) {
-        for (Map<String, String> row : rows) {
-            if (row.containsKey("input")) {
-                return "true".equals(row.get("input"));
-            }
-        }
-        return false;
+        return JsonMapper.generateEipModel(json).isInput();
     }
 
     private static CamelNodeDetails grandParent(CamelNodeDetails node, String parentName) {

@@ -62,6 +62,7 @@ import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tools.apt.helper.EndpointHelper;
+import org.apache.camel.tooling.util.JavadocHelper;
 import org.apache.camel.util.json.Jsoner;
 
 /**
@@ -218,7 +219,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                     .findFirst().orElse(null);
         }
         // as its json we need to sanitize the docs
-        doc = AnnotationProcessorHelper.sanitizeDescription(doc, false);
+        doc = JavadocHelper.sanitizeDescription(doc, false);
         option.setDescription(doc);
 
         if (isNullOrEmpty(doc)) {
@@ -380,7 +381,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             String doc = elementUtils.getDocComment(typeElement);
             if (doc != null) {
                 // need to sanitize the description first (we only want a summary)
-                doc = AnnotationProcessorHelper.sanitizeDescription(doc, true);
+                doc = JavadocHelper.sanitizeDescription(doc, true);
                 // the javadoc may actually be empty, so only change the doc if we got something
                 if (!Strings.isNullOrEmpty(doc)) {
                     model.setDescription(doc);
@@ -640,7 +641,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                         defaultValue = false;
                     }
                     if (isNullOrEmpty(defaultValue)) {
-                        defaultValue = "";
+                        defaultValue = null;
                     }
 
                     boolean isSecret = secret != null && secret || path.secret();

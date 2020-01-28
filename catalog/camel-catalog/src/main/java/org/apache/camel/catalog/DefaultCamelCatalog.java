@@ -20,15 +20,20 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -36,6 +41,16 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
+
+import org.apache.camel.tooling.model.BaseModel;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.MainModel;
+import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.util.json.JsonObject;
 
 /**
  * Default {@link CamelCatalog}.
@@ -187,383 +202,152 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<String> findComponentNames() {
-        List<String> names = null;
-        if (caching) {
-            names = (List<String>) cache.get("findComponentNames");
-        }
-
-        if (names == null) {
-            names = runtimeProvider.findComponentNames();
-
-            // include third party components
-            for (Map.Entry<String, String> entry : extraComponents.entrySet()) {
-                names.add(entry.getKey());
-            }
-            // sort the names
-            Collections.sort(names);
-
-            if (caching) {
-                cache.put("findComponentNames", names);
-            }
-        }
-        return names;
+        return cache("findComponentNames", () ->
+                Stream.of(runtimeProvider.findComponentNames(), extraComponents.keySet())
+                        .flatMap(Collection::stream)
+                        .sorted()
+                        .collect(Collectors.toList()));
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<String> findDataFormatNames() {
-        List<String> names = null;
-        if (caching) {
-            names = (List<String>) cache.get("findDataFormatNames");
-        }
-
-        if (names == null) {
-            names = runtimeProvider.findDataFormatNames();
-
-            // include third party data formats
-            for (Map.Entry<String, String> entry : extraDataFormats.entrySet()) {
-                names.add(entry.getKey());
-            }
-            // sort the names
-            Collections.sort(names);
-
-            if (caching) {
-                cache.put("findDataFormatNames", names);
-            }
-        }
-        return names;
+        return cache("findDataFormatNames", () ->
+            Stream.of(runtimeProvider.findDataFormatNames(), extraDataFormats.keySet())
+                    .flatMap(Collection::stream)
+                    .sorted()
+                    .collect(Collectors.toList()));
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<String> findLanguageNames() {
-        List<String> names = null;
-        if (caching) {
-            names = (List<String>) cache.get("findLanguageNames");
-        }
-
-        if (names == null) {
-            names = runtimeProvider.findLanguageNames();
-
-            if (caching) {
-                cache.put("findLanguageNames", names);
-            }
-        }
-        return names;
+        return cache("findLanguageNames", runtimeProvider::findLanguageNames);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<String> findModelNames() {
-        List<String> names = null;
-        if (caching) {
-            names = (List<String>) cache.get("findModelNames");
-        }
-
-        if (names == null) {
-            names = new ArrayList<>();
-            InputStream is = versionManager.getResourceAsStream(MODELS_CATALOG);
-            if (is != null) {
-                try {
-                    CatalogHelper.loadLines(is, names);
-                } catch (IOException e) {
-                    // ignore
-                }
+        return cache("findModelNames", () -> {
+            try (InputStream is = versionManager.getResourceAsStream(MODELS_CATALOG)) {
+                return CatalogHelper.loadLines(is);
+            } catch (IOException e) {
+                return Collections.emptyList();
             }
-            if (caching) {
-                cache.put("findModelNames", names);
-            }
-        }
-        return names;
+        });
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<String> findOtherNames() {
-        List<String> names = null;
-        if (caching) {
-            names = (List<String>) cache.get("findOtherNames");
-        }
-
-        if (names == null) {
-            names = runtimeProvider.findOtherNames();
-
-            if (caching) {
-                cache.put("findOtherNames", names);
-            }
-        }
-        return names;
+        return cache("findOtherNames", runtimeProvider::findOtherNames);
     }
 
     @Override
     public List<String> findModelNames(String filter) {
         // should not cache when filter parameter can by any kind of value
-        List<String> answer = new ArrayList<>();
-
-        List<String> names = findModelNames();
-        for (String name : names) {
-            String json = modelJSonSchema(name);
-            if (json != null) {
-                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
-                for (Map<String, String> row : rows) {
-                    if (row.containsKey("label")) {
-                        String label = row.get("label");
-                        String[] parts = label.split(",");
-                        for (String part : parts) {
-                            try {
-                                if (part.equalsIgnoreCase(filter) || CatalogHelper.matchWildcard(part, filter) || part.matches(filter)) {
-                                    answer.add(name);
-                                }
-                            } catch (PatternSyntaxException e) {
-                                // ignore as filter is maybe not a pattern
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return answer;
+        return findNames(filter, this::findModelNames, this::eipModel);
     }
 
     @Override
     public List<String> findComponentNames(String filter) {
         // should not cache when filter parameter can by any kind of value
-        List<String> answer = new ArrayList<>();
-
-        List<String> names = findComponentNames();
-        for (String name : names) {
-            String json = componentJSonSchema(name);
-            if (json != null) {
-                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
-                for (Map<String, String> row : rows) {
-                    if (row.containsKey("label")) {
-                        String label = row.get("label");
-                        String[] parts = label.split(",");
-                        for (String part : parts) {
-                            try {
-                                if (part.equalsIgnoreCase(filter) || CatalogHelper.matchWildcard(part, filter) || part.matches(filter)) {
-                                    answer.add(name);
-                                }
-                            } catch (PatternSyntaxException e) {
-                                // ignore as filter is maybe not a pattern
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return answer;
+        return findNames(filter, this::findComponentNames, this::componentModel);
     }
 
     @Override
     public List<String> findDataFormatNames(String filter) {
         // should not cache when filter parameter can by any kind of value
-        List<String> answer = new ArrayList<>();
-
-        List<String> names = findDataFormatNames();
-        for (String name : names) {
-            String json = dataFormatJSonSchema(name);
-            if (json != null) {
-                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("dataformat", json, false);
-                for (Map<String, String> row : rows) {
-                    if (row.containsKey("label")) {
-                        String label = row.get("label");
-                        String[] parts = label.split(",");
-                        for (String part : parts) {
-                            try {
-                                if (part.equalsIgnoreCase(filter) || CatalogHelper.matchWildcard(part, filter) || part.matches(filter)) {
-                                    answer.add(name);
-                                }
-                            } catch (PatternSyntaxException e) {
-                                // ignore as filter is maybe not a pattern
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return answer;
+        return findNames(filter, this::findDataFormatNames, this::dataFormatModel);
     }
 
     @Override
     public List<String> findLanguageNames(String filter) {
         // should not cache when filter parameter can by any kind of value
-        List<String> answer = new ArrayList<>();
-
-        List<String> names = findLanguageNames();
-        for (String name : names) {
-            String json = languageJSonSchema(name);
-            if (json != null) {
-                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
-                for (Map<String, String> row : rows) {
-                    if (row.containsKey("label")) {
-                        String label = row.get("label");
-                        String[] parts = label.split(",");
-                        for (String part : parts) {
-                            try {
-                                if (part.equalsIgnoreCase(filter) || CatalogHelper.matchWildcard(part, filter) || part.matches(filter)) {
-                                    answer.add(name);
-                                }
-                            } catch (PatternSyntaxException e) {
-                                // ignore as filter is maybe not a pattern
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return answer;
+        return findNames(filter, this::findLanguageNames, this::languageModel);
     }
 
     @Override
     public List<String> findOtherNames(String filter) {
         // should not cache when filter parameter can by any kind of value
-        List<String> answer = new ArrayList<>();
+        return findNames(filter, this::findOtherNames, this::otherModel);
+    }
 
-        List<String> names = findOtherNames();
+    private List<String> findNames(String filter, Supplier<List<String>> findNames, Function<String, ? extends BaseModel<?>> modelLoader) {
+        List<String> answer = new ArrayList<>();
+        List<String> names = findNames.get();
         for (String name : names) {
-            String json = otherJSonSchema(name);
-            if (json != null) {
-                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("other", json, false);
-                for (Map<String, String> row : rows) {
-                    if (row.containsKey("label")) {
-                        String label = row.get("label");
-                        String[] parts = label.split(",");
-                        for (String part : parts) {
-                            try {
-                                if (part.equalsIgnoreCase(filter) || CatalogHelper.matchWildcard(part, filter) || part.matches(filter)) {
-                                    answer.add(name);
-                                }
-                            } catch (PatternSyntaxException e) {
-                                // ignore as filter is maybe not a pattern
-                            }
+            BaseModel<?> model = modelLoader.apply(name);
+            if (model != null) {
+                String label = model.getLabel();
+                String[] parts = label.split(",");
+                for (String part : parts) {
+                    try {
+                        if (part.equalsIgnoreCase(filter) || CatalogHelper.matchWildcard(part, filter) || part.matches(filter)) {
+                            answer.add(name);
                         }
+                    } catch (PatternSyntaxException e) {
+                        // ignore as filter is maybe not a pattern
                     }
                 }
-            }
+           }
         }
-
         return answer;
     }
 
     @Override
     public String modelJSonSchema(String name) {
-        String file = MODEL_DIR + "/" + name + ".json";
+        return cache("eip-" + name, name, super::modelJSonSchema);
+    }
 
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("model-" + file);
-        }
-
-        if (answer == null) {
-            answer = getJSonSchemaResolver().getModelJSonSchema(name);
-            if (caching) {
-                cache.put("model-" + file, answer);
-            }
-        }
-
-        return answer;
+    @Override
+    public EipModel eipModel(String name) {
+        return cache("eip-model-" + name, name, super::eipModel);
     }
 
     @Override
     public String componentJSonSchema(String name) {
-        String file = runtimeProvider.getComponentJSonSchemaDirectory() + "/" + name + ".json";
+        return cache("component-" + name, name, super::componentJSonSchema);
+    }
 
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("component-" + file);
-        }
-
-        if (answer == null) {
-            answer = getJSonSchemaResolver().getComponentJSonSchema(name);
-            if (caching) {
-                cache.put("component-" + file, answer);
-            }
-        }
-
-        return answer;
+    @Override
+    public ComponentModel componentModel(String name) {
+        return cache("component-model-" + name, name, super::componentModel);
     }
 
     @Override
     public String dataFormatJSonSchema(String name) {
-        String file = runtimeProvider.getDataFormatJSonSchemaDirectory() + "/" + name + ".json";
+        return cache("dataformat-" + name, name, super::dataFormatJSonSchema);
+    }
 
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("dataformat-" + file);
-        }
-
-        if (answer == null) {
-            answer = getJSonSchemaResolver().getDataFormatJSonSchema(name);
-            if (caching) {
-                cache.put("dataformat-" + file, answer);
-            }
-        }
-
-        return answer;
+    @Override
+    public DataFormatModel dataFormatModel(String name) {
+        return cache("dataformat-model-" + name, name, super::dataFormatModel);
     }
 
     @Override
     public String languageJSonSchema(String name) {
-        // if we try to look method then its in the bean.json file
-        if ("method".equals(name)) {
-            name = "bean";
-        }
+        return cache("language-" + name, name, super::languageJSonSchema);
+    }
 
-        String file = runtimeProvider.getLanguageJSonSchemaDirectory() + "/" + name + ".json";
-
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("language-" + file);
-        }
-
-        if (answer == null) {
-            InputStream is = versionManager.getResourceAsStream(file);
-            if (is != null) {
-                try {
-                    answer = CatalogHelper.loadText(is);
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-            if (caching) {
-                cache.put("language-" + file, answer);
-            }
-        }
-
-        return answer;
+    @Override
+    public LanguageModel languageModel(String name) {
+        return cache("language-model-" + name, name, super::languageModel);
     }
 
     @Override
     public String otherJSonSchema(String name) {
-        String file = runtimeProvider.getOtherJSonSchemaDirectory() + "/" + name + ".json";
+        return cache("other-" + name, name, super::otherJSonSchema);
+    }
 
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("other-" + file);
-        }
+    @Override
+    public OtherModel otherModel(String name) {
+        return cache("other-model-" + name, name, super::otherModel);
+    }
 
-        if (answer == null) {
-            InputStream is = versionManager.getResourceAsStream(file);
-            if (is != null) {
-                try {
-                    answer = CatalogHelper.loadText(is);
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-            if (caching) {
-                cache.put("other-" + file, answer);
-            }
-        }
+    public String mainJSonSchema() {
+        return cache("main", "main", k -> super.mainJSonSchema());
+    }
 
-        return answer;
+    public MainModel mainModel() {
+        return cache("main-model", "main-model", k -> super.mainModel());
     }
 
     @Override
@@ -574,9 +358,12 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
             // has the name as alternative, and use the first scheme as the name to find the documentation
             List<String> names = findComponentNames();
             for (String alternative : names) {
-                String schemes = getAlternativeComponentName(alternative);
+                String schemes = getAlternativeComponentName(alternative, name);
                 if (schemes != null && schemes.contains(name)) {
                     String first = schemes.split(",")[0];
+                    if (Objects.equals(first, name)) {
+                        continue;
+                    }
                     return componentAsciiDoc(first);
                 }
             }
@@ -592,7 +379,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
             // has the name as alternative, and use the first scheme as the name to find the documentation
             List<String> names = findComponentNames();
             for (String alternative : names) {
-                String schemes = getAlternativeComponentName(alternative);
+                String schemes = getAlternativeComponentName(alternative, name);
                 if (schemes != null && schemes.contains(name)) {
                     String first = schemes.split(",")[0];
                     return componentHtmlDoc(first);
@@ -602,207 +389,118 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         return answer;
     }
 
-    private String getAlternativeComponentName(String componentName) {
+    private String getAlternativeComponentName(String componentName, String alternativeTo) {
+        // optimize for this very call to avoid loading all schemas
         String json = componentJSonSchema(componentName);
-        if (json != null) {
-            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
-            for (Map<String, String> row : rows) {
-                if (row.containsKey("alternativeSchemes")) {
-                    return row.get("alternativeSchemes");
-                }
+        if (json.contains("alternativeSchemes") && json.contains(alternativeTo)) {
+            ComponentModel model = componentModel(componentName);
+            if (model != null) {
+                return model.getAlternativeSchemes();
             }
         }
         return null;
     }
 
-    private String doComponentAsciiDoc(String name) {
+    private String doComponentAsciiDoc(String componentName) {
         // special for mail component
-        if (name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp") || name.equals("smtps")) {
+        String name;
+        if (componentName.equals("imap") || componentName.equals("imaps") || componentName.equals("pop3") || componentName.equals("pop3s") || componentName.equals("smtp") || componentName.equals("smtps")) {
             name = "mail";
+        } else {
+            name = componentName;
         }
-
         String file = DOC_DIR + "/" + name + "-component.adoc";
-
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("component-" + file);
-        }
-
-        if (answer == null) {
-            InputStream is = versionManager.getResourceAsStream(file);
-            if (is != null) {
-                try {
-                    answer = CatalogHelper.loadText(is);
-                } catch (IOException e) {
-                    // ignore
-                }
-            } else {
-                // its maybe a third party so try load it
+        return cache(file, () -> {
+            if (findComponentNames().contains(componentName)) {
+                return loadResource(file);
+            } else if (extraComponents.containsKey(name)) {
                 String className = extraComponents.get(name);
-                if (className != null) {
-                    String packageName = className.substring(0, className.lastIndexOf('.'));
-                    packageName = packageName.replace('.', '/');
-                    String path = packageName + "/" + name + "-component.adoc";
-                    is = versionManager.getResourceAsStream(path);
-                    if (is != null) {
-                        try {
-                            answer = CatalogHelper.loadText(is);
-                        } catch (IOException e) {
-                            // ignore
-                        }
-                    }
-                }
+                String packageName = className.substring(0, className.lastIndexOf('.'));
+                packageName = packageName.replace('.', '/');
+                String path = packageName + "/" + name + "-component.adoc";
+                return loadResource(path);
+            } else {
+                return null;
             }
-            if (caching) {
-                cache.put("component-" + file, answer);
-            }
-        }
-
-        return answer;
+        });
     }
 
-    private String doComponentHtmlDoc(String name) {
+    private String doComponentHtmlDoc(String componentName) {
         // special for mail component
-        if (name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp") || name.equals("smtps")) {
+        String name;
+        if (componentName.equals("imap") || componentName.equals("imaps") || componentName.equals("pop3") || componentName.equals("pop3s") || componentName.equals("smtp") || componentName.equals("smtps")) {
             name = "mail";
+        } else {
+            name = componentName;
         }
-
         String file = DOC_DIR + "/" + name + "-component.html";
-
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("component-" + file);
-        }
-
-        if (answer == null) {
-            InputStream is = versionManager.getResourceAsStream(file);
-            if (is != null) {
-                try {
-                    answer = CatalogHelper.loadText(is);
-                } catch (IOException e) {
-                    // ignore
-                }
-            } else {
-                // its maybe a third party so try load it
+        return cache(file, () -> {
+            if (findComponentNames().contains(name)) {
+                return loadResource(file);
+            } else if (extraComponents.containsKey(name)) {
                 String className = extraComponents.get(name);
-                if (className != null) {
-                    String packageName = className.substring(0, className.lastIndexOf('.'));
-                    packageName = packageName.replace('.', '/');
-                    String path = packageName + "/" + name + "-component.html";
-                    is = versionManager.getResourceAsStream(path);
-                    if (is != null) {
-                        try {
-                            answer = CatalogHelper.loadText(is);
-                        } catch (IOException e) {
-                            // ignore
-                        }
-                    }
-                }
+                String packageName = className.substring(0, className.lastIndexOf('.'));
+                packageName = packageName.replace('.', '/');
+                String path = packageName + "/" + name + "-component.html";
+                return loadResource(path);
+            } else {
+                return null;
             }
-            if (caching) {
-                cache.put("component-" + file, answer);
-            }
-        }
-
-        return answer;
+        });
     }
 
     @Override
-    public String dataFormatAsciiDoc(String name) {
+    public String dataFormatAsciiDoc(String dataformatName) {
         // special for some name data formats
-        if (name.startsWith("bindy")) {
+        String name;
+        if (dataformatName.startsWith("bindy")) {
             name = "bindy";
-        } else if (name.startsWith("univocity")) {
+        } else if (dataformatName.startsWith("univocity")) {
             name = "univocity";
+        } else {
+            name = dataformatName;
         }
-
         String file = DOC_DIR + "/" + name + "-dataformat.adoc";
-
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("dataformat-" + file);
-        }
-
-        if (answer == null) {
-            InputStream is = versionManager.getResourceAsStream(file);
-            if (is != null) {
-                try {
-                    answer = CatalogHelper.loadText(is);
-                } catch (IOException e) {
-                    // ignore
-                }
-            } else {
-                // its maybe a third party so try load it
+        return cache(file, () -> {
+            if (findDataFormatNames().contains(dataformatName)) {
+                return loadResource(file);
+            } else if (extraDataFormats.containsKey(name)) {
                 String className = extraDataFormats.get(name);
-                if (className != null) {
-                    String packageName = className.substring(0, className.lastIndexOf('.'));
-                    packageName = packageName.replace('.', '/');
-                    String path = packageName + "/" + name + "-dataformat.adoc";
-                    is = versionManager.getResourceAsStream(path);
-                    if (is != null) {
-                        try {
-                            answer = CatalogHelper.loadText(is);
-                        } catch (IOException e) {
-                            // ignore
-                        }
-                    }
-                }
+                String packageName = className.substring(0, className.lastIndexOf('.'));
+                packageName = packageName.replace('.', '/');
+                String path = packageName + "/" + name + "-dataformat.adoc";
+                return loadResource(path);
+            } else {
+                return null;
             }
-            if (caching) {
-                cache.put("dataformat-" + file, answer);
-            }
-        }
-
-        return answer;
+        });
     }
 
     @Override
-    public String dataFormatHtmlDoc(String name) {
+    public String dataFormatHtmlDoc(String dataformatName) {
         // special for some name data formats
-        if (name.startsWith("bindy")) {
+        String name;
+        if (dataformatName.startsWith("bindy")) {
             name = "bindy";
-        } else if (name.startsWith("univocity")) {
+        } else if (dataformatName.startsWith("univocity")) {
             name = "univocity";
+        } else {
+            name = dataformatName;
         }
-
         String file = DOC_DIR + "/" + name + "-dataformat.html";
-
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("dataformat-" + file);
-        }
-
-        if (answer == null) {
-            InputStream is = versionManager.getResourceAsStream(file);
-            if (is != null) {
-                try {
-                    answer = CatalogHelper.loadText(is);
-                } catch (IOException e) {
-                    // ignore
-                }
-            } else {
-                // its maybe a third party so try load it
+        return cache(file, () -> {
+            if (findDataFormatNames().contains(name)) {
+                return loadResource(file);
+            } else if (extraDataFormats.containsKey(name)) {
                 String className = extraDataFormats.get(name);
-                if (className != null) {
-                    String packageName = className.substring(0, className.lastIndexOf('.'));
-                    packageName = packageName.replace('.', '/');
-                    String path = packageName + "/" + name + "-dataformat.html";
-                    is = versionManager.getResourceAsStream(path);
-                    if (is != null) {
-                        try {
-                            answer = CatalogHelper.loadText(is);
-                        } catch (IOException e) {
-                            // ignore
-                        }
-                    }
-                }
+                String packageName = className.substring(0, className.lastIndexOf('.'));
+                packageName = packageName.replace('.', '/');
+                String path = packageName + "/" + name + "-dataformat.html";
+                return loadResource(path);
+            } else {
+                return null;
             }
-            if (caching) {
-                cache.put("dataformat-" + file, answer);
-            }
-        }
-
-        return answer;
+        });
     }
 
     @Override
@@ -811,29 +509,8 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         if ("method".equals(name)) {
             name = "bean";
         }
-
         String file = DOC_DIR + "/" + name + "-language.adoc";
-
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("language-" + file);
-        }
-
-        if (answer == null) {
-            InputStream is = versionManager.getResourceAsStream(file);
-            if (is != null) {
-                try {
-                    answer = CatalogHelper.loadText(is);
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-            if (caching) {
-                cache.put("language-" + file, answer);
-            }
-        }
-
-        return answer;
+        return cache(file, this::loadResource);
     }
 
     @Override
@@ -842,602 +519,218 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         if ("method".equals(name)) {
             name = "bean";
         }
-
         String file = DOC_DIR + "/" + name + "-language.html";
-
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("language-" + file);
-        }
-
-        if (answer == null) {
-            InputStream is = versionManager.getResourceAsStream(file);
-            if (is != null) {
-                try {
-                    answer = CatalogHelper.loadText(is);
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-            if (caching) {
-                cache.put("language-" + file, answer);
-            }
-        }
-
-        return answer;
+        return cache(file, this::loadResource);
     }
 
     @Override
     public String otherAsciiDoc(String name) {
         String file = DOC_DIR + "/" + name + ".adoc";
-
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("other-" + file);
-        }
-
-        if (answer == null) {
-            InputStream is = versionManager.getResourceAsStream(file);
-            if (is != null) {
-                try {
-                    answer = CatalogHelper.loadText(is);
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-            if (caching) {
-                cache.put("other-" + file, answer);
-            }
-        }
-
-        return answer;
+        return cache(file, this::loadResource);
     }
 
     @Override
     public String otherHtmlDoc(String name) {
         String file = DOC_DIR + "/" + name + "-other.html";
-
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("language-" + file);
-        }
-
-        if (answer == null) {
-            InputStream is = versionManager.getResourceAsStream(file);
-            if (is != null) {
-                try {
-                    answer = CatalogHelper.loadText(is);
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-            if (caching) {
-                cache.put("language-" + file, answer);
-            }
-        }
-
-        return answer;
+        return cache(file, this::loadResource);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Set<String> findModelLabels() {
-        SortedSet<String> answer = null;
-        if (caching) {
-            answer = (TreeSet<String>) cache.get("findModelLabels");
-        }
-
-        if (answer == null) {
-            answer = new TreeSet<>();
-            List<String> names = findModelNames();
-            for (String name : names) {
-                String json = modelJSonSchema(name);
-                if (json != null) {
-                    List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
-                    for (Map<String, String> row : rows) {
-                        if (row.containsKey("label")) {
-                            String label = row.get("label");
-                            String[] parts = label.split(",");
-                            for (String part : parts) {
-                                answer.add(part);
-                            }
-                        }
-                    }
-                }
-            }
-            if (caching) {
-                cache.put("findModelLabels", answer);
-            }
-        }
-
-        return answer;
+        return cache("findModelLabels", () -> findLabels(this::findModelNames, this::eipModel));
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Set<String> findComponentLabels() {
-        SortedSet<String> answer = null;
-        if (caching) {
-            answer = (TreeSet<String>) cache.get("findComponentLabels");
-        }
-
-        if (answer == null) {
-            answer = new TreeSet<>();
-            List<String> names = findComponentNames();
-            for (String name : names) {
-                String json = componentJSonSchema(name);
-                if (json != null) {
-                    List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
-                    for (Map<String, String> row : rows) {
-                        if (row.containsKey("label")) {
-                            String label = row.get("label");
-                            String[] parts = label.split(",");
-                            for (String part : parts) {
-                                answer.add(part);
-                            }
-                        }
-                    }
-                }
-            }
-            if (caching) {
-                cache.put("findComponentLabels", answer);
-            }
-        }
-
-        return answer;
+        return cache("findComponentLabels", () -> findLabels(this::findComponentNames, this::componentModel));
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Set<String> findDataFormatLabels() {
-        SortedSet<String> answer = null;
-        if (caching) {
-            answer = (TreeSet<String>) cache.get("findDataFormatLabels");
-        }
-
-        if (answer == null) {
-            answer = new TreeSet<>();
-            List<String> names = findDataFormatNames();
-            for (String name : names) {
-                String json = dataFormatJSonSchema(name);
-                if (json != null) {
-                    List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("dataformat", json, false);
-                    for (Map<String, String> row : rows) {
-                        if (row.containsKey("label")) {
-                            String label = row.get("label");
-                            String[] parts = label.split(",");
-                            for (String part : parts) {
-                                answer.add(part);
-                            }
-                        }
-                    }
-                }
-            }
-            if (caching) {
-                cache.put("findDataFormatLabels", answer);
-            }
-        }
-
-        return answer;
+        return cache("findDataFormatLabels", () -> findLabels(this::findDataFormatNames, this::dataFormatModel));
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Set<String> findLanguageLabels() {
-        SortedSet<String> answer = null;
-        if (caching) {
-            answer = (TreeSet<String>) cache.get("findLanguageLabels");
-        }
-
-        if (answer == null) {
-            answer = new TreeSet<>();
-            List<String> names = findLanguageNames();
-            for (String name : names) {
-                String json = languageJSonSchema(name);
-                if (json != null) {
-                    List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
-                    for (Map<String, String> row : rows) {
-                        if (row.containsKey("label")) {
-                            String label = row.get("label");
-                            String[] parts = label.split(",");
-                            for (String part : parts) {
-                                answer.add(part);
-                            }
-                        }
-                    }
-                }
-            }
-            if (caching) {
-                cache.put("findLanguageLabels", answer);
-            }
-        }
-
-        return answer;
+        return cache("findLanguageLabels", () -> findLabels(this::findLanguageNames, this::languageModel));
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Set<String> findOtherLabels() {
-        SortedSet<String> answer = null;
-        if (caching) {
-            answer = (TreeSet<String>) cache.get("findOtherLabels");
-        }
+        return cache("findOtherLabels", () -> findLabels(this::findOtherNames, this::otherModel));
+    }
 
-        if (answer == null) {
-            answer = new TreeSet<>();
-            List<String> names = findOtherNames();
-            for (String name : names) {
-                String json = otherJSonSchema(name);
-                if (json != null) {
-                    List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("other", json, false);
-                    for (Map<String, String> row : rows) {
-                        if (row.containsKey("label")) {
-                            String label = row.get("label");
-                            String[] parts = label.split(",");
-                            for (String part : parts) {
-                                answer.add(part);
-                            }
-                        }
-                    }
-                }
-            }
-            if (caching) {
-                cache.put("findOtherLabels", answer);
+    private SortedSet<String> findLabels(Supplier<List<String>> findNames, Function<String, ? extends BaseModel<?>> loadModel) {
+        TreeSet<String> answer = new TreeSet<>();
+        List<String> names = findNames.get();
+        for (String name : names) {
+            BaseModel<?> model = loadModel.apply(name);
+            if (model != null) {
+                String label = model.getLabel();
+                String[] parts = label.split(",");
+                Collections.addAll(answer, parts);
             }
         }
-
         return answer;
     }
 
     @Override
     public String archetypeCatalogAsXml() {
-        String file = ARCHETYPES_CATALOG;
-
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get(file);
-        }
-
-        if (answer == null) {
-            InputStream is = versionManager.getResourceAsStream(file);
-            if (is != null) {
-                try {
-                    answer = CatalogHelper.loadText(is);
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-            if (caching) {
-                cache.put(file, answer);
-            }
-        }
-
-        return answer;
+        return cache(ARCHETYPES_CATALOG, this::loadResource);
     }
 
     @Override
     public String springSchemaAsXml() {
-        String file = SCHEMAS_XML + "/camel-spring.xsd";
-
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get(file);
-        }
-
-        if (answer == null) {
-            InputStream is = versionManager.getResourceAsStream(file);
-            if (is != null) {
-                try {
-                    answer = CatalogHelper.loadText(is);
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-            if (caching) {
-                cache.put(file, answer);
-            }
-        }
-
-        return answer;
+        return cache(SCHEMAS_XML + "/camel-spring.xsd", this::loadResource);
     }
 
     @Override
     public String blueprintSchemaAsXml() {
-        String file = SCHEMAS_XML + "/camel-blueprint.xsd";
-
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get(file);
-        }
-
-        if (answer == null) {
-            InputStream is = versionManager.getResourceAsStream(file);
-            if (is != null) {
-                try {
-                    answer = CatalogHelper.loadText(is);
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-            if (caching) {
-                cache.put(file, answer);
-            }
-        }
-
-        return answer;
+        return cache(SCHEMAS_XML + "/camel-blueprint.xsd", this::loadResource);
     }
 
     @Override
     public String mainJsonSchema() {
-        String file = MAIN_DIR + "/camel-main-configuration-metadata.json";
-
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get(file);
-        }
-
-        if (answer == null) {
-            InputStream is = versionManager.getResourceAsStream(file);
-            if (is != null) {
-                try {
-                    answer = CatalogHelper.loadText(is);
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-            if (caching) {
-                cache.put(file, answer);
-            }
-        }
-
-        return answer;
-    }
-
-    /**
-     * Special logic for log endpoints to deal when showAll=true
-     */
-    private Map<String, String> filterProperties(String scheme, Map<String, String> options) {
-        if ("log".equals(scheme)) {
-            String showAll = options.get("showAll");
-            if ("true".equals(showAll)) {
-                Map<String, String> filtered = new LinkedHashMap<>();
-                // remove all the other showXXX options when showAll=true
-                for (Map.Entry<String, String> entry : options.entrySet()) {
-                    String key = entry.getKey();
-                    boolean skip = key.startsWith("show") && !key.equals("showAll");
-                    if (!skip) {
-                        filtered.put(key, entry.getValue());
-                    }
-                }
-                return filtered;
-            }
-        }
-        // use as-is
-        return options;
+        return cache(MAIN_DIR + "/camel-main-configuration-metadata.json", this::loadResource);
     }
 
     @Override
     public String listComponentsAsJson() {
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("listComponentsAsJson");
-        }
-
-        if (answer == null) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("[");
-            List<String> names = findComponentNames();
-            for (int i = 0; i < names.size(); i++) {
-                String scheme = names.get(i);
-                String json = componentJSonSchema(scheme);
-                // skip first line
-                json = CatalogHelper.between(json, "\"component\": {", "\"componentProperties\": {");
-                json = json != null ? json.trim() : "";
-                // skip last comma if not the last
-                if (i == names.size() - 1) {
-                    json = json.substring(0, json.length() - 1);
-                }
-                sb.append("\n");
-                sb.append("  {\n");
-                sb.append("    ");
-                sb.append(json);
-            }
-            sb.append("\n]");
-            answer = sb.toString();
-            if (caching) {
-                cache.put("listComponentsAsJson", answer);
-            }
-        }
-
-        return answer;
+        return cache("listComponentsAsJson", () ->
+                JsonMapper.serialize(findComponentNames().stream()
+                    .map(this::componentJSonSchema)
+                    .map(JsonMapper::deserialize)
+                    .map(o -> o.get("component"))
+                    .collect(Collectors.toList())));
     }
 
     @Override
     public String listDataFormatsAsJson() {
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("listDataFormatsAsJson");
-        }
-
-        if (answer == null) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("[");
-            List<String> names = findDataFormatNames();
-            for (int i = 0; i < names.size(); i++) {
-                String scheme = names.get(i);
-                String json = dataFormatJSonSchema(scheme);
-                // skip first line
-                json = CatalogHelper.between(json, "\"dataformat\": {", "\"properties\": {");
-                json = json != null ? json.trim() : "";
-                // skip last comma if not the last
-                if (i == names.size() - 1) {
-                    json = json.substring(0, json.length() - 1);
-                }
-                sb.append("\n");
-                sb.append("  {\n");
-                sb.append("    ");
-                sb.append(json);
-            }
-            sb.append("\n]");
-            answer = sb.toString();
-            if (caching) {
-                cache.put("listDataFormatsAsJson", answer);
-            }
-        }
-
-        return answer;
+        return cache("listDataFormatsAsJson", () ->
+                JsonMapper.serialize(findDataFormatNames().stream()
+                        .map(this::dataFormatJSonSchema)
+                        .map(JsonMapper::deserialize)
+                        .map(o -> o.get("dataformat"))
+                        .collect(Collectors.toList())));
     }
 
     @Override
     public String listLanguagesAsJson() {
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("listLanguagesAsJson");
-        }
-
-        if (answer == null) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("[");
-            List<String> names = findLanguageNames();
-            for (int i = 0; i < names.size(); i++) {
-                String scheme = names.get(i);
-                String json = languageJSonSchema(scheme);
-                // skip first line
-                json = CatalogHelper.between(json, "\"language\": {", "\"properties\": {");
-                json = json != null ? json.trim() : "";
-                // skip last comma if not the last
-                if (i == names.size() - 1) {
-                    json = json.substring(0, json.length() - 1);
-                }
-                sb.append("\n");
-                sb.append("  {\n");
-                sb.append("    ");
-                sb.append(json);
-            }
-            sb.append("\n]");
-            answer = sb.toString();
-            if (caching) {
-                cache.put("listLanguagesAsJson", answer);
-            }
-        }
-
-        return answer;
+        return cache("listLanguagesAsJson", () ->
+                JsonMapper.serialize(findLanguageNames().stream()
+                        .map(this::languageJSonSchema)
+                        .map(JsonMapper::deserialize)
+                        .map(o -> o.get("language"))
+                        .collect(Collectors.toList())));
     }
 
     @Override
     public String listModelsAsJson() {
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("listModelsAsJson");
-        }
-
-        if (answer == null) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("[");
-            List<String> names = findModelNames();
-            for (int i = 0; i < names.size(); i++) {
-                String scheme = names.get(i);
-                String json = modelJSonSchema(scheme);
-                // skip first line
-                json = CatalogHelper.between(json, "\"model\": {", "\"properties\": {");
-                json = json != null ? json.trim() : "";
-                // skip last comma if not the last
-                if (i == names.size() - 1) {
-                    json = json.substring(0, json.length() - 1);
-                }
-                sb.append("\n");
-                sb.append("  {\n");
-                sb.append("    ");
-                sb.append(json);
-            }
-            sb.append("\n]");
-            answer = sb.toString();
-            if (caching) {
-                cache.put("listModelsAsJson", answer);
-            }
-        }
-
-        return answer;
+        return cache("listModelsAsJson", () ->
+                JsonMapper.serialize(findModelNames().stream()
+                        .map(this::modelJSonSchema)
+                        .map(JsonMapper::deserialize)
+                        .map(o -> o.get("model"))
+                        .collect(Collectors.toList())));
     }
 
     @Override
     public String listOthersAsJson() {
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("listOthersAsJson");
-        }
-
-        if (answer == null) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("[");
-            List<String> names = findOtherNames();
-            for (int i = 0; i < names.size(); i++) {
-                String scheme = names.get(i);
-                String json = otherJSonSchema(scheme);
-                // skip first line
-                json = CatalogHelper.between(json, "\"other\": {", "  }");
-                json = json != null ? json.trim() : "";
-                json = json + "\n  },";
-                // skip last comma if not the last
-                if (i == names.size() - 1) {
-                    json = json.substring(0, json.length() - 1);
-                }
-                sb.append("\n");
-                sb.append("  {\n");
-                sb.append("    ");
-                sb.append(json);
-            }
-            sb.append("\n]");
-            answer = sb.toString();
-            if (caching) {
-                cache.put("listOthersAsJson", answer);
-            }
-        }
-
-        return answer;
+        return cache("listOthersAsJson", () ->
+                JsonMapper.serialize(findOtherNames().stream()
+                        .map(this::otherJSonSchema)
+                        .map(JsonMapper::deserialize)
+                        .map(o -> o.get("other"))
+                        .collect(Collectors.toList())));
     }
 
     @Override
     public String summaryAsJson() {
-        String answer = null;
-        if (caching) {
-            answer = (String) cache.get("summaryAsJson");
-        }
-
-        if (answer == null) {
-            int archetypes = 0;
-            try {
-                String xml = archetypeCatalogAsXml();
-
-                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
-                dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", Boolean.TRUE);
-                Document dom = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes()));
-                Object val = XPathFactory.newInstance().newXPath().evaluate("count(/archetype-catalog/archetypes/archetype)", dom, XPathConstants.NUMBER);
-                double num = (double) val;
-                archetypes = (int) num;
-            } catch (Exception e) {
-                // ignore
-            }
-
-            StringBuilder sb = new StringBuilder();
-            sb.append("{\n");
-            sb.append("  \"version\": \"").append(getCatalogVersion()).append("\",\n");
-            sb.append("  \"eips\": ").append(findModelNames().size()).append(",\n");
-            sb.append("  \"components\": ").append(findComponentNames().size()).append(",\n");
-            sb.append("  \"dataformats\": ").append(findDataFormatNames().size()).append(",\n");
-            sb.append("  \"languages\": ").append(findLanguageNames().size()).append(",\n");
-            sb.append("  \"archetypes\": ").append(archetypes).append("\n");
-            sb.append("}");
-            answer = sb.toString();
-            if (caching) {
-                cache.put("summaryAsJson", answer);
-            }
-        }
-
-        return answer;
+        return cache("summaryAsJson", () -> {
+            Map<String, Object> obj = new JsonObject();
+            obj.put("version", getCatalogVersion());
+            obj.put("eips", findModelNames().size());
+            obj.put("components", findComponentNames().size());
+            obj.put("dataformats", findDataFormatNames().size());
+            obj.put("languages", findLanguageNames().size());
+            obj.put("archetypes", getArchetypesCount());
+            return JsonMapper.serialize(obj);
+        });
     }
 
- // CHECKSTYLE:ON
+    private int getArchetypesCount() {
+        int archetypes = 0;
+        try {
+            String xml = archetypeCatalogAsXml();
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", Boolean.TRUE);
+            Document dom = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes()));
+            Object val = XPathFactory.newInstance().newXPath().evaluate("count(/archetype-catalog/archetypes/archetype)", dom, XPathConstants.NUMBER);
+            double num = (double) val;
+            archetypes = (int) num;
+        } catch (Exception e) {
+            // ignore
+        }
+        return archetypes;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T cache(String name, Supplier<T> loader) {
+        if (caching) {
+            T t = (T) cache.get(name);
+            if (t == null) {
+                t = loader.get();
+                if (t != null) {
+                    cache.put(name, t);
+                }
+            }
+            return t;
+        } else {
+            return loader.get();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T cache(String key, String name, Function<String, T> loader) {
+        if (caching) {
+            T t = (T) cache.get(key);
+            if (t == null) {
+                t = loader.apply(name);
+                if (t != null) {
+                    cache.put(key, t);
+                }
+            }
+            return t;
+        } else {
+            return loader.apply(name);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T cache(String name, Function<String, T> loader) {
+        if (caching) {
+            T t = (T) cache.get(name);
+            if (t == null) {
+                t = loader.apply(name);
+                if (t != null) {
+                    cache.put(name, t);
+                }
+            }
+            return t;
+        } else {
+            return loader.apply(name);
+        }
+    }
+
+    private String loadResource(String file) {
+        try (InputStream is = versionManager.getResourceAsStream(file)) {
+            return is != null ? CatalogHelper.loadText(is) : null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    // CHECKSTYLE:ON
 
 }

@@ -46,6 +46,7 @@ import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
+import org.apache.camel.tooling.util.JavadocHelper;
 
 /**
  * Process camel-spring's <camelContext> and generate json schema documentation
@@ -128,7 +129,7 @@ public class SpringAnnotationProcessorHelper {
                 if (doc != null) {
                     // need to sanitize the description first (we only want a
                     // summary)
-                    doc = AnnotationProcessorHelper.sanitizeDescription(doc, true);
+                    doc = JavadocHelper.sanitizeDescription(doc, true);
                     // the javadoc may actually be empty, so only change the doc
                     // if we got something
                     if (!Strings.isNullOrEmpty(doc)) {
@@ -470,7 +471,7 @@ public class SpringAnnotationProcessorHelper {
         option.setKind(kind);
         option.setRequired(required);
         option.setDefaultValue(defaultValue);
-        option.setDescription(AnnotationProcessorHelper.sanitizeDescription(description, false));
+        option.setDescription(JavadocHelper.sanitizeDescription(description, false));
         option.setDeprecated(deprecated);
         option.setDeprecationNote(deprecationNote);
         option.setType(AnnotationProcessorHelper.getType(type, enumType));
