@@ -79,7 +79,6 @@ public class ComponentDslBuilderFactoryGenerator {
     }
 
     private void setImports() {
-        javaClass.addImport("org.apache.camel.Component");
         javaClass.addImport(packageName + ".AbstractComponentBuilder");
         javaClass.addImport(packageName + ".ComponentBuilder");
         javaClass.addImport(componentModel.getJavaType());

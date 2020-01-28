@@ -17,7 +17,6 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
-import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.kafka.KafkaComponent;

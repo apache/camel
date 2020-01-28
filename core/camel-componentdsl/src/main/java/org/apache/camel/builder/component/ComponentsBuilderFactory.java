@@ -28,6 +28,19 @@ import javax.annotation.Generated;
 public interface ComponentsBuilderFactory {
 
     /**
+     * Debezium MySQL Connector (camel-debezium-mysql)
+     * Represents a Debezium MySQL endpoint which is used to capture changes in
+     * MySQL database so that that applications can see those changes and
+     * respond to them.
+     * 
+     * Category: database,sql,mysql
+     * Since: 3.0
+     * Maven coordinates: org.apache.camel:camel-debezium-mysql
+     */
+    static org.apache.camel.builder.component.dsl.DebeziumMySqlComponentBuilderFactory.DebeziumMySqlComponentBuilder debeziumMysql() {
+        return org.apache.camel.builder.component.dsl.DebeziumMySqlComponentBuilderFactory.debeziumMysql();
+    }
+    /**
      * Kafka (camel-kafka)
      * The kafka component allows messages to be sent to (or consumed from)
      * Apache Kafka brokers.
@@ -40,16 +53,15 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.KafkaComponentBuilderFactory.kafka();
     }
     /**
-     * Debezium MySQL Connector (camel-debezium-mysql)
-     * Represents a Debezium MySQL endpoint which is used to capture changes in
-     * MySQL database so that that applications can see those changes and
-     * respond to them.
+     * Timer (camel-timer)
+     * The timer component is used for generating message exchanges when a timer
+     * fires.
      * 
-     * Category: database,sql,mysql
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-debezium-mysql
+     * Category: core,scheduling
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-timer
      */
-    static org.apache.camel.builder.component.dsl.DebeziumMySqlComponentBuilderFactory.DebeziumMySqlComponentBuilder debeziumMysql() {
-        return org.apache.camel.builder.component.dsl.DebeziumMySqlComponentBuilderFactory.debeziumMysql();
+    static org.apache.camel.builder.component.dsl.TimerComponentBuilderFactory.TimerComponentBuilder timer() {
+        return org.apache.camel.builder.component.dsl.TimerComponentBuilderFactory.timer();
     }
 }
