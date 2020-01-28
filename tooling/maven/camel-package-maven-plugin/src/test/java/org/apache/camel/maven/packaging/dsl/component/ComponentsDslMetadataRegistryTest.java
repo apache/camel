@@ -2,7 +2,10 @@ package org.apache.camel.maven.packaging.dsl.component;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.JsonMapper;
@@ -22,7 +25,11 @@ class ComponentsDslMetadataRegistryTest {
 
         componentsDslMetadataRegistry.addComponentToMetadataAndSyncMetadataFile(componentModel, "KafkaComponentBuilderFsactory");
 
-        System.out.println(componentsDslMetadataRegistry.getComponentCacheFromMemory());
+        final Map<String, List<ComponentModel>> results = componentsDslMetadataRegistry.getComponentCacheFromMemory().values()
+                .stream()
+                .collect(Collectors.groupingBy(ComponentModel::getArtifactId, Collectors.toList()));
+
+        System.out.println(results.keySet());
 
     }
 

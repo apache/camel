@@ -195,10 +195,15 @@ public class ComponentDslMojo extends AbstractDslMojo {
             final String before = Strings.before(pomText, startMainComponentImportMarker).trim();
             final String after = Strings.after(pomText, endMainComponentImportMarker).trim();
 
+            // generate unique Artifacts IDs
+            final Map<String, List<ComponentModel>> uniqueArtifacts = componentsModels.values()
+                    .stream()
+                    .collect(Collectors.groupingBy(ComponentModel::getArtifactId, Collectors.toList()));
+
             final StringBuilder stringBuilder = new StringBuilder();
-            componentsModels.forEach((key, model) -> {
-                stringBuilder.append(generateDependencyModule(model));
-            });
+
+            uniqueArtifacts.forEach((artifactKey, groupedComponentsModel) -> stringBuilder.append(generateDependencyModule(groupedComponentsModel.get(0))));
+
             final String updatedPom = before + "\n\t\t" + startMainComponentImportMarker + "\n" + stringBuilder.toString() + "\t\t"
                     + endMainComponentImportMarker + "\n\t\t" + after;
             updateResource(buildContext, componentDslPom.toPath(), updatedPom);
