@@ -19,13 +19,12 @@ package org.apache.camel.component.aws2.eks;
 import java.util.Map;
 import java.util.Set;
 
-import software.amazon.awssdk.services.eks.EksClient;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import software.amazon.awssdk.services.eks.EksClient;
 
 /**
  * For working with Amazon EKS SDK v2.
@@ -39,22 +38,22 @@ public class EKS2Component extends DefaultComponent {
     private String secretKey;
     @Metadata
     private String region;
-    @Metadata(label = "advanced")    
+    @Metadata(label = "advanced")
     private EKS2Configuration configuration;
-    
+
     public EKS2Component() {
         this(null);
     }
-    
+
     public EKS2Component(CamelContext context) {
         super(context);
-        
+
         registerExtension(new EKS2ComponentVerifierExtension());
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        EKS2Configuration configuration =  this.configuration != null ? this.configuration.copy() : new EKS2Configuration();
+        EKS2Configuration configuration = this.configuration != null ? this.configuration.copy() : new EKS2Configuration();
         EKS2Endpoint endpoint = new EKS2Endpoint(uri, this, configuration);
         endpoint.getConfiguration().setAccessKey(accessKey);
         endpoint.getConfiguration().setSecretKey(secretKey);
@@ -64,10 +63,10 @@ public class EKS2Component extends DefaultComponent {
         if (configuration.getEksClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon eks client or accessKey and secretKey must be specified");
         }
-        
+
         return endpoint;
     }
-    
+
     public EKS2Configuration getConfiguration() {
         return configuration;
     }
@@ -100,7 +99,7 @@ public class EKS2Component extends DefaultComponent {
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
-    
+
     public String getRegion() {
         return region;
     }

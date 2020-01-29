@@ -19,13 +19,10 @@ package org.apache.camel.component.aws2.eks;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.aws2.eks.EKS2Constants;
-import org.apache.camel.component.aws2.eks.EKS2Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import software.amazon.awssdk.services.eks.model.CreateClusterResponse;
 import software.amazon.awssdk.services.eks.model.DeleteClusterResponse;
 import software.amazon.awssdk.services.eks.model.DescribeClusterResponse;
@@ -33,10 +30,10 @@ import software.amazon.awssdk.services.eks.model.ListClustersResponse;
 import software.amazon.awssdk.services.eks.model.VpcConfigRequest;
 
 public class EKS2ProducerSpringTest extends CamelSpringTestSupport {
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint mock;
-    
+
     @Test
     public void kmsListClustersTest() throws Exception {
 
@@ -49,12 +46,12 @@ public class EKS2ProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
-        ListClustersResponse resultGet = (ListClustersResponse) exchange.getIn().getBody();
+
+        ListClustersResponse resultGet = (ListClustersResponse)exchange.getIn().getBody();
         assertEquals(1, resultGet.clusters().size());
         assertEquals("Test", resultGet.clusters().get(0));
     }
-    
+
     @Test
     public void eksCreateClusterTest() throws Exception {
 
@@ -71,11 +68,11 @@ public class EKS2ProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
-        CreateClusterResponse resultGet = (CreateClusterResponse) exchange.getIn().getBody();
+
+        CreateClusterResponse resultGet = (CreateClusterResponse)exchange.getIn().getBody();
         assertEquals("Test", resultGet.cluster().name());
     }
-    
+
     @Test
     public void eksDescribeClusterTest() throws Exception {
 
@@ -89,11 +86,11 @@ public class EKS2ProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         DescribeClusterResponse resultGet = exchange.getIn().getBody(DescribeClusterResponse.class);
         assertEquals("Test", resultGet.cluster().name());
     }
-    
+
     @Test
     public void eksDeleteClusterTest() throws Exception {
 
@@ -107,7 +104,7 @@ public class EKS2ProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         DeleteClusterResponse resultGet = exchange.getIn().getBody(DeleteClusterResponse.class);
         assertEquals("Test", resultGet.cluster().name());
     }

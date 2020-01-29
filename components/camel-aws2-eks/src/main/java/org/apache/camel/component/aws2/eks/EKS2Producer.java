@@ -24,7 +24,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.eks.EksClient;
 import software.amazon.awssdk.services.eks.model.CreateClusterRequest;
@@ -111,7 +110,7 @@ public class EKS2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void createCluster(EksClient eksClient, Exchange exchange) {
         CreateClusterRequest.Builder builder = CreateClusterRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EKS2Constants.CLUSTER_NAME))) {
@@ -136,7 +135,7 @@ public class EKS2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void describeCluster(EksClient eksClient, Exchange exchange) {
         DescribeClusterRequest.Builder builder = DescribeClusterRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EKS2Constants.CLUSTER_NAME))) {
@@ -155,7 +154,7 @@ public class EKS2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void deleteCluster(EksClient eksClient, Exchange exchange) {
         DeleteClusterRequest.Builder builder = DeleteClusterRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EKS2Constants.CLUSTER_NAME))) {
@@ -174,7 +173,7 @@ public class EKS2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }
