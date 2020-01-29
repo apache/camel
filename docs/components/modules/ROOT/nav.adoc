@@ -389,6 +389,7 @@
 * xref:webhook-component.adoc[Webhook Component]
 * xref:websocket-jsr356-component.adoc[Javax Websocket Component]
 * xref:websocket-component.adoc[Jetty Websocket Component]
+* xref:weka-component.adoc[Weka Component]
 * xref:wordpress-component.adoc[Wordpress Component]
 * xref:xchange-component.adoc[XChange Component]
 * xref:xj-component.adoc[XJ Component]

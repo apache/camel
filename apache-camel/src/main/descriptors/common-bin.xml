@@ -355,6 +355,7 @@
         <include>org.apache.camel:camel-webhook</include>
         <include>org.apache.camel:camel-websocket</include>
         <include>org.apache.camel:camel-websocket-jsr356</include>
+        <include>org.apache.camel:camel-weka</include>
         <include>org.apache.camel:camel-wordpress</include>
         <include>org.apache.camel:camel-xchange</include>
         <include>org.apache.camel:camel-xj</include>
