@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.aggregate.jdbc;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
@@ -59,7 +60,7 @@ public class JdbcAggregateRecoverDeadLetterChannelFailedTest extends AbstractJdb
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
+                from("direct:start").routeId("start")
                         .aggregate(header("id"), new MyAggregationStrategy())
                         .completionSize(5).aggregationRepository(repo)
                         .log("aggregated exchange id ${exchangeId} with ${body}")
@@ -68,9 +69,10 @@ public class JdbcAggregateRecoverDeadLetterChannelFailedTest extends AbstractJdb
                         .to("mock:result")
                         .end();
 
-                from("direct:dead")
+                from("direct:dead").routeId("dead")
+                        .log("sending recovered aggregated exchange to dead letter channel with ${body}")
                         .to("mock:dead")
-                        .throwException(new IllegalArgumentException("We are dead"));
+                        .throwException(new IOException("We are dead"));
             }
         };
     }
