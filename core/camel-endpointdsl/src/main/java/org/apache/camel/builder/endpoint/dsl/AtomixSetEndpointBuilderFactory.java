@@ -49,6 +49,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointConsumerBuilder atomix(Object atomix) {
@@ -61,6 +62,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option will be converted to a <code>io.atomix.AtomixClient</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointConsumerBuilder atomix(String atomix) {
@@ -72,6 +74,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointConsumerBuilder configurationUri(
@@ -113,6 +116,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointConsumerBuilder nodes(List<Object> nodes) {
@@ -125,6 +129,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointConsumerBuilder nodes(String nodes) {
@@ -136,6 +141,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointConsumerBuilder resultHeader(
@@ -161,6 +167,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointConsumerBuilder ttl(long ttl) {
@@ -172,6 +179,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointConsumerBuilder ttl(String ttl) {
@@ -236,6 +244,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtomixSetEndpointConsumerBuilder exceptionHandler(
@@ -252,6 +261,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtomixSetEndpointConsumerBuilder exceptionHandler(
@@ -264,6 +274,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtomixSetEndpointConsumerBuilder exchangePattern(
@@ -277,6 +288,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtomixSetEndpointConsumerBuilder exchangePattern(
@@ -317,6 +329,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointConsumerBuilder defaultResourceConfig(
@@ -330,6 +343,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointConsumerBuilder defaultResourceConfig(
@@ -342,6 +356,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointConsumerBuilder defaultResourceOptions(
@@ -355,6 +370,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointConsumerBuilder defaultResourceOptions(
@@ -398,6 +414,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option is a: <code>io.atomix.resource.ReadConsistency</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointConsumerBuilder readConsistency(
@@ -411,6 +428,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.atomix.resource.ReadConsistency</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointConsumerBuilder readConsistency(
@@ -424,6 +442,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointConsumerBuilder resourceConfigs(
@@ -438,6 +457,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointConsumerBuilder resourceConfigs(
@@ -451,6 +471,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointConsumerBuilder resourceOptions(
@@ -465,6 +486,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointConsumerBuilder resourceOptions(
@@ -516,6 +538,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointProducerBuilder atomix(Object atomix) {
@@ -528,6 +551,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option will be converted to a <code>io.atomix.AtomixClient</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointProducerBuilder atomix(String atomix) {
@@ -539,6 +563,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointProducerBuilder configurationUri(
@@ -580,6 +605,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointProducerBuilder nodes(List<Object> nodes) {
@@ -592,6 +618,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointProducerBuilder nodes(String nodes) {
@@ -603,6 +630,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointProducerBuilder resultHeader(
@@ -628,6 +656,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointProducerBuilder ttl(long ttl) {
@@ -639,6 +668,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointProducerBuilder ttl(String ttl) {
@@ -731,6 +761,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointProducerBuilder defaultResourceConfig(
@@ -744,6 +775,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointProducerBuilder defaultResourceConfig(
@@ -756,6 +788,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointProducerBuilder defaultResourceOptions(
@@ -769,6 +802,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointProducerBuilder defaultResourceOptions(
@@ -812,6 +846,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option is a: <code>io.atomix.resource.ReadConsistency</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointProducerBuilder readConsistency(
@@ -825,6 +860,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.atomix.resource.ReadConsistency</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointProducerBuilder readConsistency(
@@ -838,6 +874,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointProducerBuilder resourceConfigs(
@@ -852,6 +889,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointProducerBuilder resourceConfigs(
@@ -865,6 +903,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointProducerBuilder resourceOptions(
@@ -879,6 +918,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointProducerBuilder resourceOptions(
@@ -931,6 +971,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointBuilder atomix(Object atomix) {
@@ -943,6 +984,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option will be converted to a <code>io.atomix.AtomixClient</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointBuilder atomix(String atomix) {
@@ -954,6 +996,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointBuilder configurationUri(
@@ -993,6 +1036,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointBuilder nodes(List<Object> nodes) {
@@ -1005,6 +1049,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointBuilder nodes(String nodes) {
@@ -1016,6 +1061,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointBuilder resultHeader(String resultHeader) {
@@ -1040,6 +1086,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointBuilder ttl(long ttl) {
@@ -1051,6 +1098,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixSetEndpointBuilder ttl(String ttl) {
@@ -1102,6 +1150,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointBuilder defaultResourceConfig(
@@ -1115,6 +1164,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointBuilder defaultResourceConfig(
@@ -1127,6 +1177,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointBuilder defaultResourceOptions(
@@ -1140,6 +1191,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointBuilder defaultResourceOptions(
@@ -1181,6 +1233,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option is a: <code>io.atomix.resource.ReadConsistency</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointBuilder readConsistency(
@@ -1194,6 +1247,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.atomix.resource.ReadConsistency</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointBuilder readConsistency(
@@ -1207,6 +1261,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointBuilder resourceConfigs(
@@ -1221,6 +1276,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointBuilder resourceConfigs(
@@ -1234,6 +1290,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointBuilder resourceOptions(
@@ -1248,6 +1305,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixSetEndpointBuilder resourceOptions(

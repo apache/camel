@@ -48,6 +48,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default AtomixMultiMapEndpointBuilder atomix(Object atomix) {
@@ -60,6 +61,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * The option will be converted to a <code>io.atomix.AtomixClient</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default AtomixMultiMapEndpointBuilder atomix(String atomix) {
@@ -71,6 +73,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default AtomixMultiMapEndpointBuilder configurationUri(
@@ -110,6 +113,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default AtomixMultiMapEndpointBuilder key(Object key) {
@@ -122,6 +126,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default AtomixMultiMapEndpointBuilder key(String key) {
@@ -176,6 +181,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default AtomixMultiMapEndpointBuilder nodes(List<Object> nodes) {
@@ -188,6 +194,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default AtomixMultiMapEndpointBuilder nodes(String nodes) {
@@ -199,6 +206,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default AtomixMultiMapEndpointBuilder resultHeader(String resultHeader) {
@@ -223,6 +231,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default AtomixMultiMapEndpointBuilder ttl(long ttl) {
@@ -234,6 +243,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default AtomixMultiMapEndpointBuilder ttl(String ttl) {
@@ -284,6 +294,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder defaultResourceConfig(
@@ -297,6 +308,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder defaultResourceConfig(
@@ -309,6 +321,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder defaultResourceOptions(
@@ -322,6 +335,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder defaultResourceOptions(
@@ -364,6 +378,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * The option is a: <code>io.atomix.resource.ReadConsistency</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder readConsistency(
@@ -377,6 +392,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.atomix.resource.ReadConsistency</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder readConsistency(
@@ -390,6 +406,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder resourceConfigs(
@@ -404,6 +421,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder resourceConfigs(
@@ -417,6 +435,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder resourceOptions(
@@ -431,6 +450,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder resourceOptions(

@@ -56,6 +56,7 @@ public interface CinderEndpointBuilderFactory {
          * The option is a: <code>org.openstack4j.core.transport.Config</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default CinderEndpointBuilder config(Object config) {
@@ -68,6 +69,7 @@ public interface CinderEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.openstack4j.core.transport.Config</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CinderEndpointBuilder config(String config) {
@@ -132,6 +134,7 @@ public interface CinderEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CinderEndpointBuilder operation(String operation) {
@@ -144,6 +147,7 @@ public interface CinderEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: producer
          */
         default CinderEndpointBuilder password(String password) {
@@ -156,6 +160,7 @@ public interface CinderEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: producer
          */
         default CinderEndpointBuilder project(String project) {
@@ -168,6 +173,7 @@ public interface CinderEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: producer
          */
         default CinderEndpointBuilder subsystem(String subsystem) {
@@ -180,6 +186,7 @@ public interface CinderEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: producer
          */
         default CinderEndpointBuilder username(String username) {

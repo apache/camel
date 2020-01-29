@@ -54,6 +54,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder as2From(String as2From) {
@@ -69,6 +70,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2MessageStructure</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder as2MessageStructure(
@@ -85,6 +87,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2MessageStructure</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder as2MessageStructure(
@@ -97,6 +100,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder as2To(String as2To) {
@@ -134,6 +138,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder compressionAlgorithm(
@@ -147,6 +152,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder compressionAlgorithm(
@@ -159,6 +165,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder decryptingPrivateKey(
@@ -172,6 +179,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.PrivateKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder decryptingPrivateKey(
@@ -186,6 +194,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder dispositionNotificationTo(
@@ -198,6 +207,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder ediMessageTransferEncoding(
@@ -212,6 +222,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a: <code>org.apache.http.entity.ContentType</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder ediMessageType(Object ediMessageType) {
@@ -225,6 +236,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.http.entity.ContentType</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder ediMessageType(String ediMessageType) {
@@ -237,6 +249,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder encryptingAlgorithm(
@@ -250,6 +263,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder encryptingAlgorithm(
@@ -262,6 +276,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder encryptingCertificateChain(
@@ -275,6 +290,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.cert.Certificate[]</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder encryptingCertificateChain(
@@ -287,6 +303,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder from(String from) {
@@ -298,6 +315,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder inBody(String inBody) {
@@ -309,6 +327,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder mdnMessageTemplate(
@@ -359,6 +378,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder serverPortNumber(
@@ -372,6 +392,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder serverPortNumber(
@@ -386,6 +407,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String[]</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder signedReceiptMicAlgorithms(
@@ -401,6 +423,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.String[]</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder signedReceiptMicAlgorithms(
@@ -415,6 +438,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2SignatureAlgorithm</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder signingAlgorithm(
@@ -429,6 +453,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2SignatureAlgorithm</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder signingAlgorithm(
@@ -441,6 +466,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder signingCertificateChain(
@@ -454,6 +480,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.cert.Certificate[]</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder signingCertificateChain(
@@ -466,6 +493,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder signingPrivateKey(
@@ -479,6 +507,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.PrivateKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder signingPrivateKey(
@@ -491,6 +520,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder subject(String subject) {
@@ -502,6 +532,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder targetHostname(String targetHostname) {
@@ -513,6 +544,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder targetPortNumber(
@@ -526,6 +558,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointConsumerBuilder targetPortNumber(
@@ -618,6 +651,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder backoffErrorThreshold(
@@ -631,6 +665,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder backoffErrorThreshold(
@@ -644,6 +679,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder backoffIdleThreshold(
@@ -657,6 +693,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder backoffIdleThreshold(
@@ -674,6 +711,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder backoffMultiplier(
@@ -691,6 +729,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder backoffMultiplier(
@@ -845,6 +884,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder scheduledExecutorService(
@@ -860,6 +900,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder scheduledExecutorService(
@@ -887,6 +928,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder schedulerProperties(
@@ -902,6 +944,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder schedulerProperties(
@@ -1004,6 +1047,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAS2EndpointConsumerBuilder exceptionHandler(
@@ -1020,6 +1064,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAS2EndpointConsumerBuilder exceptionHandler(
@@ -1032,6 +1077,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAS2EndpointConsumerBuilder exchangePattern(
@@ -1045,6 +1091,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAS2EndpointConsumerBuilder exchangePattern(
@@ -1061,6 +1108,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAS2EndpointConsumerBuilder pollStrategy(
@@ -1077,6 +1125,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAS2EndpointConsumerBuilder pollStrategy(
@@ -1156,6 +1205,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder as2From(String as2From) {
@@ -1171,6 +1221,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2MessageStructure</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder as2MessageStructure(
@@ -1187,6 +1238,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2MessageStructure</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder as2MessageStructure(
@@ -1199,6 +1251,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder as2To(String as2To) {
@@ -1236,6 +1289,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder compressionAlgorithm(
@@ -1249,6 +1303,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder compressionAlgorithm(
@@ -1261,6 +1316,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder decryptingPrivateKey(
@@ -1274,6 +1330,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.PrivateKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder decryptingPrivateKey(
@@ -1288,6 +1345,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder dispositionNotificationTo(
@@ -1300,6 +1358,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder ediMessageTransferEncoding(
@@ -1314,6 +1373,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a: <code>org.apache.http.entity.ContentType</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder ediMessageType(Object ediMessageType) {
@@ -1327,6 +1387,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.http.entity.ContentType</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder ediMessageType(String ediMessageType) {
@@ -1339,6 +1400,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder encryptingAlgorithm(
@@ -1352,6 +1414,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder encryptingAlgorithm(
@@ -1364,6 +1427,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder encryptingCertificateChain(
@@ -1377,6 +1441,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.cert.Certificate[]</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder encryptingCertificateChain(
@@ -1389,6 +1454,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder from(String from) {
@@ -1400,6 +1466,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder inBody(String inBody) {
@@ -1411,6 +1478,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder mdnMessageTemplate(
@@ -1461,6 +1529,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder serverPortNumber(
@@ -1474,6 +1543,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder serverPortNumber(
@@ -1488,6 +1558,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String[]</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder signedReceiptMicAlgorithms(
@@ -1503,6 +1574,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.String[]</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder signedReceiptMicAlgorithms(
@@ -1517,6 +1589,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2SignatureAlgorithm</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder signingAlgorithm(
@@ -1531,6 +1604,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2SignatureAlgorithm</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder signingAlgorithm(
@@ -1543,6 +1617,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder signingCertificateChain(
@@ -1556,6 +1631,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.cert.Certificate[]</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder signingCertificateChain(
@@ -1568,6 +1644,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder signingPrivateKey(
@@ -1581,6 +1658,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.PrivateKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder signingPrivateKey(
@@ -1593,6 +1671,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder subject(String subject) {
@@ -1604,6 +1683,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder targetHostname(String targetHostname) {
@@ -1615,6 +1695,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder targetPortNumber(
@@ -1628,6 +1709,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointProducerBuilder targetPortNumber(
@@ -1774,6 +1856,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder as2From(String as2From) {
@@ -1789,6 +1872,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2MessageStructure</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder as2MessageStructure(
@@ -1805,6 +1889,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2MessageStructure</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder as2MessageStructure(
@@ -1817,6 +1902,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder as2To(String as2To) {
@@ -1854,6 +1940,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder compressionAlgorithm(
@@ -1867,6 +1954,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder compressionAlgorithm(
@@ -1879,6 +1967,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder decryptingPrivateKey(
@@ -1892,6 +1981,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.PrivateKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder decryptingPrivateKey(
@@ -1906,6 +1996,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder dispositionNotificationTo(
@@ -1918,6 +2009,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder ediMessageTransferEncoding(
@@ -1932,6 +2024,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a: <code>org.apache.http.entity.ContentType</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder ediMessageType(Object ediMessageType) {
@@ -1945,6 +2038,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.http.entity.ContentType</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder ediMessageType(String ediMessageType) {
@@ -1957,6 +2051,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder encryptingAlgorithm(
@@ -1970,6 +2065,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder encryptingAlgorithm(
@@ -1982,6 +2078,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder encryptingCertificateChain(
@@ -1995,6 +2092,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.cert.Certificate[]</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder encryptingCertificateChain(
@@ -2007,6 +2105,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder from(String from) {
@@ -2018,6 +2117,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder inBody(String inBody) {
@@ -2029,6 +2129,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder mdnMessageTemplate(String mdnMessageTemplate) {
@@ -2078,6 +2179,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder serverPortNumber(Integer serverPortNumber) {
@@ -2090,6 +2192,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder serverPortNumber(String serverPortNumber) {
@@ -2103,6 +2206,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String[]</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder signedReceiptMicAlgorithms(
@@ -2118,6 +2222,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.String[]</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder signedReceiptMicAlgorithms(
@@ -2132,6 +2237,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2SignatureAlgorithm</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder signingAlgorithm(
@@ -2146,6 +2252,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2SignatureAlgorithm</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder signingAlgorithm(String signingAlgorithm) {
@@ -2157,6 +2264,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.cert.Certificate[]</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder signingCertificateChain(
@@ -2170,6 +2278,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.cert.Certificate[]</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder signingCertificateChain(
@@ -2182,6 +2291,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder signingPrivateKey(
@@ -2195,6 +2305,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.PrivateKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder signingPrivateKey(String signingPrivateKey) {
@@ -2206,6 +2317,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder subject(String subject) {
@@ -2217,6 +2329,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder targetHostname(String targetHostname) {
@@ -2228,6 +2341,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder targetPortNumber(Integer targetPortNumber) {
@@ -2240,6 +2354,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AS2EndpointBuilder targetPortNumber(String targetPortNumber) {

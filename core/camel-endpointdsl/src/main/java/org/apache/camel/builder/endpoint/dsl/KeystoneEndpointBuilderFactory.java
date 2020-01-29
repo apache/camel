@@ -44,6 +44,7 @@ public interface KeystoneEndpointBuilderFactory {
          * The option is a: <code>org.openstack4j.core.transport.Config</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default KeystoneEndpointBuilder config(Object config) {
@@ -56,6 +57,7 @@ public interface KeystoneEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.openstack4j.core.transport.Config</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default KeystoneEndpointBuilder config(String config) {
@@ -121,6 +123,7 @@ public interface KeystoneEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default KeystoneEndpointBuilder operation(String operation) {
@@ -133,6 +136,7 @@ public interface KeystoneEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: producer
          */
         default KeystoneEndpointBuilder password(String password) {
@@ -145,6 +149,7 @@ public interface KeystoneEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: producer
          */
         default KeystoneEndpointBuilder project(String project) {
@@ -157,6 +162,7 @@ public interface KeystoneEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: producer
          */
         default KeystoneEndpointBuilder subsystem(String subsystem) {
@@ -169,6 +175,7 @@ public interface KeystoneEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: producer
          */
         default KeystoneEndpointBuilder username(String username) {

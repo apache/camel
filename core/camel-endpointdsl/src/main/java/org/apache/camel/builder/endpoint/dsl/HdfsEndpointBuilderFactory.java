@@ -169,6 +169,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HdfsEndpointConsumerBuilder namedNodes(String namedNodes) {
@@ -181,6 +182,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HdfsEndpointConsumerBuilder owner(String owner) {
@@ -366,6 +368,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder backoffErrorThreshold(
@@ -379,6 +382,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder backoffErrorThreshold(
@@ -392,6 +396,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder backoffIdleThreshold(
@@ -405,6 +410,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder backoffIdleThreshold(
@@ -422,6 +428,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder backoffMultiplier(
@@ -439,6 +446,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder backoffMultiplier(
@@ -593,6 +601,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder scheduledExecutorService(
@@ -608,6 +617,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder scheduledExecutorService(
@@ -635,6 +645,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder schedulerProperties(
@@ -650,6 +661,7 @@ public interface HdfsEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder schedulerProperties(
@@ -739,6 +751,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default HdfsEndpointConsumerBuilder kerberosConfigFileLocation(
@@ -753,6 +766,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default HdfsEndpointConsumerBuilder kerberosKeytabLocation(
@@ -765,6 +779,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default HdfsEndpointConsumerBuilder kerberosUsername(
@@ -792,6 +807,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHdfsEndpointConsumerBuilder exceptionHandler(
@@ -808,6 +824,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHdfsEndpointConsumerBuilder exceptionHandler(
@@ -820,6 +837,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHdfsEndpointConsumerBuilder exchangePattern(
@@ -833,6 +851,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHdfsEndpointConsumerBuilder exchangePattern(
@@ -849,6 +868,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHdfsEndpointConsumerBuilder pollStrategy(
@@ -865,6 +885,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHdfsEndpointConsumerBuilder pollStrategy(
@@ -1131,6 +1152,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder splitStrategy(
@@ -1300,6 +1322,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HdfsEndpointProducerBuilder namedNodes(String namedNodes) {
@@ -1312,6 +1335,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HdfsEndpointProducerBuilder owner(String owner) {
@@ -1442,6 +1466,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default HdfsEndpointProducerBuilder kerberosConfigFileLocation(
@@ -1456,6 +1481,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default HdfsEndpointProducerBuilder kerberosKeytabLocation(
@@ -1468,6 +1494,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default HdfsEndpointProducerBuilder kerberosUsername(
@@ -1745,6 +1772,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder splitStrategy(
@@ -1913,6 +1941,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HdfsEndpointBuilder namedNodes(String namedNodes) {
@@ -1925,6 +1954,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HdfsEndpointBuilder owner(String owner) {
@@ -1963,6 +1993,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default HdfsEndpointBuilder kerberosConfigFileLocation(
@@ -1977,6 +2008,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default HdfsEndpointBuilder kerberosKeytabLocation(
@@ -1989,6 +2021,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default HdfsEndpointBuilder kerberosUsername(String kerberosUsername) {
@@ -2263,6 +2296,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder splitStrategy(String splitStrategy) {

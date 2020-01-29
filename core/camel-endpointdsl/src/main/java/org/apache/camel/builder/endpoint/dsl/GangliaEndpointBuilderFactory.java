@@ -165,6 +165,7 @@ public interface GangliaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default GangliaEndpointBuilder prefix(String prefix) {
@@ -202,6 +203,7 @@ public interface GangliaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default GangliaEndpointBuilder spoofHostname(String spoofHostname) {
@@ -291,6 +293,7 @@ public interface GangliaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default GangliaEndpointBuilder units(String units) {

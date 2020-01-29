@@ -143,6 +143,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder backoffErrorThreshold(
@@ -156,6 +157,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder backoffErrorThreshold(
@@ -169,6 +171,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder backoffIdleThreshold(
@@ -182,6 +185,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder backoffIdleThreshold(
@@ -199,6 +203,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder backoffMultiplier(
@@ -216,6 +221,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder backoffMultiplier(
@@ -370,6 +376,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder scheduledExecutorService(
@@ -385,6 +392,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder scheduledExecutorService(
@@ -412,6 +420,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder schedulerProperties(
@@ -427,6 +436,7 @@ public interface JooqEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder schedulerProperties(
@@ -530,6 +540,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJooqEndpointConsumerBuilder exceptionHandler(
@@ -546,6 +557,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJooqEndpointConsumerBuilder exceptionHandler(
@@ -558,6 +570,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJooqEndpointConsumerBuilder exchangePattern(
@@ -571,6 +584,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJooqEndpointConsumerBuilder exchangePattern(
@@ -587,6 +601,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJooqEndpointConsumerBuilder pollStrategy(
@@ -603,6 +618,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJooqEndpointConsumerBuilder pollStrategy(
@@ -750,6 +766,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default JooqEndpointProducerBuilder query(String query) {

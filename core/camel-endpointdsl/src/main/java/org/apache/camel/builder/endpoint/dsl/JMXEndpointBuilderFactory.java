@@ -123,6 +123,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JMXEndpointBuilder monitorType(String monitorType) {
@@ -135,6 +136,7 @@ public interface JMXEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: consumer
          */
         default JMXEndpointBuilder objectDomain(String objectDomain) {
@@ -147,6 +149,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JMXEndpointBuilder objectName(String objectName) {
@@ -158,6 +161,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JMXEndpointBuilder observedAttribute(String observedAttribute) {
@@ -231,6 +235,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: string
          */
         default JMXEndpointBuilder stringToCompare(String stringToCompare) {
@@ -243,6 +248,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: counter
          */
         default JMXEndpointBuilder initThreshold(int initThreshold) {
@@ -255,6 +261,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: counter
          */
         default JMXEndpointBuilder initThreshold(String initThreshold) {
@@ -267,6 +274,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: counter
          */
         default JMXEndpointBuilder modulus(int modulus) {
@@ -279,6 +287,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: counter
          */
         default JMXEndpointBuilder modulus(String modulus) {
@@ -291,6 +300,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: counter
          */
         default JMXEndpointBuilder offset(int offset) {
@@ -303,6 +313,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: counter
          */
         default JMXEndpointBuilder offset(String offset) {
@@ -394,6 +405,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
+         * Default:
          * Group: gauge
          */
         default JMXEndpointBuilder thresholdHigh(Double thresholdHigh) {
@@ -405,6 +417,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
+         * Default:
          * Group: gauge
          */
         default JMXEndpointBuilder thresholdHigh(String thresholdHigh) {
@@ -416,6 +429,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
+         * Default:
          * Group: gauge
          */
         default JMXEndpointBuilder thresholdLow(Double thresholdLow) {
@@ -427,6 +441,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
+         * Default:
          * Group: gauge
          */
         default JMXEndpointBuilder thresholdLow(String thresholdLow) {
@@ -438,6 +453,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default JMXEndpointBuilder password(String password) {
@@ -449,6 +465,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default JMXEndpointBuilder user(String user) {
@@ -475,6 +492,7 @@ public interface JMXEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJMXEndpointBuilder exceptionHandler(
@@ -491,6 +509,7 @@ public interface JMXEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJMXEndpointBuilder exceptionHandler(
@@ -503,6 +522,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJMXEndpointBuilder exchangePattern(
@@ -516,6 +536,7 @@ public interface JMXEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJMXEndpointBuilder exchangePattern(
@@ -558,6 +579,7 @@ public interface JMXEndpointBuilderFactory {
          * The option is a: <code>java.util.concurrent.ExecutorService</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJMXEndpointBuilder executorService(
@@ -572,6 +594,7 @@ public interface JMXEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ExecutorService</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJMXEndpointBuilder executorService(
@@ -586,6 +609,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJMXEndpointBuilder handback(Object handback) {
@@ -599,6 +623,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJMXEndpointBuilder handback(String handback) {
@@ -611,6 +636,7 @@ public interface JMXEndpointBuilderFactory {
          * The option is a: <code>javax.management.NotificationFilter</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJMXEndpointBuilder notificationFilter(
@@ -624,6 +650,7 @@ public interface JMXEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.management.NotificationFilter</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJMXEndpointBuilder notificationFilter(
@@ -638,6 +665,7 @@ public interface JMXEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJMXEndpointBuilder objectProperties(
@@ -653,6 +681,7 @@ public interface JMXEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJMXEndpointBuilder objectProperties(

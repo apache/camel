@@ -54,129 +54,6 @@ public interface SftpEndpointBuilderFactory {
             return (AdvancedSftpEndpointConsumerBuilder) this;
         }
         /**
-         * This option is used to specify the encoding of the file. You can use
-         * this on the consumer, to specify the encodings of the files, which
-         * allow Camel to know the charset it should load the file content in
-         * case the file content is being accessed. Likewise when writing a
-         * file, you can use this option to specify which charset to write the
-         * file as well. Do mind that when writing the file Camel may have to
-         * read the message content into memory to be able to convert the data
-         * into the configured charset, so do not use this if you have big
-         * messages.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointConsumerBuilder charset(String charset) {
-            doSetProperty("charset", charset);
-            return this;
-        }
-        /**
-         * Whether or not to disconnect from remote FTP server right after use.
-         * Disconnect will only disconnect the current connection to the FTP
-         * server. If you have a consumer which you want to stop, then you need
-         * to stop the consumer/route instead.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default SftpEndpointConsumerBuilder disconnect(boolean disconnect) {
-            doSetProperty("disconnect", disconnect);
-            return this;
-        }
-        /**
-         * Whether or not to disconnect from remote FTP server right after use.
-         * Disconnect will only disconnect the current connection to the FTP
-         * server. If you have a consumer which you want to stop, then you need
-         * to stop the consumer/route instead.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default SftpEndpointConsumerBuilder disconnect(String disconnect) {
-            doSetProperty("disconnect", disconnect);
-            return this;
-        }
-        /**
-         * Producer: If provided, then Camel will write a 2nd done file when the
-         * original file has been written. The done file will be empty. This
-         * option configures what file name to use. Either you can specify a
-         * fixed name. Or you can use dynamic placeholders. The done file will
-         * always be written in the same folder as the original file. Consumer:
-         * If provided, Camel will only consume files if a done file exists.
-         * This option configures what file name to use. Either you can specify
-         * a fixed name. Or you can use dynamic placeholders.The done file is
-         * always expected in the same folder as the original file. Only
-         * ${file.name} and ${file.name.noext} is supported as dynamic
-         * placeholders.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointConsumerBuilder doneFileName(String doneFileName) {
-            doSetProperty("doneFileName", doneFileName);
-            return this;
-        }
-        /**
-         * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
-         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
-         * CamelOverruleFileName header which takes precedence over any existing
-         * CamelFileName header; the CamelOverruleFileName is a header that is
-         * used only once, and makes it easier as this avoids to temporary store
-         * CamelFileName and have to restore it afterwards.
-         * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointConsumerBuilder fileName(Expression fileName) {
-            doSetProperty("fileName", fileName);
-            return this;
-        }
-        /**
-         * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
-         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
-         * CamelOverruleFileName header which takes precedence over any existing
-         * CamelFileName header; the CamelOverruleFileName is a header that is
-         * used only once, and makes it easier as this avoids to temporary store
-         * CamelFileName and have to restore it afterwards.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointConsumerBuilder fileName(String fileName) {
-            doSetProperty("fileName", fileName);
-            return this;
-        }
-        /**
          * The logging level to use for JSCH activity logging. As JSCH is
          * verbose at by default at INFO level the threshold is WARN by default.
          * 
@@ -233,6 +110,374 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder separator(String separator) {
             doSetProperty("separator", separator);
+            return this;
+        }
+        /**
+         * Sets the download method to use when not using a local working
+         * directory. If set to true, the remote files are streamed to the route
+         * as they are read. When set to false, the remote files are loaded into
+         * memory before being sent into the route.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default SftpEndpointConsumerBuilder streamDownload(
+                boolean streamDownload) {
+            doSetProperty("streamDownload", streamDownload);
+            return this;
+        }
+        /**
+         * Sets the download method to use when not using a local working
+         * directory. If set to true, the remote files are streamed to the route
+         * as they are read. When set to false, the remote files are loaded into
+         * memory before being sent into the route.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default SftpEndpointConsumerBuilder streamDownload(String streamDownload) {
+            doSetProperty("streamDownload", streamDownload);
+            return this;
+        }
+        /**
+         * Set a comma separated list of ciphers that will be used in order of
+         * preference. Possible cipher names are defined by JCraft JSCH. Some
+         * examples include:
+         * aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc. If not specified the default list from JSCH will be used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointConsumerBuilder ciphers(String ciphers) {
+            doSetProperty("ciphers", ciphers);
+            return this;
+        }
+        /**
+         * Sets a key pair of the public and private key so to that the SFTP
+         * endpoint can do public/private key verification.
+         * 
+         * The option is a: <code>java.security.KeyPair</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointConsumerBuilder keyPair(KeyPair keyPair) {
+            doSetProperty("keyPair", keyPair);
+            return this;
+        }
+        /**
+         * Sets a key pair of the public and private key so to that the SFTP
+         * endpoint can do public/private key verification.
+         * 
+         * The option will be converted to a <code>java.security.KeyPair</code>
+         * type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointConsumerBuilder keyPair(String keyPair) {
+            doSetProperty("keyPair", keyPair);
+            return this;
+        }
+        /**
+         * Sets the known_hosts from the byte array, so that the SFTP endpoint
+         * can do host key verification.
+         * 
+         * The option is a: <code>byte[]</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointConsumerBuilder knownHosts(Byte[] knownHosts) {
+            doSetProperty("knownHosts", knownHosts);
+            return this;
+        }
+        /**
+         * Sets the known_hosts from the byte array, so that the SFTP endpoint
+         * can do host key verification.
+         * 
+         * The option will be converted to a <code>byte[]</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointConsumerBuilder knownHosts(String knownHosts) {
+            doSetProperty("knownHosts", knownHosts);
+            return this;
+        }
+        /**
+         * Sets the known_hosts file, so that the SFTP endpoint can do host key
+         * verification.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointConsumerBuilder knownHostsFile(String knownHostsFile) {
+            doSetProperty("knownHostsFile", knownHostsFile);
+            return this;
+        }
+        /**
+         * Sets the known_hosts file (loaded from classpath by default), so that
+         * the SFTP endpoint can do host key verification.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointConsumerBuilder knownHostsUri(String knownHostsUri) {
+            doSetProperty("knownHostsUri", knownHostsUri);
+            return this;
+        }
+        /**
+         * Password to use for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointConsumerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Set the preferred authentications which SFTP endpoint will used. Some
+         * example include:password,publickey. If not specified the default list
+         * from JSCH will be used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointConsumerBuilder preferredAuthentications(
+                String preferredAuthentications) {
+            doSetProperty("preferredAuthentications", preferredAuthentications);
+            return this;
+        }
+        /**
+         * Set the private key as byte so that the SFTP endpoint can do private
+         * key verification.
+         * 
+         * The option is a: <code>byte[]</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointConsumerBuilder privateKey(Byte[] privateKey) {
+            doSetProperty("privateKey", privateKey);
+            return this;
+        }
+        /**
+         * Set the private key as byte so that the SFTP endpoint can do private
+         * key verification.
+         * 
+         * The option will be converted to a <code>byte[]</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointConsumerBuilder privateKey(String privateKey) {
+            doSetProperty("privateKey", privateKey);
+            return this;
+        }
+        /**
+         * Set the private key file so that the SFTP endpoint can do private key
+         * verification.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointConsumerBuilder privateKeyFile(String privateKeyFile) {
+            doSetProperty("privateKeyFile", privateKeyFile);
+            return this;
+        }
+        /**
+         * Set the private key file passphrase so that the SFTP endpoint can do
+         * private key verification.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointConsumerBuilder privateKeyPassphrase(
+                String privateKeyPassphrase) {
+            doSetProperty("privateKeyPassphrase", privateKeyPassphrase);
+            return this;
+        }
+        /**
+         * Set the private key file (loaded from classpath by default) so that
+         * the SFTP endpoint can do private key verification.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointConsumerBuilder privateKeyUri(String privateKeyUri) {
+            doSetProperty("privateKeyUri", privateKeyUri);
+            return this;
+        }
+        /**
+         * Sets whether to use strict host key checking.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: no
+         * Group: security
+         */
+        default SftpEndpointConsumerBuilder strictHostKeyChecking(
+                String strictHostKeyChecking) {
+            doSetProperty("strictHostKeyChecking", strictHostKeyChecking);
+            return this;
+        }
+        /**
+         * Username to use for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointConsumerBuilder username(String username) {
+            doSetProperty("username", username);
+            return this;
+        }
+        /**
+         * If knownHostFile has not been explicit configured then use the host
+         * file from System.getProperty(user.home)/.ssh/known_hosts.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         */
+        default SftpEndpointConsumerBuilder useUserKnownHostsFile(
+                boolean useUserKnownHostsFile) {
+            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
+            return this;
+        }
+        /**
+         * If knownHostFile has not been explicit configured then use the host
+         * file from System.getProperty(user.home)/.ssh/known_hosts.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         */
+        default SftpEndpointConsumerBuilder useUserKnownHostsFile(
+                String useUserKnownHostsFile) {
+            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
+            return this;
+        }
+        /**
+         * This option is used to specify the encoding of the file. You can use
+         * this on the consumer, to specify the encodings of the files, which
+         * allow Camel to know the charset it should load the file content in
+         * case the file content is being accessed. Likewise when writing a
+         * file, you can use this option to specify which charset to write the
+         * file as well. Do mind that when writing the file Camel may have to
+         * read the message content into memory to be able to convert the data
+         * into the configured charset, so do not use this if you have big
+         * messages.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: common
+         */
+        default SftpEndpointConsumerBuilder charset(String charset) {
+            doSetProperty("charset", charset);
+            return this;
+        }
+        /**
+         * Producer: If provided, then Camel will write a 2nd done file when the
+         * original file has been written. The done file will be empty. This
+         * option configures what file name to use. Either you can specify a
+         * fixed name. Or you can use dynamic placeholders. The done file will
+         * always be written in the same folder as the original file. Consumer:
+         * If provided, Camel will only consume files if a done file exists.
+         * This option configures what file name to use. Either you can specify
+         * a fixed name. Or you can use dynamic placeholders.The done file is
+         * always expected in the same folder as the original file. Only
+         * ${file.name} and ${file.name.noext} is supported as dynamic
+         * placeholders.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: common
+         */
+        default SftpEndpointConsumerBuilder doneFileName(String doneFileName) {
+            doSetProperty("doneFileName", doneFileName);
+            return this;
+        }
+        /**
+         * Use Expression such as File Language to dynamically set the filename.
+         * For consumers, it's used as a filename filter. For producers, it's
+         * used to evaluate the filename to write. If an expression is set, it
+         * take precedence over the CamelFileName header. (Note: The header
+         * itself can also be an Expression). The expression options support
+         * both String and Expression types. If the expression is a String type,
+         * it is always evaluated using the File Language. If the expression is
+         * an Expression type, the specified Expression type is used - this
+         * allows you, for instance, to use OGNL expressions. For the consumer,
+         * you can use it to filter filenames, so you can for instance consume
+         * today's file using the File Language syntax:
+         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
+         * CamelOverruleFileName header which takes precedence over any existing
+         * CamelFileName header; the CamelOverruleFileName is a header that is
+         * used only once, and makes it easier as this avoids to temporary store
+         * CamelFileName and have to restore it afterwards.
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Default:
+         * Group: common
+         */
+        default SftpEndpointConsumerBuilder fileName(Expression fileName) {
+            doSetProperty("fileName", fileName);
+            return this;
+        }
+        /**
+         * Use Expression such as File Language to dynamically set the filename.
+         * For consumers, it's used as a filename filter. For producers, it's
+         * used to evaluate the filename to write. If an expression is set, it
+         * take precedence over the CamelFileName header. (Note: The header
+         * itself can also be an Expression). The expression options support
+         * both String and Expression types. If the expression is a String type,
+         * it is always evaluated using the File Language. If the expression is
+         * an Expression type, the specified Expression type is used - this
+         * allows you, for instance, to use OGNL expressions. For the consumer,
+         * you can use it to filter filenames, so you can for instance consume
+         * today's file using the File Language syntax:
+         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
+         * CamelOverruleFileName header which takes precedence over any existing
+         * CamelFileName header; the CamelOverruleFileName is a header that is
+         * used only once, and makes it easier as this avoids to temporary store
+         * CamelFileName and have to restore it afterwards.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.Expression</code> type.
+         * 
+         * Default:
+         * Group: common
+         */
+        default SftpEndpointConsumerBuilder fileName(String fileName) {
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -305,6 +550,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder moveFailed(Expression moveFailed) {
@@ -320,6 +566,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder moveFailed(String moveFailed) {
@@ -363,6 +610,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder preMove(Expression preMove) {
@@ -377,6 +625,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder preMove(String preMove) {
@@ -472,43 +721,13 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the download method to use when not using a local working
-         * directory. If set to true, the remote files are streamed to the route
-         * as they are read. When set to false, the remote files are loaded into
-         * memory before being sent into the route.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default SftpEndpointConsumerBuilder streamDownload(
-                boolean streamDownload) {
-            doSetProperty("streamDownload", streamDownload);
-            return this;
-        }
-        /**
-         * Sets the download method to use when not using a local working
-         * directory. If set to true, the remote files are streamed to the route
-         * as they are read. When set to false, the remote files are loaded into
-         * memory before being sent into the route.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default SftpEndpointConsumerBuilder streamDownload(String streamDownload) {
-            doSetProperty("streamDownload", streamDownload);
-            return this;
-        }
-        /**
          * Ant style filter exclusion. If both antInclude and antExclude are
          * used, antExclude takes precedence over antInclude. Multiple
          * exclusions may be specified in comma-delimited format.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder antExclude(String antExclude) {
@@ -547,6 +766,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder antInclude(String antInclude) {
@@ -598,6 +818,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder exclude(String exclude) {
@@ -612,6 +833,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileFilter&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder filter(Object filter) {
@@ -626,6 +848,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileFilter&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder filter(String filter) {
@@ -639,6 +862,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Predicate</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder filterDirectory(
@@ -654,6 +878,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Predicate</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder filterDirectory(
@@ -667,6 +892,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Predicate</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder filterFile(Predicate filterFile) {
@@ -680,6 +906,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Predicate</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder filterFile(String filterFile) {
@@ -725,6 +952,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder idempotentKey(
@@ -741,6 +969,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder idempotentKey(String idempotentKey) {
@@ -755,6 +984,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder idempotentRepository(
@@ -770,6 +1000,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder idempotentRepository(
@@ -786,6 +1017,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder include(String include) {
@@ -831,6 +1063,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder maxMessagesPerPoll(
@@ -851,6 +1084,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder maxMessagesPerPoll(
@@ -865,6 +1099,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder minDepth(int minDepth) {
@@ -878,6 +1113,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder minDepth(String minDepth) {
@@ -891,6 +1127,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder move(Expression move) {
@@ -905,6 +1142,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder move(String move) {
@@ -919,6 +1157,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * 
+         * Default:
          * Group: lock
          */
         default SftpEndpointConsumerBuilder exclusiveReadLockStrategy(
@@ -934,6 +1173,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * 
+         * Default:
          * Group: lock
          */
         default SftpEndpointConsumerBuilder exclusiveReadLockStrategy(
@@ -945,41 +1185,41 @@ public interface SftpEndpointBuilderFactory {
          * Used by consumer, to only poll the files if it has exclusive
          * read-lock on the file (i.e. the file is not in-progress or being
          * written). Camel will wait until the file lock is granted. This option
-         * provides the build in strategies: - none - No read lock is in use -
-         * markerFile - Camel creates a marker file (fileName.camelLock) and
-         * then holds a lock on it. This option is not available for the FTP
-         * component - changed - Changed is using file length/modification
+         * provides the build in strategies:\n\n - none - No read lock is in
+         * use\n - markerFile - Camel creates a marker file (fileName.camelLock)
+         * and then holds a lock on it. This option is not available for the FTP
+         * component\n - changed - Changed is using file length/modification
          * timestamp to detect whether the file is currently being copied or
          * not. Will at least use 1 sec to determine this, so this option cannot
          * consume files as fast as the others, but can be more reliable as the
          * JDK IO API cannot always determine whether a file is currently being
          * used by another process. The option readLockCheckInterval can be used
-         * to set the check frequency. - fileLock - is for using
+         * to set the check frequency.\n - fileLock - is for using
          * java.nio.channels.FileLock. This option is not avail for Windows OS
          * and the FTP component. This approach should be avoided when accessing
          * a remote file system via a mount/share unless that file system
-         * supports distributed file locks. - rename - rename is for using a try
-         * to rename the file as a test if we can get exclusive read-lock. -
-         * idempotent - (only for file component) idempotent is for using a
+         * supports distributed file locks.\n - rename - rename is for using a
+         * try to rename the file as a test if we can get exclusive read-lock.\n
+         * - idempotent - (only for file component) idempotent is for using a
          * idempotentRepository as the read-lock. This allows to use read locks
          * that supports clustering if the idempotent repository implementation
-         * supports that. - idempotent-changed - (only for file component)
+         * supports that.\n - idempotent-changed - (only for file component)
          * idempotent-changed is for using a idempotentRepository and changed as
          * the combined read-lock. This allows to use read locks that supports
-         * clustering if the idempotent repository implementation supports that.
-         * - idempotent-rename - (only for file component) idempotent-rename is
-         * for using a idempotentRepository and rename as the combined
-         * read-lock. This allows to use read locks that supports clustering if
-         * the idempotent repository implementation supports that. Notice: The
-         * various read locks is not all suited to work in clustered mode, where
-         * concurrent consumers on different nodes is competing for the same
-         * files on a shared file system. The markerFile using a close to atomic
-         * operation to create the empty marker file, but its not guaranteed to
-         * work in a cluster. The fileLock may work better but then the file
-         * system need to support distributed file locks, and so on. Using the
-         * idempotent read lock can support clustering if the idempotent
-         * repository supports clustering, such as Hazelcast Component or
-         * Infinispan.
+         * clustering if the idempotent repository implementation supports
+         * that.\n - idempotent-rename - (only for file component)
+         * idempotent-rename is for using a idempotentRepository and rename as
+         * the combined read-lock. This allows to use read locks that supports
+         * clustering if the idempotent repository implementation supports
+         * that.\n \nNotice: The various read locks is not all suited to work in
+         * clustered mode, where concurrent consumers on different nodes is
+         * competing for the same files on a shared file system. The markerFile
+         * using a close to atomic operation to create the empty marker file,
+         * but its not guaranteed to work in a cluster. The fileLock may work
+         * better but then the file system need to support distributed file
+         * locks, and so on. Using the idempotent read lock can support
+         * clustering if the idempotent repository supports clustering, such as
+         * Hazelcast Component or Infinispan.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1116,6 +1356,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
@@ -1135,6 +1376,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
@@ -1154,6 +1396,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseDelay(
@@ -1173,6 +1416,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseDelay(
@@ -1187,6 +1431,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
@@ -1201,6 +1446,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
@@ -1474,6 +1720,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder backoffErrorThreshold(
@@ -1487,6 +1734,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder backoffErrorThreshold(
@@ -1500,6 +1748,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder backoffIdleThreshold(
@@ -1513,6 +1762,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder backoffIdleThreshold(
@@ -1530,6 +1780,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder backoffMultiplier(
@@ -1547,6 +1798,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder backoffMultiplier(
@@ -1701,6 +1953,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder scheduledExecutorService(
@@ -1716,6 +1969,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder scheduledExecutorService(
@@ -1743,6 +1997,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder schedulerProperties(
@@ -1758,6 +2013,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder schedulerProperties(
@@ -1874,6 +2130,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
          * type.
          * 
+         * Default:
          * Group: sort
          */
         default SftpEndpointConsumerBuilder sortBy(Comparator<Exchange> sortBy) {
@@ -1889,6 +2146,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
          * type.
          * 
+         * Default:
          * Group: sort
          */
         default SftpEndpointConsumerBuilder sortBy(String sortBy) {
@@ -1901,6 +2159,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;&gt;</code> type.
          * 
+         * Default:
          * Group: sort
          */
         default SftpEndpointConsumerBuilder sorter(Comparator<Object> sorter) {
@@ -1913,235 +2172,11 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;&gt;</code> type.
          * 
+         * Default:
          * Group: sort
          */
         default SftpEndpointConsumerBuilder sorter(String sorter) {
             doSetProperty("sorter", sorter);
-            return this;
-        }
-        /**
-         * Set a comma separated list of ciphers that will be used in order of
-         * preference. Possible cipher names are defined by JCraft JSCH. Some
-         * examples include:
-         * aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc. If not specified the default list from JSCH will be used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointConsumerBuilder ciphers(String ciphers) {
-            doSetProperty("ciphers", ciphers);
-            return this;
-        }
-        /**
-         * Sets a key pair of the public and private key so to that the SFTP
-         * endpoint can do public/private key verification.
-         * 
-         * The option is a: <code>java.security.KeyPair</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointConsumerBuilder keyPair(KeyPair keyPair) {
-            doSetProperty("keyPair", keyPair);
-            return this;
-        }
-        /**
-         * Sets a key pair of the public and private key so to that the SFTP
-         * endpoint can do public/private key verification.
-         * 
-         * The option will be converted to a <code>java.security.KeyPair</code>
-         * type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointConsumerBuilder keyPair(String keyPair) {
-            doSetProperty("keyPair", keyPair);
-            return this;
-        }
-        /**
-         * Sets the known_hosts from the byte array, so that the SFTP endpoint
-         * can do host key verification.
-         * 
-         * The option is a: <code>byte[]</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointConsumerBuilder knownHosts(Byte[] knownHosts) {
-            doSetProperty("knownHosts", knownHosts);
-            return this;
-        }
-        /**
-         * Sets the known_hosts from the byte array, so that the SFTP endpoint
-         * can do host key verification.
-         * 
-         * The option will be converted to a <code>byte[]</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointConsumerBuilder knownHosts(String knownHosts) {
-            doSetProperty("knownHosts", knownHosts);
-            return this;
-        }
-        /**
-         * Sets the known_hosts file, so that the SFTP endpoint can do host key
-         * verification.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointConsumerBuilder knownHostsFile(String knownHostsFile) {
-            doSetProperty("knownHostsFile", knownHostsFile);
-            return this;
-        }
-        /**
-         * Sets the known_hosts file (loaded from classpath by default), so that
-         * the SFTP endpoint can do host key verification.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointConsumerBuilder knownHostsUri(String knownHostsUri) {
-            doSetProperty("knownHostsUri", knownHostsUri);
-            return this;
-        }
-        /**
-         * Password to use for login.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointConsumerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
-         * Set the preferred authentications which SFTP endpoint will used. Some
-         * example include:password,publickey. If not specified the default list
-         * from JSCH will be used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointConsumerBuilder preferredAuthentications(
-                String preferredAuthentications) {
-            doSetProperty("preferredAuthentications", preferredAuthentications);
-            return this;
-        }
-        /**
-         * Set the private key as byte so that the SFTP endpoint can do private
-         * key verification.
-         * 
-         * The option is a: <code>byte[]</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointConsumerBuilder privateKey(Byte[] privateKey) {
-            doSetProperty("privateKey", privateKey);
-            return this;
-        }
-        /**
-         * Set the private key as byte so that the SFTP endpoint can do private
-         * key verification.
-         * 
-         * The option will be converted to a <code>byte[]</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointConsumerBuilder privateKey(String privateKey) {
-            doSetProperty("privateKey", privateKey);
-            return this;
-        }
-        /**
-         * Set the private key file so that the SFTP endpoint can do private key
-         * verification.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointConsumerBuilder privateKeyFile(String privateKeyFile) {
-            doSetProperty("privateKeyFile", privateKeyFile);
-            return this;
-        }
-        /**
-         * Set the private key file passphrase so that the SFTP endpoint can do
-         * private key verification.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointConsumerBuilder privateKeyPassphrase(
-                String privateKeyPassphrase) {
-            doSetProperty("privateKeyPassphrase", privateKeyPassphrase);
-            return this;
-        }
-        /**
-         * Set the private key file (loaded from classpath by default) so that
-         * the SFTP endpoint can do private key verification.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointConsumerBuilder privateKeyUri(String privateKeyUri) {
-            doSetProperty("privateKeyUri", privateKeyUri);
-            return this;
-        }
-        /**
-         * Sets whether to use strict host key checking.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: no
-         * Group: security
-         */
-        default SftpEndpointConsumerBuilder strictHostKeyChecking(
-                String strictHostKeyChecking) {
-            doSetProperty("strictHostKeyChecking", strictHostKeyChecking);
-            return this;
-        }
-        /**
-         * Username to use for login.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointConsumerBuilder username(String username) {
-            doSetProperty("username", username);
-            return this;
-        }
-        /**
-         * If knownHostFile has not been explicit configured then use the host
-         * file from System.getProperty(user.home)/.ssh/known_hosts.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: security
-         */
-        default SftpEndpointConsumerBuilder useUserKnownHostsFile(
-                boolean useUserKnownHostsFile) {
-            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
-            return this;
-        }
-        /**
-         * If knownHostFile has not been explicit configured then use the host
-         * file from System.getProperty(user.home)/.ssh/known_hosts.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: security
-         */
-        default SftpEndpointConsumerBuilder useUserKnownHostsFile(
-                String useUserKnownHostsFile) {
-            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
             return this;
         }
     }
@@ -2154,135 +2189,6 @@ public interface SftpEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default SftpEndpointConsumerBuilder basic() {
             return (SftpEndpointConsumerBuilder) this;
-        }
-        /**
-         * If set this option to be true, camel-ftp will use the list file
-         * directly to check if the file exists. Since some FTP server may not
-         * support to list the file directly, if the option is false, camel-ftp
-         * will use the old way to list the directory and check if the file
-         * exists. This option also influences readLock=changed to control
-         * whether it performs a fast check to update file information or not.
-         * This can be used to speed up the process if the FTP server has a lot
-         * of files.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common (advanced)
-         */
-        default AdvancedSftpEndpointConsumerBuilder fastExistsCheck(
-                boolean fastExistsCheck) {
-            doSetProperty("fastExistsCheck", fastExistsCheck);
-            return this;
-        }
-        /**
-         * If set this option to be true, camel-ftp will use the list file
-         * directly to check if the file exists. Since some FTP server may not
-         * support to list the file directly, if the option is false, camel-ftp
-         * will use the old way to list the directory and check if the file
-         * exists. This option also influences readLock=changed to control
-         * whether it performs a fast check to update file information or not.
-         * This can be used to speed up the process if the FTP server has a lot
-         * of files.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common (advanced)
-         */
-        default AdvancedSftpEndpointConsumerBuilder fastExistsCheck(
-                String fastExistsCheck) {
-            doSetProperty("fastExistsCheck", fastExistsCheck);
-            return this;
-        }
-        /**
-         * Whether the FTP consumer should download the file. If this option is
-         * set to false, then the message body will be null, but the consumer
-         * will still trigger a Camel Exchange that has details about the file
-         * such as file name, file size, etc. It's just that the file will not
-         * be downloaded.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer (advanced)
-         */
-        default AdvancedSftpEndpointConsumerBuilder download(boolean download) {
-            doSetProperty("download", download);
-            return this;
-        }
-        /**
-         * Whether the FTP consumer should download the file. If this option is
-         * set to false, then the message body will be null, but the consumer
-         * will still trigger a Camel Exchange that has details about the file
-         * such as file name, file size, etc. It's just that the file will not
-         * be downloaded.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer (advanced)
-         */
-        default AdvancedSftpEndpointConsumerBuilder download(String download) {
-            doSetProperty("download", download);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedSftpEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedSftpEndpointConsumerBuilder exceptionHandler(
-                String exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedSftpEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedSftpEndpointConsumerBuilder exchangePattern(
-                String exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
         }
         /**
          * Whether to ignore when (trying to list files in directories or when
@@ -2316,153 +2222,6 @@ public interface SftpEndpointBuilderFactory {
         default AdvancedSftpEndpointConsumerBuilder ignoreFileNotFoundOrPermissionError(
                 String ignoreFileNotFoundOrPermissionError) {
             doSetProperty("ignoreFileNotFoundOrPermissionError", ignoreFileNotFoundOrPermissionError);
-            return this;
-        }
-        /**
-         * A pluggable in-progress repository
-         * org.apache.camel.spi.IdempotentRepository. The in-progress repository
-         * is used to account the current in progress files being consumed. By
-         * default a memory based repository is used.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedSftpEndpointConsumerBuilder inProgressRepository(
-                IdempotentRepository inProgressRepository) {
-            doSetProperty("inProgressRepository", inProgressRepository);
-            return this;
-        }
-        /**
-         * A pluggable in-progress repository
-         * org.apache.camel.spi.IdempotentRepository. The in-progress repository
-         * is used to account the current in progress files being consumed. By
-         * default a memory based repository is used.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedSftpEndpointConsumerBuilder inProgressRepository(
-                String inProgressRepository) {
-            doSetProperty("inProgressRepository", inProgressRepository);
-            return this;
-        }
-        /**
-         * When consuming, a local work directory can be used to store the
-         * remote file content directly in local files, to avoid loading the
-         * content into memory. This is beneficial, if you consume a very big
-         * remote file and thus can conserve memory.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedSftpEndpointConsumerBuilder localWorkDirectory(
-                String localWorkDirectory) {
-            doSetProperty("localWorkDirectory", localWorkDirectory);
-            return this;
-        }
-        /**
-         * To use a custom org.apache.camel.spi.ExceptionHandler to handle any
-         * thrown exceptions that happens during the file on completion process
-         * where the consumer does either a commit or rollback. The default
-         * implementation will log any exception at WARN level and ignore.
-         * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedSftpEndpointConsumerBuilder onCompletionExceptionHandler(
-                ExceptionHandler onCompletionExceptionHandler) {
-            doSetProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
-            return this;
-        }
-        /**
-         * To use a custom org.apache.camel.spi.ExceptionHandler to handle any
-         * thrown exceptions that happens during the file on completion process
-         * where the consumer does either a commit or rollback. The default
-         * implementation will log any exception at WARN level and ignore.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedSftpEndpointConsumerBuilder onCompletionExceptionHandler(
-                String onCompletionExceptionHandler) {
-            doSetProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
-            return this;
-        }
-        /**
-         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
-         * you to provide your custom implementation to control error handling
-         * usually occurred during the poll operation before an Exchange have
-         * been created and being routed in Camel.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedSftpEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
-            doSetProperty("pollStrategy", pollStrategy);
-            return this;
-        }
-        /**
-         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
-         * you to provide your custom implementation to control error handling
-         * usually occurred during the poll operation before an Exchange have
-         * been created and being routed in Camel.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedSftpEndpointConsumerBuilder pollStrategy(
-                String pollStrategy) {
-            doSetProperty("pollStrategy", pollStrategy);
-            return this;
-        }
-        /**
-         * A pluggable
-         * org.apache.camel.component.file.GenericFileProcessStrategy allowing
-         * you to implement your own readLock option or similar. Can also be
-         * used when special conditions must be met before a file can be
-         * consumed, such as a special ready file exists. If this option is set
-         * then the readLock option does not apply.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedSftpEndpointConsumerBuilder processStrategy(
-                Object processStrategy) {
-            doSetProperty("processStrategy", processStrategy);
-            return this;
-        }
-        /**
-         * A pluggable
-         * org.apache.camel.component.file.GenericFileProcessStrategy allowing
-         * you to implement your own readLock option or similar. Can also be
-         * used when special conditions must be met before a file can be
-         * consumed, such as a special ready file exists. If this option is set
-         * then the readLock option does not apply.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedSftpEndpointConsumerBuilder processStrategy(
-                String processStrategy) {
-            doSetProperty("processStrategy", processStrategy);
             return this;
         }
         /**
@@ -2502,70 +2261,12 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Automatically create missing directories in the file's pathname. For
-         * the file consumer, that means creating the starting directory. For
-         * the file producer, it means the directory the files should be written
-         * to.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointConsumerBuilder autoCreate(
-                boolean autoCreate) {
-            doSetProperty("autoCreate", autoCreate);
-            return this;
-        }
-        /**
-         * Automatically create missing directories in the file's pathname. For
-         * the file consumer, that means creating the starting directory. For
-         * the file producer, it means the directory the files should be written
-         * to.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointConsumerBuilder autoCreate(String autoCreate) {
-            doSetProperty("autoCreate", autoCreate);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Specifies the address of the local interface against which the
          * connection should bind.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder bindAddress(
@@ -2580,6 +2281,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder bulkRequests(
@@ -2595,6 +2297,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder bulkRequests(
@@ -2609,6 +2312,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder compression(int compression) {
@@ -2622,6 +2326,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder compression(
@@ -2658,37 +2363,12 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the maximum reconnect attempts Camel performs when it tries
-         * to connect to the remote FTP server. Use 0 to disable this behavior.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointConsumerBuilder maximumReconnectAttempts(
-                int maximumReconnectAttempts) {
-            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
-            return this;
-        }
-        /**
-         * Specifies the maximum reconnect attempts Camel performs when it tries
-         * to connect to the remote FTP server. Use 0 to disable this behavior.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointConsumerBuilder maximumReconnectAttempts(
-                String maximumReconnectAttempts) {
-            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
-            return this;
-        }
-        /**
          * To use a custom configured com.jcraft.jsch.Proxy. This proxy is used
          * to consume/send messages from the target SFTP host.
          * 
          * The option is a: <code>com.jcraft.jsch.Proxy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder proxy(Object proxy) {
@@ -2702,36 +2382,11 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>com.jcraft.jsch.Proxy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder proxy(String proxy) {
             doSetProperty("proxy", proxy);
-            return this;
-        }
-        /**
-         * Delay in millis Camel will wait before performing a reconnect
-         * attempt.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointConsumerBuilder reconnectDelay(
-                long reconnectDelay) {
-            doSetProperty("reconnectDelay", reconnectDelay);
-            return this;
-        }
-        /**
-         * Delay in millis Camel will wait before performing a reconnect
-         * attempt.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointConsumerBuilder reconnectDelay(
-                String reconnectDelay) {
-            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -2773,6 +2428,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder serverAliveInterval(
@@ -2787,6 +2443,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder serverAliveInterval(
@@ -2859,34 +2516,6 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointConsumerBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointConsumerBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
          * Should an exception be thrown if connection failed (exhausted) By
          * default exception is not thrown and a WARN is logged. You can use
          * this to enable exception being thrown and handle the thrown exception
@@ -2944,6 +2573,310 @@ public interface SftpEndpointBuilderFactory {
             doSetProperty("timeout", timeout);
             return this;
         }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedSftpEndpointConsumerBuilder exceptionHandler(
+                ExceptionHandler exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedSftpEndpointConsumerBuilder exceptionHandler(
+                String exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedSftpEndpointConsumerBuilder exchangePattern(
+                ExchangePattern exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedSftpEndpointConsumerBuilder exchangePattern(
+                String exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * A pluggable in-progress repository
+         * org.apache.camel.spi.IdempotentRepository. The in-progress repository
+         * is used to account the current in progress files being consumed. By
+         * default a memory based repository is used.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedSftpEndpointConsumerBuilder inProgressRepository(
+                IdempotentRepository inProgressRepository) {
+            doSetProperty("inProgressRepository", inProgressRepository);
+            return this;
+        }
+        /**
+         * A pluggable in-progress repository
+         * org.apache.camel.spi.IdempotentRepository. The in-progress repository
+         * is used to account the current in progress files being consumed. By
+         * default a memory based repository is used.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedSftpEndpointConsumerBuilder inProgressRepository(
+                String inProgressRepository) {
+            doSetProperty("inProgressRepository", inProgressRepository);
+            return this;
+        }
+        /**
+         * When consuming, a local work directory can be used to store the
+         * remote file content directly in local files, to avoid loading the
+         * content into memory. This is beneficial, if you consume a very big
+         * remote file and thus can conserve memory.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedSftpEndpointConsumerBuilder localWorkDirectory(
+                String localWorkDirectory) {
+            doSetProperty("localWorkDirectory", localWorkDirectory);
+            return this;
+        }
+        /**
+         * To use a custom org.apache.camel.spi.ExceptionHandler to handle any
+         * thrown exceptions that happens during the file on completion process
+         * where the consumer does either a commit or rollback. The default
+         * implementation will log any exception at WARN level and ignore.
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedSftpEndpointConsumerBuilder onCompletionExceptionHandler(
+                ExceptionHandler onCompletionExceptionHandler) {
+            doSetProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
+            return this;
+        }
+        /**
+         * To use a custom org.apache.camel.spi.ExceptionHandler to handle any
+         * thrown exceptions that happens during the file on completion process
+         * where the consumer does either a commit or rollback. The default
+         * implementation will log any exception at WARN level and ignore.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedSftpEndpointConsumerBuilder onCompletionExceptionHandler(
+                String onCompletionExceptionHandler) {
+            doSetProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedSftpEndpointConsumerBuilder pollStrategy(
+                PollingConsumerPollStrategy pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedSftpEndpointConsumerBuilder pollStrategy(
+                String pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
+        /**
+         * A pluggable
+         * org.apache.camel.component.file.GenericFileProcessStrategy allowing
+         * you to implement your own readLock option or similar. Can also be
+         * used when special conditions must be met before a file can be
+         * consumed, such as a special ready file exists. If this option is set
+         * then the readLock option does not apply.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedSftpEndpointConsumerBuilder processStrategy(
+                Object processStrategy) {
+            doSetProperty("processStrategy", processStrategy);
+            return this;
+        }
+        /**
+         * A pluggable
+         * org.apache.camel.component.file.GenericFileProcessStrategy allowing
+         * you to implement your own readLock option or similar. Can also be
+         * used when special conditions must be met before a file can be
+         * consumed, such as a special ready file exists. If this option is set
+         * then the readLock option does not apply.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedSftpEndpointConsumerBuilder processStrategy(
+                String processStrategy) {
+            doSetProperty("processStrategy", processStrategy);
+            return this;
+        }
+        /**
+         * Automatically create missing directories in the file's pathname. For
+         * the file consumer, that means creating the starting directory. For
+         * the file producer, it means the directory the files should be written
+         * to.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointConsumerBuilder autoCreate(
+                boolean autoCreate) {
+            doSetProperty("autoCreate", autoCreate);
+            return this;
+        }
+        /**
+         * Automatically create missing directories in the file's pathname. For
+         * the file consumer, that means creating the starting directory. For
+         * the file producer, it means the directory the files should be written
+         * to.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointConsumerBuilder autoCreate(String autoCreate) {
+            doSetProperty("autoCreate", autoCreate);
+            return this;
+        }
+        /**
+         * Whether the endpoint should use basic property binding (Camel 2.x) or
+         * the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointConsumerBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Whether the endpoint should use basic property binding (Camel 2.x) or
+         * the newer property binding with additional capabilities.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointConsumerBuilder basicPropertyBinding(
+                String basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointConsumerBuilder synchronous(
+                boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointConsumerBuilder synchronous(
+                String synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
     }
 
     /**
@@ -2954,129 +2887,6 @@ public interface SftpEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedSftpEndpointProducerBuilder advanced() {
             return (AdvancedSftpEndpointProducerBuilder) this;
-        }
-        /**
-         * This option is used to specify the encoding of the file. You can use
-         * this on the consumer, to specify the encodings of the files, which
-         * allow Camel to know the charset it should load the file content in
-         * case the file content is being accessed. Likewise when writing a
-         * file, you can use this option to specify which charset to write the
-         * file as well. Do mind that when writing the file Camel may have to
-         * read the message content into memory to be able to convert the data
-         * into the configured charset, so do not use this if you have big
-         * messages.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointProducerBuilder charset(String charset) {
-            doSetProperty("charset", charset);
-            return this;
-        }
-        /**
-         * Whether or not to disconnect from remote FTP server right after use.
-         * Disconnect will only disconnect the current connection to the FTP
-         * server. If you have a consumer which you want to stop, then you need
-         * to stop the consumer/route instead.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default SftpEndpointProducerBuilder disconnect(boolean disconnect) {
-            doSetProperty("disconnect", disconnect);
-            return this;
-        }
-        /**
-         * Whether or not to disconnect from remote FTP server right after use.
-         * Disconnect will only disconnect the current connection to the FTP
-         * server. If you have a consumer which you want to stop, then you need
-         * to stop the consumer/route instead.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default SftpEndpointProducerBuilder disconnect(String disconnect) {
-            doSetProperty("disconnect", disconnect);
-            return this;
-        }
-        /**
-         * Producer: If provided, then Camel will write a 2nd done file when the
-         * original file has been written. The done file will be empty. This
-         * option configures what file name to use. Either you can specify a
-         * fixed name. Or you can use dynamic placeholders. The done file will
-         * always be written in the same folder as the original file. Consumer:
-         * If provided, Camel will only consume files if a done file exists.
-         * This option configures what file name to use. Either you can specify
-         * a fixed name. Or you can use dynamic placeholders.The done file is
-         * always expected in the same folder as the original file. Only
-         * ${file.name} and ${file.name.noext} is supported as dynamic
-         * placeholders.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointProducerBuilder doneFileName(String doneFileName) {
-            doSetProperty("doneFileName", doneFileName);
-            return this;
-        }
-        /**
-         * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
-         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
-         * CamelOverruleFileName header which takes precedence over any existing
-         * CamelFileName header; the CamelOverruleFileName is a header that is
-         * used only once, and makes it easier as this avoids to temporary store
-         * CamelFileName and have to restore it afterwards.
-         * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointProducerBuilder fileName(Expression fileName) {
-            doSetProperty("fileName", fileName);
-            return this;
-        }
-        /**
-         * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
-         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
-         * CamelOverruleFileName header which takes precedence over any existing
-         * CamelFileName header; the CamelOverruleFileName is a header that is
-         * used only once, and makes it easier as this avoids to temporary store
-         * CamelFileName and have to restore it afterwards.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointProducerBuilder fileName(String fileName) {
-            doSetProperty("fileName", fileName);
-            return this;
         }
         /**
          * The logging level to use for JSCH activity logging. As JSCH is
@@ -3138,21 +2948,358 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set a comma separated list of ciphers that will be used in order of
+         * preference. Possible cipher names are defined by JCraft JSCH. Some
+         * examples include:
+         * aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc. If not specified the default list from JSCH will be used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointProducerBuilder ciphers(String ciphers) {
+            doSetProperty("ciphers", ciphers);
+            return this;
+        }
+        /**
+         * Sets a key pair of the public and private key so to that the SFTP
+         * endpoint can do public/private key verification.
+         * 
+         * The option is a: <code>java.security.KeyPair</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointProducerBuilder keyPair(KeyPair keyPair) {
+            doSetProperty("keyPair", keyPair);
+            return this;
+        }
+        /**
+         * Sets a key pair of the public and private key so to that the SFTP
+         * endpoint can do public/private key verification.
+         * 
+         * The option will be converted to a <code>java.security.KeyPair</code>
+         * type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointProducerBuilder keyPair(String keyPair) {
+            doSetProperty("keyPair", keyPair);
+            return this;
+        }
+        /**
+         * Sets the known_hosts from the byte array, so that the SFTP endpoint
+         * can do host key verification.
+         * 
+         * The option is a: <code>byte[]</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointProducerBuilder knownHosts(Byte[] knownHosts) {
+            doSetProperty("knownHosts", knownHosts);
+            return this;
+        }
+        /**
+         * Sets the known_hosts from the byte array, so that the SFTP endpoint
+         * can do host key verification.
+         * 
+         * The option will be converted to a <code>byte[]</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointProducerBuilder knownHosts(String knownHosts) {
+            doSetProperty("knownHosts", knownHosts);
+            return this;
+        }
+        /**
+         * Sets the known_hosts file, so that the SFTP endpoint can do host key
+         * verification.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointProducerBuilder knownHostsFile(String knownHostsFile) {
+            doSetProperty("knownHostsFile", knownHostsFile);
+            return this;
+        }
+        /**
+         * Sets the known_hosts file (loaded from classpath by default), so that
+         * the SFTP endpoint can do host key verification.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointProducerBuilder knownHostsUri(String knownHostsUri) {
+            doSetProperty("knownHostsUri", knownHostsUri);
+            return this;
+        }
+        /**
+         * Password to use for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointProducerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Set the preferred authentications which SFTP endpoint will used. Some
+         * example include:password,publickey. If not specified the default list
+         * from JSCH will be used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointProducerBuilder preferredAuthentications(
+                String preferredAuthentications) {
+            doSetProperty("preferredAuthentications", preferredAuthentications);
+            return this;
+        }
+        /**
+         * Set the private key as byte so that the SFTP endpoint can do private
+         * key verification.
+         * 
+         * The option is a: <code>byte[]</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointProducerBuilder privateKey(Byte[] privateKey) {
+            doSetProperty("privateKey", privateKey);
+            return this;
+        }
+        /**
+         * Set the private key as byte so that the SFTP endpoint can do private
+         * key verification.
+         * 
+         * The option will be converted to a <code>byte[]</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointProducerBuilder privateKey(String privateKey) {
+            doSetProperty("privateKey", privateKey);
+            return this;
+        }
+        /**
+         * Set the private key file so that the SFTP endpoint can do private key
+         * verification.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointProducerBuilder privateKeyFile(String privateKeyFile) {
+            doSetProperty("privateKeyFile", privateKeyFile);
+            return this;
+        }
+        /**
+         * Set the private key file passphrase so that the SFTP endpoint can do
+         * private key verification.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointProducerBuilder privateKeyPassphrase(
+                String privateKeyPassphrase) {
+            doSetProperty("privateKeyPassphrase", privateKeyPassphrase);
+            return this;
+        }
+        /**
+         * Set the private key file (loaded from classpath by default) so that
+         * the SFTP endpoint can do private key verification.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointProducerBuilder privateKeyUri(String privateKeyUri) {
+            doSetProperty("privateKeyUri", privateKeyUri);
+            return this;
+        }
+        /**
+         * Sets whether to use strict host key checking.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: no
+         * Group: security
+         */
+        default SftpEndpointProducerBuilder strictHostKeyChecking(
+                String strictHostKeyChecking) {
+            doSetProperty("strictHostKeyChecking", strictHostKeyChecking);
+            return this;
+        }
+        /**
+         * Username to use for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default SftpEndpointProducerBuilder username(String username) {
+            doSetProperty("username", username);
+            return this;
+        }
+        /**
+         * If knownHostFile has not been explicit configured then use the host
+         * file from System.getProperty(user.home)/.ssh/known_hosts.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         */
+        default SftpEndpointProducerBuilder useUserKnownHostsFile(
+                boolean useUserKnownHostsFile) {
+            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
+            return this;
+        }
+        /**
+         * If knownHostFile has not been explicit configured then use the host
+         * file from System.getProperty(user.home)/.ssh/known_hosts.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         */
+        default SftpEndpointProducerBuilder useUserKnownHostsFile(
+                String useUserKnownHostsFile) {
+            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
+            return this;
+        }
+        /**
+         * This option is used to specify the encoding of the file. You can use
+         * this on the consumer, to specify the encodings of the files, which
+         * allow Camel to know the charset it should load the file content in
+         * case the file content is being accessed. Likewise when writing a
+         * file, you can use this option to specify which charset to write the
+         * file as well. Do mind that when writing the file Camel may have to
+         * read the message content into memory to be able to convert the data
+         * into the configured charset, so do not use this if you have big
+         * messages.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: common
+         */
+        default SftpEndpointProducerBuilder charset(String charset) {
+            doSetProperty("charset", charset);
+            return this;
+        }
+        /**
+         * Producer: If provided, then Camel will write a 2nd done file when the
+         * original file has been written. The done file will be empty. This
+         * option configures what file name to use. Either you can specify a
+         * fixed name. Or you can use dynamic placeholders. The done file will
+         * always be written in the same folder as the original file. Consumer:
+         * If provided, Camel will only consume files if a done file exists.
+         * This option configures what file name to use. Either you can specify
+         * a fixed name. Or you can use dynamic placeholders.The done file is
+         * always expected in the same folder as the original file. Only
+         * ${file.name} and ${file.name.noext} is supported as dynamic
+         * placeholders.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: common
+         */
+        default SftpEndpointProducerBuilder doneFileName(String doneFileName) {
+            doSetProperty("doneFileName", doneFileName);
+            return this;
+        }
+        /**
+         * Use Expression such as File Language to dynamically set the filename.
+         * For consumers, it's used as a filename filter. For producers, it's
+         * used to evaluate the filename to write. If an expression is set, it
+         * take precedence over the CamelFileName header. (Note: The header
+         * itself can also be an Expression). The expression options support
+         * both String and Expression types. If the expression is a String type,
+         * it is always evaluated using the File Language. If the expression is
+         * an Expression type, the specified Expression type is used - this
+         * allows you, for instance, to use OGNL expressions. For the consumer,
+         * you can use it to filter filenames, so you can for instance consume
+         * today's file using the File Language syntax:
+         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
+         * CamelOverruleFileName header which takes precedence over any existing
+         * CamelFileName header; the CamelOverruleFileName is a header that is
+         * used only once, and makes it easier as this avoids to temporary store
+         * CamelFileName and have to restore it afterwards.
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Default:
+         * Group: common
+         */
+        default SftpEndpointProducerBuilder fileName(Expression fileName) {
+            doSetProperty("fileName", fileName);
+            return this;
+        }
+        /**
+         * Use Expression such as File Language to dynamically set the filename.
+         * For consumers, it's used as a filename filter. For producers, it's
+         * used to evaluate the filename to write. If an expression is set, it
+         * take precedence over the CamelFileName header. (Note: The header
+         * itself can also be an Expression). The expression options support
+         * both String and Expression types. If the expression is a String type,
+         * it is always evaluated using the File Language. If the expression is
+         * an Expression type, the specified Expression type is used - this
+         * allows you, for instance, to use OGNL expressions. For the consumer,
+         * you can use it to filter filenames, so you can for instance consume
+         * today's file using the File Language syntax:
+         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
+         * CamelOverruleFileName header which takes precedence over any existing
+         * CamelFileName header; the CamelOverruleFileName is a header that is
+         * used only once, and makes it easier as this avoids to temporary store
+         * CamelFileName and have to restore it afterwards.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.Expression</code> type.
+         * 
+         * Default:
+         * Group: common
+         */
+        default SftpEndpointProducerBuilder fileName(String fileName) {
+            doSetProperty("fileName", fileName);
+            return this;
+        }
+        /**
          * What to do if a file already exists with the same name. Override,
-         * which is the default, replaces the existing file. - Append - adds
-         * content to the existing file. - Fail - throws a
+         * which is the default, replaces the existing file. \n\n - Append -
+         * adds content to the existing file.\n - Fail - throws a
          * GenericFileOperationException, indicating that there is already an
-         * existing file. - Ignore - silently ignores the problem and does not
-         * override the existing file, but assumes everything is okay. - Move -
-         * option requires to use the moveExisting option to be configured as
+         * existing file.\n - Ignore - silently ignores the problem and does not
+         * override the existing file, but assumes everything is okay.\n - Move
+         * - option requires to use the moveExisting option to be configured as
          * well. The option eagerDeleteTargetFile can be used to control what to
          * do if an moving the file, and there exists already an existing file,
          * otherwise causing the move operation to fail. The Move option will
-         * move any existing files, before writing the target file. - TryRename
-         * is only applicable if tempFileName option is in use. This allows to
-         * try renaming the file from the temporary name to the actual name,
-         * without doing any exists check. This check may be faster on some file
-         * systems and especially FTP servers.
+         * move any existing files, before writing the target file.\n -
+         * TryRename is only applicable if tempFileName option is in use. This
+         * allows to try renaming the file from the temporary name to the actual
+         * name, without doing any exists check. This check may be faster on
+         * some file systems and especially FTP servers.
          * 
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
@@ -3166,20 +3313,20 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * What to do if a file already exists with the same name. Override,
-         * which is the default, replaces the existing file. - Append - adds
-         * content to the existing file. - Fail - throws a
+         * which is the default, replaces the existing file. \n\n - Append -
+         * adds content to the existing file.\n - Fail - throws a
          * GenericFileOperationException, indicating that there is already an
-         * existing file. - Ignore - silently ignores the problem and does not
-         * override the existing file, but assumes everything is okay. - Move -
-         * option requires to use the moveExisting option to be configured as
+         * existing file.\n - Ignore - silently ignores the problem and does not
+         * override the existing file, but assumes everything is okay.\n - Move
+         * - option requires to use the moveExisting option to be configured as
          * well. The option eagerDeleteTargetFile can be used to control what to
          * do if an moving the file, and there exists already an existing file,
          * otherwise causing the move operation to fail. The Move option will
-         * move any existing files, before writing the target file. - TryRename
-         * is only applicable if tempFileName option is in use. This allows to
-         * try renaming the file from the temporary name to the actual name,
-         * without doing any exists check. This check may be faster on some file
-         * systems and especially FTP servers.
+         * move any existing files, before writing the target file.\n -
+         * TryRename is only applicable if tempFileName option is in use. This
+         * allows to try renaming the file from the temporary name to the actual
+         * name, without doing any exists check. This check may be faster on
+         * some file systems and especially FTP servers.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
@@ -3315,6 +3462,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SftpEndpointProducerBuilder moveExisting(Expression moveExisting) {
@@ -3334,6 +3482,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SftpEndpointProducerBuilder moveExisting(String moveExisting) {
@@ -3351,6 +3500,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SftpEndpointProducerBuilder tempFileName(Expression tempFileName) {
@@ -3369,6 +3519,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SftpEndpointProducerBuilder tempFileName(String tempFileName) {
@@ -3384,235 +3535,11 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SftpEndpointProducerBuilder tempPrefix(String tempPrefix) {
             doSetProperty("tempPrefix", tempPrefix);
-            return this;
-        }
-        /**
-         * Set a comma separated list of ciphers that will be used in order of
-         * preference. Possible cipher names are defined by JCraft JSCH. Some
-         * examples include:
-         * aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc. If not specified the default list from JSCH will be used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointProducerBuilder ciphers(String ciphers) {
-            doSetProperty("ciphers", ciphers);
-            return this;
-        }
-        /**
-         * Sets a key pair of the public and private key so to that the SFTP
-         * endpoint can do public/private key verification.
-         * 
-         * The option is a: <code>java.security.KeyPair</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointProducerBuilder keyPair(KeyPair keyPair) {
-            doSetProperty("keyPair", keyPair);
-            return this;
-        }
-        /**
-         * Sets a key pair of the public and private key so to that the SFTP
-         * endpoint can do public/private key verification.
-         * 
-         * The option will be converted to a <code>java.security.KeyPair</code>
-         * type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointProducerBuilder keyPair(String keyPair) {
-            doSetProperty("keyPair", keyPair);
-            return this;
-        }
-        /**
-         * Sets the known_hosts from the byte array, so that the SFTP endpoint
-         * can do host key verification.
-         * 
-         * The option is a: <code>byte[]</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointProducerBuilder knownHosts(Byte[] knownHosts) {
-            doSetProperty("knownHosts", knownHosts);
-            return this;
-        }
-        /**
-         * Sets the known_hosts from the byte array, so that the SFTP endpoint
-         * can do host key verification.
-         * 
-         * The option will be converted to a <code>byte[]</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointProducerBuilder knownHosts(String knownHosts) {
-            doSetProperty("knownHosts", knownHosts);
-            return this;
-        }
-        /**
-         * Sets the known_hosts file, so that the SFTP endpoint can do host key
-         * verification.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointProducerBuilder knownHostsFile(String knownHostsFile) {
-            doSetProperty("knownHostsFile", knownHostsFile);
-            return this;
-        }
-        /**
-         * Sets the known_hosts file (loaded from classpath by default), so that
-         * the SFTP endpoint can do host key verification.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointProducerBuilder knownHostsUri(String knownHostsUri) {
-            doSetProperty("knownHostsUri", knownHostsUri);
-            return this;
-        }
-        /**
-         * Password to use for login.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointProducerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
-         * Set the preferred authentications which SFTP endpoint will used. Some
-         * example include:password,publickey. If not specified the default list
-         * from JSCH will be used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointProducerBuilder preferredAuthentications(
-                String preferredAuthentications) {
-            doSetProperty("preferredAuthentications", preferredAuthentications);
-            return this;
-        }
-        /**
-         * Set the private key as byte so that the SFTP endpoint can do private
-         * key verification.
-         * 
-         * The option is a: <code>byte[]</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointProducerBuilder privateKey(Byte[] privateKey) {
-            doSetProperty("privateKey", privateKey);
-            return this;
-        }
-        /**
-         * Set the private key as byte so that the SFTP endpoint can do private
-         * key verification.
-         * 
-         * The option will be converted to a <code>byte[]</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointProducerBuilder privateKey(String privateKey) {
-            doSetProperty("privateKey", privateKey);
-            return this;
-        }
-        /**
-         * Set the private key file so that the SFTP endpoint can do private key
-         * verification.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointProducerBuilder privateKeyFile(String privateKeyFile) {
-            doSetProperty("privateKeyFile", privateKeyFile);
-            return this;
-        }
-        /**
-         * Set the private key file passphrase so that the SFTP endpoint can do
-         * private key verification.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointProducerBuilder privateKeyPassphrase(
-                String privateKeyPassphrase) {
-            doSetProperty("privateKeyPassphrase", privateKeyPassphrase);
-            return this;
-        }
-        /**
-         * Set the private key file (loaded from classpath by default) so that
-         * the SFTP endpoint can do private key verification.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointProducerBuilder privateKeyUri(String privateKeyUri) {
-            doSetProperty("privateKeyUri", privateKeyUri);
-            return this;
-        }
-        /**
-         * Sets whether to use strict host key checking.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: no
-         * Group: security
-         */
-        default SftpEndpointProducerBuilder strictHostKeyChecking(
-                String strictHostKeyChecking) {
-            doSetProperty("strictHostKeyChecking", strictHostKeyChecking);
-            return this;
-        }
-        /**
-         * Username to use for login.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SftpEndpointProducerBuilder username(String username) {
-            doSetProperty("username", username);
-            return this;
-        }
-        /**
-         * If knownHostFile has not been explicit configured then use the host
-         * file from System.getProperty(user.home)/.ssh/known_hosts.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: security
-         */
-        default SftpEndpointProducerBuilder useUserKnownHostsFile(
-                boolean useUserKnownHostsFile) {
-            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
-            return this;
-        }
-        /**
-         * If knownHostFile has not been explicit configured then use the host
-         * file from System.getProperty(user.home)/.ssh/known_hosts.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: security
-         */
-        default SftpEndpointProducerBuilder useUserKnownHostsFile(
-                String useUserKnownHostsFile) {
-            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
             return this;
         }
     }
@@ -3627,43 +3554,360 @@ public interface SftpEndpointBuilderFactory {
             return (SftpEndpointProducerBuilder) this;
         }
         /**
-         * If set this option to be true, camel-ftp will use the list file
-         * directly to check if the file exists. Since some FTP server may not
-         * support to list the file directly, if the option is false, camel-ftp
-         * will use the old way to list the directory and check if the file
-         * exists. This option also influences readLock=changed to control
-         * whether it performs a fast check to update file information or not.
-         * This can be used to speed up the process if the FTP server has a lot
-         * of files.
+         * Allows you to set chmod on the stored file. For example chmod=640.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: producer (advanced)
+         */
+        default AdvancedSftpEndpointProducerBuilder chmod(String chmod) {
+            doSetProperty("chmod", chmod);
+            return this;
+        }
+        /**
+         * Whether to send a noop command as a pre-write check before uploading
+         * files to the FTP server. This is enabled by default as a validation
+         * of the connection is still valid, which allows to silently re-connect
+         * to be able to upload the file. However if this causes problems, you
+         * can turn this option off.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         */
+        default AdvancedSftpEndpointProducerBuilder sendNoop(boolean sendNoop) {
+            doSetProperty("sendNoop", sendNoop);
+            return this;
+        }
+        /**
+         * Whether to send a noop command as a pre-write check before uploading
+         * files to the FTP server. This is enabled by default as a validation
+         * of the connection is still valid, which allows to silently re-connect
+         * to be able to upload the file. However if this causes problems, you
+         * can turn this option off.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         */
+        default AdvancedSftpEndpointProducerBuilder sendNoop(String sendNoop) {
+            doSetProperty("sendNoop", sendNoop);
+            return this;
+        }
+        /**
+         * Specifies the address of the local interface against which the
+         * connection should bind.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointProducerBuilder bindAddress(
+                String bindAddress) {
+            doSetProperty("bindAddress", bindAddress);
+            return this;
+        }
+        /**
+         * Specifies how many requests may be outstanding at any one time.
+         * Increasing this value may slightly improve file transfer speed but
+         * will increase memory usage.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default:
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointProducerBuilder bulkRequests(
+                Integer bulkRequests) {
+            doSetProperty("bulkRequests", bulkRequests);
+            return this;
+        }
+        /**
+         * Specifies how many requests may be outstanding at any one time.
+         * Increasing this value may slightly improve file transfer speed but
+         * will increase memory usage.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default:
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointProducerBuilder bulkRequests(
+                String bulkRequests) {
+            doSetProperty("bulkRequests", bulkRequests);
+            return this;
+        }
+        /**
+         * To use compression. Specify a level from 1 to 10. Important: You must
+         * manually add the needed JSCH zlib JAR to the classpath for
+         * compression support.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default:
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointProducerBuilder compression(int compression) {
+            doSetProperty("compression", compression);
+            return this;
+        }
+        /**
+         * To use compression. Specify a level from 1 to 10. Important: You must
+         * manually add the needed JSCH zlib JAR to the classpath for
+         * compression support.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default:
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointProducerBuilder compression(
+                String compression) {
+            doSetProperty("compression", compression);
+            return this;
+        }
+        /**
+         * Sets the connect timeout for waiting for a connection to be
+         * established Used by both FTPClient and JSCH.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10000
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointProducerBuilder connectTimeout(
+                int connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * Sets the connect timeout for waiting for a connection to be
+         * established Used by both FTPClient and JSCH.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10000
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointProducerBuilder connectTimeout(
+                String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * To use a custom configured com.jcraft.jsch.Proxy. This proxy is used
+         * to consume/send messages from the target SFTP host.
+         * 
+         * The option is a: <code>com.jcraft.jsch.Proxy</code> type.
+         * 
+         * Default:
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointProducerBuilder proxy(Object proxy) {
+            doSetProperty("proxy", proxy);
+            return this;
+        }
+        /**
+         * To use a custom configured com.jcraft.jsch.Proxy. This proxy is used
+         * to consume/send messages from the target SFTP host.
+         * 
+         * The option will be converted to a <code>com.jcraft.jsch.Proxy</code>
+         * type.
+         * 
+         * Default:
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointProducerBuilder proxy(String proxy) {
+            doSetProperty("proxy", proxy);
+            return this;
+        }
+        /**
+         * Sets the number of keep-alive messages which may be sent without
+         * receiving any messages back from the server. If this threshold is
+         * reached while keep-alive messages are being sent, the connection will
+         * be disconnected. The default value is one.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointProducerBuilder serverAliveCountMax(
+                int serverAliveCountMax) {
+            doSetProperty("serverAliveCountMax", serverAliveCountMax);
+            return this;
+        }
+        /**
+         * Sets the number of keep-alive messages which may be sent without
+         * receiving any messages back from the server. If this threshold is
+         * reached while keep-alive messages are being sent, the connection will
+         * be disconnected. The default value is one.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointProducerBuilder serverAliveCountMax(
+                String serverAliveCountMax) {
+            doSetProperty("serverAliveCountMax", serverAliveCountMax);
+            return this;
+        }
+        /**
+         * Sets the interval (millis) to send a keep-alive message. If zero is
+         * specified, any keep-alive message must not be sent. The default
+         * interval is zero.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default:
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointProducerBuilder serverAliveInterval(
+                int serverAliveInterval) {
+            doSetProperty("serverAliveInterval", serverAliveInterval);
+            return this;
+        }
+        /**
+         * Sets the interval (millis) to send a keep-alive message. If zero is
+         * specified, any keep-alive message must not be sent. The default
+         * interval is zero.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default:
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointProducerBuilder serverAliveInterval(
+                String serverAliveInterval) {
+            doSetProperty("serverAliveInterval", serverAliveInterval);
+            return this;
+        }
+        /**
+         * Sets the so timeout FTP and FTPS Only for Camel 2.4. SFTP for Camel
+         * 2.14.3/2.15.3/2.16 onwards. Is the SocketOptions.SO_TIMEOUT value in
+         * millis. Recommended option is to set this to 300000 so as not have a
+         * hanged connection. On SFTP this option is set as timeout on the JSCH
+         * Session instance.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 300000
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointProducerBuilder soTimeout(int soTimeout) {
+            doSetProperty("soTimeout", soTimeout);
+            return this;
+        }
+        /**
+         * Sets the so timeout FTP and FTPS Only for Camel 2.4. SFTP for Camel
+         * 2.14.3/2.15.3/2.16 onwards. Is the SocketOptions.SO_TIMEOUT value in
+         * millis. Recommended option is to set this to 300000 so as not have a
+         * hanged connection. On SFTP this option is set as timeout on the JSCH
+         * Session instance.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 300000
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointProducerBuilder soTimeout(String soTimeout) {
+            doSetProperty("soTimeout", soTimeout);
+            return this;
+        }
+        /**
+         * Sets whether we should stepwise change directories while traversing
+         * file structures when downloading files, or as well when uploading a
+         * file to a directory. You can disable this if you for example are in a
+         * situation where you cannot change directory on the FTP server due
+         * security reasons.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointProducerBuilder stepwise(boolean stepwise) {
+            doSetProperty("stepwise", stepwise);
+            return this;
+        }
+        /**
+         * Sets whether we should stepwise change directories while traversing
+         * file structures when downloading files, or as well when uploading a
+         * file to a directory. You can disable this if you for example are in a
+         * situation where you cannot change directory on the FTP server due
+         * security reasons.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointProducerBuilder stepwise(String stepwise) {
+            doSetProperty("stepwise", stepwise);
+            return this;
+        }
+        /**
+         * Should an exception be thrown if connection failed (exhausted) By
+         * default exception is not thrown and a WARN is logged. You can use
+         * this to enable exception being thrown and handle the thrown exception
+         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
+         * method.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: common (advanced)
+         * Group: advanced
          */
-        default AdvancedSftpEndpointProducerBuilder fastExistsCheck(
-                boolean fastExistsCheck) {
-            doSetProperty("fastExistsCheck", fastExistsCheck);
+        default AdvancedSftpEndpointProducerBuilder throwExceptionOnConnectFailed(
+                boolean throwExceptionOnConnectFailed) {
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
         }
         /**
-         * If set this option to be true, camel-ftp will use the list file
-         * directly to check if the file exists. Since some FTP server may not
-         * support to list the file directly, if the option is false, camel-ftp
-         * will use the old way to list the directory and check if the file
-         * exists. This option also influences readLock=changed to control
-         * whether it performs a fast check to update file information or not.
-         * This can be used to speed up the process if the FTP server has a lot
-         * of files.
+         * Should an exception be thrown if connection failed (exhausted) By
+         * default exception is not thrown and a WARN is logged. You can use
+         * this to enable exception being thrown and handle the thrown exception
+         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
+         * method.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
-         * Group: common (advanced)
+         * Group: advanced
          */
-        default AdvancedSftpEndpointProducerBuilder fastExistsCheck(
-                String fastExistsCheck) {
-            doSetProperty("fastExistsCheck", fastExistsCheck);
+        default AdvancedSftpEndpointProducerBuilder throwExceptionOnConnectFailed(
+                String throwExceptionOnConnectFailed) {
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            return this;
+        }
+        /**
+         * Sets the data timeout for waiting for reply Used only by FTPClient.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointProducerBuilder timeout(int timeout) {
+            doSetProperty("timeout", timeout);
+            return this;
+        }
+        /**
+         * Sets the data timeout for waiting for reply Used only by FTPClient.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointProducerBuilder timeout(String timeout) {
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -3702,47 +3946,6 @@ public interface SftpEndpointBuilderFactory {
         default AdvancedSftpEndpointProducerBuilder allowNullBody(
                 String allowNullBody) {
             doSetProperty("allowNullBody", allowNullBody);
-            return this;
-        }
-        /**
-         * Allows you to set chmod on the stored file. For example chmod=640.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer (advanced)
-         */
-        default AdvancedSftpEndpointProducerBuilder chmod(String chmod) {
-            doSetProperty("chmod", chmod);
-            return this;
-        }
-        /**
-         * Whether or not to disconnect from remote FTP server right after a
-         * Batch upload is complete. disconnectOnBatchComplete will only
-         * disconnect the current connection to the FTP server.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         */
-        default AdvancedSftpEndpointProducerBuilder disconnectOnBatchComplete(
-                boolean disconnectOnBatchComplete) {
-            doSetProperty("disconnectOnBatchComplete", disconnectOnBatchComplete);
-            return this;
-        }
-        /**
-         * Whether or not to disconnect from remote FTP server right after a
-         * Batch upload is complete. disconnectOnBatchComplete will only
-         * disconnect the current connection to the FTP server.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         */
-        default AdvancedSftpEndpointProducerBuilder disconnectOnBatchComplete(
-                String disconnectOnBatchComplete) {
-            doSetProperty("disconnectOnBatchComplete", disconnectOnBatchComplete);
             return this;
         }
         /**
@@ -3841,6 +4044,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
          * 
+         * Default:
          * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder moveExistingFileStrategy(
@@ -3856,43 +4060,12 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
          * 
+         * Default:
          * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder moveExistingFileStrategy(
                 String moveExistingFileStrategy) {
             doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
-            return this;
-        }
-        /**
-         * Whether to send a noop command as a pre-write check before uploading
-         * files to the FTP server. This is enabled by default as a validation
-         * of the connection is still valid, which allows to silently re-connect
-         * to be able to upload the file. However if this causes problems, you
-         * can turn this option off.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer (advanced)
-         */
-        default AdvancedSftpEndpointProducerBuilder sendNoop(boolean sendNoop) {
-            doSetProperty("sendNoop", sendNoop);
-            return this;
-        }
-        /**
-         * Whether to send a noop command as a pre-write check before uploading
-         * files to the FTP server. This is enabled by default as a validation
-         * of the connection is still valid, which allows to silently re-connect
-         * to be able to upload the file. However if this causes problems, you
-         * can turn this option off.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer (advanced)
-         */
-        default AdvancedSftpEndpointProducerBuilder sendNoop(String sendNoop) {
-            doSetProperty("sendNoop", sendNoop);
             return this;
         }
         /**
@@ -3955,304 +4128,6 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the address of the local interface against which the
-         * connection should bind.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder bindAddress(
-                String bindAddress) {
-            doSetProperty("bindAddress", bindAddress);
-            return this;
-        }
-        /**
-         * Specifies how many requests may be outstanding at any one time.
-         * Increasing this value may slightly improve file transfer speed but
-         * will increase memory usage.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder bulkRequests(
-                Integer bulkRequests) {
-            doSetProperty("bulkRequests", bulkRequests);
-            return this;
-        }
-        /**
-         * Specifies how many requests may be outstanding at any one time.
-         * Increasing this value may slightly improve file transfer speed but
-         * will increase memory usage.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder bulkRequests(
-                String bulkRequests) {
-            doSetProperty("bulkRequests", bulkRequests);
-            return this;
-        }
-        /**
-         * To use compression. Specify a level from 1 to 10. Important: You must
-         * manually add the needed JSCH zlib JAR to the classpath for
-         * compression support.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder compression(int compression) {
-            doSetProperty("compression", compression);
-            return this;
-        }
-        /**
-         * To use compression. Specify a level from 1 to 10. Important: You must
-         * manually add the needed JSCH zlib JAR to the classpath for
-         * compression support.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder compression(
-                String compression) {
-            doSetProperty("compression", compression);
-            return this;
-        }
-        /**
-         * Sets the connect timeout for waiting for a connection to be
-         * established Used by both FTPClient and JSCH.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 10000
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder connectTimeout(
-                int connectTimeout) {
-            doSetProperty("connectTimeout", connectTimeout);
-            return this;
-        }
-        /**
-         * Sets the connect timeout for waiting for a connection to be
-         * established Used by both FTPClient and JSCH.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 10000
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder connectTimeout(
-                String connectTimeout) {
-            doSetProperty("connectTimeout", connectTimeout);
-            return this;
-        }
-        /**
-         * Specifies the maximum reconnect attempts Camel performs when it tries
-         * to connect to the remote FTP server. Use 0 to disable this behavior.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder maximumReconnectAttempts(
-                int maximumReconnectAttempts) {
-            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
-            return this;
-        }
-        /**
-         * Specifies the maximum reconnect attempts Camel performs when it tries
-         * to connect to the remote FTP server. Use 0 to disable this behavior.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder maximumReconnectAttempts(
-                String maximumReconnectAttempts) {
-            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
-            return this;
-        }
-        /**
-         * To use a custom configured com.jcraft.jsch.Proxy. This proxy is used
-         * to consume/send messages from the target SFTP host.
-         * 
-         * The option is a: <code>com.jcraft.jsch.Proxy</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder proxy(Object proxy) {
-            doSetProperty("proxy", proxy);
-            return this;
-        }
-        /**
-         * To use a custom configured com.jcraft.jsch.Proxy. This proxy is used
-         * to consume/send messages from the target SFTP host.
-         * 
-         * The option will be converted to a <code>com.jcraft.jsch.Proxy</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder proxy(String proxy) {
-            doSetProperty("proxy", proxy);
-            return this;
-        }
-        /**
-         * Delay in millis Camel will wait before performing a reconnect
-         * attempt.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder reconnectDelay(
-                long reconnectDelay) {
-            doSetProperty("reconnectDelay", reconnectDelay);
-            return this;
-        }
-        /**
-         * Delay in millis Camel will wait before performing a reconnect
-         * attempt.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder reconnectDelay(
-                String reconnectDelay) {
-            doSetProperty("reconnectDelay", reconnectDelay);
-            return this;
-        }
-        /**
-         * Sets the number of keep-alive messages which may be sent without
-         * receiving any messages back from the server. If this threshold is
-         * reached while keep-alive messages are being sent, the connection will
-         * be disconnected. The default value is one.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 1
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder serverAliveCountMax(
-                int serverAliveCountMax) {
-            doSetProperty("serverAliveCountMax", serverAliveCountMax);
-            return this;
-        }
-        /**
-         * Sets the number of keep-alive messages which may be sent without
-         * receiving any messages back from the server. If this threshold is
-         * reached while keep-alive messages are being sent, the connection will
-         * be disconnected. The default value is one.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 1
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder serverAliveCountMax(
-                String serverAliveCountMax) {
-            doSetProperty("serverAliveCountMax", serverAliveCountMax);
-            return this;
-        }
-        /**
-         * Sets the interval (millis) to send a keep-alive message. If zero is
-         * specified, any keep-alive message must not be sent. The default
-         * interval is zero.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder serverAliveInterval(
-                int serverAliveInterval) {
-            doSetProperty("serverAliveInterval", serverAliveInterval);
-            return this;
-        }
-        /**
-         * Sets the interval (millis) to send a keep-alive message. If zero is
-         * specified, any keep-alive message must not be sent. The default
-         * interval is zero.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder serverAliveInterval(
-                String serverAliveInterval) {
-            doSetProperty("serverAliveInterval", serverAliveInterval);
-            return this;
-        }
-        /**
-         * Sets the so timeout FTP and FTPS Only for Camel 2.4. SFTP for Camel
-         * 2.14.3/2.15.3/2.16 onwards. Is the SocketOptions.SO_TIMEOUT value in
-         * millis. Recommended option is to set this to 300000 so as not have a
-         * hanged connection. On SFTP this option is set as timeout on the JSCH
-         * Session instance.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 300000
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder soTimeout(int soTimeout) {
-            doSetProperty("soTimeout", soTimeout);
-            return this;
-        }
-        /**
-         * Sets the so timeout FTP and FTPS Only for Camel 2.4. SFTP for Camel
-         * 2.14.3/2.15.3/2.16 onwards. Is the SocketOptions.SO_TIMEOUT value in
-         * millis. Recommended option is to set this to 300000 so as not have a
-         * hanged connection. On SFTP this option is set as timeout on the JSCH
-         * Session instance.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 300000
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder soTimeout(String soTimeout) {
-            doSetProperty("soTimeout", soTimeout);
-            return this;
-        }
-        /**
-         * Sets whether we should stepwise change directories while traversing
-         * file structures when downloading files, or as well when uploading a
-         * file to a directory. You can disable this if you for example are in a
-         * situation where you cannot change directory on the FTP server due
-         * security reasons.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder stepwise(boolean stepwise) {
-            doSetProperty("stepwise", stepwise);
-            return this;
-        }
-        /**
-         * Sets whether we should stepwise change directories while traversing
-         * file structures when downloading files, or as well when uploading a
-         * file to a directory. You can disable this if you for example are in a
-         * situation where you cannot change directory on the FTP server due
-         * security reasons.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder stepwise(String stepwise) {
-            doSetProperty("stepwise", stepwise);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -4280,64 +4155,6 @@ public interface SftpEndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
-        /**
-         * Should an exception be thrown if connection failed (exhausted) By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder throwExceptionOnConnectFailed(
-                boolean throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
-            return this;
-        }
-        /**
-         * Should an exception be thrown if connection failed (exhausted) By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder throwExceptionOnConnectFailed(
-                String throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
-            return this;
-        }
-        /**
-         * Sets the data timeout for waiting for reply Used only by FTPClient.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 30000
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder timeout(int timeout) {
-            doSetProperty("timeout", timeout);
-            return this;
-        }
-        /**
-         * Sets the data timeout for waiting for reply Used only by FTPClient.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 30000
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder timeout(String timeout) {
-            doSetProperty("timeout", timeout);
-            return this;
-        }
     }
 
     /**
@@ -4349,129 +4166,6 @@ public interface SftpEndpointBuilderFactory {
                 SftpEndpointProducerBuilder {
         default AdvancedSftpEndpointBuilder advanced() {
             return (AdvancedSftpEndpointBuilder) this;
-        }
-        /**
-         * This option is used to specify the encoding of the file. You can use
-         * this on the consumer, to specify the encodings of the files, which
-         * allow Camel to know the charset it should load the file content in
-         * case the file content is being accessed. Likewise when writing a
-         * file, you can use this option to specify which charset to write the
-         * file as well. Do mind that when writing the file Camel may have to
-         * read the message content into memory to be able to convert the data
-         * into the configured charset, so do not use this if you have big
-         * messages.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointBuilder charset(String charset) {
-            doSetProperty("charset", charset);
-            return this;
-        }
-        /**
-         * Whether or not to disconnect from remote FTP server right after use.
-         * Disconnect will only disconnect the current connection to the FTP
-         * server. If you have a consumer which you want to stop, then you need
-         * to stop the consumer/route instead.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default SftpEndpointBuilder disconnect(boolean disconnect) {
-            doSetProperty("disconnect", disconnect);
-            return this;
-        }
-        /**
-         * Whether or not to disconnect from remote FTP server right after use.
-         * Disconnect will only disconnect the current connection to the FTP
-         * server. If you have a consumer which you want to stop, then you need
-         * to stop the consumer/route instead.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default SftpEndpointBuilder disconnect(String disconnect) {
-            doSetProperty("disconnect", disconnect);
-            return this;
-        }
-        /**
-         * Producer: If provided, then Camel will write a 2nd done file when the
-         * original file has been written. The done file will be empty. This
-         * option configures what file name to use. Either you can specify a
-         * fixed name. Or you can use dynamic placeholders. The done file will
-         * always be written in the same folder as the original file. Consumer:
-         * If provided, Camel will only consume files if a done file exists.
-         * This option configures what file name to use. Either you can specify
-         * a fixed name. Or you can use dynamic placeholders.The done file is
-         * always expected in the same folder as the original file. Only
-         * ${file.name} and ${file.name.noext} is supported as dynamic
-         * placeholders.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointBuilder doneFileName(String doneFileName) {
-            doSetProperty("doneFileName", doneFileName);
-            return this;
-        }
-        /**
-         * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
-         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
-         * CamelOverruleFileName header which takes precedence over any existing
-         * CamelFileName header; the CamelOverruleFileName is a header that is
-         * used only once, and makes it easier as this avoids to temporary store
-         * CamelFileName and have to restore it afterwards.
-         * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointBuilder fileName(Expression fileName) {
-            doSetProperty("fileName", fileName);
-            return this;
-        }
-        /**
-         * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
-         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
-         * CamelOverruleFileName header which takes precedence over any existing
-         * CamelFileName header; the CamelOverruleFileName is a header that is
-         * used only once, and makes it easier as this avoids to temporary store
-         * CamelFileName and have to restore it afterwards.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointBuilder fileName(String fileName) {
-            doSetProperty("fileName", fileName);
-            return this;
         }
         /**
          * The logging level to use for JSCH activity logging. As JSCH is
@@ -4539,6 +4233,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SftpEndpointBuilder ciphers(String ciphers) {
@@ -4551,6 +4246,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.KeyPair</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SftpEndpointBuilder keyPair(KeyPair keyPair) {
@@ -4564,6 +4260,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>java.security.KeyPair</code>
          * type.
          * 
+         * Default:
          * Group: security
          */
         default SftpEndpointBuilder keyPair(String keyPair) {
@@ -4576,6 +4273,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>byte[]</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SftpEndpointBuilder knownHosts(Byte[] knownHosts) {
@@ -4588,6 +4286,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SftpEndpointBuilder knownHosts(String knownHosts) {
@@ -4600,6 +4299,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SftpEndpointBuilder knownHostsFile(String knownHostsFile) {
@@ -4612,6 +4312,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SftpEndpointBuilder knownHostsUri(String knownHostsUri) {
@@ -4623,6 +4324,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SftpEndpointBuilder password(String password) {
@@ -4636,6 +4338,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SftpEndpointBuilder preferredAuthentications(
@@ -4649,6 +4352,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>byte[]</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SftpEndpointBuilder privateKey(Byte[] privateKey) {
@@ -4661,6 +4365,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SftpEndpointBuilder privateKey(String privateKey) {
@@ -4673,6 +4378,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SftpEndpointBuilder privateKeyFile(String privateKeyFile) {
@@ -4685,6 +4391,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SftpEndpointBuilder privateKeyPassphrase(
@@ -4698,6 +4405,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SftpEndpointBuilder privateKeyUri(String privateKeyUri) {
@@ -4722,6 +4430,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SftpEndpointBuilder username(String username) {
@@ -4756,6 +4465,103 @@ public interface SftpEndpointBuilderFactory {
             doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
             return this;
         }
+        /**
+         * This option is used to specify the encoding of the file. You can use
+         * this on the consumer, to specify the encodings of the files, which
+         * allow Camel to know the charset it should load the file content in
+         * case the file content is being accessed. Likewise when writing a
+         * file, you can use this option to specify which charset to write the
+         * file as well. Do mind that when writing the file Camel may have to
+         * read the message content into memory to be able to convert the data
+         * into the configured charset, so do not use this if you have big
+         * messages.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: common
+         */
+        default SftpEndpointBuilder charset(String charset) {
+            doSetProperty("charset", charset);
+            return this;
+        }
+        /**
+         * Producer: If provided, then Camel will write a 2nd done file when the
+         * original file has been written. The done file will be empty. This
+         * option configures what file name to use. Either you can specify a
+         * fixed name. Or you can use dynamic placeholders. The done file will
+         * always be written in the same folder as the original file. Consumer:
+         * If provided, Camel will only consume files if a done file exists.
+         * This option configures what file name to use. Either you can specify
+         * a fixed name. Or you can use dynamic placeholders.The done file is
+         * always expected in the same folder as the original file. Only
+         * ${file.name} and ${file.name.noext} is supported as dynamic
+         * placeholders.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: common
+         */
+        default SftpEndpointBuilder doneFileName(String doneFileName) {
+            doSetProperty("doneFileName", doneFileName);
+            return this;
+        }
+        /**
+         * Use Expression such as File Language to dynamically set the filename.
+         * For consumers, it's used as a filename filter. For producers, it's
+         * used to evaluate the filename to write. If an expression is set, it
+         * take precedence over the CamelFileName header. (Note: The header
+         * itself can also be an Expression). The expression options support
+         * both String and Expression types. If the expression is a String type,
+         * it is always evaluated using the File Language. If the expression is
+         * an Expression type, the specified Expression type is used - this
+         * allows you, for instance, to use OGNL expressions. For the consumer,
+         * you can use it to filter filenames, so you can for instance consume
+         * today's file using the File Language syntax:
+         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
+         * CamelOverruleFileName header which takes precedence over any existing
+         * CamelFileName header; the CamelOverruleFileName is a header that is
+         * used only once, and makes it easier as this avoids to temporary store
+         * CamelFileName and have to restore it afterwards.
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Default:
+         * Group: common
+         */
+        default SftpEndpointBuilder fileName(Expression fileName) {
+            doSetProperty("fileName", fileName);
+            return this;
+        }
+        /**
+         * Use Expression such as File Language to dynamically set the filename.
+         * For consumers, it's used as a filename filter. For producers, it's
+         * used to evaluate the filename to write. If an expression is set, it
+         * take precedence over the CamelFileName header. (Note: The header
+         * itself can also be an Expression). The expression options support
+         * both String and Expression types. If the expression is a String type,
+         * it is always evaluated using the File Language. If the expression is
+         * an Expression type, the specified Expression type is used - this
+         * allows you, for instance, to use OGNL expressions. For the consumer,
+         * you can use it to filter filenames, so you can for instance consume
+         * today's file using the File Language syntax:
+         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
+         * CamelOverruleFileName header which takes precedence over any existing
+         * CamelFileName header; the CamelOverruleFileName is a header that is
+         * used only once, and makes it easier as this avoids to temporary store
+         * CamelFileName and have to restore it afterwards.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.Expression</code> type.
+         * 
+         * Default:
+         * Group: common
+         */
+        default SftpEndpointBuilder fileName(String fileName) {
+            doSetProperty("fileName", fileName);
+            return this;
+        }
     }
 
     /**
@@ -4769,109 +4575,12 @@ public interface SftpEndpointBuilderFactory {
             return (SftpEndpointBuilder) this;
         }
         /**
-         * If set this option to be true, camel-ftp will use the list file
-         * directly to check if the file exists. Since some FTP server may not
-         * support to list the file directly, if the option is false, camel-ftp
-         * will use the old way to list the directory and check if the file
-         * exists. This option also influences readLock=changed to control
-         * whether it performs a fast check to update file information or not.
-         * This can be used to speed up the process if the FTP server has a lot
-         * of files.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common (advanced)
-         */
-        default AdvancedSftpEndpointBuilder fastExistsCheck(
-                boolean fastExistsCheck) {
-            doSetProperty("fastExistsCheck", fastExistsCheck);
-            return this;
-        }
-        /**
-         * If set this option to be true, camel-ftp will use the list file
-         * directly to check if the file exists. Since some FTP server may not
-         * support to list the file directly, if the option is false, camel-ftp
-         * will use the old way to list the directory and check if the file
-         * exists. This option also influences readLock=changed to control
-         * whether it performs a fast check to update file information or not.
-         * This can be used to speed up the process if the FTP server has a lot
-         * of files.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common (advanced)
-         */
-        default AdvancedSftpEndpointBuilder fastExistsCheck(
-                String fastExistsCheck) {
-            doSetProperty("fastExistsCheck", fastExistsCheck);
-            return this;
-        }
-        /**
-         * Automatically create missing directories in the file's pathname. For
-         * the file consumer, that means creating the starting directory. For
-         * the file producer, it means the directory the files should be written
-         * to.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointBuilder autoCreate(boolean autoCreate) {
-            doSetProperty("autoCreate", autoCreate);
-            return this;
-        }
-        /**
-         * Automatically create missing directories in the file's pathname. For
-         * the file consumer, that means creating the starting directory. For
-         * the file producer, it means the directory the files should be written
-         * to.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointBuilder autoCreate(String autoCreate) {
-            doSetProperty("autoCreate", autoCreate);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Specifies the address of the local interface against which the
          * connection should bind.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder bindAddress(String bindAddress) {
@@ -4885,6 +4594,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder bulkRequests(Integer bulkRequests) {
@@ -4899,6 +4609,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder bulkRequests(String bulkRequests) {
@@ -4912,6 +4623,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder compression(int compression) {
@@ -4925,6 +4637,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder compression(String compression) {
@@ -4958,37 +4671,12 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the maximum reconnect attempts Camel performs when it tries
-         * to connect to the remote FTP server. Use 0 to disable this behavior.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointBuilder maximumReconnectAttempts(
-                int maximumReconnectAttempts) {
-            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
-            return this;
-        }
-        /**
-         * Specifies the maximum reconnect attempts Camel performs when it tries
-         * to connect to the remote FTP server. Use 0 to disable this behavior.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointBuilder maximumReconnectAttempts(
-                String maximumReconnectAttempts) {
-            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
-            return this;
-        }
-        /**
          * To use a custom configured com.jcraft.jsch.Proxy. This proxy is used
          * to consume/send messages from the target SFTP host.
          * 
          * The option is a: <code>com.jcraft.jsch.Proxy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder proxy(Object proxy) {
@@ -5002,34 +4690,11 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>com.jcraft.jsch.Proxy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder proxy(String proxy) {
             doSetProperty("proxy", proxy);
-            return this;
-        }
-        /**
-         * Delay in millis Camel will wait before performing a reconnect
-         * attempt.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointBuilder reconnectDelay(long reconnectDelay) {
-            doSetProperty("reconnectDelay", reconnectDelay);
-            return this;
-        }
-        /**
-         * Delay in millis Camel will wait before performing a reconnect
-         * attempt.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointBuilder reconnectDelay(String reconnectDelay) {
-            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -5071,6 +4736,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder serverAliveInterval(
@@ -5085,6 +4751,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder serverAliveInterval(
@@ -5157,32 +4824,6 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
          * Should an exception be thrown if connection failed (exhausted) By
          * default exception is not thrown and a WARN is logged. You can use
          * this to enable exception being thrown and handle the thrown exception
@@ -5238,6 +4879,90 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
+            return this;
+        }
+        /**
+         * Automatically create missing directories in the file's pathname. For
+         * the file consumer, that means creating the starting directory. For
+         * the file producer, it means the directory the files should be written
+         * to.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointBuilder autoCreate(boolean autoCreate) {
+            doSetProperty("autoCreate", autoCreate);
+            return this;
+        }
+        /**
+         * Automatically create missing directories in the file's pathname. For
+         * the file consumer, that means creating the starting directory. For
+         * the file producer, it means the directory the files should be written
+         * to.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointBuilder autoCreate(String autoCreate) {
+            doSetProperty("autoCreate", autoCreate);
+            return this;
+        }
+        /**
+         * Whether the endpoint should use basic property binding (Camel 2.x) or
+         * the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Whether the endpoint should use basic property binding (Camel 2.x) or
+         * the newer property binding with additional capabilities.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointBuilder basicPropertyBinding(
+                String basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedSftpEndpointBuilder synchronous(String synchronous) {
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

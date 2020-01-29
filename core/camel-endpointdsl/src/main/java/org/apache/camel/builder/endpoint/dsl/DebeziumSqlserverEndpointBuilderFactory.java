@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -42,6 +43,45 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default AdvancedDebeziumSqlserverEndpointBuilder advanced() {
             return (AdvancedDebeziumSqlserverEndpointBuilder) this;
+        }
+        /**
+         * Sets additional properties for debezium components in case they can't
+         * be set directly on the camel configurations (e.g: setting Kafka
+         * Connect properties needed by Debezium engine, for example setting
+         * KafkaOffsetBackingStore), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Default:
+         * Group: common
+         */
+        default DebeziumSqlserverEndpointBuilder additionalProperties(
+                Map<String, Object> additionalProperties) {
+            doSetProperty("additionalProperties", additionalProperties);
+            return this;
+        }
+        /**
+         * Sets additional properties for debezium components in case they can't
+         * be set directly on the camel configurations (e.g: setting Kafka
+         * Connect properties needed by Debezium engine, for example setting
+         * KafkaOffsetBackingStore), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Default:
+         * Group: common
+         */
+        default DebeziumSqlserverEndpointBuilder additionalProperties(
+                String additionalProperties) {
+            doSetProperty("additionalProperties", additionalProperties);
+            return this;
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
@@ -205,6 +245,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default DebeziumSqlserverEndpointBuilder offsetStorageFileName(
@@ -218,6 +259,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default DebeziumSqlserverEndpointBuilder offsetStoragePartitions(
@@ -231,6 +273,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default DebeziumSqlserverEndpointBuilder offsetStoragePartitions(
@@ -244,6 +287,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default DebeziumSqlserverEndpointBuilder offsetStorageReplicationFactor(
@@ -257,6 +301,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default DebeziumSqlserverEndpointBuilder offsetStorageReplicationFactor(
@@ -270,6 +315,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default DebeziumSqlserverEndpointBuilder offsetStorageTopic(
@@ -283,6 +329,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder columnBlacklist(
@@ -296,6 +343,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder databaseDbname(
@@ -324,6 +372,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder databaseHistoryFileFilename(
@@ -340,6 +389,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder databaseHistoryKafkaBootstrapServers(
@@ -412,6 +462,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder databaseHistoryKafkaTopic(
@@ -424,6 +475,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder databaseHostname(
@@ -438,6 +490,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder databasePassword(
@@ -479,6 +532,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder databaseServerName(
@@ -493,6 +547,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder databaseServerTimezone(
@@ -506,6 +561,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder databaseUser(
@@ -644,6 +700,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder messageKeyColumns(
@@ -711,6 +768,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder snapshotFetchSize(
@@ -724,6 +782,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder snapshotFetchSize(
@@ -795,6 +854,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder snapshotSelectStatementOverrides(
@@ -822,6 +882,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder tableBlacklist(
@@ -860,6 +921,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder tableWhitelist(
@@ -942,6 +1004,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDebeziumSqlserverEndpointBuilder exceptionHandler(
@@ -958,6 +1021,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDebeziumSqlserverEndpointBuilder exceptionHandler(
@@ -970,6 +1034,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDebeziumSqlserverEndpointBuilder exchangePattern(
@@ -983,6 +1048,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDebeziumSqlserverEndpointBuilder exchangePattern(

@@ -159,6 +159,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder since(String since) {
@@ -209,6 +210,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default CouchDbEndpointConsumerBuilder password(String password) {
@@ -220,6 +222,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default CouchDbEndpointConsumerBuilder username(String username) {
@@ -246,6 +249,7 @@ public interface CouchDbEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCouchDbEndpointConsumerBuilder exceptionHandler(
@@ -262,6 +266,7 @@ public interface CouchDbEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCouchDbEndpointConsumerBuilder exceptionHandler(
@@ -274,6 +279,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCouchDbEndpointConsumerBuilder exchangePattern(
@@ -287,6 +293,7 @@ public interface CouchDbEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCouchDbEndpointConsumerBuilder exchangePattern(
@@ -434,6 +441,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default CouchDbEndpointProducerBuilder password(String password) {
@@ -445,6 +453,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default CouchDbEndpointProducerBuilder username(String username) {
@@ -559,6 +568,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default CouchDbEndpointBuilder password(String password) {
@@ -570,6 +580,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default CouchDbEndpointBuilder username(String username) {

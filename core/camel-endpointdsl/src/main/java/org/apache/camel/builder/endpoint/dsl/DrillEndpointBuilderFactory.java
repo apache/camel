@@ -44,6 +44,7 @@ public interface DrillEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default DrillEndpointBuilder clusterId(String clusterId) {
@@ -55,6 +56,7 @@ public interface DrillEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default DrillEndpointBuilder directory(String directory) {
@@ -136,6 +138,7 @@ public interface DrillEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 2181
          * Group: producer
          */
         default DrillEndpointBuilder port(Integer port) {
@@ -148,6 +151,7 @@ public interface DrillEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 2181
          * Group: producer
          */
         default DrillEndpointBuilder port(String port) {

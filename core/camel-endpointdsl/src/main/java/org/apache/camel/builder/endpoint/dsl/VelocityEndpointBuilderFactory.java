@@ -66,6 +66,7 @@ public interface VelocityEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default VelocityEndpointBuilder encoding(String encoding) {
@@ -146,6 +147,7 @@ public interface VelocityEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default VelocityEndpointBuilder propertiesFile(String propertiesFile) {

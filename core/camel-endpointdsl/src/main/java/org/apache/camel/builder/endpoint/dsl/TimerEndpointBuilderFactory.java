@@ -242,6 +242,7 @@ public interface TimerEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTimerEndpointBuilder exceptionHandler(
@@ -258,6 +259,7 @@ public interface TimerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTimerEndpointBuilder exceptionHandler(
@@ -270,6 +272,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTimerEndpointBuilder exchangePattern(
@@ -283,6 +286,7 @@ public interface TimerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTimerEndpointBuilder exchangePattern(
@@ -350,6 +354,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder pattern(String pattern) {
@@ -389,6 +394,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Date</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder time(Date time) {
@@ -402,6 +408,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.util.Date</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder time(String time) {
@@ -413,6 +420,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Timer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder timer(Timer timer) {
@@ -424,6 +432,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.util.Timer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder timer(String timer) {

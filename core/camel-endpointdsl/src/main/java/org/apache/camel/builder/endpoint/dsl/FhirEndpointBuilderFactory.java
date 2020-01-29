@@ -51,6 +51,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
          * 
+         * Default:
          * Group: common
          */
         default FhirEndpointConsumerBuilder encoding(EncodingEnum encoding) {
@@ -63,6 +64,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
          * 
+         * Default:
          * Group: common
          */
         default FhirEndpointConsumerBuilder encoding(String encoding) {
@@ -101,6 +103,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default FhirEndpointConsumerBuilder inBody(String inBody) {
@@ -160,6 +163,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default FhirEndpointConsumerBuilder serverUrl(String serverUrl) {
@@ -238,6 +242,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder backoffErrorThreshold(
@@ -251,6 +256,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder backoffErrorThreshold(
@@ -264,6 +270,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder backoffIdleThreshold(
@@ -277,6 +284,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder backoffIdleThreshold(
@@ -294,6 +302,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder backoffMultiplier(
@@ -311,6 +320,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder backoffMultiplier(
@@ -465,6 +475,7 @@ public interface FhirEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder scheduledExecutorService(
@@ -480,6 +491,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder scheduledExecutorService(
@@ -507,6 +519,7 @@ public interface FhirEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder schedulerProperties(
@@ -522,6 +535,7 @@ public interface FhirEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder schedulerProperties(
@@ -610,6 +624,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default FhirEndpointConsumerBuilder proxyHost(String proxyHost) {
@@ -621,6 +636,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default FhirEndpointConsumerBuilder proxyPassword(String proxyPassword) {
@@ -632,6 +648,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default FhirEndpointConsumerBuilder proxyPort(Integer proxyPort) {
@@ -644,6 +661,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default FhirEndpointConsumerBuilder proxyPort(String proxyPort) {
@@ -655,6 +673,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default FhirEndpointConsumerBuilder proxyUser(String proxyUser) {
@@ -666,6 +685,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default FhirEndpointConsumerBuilder accessToken(String accessToken) {
@@ -677,6 +697,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default FhirEndpointConsumerBuilder password(String password) {
@@ -688,6 +709,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default FhirEndpointConsumerBuilder username(String username) {
@@ -714,6 +736,7 @@ public interface FhirEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFhirEndpointConsumerBuilder exceptionHandler(
@@ -730,6 +753,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFhirEndpointConsumerBuilder exceptionHandler(
@@ -742,6 +766,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFhirEndpointConsumerBuilder exchangePattern(
@@ -755,6 +780,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFhirEndpointConsumerBuilder exchangePattern(
@@ -771,6 +797,7 @@ public interface FhirEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFhirEndpointConsumerBuilder pollStrategy(
@@ -787,6 +814,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFhirEndpointConsumerBuilder pollStrategy(
@@ -828,6 +856,7 @@ public interface FhirEndpointBuilderFactory {
          * The option is a:
          * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder client(Object client) {
@@ -840,6 +869,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder client(String client) {
@@ -852,6 +882,7 @@ public interface FhirEndpointBuilderFactory {
          * The option is a:
          * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder clientFactory(
@@ -865,6 +896,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder clientFactory(
@@ -959,6 +991,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>ca.uhn.fhir.context.FhirContext</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder fhirContext(
@@ -973,6 +1006,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.context.FhirContext</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder fhirContext(
@@ -1011,6 +1045,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder sessionCookie(
@@ -1050,6 +1085,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder summary(SummaryEnum summary) {
@@ -1062,6 +1098,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder summary(String summary) {
@@ -1142,6 +1179,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
          * 
+         * Default:
          * Group: common
          */
         default FhirEndpointProducerBuilder encoding(EncodingEnum encoding) {
@@ -1154,6 +1192,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
          * 
+         * Default:
          * Group: common
          */
         default FhirEndpointProducerBuilder encoding(String encoding) {
@@ -1192,6 +1231,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default FhirEndpointProducerBuilder inBody(String inBody) {
@@ -1251,6 +1291,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default FhirEndpointProducerBuilder serverUrl(String serverUrl) {
@@ -1304,6 +1345,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default FhirEndpointProducerBuilder proxyHost(String proxyHost) {
@@ -1315,6 +1357,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default FhirEndpointProducerBuilder proxyPassword(String proxyPassword) {
@@ -1326,6 +1369,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default FhirEndpointProducerBuilder proxyPort(Integer proxyPort) {
@@ -1338,6 +1382,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default FhirEndpointProducerBuilder proxyPort(String proxyPort) {
@@ -1349,6 +1394,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default FhirEndpointProducerBuilder proxyUser(String proxyUser) {
@@ -1360,6 +1406,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default FhirEndpointProducerBuilder accessToken(String accessToken) {
@@ -1371,6 +1418,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default FhirEndpointProducerBuilder password(String password) {
@@ -1382,6 +1430,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default FhirEndpointProducerBuilder username(String username) {
@@ -1433,6 +1482,7 @@ public interface FhirEndpointBuilderFactory {
          * The option is a:
          * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder client(Object client) {
@@ -1445,6 +1495,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder client(String client) {
@@ -1457,6 +1508,7 @@ public interface FhirEndpointBuilderFactory {
          * The option is a:
          * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder clientFactory(
@@ -1470,6 +1522,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder clientFactory(
@@ -1564,6 +1617,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>ca.uhn.fhir.context.FhirContext</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder fhirContext(
@@ -1578,6 +1632,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.context.FhirContext</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder fhirContext(
@@ -1616,6 +1671,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder sessionCookie(
@@ -1655,6 +1711,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder summary(SummaryEnum summary) {
@@ -1667,6 +1724,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder summary(String summary) {
@@ -1748,6 +1806,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
          * 
+         * Default:
          * Group: common
          */
         default FhirEndpointBuilder encoding(EncodingEnum encoding) {
@@ -1760,6 +1819,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
          * 
+         * Default:
          * Group: common
          */
         default FhirEndpointBuilder encoding(String encoding) {
@@ -1797,6 +1857,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default FhirEndpointBuilder inBody(String inBody) {
@@ -1856,6 +1917,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default FhirEndpointBuilder serverUrl(String serverUrl) {
@@ -1867,6 +1929,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default FhirEndpointBuilder proxyHost(String proxyHost) {
@@ -1878,6 +1941,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default FhirEndpointBuilder proxyPassword(String proxyPassword) {
@@ -1889,6 +1953,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default FhirEndpointBuilder proxyPort(Integer proxyPort) {
@@ -1901,6 +1966,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default FhirEndpointBuilder proxyPort(String proxyPort) {
@@ -1912,6 +1978,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default FhirEndpointBuilder proxyUser(String proxyUser) {
@@ -1923,6 +1990,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default FhirEndpointBuilder accessToken(String accessToken) {
@@ -1934,6 +2002,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default FhirEndpointBuilder password(String password) {
@@ -1945,6 +2014,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default FhirEndpointBuilder username(String username) {
@@ -1997,6 +2067,7 @@ public interface FhirEndpointBuilderFactory {
          * The option is a:
          * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder client(Object client) {
@@ -2009,6 +2080,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder client(String client) {
@@ -2021,6 +2093,7 @@ public interface FhirEndpointBuilderFactory {
          * The option is a:
          * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder clientFactory(Object clientFactory) {
@@ -2033,6 +2106,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder clientFactory(String clientFactory) {
@@ -2126,6 +2200,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>ca.uhn.fhir.context.FhirContext</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder fhirContext(Object fhirContext) {
@@ -2139,6 +2214,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.context.FhirContext</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder fhirContext(String fhirContext) {
@@ -2176,6 +2252,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder sessionCookie(String sessionCookie) {
@@ -2212,6 +2289,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder summary(SummaryEnum summary) {
@@ -2224,6 +2302,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder summary(String summary) {

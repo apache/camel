@@ -86,6 +86,7 @@ public interface LumberjackEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default LumberjackEndpointBuilder sslContextParameters(
@@ -99,6 +100,7 @@ public interface LumberjackEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default LumberjackEndpointBuilder sslContextParameters(
@@ -126,6 +128,7 @@ public interface LumberjackEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedLumberjackEndpointBuilder exceptionHandler(
@@ -142,6 +145,7 @@ public interface LumberjackEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedLumberjackEndpointBuilder exceptionHandler(
@@ -154,6 +158,7 @@ public interface LumberjackEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedLumberjackEndpointBuilder exchangePattern(
@@ -167,6 +172,7 @@ public interface LumberjackEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedLumberjackEndpointBuilder exchangePattern(

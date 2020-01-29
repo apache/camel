@@ -66,6 +66,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.print.DocFlavor</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default PrinterEndpointBuilder docFlavor(Object docFlavor) {
@@ -78,6 +79,7 @@ public interface PrinterEndpointBuilderFactory {
          * The option will be converted to a <code>javax.print.DocFlavor</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default PrinterEndpointBuilder docFlavor(String docFlavor) {
@@ -89,6 +91,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default PrinterEndpointBuilder flavor(String flavor) {
@@ -158,6 +161,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default PrinterEndpointBuilder mediaTray(String mediaTray) {
@@ -169,6 +173,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default PrinterEndpointBuilder mimeType(String mimeType) {
@@ -193,6 +198,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default PrinterEndpointBuilder printerPrefix(String printerPrefix) {

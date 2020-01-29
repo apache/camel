@@ -51,6 +51,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointConsumerBuilder addresses(List<String> addresses) {
@@ -63,6 +64,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointConsumerBuilder addresses(String addresses) {
@@ -74,6 +76,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointConsumerBuilder fromAddress(String fromAddress) {
@@ -126,6 +129,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.math.BigInteger</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointConsumerBuilder gasLimit(BigInteger gasLimit) {
@@ -138,6 +142,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointConsumerBuilder gasLimit(String gasLimit) {
@@ -150,6 +155,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointConsumerBuilder privateFor(List<String> privateFor) {
@@ -162,6 +168,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointConsumerBuilder privateFor(String privateFor) {
@@ -197,6 +204,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointConsumerBuilder toAddress(String toAddress) {
@@ -223,6 +231,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointConsumerBuilder topics(List<String> topics) {
@@ -236,6 +245,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointConsumerBuilder topics(String topics) {
@@ -247,6 +257,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>org.web3j.protocol.Web3j</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointConsumerBuilder web3j(Object web3j) {
@@ -259,6 +270,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.web3j.protocol.Web3j</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointConsumerBuilder web3j(String web3j) {
@@ -324,6 +336,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedWeb3jEndpointConsumerBuilder exceptionHandler(
@@ -340,6 +353,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedWeb3jEndpointConsumerBuilder exceptionHandler(
@@ -352,6 +366,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedWeb3jEndpointConsumerBuilder exchangePattern(
@@ -365,6 +380,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedWeb3jEndpointConsumerBuilder exchangePattern(
@@ -446,6 +462,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointProducerBuilder addresses(List<String> addresses) {
@@ -458,6 +475,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointProducerBuilder addresses(String addresses) {
@@ -469,6 +487,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointProducerBuilder fromAddress(String fromAddress) {
@@ -521,6 +540,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.math.BigInteger</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointProducerBuilder gasLimit(BigInteger gasLimit) {
@@ -533,6 +553,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointProducerBuilder gasLimit(String gasLimit) {
@@ -545,6 +566,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointProducerBuilder privateFor(List<String> privateFor) {
@@ -557,6 +579,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointProducerBuilder privateFor(String privateFor) {
@@ -592,6 +615,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointProducerBuilder toAddress(String toAddress) {
@@ -618,6 +642,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointProducerBuilder topics(List<String> topics) {
@@ -631,6 +656,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointProducerBuilder topics(String topics) {
@@ -642,6 +668,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>org.web3j.protocol.Web3j</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointProducerBuilder web3j(Object web3j) {
@@ -654,6 +681,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.web3j.protocol.Web3j</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointProducerBuilder web3j(String web3j) {
@@ -665,6 +693,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder address(String address) {
@@ -689,6 +718,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder blockHash(String blockHash) {
@@ -700,6 +730,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder clientId(String clientId) {
@@ -712,6 +743,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder data(String data) {
@@ -723,6 +755,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder databaseName(String databaseName) {
@@ -734,6 +767,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.math.BigInteger</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder filterId(BigInteger filterId) {
@@ -746,6 +780,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder filterId(String filterId) {
@@ -757,6 +792,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.math.BigInteger</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder gasPrice(BigInteger gasPrice) {
@@ -769,6 +805,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder gasPrice(String gasPrice) {
@@ -780,6 +817,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder hashrate(String hashrate) {
@@ -792,6 +830,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder headerPowHash(String headerPowHash) {
@@ -803,6 +842,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.math.BigInteger</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder index(BigInteger index) {
@@ -815,6 +855,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder index(String index) {
@@ -826,6 +867,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder keyName(String keyName) {
@@ -880,6 +922,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder mixDigest(String mixDigest) {
@@ -892,6 +935,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder nonce(String nonce) {
@@ -915,6 +959,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.math.BigInteger</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder position(BigInteger position) {
@@ -927,6 +972,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder position(String position) {
@@ -938,6 +984,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.math.BigInteger</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder priority(BigInteger priority) {
@@ -950,6 +997,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder priority(String priority) {
@@ -961,6 +1009,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder sha3HashOfDataToSign(
@@ -974,6 +1023,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder signedTransactionData(
@@ -986,6 +1036,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder sourceCode(String sourceCode) {
@@ -997,6 +1048,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder transactionHash(
@@ -1009,6 +1061,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.math.BigInteger</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder ttl(BigInteger ttl) {
@@ -1021,6 +1074,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder ttl(String ttl) {
@@ -1032,6 +1086,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.math.BigInteger</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder value(BigInteger value) {
@@ -1044,6 +1099,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default Web3jEndpointProducerBuilder value(String value) {
@@ -1136,6 +1192,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointBuilder addresses(List<String> addresses) {
@@ -1148,6 +1205,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointBuilder addresses(String addresses) {
@@ -1159,6 +1217,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointBuilder fromAddress(String fromAddress) {
@@ -1211,6 +1270,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.math.BigInteger</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointBuilder gasLimit(BigInteger gasLimit) {
@@ -1223,6 +1283,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointBuilder gasLimit(String gasLimit) {
@@ -1235,6 +1296,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointBuilder privateFor(List<String> privateFor) {
@@ -1247,6 +1309,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointBuilder privateFor(String privateFor) {
@@ -1282,6 +1345,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointBuilder toAddress(String toAddress) {
@@ -1308,6 +1372,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointBuilder topics(List<String> topics) {
@@ -1321,6 +1386,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointBuilder topics(String topics) {
@@ -1332,6 +1398,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option is a: <code>org.web3j.protocol.Web3j</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointBuilder web3j(Object web3j) {
@@ -1344,6 +1411,7 @@ public interface Web3jEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.web3j.protocol.Web3j</code> type.
          * 
+         * Default:
          * Group: common
          */
         default Web3jEndpointBuilder web3j(String web3j) {

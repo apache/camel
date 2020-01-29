@@ -46,6 +46,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtmosEndpointConsumerBuilder localPath(String localPath) {
@@ -57,6 +58,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtmosEndpointConsumerBuilder newRemotePath(String newRemotePath) {
@@ -68,6 +70,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtmosEndpointConsumerBuilder query(String query) {
@@ -79,6 +82,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtmosEndpointConsumerBuilder remotePath(String remotePath) {
@@ -128,6 +132,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default AtmosEndpointConsumerBuilder fullTokenId(String fullTokenId) {
@@ -140,6 +145,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default AtmosEndpointConsumerBuilder secretKey(String secretKey) {
@@ -190,6 +196,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtmosEndpointConsumerBuilder exceptionHandler(
@@ -206,6 +213,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtmosEndpointConsumerBuilder exceptionHandler(
@@ -218,6 +226,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtmosEndpointConsumerBuilder exchangePattern(
@@ -231,6 +240,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtmosEndpointConsumerBuilder exchangePattern(
@@ -299,6 +309,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtmosEndpointConsumerBuilder uri(String uri) {
@@ -321,6 +332,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtmosEndpointProducerBuilder localPath(String localPath) {
@@ -332,6 +344,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtmosEndpointProducerBuilder newRemotePath(String newRemotePath) {
@@ -343,6 +356,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtmosEndpointProducerBuilder query(String query) {
@@ -354,6 +368,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtmosEndpointProducerBuilder remotePath(String remotePath) {
@@ -407,6 +422,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default AtmosEndpointProducerBuilder fullTokenId(String fullTokenId) {
@@ -419,6 +435,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default AtmosEndpointProducerBuilder secretKey(String secretKey) {
@@ -521,6 +538,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtmosEndpointProducerBuilder uri(String uri) {
@@ -544,6 +562,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtmosEndpointBuilder localPath(String localPath) {
@@ -555,6 +574,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtmosEndpointBuilder newRemotePath(String newRemotePath) {
@@ -566,6 +586,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtmosEndpointBuilder query(String query) {
@@ -577,6 +598,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtmosEndpointBuilder remotePath(String remotePath) {
@@ -588,6 +610,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default AtmosEndpointBuilder fullTokenId(String fullTokenId) {
@@ -600,6 +623,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default AtmosEndpointBuilder secretKey(String secretKey) {
@@ -701,6 +725,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtmosEndpointBuilder uri(String uri) {

@@ -51,6 +51,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * <code>com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams</code>
          * type.
          * 
+         * Default:
          * Group: consumer
          */
         default DdbStreamEndpointBuilder amazonDynamoDbStreamsClient(
@@ -65,6 +66,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * <code>com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams</code>
          * type.
          * 
+         * Default:
          * Group: consumer
          */
         default DdbStreamEndpointBuilder amazonDynamoDbStreamsClient(
@@ -148,6 +150,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default DdbStreamEndpointBuilder maxResultsPerRequest(
@@ -160,6 +163,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default DdbStreamEndpointBuilder maxResultsPerRequest(
@@ -172,6 +176,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default DdbStreamEndpointBuilder proxyHost(String proxyHost) {
@@ -183,6 +188,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default DdbStreamEndpointBuilder proxyPort(Integer proxyPort) {
@@ -195,6 +201,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: consumer
          */
         default DdbStreamEndpointBuilder proxyPort(String proxyPort) {
@@ -231,6 +238,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default DdbStreamEndpointBuilder region(String region) {
@@ -273,6 +281,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.aws.ddbstream.SequenceNumberProvider</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default DdbStreamEndpointBuilder sequenceNumberProvider(
@@ -288,6 +297,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.aws.ddbstream.SequenceNumberProvider</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default DdbStreamEndpointBuilder sequenceNumberProvider(
@@ -301,6 +311,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder backoffErrorThreshold(
@@ -314,6 +325,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder backoffErrorThreshold(
@@ -327,6 +339,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder backoffIdleThreshold(
@@ -340,6 +353,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder backoffIdleThreshold(
@@ -357,6 +371,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder backoffMultiplier(int backoffMultiplier) {
@@ -373,6 +388,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder backoffMultiplier(
@@ -526,6 +542,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder scheduledExecutorService(
@@ -541,6 +558,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder scheduledExecutorService(
@@ -568,6 +586,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder schedulerProperties(
@@ -583,6 +602,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder schedulerProperties(
@@ -670,6 +690,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default DdbStreamEndpointBuilder accessKey(String accessKey) {
@@ -681,6 +702,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default DdbStreamEndpointBuilder secretKey(String secretKey) {
@@ -707,6 +729,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDdbStreamEndpointBuilder exceptionHandler(
@@ -723,6 +746,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDdbStreamEndpointBuilder exceptionHandler(
@@ -735,6 +759,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDdbStreamEndpointBuilder exchangePattern(
@@ -748,6 +773,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDdbStreamEndpointBuilder exchangePattern(
@@ -764,6 +790,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDdbStreamEndpointBuilder pollStrategy(
@@ -780,6 +807,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDdbStreamEndpointBuilder pollStrategy(

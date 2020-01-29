@@ -66,6 +66,7 @@ public interface ChunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ChunkEndpointBuilder encoding(String encoding) {
@@ -77,6 +78,7 @@ public interface ChunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ChunkEndpointBuilder extension(String extension) {
@@ -128,6 +130,7 @@ public interface ChunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ChunkEndpointBuilder themeFolder(String themeFolder) {
@@ -139,6 +142,7 @@ public interface ChunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ChunkEndpointBuilder themeLayer(String themeLayer) {
@@ -150,6 +154,7 @@ public interface ChunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ChunkEndpointBuilder themeSubfolder(String themeSubfolder) {

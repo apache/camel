@@ -50,6 +50,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a: <code>javax.cache.configuration.Configuration</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default JCacheEndpointConsumerBuilder cacheConfiguration(
@@ -63,6 +64,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.cache.configuration.Configuration</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JCacheEndpointConsumerBuilder cacheConfiguration(
@@ -76,6 +78,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JCacheEndpointConsumerBuilder cacheConfigurationProperties(
@@ -89,6 +92,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.util.Map</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JCacheEndpointConsumerBuilder cacheConfigurationProperties(
@@ -102,6 +106,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JCacheEndpointConsumerBuilder cachingProvider(
@@ -114,6 +119,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JCacheEndpointConsumerBuilder configurationUri(
@@ -290,6 +296,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JCacheEndpointConsumerBuilder filteredEvents(
@@ -365,6 +372,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;javax.cache.event.CacheEntryEventFilter&gt;</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJCacheEndpointConsumerBuilder eventFilters(
@@ -379,6 +387,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;javax.cache.event.CacheEntryEventFilter&gt;</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJCacheEndpointConsumerBuilder eventFilters(
@@ -395,6 +404,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJCacheEndpointConsumerBuilder exceptionHandler(
@@ -411,6 +421,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJCacheEndpointConsumerBuilder exceptionHandler(
@@ -423,6 +434,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJCacheEndpointConsumerBuilder exchangePattern(
@@ -436,6 +448,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJCacheEndpointConsumerBuilder exchangePattern(
@@ -477,6 +490,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a:
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJCacheEndpointConsumerBuilder cacheLoaderFactory(
@@ -490,6 +504,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJCacheEndpointConsumerBuilder cacheLoaderFactory(
@@ -503,6 +518,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a:
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJCacheEndpointConsumerBuilder cacheWriterFactory(
@@ -516,6 +532,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJCacheEndpointConsumerBuilder cacheWriterFactory(
@@ -557,6 +574,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a:
          * <code>javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJCacheEndpointConsumerBuilder expiryPolicyFactory(
@@ -570,6 +588,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJCacheEndpointConsumerBuilder expiryPolicyFactory(
@@ -622,6 +641,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a: <code>javax.cache.configuration.Configuration</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default JCacheEndpointProducerBuilder cacheConfiguration(
@@ -635,6 +655,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.cache.configuration.Configuration</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JCacheEndpointProducerBuilder cacheConfiguration(
@@ -648,6 +669,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JCacheEndpointProducerBuilder cacheConfigurationProperties(
@@ -661,6 +683,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.util.Map</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JCacheEndpointProducerBuilder cacheConfigurationProperties(
@@ -674,6 +697,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JCacheEndpointProducerBuilder cachingProvider(
@@ -686,6 +710,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JCacheEndpointProducerBuilder configurationUri(
@@ -824,6 +849,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default JCacheEndpointProducerBuilder action(String action) {
@@ -917,6 +943,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a:
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJCacheEndpointProducerBuilder cacheLoaderFactory(
@@ -930,6 +957,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJCacheEndpointProducerBuilder cacheLoaderFactory(
@@ -943,6 +971,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a:
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJCacheEndpointProducerBuilder cacheWriterFactory(
@@ -956,6 +985,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJCacheEndpointProducerBuilder cacheWriterFactory(
@@ -997,6 +1027,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a:
          * <code>javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJCacheEndpointProducerBuilder expiryPolicyFactory(
@@ -1010,6 +1041,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJCacheEndpointProducerBuilder expiryPolicyFactory(
@@ -1063,6 +1095,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a: <code>javax.cache.configuration.Configuration</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default JCacheEndpointBuilder cacheConfiguration(
@@ -1076,6 +1109,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.cache.configuration.Configuration</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JCacheEndpointBuilder cacheConfiguration(
@@ -1089,6 +1123,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Map</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JCacheEndpointBuilder cacheConfigurationProperties(
@@ -1102,6 +1137,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.util.Map</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JCacheEndpointBuilder cacheConfigurationProperties(
@@ -1115,6 +1151,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JCacheEndpointBuilder cachingProvider(String cachingProvider) {
@@ -1126,6 +1163,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JCacheEndpointBuilder configurationUri(String configurationUri) {
@@ -1300,6 +1338,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a:
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJCacheEndpointBuilder cacheLoaderFactory(
@@ -1313,6 +1352,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJCacheEndpointBuilder cacheLoaderFactory(
@@ -1326,6 +1366,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a:
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJCacheEndpointBuilder cacheWriterFactory(
@@ -1339,6 +1380,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJCacheEndpointBuilder cacheWriterFactory(
@@ -1380,6 +1422,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a:
          * <code>javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJCacheEndpointBuilder expiryPolicyFactory(
@@ -1393,6 +1436,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJCacheEndpointBuilder expiryPolicyFactory(

@@ -49,6 +49,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastTopicEndpointConsumerBuilder defaultOperation(
@@ -64,6 +65,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastTopicEndpointConsumerBuilder defaultOperation(
@@ -78,6 +80,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastTopicEndpointConsumerBuilder hazelcastInstance(
@@ -92,6 +95,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastTopicEndpointConsumerBuilder hazelcastInstance(
@@ -106,6 +110,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastTopicEndpointConsumerBuilder hazelcastInstanceName(
@@ -196,6 +201,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHazelcastTopicEndpointConsumerBuilder exceptionHandler(
@@ -212,6 +218,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHazelcastTopicEndpointConsumerBuilder exceptionHandler(
@@ -224,6 +231,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHazelcastTopicEndpointConsumerBuilder exchangePattern(
@@ -237,6 +245,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHazelcastTopicEndpointConsumerBuilder exchangePattern(
@@ -319,6 +328,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastTopicEndpointProducerBuilder defaultOperation(
@@ -334,6 +344,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastTopicEndpointProducerBuilder defaultOperation(
@@ -348,6 +359,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastTopicEndpointProducerBuilder hazelcastInstance(
@@ -362,6 +374,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastTopicEndpointProducerBuilder hazelcastInstance(
@@ -376,6 +389,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastTopicEndpointProducerBuilder hazelcastInstanceName(
@@ -537,6 +551,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastTopicEndpointBuilder defaultOperation(
@@ -552,6 +567,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastTopicEndpointBuilder defaultOperation(
@@ -566,6 +582,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastTopicEndpointBuilder hazelcastInstance(
@@ -580,6 +597,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastTopicEndpointBuilder hazelcastInstance(
@@ -594,6 +612,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastTopicEndpointBuilder hazelcastInstanceName(

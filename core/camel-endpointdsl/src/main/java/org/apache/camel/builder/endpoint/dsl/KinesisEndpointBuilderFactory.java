@@ -53,6 +53,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a:
          * <code>com.amazonaws.services.kinesis.AmazonKinesis</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KinesisEndpointConsumerBuilder amazonKinesisClient(
@@ -66,6 +67,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.kinesis.AmazonKinesis</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KinesisEndpointConsumerBuilder amazonKinesisClient(
@@ -78,6 +80,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KinesisEndpointConsumerBuilder proxyHost(String proxyHost) {
@@ -89,6 +92,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KinesisEndpointConsumerBuilder proxyPort(Integer proxyPort) {
@@ -101,6 +105,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default KinesisEndpointConsumerBuilder proxyPort(String proxyPort) {
@@ -142,6 +147,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KinesisEndpointConsumerBuilder region(String region) {
@@ -275,6 +281,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default KinesisEndpointConsumerBuilder sequenceNumber(
@@ -324,6 +331,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default KinesisEndpointConsumerBuilder shardId(String shardId) {
@@ -336,6 +344,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder backoffErrorThreshold(
@@ -349,6 +358,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder backoffErrorThreshold(
@@ -362,6 +372,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder backoffIdleThreshold(
@@ -375,6 +386,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder backoffIdleThreshold(
@@ -392,6 +404,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder backoffMultiplier(
@@ -409,6 +422,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder backoffMultiplier(
@@ -563,6 +577,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder scheduledExecutorService(
@@ -578,6 +593,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder scheduledExecutorService(
@@ -605,6 +621,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder schedulerProperties(
@@ -620,6 +637,7 @@ public interface KinesisEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder schedulerProperties(
@@ -711,6 +729,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KinesisEndpointConsumerBuilder accessKey(String accessKey) {
@@ -722,6 +741,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KinesisEndpointConsumerBuilder secretKey(String secretKey) {
@@ -748,6 +768,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedKinesisEndpointConsumerBuilder exceptionHandler(
@@ -764,6 +785,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedKinesisEndpointConsumerBuilder exceptionHandler(
@@ -776,6 +798,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedKinesisEndpointConsumerBuilder exchangePattern(
@@ -789,6 +812,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedKinesisEndpointConsumerBuilder exchangePattern(
@@ -805,6 +829,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedKinesisEndpointConsumerBuilder pollStrategy(
@@ -821,6 +846,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedKinesisEndpointConsumerBuilder pollStrategy(
@@ -901,6 +927,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a:
          * <code>com.amazonaws.services.kinesis.AmazonKinesis</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KinesisEndpointProducerBuilder amazonKinesisClient(
@@ -914,6 +941,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.kinesis.AmazonKinesis</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KinesisEndpointProducerBuilder amazonKinesisClient(
@@ -926,6 +954,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KinesisEndpointProducerBuilder proxyHost(String proxyHost) {
@@ -937,6 +966,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KinesisEndpointProducerBuilder proxyPort(Integer proxyPort) {
@@ -949,6 +979,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default KinesisEndpointProducerBuilder proxyPort(String proxyPort) {
@@ -990,6 +1021,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KinesisEndpointProducerBuilder region(String region) {
@@ -1043,6 +1075,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KinesisEndpointProducerBuilder accessKey(String accessKey) {
@@ -1054,6 +1087,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KinesisEndpointProducerBuilder secretKey(String secretKey) {
@@ -1145,6 +1179,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a:
          * <code>com.amazonaws.services.kinesis.AmazonKinesis</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KinesisEndpointBuilder amazonKinesisClient(
@@ -1158,6 +1193,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.kinesis.AmazonKinesis</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KinesisEndpointBuilder amazonKinesisClient(
@@ -1170,6 +1206,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KinesisEndpointBuilder proxyHost(String proxyHost) {
@@ -1181,6 +1218,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KinesisEndpointBuilder proxyPort(Integer proxyPort) {
@@ -1193,6 +1231,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default KinesisEndpointBuilder proxyPort(String proxyPort) {
@@ -1232,6 +1271,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KinesisEndpointBuilder region(String region) {
@@ -1243,6 +1283,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KinesisEndpointBuilder accessKey(String accessKey) {
@@ -1254,6 +1295,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KinesisEndpointBuilder secretKey(String secretKey) {

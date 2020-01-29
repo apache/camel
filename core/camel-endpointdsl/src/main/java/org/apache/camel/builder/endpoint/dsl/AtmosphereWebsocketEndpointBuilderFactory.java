@@ -157,6 +157,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtmosphereWebsocketEndpointConsumerBuilder headerFilterStrategy(
@@ -171,6 +172,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtmosphereWebsocketEndpointConsumerBuilder headerFilterStrategy(
@@ -275,6 +277,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default AtmosphereWebsocketEndpointConsumerBuilder httpMethodRestrict(
@@ -343,6 +346,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default AtmosphereWebsocketEndpointConsumerBuilder responseBufferSize(
@@ -356,6 +360,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: consumer
          */
         default AtmosphereWebsocketEndpointConsumerBuilder responseBufferSize(
@@ -437,6 +442,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
+         * Default:
          * Group: common (advanced)
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder httpBinding(
@@ -451,6 +457,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
+         * Default:
          * Group: common (advanced)
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder httpBinding(
@@ -533,6 +540,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder exceptionHandler(
@@ -549,6 +557,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder exceptionHandler(
@@ -561,6 +570,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder exchangePattern(
@@ -574,6 +584,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder exchangePattern(
@@ -588,6 +599,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder fileNameExtWhitelist(
@@ -923,6 +935,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtmosphereWebsocketEndpointProducerBuilder headerFilterStrategy(
@@ -937,6 +950,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtmosphereWebsocketEndpointProducerBuilder headerFilterStrategy(
@@ -1033,6 +1047,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
+         * Default:
          * Group: common (advanced)
          */
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder httpBinding(
@@ -1047,6 +1062,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
+         * Default:
          * Group: common (advanced)
          */
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder httpBinding(
@@ -1325,6 +1341,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtmosphereWebsocketEndpointBuilder headerFilterStrategy(
@@ -1339,6 +1356,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtmosphereWebsocketEndpointBuilder headerFilterStrategy(
@@ -1433,6 +1451,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
+         * Default:
          * Group: common (advanced)
          */
         default AdvancedAtmosphereWebsocketEndpointBuilder httpBinding(
@@ -1447,6 +1466,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
+         * Default:
          * Group: common (advanced)
          */
         default AdvancedAtmosphereWebsocketEndpointBuilder httpBinding(

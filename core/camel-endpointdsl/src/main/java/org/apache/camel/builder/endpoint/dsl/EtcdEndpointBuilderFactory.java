@@ -88,6 +88,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EtcdEndpointConsumerBuilder timeout(Long timeout) {
@@ -99,6 +100,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EtcdEndpointConsumerBuilder timeout(String timeout) {
@@ -215,6 +217,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder backoffErrorThreshold(
@@ -228,6 +231,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder backoffErrorThreshold(
@@ -241,6 +245,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder backoffIdleThreshold(
@@ -254,6 +259,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder backoffIdleThreshold(
@@ -271,6 +277,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder backoffMultiplier(
@@ -288,6 +295,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder backoffMultiplier(
@@ -442,6 +450,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder scheduledExecutorService(
@@ -457,6 +466,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder scheduledExecutorService(
@@ -484,6 +494,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder schedulerProperties(
@@ -499,6 +510,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder schedulerProperties(
@@ -587,6 +599,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default EtcdEndpointConsumerBuilder password(String password) {
@@ -599,6 +612,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default EtcdEndpointConsumerBuilder sslContextParameters(
@@ -612,6 +626,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default EtcdEndpointConsumerBuilder sslContextParameters(
@@ -624,6 +639,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default EtcdEndpointConsumerBuilder userName(String userName) {
@@ -650,6 +666,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedEtcdEndpointConsumerBuilder exceptionHandler(
@@ -666,6 +683,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedEtcdEndpointConsumerBuilder exceptionHandler(
@@ -678,6 +696,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedEtcdEndpointConsumerBuilder exchangePattern(
@@ -691,6 +710,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedEtcdEndpointConsumerBuilder exchangePattern(
@@ -731,6 +751,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedEtcdEndpointConsumerBuilder pollStrategy(
@@ -747,6 +768,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedEtcdEndpointConsumerBuilder pollStrategy(
@@ -862,6 +884,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EtcdEndpointProducerBuilder timeout(Long timeout) {
@@ -873,6 +896,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EtcdEndpointProducerBuilder timeout(String timeout) {
@@ -938,6 +962,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default EtcdEndpointProducerBuilder timeToLive(Integer timeToLive) {
@@ -950,6 +975,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default EtcdEndpointProducerBuilder timeToLive(String timeToLive) {
@@ -961,6 +987,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default EtcdEndpointProducerBuilder password(String password) {
@@ -973,6 +1000,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default EtcdEndpointProducerBuilder sslContextParameters(
@@ -986,6 +1014,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default EtcdEndpointProducerBuilder sslContextParameters(
@@ -998,6 +1027,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default EtcdEndpointProducerBuilder userName(String userName) {
@@ -1124,6 +1154,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EtcdEndpointBuilder timeout(Long timeout) {
@@ -1135,6 +1166,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EtcdEndpointBuilder timeout(String timeout) {
@@ -1158,6 +1190,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default EtcdEndpointBuilder password(String password) {
@@ -1170,6 +1203,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default EtcdEndpointBuilder sslContextParameters(
@@ -1183,6 +1217,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default EtcdEndpointBuilder sslContextParameters(
@@ -1195,6 +1230,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default EtcdEndpointBuilder userName(String userName) {

@@ -47,6 +47,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KubernetesNodesEndpointConsumerBuilder apiVersion(
@@ -59,6 +60,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KubernetesNodesEndpointConsumerBuilder dnsDomain(
@@ -72,6 +74,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KubernetesNodesEndpointConsumerBuilder kubernetesClient(
@@ -85,6 +88,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KubernetesNodesEndpointConsumerBuilder kubernetesClient(
@@ -97,6 +101,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KubernetesNodesEndpointConsumerBuilder portName(String portName) {
@@ -159,6 +164,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default KubernetesNodesEndpointConsumerBuilder labelKey(String labelKey) {
@@ -170,6 +176,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default KubernetesNodesEndpointConsumerBuilder labelValue(
@@ -182,6 +189,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default KubernetesNodesEndpointConsumerBuilder namespace(
@@ -218,6 +226,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default KubernetesNodesEndpointConsumerBuilder resourceName(
@@ -230,6 +239,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointConsumerBuilder caCertData(
@@ -242,6 +252,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointConsumerBuilder caCertFile(
@@ -254,6 +265,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointConsumerBuilder clientCertData(
@@ -266,6 +278,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointConsumerBuilder clientCertFile(
@@ -278,6 +291,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointConsumerBuilder clientKeyAlgo(
@@ -290,6 +304,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointConsumerBuilder clientKeyData(
@@ -302,6 +317,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointConsumerBuilder clientKeyFile(
@@ -314,6 +330,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointConsumerBuilder clientKeyPassphrase(
@@ -326,6 +343,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointConsumerBuilder oauthToken(
@@ -338,6 +356,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointConsumerBuilder password(String password) {
@@ -349,6 +368,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointConsumerBuilder trustCerts(
@@ -362,6 +382,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointConsumerBuilder trustCerts(
@@ -374,6 +395,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointConsumerBuilder username(String username) {
@@ -401,6 +423,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedKubernetesNodesEndpointConsumerBuilder exceptionHandler(
@@ -417,6 +440,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedKubernetesNodesEndpointConsumerBuilder exceptionHandler(
@@ -429,6 +453,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedKubernetesNodesEndpointConsumerBuilder exchangePattern(
@@ -442,6 +467,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedKubernetesNodesEndpointConsumerBuilder exchangePattern(
@@ -483,6 +509,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedKubernetesNodesEndpointConsumerBuilder connectionTimeout(
@@ -497,6 +524,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedKubernetesNodesEndpointConsumerBuilder connectionTimeout(
@@ -548,6 +576,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KubernetesNodesEndpointProducerBuilder apiVersion(
@@ -560,6 +589,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KubernetesNodesEndpointProducerBuilder dnsDomain(
@@ -573,6 +603,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KubernetesNodesEndpointProducerBuilder kubernetesClient(
@@ -586,6 +617,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KubernetesNodesEndpointProducerBuilder kubernetesClient(
@@ -598,6 +630,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KubernetesNodesEndpointProducerBuilder portName(String portName) {
@@ -664,6 +697,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default KubernetesNodesEndpointProducerBuilder operation(
@@ -676,6 +710,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointProducerBuilder caCertData(
@@ -688,6 +723,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointProducerBuilder caCertFile(
@@ -700,6 +736,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointProducerBuilder clientCertData(
@@ -712,6 +749,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointProducerBuilder clientCertFile(
@@ -724,6 +762,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointProducerBuilder clientKeyAlgo(
@@ -736,6 +775,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointProducerBuilder clientKeyData(
@@ -748,6 +788,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointProducerBuilder clientKeyFile(
@@ -760,6 +801,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointProducerBuilder clientKeyPassphrase(
@@ -772,6 +814,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointProducerBuilder oauthToken(
@@ -784,6 +827,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointProducerBuilder password(String password) {
@@ -795,6 +839,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointProducerBuilder trustCerts(
@@ -808,6 +853,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointProducerBuilder trustCerts(
@@ -820,6 +866,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointProducerBuilder username(String username) {
@@ -872,6 +919,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedKubernetesNodesEndpointProducerBuilder connectionTimeout(
@@ -886,6 +934,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedKubernetesNodesEndpointProducerBuilder connectionTimeout(
@@ -938,6 +987,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KubernetesNodesEndpointBuilder apiVersion(String apiVersion) {
@@ -949,6 +999,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KubernetesNodesEndpointBuilder dnsDomain(String dnsDomain) {
@@ -961,6 +1012,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KubernetesNodesEndpointBuilder kubernetesClient(
@@ -974,6 +1026,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KubernetesNodesEndpointBuilder kubernetesClient(
@@ -986,6 +1039,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KubernetesNodesEndpointBuilder portName(String portName) {
@@ -1009,6 +1063,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointBuilder caCertData(String caCertData) {
@@ -1020,6 +1075,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointBuilder caCertFile(String caCertFile) {
@@ -1031,6 +1087,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointBuilder clientCertData(
@@ -1043,6 +1100,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointBuilder clientCertFile(
@@ -1055,6 +1113,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointBuilder clientKeyAlgo(
@@ -1067,6 +1126,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointBuilder clientKeyData(
@@ -1079,6 +1139,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointBuilder clientKeyFile(
@@ -1091,6 +1152,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointBuilder clientKeyPassphrase(
@@ -1103,6 +1165,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointBuilder oauthToken(String oauthToken) {
@@ -1114,6 +1177,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointBuilder password(String password) {
@@ -1125,6 +1189,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointBuilder trustCerts(Boolean trustCerts) {
@@ -1137,6 +1202,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointBuilder trustCerts(String trustCerts) {
@@ -1148,6 +1214,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesNodesEndpointBuilder username(String username) {
@@ -1200,6 +1267,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedKubernetesNodesEndpointBuilder connectionTimeout(
@@ -1214,6 +1282,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedKubernetesNodesEndpointBuilder connectionTimeout(

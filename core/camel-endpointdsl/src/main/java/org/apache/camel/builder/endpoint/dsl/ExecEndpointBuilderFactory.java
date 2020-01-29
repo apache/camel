@@ -43,6 +43,7 @@ public interface ExecEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ExecEndpointBuilder args(String args) {
@@ -55,6 +56,7 @@ public interface ExecEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.exec.ExecBinding</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ExecEndpointBuilder binding(Object binding) {
@@ -67,6 +69,7 @@ public interface ExecEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.exec.ExecBinding</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ExecEndpointBuilder binding(String binding) {
@@ -83,6 +86,7 @@ public interface ExecEndpointBuilderFactory {
          * <code>org.apache.camel.component.exec.ExecCommandExecutor</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default ExecEndpointBuilder commandExecutor(Object commandExecutor) {
@@ -99,6 +103,7 @@ public interface ExecEndpointBuilderFactory {
          * <code>org.apache.camel.component.exec.ExecCommandExecutor</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default ExecEndpointBuilder commandExecutor(String commandExecutor) {
@@ -181,6 +186,7 @@ public interface ExecEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ExecEndpointBuilder outFile(String outFile) {
@@ -194,6 +200,7 @@ public interface ExecEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ExecEndpointBuilder timeout(long timeout) {
@@ -207,6 +214,7 @@ public interface ExecEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ExecEndpointBuilder timeout(String timeout) {
@@ -249,6 +257,7 @@ public interface ExecEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ExecEndpointBuilder workingDir(String workingDir) {

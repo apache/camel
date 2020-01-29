@@ -54,6 +54,7 @@ public interface ControlBusEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ControlBusEndpointBuilder action(String action) {
@@ -187,6 +188,7 @@ public interface ControlBusEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ControlBusEndpointBuilder routeId(String routeId) {

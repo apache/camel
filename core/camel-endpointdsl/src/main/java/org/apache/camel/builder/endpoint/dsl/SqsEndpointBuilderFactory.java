@@ -67,6 +67,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a: <code>com.amazonaws.services.sqs.AmazonSQS</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default SqsEndpointConsumerBuilder amazonSQSClient(
@@ -80,6 +81,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.sqs.AmazonSQS</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqsEndpointConsumerBuilder amazonSQSClient(
@@ -119,6 +121,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqsEndpointConsumerBuilder headerFilterStrategy(
@@ -132,6 +135,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqsEndpointConsumerBuilder headerFilterStrategy(
@@ -182,6 +186,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqsEndpointConsumerBuilder queueOwnerAWSAccountId(
@@ -198,6 +203,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqsEndpointConsumerBuilder region(String region) {
@@ -210,6 +216,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder attributeNames(String attributeNames) {
@@ -287,6 +294,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder defaultVisibilityTimeout(
@@ -300,6 +308,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder defaultVisibilityTimeout(
@@ -405,6 +414,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder kmsDataKeyReusePeriodSeconds(
@@ -421,6 +431,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder kmsDataKeyReusePeriodSeconds(
@@ -434,6 +445,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder kmsMasterKeyId(String kmsMasterKeyId) {
@@ -447,6 +459,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder maxMessagesPerPoll(
@@ -461,6 +474,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder maxMessagesPerPoll(
@@ -474,6 +488,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder messageAttributeNames(
@@ -545,6 +560,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder visibilityTimeout(
@@ -563,6 +579,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder visibilityTimeout(
@@ -576,6 +593,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder waitTimeSeconds(
@@ -590,6 +608,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder waitTimeSeconds(
@@ -603,6 +622,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder backoffErrorThreshold(
@@ -616,6 +636,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder backoffErrorThreshold(
@@ -629,6 +650,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder backoffIdleThreshold(
@@ -642,6 +664,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder backoffIdleThreshold(
@@ -659,6 +682,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder backoffMultiplier(
@@ -676,6 +700,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder backoffMultiplier(
@@ -830,6 +855,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder scheduledExecutorService(
@@ -845,6 +871,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder scheduledExecutorService(
@@ -872,6 +899,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder schedulerProperties(
@@ -887,6 +915,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder schedulerProperties(
@@ -974,6 +1003,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SqsEndpointConsumerBuilder proxyHost(String proxyHost) {
@@ -985,6 +1015,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SqsEndpointConsumerBuilder proxyPort(Integer proxyPort) {
@@ -997,6 +1028,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default SqsEndpointConsumerBuilder proxyPort(String proxyPort) {
@@ -1009,6 +1041,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointConsumerBuilder maximumMessageSize(
@@ -1023,6 +1056,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointConsumerBuilder maximumMessageSize(
@@ -1036,6 +1070,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointConsumerBuilder messageRetentionPeriod(
@@ -1050,6 +1085,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointConsumerBuilder messageRetentionPeriod(
@@ -1062,6 +1098,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointConsumerBuilder policy(String policy) {
@@ -1075,6 +1112,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointConsumerBuilder receiveMessageWaitTimeSeconds(
@@ -1090,6 +1128,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointConsumerBuilder receiveMessageWaitTimeSeconds(
@@ -1103,6 +1142,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointConsumerBuilder redrivePolicy(String redrivePolicy) {
@@ -1114,6 +1154,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SqsEndpointConsumerBuilder accessKey(String accessKey) {
@@ -1125,6 +1166,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SqsEndpointConsumerBuilder secretKey(String secretKey) {
@@ -1152,6 +1194,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSqsEndpointConsumerBuilder exceptionHandler(
@@ -1168,6 +1211,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSqsEndpointConsumerBuilder exceptionHandler(
@@ -1180,6 +1224,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSqsEndpointConsumerBuilder exchangePattern(
@@ -1193,6 +1238,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSqsEndpointConsumerBuilder exchangePattern(
@@ -1209,6 +1255,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSqsEndpointConsumerBuilder pollStrategy(
@@ -1225,6 +1272,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSqsEndpointConsumerBuilder pollStrategy(
@@ -1294,6 +1342,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqsEndpointConsumerBuilder queueUrl(String queueUrl) {
@@ -1358,6 +1407,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a: <code>com.amazonaws.services.sqs.AmazonSQS</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default SqsEndpointProducerBuilder amazonSQSClient(
@@ -1371,6 +1421,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.sqs.AmazonSQS</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqsEndpointProducerBuilder amazonSQSClient(
@@ -1410,6 +1461,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqsEndpointProducerBuilder headerFilterStrategy(
@@ -1423,6 +1475,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqsEndpointProducerBuilder headerFilterStrategy(
@@ -1473,6 +1526,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqsEndpointProducerBuilder queueOwnerAWSAccountId(
@@ -1489,6 +1543,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqsEndpointProducerBuilder region(String region) {
@@ -1500,6 +1555,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SqsEndpointProducerBuilder delaySeconds(Integer delaySeconds) {
@@ -1512,6 +1568,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default SqsEndpointProducerBuilder delaySeconds(String delaySeconds) {
@@ -1603,6 +1660,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.aws.sqs.MessageGroupIdStrategy</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SqsEndpointProducerBuilder messageGroupIdStrategy(
@@ -1619,6 +1677,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.aws.sqs.MessageGroupIdStrategy</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SqsEndpointProducerBuilder messageGroupIdStrategy(
@@ -1633,6 +1692,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.aws.sqs.SqsOperations</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SqsEndpointProducerBuilder operation(SqsOperations operation) {
@@ -1646,6 +1706,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.aws.sqs.SqsOperations</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SqsEndpointProducerBuilder operation(String operation) {
@@ -1657,6 +1718,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SqsEndpointProducerBuilder proxyHost(String proxyHost) {
@@ -1668,6 +1730,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SqsEndpointProducerBuilder proxyPort(Integer proxyPort) {
@@ -1680,6 +1743,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default SqsEndpointProducerBuilder proxyPort(String proxyPort) {
@@ -1692,6 +1756,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointProducerBuilder maximumMessageSize(
@@ -1706,6 +1771,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointProducerBuilder maximumMessageSize(
@@ -1719,6 +1785,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointProducerBuilder messageRetentionPeriod(
@@ -1733,6 +1800,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointProducerBuilder messageRetentionPeriod(
@@ -1745,6 +1813,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointProducerBuilder policy(String policy) {
@@ -1758,6 +1827,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointProducerBuilder receiveMessageWaitTimeSeconds(
@@ -1773,6 +1843,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointProducerBuilder receiveMessageWaitTimeSeconds(
@@ -1786,6 +1857,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointProducerBuilder redrivePolicy(String redrivePolicy) {
@@ -1797,6 +1869,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SqsEndpointProducerBuilder accessKey(String accessKey) {
@@ -1808,6 +1881,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SqsEndpointProducerBuilder secretKey(String secretKey) {
@@ -1888,6 +1962,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqsEndpointProducerBuilder queueUrl(String queueUrl) {
@@ -1952,6 +2027,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a: <code>com.amazonaws.services.sqs.AmazonSQS</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default SqsEndpointBuilder amazonSQSClient(Object amazonSQSClient) {
@@ -1964,6 +2040,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.sqs.AmazonSQS</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqsEndpointBuilder amazonSQSClient(String amazonSQSClient) {
@@ -2000,6 +2077,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqsEndpointBuilder headerFilterStrategy(
@@ -2013,6 +2091,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqsEndpointBuilder headerFilterStrategy(
@@ -2063,6 +2142,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqsEndpointBuilder queueOwnerAWSAccountId(
@@ -2079,6 +2159,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqsEndpointBuilder region(String region) {
@@ -2090,6 +2171,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SqsEndpointBuilder proxyHost(String proxyHost) {
@@ -2101,6 +2183,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SqsEndpointBuilder proxyPort(Integer proxyPort) {
@@ -2113,6 +2196,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default SqsEndpointBuilder proxyPort(String proxyPort) {
@@ -2125,6 +2209,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointBuilder maximumMessageSize(Integer maximumMessageSize) {
@@ -2138,6 +2223,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointBuilder maximumMessageSize(String maximumMessageSize) {
@@ -2150,6 +2236,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointBuilder messageRetentionPeriod(
@@ -2164,6 +2251,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointBuilder messageRetentionPeriod(
@@ -2176,6 +2264,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointBuilder policy(String policy) {
@@ -2189,6 +2278,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointBuilder receiveMessageWaitTimeSeconds(
@@ -2204,6 +2294,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointBuilder receiveMessageWaitTimeSeconds(
@@ -2217,6 +2308,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: queue
          */
         default SqsEndpointBuilder redrivePolicy(String redrivePolicy) {
@@ -2228,6 +2320,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SqsEndpointBuilder accessKey(String accessKey) {
@@ -2239,6 +2332,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SqsEndpointBuilder secretKey(String secretKey) {
@@ -2319,6 +2413,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqsEndpointBuilder queueUrl(String queueUrl) {

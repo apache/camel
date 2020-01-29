@@ -49,6 +49,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a:
          * <code>com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointConsumerBuilder amazonSWClient(Object amazonSWClient) {
@@ -61,6 +62,7 @@ public interface SWFEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointConsumerBuilder amazonSWClient(String amazonSWClient) {
@@ -76,6 +78,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleworkflow.flow.DataConverter</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointConsumerBuilder dataConverter(Object dataConverter) {
@@ -91,6 +94,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleworkflow.flow.DataConverter</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointConsumerBuilder dataConverter(String dataConverter) {
@@ -102,6 +106,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointConsumerBuilder domainName(String domainName) {
@@ -113,6 +118,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointConsumerBuilder eventName(String eventName) {
@@ -126,6 +132,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointConsumerBuilder region(String region) {
@@ -137,6 +144,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointConsumerBuilder version(String version) {
@@ -186,6 +194,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: activity
          */
         default SWFEndpointConsumerBuilder activityList(String activityList) {
@@ -224,6 +233,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a:
          * <code>com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions</code> type.
          * 
+         * Default:
          * Group: activity
          */
         default SWFEndpointConsumerBuilder activityTypeExecutionOptions(
@@ -237,6 +247,7 @@ public interface SWFEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions</code> type.
          * 
+         * Default:
          * Group: activity
          */
         default SWFEndpointConsumerBuilder activityTypeExecutionOptions(
@@ -250,6 +261,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a:
          * <code>com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions</code> type.
          * 
+         * Default:
          * Group: activity
          */
         default SWFEndpointConsumerBuilder activityTypeRegistrationOptions(
@@ -263,6 +275,7 @@ public interface SWFEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions</code> type.
          * 
+         * Default:
          * Group: activity
          */
         default SWFEndpointConsumerBuilder activityTypeRegistrationOptions(
@@ -275,6 +288,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: workflow
          */
         default SWFEndpointConsumerBuilder workflowList(String workflowList) {
@@ -287,6 +301,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a:
          * <code>com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions</code> type.
          * 
+         * Default:
          * Group: workflow
          */
         default SWFEndpointConsumerBuilder workflowTypeRegistrationOptions(
@@ -300,6 +315,7 @@ public interface SWFEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions</code> type.
          * 
+         * Default:
          * Group: workflow
          */
         default SWFEndpointConsumerBuilder workflowTypeRegistrationOptions(
@@ -312,6 +328,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SWFEndpointConsumerBuilder accessKey(String accessKey) {
@@ -323,6 +340,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SWFEndpointConsumerBuilder secretKey(String secretKey) {
@@ -350,6 +368,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSWFEndpointConsumerBuilder exceptionHandler(
@@ -366,6 +385,7 @@ public interface SWFEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSWFEndpointConsumerBuilder exceptionHandler(
@@ -378,6 +398,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSWFEndpointConsumerBuilder exchangePattern(
@@ -391,6 +412,7 @@ public interface SWFEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSWFEndpointConsumerBuilder exchangePattern(
@@ -433,6 +455,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSWFEndpointConsumerBuilder clientConfigurationParameters(
@@ -448,6 +471,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSWFEndpointConsumerBuilder clientConfigurationParameters(
@@ -462,6 +486,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSWFEndpointConsumerBuilder startWorkflowOptionsParameters(
@@ -477,6 +502,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSWFEndpointConsumerBuilder startWorkflowOptionsParameters(
@@ -491,6 +517,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSWFEndpointConsumerBuilder sWClientParameters(
@@ -506,6 +533,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSWFEndpointConsumerBuilder sWClientParameters(
@@ -558,6 +586,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a:
          * <code>com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointProducerBuilder amazonSWClient(Object amazonSWClient) {
@@ -570,6 +599,7 @@ public interface SWFEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointProducerBuilder amazonSWClient(String amazonSWClient) {
@@ -585,6 +615,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleworkflow.flow.DataConverter</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointProducerBuilder dataConverter(Object dataConverter) {
@@ -600,6 +631,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleworkflow.flow.DataConverter</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointProducerBuilder dataConverter(String dataConverter) {
@@ -611,6 +643,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointProducerBuilder domainName(String domainName) {
@@ -622,6 +655,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointProducerBuilder eventName(String eventName) {
@@ -635,6 +669,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointProducerBuilder region(String region) {
@@ -646,6 +681,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointProducerBuilder version(String version) {
@@ -700,6 +736,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a:
          * <code>com.amazonaws.services.simpleworkflow.flow.ActivitySchedulingOptions</code> type.
          * 
+         * Default:
          * Group: activity
          */
         default SWFEndpointProducerBuilder activitySchedulingOptions(
@@ -713,6 +750,7 @@ public interface SWFEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.simpleworkflow.flow.ActivitySchedulingOptions</code> type.
          * 
+         * Default:
          * Group: activity
          */
         default SWFEndpointProducerBuilder activitySchedulingOptions(
@@ -725,6 +763,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: workflow
          */
         default SWFEndpointProducerBuilder childPolicy(String childPolicy) {
@@ -761,6 +800,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: workflow
          */
         default SWFEndpointProducerBuilder signalName(String signalName) {
@@ -772,6 +812,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: workflow
          */
         default SWFEndpointProducerBuilder stateResultType(
@@ -797,6 +838,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: workflow
          */
         default SWFEndpointProducerBuilder terminationDetails(
@@ -809,6 +851,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: workflow
          */
         default SWFEndpointProducerBuilder terminationReason(
@@ -821,6 +864,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SWFEndpointProducerBuilder accessKey(String accessKey) {
@@ -832,6 +876,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SWFEndpointProducerBuilder secretKey(String secretKey) {
@@ -885,6 +930,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSWFEndpointProducerBuilder clientConfigurationParameters(
@@ -900,6 +946,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSWFEndpointProducerBuilder clientConfigurationParameters(
@@ -914,6 +961,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSWFEndpointProducerBuilder startWorkflowOptionsParameters(
@@ -929,6 +977,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSWFEndpointProducerBuilder startWorkflowOptionsParameters(
@@ -943,6 +992,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSWFEndpointProducerBuilder sWClientParameters(
@@ -958,6 +1008,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSWFEndpointProducerBuilder sWClientParameters(
@@ -1011,6 +1062,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a:
          * <code>com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointBuilder amazonSWClient(Object amazonSWClient) {
@@ -1023,6 +1075,7 @@ public interface SWFEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointBuilder amazonSWClient(String amazonSWClient) {
@@ -1038,6 +1091,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleworkflow.flow.DataConverter</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointBuilder dataConverter(Object dataConverter) {
@@ -1053,6 +1107,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleworkflow.flow.DataConverter</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointBuilder dataConverter(String dataConverter) {
@@ -1064,6 +1119,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointBuilder domainName(String domainName) {
@@ -1075,6 +1131,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointBuilder eventName(String eventName) {
@@ -1088,6 +1145,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointBuilder region(String region) {
@@ -1099,6 +1157,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SWFEndpointBuilder version(String version) {
@@ -1110,6 +1169,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SWFEndpointBuilder accessKey(String accessKey) {
@@ -1121,6 +1181,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SWFEndpointBuilder secretKey(String secretKey) {
@@ -1174,6 +1235,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSWFEndpointBuilder clientConfigurationParameters(
@@ -1189,6 +1251,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSWFEndpointBuilder clientConfigurationParameters(
@@ -1203,6 +1266,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSWFEndpointBuilder startWorkflowOptionsParameters(
@@ -1218,6 +1282,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSWFEndpointBuilder startWorkflowOptionsParameters(
@@ -1232,6 +1297,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSWFEndpointBuilder sWClientParameters(
@@ -1247,6 +1313,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSWFEndpointBuilder sWClientParameters(

@@ -46,6 +46,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CaffeineLoadCacheEndpointBuilder action(String action) {
@@ -58,6 +59,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * The option is a:
          * <code>com.github.benmanes.caffeine.cache.LoadingCache</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CaffeineLoadCacheEndpointBuilder cache(Object cache) {
@@ -70,6 +72,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.github.benmanes.caffeine.cache.LoadingCache</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CaffeineLoadCacheEndpointBuilder cache(String cache) {
@@ -82,6 +85,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * The option is a:
          * <code>com.github.benmanes.caffeine.cache.CacheLoader</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CaffeineLoadCacheEndpointBuilder cacheLoader(Object cacheLoader) {
@@ -94,6 +98,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.github.benmanes.caffeine.cache.CacheLoader</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CaffeineLoadCacheEndpointBuilder cacheLoader(String cacheLoader) {
@@ -244,6 +249,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CaffeineLoadCacheEndpointBuilder key(Object key) {
@@ -256,6 +262,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CaffeineLoadCacheEndpointBuilder key(String key) {
@@ -334,6 +341,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * The option is a:
          * <code>com.github.benmanes.caffeine.cache.RemovalListener</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CaffeineLoadCacheEndpointBuilder removalListener(
@@ -347,6 +355,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.github.benmanes.caffeine.cache.RemovalListener</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CaffeineLoadCacheEndpointBuilder removalListener(
@@ -361,6 +370,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * <code>com.github.benmanes.caffeine.cache.stats.StatsCounter</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default CaffeineLoadCacheEndpointBuilder statsCounter(
@@ -375,6 +385,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * <code>com.github.benmanes.caffeine.cache.stats.StatsCounter</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default CaffeineLoadCacheEndpointBuilder statsCounter(
@@ -452,6 +463,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCaffeineLoadCacheEndpointBuilder keyType(String keyType) {
@@ -491,6 +503,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCaffeineLoadCacheEndpointBuilder valueType(

@@ -279,6 +279,7 @@ public interface MinaEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointConsumerBuilder codec(Object codec) {
@@ -291,6 +292,7 @@ public interface MinaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointConsumerBuilder codec(String codec) {
@@ -360,6 +362,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointConsumerBuilder encoding(String encoding) {
@@ -372,6 +375,7 @@ public interface MinaEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointConsumerBuilder filters(List<Object> filters) {
@@ -384,6 +388,7 @@ public interface MinaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointConsumerBuilder filters(String filters) {
@@ -427,6 +432,7 @@ public interface MinaEndpointBuilderFactory {
          * <code>org.apache.camel.component.mina.MinaTextLineDelimiter</code>
          * type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointConsumerBuilder textlineDelimiter(
@@ -443,6 +449,7 @@ public interface MinaEndpointBuilderFactory {
          * <code>org.apache.camel.component.mina.MinaTextLineDelimiter</code>
          * type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointConsumerBuilder textlineDelimiter(
@@ -480,6 +487,7 @@ public interface MinaEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default MinaEndpointConsumerBuilder sslContextParameters(
@@ -493,6 +501,7 @@ public interface MinaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default MinaEndpointConsumerBuilder sslContextParameters(
@@ -548,6 +557,7 @@ public interface MinaEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMinaEndpointConsumerBuilder exceptionHandler(
@@ -564,6 +574,7 @@ public interface MinaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMinaEndpointConsumerBuilder exceptionHandler(
@@ -576,6 +587,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMinaEndpointConsumerBuilder exchangePattern(
@@ -589,6 +601,7 @@ public interface MinaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMinaEndpointConsumerBuilder exchangePattern(
@@ -996,6 +1009,7 @@ public interface MinaEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointProducerBuilder codec(Object codec) {
@@ -1008,6 +1022,7 @@ public interface MinaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointProducerBuilder codec(String codec) {
@@ -1077,6 +1092,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointProducerBuilder encoding(String encoding) {
@@ -1089,6 +1105,7 @@ public interface MinaEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointProducerBuilder filters(List<Object> filters) {
@@ -1101,6 +1118,7 @@ public interface MinaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointProducerBuilder filters(String filters) {
@@ -1144,6 +1162,7 @@ public interface MinaEndpointBuilderFactory {
          * <code>org.apache.camel.component.mina.MinaTextLineDelimiter</code>
          * type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointProducerBuilder textlineDelimiter(
@@ -1160,6 +1179,7 @@ public interface MinaEndpointBuilderFactory {
          * <code>org.apache.camel.component.mina.MinaTextLineDelimiter</code>
          * type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointProducerBuilder textlineDelimiter(
@@ -1197,6 +1217,7 @@ public interface MinaEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default MinaEndpointProducerBuilder sslContextParameters(
@@ -1210,6 +1231,7 @@ public interface MinaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default MinaEndpointProducerBuilder sslContextParameters(
@@ -1612,6 +1634,7 @@ public interface MinaEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointBuilder codec(Object codec) {
@@ -1624,6 +1647,7 @@ public interface MinaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointBuilder codec(String codec) {
@@ -1693,6 +1717,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointBuilder encoding(String encoding) {
@@ -1705,6 +1730,7 @@ public interface MinaEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointBuilder filters(List<Object> filters) {
@@ -1717,6 +1743,7 @@ public interface MinaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointBuilder filters(String filters) {
@@ -1760,6 +1787,7 @@ public interface MinaEndpointBuilderFactory {
          * <code>org.apache.camel.component.mina.MinaTextLineDelimiter</code>
          * type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointBuilder textlineDelimiter(
@@ -1776,6 +1804,7 @@ public interface MinaEndpointBuilderFactory {
          * <code>org.apache.camel.component.mina.MinaTextLineDelimiter</code>
          * type.
          * 
+         * Default:
          * Group: codec
          */
         default MinaEndpointBuilder textlineDelimiter(String textlineDelimiter) {
@@ -1812,6 +1841,7 @@ public interface MinaEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default MinaEndpointBuilder sslContextParameters(
@@ -1825,6 +1855,7 @@ public interface MinaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default MinaEndpointBuilder sslContextParameters(

@@ -51,6 +51,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointConsumerBuilder connectTimeoutMillis(
@@ -63,6 +64,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointConsumerBuilder connectTimeoutMillis(
@@ -75,6 +77,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>com.orbitz.consul.Consul</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointConsumerBuilder consulClient(Object consulClient) {
@@ -87,6 +90,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.orbitz.consul.Consul</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointConsumerBuilder consulClient(String consulClient) {
@@ -98,6 +102,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointConsumerBuilder key(String key) {
@@ -135,6 +140,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointConsumerBuilder readTimeoutMillis(
@@ -147,6 +153,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointConsumerBuilder readTimeoutMillis(
@@ -160,6 +167,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a: <code>java.util.Set&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointConsumerBuilder tags(Set<String> tags) {
@@ -172,6 +180,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.Set&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointConsumerBuilder tags(String tags) {
@@ -183,6 +192,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointConsumerBuilder url(String url) {
@@ -194,6 +204,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointConsumerBuilder writeTimeoutMillis(
@@ -206,6 +217,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointConsumerBuilder writeTimeoutMillis(
@@ -330,6 +342,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ConsulEndpointConsumerBuilder aclToken(String aclToken) {
@@ -341,6 +354,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ConsulEndpointConsumerBuilder password(String password) {
@@ -354,6 +368,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ConsulEndpointConsumerBuilder sslContextParameters(
@@ -368,6 +383,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ConsulEndpointConsumerBuilder sslContextParameters(
@@ -380,6 +396,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ConsulEndpointConsumerBuilder userName(String userName) {
@@ -406,6 +423,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedConsulEndpointConsumerBuilder exceptionHandler(
@@ -422,6 +440,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedConsulEndpointConsumerBuilder exceptionHandler(
@@ -434,6 +453,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedConsulEndpointConsumerBuilder exchangePattern(
@@ -447,6 +467,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedConsulEndpointConsumerBuilder exchangePattern(
@@ -517,6 +538,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedConsulEndpointConsumerBuilder datacenter(
@@ -529,6 +551,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedConsulEndpointConsumerBuilder nearNode(String nearNode) {
@@ -541,6 +564,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedConsulEndpointConsumerBuilder nodeMeta(
@@ -554,6 +578,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedConsulEndpointConsumerBuilder nodeMeta(String nodeMeta) {
@@ -604,6 +629,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointProducerBuilder connectTimeoutMillis(
@@ -616,6 +642,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointProducerBuilder connectTimeoutMillis(
@@ -628,6 +655,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>com.orbitz.consul.Consul</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointProducerBuilder consulClient(Object consulClient) {
@@ -640,6 +668,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.orbitz.consul.Consul</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointProducerBuilder consulClient(String consulClient) {
@@ -651,6 +680,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointProducerBuilder key(String key) {
@@ -688,6 +718,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointProducerBuilder readTimeoutMillis(
@@ -700,6 +731,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointProducerBuilder readTimeoutMillis(
@@ -713,6 +745,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a: <code>java.util.Set&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointProducerBuilder tags(Set<String> tags) {
@@ -725,6 +758,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.Set&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointProducerBuilder tags(String tags) {
@@ -736,6 +770,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointProducerBuilder url(String url) {
@@ -747,6 +782,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointProducerBuilder writeTimeoutMillis(
@@ -759,6 +795,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointProducerBuilder writeTimeoutMillis(
@@ -771,6 +808,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ConsulEndpointProducerBuilder action(String action) {
@@ -851,6 +889,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ConsulEndpointProducerBuilder aclToken(String aclToken) {
@@ -862,6 +901,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ConsulEndpointProducerBuilder password(String password) {
@@ -875,6 +915,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ConsulEndpointProducerBuilder sslContextParameters(
@@ -889,6 +930,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ConsulEndpointProducerBuilder sslContextParameters(
@@ -901,6 +943,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ConsulEndpointProducerBuilder userName(String userName) {
@@ -981,6 +1024,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedConsulEndpointProducerBuilder datacenter(
@@ -993,6 +1037,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedConsulEndpointProducerBuilder nearNode(String nearNode) {
@@ -1005,6 +1050,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedConsulEndpointProducerBuilder nodeMeta(
@@ -1018,6 +1064,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedConsulEndpointProducerBuilder nodeMeta(String nodeMeta) {
@@ -1069,6 +1116,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointBuilder connectTimeoutMillis(
@@ -1081,6 +1129,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointBuilder connectTimeoutMillis(
@@ -1093,6 +1142,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>com.orbitz.consul.Consul</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointBuilder consulClient(Object consulClient) {
@@ -1105,6 +1155,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.orbitz.consul.Consul</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointBuilder consulClient(String consulClient) {
@@ -1116,6 +1167,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointBuilder key(String key) {
@@ -1153,6 +1205,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointBuilder readTimeoutMillis(Long readTimeoutMillis) {
@@ -1164,6 +1217,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointBuilder readTimeoutMillis(String readTimeoutMillis) {
@@ -1176,6 +1230,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a: <code>java.util.Set&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointBuilder tags(Set<String> tags) {
@@ -1188,6 +1243,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.Set&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointBuilder tags(String tags) {
@@ -1199,6 +1255,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointBuilder url(String url) {
@@ -1210,6 +1267,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointBuilder writeTimeoutMillis(Long writeTimeoutMillis) {
@@ -1221,6 +1279,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ConsulEndpointBuilder writeTimeoutMillis(
@@ -1233,6 +1292,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ConsulEndpointBuilder aclToken(String aclToken) {
@@ -1244,6 +1304,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ConsulEndpointBuilder password(String password) {
@@ -1257,6 +1318,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ConsulEndpointBuilder sslContextParameters(
@@ -1271,6 +1333,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ConsulEndpointBuilder sslContextParameters(
@@ -1283,6 +1346,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ConsulEndpointBuilder userName(String userName) {
@@ -1364,6 +1428,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedConsulEndpointBuilder datacenter(String datacenter) {
@@ -1375,6 +1440,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedConsulEndpointBuilder nearNode(String nearNode) {
@@ -1387,6 +1453,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedConsulEndpointBuilder nodeMeta(List<String> nodeMeta) {
@@ -1399,6 +1466,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedConsulEndpointBuilder nodeMeta(String nodeMeta) {

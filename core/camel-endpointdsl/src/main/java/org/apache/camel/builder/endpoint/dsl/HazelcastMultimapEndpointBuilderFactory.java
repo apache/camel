@@ -50,6 +50,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastMultimapEndpointConsumerBuilder defaultOperation(
@@ -65,6 +66,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastMultimapEndpointConsumerBuilder defaultOperation(
@@ -79,6 +81,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastMultimapEndpointConsumerBuilder hazelcastInstance(
@@ -93,6 +96,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastMultimapEndpointConsumerBuilder hazelcastInstance(
@@ -107,6 +111,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastMultimapEndpointConsumerBuilder hazelcastInstanceName(
@@ -173,6 +178,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHazelcastMultimapEndpointConsumerBuilder exceptionHandler(
@@ -189,6 +195,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHazelcastMultimapEndpointConsumerBuilder exceptionHandler(
@@ -201,6 +208,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHazelcastMultimapEndpointConsumerBuilder exchangePattern(
@@ -214,6 +222,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHazelcastMultimapEndpointConsumerBuilder exchangePattern(
@@ -296,6 +305,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastMultimapEndpointProducerBuilder defaultOperation(
@@ -311,6 +321,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastMultimapEndpointProducerBuilder defaultOperation(
@@ -325,6 +336,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastMultimapEndpointProducerBuilder hazelcastInstance(
@@ -339,6 +351,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastMultimapEndpointProducerBuilder hazelcastInstance(
@@ -353,6 +366,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastMultimapEndpointProducerBuilder hazelcastInstanceName(
@@ -490,6 +504,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastMultimapEndpointBuilder defaultOperation(
@@ -505,6 +520,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastMultimapEndpointBuilder defaultOperation(
@@ -519,6 +535,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastMultimapEndpointBuilder hazelcastInstance(
@@ -533,6 +550,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastMultimapEndpointBuilder hazelcastInstance(
@@ -547,6 +565,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastMultimapEndpointBuilder hazelcastInstanceName(

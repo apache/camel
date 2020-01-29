@@ -160,6 +160,7 @@ public interface NagiosEndpointBuilderFactory {
          * The option is a:
          * <code>com.googlecode.jsendnsca.encryption.Encryption</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NagiosEndpointBuilder encryption(Encryption encryption) {
@@ -172,6 +173,7 @@ public interface NagiosEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.googlecode.jsendnsca.encryption.Encryption</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NagiosEndpointBuilder encryption(String encryption) {
@@ -183,6 +185,7 @@ public interface NagiosEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NagiosEndpointBuilder password(String password) {

@@ -174,6 +174,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder backoffErrorThreshold(
@@ -187,6 +188,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder backoffErrorThreshold(
@@ -200,6 +202,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder backoffIdleThreshold(
@@ -213,6 +216,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder backoffIdleThreshold(
@@ -230,6 +234,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder backoffMultiplier(
@@ -247,6 +252,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder backoffMultiplier(
@@ -401,6 +407,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder scheduledExecutorService(
@@ -416,6 +423,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder scheduledExecutorService(
@@ -443,6 +451,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder schedulerProperties(
@@ -458,6 +467,7 @@ public interface TelegramEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder schedulerProperties(
@@ -549,6 +559,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TelegramEndpointConsumerBuilder proxyHost(String proxyHost) {
@@ -560,6 +571,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TelegramEndpointConsumerBuilder proxyPort(Integer proxyPort) {
@@ -572,6 +584,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default TelegramEndpointConsumerBuilder proxyPort(String proxyPort) {
@@ -584,6 +597,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: security
          */
         default TelegramEndpointConsumerBuilder authorizationToken(
@@ -611,6 +625,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTelegramEndpointConsumerBuilder exceptionHandler(
@@ -627,6 +642,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTelegramEndpointConsumerBuilder exceptionHandler(
@@ -639,6 +655,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTelegramEndpointConsumerBuilder exchangePattern(
@@ -652,6 +669,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTelegramEndpointConsumerBuilder exchangePattern(
@@ -668,6 +686,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTelegramEndpointConsumerBuilder pollStrategy(
@@ -684,6 +703,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTelegramEndpointConsumerBuilder pollStrategy(
@@ -697,6 +717,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedTelegramEndpointConsumerBuilder baseUri(String baseUri) {
@@ -766,6 +787,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option is a:
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedTelegramEndpointConsumerBuilder clientConfig(
@@ -780,6 +802,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedTelegramEndpointConsumerBuilder clientConfig(
@@ -836,6 +859,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default TelegramEndpointProducerBuilder chatId(String chatId) {
@@ -889,6 +913,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TelegramEndpointProducerBuilder proxyHost(String proxyHost) {
@@ -900,6 +925,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TelegramEndpointProducerBuilder proxyPort(Integer proxyPort) {
@@ -912,6 +938,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default TelegramEndpointProducerBuilder proxyPort(String proxyPort) {
@@ -924,6 +951,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: security
          */
         default TelegramEndpointProducerBuilder authorizationToken(
@@ -948,6 +976,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedTelegramEndpointProducerBuilder baseUri(String baseUri) {
@@ -1017,6 +1046,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option is a:
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedTelegramEndpointProducerBuilder clientConfig(
@@ -1031,6 +1061,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedTelegramEndpointProducerBuilder clientConfig(
@@ -1083,6 +1114,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TelegramEndpointBuilder proxyHost(String proxyHost) {
@@ -1094,6 +1126,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TelegramEndpointBuilder proxyPort(Integer proxyPort) {
@@ -1106,6 +1139,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default TelegramEndpointBuilder proxyPort(String proxyPort) {
@@ -1118,6 +1152,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: security
          */
         default TelegramEndpointBuilder authorizationToken(
@@ -1143,6 +1178,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedTelegramEndpointBuilder baseUri(String baseUri) {
@@ -1210,6 +1246,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option is a:
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedTelegramEndpointBuilder clientConfig(Object clientConfig) {
@@ -1223,6 +1260,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedTelegramEndpointBuilder clientConfig(String clientConfig) {

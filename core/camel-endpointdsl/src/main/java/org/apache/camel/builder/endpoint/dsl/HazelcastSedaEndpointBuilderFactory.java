@@ -49,6 +49,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastSedaEndpointConsumerBuilder defaultOperation(
@@ -64,6 +65,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastSedaEndpointConsumerBuilder defaultOperation(
@@ -78,6 +80,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastSedaEndpointConsumerBuilder hazelcastInstance(
@@ -92,6 +95,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastSedaEndpointConsumerBuilder hazelcastInstance(
@@ -106,6 +110,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastSedaEndpointConsumerBuilder hazelcastInstanceName(
@@ -314,6 +319,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHazelcastSedaEndpointConsumerBuilder exceptionHandler(
@@ -330,6 +336,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHazelcastSedaEndpointConsumerBuilder exceptionHandler(
@@ -342,6 +349,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHazelcastSedaEndpointConsumerBuilder exchangePattern(
@@ -355,6 +363,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHazelcastSedaEndpointConsumerBuilder exchangePattern(
@@ -437,6 +446,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastSedaEndpointProducerBuilder defaultOperation(
@@ -452,6 +462,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastSedaEndpointProducerBuilder defaultOperation(
@@ -466,6 +477,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastSedaEndpointProducerBuilder hazelcastInstance(
@@ -480,6 +492,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastSedaEndpointProducerBuilder hazelcastInstance(
@@ -494,6 +507,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastSedaEndpointProducerBuilder hazelcastInstanceName(
@@ -773,6 +787,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastSedaEndpointBuilder defaultOperation(
@@ -788,6 +803,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastSedaEndpointBuilder defaultOperation(
@@ -802,6 +818,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastSedaEndpointBuilder hazelcastInstance(
@@ -816,6 +833,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastSedaEndpointBuilder hazelcastInstance(
@@ -830,6 +848,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HazelcastSedaEndpointBuilder hazelcastInstanceName(

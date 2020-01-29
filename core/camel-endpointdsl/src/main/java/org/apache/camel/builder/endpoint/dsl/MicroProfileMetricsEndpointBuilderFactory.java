@@ -44,6 +44,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder action(String action) {
@@ -55,6 +56,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder counterIncrement(
@@ -67,6 +69,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder counterIncrement(
@@ -79,6 +82,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder description(
@@ -91,6 +95,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder displayName(
@@ -103,6 +108,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder gaugeDecrement(
@@ -116,6 +122,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder gaugeDecrement(
@@ -128,6 +135,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder gaugeIncrement(
@@ -141,6 +149,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder gaugeIncrement(
@@ -153,6 +162,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Number</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder gaugeValue(Number gaugeValue) {
@@ -164,6 +174,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Number</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder gaugeValue(String gaugeValue) {
@@ -217,6 +228,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder mark(Long mark) {
@@ -228,6 +240,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder mark(String mark) {
@@ -239,6 +252,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder metricUnit(String metricUnit) {
@@ -251,6 +265,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder tags(String tags) {
@@ -262,6 +277,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder value(Long value) {
@@ -273,6 +289,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder value(String value) {

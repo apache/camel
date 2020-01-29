@@ -152,6 +152,7 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default UndertowEndpointConsumerBuilder httpMethodRestrict(
@@ -280,6 +281,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default UndertowEndpointConsumerBuilder sslContextParameters(
@@ -293,6 +295,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default UndertowEndpointConsumerBuilder sslContextParameters(
@@ -320,6 +323,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedUndertowEndpointConsumerBuilder exceptionHandler(
@@ -336,6 +340,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedUndertowEndpointConsumerBuilder exceptionHandler(
@@ -348,6 +353,7 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedUndertowEndpointConsumerBuilder exchangePattern(
@@ -361,6 +367,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedUndertowEndpointConsumerBuilder exchangePattern(
@@ -380,6 +387,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.Set&lt;org.apache.camel.component.undertow.HttpHandlerRegistrationInfo&gt;</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedUndertowEndpointConsumerBuilder handlers(
@@ -399,6 +407,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.Set&lt;org.apache.camel.component.undertow.HttpHandlerRegistrationInfo&gt;</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedUndertowEndpointConsumerBuilder handlers(String handlers) {
@@ -413,6 +422,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedUndertowEndpointConsumerBuilder accessLogReceiver(
@@ -428,6 +438,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedUndertowEndpointConsumerBuilder accessLogReceiver(
@@ -470,6 +481,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedUndertowEndpointConsumerBuilder headerFilterStrategy(
@@ -484,6 +496,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedUndertowEndpointConsumerBuilder headerFilterStrategy(
@@ -527,6 +540,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedUndertowEndpointConsumerBuilder undertowHttpBinding(
@@ -542,6 +556,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedUndertowEndpointConsumerBuilder undertowHttpBinding(
@@ -603,6 +618,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default UndertowEndpointProducerBuilder cookieHandler(
@@ -616,6 +632,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default UndertowEndpointProducerBuilder cookieHandler(
@@ -699,6 +716,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default UndertowEndpointProducerBuilder options(
@@ -716,6 +734,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default UndertowEndpointProducerBuilder options(String options) {
@@ -916,6 +935,7 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default:
          * Group: websocket
          */
         default UndertowEndpointProducerBuilder sendToAll(Boolean sendToAll) {
@@ -930,6 +950,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default:
          * Group: websocket
          */
         default UndertowEndpointProducerBuilder sendToAll(String sendToAll) {
@@ -942,6 +963,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default UndertowEndpointProducerBuilder sslContextParameters(
@@ -955,6 +977,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default UndertowEndpointProducerBuilder sslContextParameters(
@@ -981,6 +1004,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedUndertowEndpointProducerBuilder accessLogReceiver(
@@ -996,6 +1020,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedUndertowEndpointProducerBuilder accessLogReceiver(
@@ -1038,6 +1063,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedUndertowEndpointProducerBuilder headerFilterStrategy(
@@ -1052,6 +1078,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedUndertowEndpointProducerBuilder headerFilterStrategy(
@@ -1095,6 +1122,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedUndertowEndpointProducerBuilder undertowHttpBinding(
@@ -1110,6 +1138,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedUndertowEndpointProducerBuilder undertowHttpBinding(
@@ -1171,6 +1200,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default UndertowEndpointBuilder sslContextParameters(
@@ -1184,6 +1214,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default UndertowEndpointBuilder sslContextParameters(
@@ -1211,6 +1242,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedUndertowEndpointBuilder accessLogReceiver(
@@ -1226,6 +1258,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedUndertowEndpointBuilder accessLogReceiver(
@@ -1268,6 +1301,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedUndertowEndpointBuilder headerFilterStrategy(
@@ -1282,6 +1316,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedUndertowEndpointBuilder headerFilterStrategy(
@@ -1323,6 +1358,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedUndertowEndpointBuilder undertowHttpBinding(
@@ -1338,6 +1374,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedUndertowEndpointBuilder undertowHttpBinding(

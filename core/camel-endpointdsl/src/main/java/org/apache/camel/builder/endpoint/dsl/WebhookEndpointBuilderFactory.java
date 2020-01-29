@@ -76,6 +76,7 @@ public interface WebhookEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WebhookEndpointBuilder webhookBasePath(String webhookBasePath) {
@@ -88,6 +89,7 @@ public interface WebhookEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WebhookEndpointBuilder webhookComponentName(
@@ -100,6 +102,7 @@ public interface WebhookEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WebhookEndpointBuilder webhookExternalUrl(
@@ -113,6 +116,7 @@ public interface WebhookEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WebhookEndpointBuilder webhookPath(String webhookPath) {
@@ -177,6 +181,7 @@ public interface WebhookEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedWebhookEndpointBuilder exceptionHandler(
@@ -193,6 +198,7 @@ public interface WebhookEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedWebhookEndpointBuilder exceptionHandler(
@@ -205,6 +211,7 @@ public interface WebhookEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedWebhookEndpointBuilder exchangePattern(
@@ -218,6 +225,7 @@ public interface WebhookEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedWebhookEndpointBuilder exchangePattern(

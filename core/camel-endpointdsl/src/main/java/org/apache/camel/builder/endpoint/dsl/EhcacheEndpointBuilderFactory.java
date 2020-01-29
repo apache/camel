@@ -49,6 +49,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.ehcache.EhcacheManager</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EhcacheEndpointConsumerBuilder cacheManager(Object cacheManager) {
@@ -61,6 +62,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.ehcache.EhcacheManager</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EhcacheEndpointConsumerBuilder cacheManager(String cacheManager) {
@@ -72,6 +74,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>org.ehcache.config.Configuration</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EhcacheEndpointConsumerBuilder cacheManagerConfiguration(
@@ -85,6 +88,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.ehcache.config.Configuration</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EhcacheEndpointConsumerBuilder cacheManagerConfiguration(
@@ -97,6 +101,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EhcacheEndpointConsumerBuilder configurationUri(
@@ -230,6 +235,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default EhcacheEndpointConsumerBuilder eventTypes(String eventTypes) {
@@ -256,6 +262,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedEhcacheEndpointConsumerBuilder exceptionHandler(
@@ -272,6 +279,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedEhcacheEndpointConsumerBuilder exceptionHandler(
@@ -284,6 +292,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedEhcacheEndpointConsumerBuilder exchangePattern(
@@ -297,6 +306,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedEhcacheEndpointConsumerBuilder exchangePattern(
@@ -339,6 +349,7 @@ public interface EhcacheEndpointBuilderFactory {
          * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder configuration(
@@ -353,6 +364,7 @@ public interface EhcacheEndpointBuilderFactory {
          * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder configuration(
@@ -366,6 +378,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder configurations(
@@ -380,6 +393,7 @@ public interface EhcacheEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder configurations(
@@ -392,6 +406,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder keyType(String keyType) {
@@ -431,6 +446,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder valueType(
@@ -455,6 +471,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.ehcache.EhcacheManager</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EhcacheEndpointProducerBuilder cacheManager(Object cacheManager) {
@@ -467,6 +484,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.ehcache.EhcacheManager</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EhcacheEndpointProducerBuilder cacheManager(String cacheManager) {
@@ -478,6 +496,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>org.ehcache.config.Configuration</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EhcacheEndpointProducerBuilder cacheManagerConfiguration(
@@ -491,6 +510,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.ehcache.config.Configuration</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EhcacheEndpointProducerBuilder cacheManagerConfiguration(
@@ -503,6 +523,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EhcacheEndpointProducerBuilder configurationUri(
@@ -544,6 +565,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default EhcacheEndpointProducerBuilder action(String action) {
@@ -556,6 +578,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default EhcacheEndpointProducerBuilder key(Object key) {
@@ -568,6 +591,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default EhcacheEndpointProducerBuilder key(String key) {
@@ -662,6 +686,7 @@ public interface EhcacheEndpointBuilderFactory {
          * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder configuration(
@@ -676,6 +701,7 @@ public interface EhcacheEndpointBuilderFactory {
          * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder configuration(
@@ -689,6 +715,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder configurations(
@@ -703,6 +730,7 @@ public interface EhcacheEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder configurations(
@@ -715,6 +743,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder keyType(String keyType) {
@@ -754,6 +783,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder valueType(
@@ -779,6 +809,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.ehcache.EhcacheManager</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EhcacheEndpointBuilder cacheManager(Object cacheManager) {
@@ -791,6 +822,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.ehcache.EhcacheManager</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EhcacheEndpointBuilder cacheManager(String cacheManager) {
@@ -802,6 +834,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>org.ehcache.config.Configuration</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EhcacheEndpointBuilder cacheManagerConfiguration(
@@ -815,6 +848,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.ehcache.config.Configuration</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EhcacheEndpointBuilder cacheManagerConfiguration(
@@ -827,6 +861,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default EhcacheEndpointBuilder configurationUri(String configurationUri) {
@@ -908,6 +943,7 @@ public interface EhcacheEndpointBuilderFactory {
          * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder configuration(
@@ -922,6 +958,7 @@ public interface EhcacheEndpointBuilderFactory {
          * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder configuration(
@@ -935,6 +972,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder configurations(
@@ -949,6 +987,7 @@ public interface EhcacheEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder configurations(
@@ -961,6 +1000,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder keyType(String keyType) {
@@ -998,6 +1038,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder valueType(String valueType) {

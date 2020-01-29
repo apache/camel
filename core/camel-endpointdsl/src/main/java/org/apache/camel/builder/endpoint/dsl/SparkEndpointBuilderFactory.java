@@ -68,6 +68,7 @@ public interface SparkEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.spark.sql.Dataset&lt;org.apache.spark.sql.Row&gt;</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SparkEndpointBuilder dataFrame(Object dataFrame) {
@@ -80,6 +81,7 @@ public interface SparkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.spark.sql.Dataset&lt;org.apache.spark.sql.Row&gt;</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SparkEndpointBuilder dataFrame(String dataFrame) {
@@ -92,6 +94,7 @@ public interface SparkEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.spark.DataFrameCallback</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SparkEndpointBuilder dataFrameCallback(Object dataFrameCallback) {
@@ -104,6 +107,7 @@ public interface SparkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.spark.DataFrameCallback</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SparkEndpointBuilder dataFrameCallback(String dataFrameCallback) {
@@ -156,6 +160,7 @@ public interface SparkEndpointBuilderFactory {
          * The option is a: <code>org.apache.spark.api.java.JavaRDDLike</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default SparkEndpointBuilder rdd(Object rdd) {
@@ -168,6 +173,7 @@ public interface SparkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.spark.api.java.JavaRDDLike</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SparkEndpointBuilder rdd(String rdd) {
@@ -180,6 +186,7 @@ public interface SparkEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.spark.RddCallback</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SparkEndpointBuilder rddCallback(Object rddCallback) {
@@ -192,6 +199,7 @@ public interface SparkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.spark.RddCallback</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SparkEndpointBuilder rddCallback(String rddCallback) {

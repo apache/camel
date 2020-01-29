@@ -53,6 +53,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JmsEndpointConsumerBuilder clientId(String clientId) {
@@ -67,6 +68,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ConnectionFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JmsEndpointConsumerBuilder connectionFactory(
@@ -83,6 +85,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.jms.ConnectionFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JmsEndpointConsumerBuilder connectionFactory(
@@ -134,6 +137,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JmsEndpointConsumerBuilder durableSubscriptionName(
@@ -151,6 +155,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JmsEndpointConsumerBuilder jmsMessageType(
@@ -168,6 +173,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JmsEndpointConsumerBuilder jmsMessageType(String jmsMessageType) {
@@ -294,6 +300,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder cacheLevel(int cacheLevel) {
@@ -306,6 +313,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder cacheLevel(String cacheLevel) {
@@ -374,6 +382,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder maxConcurrentConsumers(
@@ -391,6 +400,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder maxConcurrentConsumers(
@@ -404,6 +414,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder replyTo(String replyTo) {
@@ -441,6 +452,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder selector(String selector) {
@@ -498,6 +510,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder subscriptionName(
@@ -614,6 +627,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default JmsEndpointConsumerBuilder password(String password) {
@@ -626,6 +640,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default JmsEndpointConsumerBuilder username(String username) {
@@ -807,6 +822,7 @@ public interface JmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.DefaultTaskExecutorType</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder defaultTaskExecutorType(
@@ -830,6 +846,7 @@ public interface JmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.DefaultTaskExecutorType</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder defaultTaskExecutorType(
@@ -898,6 +915,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder exceptionHandler(
@@ -914,6 +932,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder exceptionHandler(
@@ -926,6 +945,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder exchangePattern(
@@ -939,6 +959,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder exchangePattern(
@@ -1012,6 +1033,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.core.task.TaskExecutor</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder taskExecutor(
@@ -1025,6 +1047,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.core.task.TaskExecutor</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder taskExecutor(
@@ -1173,6 +1196,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder destinationResolver(
@@ -1189,6 +1213,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder destinationResolver(
@@ -1208,6 +1233,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a: <code>org.springframework.util.ErrorHandler</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder errorHandler(
@@ -1227,6 +1253,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.util.ErrorHandler</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder errorHandler(
@@ -1240,6 +1267,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ExceptionListener</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder exceptionListener(
@@ -1254,6 +1282,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.jms.ExceptionListener</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder exceptionListener(
@@ -1268,6 +1297,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder headerFilterStrategy(
@@ -1282,6 +1312,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder headerFilterStrategy(
@@ -1398,6 +1429,7 @@ public interface JmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder jmsKeyFormatStrategy(
@@ -1420,6 +1452,7 @@ public interface JmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder jmsKeyFormatStrategy(
@@ -1495,6 +1528,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder messageConverter(
@@ -1510,6 +1544,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder messageConverter(
@@ -1526,6 +1561,7 @@ public interface JmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder messageCreatedStrategy(
@@ -1542,6 +1578,7 @@ public interface JmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder messageCreatedStrategy(
@@ -1593,6 +1630,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder messageListenerContainerFactory(
@@ -1610,6 +1648,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder messageListenerContainerFactory(
@@ -2017,6 +2056,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
+         * Default:
          * Group: transaction (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder transactionManager(
@@ -2030,6 +2070,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
+         * Default:
          * Group: transaction (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder transactionManager(
@@ -2042,6 +2083,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: transaction (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder transactionName(
@@ -2097,6 +2139,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JmsEndpointProducerBuilder clientId(String clientId) {
@@ -2111,6 +2154,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ConnectionFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JmsEndpointProducerBuilder connectionFactory(
@@ -2127,6 +2171,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.jms.ConnectionFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JmsEndpointProducerBuilder connectionFactory(
@@ -2178,6 +2223,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JmsEndpointProducerBuilder durableSubscriptionName(
@@ -2195,6 +2241,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JmsEndpointProducerBuilder jmsMessageType(
@@ -2212,6 +2259,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JmsEndpointProducerBuilder jmsMessageType(String jmsMessageType) {
@@ -2285,6 +2333,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default JmsEndpointProducerBuilder deliveryMode(Integer deliveryMode) {
@@ -2299,6 +2348,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default JmsEndpointProducerBuilder deliveryMode(String deliveryMode) {
@@ -2547,6 +2597,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default JmsEndpointProducerBuilder replyToMaxConcurrentConsumers(
@@ -2561,6 +2612,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default JmsEndpointProducerBuilder replyToMaxConcurrentConsumers(
@@ -2604,6 +2656,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default JmsEndpointProducerBuilder replyToOverride(
@@ -2625,6 +2678,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.ReplyToType</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default JmsEndpointProducerBuilder replyToType(ReplyToType replyToType) {
@@ -2645,6 +2699,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.ReplyToType</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default JmsEndpointProducerBuilder replyToType(String replyToType) {
@@ -2715,6 +2770,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default JmsEndpointProducerBuilder password(String password) {
@@ -2727,6 +2783,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default JmsEndpointProducerBuilder username(String username) {
@@ -2778,6 +2835,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer (advanced)
          */
         default AdvancedJmsEndpointProducerBuilder allowAdditionalHeaders(
@@ -2860,6 +2918,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer (advanced)
          */
         default AdvancedJmsEndpointProducerBuilder correlationProperty(
@@ -2986,6 +3045,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer (advanced)
          */
         default AdvancedJmsEndpointProducerBuilder replyToCacheLevelName(
@@ -3000,6 +3060,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer (advanced)
          */
         default AdvancedJmsEndpointProducerBuilder replyToDestinationSelectorName(
@@ -3186,6 +3247,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder destinationResolver(
@@ -3202,6 +3264,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder destinationResolver(
@@ -3221,6 +3284,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a: <code>org.springframework.util.ErrorHandler</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder errorHandler(
@@ -3240,6 +3304,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.util.ErrorHandler</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder errorHandler(
@@ -3253,6 +3318,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ExceptionListener</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder exceptionListener(
@@ -3267,6 +3333,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.jms.ExceptionListener</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder exceptionListener(
@@ -3281,6 +3348,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder headerFilterStrategy(
@@ -3295,6 +3363,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder headerFilterStrategy(
@@ -3411,6 +3480,7 @@ public interface JmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder jmsKeyFormatStrategy(
@@ -3433,6 +3503,7 @@ public interface JmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder jmsKeyFormatStrategy(
@@ -3508,6 +3579,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder messageConverter(
@@ -3523,6 +3595,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder messageConverter(
@@ -3539,6 +3612,7 @@ public interface JmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder messageCreatedStrategy(
@@ -3555,6 +3629,7 @@ public interface JmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder messageCreatedStrategy(
@@ -3606,6 +3681,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder messageListenerContainerFactory(
@@ -3623,6 +3699,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder messageListenerContainerFactory(
@@ -4030,6 +4107,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
+         * Default:
          * Group: transaction (advanced)
          */
         default AdvancedJmsEndpointProducerBuilder transactionManager(
@@ -4043,6 +4121,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
+         * Default:
          * Group: transaction (advanced)
          */
         default AdvancedJmsEndpointProducerBuilder transactionManager(
@@ -4055,6 +4134,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: transaction (advanced)
          */
         default AdvancedJmsEndpointProducerBuilder transactionName(
@@ -4111,6 +4191,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JmsEndpointBuilder clientId(String clientId) {
@@ -4125,6 +4206,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ConnectionFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JmsEndpointBuilder connectionFactory(Object connectionFactory) {
@@ -4140,6 +4222,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.jms.ConnectionFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JmsEndpointBuilder connectionFactory(String connectionFactory) {
@@ -4190,6 +4273,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JmsEndpointBuilder durableSubscriptionName(
@@ -4207,6 +4291,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JmsEndpointBuilder jmsMessageType(JmsMessageType jmsMessageType) {
@@ -4223,6 +4308,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JmsEndpointBuilder jmsMessageType(String jmsMessageType) {
@@ -4269,6 +4355,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default JmsEndpointBuilder password(String password) {
@@ -4281,6 +4368,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default JmsEndpointBuilder username(String username) {
@@ -4464,6 +4552,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder destinationResolver(
@@ -4480,6 +4569,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder destinationResolver(
@@ -4499,6 +4589,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a: <code>org.springframework.util.ErrorHandler</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder errorHandler(Object errorHandler) {
@@ -4517,6 +4608,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.util.ErrorHandler</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder errorHandler(String errorHandler) {
@@ -4529,6 +4621,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ExceptionListener</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder exceptionListener(
@@ -4543,6 +4636,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.jms.ExceptionListener</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder exceptionListener(
@@ -4557,6 +4651,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder headerFilterStrategy(
@@ -4571,6 +4666,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder headerFilterStrategy(
@@ -4687,6 +4783,7 @@ public interface JmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder jmsKeyFormatStrategy(
@@ -4709,6 +4806,7 @@ public interface JmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder jmsKeyFormatStrategy(
@@ -4782,6 +4880,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder messageConverter(
@@ -4797,6 +4896,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder messageConverter(
@@ -4813,6 +4913,7 @@ public interface JmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder messageCreatedStrategy(
@@ -4829,6 +4930,7 @@ public interface JmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder messageCreatedStrategy(
@@ -4880,6 +4982,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder messageListenerContainerFactory(
@@ -4897,6 +5000,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder messageListenerContainerFactory(
@@ -5298,6 +5402,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
+         * Default:
          * Group: transaction (advanced)
          */
         default AdvancedJmsEndpointBuilder transactionManager(
@@ -5311,6 +5416,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
+         * Default:
          * Group: transaction (advanced)
          */
         default AdvancedJmsEndpointBuilder transactionManager(
@@ -5323,6 +5429,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: transaction (advanced)
          */
         default AdvancedJmsEndpointBuilder transactionName(

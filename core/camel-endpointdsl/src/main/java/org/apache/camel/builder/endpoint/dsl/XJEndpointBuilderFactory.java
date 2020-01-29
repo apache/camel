@@ -45,6 +45,7 @@ public interface XJEndpointBuilderFactory {
          * <code>org.apache.camel.component.xj.TransformDirection</code> type.
          * 
          * Required: true
+         * Default:
          * Group: producer
          */
         default XJEndpointBuilder transformDirection(
@@ -59,6 +60,7 @@ public interface XJEndpointBuilderFactory {
          * <code>org.apache.camel.component.xj.TransformDirection</code> type.
          * 
          * Required: true
+         * Default:
          * Group: producer
          */
         default XJEndpointBuilder transformDirection(String transformDirection) {
@@ -302,6 +304,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option is a: <code>net.sf.saxon.Configuration</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder saxonConfiguration(
@@ -315,6 +318,7 @@ public interface XJEndpointBuilderFactory {
          * The option will be converted to a
          * <code>net.sf.saxon.Configuration</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder saxonConfiguration(
@@ -331,6 +335,7 @@ public interface XJEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder saxonExtensionFunctions(
@@ -347,6 +352,7 @@ public interface XJEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder saxonExtensionFunctions(
@@ -388,6 +394,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option is a: <code>org.xml.sax.EntityResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder entityResolver(Object entityResolver) {
@@ -401,6 +408,7 @@ public interface XJEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.xml.sax.EntityResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder entityResolver(String entityResolver) {
@@ -416,6 +424,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.xml.transform.ErrorListener</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder errorListener(Object errorListener) {
@@ -432,6 +441,7 @@ public interface XJEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.xml.transform.ErrorListener</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder errorListener(String errorListener) {
@@ -447,6 +457,7 @@ public interface XJEndpointBuilderFactory {
          * <code>org.apache.camel.component.xslt.ResultHandlerFactory</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder resultHandlerFactory(
@@ -463,6 +474,7 @@ public interface XJEndpointBuilderFactory {
          * <code>org.apache.camel.component.xslt.ResultHandlerFactory</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder resultHandlerFactory(
@@ -502,6 +514,7 @@ public interface XJEndpointBuilderFactory {
          * The option is a: <code>javax.xml.transform.TransformerFactory</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder transformerFactory(
@@ -515,6 +528,7 @@ public interface XJEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.xml.transform.TransformerFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder transformerFactory(
@@ -528,6 +542,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder transformerFactoryClass(
@@ -542,6 +557,7 @@ public interface XJEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder transformerFactoryConfigurationStrategy(
@@ -556,6 +572,7 @@ public interface XJEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder transformerFactoryConfigurationStrategy(
@@ -568,6 +585,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.xml.transform.URIResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder uriResolver(Object uriResolver) {
@@ -580,6 +598,7 @@ public interface XJEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.xml.transform.URIResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder uriResolver(String uriResolver) {

@@ -280,6 +280,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option is a: <code>net.sf.saxon.Configuration</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder saxonConfiguration(
@@ -293,6 +294,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * The option will be converted to a
          * <code>net.sf.saxon.Configuration</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder saxonConfiguration(
@@ -309,6 +311,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder saxonExtensionFunctions(
@@ -325,6 +328,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder saxonExtensionFunctions(
@@ -366,6 +370,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option is a: <code>org.xml.sax.EntityResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder entityResolver(
@@ -380,6 +385,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.xml.sax.EntityResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder entityResolver(
@@ -396,6 +402,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.xml.transform.ErrorListener</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder errorListener(
@@ -413,6 +420,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.xml.transform.ErrorListener</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder errorListener(
@@ -429,6 +437,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * <code>org.apache.camel.component.xslt.ResultHandlerFactory</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder resultHandlerFactory(
@@ -445,6 +454,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * <code>org.apache.camel.component.xslt.ResultHandlerFactory</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder resultHandlerFactory(
@@ -484,6 +494,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * The option is a: <code>javax.xml.transform.TransformerFactory</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder transformerFactory(
@@ -497,6 +508,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.xml.transform.TransformerFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder transformerFactory(
@@ -510,6 +522,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder transformerFactoryClass(
@@ -524,6 +537,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder transformerFactoryConfigurationStrategy(
@@ -538,6 +552,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder transformerFactoryConfigurationStrategy(
@@ -550,6 +565,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.xml.transform.URIResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder uriResolver(Object uriResolver) {
@@ -562,6 +578,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.xml.transform.URIResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder uriResolver(String uriResolver) {

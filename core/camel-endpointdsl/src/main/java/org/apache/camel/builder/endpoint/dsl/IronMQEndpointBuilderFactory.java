@@ -52,6 +52,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>io.iron.ironmq.Client</code> type.
          * 
+         * Default:
          * Group: common
          */
         default IronMQEndpointConsumerBuilder client(Object client) {
@@ -64,6 +65,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>io.iron.ironmq.Client</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default IronMQEndpointConsumerBuilder client(String client) {
@@ -121,6 +123,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default IronMQEndpointConsumerBuilder projectId(String projectId) {
@@ -132,6 +135,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default IronMQEndpointConsumerBuilder token(String token) {
@@ -316,6 +320,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default IronMQEndpointConsumerBuilder wait(int wait) {
@@ -328,6 +333,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default IronMQEndpointConsumerBuilder wait(String wait) {
@@ -340,6 +346,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder backoffErrorThreshold(
@@ -353,6 +360,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder backoffErrorThreshold(
@@ -366,6 +374,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder backoffIdleThreshold(
@@ -379,6 +388,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder backoffIdleThreshold(
@@ -396,6 +406,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder backoffMultiplier(
@@ -413,6 +424,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder backoffMultiplier(
@@ -567,6 +579,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder scheduledExecutorService(
@@ -582,6 +595,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder scheduledExecutorService(
@@ -609,6 +623,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder schedulerProperties(
@@ -624,6 +639,7 @@ public interface IronMQEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder schedulerProperties(
@@ -729,6 +745,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIronMQEndpointConsumerBuilder exceptionHandler(
@@ -745,6 +762,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIronMQEndpointConsumerBuilder exceptionHandler(
@@ -757,6 +775,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIronMQEndpointConsumerBuilder exchangePattern(
@@ -770,6 +789,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIronMQEndpointConsumerBuilder exchangePattern(
@@ -786,6 +806,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIronMQEndpointConsumerBuilder pollStrategy(
@@ -802,6 +823,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIronMQEndpointConsumerBuilder pollStrategy(
@@ -881,6 +903,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>io.iron.ironmq.Client</code> type.
          * 
+         * Default:
          * Group: common
          */
         default IronMQEndpointProducerBuilder client(Object client) {
@@ -893,6 +916,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>io.iron.ironmq.Client</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default IronMQEndpointProducerBuilder client(String client) {
@@ -950,6 +974,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default IronMQEndpointProducerBuilder projectId(String projectId) {
@@ -961,6 +986,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default IronMQEndpointProducerBuilder token(String token) {
@@ -1015,6 +1041,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default IronMQEndpointProducerBuilder visibilityDelay(
@@ -1028,6 +1055,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default IronMQEndpointProducerBuilder visibilityDelay(
@@ -1119,6 +1147,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>io.iron.ironmq.Client</code> type.
          * 
+         * Default:
          * Group: common
          */
         default IronMQEndpointBuilder client(Object client) {
@@ -1131,6 +1160,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>io.iron.ironmq.Client</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default IronMQEndpointBuilder client(String client) {
@@ -1186,6 +1216,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default IronMQEndpointBuilder projectId(String projectId) {
@@ -1197,6 +1228,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default IronMQEndpointBuilder token(String token) {

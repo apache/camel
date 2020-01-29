@@ -51,6 +51,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ZendeskEndpointConsumerBuilder inBody(String inBody) {
@@ -62,6 +63,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ZendeskEndpointConsumerBuilder serverUrl(String serverUrl) {
@@ -140,6 +142,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default ZendeskEndpointConsumerBuilder backoffErrorThreshold(
@@ -153,6 +156,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default ZendeskEndpointConsumerBuilder backoffErrorThreshold(
@@ -166,6 +170,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default ZendeskEndpointConsumerBuilder backoffIdleThreshold(
@@ -179,6 +184,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default ZendeskEndpointConsumerBuilder backoffIdleThreshold(
@@ -196,6 +202,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default ZendeskEndpointConsumerBuilder backoffMultiplier(
@@ -213,6 +220,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default ZendeskEndpointConsumerBuilder backoffMultiplier(
@@ -367,6 +375,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default ZendeskEndpointConsumerBuilder scheduledExecutorService(
@@ -382,6 +391,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default ZendeskEndpointConsumerBuilder scheduledExecutorService(
@@ -409,6 +419,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default ZendeskEndpointConsumerBuilder schedulerProperties(
@@ -424,6 +435,7 @@ public interface ZendeskEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default ZendeskEndpointConsumerBuilder schedulerProperties(
@@ -515,6 +527,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ZendeskEndpointConsumerBuilder oauthToken(String oauthToken) {
@@ -526,6 +539,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ZendeskEndpointConsumerBuilder password(String password) {
@@ -537,6 +551,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ZendeskEndpointConsumerBuilder token(String token) {
@@ -548,6 +563,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ZendeskEndpointConsumerBuilder username(String username) {
@@ -574,6 +590,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedZendeskEndpointConsumerBuilder exceptionHandler(
@@ -590,6 +607,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedZendeskEndpointConsumerBuilder exceptionHandler(
@@ -602,6 +620,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedZendeskEndpointConsumerBuilder exchangePattern(
@@ -615,6 +634,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedZendeskEndpointConsumerBuilder exchangePattern(
@@ -631,6 +651,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedZendeskEndpointConsumerBuilder pollStrategy(
@@ -647,6 +668,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedZendeskEndpointConsumerBuilder pollStrategy(
@@ -726,6 +748,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ZendeskEndpointProducerBuilder inBody(String inBody) {
@@ -737,6 +760,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ZendeskEndpointProducerBuilder serverUrl(String serverUrl) {
@@ -790,6 +814,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ZendeskEndpointProducerBuilder oauthToken(String oauthToken) {
@@ -801,6 +826,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ZendeskEndpointProducerBuilder password(String password) {
@@ -812,6 +838,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ZendeskEndpointProducerBuilder token(String token) {
@@ -823,6 +850,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ZendeskEndpointProducerBuilder username(String username) {
@@ -913,6 +941,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ZendeskEndpointBuilder inBody(String inBody) {
@@ -924,6 +953,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ZendeskEndpointBuilder serverUrl(String serverUrl) {
@@ -935,6 +965,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ZendeskEndpointBuilder oauthToken(String oauthToken) {
@@ -946,6 +977,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ZendeskEndpointBuilder password(String password) {
@@ -957,6 +989,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ZendeskEndpointBuilder token(String token) {
@@ -968,6 +1001,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ZendeskEndpointBuilder username(String username) {

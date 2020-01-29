@@ -50,6 +50,7 @@ public interface CxfRsEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.cxf.feature.Feature&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointConsumerBuilder features(List<Object> features) {
@@ -63,6 +64,7 @@ public interface CxfRsEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.cxf.feature.Feature&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointConsumerBuilder features(String features) {
@@ -103,6 +105,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointConsumerBuilder loggingSizeLimit(
@@ -116,6 +119,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointConsumerBuilder loggingSizeLimit(
@@ -130,6 +134,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointConsumerBuilder modelRef(String modelRef) {
@@ -144,6 +149,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointConsumerBuilder providers(List<Object> providers) {
@@ -158,6 +164,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointConsumerBuilder providers(String providers) {
@@ -171,6 +178,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointConsumerBuilder resourceClasses(
@@ -185,6 +193,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointConsumerBuilder resourceClasses(
@@ -199,6 +208,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointConsumerBuilder schemaLocations(
@@ -213,6 +223,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointConsumerBuilder schemaLocations(
@@ -347,6 +358,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default CxfRsEndpointConsumerBuilder publishedEndpointUrl(
@@ -374,6 +386,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCxfRsEndpointConsumerBuilder exceptionHandler(
@@ -390,6 +403,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCxfRsEndpointConsumerBuilder exceptionHandler(
@@ -402,6 +416,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCxfRsEndpointConsumerBuilder exchangePattern(
@@ -415,6 +430,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCxfRsEndpointConsumerBuilder exchangePattern(
@@ -429,6 +445,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCxfRsEndpointConsumerBuilder serviceBeans(
@@ -471,6 +488,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.cxf.jaxrs.CxfRsBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointConsumerBuilder binding(Object binding) {
@@ -484,6 +502,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.jaxrs.CxfRsBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointConsumerBuilder binding(String binding) {
@@ -495,6 +514,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.cxf.Bus</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointConsumerBuilder bus(Object bus) {
@@ -507,6 +527,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a <code>org.apache.cxf.Bus</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointConsumerBuilder bus(String bus) {
@@ -554,6 +575,7 @@ public interface CxfRsEndpointBuilderFactory {
          * <code>org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointConsumerBuilder cxfRsConfigurer(
@@ -572,6 +594,7 @@ public interface CxfRsEndpointBuilderFactory {
          * <code>org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointConsumerBuilder cxfRsConfigurer(
@@ -612,6 +635,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointConsumerBuilder headerFilterStrategy(
@@ -626,6 +650,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointConsumerBuilder headerFilterStrategy(
@@ -741,6 +766,7 @@ public interface CxfRsEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.cxf.feature.Feature&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointProducerBuilder features(List<Object> features) {
@@ -754,6 +780,7 @@ public interface CxfRsEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.cxf.feature.Feature&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointProducerBuilder features(String features) {
@@ -794,6 +821,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointProducerBuilder loggingSizeLimit(
@@ -807,6 +835,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointProducerBuilder loggingSizeLimit(
@@ -821,6 +850,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointProducerBuilder modelRef(String modelRef) {
@@ -835,6 +865,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointProducerBuilder providers(List<Object> providers) {
@@ -849,6 +880,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointProducerBuilder providers(String providers) {
@@ -862,6 +894,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointProducerBuilder resourceClasses(
@@ -876,6 +909,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointProducerBuilder resourceClasses(
@@ -890,6 +924,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointProducerBuilder schemaLocations(
@@ -904,6 +939,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointProducerBuilder schemaLocations(
@@ -945,6 +981,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CxfRsEndpointProducerBuilder cookieHandler(Object cookieHandler) {
@@ -957,6 +994,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CxfRsEndpointProducerBuilder cookieHandler(String cookieHandler) {
@@ -969,6 +1007,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CxfRsEndpointProducerBuilder hostnameVerifier(
@@ -983,6 +1022,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CxfRsEndpointProducerBuilder hostnameVerifier(
@@ -1039,6 +1079,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CxfRsEndpointProducerBuilder sslContextParameters(
@@ -1053,6 +1094,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CxfRsEndpointProducerBuilder sslContextParameters(
@@ -1222,6 +1264,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.cxf.jaxrs.CxfRsBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointProducerBuilder binding(Object binding) {
@@ -1235,6 +1278,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.jaxrs.CxfRsBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointProducerBuilder binding(String binding) {
@@ -1246,6 +1290,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.cxf.Bus</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointProducerBuilder bus(Object bus) {
@@ -1258,6 +1303,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a <code>org.apache.cxf.Bus</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointProducerBuilder bus(String bus) {
@@ -1305,6 +1351,7 @@ public interface CxfRsEndpointBuilderFactory {
          * <code>org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointProducerBuilder cxfRsConfigurer(
@@ -1323,6 +1370,7 @@ public interface CxfRsEndpointBuilderFactory {
          * <code>org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointProducerBuilder cxfRsConfigurer(
@@ -1363,6 +1411,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointProducerBuilder headerFilterStrategy(
@@ -1377,6 +1426,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointProducerBuilder headerFilterStrategy(
@@ -1493,6 +1543,7 @@ public interface CxfRsEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.cxf.feature.Feature&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointBuilder features(List<Object> features) {
@@ -1506,6 +1557,7 @@ public interface CxfRsEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.cxf.feature.Feature&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointBuilder features(String features) {
@@ -1546,6 +1598,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointBuilder loggingSizeLimit(int loggingSizeLimit) {
@@ -1558,6 +1611,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointBuilder loggingSizeLimit(String loggingSizeLimit) {
@@ -1571,6 +1625,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointBuilder modelRef(String modelRef) {
@@ -1585,6 +1640,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointBuilder providers(List<Object> providers) {
@@ -1599,6 +1655,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointBuilder providers(String providers) {
@@ -1612,6 +1669,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointBuilder resourceClasses(
@@ -1626,6 +1684,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointBuilder resourceClasses(String resourceClasses) {
@@ -1639,6 +1698,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointBuilder schemaLocations(
@@ -1653,6 +1713,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfRsEndpointBuilder schemaLocations(String schemaLocations) {
@@ -1732,6 +1793,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.cxf.jaxrs.CxfRsBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder binding(Object binding) {
@@ -1745,6 +1807,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.jaxrs.CxfRsBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder binding(String binding) {
@@ -1756,6 +1819,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.cxf.Bus</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder bus(Object bus) {
@@ -1768,6 +1832,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a <code>org.apache.cxf.Bus</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder bus(String bus) {
@@ -1815,6 +1880,7 @@ public interface CxfRsEndpointBuilderFactory {
          * <code>org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder cxfRsConfigurer(
@@ -1833,6 +1899,7 @@ public interface CxfRsEndpointBuilderFactory {
          * <code>org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder cxfRsConfigurer(
@@ -1871,6 +1938,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder headerFilterStrategy(
@@ -1885,6 +1953,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder headerFilterStrategy(

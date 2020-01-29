@@ -98,6 +98,7 @@ public interface ServiceEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedServiceEndpointBuilder exceptionHandler(
@@ -114,6 +115,7 @@ public interface ServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedServiceEndpointBuilder exceptionHandler(
@@ -126,6 +128,7 @@ public interface ServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedServiceEndpointBuilder exchangePattern(
@@ -139,6 +142,7 @@ public interface ServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedServiceEndpointBuilder exchangePattern(

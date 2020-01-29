@@ -43,6 +43,7 @@ public interface CMEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: producer
          */
         default CMEndpointBuilder defaultFrom(String defaultFrom) {
@@ -127,6 +128,7 @@ public interface CMEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: producer
          */
         default CMEndpointBuilder productToken(String productToken) {

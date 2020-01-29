@@ -80,6 +80,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SshEndpointConsumerBuilder knownHostsResource(
@@ -159,6 +160,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SshEndpointConsumerBuilder pollCommand(String pollCommand) {
@@ -199,6 +201,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SshEndpointConsumerBuilder backoffErrorThreshold(
@@ -212,6 +215,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SshEndpointConsumerBuilder backoffErrorThreshold(
@@ -225,6 +229,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SshEndpointConsumerBuilder backoffIdleThreshold(
@@ -238,6 +243,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SshEndpointConsumerBuilder backoffIdleThreshold(
@@ -255,6 +261,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SshEndpointConsumerBuilder backoffMultiplier(
@@ -272,6 +279,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SshEndpointConsumerBuilder backoffMultiplier(
@@ -426,6 +434,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SshEndpointConsumerBuilder scheduledExecutorService(
@@ -441,6 +450,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SshEndpointConsumerBuilder scheduledExecutorService(
@@ -468,6 +478,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SshEndpointConsumerBuilder schedulerProperties(
@@ -483,6 +494,7 @@ public interface SshEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SshEndpointConsumerBuilder schedulerProperties(
@@ -572,6 +584,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointConsumerBuilder certResource(String certResource) {
@@ -584,6 +597,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointConsumerBuilder certResourcePassword(
@@ -598,6 +612,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointConsumerBuilder keyPairProvider(
@@ -612,6 +627,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointConsumerBuilder keyPairProvider(
@@ -628,6 +644,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointConsumerBuilder keyType(String keyType) {
@@ -640,6 +657,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointConsumerBuilder password(String password) {
@@ -651,6 +669,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointConsumerBuilder username(String username) {
@@ -677,6 +696,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSshEndpointConsumerBuilder exceptionHandler(
@@ -693,6 +713,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSshEndpointConsumerBuilder exceptionHandler(
@@ -705,6 +726,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSshEndpointConsumerBuilder exchangePattern(
@@ -718,6 +740,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSshEndpointConsumerBuilder exchangePattern(
@@ -734,6 +757,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSshEndpointConsumerBuilder pollStrategy(
@@ -750,6 +774,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSshEndpointConsumerBuilder pollStrategy(
@@ -805,6 +830,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSshEndpointConsumerBuilder shellPrompt(
@@ -912,6 +938,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SshEndpointProducerBuilder knownHostsResource(
@@ -994,6 +1021,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointProducerBuilder certResource(String certResource) {
@@ -1006,6 +1034,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointProducerBuilder certResourcePassword(
@@ -1020,6 +1049,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointProducerBuilder keyPairProvider(
@@ -1034,6 +1064,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointProducerBuilder keyPairProvider(
@@ -1050,6 +1081,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointProducerBuilder keyType(String keyType) {
@@ -1062,6 +1094,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointProducerBuilder password(String password) {
@@ -1073,6 +1106,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointProducerBuilder username(String username) {
@@ -1138,6 +1172,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSshEndpointProducerBuilder shellPrompt(
@@ -1244,6 +1279,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SshEndpointBuilder knownHostsResource(String knownHostsResource) {
@@ -1283,6 +1319,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointBuilder certResource(String certResource) {
@@ -1295,6 +1332,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointBuilder certResourcePassword(
@@ -1309,6 +1347,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointBuilder keyPairProvider(Object keyPairProvider) {
@@ -1322,6 +1361,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointBuilder keyPairProvider(String keyPairProvider) {
@@ -1337,6 +1377,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointBuilder keyType(String keyType) {
@@ -1349,6 +1390,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointBuilder password(String password) {
@@ -1360,6 +1402,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SshEndpointBuilder username(String username) {
@@ -1425,6 +1468,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSshEndpointBuilder shellPrompt(String shellPrompt) {

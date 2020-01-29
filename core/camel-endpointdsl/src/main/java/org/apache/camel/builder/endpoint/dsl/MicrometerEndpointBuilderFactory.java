@@ -45,6 +45,7 @@ public interface MicrometerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MicrometerEndpointBuilder action(String action) {
@@ -56,6 +57,7 @@ public interface MicrometerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MicrometerEndpointBuilder decrement(String decrement) {
@@ -67,6 +69,7 @@ public interface MicrometerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MicrometerEndpointBuilder increment(String increment) {
@@ -120,6 +123,7 @@ public interface MicrometerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MicrometerEndpointBuilder value(String value) {

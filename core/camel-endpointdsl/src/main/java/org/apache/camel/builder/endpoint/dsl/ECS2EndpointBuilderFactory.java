@@ -31,7 +31,7 @@ public interface ECS2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS2 ECS component.
+     * Builder for endpoint for the AWS 2 ECS component.
      */
     public interface ECS2EndpointBuilder extends EndpointProducerBuilder {
         default AdvancedECS2EndpointBuilder advanced() {
@@ -42,6 +42,7 @@ public interface ECS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ECS2EndpointBuilder accessKey(String accessKey) {
@@ -54,6 +55,7 @@ public interface ECS2EndpointBuilderFactory {
          * The option is a:
          * <code>software.amazon.awssdk.services.ecs.EcsClient</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ECS2EndpointBuilder ecsClient(Object ecsClient) {
@@ -66,6 +68,7 @@ public interface ECS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>software.amazon.awssdk.services.ecs.EcsClient</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ECS2EndpointBuilder ecsClient(String ecsClient) {
@@ -119,6 +122,7 @@ public interface ECS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.aws2.ecs.ECS2Operations</code> type.
          * 
          * Required: true
+         * Default:
          * Group: producer
          */
         default ECS2EndpointBuilder operation(ECS2Operations operation) {
@@ -132,6 +136,7 @@ public interface ECS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.aws2.ecs.ECS2Operations</code> type.
          * 
          * Required: true
+         * Default:
          * Group: producer
          */
         default ECS2EndpointBuilder operation(String operation) {
@@ -143,6 +148,7 @@ public interface ECS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ECS2EndpointBuilder proxyHost(String proxyHost) {
@@ -154,6 +160,7 @@ public interface ECS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ECS2EndpointBuilder proxyPort(Integer proxyPort) {
@@ -166,6 +173,7 @@ public interface ECS2EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default ECS2EndpointBuilder proxyPort(String proxyPort) {
@@ -206,6 +214,7 @@ public interface ECS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ECS2EndpointBuilder region(String region) {
@@ -217,6 +226,7 @@ public interface ECS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ECS2EndpointBuilder secretKey(String secretKey) {
@@ -226,7 +236,7 @@ public interface ECS2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS2 ECS component.
+     * Advanced builder for endpoint for the AWS 2 ECS component.
      */
     public interface AdvancedECS2EndpointBuilder
             extends
@@ -311,7 +321,7 @@ public interface ECS2EndpointBuilderFactory {
 
     public interface ECS2Builders {
         /**
-         * AWS2 ECS (camel-aws2-ecs)
+         * AWS 2 ECS (camel-aws2-ecs)
          * The aws2-ecs is used for managing Amazon ECS
          * 
          * Category: cloud,management
@@ -328,7 +338,7 @@ public interface ECS2EndpointBuilderFactory {
         }
     }
     /**
-     * AWS2 ECS (camel-aws2-ecs)
+     * AWS 2 ECS (camel-aws2-ecs)
      * The aws2-ecs is used for managing Amazon ECS
      * 
      * Category: cloud,management

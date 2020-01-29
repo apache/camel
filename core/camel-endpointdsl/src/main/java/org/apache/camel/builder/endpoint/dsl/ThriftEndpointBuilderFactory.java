@@ -145,6 +145,7 @@ public interface ThriftEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default ThriftEndpointConsumerBuilder clientTimeout(int clientTimeout) {
@@ -156,6 +157,7 @@ public interface ThriftEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default ThriftEndpointConsumerBuilder clientTimeout(String clientTimeout) {
@@ -246,6 +248,7 @@ public interface ThriftEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ThriftEndpointConsumerBuilder sslParameters(Object sslParameters) {
@@ -258,6 +261,7 @@ public interface ThriftEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ThriftEndpointConsumerBuilder sslParameters(String sslParameters) {
@@ -284,6 +288,7 @@ public interface ThriftEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedThriftEndpointConsumerBuilder exceptionHandler(
@@ -300,6 +305,7 @@ public interface ThriftEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedThriftEndpointConsumerBuilder exceptionHandler(
@@ -312,6 +318,7 @@ public interface ThriftEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedThriftEndpointConsumerBuilder exchangePattern(
@@ -325,6 +332,7 @@ public interface ThriftEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedThriftEndpointConsumerBuilder exchangePattern(
@@ -506,6 +514,7 @@ public interface ThriftEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ThriftEndpointProducerBuilder method(String method) {
@@ -548,6 +557,7 @@ public interface ThriftEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ThriftEndpointProducerBuilder sslParameters(Object sslParameters) {
@@ -560,6 +570,7 @@ public interface ThriftEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ThriftEndpointProducerBuilder sslParameters(String sslParameters) {
@@ -738,6 +749,7 @@ public interface ThriftEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ThriftEndpointBuilder sslParameters(Object sslParameters) {
@@ -750,6 +762,7 @@ public interface ThriftEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default ThriftEndpointBuilder sslParameters(String sslParameters) {

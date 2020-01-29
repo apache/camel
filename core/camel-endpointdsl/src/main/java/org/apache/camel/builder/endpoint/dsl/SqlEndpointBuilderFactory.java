@@ -77,6 +77,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sql.DataSource</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqlEndpointConsumerBuilder dataSource(Object dataSource) {
@@ -89,6 +90,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>javax.sql.DataSource</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default SqlEndpointConsumerBuilder dataSource(String dataSource) {
@@ -101,6 +103,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         @Deprecated
@@ -114,6 +117,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqlEndpointConsumerBuilder outputClass(String outputClass) {
@@ -129,6 +133,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqlEndpointConsumerBuilder outputHeader(String outputHeader) {
@@ -304,6 +309,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SqlEndpointConsumerBuilder maxMessagesPerPoll(
@@ -316,6 +322,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SqlEndpointConsumerBuilder maxMessagesPerPoll(
@@ -330,6 +337,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SqlEndpointConsumerBuilder onConsume(String onConsume) {
@@ -342,6 +350,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SqlEndpointConsumerBuilder onConsumeBatchComplete(
@@ -356,6 +365,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SqlEndpointConsumerBuilder onConsumeFailed(
@@ -479,6 +489,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder backoffErrorThreshold(
@@ -492,6 +503,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder backoffErrorThreshold(
@@ -505,6 +517,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder backoffIdleThreshold(
@@ -518,6 +531,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder backoffIdleThreshold(
@@ -535,6 +549,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder backoffMultiplier(
@@ -552,6 +567,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder backoffMultiplier(
@@ -706,6 +722,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder scheduledExecutorService(
@@ -721,6 +738,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder scheduledExecutorService(
@@ -748,6 +766,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder schedulerProperties(
@@ -763,6 +782,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder schedulerProperties(
@@ -865,6 +885,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSqlEndpointConsumerBuilder exceptionHandler(
@@ -881,6 +902,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSqlEndpointConsumerBuilder exceptionHandler(
@@ -893,6 +915,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSqlEndpointConsumerBuilder exchangePattern(
@@ -906,6 +929,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSqlEndpointConsumerBuilder exchangePattern(
@@ -922,6 +946,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSqlEndpointConsumerBuilder pollStrategy(
@@ -938,6 +963,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSqlEndpointConsumerBuilder pollStrategy(
@@ -954,6 +980,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlProcessingStrategy</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSqlEndpointConsumerBuilder processingStrategy(
@@ -970,6 +997,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlProcessingStrategy</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSqlEndpointConsumerBuilder processingStrategy(
@@ -1049,6 +1077,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder parametersCount(
@@ -1064,6 +1093,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder parametersCount(
@@ -1094,6 +1124,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder prepareStatementStrategy(
@@ -1109,6 +1140,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder prepareStatementStrategy(
@@ -1150,6 +1182,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder templateOptions(
@@ -1164,6 +1197,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder templateOptions(
@@ -1241,6 +1275,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sql.DataSource</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqlEndpointProducerBuilder dataSource(Object dataSource) {
@@ -1253,6 +1288,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>javax.sql.DataSource</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default SqlEndpointProducerBuilder dataSource(String dataSource) {
@@ -1265,6 +1301,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         @Deprecated
@@ -1278,6 +1315,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqlEndpointProducerBuilder outputClass(String outputClass) {
@@ -1293,6 +1331,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqlEndpointProducerBuilder outputHeader(String outputHeader) {
@@ -1578,6 +1617,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder parametersCount(
@@ -1593,6 +1633,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder parametersCount(
@@ -1623,6 +1664,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder prepareStatementStrategy(
@@ -1638,6 +1680,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder prepareStatementStrategy(
@@ -1679,6 +1722,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder templateOptions(
@@ -1693,6 +1737,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder templateOptions(
@@ -1771,6 +1816,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sql.DataSource</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqlEndpointBuilder dataSource(Object dataSource) {
@@ -1783,6 +1829,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>javax.sql.DataSource</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default SqlEndpointBuilder dataSource(String dataSource) {
@@ -1795,6 +1842,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         @Deprecated
@@ -1808,6 +1856,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqlEndpointBuilder outputClass(String outputClass) {
@@ -1823,6 +1872,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SqlEndpointBuilder outputHeader(String outputHeader) {
@@ -1987,6 +2037,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqlEndpointBuilder parametersCount(int parametersCount) {
@@ -2001,6 +2052,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqlEndpointBuilder parametersCount(
@@ -2030,6 +2082,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqlEndpointBuilder prepareStatementStrategy(
@@ -2045,6 +2098,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqlEndpointBuilder prepareStatementStrategy(
@@ -2084,6 +2138,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqlEndpointBuilder templateOptions(
@@ -2098,6 +2153,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSqlEndpointBuilder templateOptions(

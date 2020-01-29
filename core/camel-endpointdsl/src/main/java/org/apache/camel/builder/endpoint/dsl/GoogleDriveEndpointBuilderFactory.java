@@ -54,6 +54,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder accessToken(
@@ -67,6 +68,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder applicationName(
@@ -81,6 +83,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder clientFactory(
@@ -95,6 +98,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder clientFactory(
@@ -107,6 +111,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder clientId(String clientId) {
@@ -118,6 +123,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder clientSecret(
@@ -130,6 +136,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder inBody(String inBody) {
@@ -143,6 +150,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder refreshToken(
@@ -158,6 +166,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder scopes(List<String> scopes) {
@@ -172,6 +181,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder scopes(String scopes) {
@@ -250,6 +260,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default GoogleDriveEndpointConsumerBuilder backoffErrorThreshold(
@@ -263,6 +274,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default GoogleDriveEndpointConsumerBuilder backoffErrorThreshold(
@@ -276,6 +288,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default GoogleDriveEndpointConsumerBuilder backoffIdleThreshold(
@@ -289,6 +302,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default GoogleDriveEndpointConsumerBuilder backoffIdleThreshold(
@@ -306,6 +320,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default GoogleDriveEndpointConsumerBuilder backoffMultiplier(
@@ -323,6 +338,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default GoogleDriveEndpointConsumerBuilder backoffMultiplier(
@@ -480,6 +496,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default GoogleDriveEndpointConsumerBuilder scheduledExecutorService(
@@ -495,6 +512,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default GoogleDriveEndpointConsumerBuilder scheduledExecutorService(
@@ -522,6 +540,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default GoogleDriveEndpointConsumerBuilder schedulerProperties(
@@ -537,6 +556,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default GoogleDriveEndpointConsumerBuilder schedulerProperties(
@@ -643,6 +663,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder exceptionHandler(
@@ -659,6 +680,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder exceptionHandler(
@@ -671,6 +693,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder exchangePattern(
@@ -684,6 +707,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder exchangePattern(
@@ -700,6 +724,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder pollStrategy(
@@ -716,6 +741,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder pollStrategy(
@@ -796,6 +822,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointProducerBuilder accessToken(
@@ -809,6 +836,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointProducerBuilder applicationName(
@@ -823,6 +851,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointProducerBuilder clientFactory(
@@ -837,6 +866,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointProducerBuilder clientFactory(
@@ -849,6 +879,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointProducerBuilder clientId(String clientId) {
@@ -860,6 +891,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointProducerBuilder clientSecret(
@@ -872,6 +904,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointProducerBuilder inBody(String inBody) {
@@ -885,6 +918,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointProducerBuilder refreshToken(
@@ -900,6 +934,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointProducerBuilder scopes(List<String> scopes) {
@@ -914,6 +949,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointProducerBuilder scopes(String scopes) {
@@ -1047,6 +1083,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointBuilder accessToken(String accessToken) {
@@ -1059,6 +1096,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointBuilder applicationName(
@@ -1073,6 +1111,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointBuilder clientFactory(Object clientFactory) {
@@ -1086,6 +1125,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointBuilder clientFactory(String clientFactory) {
@@ -1097,6 +1137,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointBuilder clientId(String clientId) {
@@ -1108,6 +1149,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointBuilder clientSecret(String clientSecret) {
@@ -1119,6 +1161,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointBuilder inBody(String inBody) {
@@ -1132,6 +1175,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointBuilder refreshToken(String refreshToken) {
@@ -1146,6 +1190,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointBuilder scopes(List<String> scopes) {
@@ -1160,6 +1205,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoogleDriveEndpointBuilder scopes(String scopes) {

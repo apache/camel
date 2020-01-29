@@ -113,6 +113,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SpringIntegrationEndpointConsumerBuilder inputChannel(
@@ -141,6 +142,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder exceptionHandler(
@@ -157,6 +159,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder exceptionHandler(
@@ -169,6 +172,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder exchangePattern(
@@ -182,6 +186,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder exchangePattern(
@@ -332,6 +337,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SpringIntegrationEndpointProducerBuilder outputChannel(

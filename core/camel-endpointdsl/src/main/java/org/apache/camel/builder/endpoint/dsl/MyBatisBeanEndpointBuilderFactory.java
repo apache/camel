@@ -80,6 +80,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MyBatisBeanEndpointBuilder inputHeader(String inputHeader) {
@@ -140,6 +141,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MyBatisBeanEndpointBuilder outputHeader(String outputHeader) {

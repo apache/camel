@@ -117,6 +117,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SchedulerEndpointBuilder backoffErrorThreshold(
@@ -130,6 +131,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SchedulerEndpointBuilder backoffErrorThreshold(
@@ -143,6 +145,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SchedulerEndpointBuilder backoffIdleThreshold(
@@ -156,6 +159,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SchedulerEndpointBuilder backoffIdleThreshold(
@@ -173,6 +177,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SchedulerEndpointBuilder backoffMultiplier(int backoffMultiplier) {
@@ -189,6 +194,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SchedulerEndpointBuilder backoffMultiplier(
@@ -368,6 +374,7 @@ public interface SchedulerEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SchedulerEndpointBuilder scheduledExecutorService(
@@ -383,6 +390,7 @@ public interface SchedulerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SchedulerEndpointBuilder scheduledExecutorService(
@@ -410,6 +418,7 @@ public interface SchedulerEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SchedulerEndpointBuilder schedulerProperties(
@@ -425,6 +434,7 @@ public interface SchedulerEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SchedulerEndpointBuilder schedulerProperties(
@@ -527,6 +537,7 @@ public interface SchedulerEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSchedulerEndpointBuilder exceptionHandler(
@@ -543,6 +554,7 @@ public interface SchedulerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSchedulerEndpointBuilder exceptionHandler(
@@ -555,6 +567,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSchedulerEndpointBuilder exchangePattern(
@@ -568,6 +581,7 @@ public interface SchedulerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSchedulerEndpointBuilder exchangePattern(
@@ -584,6 +598,7 @@ public interface SchedulerEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSchedulerEndpointBuilder pollStrategy(
@@ -600,6 +615,7 @@ public interface SchedulerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSchedulerEndpointBuilder pollStrategy(

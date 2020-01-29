@@ -141,6 +141,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SjmsEndpointConsumerBuilder durableSubscriptionId(
@@ -317,6 +318,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sjms.TransactionCommitStrategy</code> type.
          * 
+         * Default:
          * Group: transaction
          */
         default SjmsEndpointConsumerBuilder transactionCommitStrategy(
@@ -330,6 +332,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sjms.TransactionCommitStrategy</code> type.
          * 
+         * Default:
          * Group: transaction
          */
         default SjmsEndpointConsumerBuilder transactionCommitStrategy(
@@ -357,6 +360,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSjmsEndpointConsumerBuilder exceptionHandler(
@@ -373,6 +377,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSjmsEndpointConsumerBuilder exceptionHandler(
@@ -385,6 +390,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSjmsEndpointConsumerBuilder exchangePattern(
@@ -398,6 +404,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSjmsEndpointConsumerBuilder exchangePattern(
@@ -410,6 +417,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSjmsEndpointConsumerBuilder messageSelector(
@@ -522,6 +530,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder connectionCount(
@@ -535,6 +544,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder connectionCount(
@@ -548,6 +558,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ConnectionFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder connectionFactory(
@@ -562,6 +573,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.jms.ConnectionFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder connectionFactory(
@@ -577,6 +589,7 @@ public interface SjmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.ConnectionResource</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder connectionResource(
@@ -592,6 +605,7 @@ public interface SjmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.ConnectionResource</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder connectionResource(
@@ -605,6 +619,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sjms.jms.DestinationCreationStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder destinationCreationStrategy(
@@ -618,6 +633,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sjms.jms.DestinationCreationStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder destinationCreationStrategy(
@@ -631,6 +647,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ExceptionListener</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder exceptionListener(
@@ -645,6 +662,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.jms.ExceptionListener</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder exceptionListener(
@@ -659,6 +677,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder headerFilterStrategy(
@@ -673,6 +692,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder headerFilterStrategy(
@@ -727,6 +747,7 @@ public interface SjmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder jmsKeyFormatStrategy(
@@ -749,6 +770,7 @@ public interface SjmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder jmsKeyFormatStrategy(
@@ -794,6 +816,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder messageCreatedStrategy(
@@ -809,6 +832,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder messageCreatedStrategy(
@@ -938,6 +962,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SjmsEndpointProducerBuilder namedReplyTo(String namedReplyTo) {
@@ -1022,6 +1047,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sjms.TransactionCommitStrategy</code> type.
          * 
+         * Default:
          * Group: transaction
          */
         default SjmsEndpointProducerBuilder transactionCommitStrategy(
@@ -1035,6 +1061,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sjms.TransactionCommitStrategy</code> type.
          * 
+         * Default:
          * Group: transaction
          */
         default SjmsEndpointProducerBuilder transactionCommitStrategy(
@@ -1242,6 +1269,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder connectionCount(
@@ -1255,6 +1283,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder connectionCount(
@@ -1268,6 +1297,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ConnectionFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder connectionFactory(
@@ -1282,6 +1312,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.jms.ConnectionFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder connectionFactory(
@@ -1297,6 +1328,7 @@ public interface SjmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.ConnectionResource</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder connectionResource(
@@ -1312,6 +1344,7 @@ public interface SjmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.ConnectionResource</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder connectionResource(
@@ -1325,6 +1358,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sjms.jms.DestinationCreationStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder destinationCreationStrategy(
@@ -1338,6 +1372,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sjms.jms.DestinationCreationStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder destinationCreationStrategy(
@@ -1351,6 +1386,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ExceptionListener</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder exceptionListener(
@@ -1365,6 +1401,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.jms.ExceptionListener</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder exceptionListener(
@@ -1379,6 +1416,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder headerFilterStrategy(
@@ -1393,6 +1431,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder headerFilterStrategy(
@@ -1447,6 +1486,7 @@ public interface SjmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder jmsKeyFormatStrategy(
@@ -1469,6 +1509,7 @@ public interface SjmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder jmsKeyFormatStrategy(
@@ -1514,6 +1555,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder messageCreatedStrategy(
@@ -1529,6 +1571,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder messageCreatedStrategy(
@@ -1616,6 +1659,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sjms.TransactionCommitStrategy</code> type.
          * 
+         * Default:
          * Group: transaction
          */
         default SjmsEndpointBuilder transactionCommitStrategy(
@@ -1629,6 +1673,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sjms.TransactionCommitStrategy</code> type.
          * 
+         * Default:
          * Group: transaction
          */
         default SjmsEndpointBuilder transactionCommitStrategy(
@@ -1753,6 +1798,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder connectionCount(
@@ -1766,6 +1812,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder connectionCount(
@@ -1779,6 +1826,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ConnectionFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder connectionFactory(
@@ -1793,6 +1841,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.jms.ConnectionFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder connectionFactory(
@@ -1808,6 +1857,7 @@ public interface SjmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.ConnectionResource</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder connectionResource(
@@ -1823,6 +1873,7 @@ public interface SjmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.ConnectionResource</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder connectionResource(
@@ -1836,6 +1887,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sjms.jms.DestinationCreationStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder destinationCreationStrategy(
@@ -1849,6 +1901,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sjms.jms.DestinationCreationStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder destinationCreationStrategy(
@@ -1862,6 +1915,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ExceptionListener</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder exceptionListener(
@@ -1876,6 +1930,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.jms.ExceptionListener</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder exceptionListener(
@@ -1890,6 +1945,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder headerFilterStrategy(
@@ -1904,6 +1960,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder headerFilterStrategy(
@@ -1958,6 +2015,7 @@ public interface SjmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder jmsKeyFormatStrategy(
@@ -1980,6 +2038,7 @@ public interface SjmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder jmsKeyFormatStrategy(
@@ -2023,6 +2082,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder messageCreatedStrategy(
@@ -2038,6 +2098,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder messageCreatedStrategy(

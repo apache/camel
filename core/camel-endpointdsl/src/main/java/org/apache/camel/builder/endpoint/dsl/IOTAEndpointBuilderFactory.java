@@ -141,6 +141,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: producer
          */
         default IOTAEndpointBuilder operation(String operation) {
@@ -152,6 +153,7 @@ public interface IOTAEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default IOTAEndpointBuilder tag(String tag) {
@@ -164,6 +166,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: producer
          */
         default IOTAEndpointBuilder url(String url) {

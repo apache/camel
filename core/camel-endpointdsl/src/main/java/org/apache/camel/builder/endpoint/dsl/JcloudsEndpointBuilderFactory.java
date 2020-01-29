@@ -84,6 +84,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: blobstore
          */
         default JcloudsEndpointConsumerBuilder container(String container) {
@@ -95,6 +96,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: blobstore
          */
         default JcloudsEndpointConsumerBuilder directory(String directory) {
@@ -121,6 +123,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJcloudsEndpointConsumerBuilder exceptionHandler(
@@ -137,6 +140,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJcloudsEndpointConsumerBuilder exceptionHandler(
@@ -149,6 +153,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJcloudsEndpointConsumerBuilder exchangePattern(
@@ -162,6 +167,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJcloudsEndpointConsumerBuilder exchangePattern(
@@ -283,6 +289,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: blobstore
          */
         default JcloudsEndpointProducerBuilder blobName(String blobName) {
@@ -294,6 +301,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: blobstore
          */
         default JcloudsEndpointProducerBuilder container(String container) {
@@ -306,6 +314,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: compute
          */
         default JcloudsEndpointProducerBuilder group(String group) {
@@ -318,6 +327,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: compute
          */
         default JcloudsEndpointProducerBuilder hardwareId(String hardwareId) {
@@ -330,6 +340,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: compute
          */
         default JcloudsEndpointProducerBuilder imageId(String imageId) {
@@ -342,6 +353,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: compute
          */
         default JcloudsEndpointProducerBuilder locationId(String locationId) {
@@ -353,6 +365,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: compute
          */
         default JcloudsEndpointProducerBuilder nodeId(String nodeId) {
@@ -364,6 +377,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: compute
          */
         default JcloudsEndpointProducerBuilder nodeState(String nodeState) {
@@ -376,6 +390,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: compute
          */
         default JcloudsEndpointProducerBuilder operation(String operation) {
@@ -387,6 +402,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: compute
          */
         default JcloudsEndpointProducerBuilder user(String user) {
@@ -477,6 +493,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: blobstore
          */
         default JcloudsEndpointBuilder container(String container) {

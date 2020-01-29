@@ -47,6 +47,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoraEndpointConsumerBuilder dataStoreClass(String dataStoreClass) {
@@ -58,6 +59,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoraEndpointConsumerBuilder keyClass(String keyClass) {
@@ -69,6 +71,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoraEndpointConsumerBuilder valueClass(String valueClass) {
@@ -144,6 +147,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder endKey(Object endKey) {
@@ -155,6 +159,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder endKey(String endKey) {
@@ -166,6 +171,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder endTime(long endTime) {
@@ -177,6 +183,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder endTime(String endTime) {
@@ -188,6 +195,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>com.google.common.base.Strings</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder fields(Object fields) {
@@ -200,6 +208,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.google.common.base.Strings</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder fields(String fields) {
@@ -211,6 +220,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder keyRangeFrom(Object keyRangeFrom) {
@@ -222,6 +232,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder keyRangeFrom(String keyRangeFrom) {
@@ -233,6 +244,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder keyRangeTo(Object keyRangeTo) {
@@ -244,6 +256,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder keyRangeTo(String keyRangeTo) {
@@ -255,6 +268,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder limit(long limit) {
@@ -266,6 +280,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder limit(String limit) {
@@ -277,6 +292,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder startKey(Object startKey) {
@@ -288,6 +304,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder startKey(String startKey) {
@@ -299,6 +316,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder startTime(long startTime) {
@@ -310,6 +328,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder startTime(String startTime) {
@@ -321,6 +340,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder timeRangeFrom(long timeRangeFrom) {
@@ -332,6 +352,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder timeRangeFrom(String timeRangeFrom) {
@@ -343,6 +364,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder timeRangeTo(long timeRangeTo) {
@@ -354,6 +376,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder timeRangeTo(String timeRangeTo) {
@@ -365,6 +388,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder timestamp(long timestamp) {
@@ -376,6 +400,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder timestamp(String timestamp) {
@@ -402,6 +427,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoraEndpointConsumerBuilder exceptionHandler(
@@ -418,6 +444,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoraEndpointConsumerBuilder exceptionHandler(
@@ -430,6 +457,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoraEndpointConsumerBuilder exchangePattern(
@@ -443,6 +471,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoraEndpointConsumerBuilder exchangePattern(
@@ -484,6 +513,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a: <code>org.apache.hadoop.conf.Configuration</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedGoraEndpointConsumerBuilder hadoopConfiguration(
@@ -497,6 +527,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.hadoop.conf.Configuration</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedGoraEndpointConsumerBuilder hadoopConfiguration(
@@ -548,6 +579,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoraEndpointProducerBuilder dataStoreClass(String dataStoreClass) {
@@ -559,6 +591,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoraEndpointProducerBuilder keyClass(String keyClass) {
@@ -570,6 +603,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoraEndpointProducerBuilder valueClass(String valueClass) {
@@ -689,6 +723,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a: <code>org.apache.hadoop.conf.Configuration</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedGoraEndpointProducerBuilder hadoopConfiguration(
@@ -702,6 +737,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.hadoop.conf.Configuration</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedGoraEndpointProducerBuilder hadoopConfiguration(
@@ -754,6 +790,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoraEndpointBuilder dataStoreClass(String dataStoreClass) {
@@ -765,6 +802,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoraEndpointBuilder keyClass(String keyClass) {
@@ -776,6 +814,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GoraEndpointBuilder valueClass(String valueClass) {
@@ -828,6 +867,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a: <code>org.apache.hadoop.conf.Configuration</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedGoraEndpointBuilder hadoopConfiguration(
@@ -841,6 +881,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.hadoop.conf.Configuration</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedGoraEndpointBuilder hadoopConfiguration(

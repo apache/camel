@@ -52,6 +52,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default TwitterTimelineEndpointConsumerBuilder user(String user) {
@@ -210,6 +211,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default TwitterTimelineEndpointConsumerBuilder lang(String lang) {
@@ -275,6 +277,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default TwitterTimelineEndpointConsumerBuilder userIds(String userIds) {
@@ -287,6 +290,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder backoffErrorThreshold(
@@ -300,6 +304,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder backoffErrorThreshold(
@@ -313,6 +318,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder backoffIdleThreshold(
@@ -326,6 +332,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder backoffIdleThreshold(
@@ -343,6 +350,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder backoffMultiplier(
@@ -360,6 +368,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder backoffMultiplier(
@@ -514,6 +523,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder scheduledExecutorService(
@@ -529,6 +539,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder scheduledExecutorService(
@@ -557,6 +568,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder schedulerProperties(
@@ -572,6 +584,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder schedulerProperties(
@@ -689,6 +702,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterTimelineEndpointConsumerBuilder httpProxyHost(
@@ -702,6 +716,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterTimelineEndpointConsumerBuilder httpProxyPassword(
@@ -715,6 +730,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterTimelineEndpointConsumerBuilder httpProxyPort(
@@ -729,6 +745,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterTimelineEndpointConsumerBuilder httpProxyPort(
@@ -742,6 +759,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterTimelineEndpointConsumerBuilder httpProxyUser(
@@ -755,6 +773,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterTimelineEndpointConsumerBuilder accessToken(
@@ -768,6 +787,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterTimelineEndpointConsumerBuilder accessTokenSecret(
@@ -781,6 +801,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterTimelineEndpointConsumerBuilder consumerKey(
@@ -794,6 +815,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterTimelineEndpointConsumerBuilder consumerSecret(
@@ -838,6 +860,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterTimelineEndpointConsumerBuilder exceptionHandler(
@@ -854,6 +877,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterTimelineEndpointConsumerBuilder exceptionHandler(
@@ -866,6 +890,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterTimelineEndpointConsumerBuilder exchangePattern(
@@ -879,6 +904,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterTimelineEndpointConsumerBuilder exchangePattern(
@@ -921,6 +947,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterTimelineEndpointConsumerBuilder latitude(
@@ -935,6 +962,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterTimelineEndpointConsumerBuilder latitude(
@@ -949,6 +977,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterTimelineEndpointConsumerBuilder locations(
@@ -963,6 +992,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterTimelineEndpointConsumerBuilder longitude(
@@ -977,6 +1007,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterTimelineEndpointConsumerBuilder longitude(
@@ -993,6 +1024,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterTimelineEndpointConsumerBuilder pollStrategy(
@@ -1009,6 +1041,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterTimelineEndpointConsumerBuilder pollStrategy(
@@ -1023,6 +1056,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterTimelineEndpointConsumerBuilder radius(
@@ -1037,6 +1071,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterTimelineEndpointConsumerBuilder radius(
@@ -1116,6 +1151,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default TwitterTimelineEndpointProducerBuilder user(String user) {
@@ -1170,6 +1206,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterTimelineEndpointProducerBuilder httpProxyHost(
@@ -1183,6 +1220,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterTimelineEndpointProducerBuilder httpProxyPassword(
@@ -1196,6 +1234,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterTimelineEndpointProducerBuilder httpProxyPort(
@@ -1210,6 +1249,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterTimelineEndpointProducerBuilder httpProxyPort(
@@ -1223,6 +1263,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterTimelineEndpointProducerBuilder httpProxyUser(
@@ -1236,6 +1277,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterTimelineEndpointProducerBuilder accessToken(
@@ -1249,6 +1291,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterTimelineEndpointProducerBuilder accessTokenSecret(
@@ -1262,6 +1305,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterTimelineEndpointProducerBuilder consumerKey(
@@ -1275,6 +1319,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterTimelineEndpointProducerBuilder consumerSecret(
@@ -1367,6 +1412,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default TwitterTimelineEndpointBuilder user(String user) {
@@ -1379,6 +1425,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterTimelineEndpointBuilder httpProxyHost(
@@ -1392,6 +1439,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterTimelineEndpointBuilder httpProxyPassword(
@@ -1405,6 +1453,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterTimelineEndpointBuilder httpProxyPort(
@@ -1419,6 +1468,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterTimelineEndpointBuilder httpProxyPort(
@@ -1432,6 +1482,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterTimelineEndpointBuilder httpProxyUser(
@@ -1445,6 +1496,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterTimelineEndpointBuilder accessToken(String accessToken) {
@@ -1457,6 +1509,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterTimelineEndpointBuilder accessTokenSecret(
@@ -1470,6 +1523,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterTimelineEndpointBuilder consumerKey(String consumerKey) {
@@ -1482,6 +1536,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterTimelineEndpointBuilder consumerSecret(
