@@ -408,6 +408,7 @@ public class JsonMapper {
         prop.entrySet().removeIf(e -> e.getValue() == null);
         prop.remove("prefix", "");
         prop.remove("optionalPrefix", "");
+        prop.remove("defaultValue", "");
         prop.remove("multiValue", Boolean.FALSE);
         prop.remove("asPredicate", Boolean.FALSE);
         return prop;

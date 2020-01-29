@@ -55,7 +55,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DebeziumMySqlEndpointBuilder additionalProperties(
@@ -75,7 +74,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default DebeziumMySqlEndpointBuilder additionalProperties(
@@ -244,7 +242,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default DebeziumMySqlEndpointBuilder offsetStorageFileName(
@@ -258,7 +255,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default DebeziumMySqlEndpointBuilder offsetStoragePartitions(
@@ -272,7 +268,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default DebeziumMySqlEndpointBuilder offsetStoragePartitions(
@@ -286,7 +281,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default DebeziumMySqlEndpointBuilder offsetStorageReplicationFactor(
@@ -300,7 +294,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default DebeziumMySqlEndpointBuilder offsetStorageReplicationFactor(
@@ -314,7 +307,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default DebeziumMySqlEndpointBuilder offsetStorageTopic(
@@ -379,7 +371,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder columnBlacklist(
@@ -477,7 +468,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseBlacklist(
@@ -506,7 +496,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseHistoryFileFilename(
@@ -523,7 +512,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseHistoryKafkaBootstrapServers(
@@ -596,7 +584,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseHistoryKafkaTopic(
@@ -673,7 +660,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseHostname(
@@ -692,7 +678,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseInitialStatements(
@@ -720,7 +705,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databasePassword(
@@ -761,7 +745,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseServerId(
@@ -778,7 +761,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseServerId(
@@ -827,7 +809,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseServerName(
@@ -841,7 +822,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseSslKeystore(
@@ -858,7 +838,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseSslKeystorePassword(
@@ -895,7 +874,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseSslTruststore(
@@ -910,7 +888,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseSslTruststorePassword(
@@ -924,7 +901,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseUser(String databaseUser) {
@@ -936,7 +912,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseWhitelist(
@@ -1037,7 +1012,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder gtidSourceExcludes(
@@ -1083,7 +1057,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder gtidSourceIncludes(
@@ -1291,7 +1264,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder messageKeyColumns(
@@ -1358,7 +1330,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder snapshotFetchSize(
@@ -1372,7 +1343,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder snapshotFetchSize(
@@ -1470,7 +1440,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder snapshotSelectStatementOverrides(
@@ -1498,7 +1467,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder tableBlacklist(
@@ -1537,7 +1505,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder tableWhitelist(
@@ -1618,7 +1585,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDebeziumMySqlEndpointBuilder exceptionHandler(
@@ -1635,7 +1601,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDebeziumMySqlEndpointBuilder exceptionHandler(
@@ -1648,7 +1613,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDebeziumMySqlEndpointBuilder exchangePattern(
@@ -1662,7 +1626,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDebeziumMySqlEndpointBuilder exchangePattern(
