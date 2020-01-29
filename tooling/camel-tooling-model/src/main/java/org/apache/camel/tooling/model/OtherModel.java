@@ -16,9 +16,6 @@
  */
 package org.apache.camel.tooling.model;
 
-import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
-
 public class OtherModel extends BaseModel<BaseOptionModel> {
 
     protected String groupId;

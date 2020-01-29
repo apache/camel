@@ -17,14 +17,10 @@
 package org.apache.camel.tooling.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.util.Strings;
-import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 
 public abstract class BaseModel<O extends BaseOptionModel> {
 
