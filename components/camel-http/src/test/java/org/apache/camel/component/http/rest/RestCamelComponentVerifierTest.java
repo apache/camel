@@ -116,7 +116,7 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
+        assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
     }
 
     @Test
@@ -128,7 +128,7 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
-        assertEquals(1, result.getErrors().size());
+        assertEquals(2, result.getErrors().size());
         assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
         assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
         assertTrue(result.getErrors().get(0).getParameterKeys().contains("method"));
@@ -146,10 +146,10 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
-        assertEquals(1, result.getErrors().size());
+        assertEquals(3, result.getErrors().size());
         assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.UNKNOWN_PARAMETER, result.getErrors().get(0).getCode());
         assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
-        assertTrue(result.getErrors().get(0).getParameterKeys().contains("nonExistingOption"));
+        assertTrue(result.getErrors().get(2).getParameterKeys().contains("nonExistingOption"));
     }
 
     @Test
@@ -159,6 +159,6 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
-        assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
+        assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
     }
 }
