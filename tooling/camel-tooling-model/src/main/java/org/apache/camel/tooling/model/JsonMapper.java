@@ -90,18 +90,22 @@ public class JsonMapper {
         model.setArtifactId(mobj.getString("artifactId"));
         model.setVersion(mobj.getString("version"));
         JsonObject mcprp = (JsonObject) obj.get("componentProperties");
-        for (Map.Entry<String, Object> entry : mcprp.entrySet()) {
-            JsonObject mp = (JsonObject) entry.getValue();
-            ComponentOptionModel option = new ComponentOptionModel();
-            parseOption(mp, option, entry.getKey());
-            model.addComponentOption(option);
+        if (mcprp != null) {
+            for (Map.Entry<String, Object> entry : mcprp.entrySet()) {
+                JsonObject mp = (JsonObject) entry.getValue();
+                ComponentOptionModel option = new ComponentOptionModel();
+                parseOption(mp, option, entry.getKey());
+                model.addComponentOption(option);
+            }
         }
         JsonObject mprp = (JsonObject) obj.get("properties");
-        for (Map.Entry<String, Object> entry : mprp.entrySet()) {
-            JsonObject mp = (JsonObject) entry.getValue();
-            EndpointOptionModel option = new EndpointOptionModel();
-            parseOption(mp, option, entry.getKey());
-            model.addEndpointOption(option);
+        if (mprp != null) {
+            for (Map.Entry<String, Object> entry : mprp.entrySet()) {
+                JsonObject mp = (JsonObject) entry.getValue();
+                EndpointOptionModel option = new EndpointOptionModel();
+                parseOption(mp, option, entry.getKey());
+                model.addEndpointOption(option);
+            }
         }
         return model;
     }

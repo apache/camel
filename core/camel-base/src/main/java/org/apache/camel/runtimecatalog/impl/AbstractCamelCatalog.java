@@ -771,8 +771,9 @@ public abstract class AbstractCamelCatalog {
                 boolean contains = properties.containsKey(key);
                 if (!contains) {
                     // if the key are similar we have no explicit value and can try to find a default value if the option is required
-                    if (rows.get(key).isRequired()) {
-                        Object value = rows.get(key).getDefaultValue();
+                    BaseOptionModel row = rows.get(key);
+                    if (row != null && row.isRequired()) {
+                        Object value = row.getDefaultValue();
                         if (!URISupport.isEmpty(value)) {
                             properties.put(key, key2 = value.toString());
                         }
