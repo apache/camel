@@ -343,7 +343,7 @@ public abstract class AbstractCamelCatalog {
         try {
             URI u = URISupport.normalizeUri(uri);
             String scheme = u.getScheme();
-            ComponentModel model = componentModel(scheme);
+            ComponentModel model = scheme != null ? componentModel(scheme) : null;
             if (model == null) {
                 EndpointValidationResult result = new EndpointValidationResult(uri);
                 if (uri.startsWith("{{")) {
