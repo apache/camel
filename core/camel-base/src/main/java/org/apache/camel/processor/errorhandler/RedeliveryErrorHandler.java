@@ -403,7 +403,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             // compute if we are exhausted or not
             boolean exhausted = isExhausted(exchange);
-            boolean redeliverAllowed = isRedeliveryAllowed();
+            boolean redeliverAllowed = redeliveryCounter == 0 || isRedeliveryAllowed();
 
             // if we are exhausted or redelivery is not allowed, then deliver to failure processor (eg such as DLC)
             if (!redeliverAllowed || exhausted) {
@@ -482,7 +482,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // if camel context is forcing a shutdown then do not allow running
             boolean forceShutdown = shutdownStrategy.forceShutdown(RedeliveryErrorHandler.this);
             if (forceShutdown) {
-                LOG.trace("isRunAllowed() -> false (Run not allowed as ShutdownStrategy is forcing shutting down)");
                 return false;
             }
 
@@ -490,43 +489,28 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // but this only applies during a redelivery (counter must > 0)
             if (redeliveryCounter > 0) {
                 if (currentRedeliveryPolicy.allowRedeliveryWhileStopping) {
-                    LOG.trace("isRunAllowed() -> true (Run allowed as RedeliverWhileStopping is enabled)");
                     return true;
                 } else if (preparingShutdown) {
                     // we are preparing for shutdown, now determine if we can still run
-                    boolean answer = isRunAllowedOnPreparingShutdown();
-                    LOG.trace("isRunAllowed() -> {} (Run not allowed as we are preparing for shutdown)", answer);
-                    return answer;
+                    return isRunAllowedOnPreparingShutdown();
                 }
             }
 
             // we cannot run if we are stopping/stopped
-            boolean answer = !isStoppingOrStopped();
-            LOG.trace("isRunAllowed() -> {} (Run allowed if we are not stopped/stopping)", answer);
-            return answer;
+            return !isStoppingOrStopped();
         }
 
         protected boolean isRedeliveryAllowed() {
             // redelivery policy can control if redelivery is allowed during stopping/shutdown
-            // but this only applies during a redelivery (counter must > 0)
-            if (redeliveryCounter > 0) {
-                boolean stopping = isStoppingOrStopped();
-                if (!preparingShutdown && !stopping) {
-                    LOG.trace("isRedeliveryAllowed() -> true (we are not stopping/stopped)");
-                    return true;
-                } else {
-                    // we are stopping or preparing to shutdown
-                    if (currentRedeliveryPolicy.allowRedeliveryWhileStopping) {
-                        LOG.trace("isRedeliveryAllowed() -> true (Redelivery allowed as RedeliverWhileStopping is enabled)");
-                        return true;
-                    } else {
-                        LOG.trace("isRedeliveryAllowed() -> false (Redelivery not allowed as RedeliverWhileStopping is disabled)");
-                        return false;
-                    }
-                }
+            // but this only applies during a redelivery (this method is only invoked when counter > 0)
+            boolean stopping = isStoppingOrStopped();
+            if (!preparingShutdown && !stopping) {
+                // we are not preparing to shutdown and are not stopping so we can redeliver
+                return true;
+            } else {
+                // we are stopping or preparing to shutdown, so see policy
+                return currentRedeliveryPolicy.allowRedeliveryWhileStopping;
             }
-
-            return true;
         }
 
         protected void redeliver() {

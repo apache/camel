@@ -69,8 +69,6 @@ public final class UnitOfWorkHelper {
     }
 
     public static void doneSynchronizations(Exchange exchange, List<Synchronization> synchronizations, Logger log) {
-        boolean failed = exchange.isFailed();
-
         if (synchronizations != null && !synchronizations.isEmpty()) {
             // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
             List<Synchronization> copy = new ArrayList<>(synchronizations);
@@ -79,6 +77,8 @@ public final class UnitOfWorkHelper {
             Collections.reverse(copy);
             // and honor if any was ordered by sorting it accordingly
             copy.sort(OrderedComparator.get());
+
+            boolean failed = exchange.isFailed();
 
             // invoke synchronization callbacks
             for (Synchronization synchronization : copy) {

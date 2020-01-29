@@ -59,6 +59,8 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private final Exchange exchange;
     private final CamelContext context;
     private final InflightRepository inflightRepository;
+    final boolean allowUseOriginalMessage;
+    final boolean useBreadcrumb;
     private Logger log;
     private RouteContext prevRouteContext;
     private RouteContext routeContext;
@@ -66,21 +68,24 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private Message originalInMessage;
     private Set<Object> transactedBy;
 
-    protected DefaultUnitOfWork(Exchange exchange, Logger logger) {
-        this(exchange);
+    public DefaultUnitOfWork(Exchange exchange) {
+        this(exchange, exchange.getContext().isAllowUseOriginalMessage(), exchange.getContext().isUseBreadcrumb());
+    }
+
+    protected DefaultUnitOfWork(Exchange exchange, Logger logger, boolean allowUseOriginalMessage, boolean useBreadcrumb) {
+        this(exchange, allowUseOriginalMessage, useBreadcrumb);
         this.log = logger;
     }
 
-    public DefaultUnitOfWork(Exchange exchange) {
+    public DefaultUnitOfWork(Exchange exchange, boolean allowUseOriginalMessage, boolean useBreadcrumb) {
         this.exchange = exchange;
         this.log = LOG;
-        if (log.isTraceEnabled()) {
-            log.trace("UnitOfWork created for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
-        }
-        context = exchange.getContext();
-        inflightRepository = exchange.getContext().getInflightRepository();
+        this.allowUseOriginalMessage = allowUseOriginalMessage;
+        this.useBreadcrumb = useBreadcrumb;
+        this.context = exchange.getContext();
+        this.inflightRepository = exchange.getContext().getInflightRepository();
 
-        if (context.isAllowUseOriginalMessage()) {
+        if (allowUseOriginalMessage) {
             // special for JmsMessage as it can cause it to loose headers later.
             if (exchange.getIn().getClass().getName().equals("org.apache.camel.component.jms.JmsMessage")) {
                 this.originalInMessage = new DefaultMessage(context);
@@ -96,7 +101,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
 
         // inject breadcrumb header if enabled
-        if (context.isUseBreadcrumb()) {
+        if (useBreadcrumb) {
             // create or use existing breadcrumb
             String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
             if (breadcrumbId == null) {
@@ -121,7 +126,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     }
 
     UnitOfWork newInstance(Exchange exchange) {
-        return new DefaultUnitOfWork(exchange);
+        return new DefaultUnitOfWork(exchange, allowUseOriginalMessage, useBreadcrumb);
     }
 
     @Override
