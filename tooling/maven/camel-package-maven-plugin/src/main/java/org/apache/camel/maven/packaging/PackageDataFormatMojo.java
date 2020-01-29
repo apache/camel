@@ -17,13 +17,19 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.DataFormatModel.DataFormatOptionModel;
@@ -37,15 +43,21 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.FieldSource;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.MethodSource;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor
  * information for easier auto-discovery in Camel.
  */
-@Mojo(name = "generate-dataformats-list", threadSafe = true)
+@Mojo(name = "generate-dataformats-list", threadSafe = true,
+        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
     /**
@@ -57,8 +69,14 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
     /**
      * The output directory for generated dataformats file
      */
-    @Parameter(defaultValue = "${project.build.directory}/src/main/java")
-    protected File configurerOutDir;
+    @Parameter(defaultValue = "${project.basedir}/src/generated/java")
+    protected File configurerSourceOutDir;
+
+    /**
+     * The output directory for generated dataformats file
+     */
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
+    protected File configurerResourceOutDir;
 
     /**
      * The output directory for generated dataformats file
@@ -76,11 +94,12 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, configurerOutDir, schemaOutDir, buildContext);
+        prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, configurerSourceOutDir, configurerResourceOutDir, schemaOutDir, buildContext);
     }
 
     public static int prepareDataFormat(Log log, MavenProject project, MavenProjectHelper projectHelper,
-                                        File dataFormatOutDir, File configurerOutDir, File schemaOutDir, BuildContext buildContext)
+                                        File dataFormatOutDir, File configurerSourceOutDir, File configurerResourceOutDir,
+                                        File schemaOutDir, BuildContext buildContext)
         throws MojoExecutionException {
 
         File camelMetaDir = new File(dataFormatOutDir, "META-INF/services/org/apache/camel/");
@@ -154,16 +173,22 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                             log.debug("Generated " + out + " containing JSon schema for " + name + " data format");
                         }
 
-
-                        String type = dataFormatModel.getJavaType();
-                        String cn = type.substring(type.lastIndexOf('.') + 1);
-                        String pn = type.substring(0, type.length() - cn.length() - 1);
-                        Path outCfg = configurerOutDir.toPath()
-                                .resolve(pn.replace('.', '/'))
-                                .resolve(cn + "Configurer.java");
-//                        updateResource(buildContext, outCfg,
-//                                generatePropertyConfigurer(pn, cn + "Configurer", cn,
-//                                        dataFormatModel.get));
+                        String cn = javaType.substring(javaType.lastIndexOf('.') + 1);
+                        String pn = javaType.substring(0, javaType.length() - cn.length() - 1);
+                        Set<String> names = dataFormatModel.getOptions().stream().map(DataFormatOptionModel::getName).collect(Collectors.toSet());
+                        List<DataFormatOptionModel> options = parseConfigurationSource(project, javaType);
+                        options.removeIf(o -> !names.contains(o.getName()));
+                        names.removeAll(options.stream().map(DataFormatOptionModel::getName).collect(Collectors.toList()));
+                        names.removeAll(Arrays.asList("contentTypeHeader", "id"));
+                        if (!names.isEmpty()) {
+                            log.warn("Unmapped options: " + String.join(",", names));
+                        }
+                        updateResource(buildContext,
+                                configurerSourceOutDir.toPath().resolve(pn.replace('.', '/')).resolve(cn + "Configurer.java"),
+                                generatePropertyConfigurer(pn, cn + "Configurer", cn, options));
+                        updateResource(buildContext,
+                                configurerResourceOutDir.toPath().resolve("META-INF/services/org/apache/camel/configurer/" + name + "-dataformat-configurer"),
+                                generateMetaInfConfigurer(pn + "." + cn + "Configurer"));
                     }
                 } else {
                     throw new MojoExecutionException("Error finding core/camel-core/target/camel-core-engine-" + project.getVersion()
@@ -335,9 +360,46 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         return pckName.replace('.', '/');
     }
 
+    /**
+     * Parses the Camel Main configuration java source file.
+     */
+    private static List<DataFormatOptionModel> parseConfigurationSource(MavenProject project, String className) throws FileNotFoundException {
+        final List<DataFormatOptionModel> answer = new ArrayList<>();
+        File file = new File(project.getBasedir(), "src/main/java/" + className.replace('.', '/') + ".java");
+        if (!file.exists()) {
+            return Collections.emptyList();
+        }
+
+        JavaClassSource clazz = (JavaClassSource) Roaster.parse(file);
+        List<FieldSource<JavaClassSource>> fields = clazz.getFields();
+        // filter out final or static fields
+        fields = fields.stream().filter(f -> !f.isFinal() && !f.isStatic()).collect(Collectors.toList());
+        fields.forEach(f -> {
+            String name = f.getName();
+            String javaType = f.getType().getQualifiedName();
+            if (f.getType().isArray()) {
+                javaType += "[]";
+            }
+            String setterName = "set" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
+            MethodSource<?> setter = clazz.getMethod(setterName, javaType);
+            if (setter != null) {
+                DataFormatOptionModel model = new DataFormatOptionModel();
+                model.setName(name);
+                model.setJavaType(javaType);
+                answer.add(model);
+            }
+        });
+
+        if (clazz.getSuperType() != null) {
+            answer.addAll(parseConfigurationSource(project, clazz.getSuperType()));
+        }
+
+        return answer;
+    }
+
     public static String generatePropertyConfigurer(
             String pn, String cn, String en,
-            Set<DataFormatOptionModel> options) throws IOException {
+            Collection<DataFormatOptionModel> options) throws IOException {
 
         try (StringWriter w = new StringWriter()) {
             w.write("/* Generated by camel-package-maven-plugin - do not edit this file! */\n");
@@ -358,19 +420,22 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             w.write("\n");
             w.write("    @Override\n");
             w.write("    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {\n");
+            w.write("        " + en + " dataformat = (" + en + ") target;\n");
             w.write("        switch (ignoreCase ? name.toLowerCase() : name) {\n");
             for (DataFormatOptionModel option : options) {
                 String name = option.getName();
-                String setter = "set" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
-                String type = Strings.canonicalClassName(option.getType());
-                w.write(String.format("        case \"%s\": ((%s) target).%s(property(camelContext, %s.class, value)); return true;\n",
-                        name, en, setter, type));
-                if (!name.toLowerCase().equals(name)) {
-                    w.write(String.format("        case \"%s\": ((%s) target).%s(property(camelContext, %s.class, value)); return true;\n",
-                            name.toLowerCase(), en, setter, type));
+                if ("contentTypeHeader".equals(name) || "id".equals(name)) {
+                    continue;
                 }
+                String setter = "set" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
+                String type = Strings.canonicalClassName(option.getJavaType());
+                if (!name.toLowerCase().equals(name)) {
+                    w.write(String.format("        case \"%s\":\n", name.toLowerCase()));
+                }
+                w.write(String.format("        case \"%s\": dataformat.%s(property(camelContext, %s.class, value)); return true;\n",
+                        name, setter, type));
             }
-            w.write("            default: return false;\n");
+            w.write("        default: return false;\n");
             w.write("        }\n");
             w.write("    }\n");
             w.write("\n");
@@ -380,8 +445,8 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         }
     }
 
-    public static String generateMetaInfConfigurer(String name, String fqn) {
-        return "# Generated by camel annotation processor\n" + fqn + "\n";
+    public static String generateMetaInfConfigurer(String fqn) {
+        return "# Generated by camel-package-maven-plugin\nclass=" + fqn + "\n";
     }
 
 }
