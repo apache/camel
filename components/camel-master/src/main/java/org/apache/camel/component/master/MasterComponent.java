@@ -78,6 +78,12 @@ public class MasterComponent extends DefaultComponent {
         );
     }
 
+    @Override
+    public boolean useRawUri() {
+        // disable URI encoding at master endpoint level to avoid encoding URI twice
+        return true;
+    }
+
     public CamelClusterService getService() {
         return service;
     }
