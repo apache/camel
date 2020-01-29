@@ -47,8 +47,8 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     private final String originalCamelContextId;
     private final String originalTransactionKey;
 
-    public MDCUnitOfWork(Exchange exchange, String pattern) {
-        super(exchange, LOG);
+    public MDCUnitOfWork(Exchange exchange, String pattern, boolean allowUseOriginalMessage, boolean useBreadcrumb) {
+        super(exchange, LOG, allowUseOriginalMessage, useBreadcrumb);
         this.pattern = pattern;
 
         // remember existing values
@@ -81,7 +81,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
 
     @Override
     public UnitOfWork newInstance(Exchange exchange) {
-        return new MDCUnitOfWork(exchange, pattern);
+        return new MDCUnitOfWork(exchange, pattern, allowUseOriginalMessage, useBreadcrumb);
     }
 
     @Override
