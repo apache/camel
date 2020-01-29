@@ -45,6 +45,7 @@
 * xref:aws-xray.adoc[AWS XRay Component]
 * xref:aws-ecs2-component.adoc[AWS ECS Component]
 * xref:aws2-ecs-component.adoc[AWS 2 ECS Component]
+* xref:aws2-eks-component.adoc[AWS 2 EKS Component]
 * xref:aws2-translate-component.adoc[AWS 2 Translate Component]
 * xref:azure-blob-component.adoc[Azure Storage Blob Service Component]
 * xref:azure-queue-component.adoc[Azure Storage Queue Service Component]
