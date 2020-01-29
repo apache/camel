@@ -322,6 +322,7 @@ public interface EndpointBuilderFactory extends
         Web3jEndpointBuilderFactory,
         WebhookEndpointBuilderFactory,
         WebsocketEndpointBuilderFactory,
+        WekaEndpointBuilderFactory,
         WordpressEndpointBuilderFactory,
         WsEndpointBuilderFactory,
         XChangeEndpointBuilderFactory,

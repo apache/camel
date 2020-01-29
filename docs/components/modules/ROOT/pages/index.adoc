@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 305 in 243 JAR artifacts (0 deprecated)
+Number of Components: 306 in 244 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -597,6 +597,8 @@ Number of Components: 305 in 243 JAR artifacts (0 deprecated)
 | xref:web3j-component.adoc[Web3j Ethereum Blockchain] (camel-web3j) | 2.22 | The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
 
 | xref:webhook-component.adoc[Webhook] (camel-webhook) | 3.0 | The webhook component allows other Camel components that can receive push notifications to expose webhook endpoints and automatically register them with their own webhook provider.
+
+| xref:weka-component.adoc[Weka] (camel-weka) | 3.0.2 | The camel-weka component provides Data Mining functionality through Weka.
 
 | xref:wordpress-component.adoc[Wordpress] (camel-wordpress) | 2.21 | Integrates Camel with Wordpress.
 

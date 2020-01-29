@@ -350,6 +350,7 @@
         <include>org.apache.camel:camel-webhook</include>
         <include>org.apache.camel:camel-websocket</include>
         <include>org.apache.camel:camel-websocket-jsr356</include>
+        <include>org.apache.camel:camel-weka</include>
         <include>org.apache.camel:camel-wordpress</include>
         <include>org.apache.camel:camel-xchange</include>
         <include>org.apache.camel:camel-xj</include>
@@ -690,6 +691,7 @@
         <include>org.apache.camel.springboot:camel-webhook-starter</include>
         <include>org.apache.camel.springboot:camel-websocket-jsr356-starter</include>
         <include>org.apache.camel.springboot:camel-websocket-starter</include>
+        <include>org.apache.camel.springboot:camel-weka-starter</include>
         <include>org.apache.camel.springboot:camel-wordpress-starter</include>
         <include>org.apache.camel.springboot:camel-xchange-starter</include>
         <include>org.apache.camel.springboot:camel-xj-starter</include>

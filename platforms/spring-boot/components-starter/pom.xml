@@ -385,6 +385,7 @@
     <module>camel-webhook-starter</module>
     <module>camel-websocket-jsr356-starter</module>
     <module>camel-websocket-starter</module>
+    <module>camel-weka-starter</module>
     <module>camel-wordpress-starter</module>
     <module>camel-xchange-starter</module>
     <module>camel-xj-starter</module>

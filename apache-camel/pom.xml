@@ -1648,6 +1648,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-weka</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-wordpress</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -3148,6 +3153,11 @@
     <dependency>
       <groupId>org.apache.camel.springboot</groupId>
       <artifactId>camel-websocket-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-weka-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
