@@ -30,7 +30,7 @@ public class PrepareCamelMainMojoTest {
 
     @Test
     public void testMyParser() throws Exception {
-        String fileName = "src/test/java/org/apache/camel/packaging/MyConfiguration.java";
+        String fileName = "src/test/java/org/apache/camel/maven/packaging/MyConfiguration.java";
 
         List<MainModel.MainOptionModel> list = PrepareCamelMainMojo.parseConfigurationSource(fileName);
         assertNotNull(list);
@@ -43,7 +43,7 @@ public class PrepareCamelMainMojoTest {
 
         assertEquals("shutdownTimeout", list.get(4).getName());
         assertEquals("int", list.get(4).getJavaType());
-        assertEquals("300", list.get(4).getDefaultValue());
+        assertEquals(300, list.get(4).getDefaultValue());
         assertEquals("Timeout in seconds to graceful shutdown Camel.", list.get(4).getDescription());
 
         assertEquals("tracing", list.get(25).getName());
