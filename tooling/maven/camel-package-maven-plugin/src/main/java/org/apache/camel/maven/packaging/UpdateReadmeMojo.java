@@ -199,6 +199,13 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     File file = new File(docDir, dataFormatName + "-dataformat.adoc");
 
                     DataFormatModel model = generateDataFormatModel(json);
+                    // Bindy has 3 derived dataformats, but only one doc, so avoid any differences
+                    // to make sure the build is stable
+                    if ("bindy".equals(dataFormatName)) {
+                        model.getOptions().stream()
+                                .filter(o -> "type".equals(o.getName()))
+                                .forEach(o -> o.setDefaultValue(null));
+                    }
 
                     String title = asDataFormatTitle(model.getName(), model.getTitle());
                     model.setTitle(title);
@@ -798,6 +805,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
                 }
             }
         }
+        Collections.sort(names);
         return names;
     }
 

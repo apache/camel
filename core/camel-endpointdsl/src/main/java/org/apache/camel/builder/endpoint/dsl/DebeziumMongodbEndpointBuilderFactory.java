@@ -55,7 +55,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DebeziumMongodbEndpointBuilder additionalProperties(
@@ -75,7 +74,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default DebeziumMongodbEndpointBuilder additionalProperties(
@@ -245,7 +243,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default DebeziumMongodbEndpointBuilder offsetStorageFileName(
@@ -259,7 +256,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default DebeziumMongodbEndpointBuilder offsetStoragePartitions(
@@ -273,7 +269,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default DebeziumMongodbEndpointBuilder offsetStoragePartitions(
@@ -287,7 +282,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default DebeziumMongodbEndpointBuilder offsetStorageReplicationFactor(
@@ -301,7 +295,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default DebeziumMongodbEndpointBuilder offsetStorageReplicationFactor(
@@ -315,7 +308,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default DebeziumMongodbEndpointBuilder offsetStorageTopic(
@@ -329,7 +321,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder collectionBlacklist(
@@ -342,7 +333,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder collectionWhitelist(
@@ -449,7 +439,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder databaseBlacklist(
@@ -463,7 +452,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder databaseHistoryFileFilename(
@@ -476,7 +464,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder databaseWhitelist(
@@ -490,7 +477,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder fieldBlacklist(
@@ -504,7 +490,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder fieldRenames(String fieldRenames) {
@@ -641,7 +626,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder mongodbHosts(String mongodbHosts) {
@@ -689,7 +673,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder mongodbName(String mongodbName) {
@@ -702,7 +685,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder mongodbPassword(
@@ -769,7 +751,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder mongodbUser(String mongodbUser) {
@@ -836,7 +817,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder snapshotFetchSize(
@@ -850,7 +830,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder snapshotFetchSize(
@@ -942,7 +921,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDebeziumMongodbEndpointBuilder exceptionHandler(
@@ -959,7 +937,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDebeziumMongodbEndpointBuilder exceptionHandler(
@@ -972,7 +949,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDebeziumMongodbEndpointBuilder exchangePattern(
@@ -986,7 +962,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDebeziumMongodbEndpointBuilder exchangePattern(

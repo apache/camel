@@ -52,7 +52,6 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default TwilioEndpointConsumerBuilder inBody(String inBody) {
@@ -131,7 +130,6 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder backoffErrorThreshold(
@@ -145,7 +143,6 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder backoffErrorThreshold(
@@ -159,7 +156,6 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder backoffIdleThreshold(
@@ -173,7 +169,6 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder backoffIdleThreshold(
@@ -191,7 +186,6 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder backoffMultiplier(
@@ -209,7 +203,6 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder backoffMultiplier(
@@ -364,7 +357,6 @@ public interface TwilioEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder scheduledExecutorService(
@@ -380,7 +372,6 @@ public interface TwilioEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder scheduledExecutorService(
@@ -408,7 +399,6 @@ public interface TwilioEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder schedulerProperties(
@@ -424,7 +414,6 @@ public interface TwilioEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder schedulerProperties(
@@ -530,7 +519,6 @@ public interface TwilioEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwilioEndpointConsumerBuilder exceptionHandler(
@@ -547,7 +535,6 @@ public interface TwilioEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwilioEndpointConsumerBuilder exceptionHandler(
@@ -560,7 +547,6 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwilioEndpointConsumerBuilder exchangePattern(
@@ -574,7 +560,6 @@ public interface TwilioEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwilioEndpointConsumerBuilder exchangePattern(
@@ -591,7 +576,6 @@ public interface TwilioEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwilioEndpointConsumerBuilder pollStrategy(
@@ -608,7 +592,6 @@ public interface TwilioEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwilioEndpointConsumerBuilder pollStrategy(
@@ -688,7 +671,6 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default TwilioEndpointProducerBuilder inBody(String inBody) {
@@ -821,7 +803,6 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default TwilioEndpointBuilder inBody(String inBody) {
