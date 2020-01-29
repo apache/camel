@@ -342,7 +342,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
      */
     protected class RedeliveryState implements Runnable {
         Exchange original;
-        Exchange exchange;
+        ExtendedExchange exchange;
         AsyncCallback callback;
         int redeliveryCounter;
         long redeliveryDelay;
@@ -371,7 +371,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // do a defensive copy of the original Exchange, which is needed for redelivery so we can ensure the
             // original Exchange is being redelivered, and not a mutated Exchange
             this.original = redeliveryEnabled ? defensiveCopyExchangeIfNeeded(exchange) : null;
-            this.exchange = exchange;
+            this.exchange = (ExtendedExchange) exchange;
             this.callback = callback;
         }
 
@@ -401,10 +401,17 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 onExceptionOccurred();
             }
 
-            // compute if we are exhausted or not
-            boolean exhausted = isExhausted(exchange);
+            // compute if we are exhausted or cannot redeliver
             boolean redeliverAllowed = redeliveryCounter == 0 || isRedeliveryAllowed();
-
+            boolean exhausted = false;
+            if (redeliverAllowed) {
+                // we can redeliver but check if we are exhausted first (optimized to only check when needed)
+                exhausted = exchange.isRedeliveryExhausted() || exchange.isRollbackOnly();
+                if (!exhausted && redeliveryCounter > 0) {
+                    // its a potential redelivery so determine if we should redeliver or not
+                    redeliverAllowed = currentRedeliveryPolicy.shouldRedeliver(exchange, redeliveryCounter, retryWhilePredicate);
+                }
+            }
             // if we are exhausted or redelivery is not allowed, then deliver to failure processor (eg such as DLC)
             if (!redeliverAllowed || exhausted) {
                 Processor target = failureProcessor != null ? failureProcessor : deadLetter;
@@ -1080,39 +1087,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     logger.log(msg, newLogLevel);
                 }
             }
-        }
-
-        /**
-         * Determines whether the exchange is exhausted (or anyway marked to not continue such as rollback).
-         * <p/>
-         * If the exchange is exhausted, then we will not continue processing, but let the
-         * failure processor deal with the exchange.
-         *
-         * @param exchange the current exchange
-         * @return <tt>false</tt> to continue/redeliver, or <tt>true</tt> to exhaust.
-         */
-        private boolean isExhausted(Exchange exchange) {
-            ExtendedExchange ee = (ExtendedExchange) exchange;
-            // if marked as rollback only then do not continue/redeliver
-            boolean exhausted = ee.isRedeliveryExhausted();
-            if (exhausted) {
-                LOG.trace("This exchange is marked as redelivery exhausted: {}", exchange);
-                return true;
-            }
-
-            // if marked as rollback only then do not continue/redeliver
-            boolean rollbackOnly = ee.isRollbackOnly();
-            if (rollbackOnly) {
-                LOG.trace("This exchange is marked as rollback only, so forcing it to be exhausted: {}", exchange);
-                return true;
-            }
-            // its the first original call so continue
-            if (redeliveryCounter == 0) {
-                return false;
-            }
-            // its a potential redelivery so determine if we should redeliver or not
-            boolean redeliver = currentRedeliveryPolicy.shouldRedeliver(exchange, redeliveryCounter, retryWhilePredicate);
-            return !redeliver;
         }
 
         /**
