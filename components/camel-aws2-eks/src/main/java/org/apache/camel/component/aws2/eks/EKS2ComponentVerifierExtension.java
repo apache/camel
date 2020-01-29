@@ -18,6 +18,10 @@ package org.apache.camel.component.aws2.eks;
 
 import java.util.Map;
 
+import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
+import org.apache.camel.component.extension.verifier.ResultBuilder;
+import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
+import org.apache.camel.component.extension.verifier.ResultErrorHelper;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.core.exception.SdkClientException;
@@ -25,11 +29,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.eks.EksClient;
 import software.amazon.awssdk.services.eks.EksClientBuilder;
 import software.amazon.awssdk.services.eks.model.ListClustersRequest;
-
-import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
-import org.apache.camel.component.extension.verifier.ResultBuilder;
-import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
-import org.apache.camel.component.extension.verifier.ResultErrorHelper;
 
 public class EKS2ComponentVerifierExtension extends DefaultComponentVerifierExtension {
 
