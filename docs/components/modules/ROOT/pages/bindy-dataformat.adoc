@@ -60,7 +60,7 @@ The Bindy dataformat supports 6 options, which are listed below.
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| type | KeyValue | BindyType | Whether to use Csv, Fixed, or KeyValue.
+| type | Fixed | BindyType | Whether to use Csv, Fixed, or KeyValue.
 | classType |  | String | Name of model class to use.
 | locale |  | String | To configure a default locale to use, such as us for united states. To use the JVM platform default locale then use the name default
 | unwrapSingleInstance | true | Boolean | When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a java.util.List.
