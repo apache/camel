@@ -164,6 +164,7 @@ public class RestOpenApiSupport {
             contact.url = contactUrl;
             contact.email = contactEmail;
             info.contact = contact;
+            contact._parent = info;
         }
         openApiConfig.setInfo(info);
     }
@@ -190,6 +191,7 @@ public class RestOpenApiSupport {
             contact.url = contactUrl;
             contact.email = contactEmail;
             info.contact = contact;
+            contact._parent = info;
         }
         openApiConfig.setInfo(info);
     }
