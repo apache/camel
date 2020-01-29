@@ -16,11 +16,22 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.Comparator;
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.Generated;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
+import org.apache.camel.LoggingLevel;
+import org.apache.camel.Predicate;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
+import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * To copy files using the secure copy protocol (SCP).
@@ -39,36 +50,6 @@ public interface ScpEndpointBuilderFactory {
             return (AdvancedScpEndpointBuilder) this;
         }
         /**
-         * Whether or not to disconnect from remote FTP server right after use.
-         * Disconnect will only disconnect the current connection to the FTP
-         * server. If you have a consumer which you want to stop, then you need
-         * to stop the consumer/route instead.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default ScpEndpointBuilder disconnect(boolean disconnect) {
-            doSetProperty("disconnect", disconnect);
-            return this;
-        }
-        /**
-         * Whether or not to disconnect from remote FTP server right after use.
-         * Disconnect will only disconnect the current connection to the FTP
-         * server. If you have a consumer which you want to stop, then you need
-         * to stop the consumer/route instead.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default ScpEndpointBuilder disconnect(String disconnect) {
-            doSetProperty("disconnect", disconnect);
-            return this;
-        }
-        /**
          * Allows you to set chmod on the stored file. For example chmod=664.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -78,6 +59,189 @@ public interface ScpEndpointBuilderFactory {
          */
         default ScpEndpointBuilder chmod(String chmod) {
             doSetProperty("chmod", chmod);
+            return this;
+        }
+        /**
+         * Sets whether to use strict host key checking. Possible values are:
+         * no, yes.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: no
+         * Group: producer
+         */
+        default ScpEndpointBuilder strictHostKeyChecking(
+                String strictHostKeyChecking) {
+            doSetProperty("strictHostKeyChecking", strictHostKeyChecking);
+            return this;
+        }
+        /**
+         * Sets the known_hosts file, so that the jsch endpoint can do host key
+         * verification. You can prefix with classpath: to load the file from
+         * classpath instead of file system.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default ScpEndpointBuilder knownHostsFile(String knownHostsFile) {
+            doSetProperty("knownHostsFile", knownHostsFile);
+            return this;
+        }
+        /**
+         * Password to use for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default ScpEndpointBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Set a comma separated list of authentications that will be used in
+         * order of preference. Possible authentication methods are defined by
+         * JCraft JSCH. Some examples include:
+         * gssapi-with-mic,publickey,keyboard-interactive,password If not
+         * specified the JSCH and/or system defaults will be used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default ScpEndpointBuilder preferredAuthentications(
+                String preferredAuthentications) {
+            doSetProperty("preferredAuthentications", preferredAuthentications);
+            return this;
+        }
+        /**
+         * Set the private key bytes to that the endpoint can do private key
+         * verification. This must be used only if privateKeyFile wasn't set.
+         * Otherwise the file will have the priority.
+         * 
+         * The option is a: <code>byte[]</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default ScpEndpointBuilder privateKeyBytes(Byte[] privateKeyBytes) {
+            doSetProperty("privateKeyBytes", privateKeyBytes);
+            return this;
+        }
+        /**
+         * Set the private key bytes to that the endpoint can do private key
+         * verification. This must be used only if privateKeyFile wasn't set.
+         * Otherwise the file will have the priority.
+         * 
+         * The option will be converted to a <code>byte[]</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default ScpEndpointBuilder privateKeyBytes(String privateKeyBytes) {
+            doSetProperty("privateKeyBytes", privateKeyBytes);
+            return this;
+        }
+        /**
+         * Set the private key file to that the endpoint can do private key
+         * verification. You can prefix with classpath: to load the file from
+         * classpath instead of file system.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default ScpEndpointBuilder privateKeyFile(String privateKeyFile) {
+            doSetProperty("privateKeyFile", privateKeyFile);
+            return this;
+        }
+        /**
+         * Set the private key file passphrase to that the endpoint can do
+         * private key verification.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default ScpEndpointBuilder privateKeyFilePassphrase(
+                String privateKeyFilePassphrase) {
+            doSetProperty("privateKeyFilePassphrase", privateKeyFilePassphrase);
+            return this;
+        }
+        /**
+         * Username to use for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default ScpEndpointBuilder username(String username) {
+            doSetProperty("username", username);
+            return this;
+        }
+        /**
+         * If knownHostFile has not been explicit configured, then use the host
+         * file from System.getProperty(user.home) /.ssh/known_hosts.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         */
+        default ScpEndpointBuilder useUserKnownHostsFile(
+                boolean useUserKnownHostsFile) {
+            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
+            return this;
+        }
+        /**
+         * If knownHostFile has not been explicit configured, then use the host
+         * file from System.getProperty(user.home) /.ssh/known_hosts.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         */
+        default ScpEndpointBuilder useUserKnownHostsFile(
+                String useUserKnownHostsFile) {
+            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
+            return this;
+        }
+        /**
+         * Sets the download method to use when not using a local working
+         * directory. If set to true, the remote files are streamed to the route
+         * as they are read. When set to false, the remote files are loaded into
+         * memory before being sent into the route.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ScpEndpointBuilder streamDownload(boolean streamDownload) {
+            doSetProperty("streamDownload", streamDownload);
+            return this;
+        }
+        /**
+         * Sets the download method to use when not using a local working
+         * directory. If set to true, the remote files are streamed to the route
+         * as they are read. When set to false, the remote files are loaded into
+         * memory before being sent into the route.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ScpEndpointBuilder streamDownload(String streamDownload) {
+            doSetProperty("streamDownload", streamDownload);
             return this;
         }
         /**
@@ -100,7 +264,8 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Group: producer
+         * Default:
+         * Group: common
          */
         default ScpEndpointBuilder fileName(Expression fileName) {
             doSetProperty("fileName", fileName);
@@ -127,10 +292,249 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Group: producer
+         * Default:
+         * Group: common
          */
         default ScpEndpointBuilder fileName(String fileName) {
             doSetProperty("fileName", fileName);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ScpEndpointBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ScpEndpointBuilder bridgeErrorHandler(String bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * If true, the file will be deleted after it is processed successfully.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ScpEndpointBuilder delete(boolean delete) {
+            doSetProperty("delete", delete);
+            return this;
+        }
+        /**
+         * If true, the file will be deleted after it is processed successfully.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ScpEndpointBuilder delete(String delete) {
+            doSetProperty("delete", delete);
+            return this;
+        }
+        /**
+         * Sets the move failure expression based on Simple language. For
+         * example, to move files into a .error subdirectory use: .error. Note:
+         * When moving the files to the fail location Camel will handle the
+         * error and will not pick up the file again.
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Default:
+         * Group: consumer
+         */
+        default ScpEndpointBuilder moveFailed(Expression moveFailed) {
+            doSetProperty("moveFailed", moveFailed);
+            return this;
+        }
+        /**
+         * Sets the move failure expression based on Simple language. For
+         * example, to move files into a .error subdirectory use: .error. Note:
+         * When moving the files to the fail location Camel will handle the
+         * error and will not pick up the file again.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.Expression</code> type.
+         * 
+         * Default:
+         * Group: consumer
+         */
+        default ScpEndpointBuilder moveFailed(String moveFailed) {
+            doSetProperty("moveFailed", moveFailed);
+            return this;
+        }
+        /**
+         * If true, the file is not moved or deleted in any way. This option is
+         * good for readonly data, or for ETL type requirements. If noop=true,
+         * Camel will set idempotent=true as well, to avoid consuming the same
+         * files over and over again.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ScpEndpointBuilder noop(boolean noop) {
+            doSetProperty("noop", noop);
+            return this;
+        }
+        /**
+         * If true, the file is not moved or deleted in any way. This option is
+         * good for readonly data, or for ETL type requirements. If noop=true,
+         * Camel will set idempotent=true as well, to avoid consuming the same
+         * files over and over again.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ScpEndpointBuilder noop(String noop) {
+            doSetProperty("noop", noop);
+            return this;
+        }
+        /**
+         * Expression (such as File Language) used to dynamically set the
+         * filename when moving it before processing. For example to move
+         * in-progress files into the order directory set this value to order.
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Default:
+         * Group: consumer
+         */
+        default ScpEndpointBuilder preMove(Expression preMove) {
+            doSetProperty("preMove", preMove);
+            return this;
+        }
+        /**
+         * Expression (such as File Language) used to dynamically set the
+         * filename when moving it before processing. For example to move
+         * in-progress files into the order directory set this value to order.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.Expression</code> type.
+         * 
+         * Default:
+         * Group: consumer
+         */
+        default ScpEndpointBuilder preMove(String preMove) {
+            doSetProperty("preMove", preMove);
+            return this;
+        }
+        /**
+         * When pre-sort is enabled then the consumer will sort the file and
+         * directory names during polling, that was retrieved from the file
+         * system. You may want to do this in case you need to operate on the
+         * files in a sorted order. The pre-sort is executed before the consumer
+         * starts to filter, and accept files to process by Camel. This option
+         * is default=false meaning disabled.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ScpEndpointBuilder preSort(boolean preSort) {
+            doSetProperty("preSort", preSort);
+            return this;
+        }
+        /**
+         * When pre-sort is enabled then the consumer will sort the file and
+         * directory names during polling, that was retrieved from the file
+         * system. You may want to do this in case you need to operate on the
+         * files in a sorted order. The pre-sort is executed before the consumer
+         * starts to filter, and accept files to process by Camel. This option
+         * is default=false meaning disabled.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ScpEndpointBuilder preSort(String preSort) {
+            doSetProperty("preSort", preSort);
+            return this;
+        }
+        /**
+         * If a directory, will look for files in all the sub-directories as
+         * well.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ScpEndpointBuilder recursive(boolean recursive) {
+            doSetProperty("recursive", recursive);
+            return this;
+        }
+        /**
+         * If a directory, will look for files in all the sub-directories as
+         * well.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ScpEndpointBuilder recursive(String recursive) {
+            doSetProperty("recursive", recursive);
+            return this;
+        }
+        /**
+         * If the polling consumer did not poll any files, you can enable this
+         * option to send an empty message (no body) instead.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ScpEndpointBuilder sendEmptyMessageWhenIdle(
+                boolean sendEmptyMessageWhenIdle) {
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * If the polling consumer did not poll any files, you can enable this
+         * option to send an empty message (no body) instead.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ScpEndpointBuilder sendEmptyMessageWhenIdle(
+                String sendEmptyMessageWhenIdle) {
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -244,148 +648,1306 @@ public interface ScpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether to use strict host key checking. Possible values are:
-         * no, yes.
+         * Ant style filter exclusion. If both antInclude and antExclude are
+         * used, antExclude takes precedence over antInclude. Multiple
+         * exclusions may be specified in comma-delimited format.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: no
-         * Group: producer
+         * Default:
+         * Group: filter
          */
-        default ScpEndpointBuilder strictHostKeyChecking(
-                String strictHostKeyChecking) {
-            doSetProperty("strictHostKeyChecking", strictHostKeyChecking);
+        default ScpEndpointBuilder antExclude(String antExclude) {
+            doSetProperty("antExclude", antExclude);
             return this;
         }
         /**
-         * Sets the known_hosts file, so that the jsch endpoint can do host key
-         * verification. You can prefix with classpath: to load the file from
-         * classpath instead of file system.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default ScpEndpointBuilder knownHostsFile(String knownHostsFile) {
-            doSetProperty("knownHostsFile", knownHostsFile);
-            return this;
-        }
-        /**
-         * Password to use for login.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default ScpEndpointBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
-         * Set a comma separated list of authentications that will be used in
-         * order of preference. Possible authentication methods are defined by
-         * JCraft JSCH. Some examples include:
-         * gssapi-with-mic,publickey,keyboard-interactive,password If not
-         * specified the JSCH and/or system defaults will be used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default ScpEndpointBuilder preferredAuthentications(
-                String preferredAuthentications) {
-            doSetProperty("preferredAuthentications", preferredAuthentications);
-            return this;
-        }
-        /**
-         * Set the private key bytes to that the endpoint can do private key
-         * verification. This must be used only if privateKeyFile wasn't set.
-         * Otherwise the file will have the priority.
-         * 
-         * The option is a: <code>byte[]</code> type.
-         * 
-         * Group: security
-         */
-        default ScpEndpointBuilder privateKeyBytes(Byte[] privateKeyBytes) {
-            doSetProperty("privateKeyBytes", privateKeyBytes);
-            return this;
-        }
-        /**
-         * Set the private key bytes to that the endpoint can do private key
-         * verification. This must be used only if privateKeyFile wasn't set.
-         * Otherwise the file will have the priority.
-         * 
-         * The option will be converted to a <code>byte[]</code> type.
-         * 
-         * Group: security
-         */
-        default ScpEndpointBuilder privateKeyBytes(String privateKeyBytes) {
-            doSetProperty("privateKeyBytes", privateKeyBytes);
-            return this;
-        }
-        /**
-         * Set the private key file to that the endpoint can do private key
-         * verification. You can prefix with classpath: to load the file from
-         * classpath instead of file system.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default ScpEndpointBuilder privateKeyFile(String privateKeyFile) {
-            doSetProperty("privateKeyFile", privateKeyFile);
-            return this;
-        }
-        /**
-         * Set the private key file passphrase to that the endpoint can do
-         * private key verification.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default ScpEndpointBuilder privateKeyFilePassphrase(
-                String privateKeyFilePassphrase) {
-            doSetProperty("privateKeyFilePassphrase", privateKeyFilePassphrase);
-            return this;
-        }
-        /**
-         * Username to use for login.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default ScpEndpointBuilder username(String username) {
-            doSetProperty("username", username);
-            return this;
-        }
-        /**
-         * If knownHostFile has not been explicit configured, then use the host
-         * file from System.getProperty(user.home) /.ssh/known_hosts.
+         * Sets case sensitive flag on ant filter.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: true
-         * Group: security
+         * Group: filter
          */
-        default ScpEndpointBuilder useUserKnownHostsFile(
-                boolean useUserKnownHostsFile) {
-            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
+        default ScpEndpointBuilder antFilterCaseSensitive(
+                boolean antFilterCaseSensitive) {
+            doSetProperty("antFilterCaseSensitive", antFilterCaseSensitive);
             return this;
         }
         /**
-         * If knownHostFile has not been explicit configured, then use the host
-         * file from System.getProperty(user.home) /.ssh/known_hosts.
+         * Sets case sensitive flag on ant filter.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
-         * Group: security
+         * Group: filter
          */
-        default ScpEndpointBuilder useUserKnownHostsFile(
-                String useUserKnownHostsFile) {
-            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
+        default ScpEndpointBuilder antFilterCaseSensitive(
+                String antFilterCaseSensitive) {
+            doSetProperty("antFilterCaseSensitive", antFilterCaseSensitive);
+            return this;
+        }
+        /**
+         * Ant style filter inclusion. Multiple inclusions may be specified in
+         * comma-delimited format.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: filter
+         */
+        default ScpEndpointBuilder antInclude(String antInclude) {
+            doSetProperty("antInclude", antInclude);
+            return this;
+        }
+        /**
+         * Allows for controlling whether the limit from maxMessagesPerPoll is
+         * eager or not. If eager then the limit is during the scanning of
+         * files. Where as false would scan all files, and then perform sorting.
+         * Setting this option to false allows for sorting all files first, and
+         * then limit the poll. Mind that this requires a higher memory usage as
+         * all file details are in memory to perform the sorting.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: filter
+         */
+        default ScpEndpointBuilder eagerMaxMessagesPerPoll(
+                boolean eagerMaxMessagesPerPoll) {
+            doSetProperty("eagerMaxMessagesPerPoll", eagerMaxMessagesPerPoll);
+            return this;
+        }
+        /**
+         * Allows for controlling whether the limit from maxMessagesPerPoll is
+         * eager or not. If eager then the limit is during the scanning of
+         * files. Where as false would scan all files, and then perform sorting.
+         * Setting this option to false allows for sorting all files first, and
+         * then limit the poll. Mind that this requires a higher memory usage as
+         * all file details are in memory to perform the sorting.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: filter
+         */
+        default ScpEndpointBuilder eagerMaxMessagesPerPoll(
+                String eagerMaxMessagesPerPoll) {
+            doSetProperty("eagerMaxMessagesPerPoll", eagerMaxMessagesPerPoll);
+            return this;
+        }
+        /**
+         * Is used to exclude files, if filename matches the regex pattern
+         * (matching is case in-senstive). Notice if you use symbols such as
+         * plus sign and others you would need to configure this using the RAW()
+         * syntax if configuring this as an endpoint uri. See more details at
+         * configuring endpoint uris.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: filter
+         */
+        default ScpEndpointBuilder exclude(String exclude) {
+            doSetProperty("exclude", exclude);
+            return this;
+        }
+        /**
+         * Pluggable filter as a
+         * org.apache.camel.component.file.GenericFileFilter class. Will skip
+         * files if filter returns false in its accept() method.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.file.GenericFileFilter&lt;org.apache.camel.component.scp.ScpFile&gt;</code> type.
+         * 
+         * Default:
+         * Group: filter
+         */
+        default ScpEndpointBuilder filter(Object filter) {
+            doSetProperty("filter", filter);
+            return this;
+        }
+        /**
+         * Pluggable filter as a
+         * org.apache.camel.component.file.GenericFileFilter class. Will skip
+         * files if filter returns false in its accept() method.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.file.GenericFileFilter&lt;org.apache.camel.component.scp.ScpFile&gt;</code> type.
+         * 
+         * Default:
+         * Group: filter
+         */
+        default ScpEndpointBuilder filter(String filter) {
+            doSetProperty("filter", filter);
+            return this;
+        }
+        /**
+         * Filters the directory based on Simple language. For example to filter
+         * on current date, you can use a simple date pattern such as
+         * ${date:now:yyyMMdd}.
+         * 
+         * The option is a: <code>org.apache.camel.Predicate</code> type.
+         * 
+         * Default:
+         * Group: filter
+         */
+        default ScpEndpointBuilder filterDirectory(Predicate filterDirectory) {
+            doSetProperty("filterDirectory", filterDirectory);
+            return this;
+        }
+        /**
+         * Filters the directory based on Simple language. For example to filter
+         * on current date, you can use a simple date pattern such as
+         * ${date:now:yyyMMdd}.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.Predicate</code> type.
+         * 
+         * Default:
+         * Group: filter
+         */
+        default ScpEndpointBuilder filterDirectory(String filterDirectory) {
+            doSetProperty("filterDirectory", filterDirectory);
+            return this;
+        }
+        /**
+         * Filters the file based on Simple language. For example to filter on
+         * file size, you can use ${file:size} 5000.
+         * 
+         * The option is a: <code>org.apache.camel.Predicate</code> type.
+         * 
+         * Default:
+         * Group: filter
+         */
+        default ScpEndpointBuilder filterFile(Predicate filterFile) {
+            doSetProperty("filterFile", filterFile);
+            return this;
+        }
+        /**
+         * Filters the file based on Simple language. For example to filter on
+         * file size, you can use ${file:size} 5000.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.Predicate</code> type.
+         * 
+         * Default:
+         * Group: filter
+         */
+        default ScpEndpointBuilder filterFile(String filterFile) {
+            doSetProperty("filterFile", filterFile);
+            return this;
+        }
+        /**
+         * Option to use the Idempotent Consumer EIP pattern to let Camel skip
+         * already processed files. Will by default use a memory based LRUCache
+         * that holds 1000 entries. If noop=true then idempotent will be enabled
+         * as well to avoid consuming the same files over and over again.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: filter
+         */
+        default ScpEndpointBuilder idempotent(Boolean idempotent) {
+            doSetProperty("idempotent", idempotent);
+            return this;
+        }
+        /**
+         * Option to use the Idempotent Consumer EIP pattern to let Camel skip
+         * already processed files. Will by default use a memory based LRUCache
+         * that holds 1000 entries. If noop=true then idempotent will be enabled
+         * as well to avoid consuming the same files over and over again.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: filter
+         */
+        default ScpEndpointBuilder idempotent(String idempotent) {
+            doSetProperty("idempotent", idempotent);
+            return this;
+        }
+        /**
+         * To use a custom idempotent key. By default the absolute path of the
+         * file is used. You can use the File Language, for example to use the
+         * file name and file size, you can do:
+         * idempotentKey=${file:name}-${file:size}.
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Default:
+         * Group: filter
+         */
+        default ScpEndpointBuilder idempotentKey(Expression idempotentKey) {
+            doSetProperty("idempotentKey", idempotentKey);
+            return this;
+        }
+        /**
+         * To use a custom idempotent key. By default the absolute path of the
+         * file is used. You can use the File Language, for example to use the
+         * file name and file size, you can do:
+         * idempotentKey=${file:name}-${file:size}.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.Expression</code> type.
+         * 
+         * Default:
+         * Group: filter
+         */
+        default ScpEndpointBuilder idempotentKey(String idempotentKey) {
+            doSetProperty("idempotentKey", idempotentKey);
+            return this;
+        }
+        /**
+         * A pluggable repository org.apache.camel.spi.IdempotentRepository
+         * which by default use MemoryMessageIdRepository if none is specified
+         * and idempotent is true.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * 
+         * Default:
+         * Group: filter
+         */
+        default ScpEndpointBuilder idempotentRepository(
+                IdempotentRepository idempotentRepository) {
+            doSetProperty("idempotentRepository", idempotentRepository);
+            return this;
+        }
+        /**
+         * A pluggable repository org.apache.camel.spi.IdempotentRepository
+         * which by default use MemoryMessageIdRepository if none is specified
+         * and idempotent is true.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * 
+         * Default:
+         * Group: filter
+         */
+        default ScpEndpointBuilder idempotentRepository(
+                String idempotentRepository) {
+            doSetProperty("idempotentRepository", idempotentRepository);
+            return this;
+        }
+        /**
+         * Is used to include files, if filename matches the regex pattern
+         * (matching is case in-sensitive). Notice if you use symbols such as
+         * plus sign and others you would need to configure this using the RAW()
+         * syntax if configuring this as an endpoint uri. See more details at
+         * configuring endpoint uris.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: filter
+         */
+        default ScpEndpointBuilder include(String include) {
+            doSetProperty("include", include);
+            return this;
+        }
+        /**
+         * The maximum depth to traverse when recursively processing a
+         * directory.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 2147483647
+         * Group: filter
+         */
+        default ScpEndpointBuilder maxDepth(int maxDepth) {
+            doSetProperty("maxDepth", maxDepth);
+            return this;
+        }
+        /**
+         * The maximum depth to traverse when recursively processing a
+         * directory.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 2147483647
+         * Group: filter
+         */
+        default ScpEndpointBuilder maxDepth(String maxDepth) {
+            doSetProperty("maxDepth", maxDepth);
+            return this;
+        }
+        /**
+         * To define a maximum messages to gather per poll. By default no
+         * maximum is set. Can be used to set a limit of e.g. 1000 to avoid when
+         * starting up the server that there are thousands of files. Set a value
+         * of 0 or negative to disabled it. Notice: If this option is in use
+         * then the File and FTP components will limit before any sorting. For
+         * example if you have 100000 files and use maxMessagesPerPoll=500, then
+         * only the first 500 files will be picked up, and then sorted. You can
+         * use the eagerMaxMessagesPerPoll option and set this to false to allow
+         * to scan all files first and then sort afterwards.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default:
+         * Group: filter
+         */
+        default ScpEndpointBuilder maxMessagesPerPoll(int maxMessagesPerPoll) {
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
+         * To define a maximum messages to gather per poll. By default no
+         * maximum is set. Can be used to set a limit of e.g. 1000 to avoid when
+         * starting up the server that there are thousands of files. Set a value
+         * of 0 or negative to disabled it. Notice: If this option is in use
+         * then the File and FTP components will limit before any sorting. For
+         * example if you have 100000 files and use maxMessagesPerPoll=500, then
+         * only the first 500 files will be picked up, and then sorted. You can
+         * use the eagerMaxMessagesPerPoll option and set this to false to allow
+         * to scan all files first and then sort afterwards.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default:
+         * Group: filter
+         */
+        default ScpEndpointBuilder maxMessagesPerPoll(String maxMessagesPerPoll) {
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
+         * The minimum depth to start processing when recursively processing a
+         * directory. Using minDepth=1 means the base directory. Using
+         * minDepth=2 means the first sub directory.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default:
+         * Group: filter
+         */
+        default ScpEndpointBuilder minDepth(int minDepth) {
+            doSetProperty("minDepth", minDepth);
+            return this;
+        }
+        /**
+         * The minimum depth to start processing when recursively processing a
+         * directory. Using minDepth=1 means the base directory. Using
+         * minDepth=2 means the first sub directory.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default:
+         * Group: filter
+         */
+        default ScpEndpointBuilder minDepth(String minDepth) {
+            doSetProperty("minDepth", minDepth);
+            return this;
+        }
+        /**
+         * Expression (such as Simple Language) used to dynamically set the
+         * filename when moving it after processing. To move files into a .done
+         * subdirectory just enter .done.
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Default:
+         * Group: filter
+         */
+        default ScpEndpointBuilder move(Expression move) {
+            doSetProperty("move", move);
+            return this;
+        }
+        /**
+         * Expression (such as Simple Language) used to dynamically set the
+         * filename when moving it after processing. To move files into a .done
+         * subdirectory just enter .done.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.Expression</code> type.
+         * 
+         * Default:
+         * Group: filter
+         */
+        default ScpEndpointBuilder move(String move) {
+            doSetProperty("move", move);
+            return this;
+        }
+        /**
+         * Pluggable read-lock as a
+         * org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy
+         * implementation.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;org.apache.camel.component.scp.ScpFile&gt;</code> type.
+         * 
+         * Default:
+         * Group: lock
+         */
+        default ScpEndpointBuilder exclusiveReadLockStrategy(
+                Object exclusiveReadLockStrategy) {
+            doSetProperty("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
+            return this;
+        }
+        /**
+         * Pluggable read-lock as a
+         * org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy
+         * implementation.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;org.apache.camel.component.scp.ScpFile&gt;</code> type.
+         * 
+         * Default:
+         * Group: lock
+         */
+        default ScpEndpointBuilder exclusiveReadLockStrategy(
+                String exclusiveReadLockStrategy) {
+            doSetProperty("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
+            return this;
+        }
+        /**
+         * Used by consumer, to only poll the files if it has exclusive
+         * read-lock on the file (i.e. the file is not in-progress or being
+         * written). Camel will wait until the file lock is granted. This option
+         * provides the build in strategies:\n\n - none - No read lock is in
+         * use\n - markerFile - Camel creates a marker file (fileName.camelLock)
+         * and then holds a lock on it. This option is not available for the FTP
+         * component\n - changed - Changed is using file length/modification
+         * timestamp to detect whether the file is currently being copied or
+         * not. Will at least use 1 sec to determine this, so this option cannot
+         * consume files as fast as the others, but can be more reliable as the
+         * JDK IO API cannot always determine whether a file is currently being
+         * used by another process. The option readLockCheckInterval can be used
+         * to set the check frequency.\n - fileLock - is for using
+         * java.nio.channels.FileLock. This option is not avail for Windows OS
+         * and the FTP component. This approach should be avoided when accessing
+         * a remote file system via a mount/share unless that file system
+         * supports distributed file locks.\n - rename - rename is for using a
+         * try to rename the file as a test if we can get exclusive read-lock.\n
+         * - idempotent - (only for file component) idempotent is for using a
+         * idempotentRepository as the read-lock. This allows to use read locks
+         * that supports clustering if the idempotent repository implementation
+         * supports that.\n - idempotent-changed - (only for file component)
+         * idempotent-changed is for using a idempotentRepository and changed as
+         * the combined read-lock. This allows to use read locks that supports
+         * clustering if the idempotent repository implementation supports
+         * that.\n - idempotent-rename - (only for file component)
+         * idempotent-rename is for using a idempotentRepository and rename as
+         * the combined read-lock. This allows to use read locks that supports
+         * clustering if the idempotent repository implementation supports
+         * that.\n \nNotice: The various read locks is not all suited to work in
+         * clustered mode, where concurrent consumers on different nodes is
+         * competing for the same files on a shared file system. The markerFile
+         * using a close to atomic operation to create the empty marker file,
+         * but its not guaranteed to work in a cluster. The fileLock may work
+         * better but then the file system need to support distributed file
+         * locks, and so on. Using the idempotent read lock can support
+         * clustering if the idempotent repository supports clustering, such as
+         * Hazelcast Component or Infinispan.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: none
+         * Group: lock
+         */
+        default ScpEndpointBuilder readLock(String readLock) {
+            doSetProperty("readLock", readLock);
+            return this;
+        }
+        /**
+         * Interval in millis for the read-lock, if supported by the read lock.
+         * This interval is used for sleeping between attempts to acquire the
+         * read lock. For example when using the changed read lock, you can set
+         * a higher interval period to cater for slow writes. The default of 1
+         * sec. may be too fast if the producer is very slow writing the file.
+         * Notice: For FTP the default readLockCheckInterval is 5000. The
+         * readLockTimeout value must be higher than readLockCheckInterval, but
+         * a rule of thumb is to have a timeout that is at least 2 or more times
+         * higher than the readLockCheckInterval. This is needed to ensure that
+         * amble time is allowed for the read lock process to try to grab the
+         * lock before the timeout was hit.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: lock
+         */
+        default ScpEndpointBuilder readLockCheckInterval(
+                long readLockCheckInterval) {
+            doSetProperty("readLockCheckInterval", readLockCheckInterval);
+            return this;
+        }
+        /**
+         * Interval in millis for the read-lock, if supported by the read lock.
+         * This interval is used for sleeping between attempts to acquire the
+         * read lock. For example when using the changed read lock, you can set
+         * a higher interval period to cater for slow writes. The default of 1
+         * sec. may be too fast if the producer is very slow writing the file.
+         * Notice: For FTP the default readLockCheckInterval is 5000. The
+         * readLockTimeout value must be higher than readLockCheckInterval, but
+         * a rule of thumb is to have a timeout that is at least 2 or more times
+         * higher than the readLockCheckInterval. This is needed to ensure that
+         * amble time is allowed for the read lock process to try to grab the
+         * lock before the timeout was hit.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: lock
+         */
+        default ScpEndpointBuilder readLockCheckInterval(
+                String readLockCheckInterval) {
+            doSetProperty("readLockCheckInterval", readLockCheckInterval);
+            return this;
+        }
+        /**
+         * Whether or not read lock with marker files should upon startup delete
+         * any orphan read lock files, which may have been left on the file
+         * system, if Camel was not properly shutdown (such as a JVM crash). If
+         * turning this option to false then any orphaned lock file will cause
+         * Camel to not attempt to pickup that file, this could also be due
+         * another node is concurrently reading files from the same shared
+         * directory.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: lock
+         */
+        default ScpEndpointBuilder readLockDeleteOrphanLockFiles(
+                boolean readLockDeleteOrphanLockFiles) {
+            doSetProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
+            return this;
+        }
+        /**
+         * Whether or not read lock with marker files should upon startup delete
+         * any orphan read lock files, which may have been left on the file
+         * system, if Camel was not properly shutdown (such as a JVM crash). If
+         * turning this option to false then any orphaned lock file will cause
+         * Camel to not attempt to pickup that file, this could also be due
+         * another node is concurrently reading files from the same shared
+         * directory.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: lock
+         */
+        default ScpEndpointBuilder readLockDeleteOrphanLockFiles(
+                String readLockDeleteOrphanLockFiles) {
+            doSetProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
+            return this;
+        }
+        /**
+         * Logging level used when a read lock could not be acquired. By default
+         * a DEBUG is logged. You can change this level, for example to OFF to
+         * not have any logging. This option is only applicable for readLock of
+         * types: changed, fileLock, idempotent, idempotent-changed,
+         * idempotent-rename, rename.
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: DEBUG
+         * Group: lock
+         */
+        default ScpEndpointBuilder readLockLoggingLevel(
+                LoggingLevel readLockLoggingLevel) {
+            doSetProperty("readLockLoggingLevel", readLockLoggingLevel);
+            return this;
+        }
+        /**
+         * Logging level used when a read lock could not be acquired. By default
+         * a DEBUG is logged. You can change this level, for example to OFF to
+         * not have any logging. This option is only applicable for readLock of
+         * types: changed, fileLock, idempotent, idempotent-changed,
+         * idempotent-rename, rename.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: DEBUG
+         * Group: lock
+         */
+        default ScpEndpointBuilder readLockLoggingLevel(
+                String readLockLoggingLevel) {
+            doSetProperty("readLockLoggingLevel", readLockLoggingLevel);
+            return this;
+        }
+        /**
+         * Whether to use marker file with the changed, rename, or exclusive
+         * read lock types. By default a marker file is used as well to guard
+         * against other processes picking up the same files. This behavior can
+         * be turned off by setting this option to false. For example if you do
+         * not want to write marker files to the file systems by the Camel
+         * application.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: lock
+         */
+        default ScpEndpointBuilder readLockMarkerFile(boolean readLockMarkerFile) {
+            doSetProperty("readLockMarkerFile", readLockMarkerFile);
+            return this;
+        }
+        /**
+         * Whether to use marker file with the changed, rename, or exclusive
+         * read lock types. By default a marker file is used as well to guard
+         * against other processes picking up the same files. This behavior can
+         * be turned off by setting this option to false. For example if you do
+         * not want to write marker files to the file systems by the Camel
+         * application.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: lock
+         */
+        default ScpEndpointBuilder readLockMarkerFile(String readLockMarkerFile) {
+            doSetProperty("readLockMarkerFile", readLockMarkerFile);
+            return this;
+        }
+        /**
+         * This option is applied only for readLock=changed. It allows to
+         * specify a minimum age the file must be before attempting to acquire
+         * the read lock. For example use readLockMinAge=300s to require the
+         * file is at last 5 minutes old. This can speedup the changed read lock
+         * as it will only attempt to acquire files which are at least that
+         * given age.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: lock
+         */
+        default ScpEndpointBuilder readLockMinAge(long readLockMinAge) {
+            doSetProperty("readLockMinAge", readLockMinAge);
+            return this;
+        }
+        /**
+         * This option is applied only for readLock=changed. It allows to
+         * specify a minimum age the file must be before attempting to acquire
+         * the read lock. For example use readLockMinAge=300s to require the
+         * file is at last 5 minutes old. This can speedup the changed read lock
+         * as it will only attempt to acquire files which are at least that
+         * given age.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: lock
+         */
+        default ScpEndpointBuilder readLockMinAge(String readLockMinAge) {
+            doSetProperty("readLockMinAge", readLockMinAge);
+            return this;
+        }
+        /**
+         * This option is applied only for readLock=changed. It allows you to
+         * configure a minimum file length. By default Camel expects the file to
+         * contain data, and thus the default value is 1. You can set this
+         * option to zero, to allow consuming zero-length files.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 1
+         * Group: lock
+         */
+        default ScpEndpointBuilder readLockMinLength(long readLockMinLength) {
+            doSetProperty("readLockMinLength", readLockMinLength);
+            return this;
+        }
+        /**
+         * This option is applied only for readLock=changed. It allows you to
+         * configure a minimum file length. By default Camel expects the file to
+         * contain data, and thus the default value is 1. You can set this
+         * option to zero, to allow consuming zero-length files.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 1
+         * Group: lock
+         */
+        default ScpEndpointBuilder readLockMinLength(String readLockMinLength) {
+            doSetProperty("readLockMinLength", readLockMinLength);
+            return this;
+        }
+        /**
+         * This option is applied only for readLock=idempotent. It allows to
+         * specify whether to remove the file name entry from the idempotent
+         * repository when processing the file is succeeded and a commit
+         * happens. By default the file is not removed which ensures that any
+         * race-condition do not occur so another active node may attempt to
+         * grab the file. Instead the idempotent repository may support eviction
+         * strategies that you can configure to evict the file name entry after
+         * X minutes - this ensures no problems with race conditions. See more
+         * details at the readLockIdempotentReleaseDelay option.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: lock
+         */
+        default ScpEndpointBuilder readLockRemoveOnCommit(
+                boolean readLockRemoveOnCommit) {
+            doSetProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
+            return this;
+        }
+        /**
+         * This option is applied only for readLock=idempotent. It allows to
+         * specify whether to remove the file name entry from the idempotent
+         * repository when processing the file is succeeded and a commit
+         * happens. By default the file is not removed which ensures that any
+         * race-condition do not occur so another active node may attempt to
+         * grab the file. Instead the idempotent repository may support eviction
+         * strategies that you can configure to evict the file name entry after
+         * X minutes - this ensures no problems with race conditions. See more
+         * details at the readLockIdempotentReleaseDelay option.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: lock
+         */
+        default ScpEndpointBuilder readLockRemoveOnCommit(
+                String readLockRemoveOnCommit) {
+            doSetProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
+            return this;
+        }
+        /**
+         * This option is applied only for readLock=idempotent. It allows to
+         * specify whether to remove the file name entry from the idempotent
+         * repository when processing the file failed and a rollback happens. If
+         * this option is false, then the file name entry is confirmed (as if
+         * the file did a commit).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: lock
+         */
+        default ScpEndpointBuilder readLockRemoveOnRollback(
+                boolean readLockRemoveOnRollback) {
+            doSetProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
+            return this;
+        }
+        /**
+         * This option is applied only for readLock=idempotent. It allows to
+         * specify whether to remove the file name entry from the idempotent
+         * repository when processing the file failed and a rollback happens. If
+         * this option is false, then the file name entry is confirmed (as if
+         * the file did a commit).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: lock
+         */
+        default ScpEndpointBuilder readLockRemoveOnRollback(
+                String readLockRemoveOnRollback) {
+            doSetProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
+            return this;
+        }
+        /**
+         * Optional timeout in millis for the read-lock, if supported by the
+         * read-lock. If the read-lock could not be granted and the timeout
+         * triggered, then Camel will skip the file. At next poll Camel, will
+         * try the file again, and this time maybe the read-lock could be
+         * granted. Use a value of 0 or lower to indicate forever. Currently
+         * fileLock, changed and rename support the timeout. Notice: For FTP the
+         * default readLockTimeout value is 20000 instead of 10000. The
+         * readLockTimeout value must be higher than readLockCheckInterval, but
+         * a rule of thumb is to have a timeout that is at least 2 or more times
+         * higher than the readLockCheckInterval. This is needed to ensure that
+         * amble time is allowed for the read lock process to try to grab the
+         * lock before the timeout was hit.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 10000
+         * Group: lock
+         */
+        default ScpEndpointBuilder readLockTimeout(long readLockTimeout) {
+            doSetProperty("readLockTimeout", readLockTimeout);
+            return this;
+        }
+        /**
+         * Optional timeout in millis for the read-lock, if supported by the
+         * read-lock. If the read-lock could not be granted and the timeout
+         * triggered, then Camel will skip the file. At next poll Camel, will
+         * try the file again, and this time maybe the read-lock could be
+         * granted. Use a value of 0 or lower to indicate forever. Currently
+         * fileLock, changed and rename support the timeout. Notice: For FTP the
+         * default readLockTimeout value is 20000 instead of 10000. The
+         * readLockTimeout value must be higher than readLockCheckInterval, but
+         * a rule of thumb is to have a timeout that is at least 2 or more times
+         * higher than the readLockCheckInterval. This is needed to ensure that
+         * amble time is allowed for the read lock process to try to grab the
+         * lock before the timeout was hit.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 10000
+         * Group: lock
+         */
+        default ScpEndpointBuilder readLockTimeout(String readLockTimeout) {
+            doSetProperty("readLockTimeout", readLockTimeout);
+            return this;
+        }
+        /**
+         * The number of subsequent error polls (failed due some error) that
+         * should happen before the backoffMultipler should kick-in.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default:
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder backoffErrorThreshold(
+                int backoffErrorThreshold) {
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent error polls (failed due some error) that
+         * should happen before the backoffMultipler should kick-in.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default:
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder backoffErrorThreshold(
+                String backoffErrorThreshold) {
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent idle polls that should happen before the
+         * backoffMultipler should kick-in.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default:
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder backoffIdleThreshold(int backoffIdleThreshold) {
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent idle polls that should happen before the
+         * backoffMultipler should kick-in.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default:
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder backoffIdleThreshold(
+                String backoffIdleThreshold) {
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
+            return this;
+        }
+        /**
+         * To let the scheduled polling consumer backoff if there has been a
+         * number of subsequent idles/errors in a row. The multiplier is then
+         * the number of polls that will be skipped before the next actual
+         * attempt is happening again. When this option is in use then
+         * backoffIdleThreshold and/or backoffErrorThreshold must also be
+         * configured.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default:
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder backoffMultiplier(int backoffMultiplier) {
+            doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * To let the scheduled polling consumer backoff if there has been a
+         * number of subsequent idles/errors in a row. The multiplier is then
+         * the number of polls that will be skipped before the next actual
+         * attempt is happening again. When this option is in use then
+         * backoffIdleThreshold and/or backoffErrorThreshold must also be
+         * configured.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default:
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder backoffMultiplier(String backoffMultiplier) {
+            doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll. You can also specify time values
+         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 500
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder delay(long delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll. You can also specify time values
+         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 500
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder delay(String delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * If greedy is enabled, then the ScheduledPollConsumer will run
+         * immediately again, if the previous run polled 1 or more messages.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder greedy(boolean greedy) {
+            doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * If greedy is enabled, then the ScheduledPollConsumer will run
+         * immediately again, if the previous run polled 1 or more messages.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder greedy(String greedy) {
+            doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts. You can also specify time
+         * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder initialDelay(long initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts. You can also specify time
+         * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder initialDelay(String initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder repeatCount(long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder repeatCount(String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * The consumer logs a start/complete log line when it polls. This
+         * option allows you to configure the logging level for that.
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: TRACE
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder runLoggingLevel(LoggingLevel runLoggingLevel) {
+            doSetProperty("runLoggingLevel", runLoggingLevel);
+            return this;
+        }
+        /**
+         * The consumer logs a start/complete log line when it polls. This
+         * option allows you to configure the logging level for that.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: TRACE
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder runLoggingLevel(String runLoggingLevel) {
+            doSetProperty("runLoggingLevel", runLoggingLevel);
+            return this;
+        }
+        /**
+         * Allows for configuring a custom/shared thread pool to use for the
+         * consumer. By default each consumer has its own single threaded thread
+         * pool.
+         * 
+         * The option is a:
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * 
+         * Default:
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder scheduledExecutorService(
+                ScheduledExecutorService scheduledExecutorService) {
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
+            return this;
+        }
+        /**
+         * Allows for configuring a custom/shared thread pool to use for the
+         * consumer. By default each consumer has its own single threaded thread
+         * pool.
+         * 
+         * The option will be converted to a
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * 
+         * Default:
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder scheduledExecutorService(
+                String scheduledExecutorService) {
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: none
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder scheduler(String scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Default:
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder schedulerProperties(
+                Map<String, Object> schedulerProperties) {
+            doSetProperty("schedulerProperties", schedulerProperties);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Default:
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder schedulerProperties(
+                String schedulerProperties) {
+            doSetProperty("schedulerProperties", schedulerProperties);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder startScheduler(boolean startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder startScheduler(String startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
+         * Time unit for initialDelay and delay options.
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Default: MILLISECONDS
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder timeUnit(TimeUnit timeUnit) {
+            doSetProperty("timeUnit", timeUnit);
+            return this;
+        }
+        /**
+         * Time unit for initialDelay and delay options.
+         * 
+         * The option will be converted to a
+         * <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Default: MILLISECONDS
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder timeUnit(String timeUnit) {
+            doSetProperty("timeUnit", timeUnit);
+            return this;
+        }
+        /**
+         * Controls if fixed delay or fixed rate is used. See
+         * ScheduledExecutorService in JDK for details.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder useFixedDelay(boolean useFixedDelay) {
+            doSetProperty("useFixedDelay", useFixedDelay);
+            return this;
+        }
+        /**
+         * Controls if fixed delay or fixed rate is used. See
+         * ScheduledExecutorService in JDK for details.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: scheduler
+         */
+        default ScpEndpointBuilder useFixedDelay(String useFixedDelay) {
+            doSetProperty("useFixedDelay", useFixedDelay);
+            return this;
+        }
+        /**
+         * To shuffle the list of files (sort in random order).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: sort
+         */
+        default ScpEndpointBuilder shuffle(boolean shuffle) {
+            doSetProperty("shuffle", shuffle);
+            return this;
+        }
+        /**
+         * To shuffle the list of files (sort in random order).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: sort
+         */
+        default ScpEndpointBuilder shuffle(String shuffle) {
+            doSetProperty("shuffle", shuffle);
+            return this;
+        }
+        /**
+         * Built-in sort by using the File Language. Supports nested sorts, so
+         * you can have a sort by file name and as a 2nd group sort by modified
+         * date.
+         * 
+         * The option is a:
+         * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
+         * type.
+         * 
+         * Default:
+         * Group: sort
+         */
+        default ScpEndpointBuilder sortBy(Comparator<Exchange> sortBy) {
+            doSetProperty("sortBy", sortBy);
+            return this;
+        }
+        /**
+         * Built-in sort by using the File Language. Supports nested sorts, so
+         * you can have a sort by file name and as a 2nd group sort by modified
+         * date.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
+         * type.
+         * 
+         * Default:
+         * Group: sort
+         */
+        default ScpEndpointBuilder sortBy(String sortBy) {
+            doSetProperty("sortBy", sortBy);
+            return this;
+        }
+        /**
+         * Pluggable sorter as a java.util.Comparator class.
+         * 
+         * The option is a:
+         * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.camel.component.scp.ScpFile&gt;&gt;</code> type.
+         * 
+         * Default:
+         * Group: sort
+         */
+        default ScpEndpointBuilder sorter(Comparator<Object> sorter) {
+            doSetProperty("sorter", sorter);
+            return this;
+        }
+        /**
+         * Pluggable sorter as a java.util.Comparator class.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.camel.component.scp.ScpFile&gt;&gt;</code> type.
+         * 
+         * Default:
+         * Group: sort
+         */
+        default ScpEndpointBuilder sorter(String sorter) {
+            doSetProperty("sorter", sorter);
             return this;
         }
     }
@@ -398,130 +1960,6 @@ public interface ScpEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default ScpEndpointBuilder basic() {
             return (ScpEndpointBuilder) this;
-        }
-        /**
-         * Used to specify if a null body is allowed during file writing. If set
-         * to true then an empty file will be created, when set to false, and
-         * attempting to send a null body to the file component, a
-         * GenericFileWriteException of 'Cannot write null body to file.' will
-         * be thrown. If the fileExist option is set to 'Override', then the
-         * file will be truncated, and if set to append the file will remain
-         * unchanged.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         */
-        default AdvancedScpEndpointBuilder allowNullBody(boolean allowNullBody) {
-            doSetProperty("allowNullBody", allowNullBody);
-            return this;
-        }
-        /**
-         * Used to specify if a null body is allowed during file writing. If set
-         * to true then an empty file will be created, when set to false, and
-         * attempting to send a null body to the file component, a
-         * GenericFileWriteException of 'Cannot write null body to file.' will
-         * be thrown. If the fileExist option is set to 'Override', then the
-         * file will be truncated, and if set to append the file will remain
-         * unchanged.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         */
-        default AdvancedScpEndpointBuilder allowNullBody(String allowNullBody) {
-            doSetProperty("allowNullBody", allowNullBody);
-            return this;
-        }
-        /**
-         * Whether or not to disconnect from remote FTP server right after a
-         * Batch upload is complete. disconnectOnBatchComplete will only
-         * disconnect the current connection to the FTP server.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         */
-        default AdvancedScpEndpointBuilder disconnectOnBatchComplete(
-                boolean disconnectOnBatchComplete) {
-            doSetProperty("disconnectOnBatchComplete", disconnectOnBatchComplete);
-            return this;
-        }
-        /**
-         * Whether or not to disconnect from remote FTP server right after a
-         * Batch upload is complete. disconnectOnBatchComplete will only
-         * disconnect the current connection to the FTP server.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         */
-        default AdvancedScpEndpointBuilder disconnectOnBatchComplete(
-                String disconnectOnBatchComplete) {
-            doSetProperty("disconnectOnBatchComplete", disconnectOnBatchComplete);
-            return this;
-        }
-        /**
-         * Strategy (Custom Strategy) used to move file with special naming
-         * token to use when fileExist=Move is configured. By default, there is
-         * an implementation used if no custom strategy is provided.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
-         * 
-         * Group: producer (advanced)
-         */
-        default AdvancedScpEndpointBuilder moveExistingFileStrategy(
-                Object moveExistingFileStrategy) {
-            doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
-            return this;
-        }
-        /**
-         * Strategy (Custom Strategy) used to move file with special naming
-         * token to use when fileExist=Move is configured. By default, there is
-         * an implementation used if no custom strategy is provided.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
-         * 
-         * Group: producer (advanced)
-         */
-        default AdvancedScpEndpointBuilder moveExistingFileStrategy(
-                String moveExistingFileStrategy) {
-            doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedScpEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedScpEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
         }
         /**
          * Sets the connect timeout for waiting for a connection to be
@@ -582,32 +2020,6 @@ public interface ScpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedScpEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedScpEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
          * The option is a: <code>int</code> type.
@@ -639,10 +2051,419 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security (advanced)
          */
         default AdvancedScpEndpointBuilder ciphers(String ciphers) {
             doSetProperty("ciphers", ciphers);
+            return this;
+        }
+        /**
+         * Whether to ignore when (trying to list files in directories or when
+         * downloading a file), which does not exist or due to permission error.
+         * By default when a directory or file does not exists or insufficient
+         * permission, then an exception is thrown. Setting this option to true
+         * allows to ignore that instead.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         */
+        default AdvancedScpEndpointBuilder ignoreFileNotFoundOrPermissionError(
+                boolean ignoreFileNotFoundOrPermissionError) {
+            doSetProperty("ignoreFileNotFoundOrPermissionError", ignoreFileNotFoundOrPermissionError);
+            return this;
+        }
+        /**
+         * Whether to ignore when (trying to list files in directories or when
+         * downloading a file), which does not exist or due to permission error.
+         * By default when a directory or file does not exists or insufficient
+         * permission, then an exception is thrown. Setting this option to true
+         * allows to ignore that instead.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         */
+        default AdvancedScpEndpointBuilder ignoreFileNotFoundOrPermissionError(
+                String ignoreFileNotFoundOrPermissionError) {
+            doSetProperty("ignoreFileNotFoundOrPermissionError", ignoreFileNotFoundOrPermissionError);
+            return this;
+        }
+        /**
+         * Whether to allow using LIST command when downloading a file. Default
+         * is true. In some use cases you may want to download a specific file
+         * and are not allowed to use the LIST command, and therefore you can
+         * set this option to false. Notice when using this option, then the
+         * specific file to download does not include meta-data information such
+         * as file size, timestamp, permissions etc, because those information
+         * is only possible to retrieve when LIST command is in use.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         */
+        default AdvancedScpEndpointBuilder useList(boolean useList) {
+            doSetProperty("useList", useList);
+            return this;
+        }
+        /**
+         * Whether to allow using LIST command when downloading a file. Default
+         * is true. In some use cases you may want to download a specific file
+         * and are not allowed to use the LIST command, and therefore you can
+         * set this option to false. Notice when using this option, then the
+         * specific file to download does not include meta-data information such
+         * as file size, timestamp, permissions etc, because those information
+         * is only possible to retrieve when LIST command is in use.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         */
+        default AdvancedScpEndpointBuilder useList(String useList) {
+            doSetProperty("useList", useList);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedScpEndpointBuilder exceptionHandler(
+                ExceptionHandler exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedScpEndpointBuilder exceptionHandler(
+                String exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedScpEndpointBuilder exchangePattern(
+                ExchangePattern exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedScpEndpointBuilder exchangePattern(
+                String exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * A pluggable in-progress repository
+         * org.apache.camel.spi.IdempotentRepository. The in-progress repository
+         * is used to account the current in progress files being consumed. By
+         * default a memory based repository is used.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedScpEndpointBuilder inProgressRepository(
+                IdempotentRepository inProgressRepository) {
+            doSetProperty("inProgressRepository", inProgressRepository);
+            return this;
+        }
+        /**
+         * A pluggable in-progress repository
+         * org.apache.camel.spi.IdempotentRepository. The in-progress repository
+         * is used to account the current in progress files being consumed. By
+         * default a memory based repository is used.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedScpEndpointBuilder inProgressRepository(
+                String inProgressRepository) {
+            doSetProperty("inProgressRepository", inProgressRepository);
+            return this;
+        }
+        /**
+         * When consuming, a local work directory can be used to store the
+         * remote file content directly in local files, to avoid loading the
+         * content into memory. This is beneficial, if you consume a very big
+         * remote file and thus can conserve memory.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedScpEndpointBuilder localWorkDirectory(
+                String localWorkDirectory) {
+            doSetProperty("localWorkDirectory", localWorkDirectory);
+            return this;
+        }
+        /**
+         * To use a custom org.apache.camel.spi.ExceptionHandler to handle any
+         * thrown exceptions that happens during the file on completion process
+         * where the consumer does either a commit or rollback. The default
+         * implementation will log any exception at WARN level and ignore.
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedScpEndpointBuilder onCompletionExceptionHandler(
+                ExceptionHandler onCompletionExceptionHandler) {
+            doSetProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
+            return this;
+        }
+        /**
+         * To use a custom org.apache.camel.spi.ExceptionHandler to handle any
+         * thrown exceptions that happens during the file on completion process
+         * where the consumer does either a commit or rollback. The default
+         * implementation will log any exception at WARN level and ignore.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedScpEndpointBuilder onCompletionExceptionHandler(
+                String onCompletionExceptionHandler) {
+            doSetProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedScpEndpointBuilder pollStrategy(
+                PollingConsumerPollStrategy pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedScpEndpointBuilder pollStrategy(String pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
+        /**
+         * A pluggable
+         * org.apache.camel.component.file.GenericFileProcessStrategy allowing
+         * you to implement your own readLock option or similar. Can also be
+         * used when special conditions must be met before a file can be
+         * consumed, such as a special ready file exists. If this option is set
+         * then the readLock option does not apply.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.camel.component.scp.ScpFile&gt;</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedScpEndpointBuilder processStrategy(
+                Object processStrategy) {
+            doSetProperty("processStrategy", processStrategy);
+            return this;
+        }
+        /**
+         * A pluggable
+         * org.apache.camel.component.file.GenericFileProcessStrategy allowing
+         * you to implement your own readLock option or similar. Can also be
+         * used when special conditions must be met before a file can be
+         * consumed, such as a special ready file exists. If this option is set
+         * then the readLock option does not apply.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.camel.component.scp.ScpFile&gt;</code> type.
+         * 
+         * Default:
+         * Group: consumer (advanced)
+         */
+        default AdvancedScpEndpointBuilder processStrategy(
+                String processStrategy) {
+            doSetProperty("processStrategy", processStrategy);
+            return this;
+        }
+        /**
+         * Used to specify if a null body is allowed during file writing. If set
+         * to true then an empty file will be created, when set to false, and
+         * attempting to send a null body to the file component, a
+         * GenericFileWriteException of 'Cannot write null body to file.' will
+         * be thrown. If the fileExist option is set to 'Override', then the
+         * file will be truncated, and if set to append the file will remain
+         * unchanged.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         */
+        default AdvancedScpEndpointBuilder allowNullBody(boolean allowNullBody) {
+            doSetProperty("allowNullBody", allowNullBody);
+            return this;
+        }
+        /**
+         * Used to specify if a null body is allowed during file writing. If set
+         * to true then an empty file will be created, when set to false, and
+         * attempting to send a null body to the file component, a
+         * GenericFileWriteException of 'Cannot write null body to file.' will
+         * be thrown. If the fileExist option is set to 'Override', then the
+         * file will be truncated, and if set to append the file will remain
+         * unchanged.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         */
+        default AdvancedScpEndpointBuilder allowNullBody(String allowNullBody) {
+            doSetProperty("allowNullBody", allowNullBody);
+            return this;
+        }
+        /**
+         * Strategy (Custom Strategy) used to move file with special naming
+         * token to use when fileExist=Move is configured. By default, there is
+         * an implementation used if no custom strategy is provided.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
+         * 
+         * Default:
+         * Group: producer (advanced)
+         */
+        default AdvancedScpEndpointBuilder moveExistingFileStrategy(
+                Object moveExistingFileStrategy) {
+            doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
+            return this;
+        }
+        /**
+         * Strategy (Custom Strategy) used to move file with special naming
+         * token to use when fileExist=Move is configured. By default, there is
+         * an implementation used if no custom strategy is provided.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
+         * 
+         * Default:
+         * Group: producer (advanced)
+         */
+        default AdvancedScpEndpointBuilder moveExistingFileStrategy(
+                String moveExistingFileStrategy) {
+            doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
+            return this;
+        }
+        /**
+         * Whether the endpoint should use basic property binding (Camel 2.x) or
+         * the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedScpEndpointBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Whether the endpoint should use basic property binding (Camel 2.x) or
+         * the newer property binding with additional capabilities.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedScpEndpointBuilder basicPropertyBinding(
+                String basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedScpEndpointBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedScpEndpointBuilder synchronous(String synchronous) {
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

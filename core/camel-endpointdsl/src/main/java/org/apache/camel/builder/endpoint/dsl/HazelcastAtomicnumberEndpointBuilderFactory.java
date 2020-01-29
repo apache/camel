@@ -48,6 +48,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default HazelcastAtomicnumberEndpointBuilder defaultOperation(
@@ -63,6 +64,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default HazelcastAtomicnumberEndpointBuilder defaultOperation(
@@ -77,6 +79,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default HazelcastAtomicnumberEndpointBuilder hazelcastInstance(
@@ -91,6 +94,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default HazelcastAtomicnumberEndpointBuilder hazelcastInstance(
@@ -105,6 +109,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default HazelcastAtomicnumberEndpointBuilder hazelcastInstanceName(

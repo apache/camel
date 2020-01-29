@@ -45,6 +45,7 @@ public interface MetricsEndpointBuilderFactory {
          * <code>org.apache.camel.component.metrics.MetricsTimerAction</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default MetricsEndpointBuilder action(MetricsTimerAction action) {
@@ -58,6 +59,7 @@ public interface MetricsEndpointBuilderFactory {
          * <code>org.apache.camel.component.metrics.MetricsTimerAction</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default MetricsEndpointBuilder action(String action) {
@@ -69,6 +71,7 @@ public interface MetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MetricsEndpointBuilder decrement(Long decrement) {
@@ -80,6 +83,7 @@ public interface MetricsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MetricsEndpointBuilder decrement(String decrement) {
@@ -91,6 +95,7 @@ public interface MetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MetricsEndpointBuilder increment(Long increment) {
@@ -102,6 +107,7 @@ public interface MetricsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MetricsEndpointBuilder increment(String increment) {
@@ -155,6 +161,7 @@ public interface MetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MetricsEndpointBuilder mark(Long mark) {
@@ -166,6 +173,7 @@ public interface MetricsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MetricsEndpointBuilder mark(String mark) {
@@ -177,6 +185,7 @@ public interface MetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MetricsEndpointBuilder subject(Object subject) {
@@ -188,6 +197,7 @@ public interface MetricsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MetricsEndpointBuilder subject(String subject) {
@@ -199,6 +209,7 @@ public interface MetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MetricsEndpointBuilder value(Long value) {
@@ -210,6 +221,7 @@ public interface MetricsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MetricsEndpointBuilder value(String value) {

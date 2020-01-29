@@ -49,6 +49,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a:
          * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
          * 
+         * Default:
          * Group: common
          */
         default QueueServiceEndpointConsumerBuilder azureQueueClient(
@@ -62,6 +63,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
          * 
+         * Default:
          * Group: common
          */
         default QueueServiceEndpointConsumerBuilder azureQueueClient(
@@ -75,6 +77,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a:
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * 
+         * Default:
          * Group: common
          */
         default QueueServiceEndpointConsumerBuilder credentials(
@@ -88,6 +91,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * 
+         * Default:
          * Group: common
          */
         default QueueServiceEndpointConsumerBuilder credentials(
@@ -154,6 +158,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedQueueServiceEndpointConsumerBuilder exceptionHandler(
@@ -170,6 +175,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedQueueServiceEndpointConsumerBuilder exceptionHandler(
@@ -182,6 +188,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedQueueServiceEndpointConsumerBuilder exchangePattern(
@@ -195,6 +202,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedQueueServiceEndpointConsumerBuilder exchangePattern(
@@ -276,6 +284,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a:
          * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
          * 
+         * Default:
          * Group: common
          */
         default QueueServiceEndpointProducerBuilder azureQueueClient(
@@ -289,6 +298,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
          * 
+         * Default:
          * Group: common
          */
         default QueueServiceEndpointProducerBuilder azureQueueClient(
@@ -302,6 +312,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a:
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * 
+         * Default:
          * Group: common
          */
         default QueueServiceEndpointProducerBuilder credentials(
@@ -315,6 +326,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * 
+         * Default:
          * Group: common
          */
         default QueueServiceEndpointProducerBuilder credentials(
@@ -369,6 +381,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default QueueServiceEndpointProducerBuilder messageTimeToLive(
@@ -381,6 +394,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default QueueServiceEndpointProducerBuilder messageTimeToLive(
@@ -393,6 +407,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default QueueServiceEndpointProducerBuilder messageVisibilityDelay(
@@ -405,6 +420,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default QueueServiceEndpointProducerBuilder messageVisibilityDelay(
@@ -444,6 +460,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default QueueServiceEndpointProducerBuilder queuePrefix(
@@ -537,6 +554,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a:
          * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
          * 
+         * Default:
          * Group: common
          */
         default QueueServiceEndpointBuilder azureQueueClient(
@@ -550,6 +568,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
          * 
+         * Default:
          * Group: common
          */
         default QueueServiceEndpointBuilder azureQueueClient(
@@ -563,6 +582,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a:
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * 
+         * Default:
          * Group: common
          */
         default QueueServiceEndpointBuilder credentials(Object credentials) {
@@ -575,6 +595,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * 
+         * Default:
          * Group: common
          */
         default QueueServiceEndpointBuilder credentials(String credentials) {

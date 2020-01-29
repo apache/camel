@@ -50,6 +50,7 @@ public interface ClientEndpointBuilderFactory {
          * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ClientEndpointConsumerBuilder dataModuleOptions(
@@ -63,6 +64,7 @@ public interface ClientEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ClientEndpointConsumerBuilder dataModuleOptions(
@@ -77,6 +79,7 @@ public interface ClientEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default ClientEndpointConsumerBuilder protocolOptions(
@@ -91,6 +94,7 @@ public interface ClientEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default ClientEndpointConsumerBuilder protocolOptions(
@@ -169,6 +173,7 @@ public interface ClientEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
          * type.
          * 
+         * Default:
          * Group: connection
          */
         default ClientEndpointConsumerBuilder adsuAddressType(
@@ -183,6 +188,7 @@ public interface ClientEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
          * type.
          * 
+         * Default:
          * Group: connection
          */
         default ClientEndpointConsumerBuilder adsuAddressType(
@@ -196,6 +202,7 @@ public interface ClientEndpointBuilderFactory {
          * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
          * 
+         * Default:
          * Group: connection
          */
         default ClientEndpointConsumerBuilder causeOfTransmissionType(
@@ -209,6 +216,7 @@ public interface ClientEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
          * 
+         * Default:
          * Group: connection
          */
         default ClientEndpointConsumerBuilder causeOfTransmissionType(
@@ -222,6 +230,7 @@ public interface ClientEndpointBuilderFactory {
          * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
          * 
+         * Default:
          * Group: connection
          */
         default ClientEndpointConsumerBuilder informationObjectAddressType(
@@ -235,6 +244,7 @@ public interface ClientEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
          * 
+         * Default:
          * Group: connection
          */
         default ClientEndpointConsumerBuilder informationObjectAddressType(
@@ -345,6 +355,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option is a: <code>byte</code> type.
          * 
+         * Default:
          * Group: data
          */
         default ClientEndpointConsumerBuilder causeSourceAddress(
@@ -357,6 +368,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte</code> type.
          * 
+         * Default:
          * Group: data
          */
         default ClientEndpointConsumerBuilder causeSourceAddress(
@@ -474,6 +486,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: id
          */
         default ClientEndpointConsumerBuilder connectionId(String connectionId) {
@@ -501,6 +514,7 @@ public interface ClientEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedClientEndpointConsumerBuilder exceptionHandler(
@@ -517,6 +531,7 @@ public interface ClientEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedClientEndpointConsumerBuilder exceptionHandler(
@@ -529,6 +544,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedClientEndpointConsumerBuilder exchangePattern(
@@ -542,6 +558,7 @@ public interface ClientEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedClientEndpointConsumerBuilder exchangePattern(
@@ -622,6 +639,7 @@ public interface ClientEndpointBuilderFactory {
          * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ClientEndpointProducerBuilder dataModuleOptions(
@@ -635,6 +653,7 @@ public interface ClientEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ClientEndpointProducerBuilder dataModuleOptions(
@@ -649,6 +668,7 @@ public interface ClientEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default ClientEndpointProducerBuilder protocolOptions(
@@ -663,6 +683,7 @@ public interface ClientEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default ClientEndpointProducerBuilder protocolOptions(
@@ -745,6 +766,7 @@ public interface ClientEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
          * type.
          * 
+         * Default:
          * Group: connection
          */
         default ClientEndpointProducerBuilder adsuAddressType(
@@ -759,6 +781,7 @@ public interface ClientEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
          * type.
          * 
+         * Default:
          * Group: connection
          */
         default ClientEndpointProducerBuilder adsuAddressType(
@@ -772,6 +795,7 @@ public interface ClientEndpointBuilderFactory {
          * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
          * 
+         * Default:
          * Group: connection
          */
         default ClientEndpointProducerBuilder causeOfTransmissionType(
@@ -785,6 +809,7 @@ public interface ClientEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
          * 
+         * Default:
          * Group: connection
          */
         default ClientEndpointProducerBuilder causeOfTransmissionType(
@@ -798,6 +823,7 @@ public interface ClientEndpointBuilderFactory {
          * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
          * 
+         * Default:
          * Group: connection
          */
         default ClientEndpointProducerBuilder informationObjectAddressType(
@@ -811,6 +837,7 @@ public interface ClientEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
          * 
+         * Default:
          * Group: connection
          */
         default ClientEndpointProducerBuilder informationObjectAddressType(
@@ -921,6 +948,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option is a: <code>byte</code> type.
          * 
+         * Default:
          * Group: data
          */
         default ClientEndpointProducerBuilder causeSourceAddress(
@@ -933,6 +961,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte</code> type.
          * 
+         * Default:
          * Group: data
          */
         default ClientEndpointProducerBuilder causeSourceAddress(
@@ -1050,6 +1079,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: id
          */
         default ClientEndpointProducerBuilder connectionId(String connectionId) {
@@ -1142,6 +1172,7 @@ public interface ClientEndpointBuilderFactory {
          * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ClientEndpointBuilder dataModuleOptions(Object dataModuleOptions) {
@@ -1154,6 +1185,7 @@ public interface ClientEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ClientEndpointBuilder dataModuleOptions(String dataModuleOptions) {
@@ -1167,6 +1199,7 @@ public interface ClientEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default ClientEndpointBuilder protocolOptions(Object protocolOptions) {
@@ -1180,6 +1213,7 @@ public interface ClientEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default ClientEndpointBuilder protocolOptions(String protocolOptions) {
@@ -1217,6 +1251,7 @@ public interface ClientEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
          * type.
          * 
+         * Default:
          * Group: connection
          */
         default ClientEndpointBuilder adsuAddressType(
@@ -1231,6 +1266,7 @@ public interface ClientEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
          * type.
          * 
+         * Default:
          * Group: connection
          */
         default ClientEndpointBuilder adsuAddressType(String adsuAddressType) {
@@ -1243,6 +1279,7 @@ public interface ClientEndpointBuilderFactory {
          * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
          * 
+         * Default:
          * Group: connection
          */
         default ClientEndpointBuilder causeOfTransmissionType(
@@ -1256,6 +1293,7 @@ public interface ClientEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
          * 
+         * Default:
          * Group: connection
          */
         default ClientEndpointBuilder causeOfTransmissionType(
@@ -1269,6 +1307,7 @@ public interface ClientEndpointBuilderFactory {
          * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
          * 
+         * Default:
          * Group: connection
          */
         default ClientEndpointBuilder informationObjectAddressType(
@@ -1282,6 +1321,7 @@ public interface ClientEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
          * 
+         * Default:
          * Group: connection
          */
         default ClientEndpointBuilder informationObjectAddressType(
@@ -1390,6 +1430,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option is a: <code>byte</code> type.
          * 
+         * Default:
          * Group: data
          */
         default ClientEndpointBuilder causeSourceAddress(byte causeSourceAddress) {
@@ -1401,6 +1442,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte</code> type.
          * 
+         * Default:
          * Group: data
          */
         default ClientEndpointBuilder causeSourceAddress(
@@ -1516,6 +1558,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: id
          */
         default ClientEndpointBuilder connectionId(String connectionId) {

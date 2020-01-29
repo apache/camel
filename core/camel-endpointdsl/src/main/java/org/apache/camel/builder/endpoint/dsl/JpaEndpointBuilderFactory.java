@@ -110,6 +110,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JpaEndpointConsumerBuilder namedQuery(String namedQuery) {
@@ -122,6 +123,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JpaEndpointConsumerBuilder nativeQuery(String nativeQuery) {
@@ -147,6 +149,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JpaEndpointConsumerBuilder query(String query) {
@@ -163,6 +166,7 @@ public interface JpaEndpointBuilderFactory {
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default JpaEndpointConsumerBuilder resultClass(Class<Object> resultClass) {
@@ -179,6 +183,7 @@ public interface JpaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JpaEndpointConsumerBuilder resultClass(String resultClass) {
@@ -284,6 +289,7 @@ public interface JpaEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jpa.DeleteHandler&lt;java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder deleteHandler(Object deleteHandler) {
@@ -297,6 +303,7 @@ public interface JpaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jpa.DeleteHandler&lt;java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder deleteHandler(String deleteHandler) {
@@ -337,6 +344,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder maxMessagesPerPoll(
@@ -352,6 +360,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder maxMessagesPerPoll(
@@ -366,6 +375,7 @@ public interface JpaEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jpa.DeleteHandler&lt;java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder preDeleteHandler(
@@ -380,6 +390,7 @@ public interface JpaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jpa.DeleteHandler&lt;java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder preDeleteHandler(
@@ -481,6 +492,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder backoffErrorThreshold(
@@ -494,6 +506,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder backoffErrorThreshold(
@@ -507,6 +520,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder backoffIdleThreshold(
@@ -520,6 +534,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder backoffIdleThreshold(
@@ -537,6 +552,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder backoffMultiplier(
@@ -554,6 +570,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder backoffMultiplier(
@@ -708,6 +725,7 @@ public interface JpaEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder scheduledExecutorService(
@@ -723,6 +741,7 @@ public interface JpaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder scheduledExecutorService(
@@ -750,6 +769,7 @@ public interface JpaEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder schedulerProperties(
@@ -765,6 +785,7 @@ public interface JpaEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder schedulerProperties(
@@ -867,6 +888,7 @@ public interface JpaEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJpaEndpointConsumerBuilder exceptionHandler(
@@ -883,6 +905,7 @@ public interface JpaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJpaEndpointConsumerBuilder exceptionHandler(
@@ -895,6 +918,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJpaEndpointConsumerBuilder exchangePattern(
@@ -908,6 +932,7 @@ public interface JpaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJpaEndpointConsumerBuilder exchangePattern(
@@ -927,6 +952,7 @@ public interface JpaEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJpaEndpointConsumerBuilder parameters(
@@ -947,6 +973,7 @@ public interface JpaEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJpaEndpointConsumerBuilder parameters(String parameters) {
@@ -962,6 +989,7 @@ public interface JpaEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJpaEndpointConsumerBuilder pollStrategy(
@@ -978,6 +1006,7 @@ public interface JpaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJpaEndpointConsumerBuilder pollStrategy(
@@ -1019,6 +1048,7 @@ public interface JpaEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJpaEndpointConsumerBuilder entityManagerProperties(
@@ -1033,6 +1063,7 @@ public interface JpaEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJpaEndpointConsumerBuilder entityManagerProperties(
@@ -1172,6 +1203,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JpaEndpointProducerBuilder namedQuery(String namedQuery) {
@@ -1184,6 +1216,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JpaEndpointProducerBuilder nativeQuery(String nativeQuery) {
@@ -1209,6 +1242,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JpaEndpointProducerBuilder query(String query) {
@@ -1225,6 +1259,7 @@ public interface JpaEndpointBuilderFactory {
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default JpaEndpointProducerBuilder resultClass(Class<Object> resultClass) {
@@ -1241,6 +1276,7 @@ public interface JpaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JpaEndpointProducerBuilder resultClass(String resultClass) {
@@ -1372,6 +1408,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default JpaEndpointProducerBuilder useExecuteUpdate(
@@ -1387,6 +1424,7 @@ public interface JpaEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default JpaEndpointProducerBuilder useExecuteUpdate(
@@ -1501,6 +1539,7 @@ public interface JpaEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJpaEndpointProducerBuilder entityManagerProperties(
@@ -1515,6 +1554,7 @@ public interface JpaEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJpaEndpointProducerBuilder entityManagerProperties(
@@ -1653,6 +1693,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JpaEndpointBuilder namedQuery(String namedQuery) {
@@ -1665,6 +1706,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JpaEndpointBuilder nativeQuery(String nativeQuery) {
@@ -1689,6 +1731,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JpaEndpointBuilder query(String query) {
@@ -1705,6 +1748,7 @@ public interface JpaEndpointBuilderFactory {
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default JpaEndpointBuilder resultClass(Class<Object> resultClass) {
@@ -1721,6 +1765,7 @@ public interface JpaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JpaEndpointBuilder resultClass(String resultClass) {
@@ -1773,6 +1818,7 @@ public interface JpaEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJpaEndpointBuilder entityManagerProperties(
@@ -1787,6 +1833,7 @@ public interface JpaEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedJpaEndpointBuilder entityManagerProperties(

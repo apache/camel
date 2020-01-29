@@ -50,6 +50,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointConsumerBuilder cellMappingStrategyFactory(
@@ -64,6 +65,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointConsumerBuilder cellMappingStrategyFactory(
@@ -77,6 +79,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointConsumerBuilder filters(List<Object> filters) {
@@ -89,6 +92,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointConsumerBuilder filters(String filters) {
@@ -100,6 +104,7 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointConsumerBuilder mappingStrategyClassName(
@@ -113,6 +118,7 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointConsumerBuilder mappingStrategyName(
@@ -135,6 +141,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointConsumerBuilder rowMapping(
@@ -158,6 +165,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointConsumerBuilder rowMapping(String rowMapping) {
@@ -171,6 +179,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointConsumerBuilder rowModel(Object rowModel) {
@@ -184,6 +193,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointConsumerBuilder rowModel(String rowModel) {
@@ -196,6 +206,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointConsumerBuilder userGroupInformation(
@@ -209,6 +220,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointConsumerBuilder userGroupInformation(
@@ -261,6 +273,7 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default HBaseEndpointConsumerBuilder maxMessagesPerPoll(
@@ -275,6 +288,7 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default HBaseEndpointConsumerBuilder maxMessagesPerPoll(
@@ -287,6 +301,7 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default HBaseEndpointConsumerBuilder operation(String operation) {
@@ -327,6 +342,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.camel.component.hbase.HBaseRemoveHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer
          */
         default HBaseEndpointConsumerBuilder removeHandler(Object removeHandler) {
@@ -341,6 +357,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.camel.component.hbase.HBaseRemoveHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer
          */
         default HBaseEndpointConsumerBuilder removeHandler(String removeHandler) {
@@ -367,6 +384,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHBaseEndpointConsumerBuilder exceptionHandler(
@@ -383,6 +401,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHBaseEndpointConsumerBuilder exceptionHandler(
@@ -395,6 +414,7 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHBaseEndpointConsumerBuilder exchangePattern(
@@ -408,6 +428,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHBaseEndpointConsumerBuilder exchangePattern(
@@ -489,6 +510,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointProducerBuilder cellMappingStrategyFactory(
@@ -503,6 +525,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointProducerBuilder cellMappingStrategyFactory(
@@ -516,6 +539,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointProducerBuilder filters(List<Object> filters) {
@@ -528,6 +552,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointProducerBuilder filters(String filters) {
@@ -539,6 +564,7 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointProducerBuilder mappingStrategyClassName(
@@ -552,6 +578,7 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointProducerBuilder mappingStrategyName(
@@ -574,6 +601,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointProducerBuilder rowMapping(
@@ -597,6 +625,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointProducerBuilder rowMapping(String rowMapping) {
@@ -610,6 +639,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointProducerBuilder rowModel(Object rowModel) {
@@ -623,6 +653,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointProducerBuilder rowModel(String rowModel) {
@@ -635,6 +666,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointProducerBuilder userGroupInformation(
@@ -648,6 +680,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointProducerBuilder userGroupInformation(
@@ -807,6 +840,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointBuilder cellMappingStrategyFactory(
@@ -821,6 +855,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointBuilder cellMappingStrategyFactory(
@@ -834,6 +869,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointBuilder filters(List<Object> filters) {
@@ -846,6 +882,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointBuilder filters(String filters) {
@@ -857,6 +894,7 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointBuilder mappingStrategyClassName(
@@ -870,6 +908,7 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointBuilder mappingStrategyName(
@@ -892,6 +931,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointBuilder rowMapping(Map<String, Object> rowMapping) {
@@ -914,6 +954,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointBuilder rowMapping(String rowMapping) {
@@ -927,6 +968,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointBuilder rowModel(Object rowModel) {
@@ -940,6 +982,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointBuilder rowModel(String rowModel) {
@@ -952,6 +995,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointBuilder userGroupInformation(
@@ -965,6 +1009,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
          * 
+         * Default:
          * Group: common
          */
         default HBaseEndpointBuilder userGroupInformation(

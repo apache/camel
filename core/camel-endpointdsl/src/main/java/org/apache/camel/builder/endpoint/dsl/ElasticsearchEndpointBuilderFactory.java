@@ -147,6 +147,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: producer
          */
         default ElasticsearchEndpointBuilder hostAddresses(String hostAddresses) {
@@ -158,6 +159,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ElasticsearchEndpointBuilder indexName(String indexName) {
@@ -237,6 +239,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.elasticsearch.ElasticsearchOperation</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ElasticsearchEndpointBuilder operation(
@@ -250,6 +253,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.elasticsearch.ElasticsearchOperation</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ElasticsearchEndpointBuilder operation(String operation) {

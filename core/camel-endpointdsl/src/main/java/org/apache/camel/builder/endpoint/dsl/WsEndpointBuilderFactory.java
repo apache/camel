@@ -132,6 +132,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default WsEndpointConsumerBuilder headerFilterStrategy(
@@ -146,6 +147,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default WsEndpointConsumerBuilder headerFilterStrategy(
@@ -236,6 +238,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default WsEndpointConsumerBuilder sslContextParameters(
@@ -254,6 +257,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default WsEndpointConsumerBuilder sslContextParameters(
@@ -307,6 +311,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder binding(Object binding) {
@@ -320,6 +325,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder binding(String binding) {
@@ -333,6 +339,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a:
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder clientConfig(
@@ -347,6 +354,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder clientConfig(
@@ -361,6 +369,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder clientConfigOptions(
@@ -376,6 +385,7 @@ public interface WsEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder clientConfigOptions(
@@ -417,6 +427,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: security
          */
         default AdvancedWsEndpointConsumerBuilder clientConfigRealmOptions(
@@ -432,6 +443,7 @@ public interface WsEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: security
          */
         default AdvancedWsEndpointConsumerBuilder clientConfigRealmOptions(
@@ -563,6 +575,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default WsEndpointProducerBuilder cookieHandler(Object cookieHandler) {
@@ -575,6 +588,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default WsEndpointProducerBuilder cookieHandler(String cookieHandler) {
@@ -588,6 +602,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default WsEndpointProducerBuilder headerFilterStrategy(
@@ -602,6 +617,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default WsEndpointProducerBuilder headerFilterStrategy(
@@ -734,6 +750,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default WsEndpointProducerBuilder sslContextParameters(
@@ -752,6 +769,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default WsEndpointProducerBuilder sslContextParameters(
@@ -805,6 +823,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder binding(Object binding) {
@@ -818,6 +837,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder binding(String binding) {
@@ -831,6 +851,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a:
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder clientConfig(
@@ -845,6 +866,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder clientConfig(
@@ -859,6 +881,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder clientConfigOptions(
@@ -874,6 +897,7 @@ public interface WsEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder clientConfigOptions(
@@ -915,6 +939,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: security
          */
         default AdvancedWsEndpointProducerBuilder clientConfigRealmOptions(
@@ -930,6 +955,7 @@ public interface WsEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: security
          */
         default AdvancedWsEndpointProducerBuilder clientConfigRealmOptions(
@@ -1012,6 +1038,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default WsEndpointBuilder headerFilterStrategy(
@@ -1026,6 +1053,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default WsEndpointBuilder headerFilterStrategy(
@@ -1114,6 +1142,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default WsEndpointBuilder sslContextParameters(
@@ -1132,6 +1161,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default WsEndpointBuilder sslContextParameters(
@@ -1186,6 +1216,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedWsEndpointBuilder binding(Object binding) {
@@ -1199,6 +1230,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedWsEndpointBuilder binding(String binding) {
@@ -1212,6 +1244,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a:
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedWsEndpointBuilder clientConfig(Object clientConfig) {
@@ -1225,6 +1258,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedWsEndpointBuilder clientConfig(String clientConfig) {
@@ -1238,6 +1272,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedWsEndpointBuilder clientConfigOptions(
@@ -1253,6 +1288,7 @@ public interface WsEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedWsEndpointBuilder clientConfigOptions(
@@ -1293,6 +1329,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: security
          */
         default AdvancedWsEndpointBuilder clientConfigRealmOptions(
@@ -1308,6 +1345,7 @@ public interface WsEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: security
          */
         default AdvancedWsEndpointBuilder clientConfigRealmOptions(

@@ -123,6 +123,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default GeoCoderEndpointBuilder proxyAuthDomain(String proxyAuthDomain) {
@@ -134,6 +135,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default GeoCoderEndpointBuilder proxyAuthHost(String proxyAuthHost) {
@@ -145,6 +147,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default GeoCoderEndpointBuilder proxyAuthMethod(String proxyAuthMethod) {
@@ -156,6 +159,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default GeoCoderEndpointBuilder proxyAuthPassword(
@@ -168,6 +172,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default GeoCoderEndpointBuilder proxyAuthUsername(
@@ -180,6 +185,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default GeoCoderEndpointBuilder proxyHost(String proxyHost) {
@@ -191,6 +197,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default GeoCoderEndpointBuilder proxyPort(Integer proxyPort) {
@@ -203,6 +210,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default GeoCoderEndpointBuilder proxyPort(String proxyPort) {
@@ -214,6 +222,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default GeoCoderEndpointBuilder apiKey(String apiKey) {
@@ -225,6 +234,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default GeoCoderEndpointBuilder clientId(String clientId) {
@@ -236,6 +246,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default GeoCoderEndpointBuilder clientKey(String clientKey) {

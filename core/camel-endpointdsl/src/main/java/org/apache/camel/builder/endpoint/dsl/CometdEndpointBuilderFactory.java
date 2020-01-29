@@ -65,6 +65,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CometdEndpointConsumerBuilder baseResource(String baseResource) {
@@ -103,6 +104,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CometdEndpointConsumerBuilder filterPath(String filterPath) {
@@ -115,6 +117,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CometdEndpointConsumerBuilder interval(int interval) {
@@ -127,6 +130,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CometdEndpointConsumerBuilder interval(String interval) {
@@ -352,6 +356,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCometdEndpointConsumerBuilder exceptionHandler(
@@ -368,6 +373,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCometdEndpointConsumerBuilder exceptionHandler(
@@ -380,6 +386,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCometdEndpointConsumerBuilder exchangePattern(
@@ -393,6 +400,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCometdEndpointConsumerBuilder exchangePattern(
@@ -490,6 +498,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CometdEndpointProducerBuilder baseResource(String baseResource) {
@@ -528,6 +537,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CometdEndpointProducerBuilder filterPath(String filterPath) {
@@ -540,6 +550,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CometdEndpointProducerBuilder interval(int interval) {
@@ -552,6 +563,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CometdEndpointProducerBuilder interval(String interval) {
@@ -864,6 +876,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CometdEndpointBuilder baseResource(String baseResource) {
@@ -902,6 +915,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CometdEndpointBuilder filterPath(String filterPath) {
@@ -914,6 +928,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CometdEndpointBuilder interval(int interval) {
@@ -926,6 +941,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CometdEndpointBuilder interval(String interval) {

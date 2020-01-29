@@ -445,6 +445,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default DataSetEndpointProducerBuilder reportGroup(int reportGroup) {
@@ -457,6 +458,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default DataSetEndpointProducerBuilder reportGroup(String reportGroup) {

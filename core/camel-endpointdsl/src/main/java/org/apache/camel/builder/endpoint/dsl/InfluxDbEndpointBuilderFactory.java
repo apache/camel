@@ -67,6 +67,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default InfluxDbEndpointBuilder databaseName(String databaseName) {
@@ -132,6 +133,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default InfluxDbEndpointBuilder query(String query) {

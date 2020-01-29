@@ -46,6 +46,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.avro.Protocol</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AvroEndpointConsumerBuilder protocol(Object protocol) {
@@ -58,6 +59,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.avro.Protocol</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AvroEndpointConsumerBuilder protocol(String protocol) {
@@ -69,6 +71,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AvroEndpointConsumerBuilder protocolClassName(
@@ -81,6 +84,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AvroEndpointConsumerBuilder protocolLocation(
@@ -151,6 +155,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AvroEndpointConsumerBuilder uriAuthority(String uriAuthority) {
@@ -215,6 +220,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAvroEndpointConsumerBuilder exceptionHandler(
@@ -231,6 +237,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAvroEndpointConsumerBuilder exceptionHandler(
@@ -243,6 +250,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAvroEndpointConsumerBuilder exchangePattern(
@@ -256,6 +264,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAvroEndpointConsumerBuilder exchangePattern(
@@ -335,6 +344,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.avro.Protocol</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AvroEndpointProducerBuilder protocol(Object protocol) {
@@ -347,6 +357,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.avro.Protocol</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AvroEndpointProducerBuilder protocol(String protocol) {
@@ -358,6 +369,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AvroEndpointProducerBuilder protocolClassName(
@@ -370,6 +382,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AvroEndpointProducerBuilder protocolLocation(
@@ -440,6 +453,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AvroEndpointProducerBuilder uriAuthority(String uriAuthority) {
@@ -572,6 +586,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.avro.Protocol</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AvroEndpointBuilder protocol(Object protocol) {
@@ -584,6 +599,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.avro.Protocol</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AvroEndpointBuilder protocol(String protocol) {
@@ -595,6 +611,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AvroEndpointBuilder protocolClassName(String protocolClassName) {
@@ -606,6 +623,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AvroEndpointBuilder protocolLocation(String protocolLocation) {
@@ -672,6 +690,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AvroEndpointBuilder uriAuthority(String uriAuthority) {

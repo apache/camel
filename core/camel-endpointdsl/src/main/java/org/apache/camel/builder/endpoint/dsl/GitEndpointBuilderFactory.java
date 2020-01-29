@@ -46,6 +46,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GitEndpointConsumerBuilder branchName(String branchName) {
@@ -57,6 +58,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GitEndpointConsumerBuilder password(String password) {
@@ -68,6 +70,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GitEndpointConsumerBuilder remoteName(String remoteName) {
@@ -79,6 +82,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GitEndpointConsumerBuilder remotePath(String remotePath) {
@@ -90,6 +94,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GitEndpointConsumerBuilder tagName(String tagName) {
@@ -101,6 +106,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GitEndpointConsumerBuilder username(String username) {
@@ -151,6 +157,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.git.consumer.GitType</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GitEndpointConsumerBuilder type(GitType type) {
@@ -163,6 +170,7 @@ public interface GitEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.git.consumer.GitType</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default GitEndpointConsumerBuilder type(String type) {
@@ -189,6 +197,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGitEndpointConsumerBuilder exceptionHandler(
@@ -205,6 +214,7 @@ public interface GitEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGitEndpointConsumerBuilder exceptionHandler(
@@ -217,6 +227,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGitEndpointConsumerBuilder exchangePattern(
@@ -230,6 +241,7 @@ public interface GitEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGitEndpointConsumerBuilder exchangePattern(
@@ -309,6 +321,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GitEndpointProducerBuilder branchName(String branchName) {
@@ -320,6 +333,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GitEndpointProducerBuilder password(String password) {
@@ -331,6 +345,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GitEndpointProducerBuilder remoteName(String remoteName) {
@@ -342,6 +357,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GitEndpointProducerBuilder remotePath(String remotePath) {
@@ -353,6 +369,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GitEndpointProducerBuilder tagName(String tagName) {
@@ -364,6 +381,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GitEndpointProducerBuilder username(String username) {
@@ -441,6 +459,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default GitEndpointProducerBuilder operation(String operation) {
@@ -531,6 +550,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GitEndpointBuilder branchName(String branchName) {
@@ -542,6 +562,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GitEndpointBuilder password(String password) {
@@ -553,6 +574,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GitEndpointBuilder remoteName(String remoteName) {
@@ -564,6 +586,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GitEndpointBuilder remotePath(String remotePath) {
@@ -575,6 +598,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GitEndpointBuilder tagName(String tagName) {
@@ -586,6 +610,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GitEndpointBuilder username(String username) {

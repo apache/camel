@@ -49,6 +49,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.KeyStore</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CryptoCmsEndpointBuilder keyStore(KeyStore keyStore) {
@@ -64,6 +65,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option will be converted to a <code>java.security.KeyStore</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CryptoCmsEndpointBuilder keyStore(String keyStore) {
@@ -78,6 +80,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CryptoCmsEndpointBuilder keyStoreParameters(
@@ -93,6 +96,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CryptoCmsEndpointBuilder keyStoreParameters(
@@ -150,6 +154,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * 
          * The option is a: <code>char[]</code> type.
          * 
+         * Default:
          * Group: decrypt
          */
         default CryptoCmsEndpointBuilder password(Character[] password) {
@@ -164,6 +169,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>char[]</code> type.
          * 
+         * Default:
          * Group: decrypt
          */
         default CryptoCmsEndpointBuilder password(String password) {
@@ -203,6 +209,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: encrypt
          */
         default CryptoCmsEndpointBuilder contentEncryptionAlgorithm(
@@ -218,6 +225,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.crypto.cms.common.OriginatorInformationProvider</code> type.
          * 
+         * Default:
          * Group: encrypt
          */
         default CryptoCmsEndpointBuilder originatorInformationProvider(
@@ -233,6 +241,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.crypto.cms.common.OriginatorInformationProvider</code> type.
          * 
+         * Default:
          * Group: encrypt
          */
         default CryptoCmsEndpointBuilder originatorInformationProvider(
@@ -247,6 +256,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.crypt.RecipientInfo&gt;</code> type.
          * 
+         * Default:
          * Group: encrypt
          */
         default CryptoCmsEndpointBuilder recipient(List<Object> recipient) {
@@ -260,6 +270,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.crypt.RecipientInfo&gt;</code> type.
          * 
+         * Default:
          * Group: encrypt
          */
         default CryptoCmsEndpointBuilder recipient(String recipient) {
@@ -279,6 +290,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: encrypt
          */
         default CryptoCmsEndpointBuilder secretKeyLength(int secretKeyLength) {
@@ -298,6 +310,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: encrypt
          */
         default CryptoCmsEndpointBuilder secretKeyLength(String secretKeyLength) {
@@ -313,6 +326,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.crypto.cms.common.AttributesGeneratorProvider</code> type.
          * 
+         * Default:
          * Group: encrypt
          */
         default CryptoCmsEndpointBuilder unprotectedAttributesGeneratorProvider(
@@ -329,6 +343,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.crypto.cms.common.AttributesGeneratorProvider</code> type.
          * 
+         * Default:
          * Group: encrypt
          */
         default CryptoCmsEndpointBuilder unprotectedAttributesGeneratorProvider(
@@ -400,6 +415,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.sig.SignerInfo&gt;</code> type.
          * 
+         * Default:
          * Group: sign
          */
         default CryptoCmsEndpointBuilder signer(List<Object> signer) {
@@ -414,6 +430,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.sig.SignerInfo&gt;</code> type.
          * 
+         * Default:
          * Group: sign
          */
         default CryptoCmsEndpointBuilder signer(String signer) {

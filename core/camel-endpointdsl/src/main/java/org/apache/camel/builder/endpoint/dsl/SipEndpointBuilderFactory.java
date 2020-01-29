@@ -102,6 +102,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointConsumerBuilder eventHeaderName(
@@ -115,6 +116,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointConsumerBuilder eventId(String eventId) {
@@ -127,6 +129,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointConsumerBuilder fromHost(String fromHost) {
@@ -139,6 +142,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointConsumerBuilder fromPort(int fromPort) {
@@ -151,6 +155,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointConsumerBuilder fromPort(String fromPort) {
@@ -163,6 +168,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointConsumerBuilder fromUser(String fromUser) {
@@ -241,6 +247,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointConsumerBuilder toHost(String toHost) {
@@ -253,6 +260,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointConsumerBuilder toPort(int toPort) {
@@ -265,6 +273,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointConsumerBuilder toPort(String toPort) {
@@ -277,6 +286,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointConsumerBuilder toUser(String toUser) {
@@ -395,6 +405,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: logging
          */
         default SipEndpointConsumerBuilder implementationDebugLogFile(
@@ -407,6 +418,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: logging
          */
         default SipEndpointConsumerBuilder implementationServerLogFile(
@@ -432,6 +444,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SipEndpointConsumerBuilder maxForwards(int maxForwards) {
@@ -443,6 +456,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SipEndpointConsumerBuilder maxForwards(String maxForwards) {
@@ -497,6 +511,7 @@ public interface SipEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSipEndpointConsumerBuilder exceptionHandler(
@@ -513,6 +528,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSipEndpointConsumerBuilder exceptionHandler(
@@ -525,6 +541,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSipEndpointConsumerBuilder exchangePattern(
@@ -538,6 +555,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSipEndpointConsumerBuilder exchangePattern(
@@ -550,6 +568,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.address.AddressFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder addressFactory(
@@ -563,6 +582,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.address.AddressFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder addressFactory(
@@ -604,6 +624,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.CallIdHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder callIdHeader(
@@ -618,6 +639,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.CallIdHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder callIdHeader(
@@ -632,6 +654,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.ContactHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder contactHeader(
@@ -647,6 +670,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.ContactHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder contactHeader(
@@ -661,6 +685,7 @@ public interface SipEndpointBuilderFactory {
          * The option is a: <code>javax.sip.header.ContentTypeHeader</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder contentTypeHeader(
@@ -675,6 +700,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.ContentTypeHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder contentTypeHeader(
@@ -688,6 +714,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.EventHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder eventHeader(
@@ -702,6 +729,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.EventHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder eventHeader(
@@ -715,6 +743,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.ExpiresHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder expiresHeader(
@@ -729,6 +758,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.ExpiresHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder expiresHeader(
@@ -742,6 +772,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.ExtensionHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder extensionHeader(
@@ -756,6 +787,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.ExtensionHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder extensionHeader(
@@ -769,6 +801,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.FromHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder fromHeader(Object fromHeader) {
@@ -782,6 +815,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.FromHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder fromHeader(String fromHeader) {
@@ -793,6 +827,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.HeaderFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder headerFactory(
@@ -806,6 +841,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.HeaderFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder headerFactory(
@@ -818,6 +854,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.ListeningPoint</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder listeningPoint(
@@ -831,6 +868,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.ListeningPoint</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder listeningPoint(
@@ -846,6 +884,7 @@ public interface SipEndpointBuilderFactory {
          * The option is a: <code>javax.sip.header.MaxForwardsHeader</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder maxForwardsHeader(
@@ -861,6 +900,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.MaxForwardsHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder maxForwardsHeader(
@@ -899,6 +939,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.message.MessageFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder messageFactory(
@@ -912,6 +953,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.message.MessageFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder messageFactory(
@@ -924,6 +966,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.SipFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder sipFactory(Object sipFactory) {
@@ -936,6 +979,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a <code>javax.sip.SipFactory</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder sipFactory(String sipFactory) {
@@ -947,6 +991,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.SipStack</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder sipStack(Object sipStack) {
@@ -959,6 +1004,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a <code>javax.sip.SipStack</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder sipStack(String sipStack) {
@@ -971,6 +1017,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.address.SipURI</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder sipUri(Object sipUri) {
@@ -984,6 +1031,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.address.SipURI</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder sipUri(String sipUri) {
@@ -1024,6 +1072,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.ToHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder toHeader(Object toHeader) {
@@ -1037,6 +1086,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.ToHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder toHeader(String toHeader) {
@@ -1052,6 +1102,7 @@ public interface SipEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;javax.sip.header.ViaHeader&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder viaHeaders(
@@ -1068,6 +1119,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;javax.sip.header.ViaHeader&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder viaHeaders(String viaHeaders) {
@@ -1144,6 +1196,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointProducerBuilder eventHeaderName(
@@ -1157,6 +1210,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointProducerBuilder eventId(String eventId) {
@@ -1169,6 +1223,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointProducerBuilder fromHost(String fromHost) {
@@ -1181,6 +1236,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointProducerBuilder fromPort(int fromPort) {
@@ -1193,6 +1249,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointProducerBuilder fromPort(String fromPort) {
@@ -1205,6 +1262,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointProducerBuilder fromUser(String fromUser) {
@@ -1283,6 +1341,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointProducerBuilder toHost(String toHost) {
@@ -1295,6 +1354,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointProducerBuilder toPort(int toPort) {
@@ -1307,6 +1367,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointProducerBuilder toPort(String toPort) {
@@ -1319,6 +1380,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointProducerBuilder toUser(String toUser) {
@@ -1385,6 +1447,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: logging
          */
         default SipEndpointProducerBuilder implementationDebugLogFile(
@@ -1397,6 +1460,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: logging
          */
         default SipEndpointProducerBuilder implementationServerLogFile(
@@ -1422,6 +1486,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SipEndpointProducerBuilder maxForwards(int maxForwards) {
@@ -1433,6 +1498,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SipEndpointProducerBuilder maxForwards(String maxForwards) {
@@ -1483,6 +1549,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.address.AddressFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder addressFactory(
@@ -1496,6 +1563,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.address.AddressFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder addressFactory(
@@ -1537,6 +1605,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.CallIdHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder callIdHeader(
@@ -1551,6 +1620,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.CallIdHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder callIdHeader(
@@ -1565,6 +1635,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.ContactHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder contactHeader(
@@ -1580,6 +1651,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.ContactHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder contactHeader(
@@ -1594,6 +1666,7 @@ public interface SipEndpointBuilderFactory {
          * The option is a: <code>javax.sip.header.ContentTypeHeader</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder contentTypeHeader(
@@ -1608,6 +1681,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.ContentTypeHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder contentTypeHeader(
@@ -1621,6 +1695,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.EventHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder eventHeader(
@@ -1635,6 +1710,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.EventHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder eventHeader(
@@ -1648,6 +1724,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.ExpiresHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder expiresHeader(
@@ -1662,6 +1739,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.ExpiresHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder expiresHeader(
@@ -1675,6 +1753,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.ExtensionHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder extensionHeader(
@@ -1689,6 +1768,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.ExtensionHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder extensionHeader(
@@ -1702,6 +1782,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.FromHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder fromHeader(Object fromHeader) {
@@ -1715,6 +1796,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.FromHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder fromHeader(String fromHeader) {
@@ -1726,6 +1808,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.HeaderFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder headerFactory(
@@ -1739,6 +1822,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.HeaderFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder headerFactory(
@@ -1751,6 +1835,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.ListeningPoint</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder listeningPoint(
@@ -1764,6 +1849,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.ListeningPoint</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder listeningPoint(
@@ -1779,6 +1865,7 @@ public interface SipEndpointBuilderFactory {
          * The option is a: <code>javax.sip.header.MaxForwardsHeader</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder maxForwardsHeader(
@@ -1794,6 +1881,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.MaxForwardsHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder maxForwardsHeader(
@@ -1832,6 +1920,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.message.MessageFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder messageFactory(
@@ -1845,6 +1934,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.message.MessageFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder messageFactory(
@@ -1857,6 +1947,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.SipFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder sipFactory(Object sipFactory) {
@@ -1869,6 +1960,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a <code>javax.sip.SipFactory</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder sipFactory(String sipFactory) {
@@ -1880,6 +1972,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.SipStack</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder sipStack(Object sipStack) {
@@ -1892,6 +1985,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a <code>javax.sip.SipStack</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder sipStack(String sipStack) {
@@ -1904,6 +1998,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.address.SipURI</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder sipUri(Object sipUri) {
@@ -1917,6 +2012,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.address.SipURI</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder sipUri(String sipUri) {
@@ -1957,6 +2053,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.ToHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder toHeader(Object toHeader) {
@@ -1970,6 +2067,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.ToHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder toHeader(String toHeader) {
@@ -1985,6 +2083,7 @@ public interface SipEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;javax.sip.header.ViaHeader&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder viaHeaders(
@@ -2001,6 +2100,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;javax.sip.header.ViaHeader&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder viaHeaders(String viaHeaders) {
@@ -2076,6 +2176,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointBuilder eventHeaderName(String eventHeaderName) {
@@ -2088,6 +2189,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointBuilder eventId(String eventId) {
@@ -2100,6 +2202,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointBuilder fromHost(String fromHost) {
@@ -2112,6 +2215,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointBuilder fromPort(int fromPort) {
@@ -2124,6 +2228,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointBuilder fromPort(String fromPort) {
@@ -2136,6 +2241,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointBuilder fromUser(String fromUser) {
@@ -2214,6 +2320,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointBuilder toHost(String toHost) {
@@ -2226,6 +2333,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointBuilder toPort(int toPort) {
@@ -2238,6 +2346,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointBuilder toPort(String toPort) {
@@ -2250,6 +2359,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SipEndpointBuilder toUser(String toUser) {
@@ -2274,6 +2384,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: logging
          */
         default SipEndpointBuilder implementationDebugLogFile(
@@ -2286,6 +2397,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: logging
          */
         default SipEndpointBuilder implementationServerLogFile(
@@ -2311,6 +2423,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SipEndpointBuilder maxForwards(int maxForwards) {
@@ -2322,6 +2435,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SipEndpointBuilder maxForwards(String maxForwards) {
@@ -2373,6 +2487,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.address.AddressFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder addressFactory(Object addressFactory) {
@@ -2385,6 +2500,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.address.AddressFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder addressFactory(String addressFactory) {
@@ -2425,6 +2541,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.CallIdHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder callIdHeader(Object callIdHeader) {
@@ -2438,6 +2555,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.CallIdHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder callIdHeader(String callIdHeader) {
@@ -2451,6 +2569,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.ContactHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder contactHeader(Object contactHeader) {
@@ -2465,6 +2584,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.ContactHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder contactHeader(String contactHeader) {
@@ -2478,6 +2598,7 @@ public interface SipEndpointBuilderFactory {
          * The option is a: <code>javax.sip.header.ContentTypeHeader</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder contentTypeHeader(
@@ -2492,6 +2613,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.ContentTypeHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder contentTypeHeader(
@@ -2505,6 +2627,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.EventHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder eventHeader(Object eventHeader) {
@@ -2518,6 +2641,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.EventHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder eventHeader(String eventHeader) {
@@ -2530,6 +2654,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.ExpiresHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder expiresHeader(Object expiresHeader) {
@@ -2543,6 +2668,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.ExpiresHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder expiresHeader(String expiresHeader) {
@@ -2555,6 +2681,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.ExtensionHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder extensionHeader(
@@ -2569,6 +2696,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.ExtensionHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder extensionHeader(
@@ -2582,6 +2710,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.FromHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder fromHeader(Object fromHeader) {
@@ -2595,6 +2724,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.FromHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder fromHeader(String fromHeader) {
@@ -2606,6 +2736,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.HeaderFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder headerFactory(Object headerFactory) {
@@ -2618,6 +2749,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.HeaderFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder headerFactory(String headerFactory) {
@@ -2629,6 +2761,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.ListeningPoint</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder listeningPoint(Object listeningPoint) {
@@ -2641,6 +2774,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.ListeningPoint</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder listeningPoint(String listeningPoint) {
@@ -2655,6 +2789,7 @@ public interface SipEndpointBuilderFactory {
          * The option is a: <code>javax.sip.header.MaxForwardsHeader</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder maxForwardsHeader(
@@ -2670,6 +2805,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.MaxForwardsHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder maxForwardsHeader(
@@ -2706,6 +2842,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.message.MessageFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder messageFactory(Object messageFactory) {
@@ -2718,6 +2855,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.message.MessageFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder messageFactory(String messageFactory) {
@@ -2729,6 +2867,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.SipFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder sipFactory(Object sipFactory) {
@@ -2741,6 +2880,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a <code>javax.sip.SipFactory</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder sipFactory(String sipFactory) {
@@ -2752,6 +2892,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.SipStack</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder sipStack(Object sipStack) {
@@ -2764,6 +2905,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a <code>javax.sip.SipStack</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder sipStack(String sipStack) {
@@ -2776,6 +2918,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.address.SipURI</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder sipUri(Object sipUri) {
@@ -2789,6 +2932,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.address.SipURI</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder sipUri(String sipUri) {
@@ -2827,6 +2971,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sip.header.ToHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder toHeader(Object toHeader) {
@@ -2840,6 +2985,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.sip.header.ToHeader</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder toHeader(String toHeader) {
@@ -2855,6 +3001,7 @@ public interface SipEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;javax.sip.header.ViaHeader&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder viaHeaders(List<Object> viaHeaders) {
@@ -2870,6 +3017,7 @@ public interface SipEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;javax.sip.header.ViaHeader&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder viaHeaders(String viaHeaders) {

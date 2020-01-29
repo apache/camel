@@ -49,6 +49,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointConsumerBuilder atomix(Object atomix) {
@@ -61,6 +62,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option will be converted to a <code>io.atomix.AtomixClient</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointConsumerBuilder atomix(String atomix) {
@@ -72,6 +74,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointConsumerBuilder configurationUri(
@@ -113,6 +116,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointConsumerBuilder key(Object key) {
@@ -125,6 +129,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointConsumerBuilder key(String key) {
@@ -137,6 +142,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointConsumerBuilder nodes(List<Object> nodes) {
@@ -149,6 +155,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointConsumerBuilder nodes(String nodes) {
@@ -160,6 +167,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointConsumerBuilder resultHeader(
@@ -185,6 +193,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointConsumerBuilder ttl(long ttl) {
@@ -196,6 +205,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointConsumerBuilder ttl(String ttl) {
@@ -260,6 +270,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtomixMapEndpointConsumerBuilder exceptionHandler(
@@ -276,6 +287,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtomixMapEndpointConsumerBuilder exceptionHandler(
@@ -288,6 +300,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtomixMapEndpointConsumerBuilder exchangePattern(
@@ -301,6 +314,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtomixMapEndpointConsumerBuilder exchangePattern(
@@ -341,6 +355,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointConsumerBuilder defaultResourceConfig(
@@ -354,6 +369,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointConsumerBuilder defaultResourceConfig(
@@ -366,6 +382,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointConsumerBuilder defaultResourceOptions(
@@ -379,6 +396,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointConsumerBuilder defaultResourceOptions(
@@ -422,6 +440,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option is a: <code>io.atomix.resource.ReadConsistency</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointConsumerBuilder readConsistency(
@@ -435,6 +454,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.atomix.resource.ReadConsistency</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointConsumerBuilder readConsistency(
@@ -448,6 +468,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointConsumerBuilder resourceConfigs(
@@ -462,6 +483,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointConsumerBuilder resourceConfigs(
@@ -475,6 +497,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointConsumerBuilder resourceOptions(
@@ -489,6 +512,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointConsumerBuilder resourceOptions(
@@ -540,6 +564,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointProducerBuilder atomix(Object atomix) {
@@ -552,6 +577,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option will be converted to a <code>io.atomix.AtomixClient</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointProducerBuilder atomix(String atomix) {
@@ -563,6 +589,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointProducerBuilder configurationUri(
@@ -604,6 +631,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointProducerBuilder key(Object key) {
@@ -616,6 +644,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointProducerBuilder key(String key) {
@@ -628,6 +657,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointProducerBuilder nodes(List<Object> nodes) {
@@ -640,6 +670,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointProducerBuilder nodes(String nodes) {
@@ -651,6 +682,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointProducerBuilder resultHeader(
@@ -676,6 +708,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointProducerBuilder ttl(long ttl) {
@@ -687,6 +720,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointProducerBuilder ttl(String ttl) {
@@ -779,6 +813,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointProducerBuilder defaultResourceConfig(
@@ -792,6 +827,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointProducerBuilder defaultResourceConfig(
@@ -804,6 +840,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointProducerBuilder defaultResourceOptions(
@@ -817,6 +854,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointProducerBuilder defaultResourceOptions(
@@ -860,6 +898,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option is a: <code>io.atomix.resource.ReadConsistency</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointProducerBuilder readConsistency(
@@ -873,6 +912,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.atomix.resource.ReadConsistency</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointProducerBuilder readConsistency(
@@ -886,6 +926,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointProducerBuilder resourceConfigs(
@@ -900,6 +941,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointProducerBuilder resourceConfigs(
@@ -913,6 +955,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointProducerBuilder resourceOptions(
@@ -927,6 +970,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointProducerBuilder resourceOptions(
@@ -979,6 +1023,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointBuilder atomix(Object atomix) {
@@ -991,6 +1036,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option will be converted to a <code>io.atomix.AtomixClient</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointBuilder atomix(String atomix) {
@@ -1002,6 +1048,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointBuilder configurationUri(
@@ -1041,6 +1088,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointBuilder key(Object key) {
@@ -1053,6 +1101,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointBuilder key(String key) {
@@ -1065,6 +1114,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointBuilder nodes(List<Object> nodes) {
@@ -1077,6 +1127,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointBuilder nodes(String nodes) {
@@ -1088,6 +1139,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointBuilder resultHeader(String resultHeader) {
@@ -1112,6 +1164,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointBuilder ttl(long ttl) {
@@ -1123,6 +1176,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixMapEndpointBuilder ttl(String ttl) {
@@ -1174,6 +1228,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointBuilder defaultResourceConfig(
@@ -1187,6 +1242,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointBuilder defaultResourceConfig(
@@ -1199,6 +1255,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointBuilder defaultResourceOptions(
@@ -1212,6 +1269,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointBuilder defaultResourceOptions(
@@ -1253,6 +1311,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option is a: <code>io.atomix.resource.ReadConsistency</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointBuilder readConsistency(
@@ -1266,6 +1325,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.atomix.resource.ReadConsistency</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointBuilder readConsistency(
@@ -1279,6 +1339,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointBuilder resourceConfigs(
@@ -1293,6 +1354,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointBuilder resourceConfigs(
@@ -1306,6 +1368,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointBuilder resourceOptions(
@@ -1320,6 +1383,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointBuilder resourceOptions(

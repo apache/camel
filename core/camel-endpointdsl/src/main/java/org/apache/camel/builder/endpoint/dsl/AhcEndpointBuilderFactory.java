@@ -127,6 +127,7 @@ public interface AhcEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default AhcEndpointBuilder cookieHandler(Object cookieHandler) {
@@ -139,6 +140,7 @@ public interface AhcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default AhcEndpointBuilder cookieHandler(String cookieHandler) {
@@ -152,6 +154,7 @@ public interface AhcEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default AhcEndpointBuilder headerFilterStrategy(
@@ -166,6 +169,7 @@ public interface AhcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default AhcEndpointBuilder headerFilterStrategy(
@@ -294,6 +298,7 @@ public interface AhcEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default AhcEndpointBuilder sslContextParameters(
@@ -312,6 +317,7 @@ public interface AhcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default AhcEndpointBuilder sslContextParameters(
@@ -365,6 +371,7 @@ public interface AhcEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder binding(Object binding) {
@@ -378,6 +385,7 @@ public interface AhcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder binding(String binding) {
@@ -391,6 +399,7 @@ public interface AhcEndpointBuilderFactory {
          * The option is a:
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder clientConfig(Object clientConfig) {
@@ -404,6 +413,7 @@ public interface AhcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder clientConfig(String clientConfig) {
@@ -417,6 +427,7 @@ public interface AhcEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder clientConfigOptions(
@@ -432,6 +443,7 @@ public interface AhcEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder clientConfigOptions(
@@ -472,6 +484,7 @@ public interface AhcEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: security
          */
         default AdvancedAhcEndpointBuilder clientConfigRealmOptions(
@@ -487,6 +500,7 @@ public interface AhcEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: security
          */
         default AdvancedAhcEndpointBuilder clientConfigRealmOptions(

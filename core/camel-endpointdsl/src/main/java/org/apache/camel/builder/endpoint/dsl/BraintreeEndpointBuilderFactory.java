@@ -53,6 +53,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BraintreeEndpointConsumerBuilder environment(String environment) {
@@ -64,6 +65,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BraintreeEndpointConsumerBuilder inBody(String inBody) {
@@ -75,6 +77,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BraintreeEndpointConsumerBuilder merchantId(String merchantId) {
@@ -86,6 +89,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BraintreeEndpointConsumerBuilder privateKey(String privateKey) {
@@ -97,6 +101,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BraintreeEndpointConsumerBuilder publicKey(String publicKey) {
@@ -175,6 +180,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder backoffErrorThreshold(
@@ -188,6 +194,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder backoffErrorThreshold(
@@ -201,6 +208,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder backoffIdleThreshold(
@@ -214,6 +222,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder backoffIdleThreshold(
@@ -231,6 +240,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder backoffMultiplier(
@@ -248,6 +258,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder backoffMultiplier(
@@ -403,6 +414,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder scheduledExecutorService(
@@ -418,6 +430,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder scheduledExecutorService(
@@ -445,6 +458,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder schedulerProperties(
@@ -460,6 +474,7 @@ public interface BraintreeEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder schedulerProperties(
@@ -551,6 +566,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default BraintreeEndpointConsumerBuilder proxyHost(String proxyHost) {
@@ -562,6 +578,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default BraintreeEndpointConsumerBuilder proxyPort(Integer proxyPort) {
@@ -574,6 +591,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default BraintreeEndpointConsumerBuilder proxyPort(String proxyPort) {
@@ -600,6 +618,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBraintreeEndpointConsumerBuilder exceptionHandler(
@@ -616,6 +635,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBraintreeEndpointConsumerBuilder exceptionHandler(
@@ -628,6 +648,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBraintreeEndpointConsumerBuilder exchangePattern(
@@ -641,6 +662,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBraintreeEndpointConsumerBuilder exchangePattern(
@@ -657,6 +679,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBraintreeEndpointConsumerBuilder pollStrategy(
@@ -673,6 +696,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBraintreeEndpointConsumerBuilder pollStrategy(
@@ -687,6 +711,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedBraintreeEndpointConsumerBuilder accessToken(
@@ -727,6 +752,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedBraintreeEndpointConsumerBuilder httpReadTimeout(
@@ -740,6 +766,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedBraintreeEndpointConsumerBuilder httpReadTimeout(
@@ -780,6 +807,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.logging.Level</code> type.
          * 
+         * Default:
          * Group: logging
          */
         default AdvancedBraintreeEndpointConsumerBuilder httpLogLevel(
@@ -793,6 +821,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.logging.Level</code> type.
          * 
+         * Default:
          * Group: logging
          */
         default AdvancedBraintreeEndpointConsumerBuilder httpLogLevel(
@@ -848,6 +877,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BraintreeEndpointProducerBuilder environment(String environment) {
@@ -859,6 +889,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BraintreeEndpointProducerBuilder inBody(String inBody) {
@@ -870,6 +901,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BraintreeEndpointProducerBuilder merchantId(String merchantId) {
@@ -881,6 +913,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BraintreeEndpointProducerBuilder privateKey(String privateKey) {
@@ -892,6 +925,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BraintreeEndpointProducerBuilder publicKey(String publicKey) {
@@ -945,6 +979,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default BraintreeEndpointProducerBuilder proxyHost(String proxyHost) {
@@ -956,6 +991,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default BraintreeEndpointProducerBuilder proxyPort(Integer proxyPort) {
@@ -968,6 +1004,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default BraintreeEndpointProducerBuilder proxyPort(String proxyPort) {
@@ -992,6 +1029,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedBraintreeEndpointProducerBuilder accessToken(
@@ -1032,6 +1070,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedBraintreeEndpointProducerBuilder httpReadTimeout(
@@ -1045,6 +1084,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedBraintreeEndpointProducerBuilder httpReadTimeout(
@@ -1085,6 +1125,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.logging.Level</code> type.
          * 
+         * Default:
          * Group: logging
          */
         default AdvancedBraintreeEndpointProducerBuilder httpLogLevel(
@@ -1098,6 +1139,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.logging.Level</code> type.
          * 
+         * Default:
          * Group: logging
          */
         default AdvancedBraintreeEndpointProducerBuilder httpLogLevel(
@@ -1154,6 +1196,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BraintreeEndpointBuilder environment(String environment) {
@@ -1165,6 +1208,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BraintreeEndpointBuilder inBody(String inBody) {
@@ -1176,6 +1220,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BraintreeEndpointBuilder merchantId(String merchantId) {
@@ -1187,6 +1232,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BraintreeEndpointBuilder privateKey(String privateKey) {
@@ -1198,6 +1244,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BraintreeEndpointBuilder publicKey(String publicKey) {
@@ -1209,6 +1256,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default BraintreeEndpointBuilder proxyHost(String proxyHost) {
@@ -1220,6 +1268,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default BraintreeEndpointBuilder proxyPort(Integer proxyPort) {
@@ -1232,6 +1281,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default BraintreeEndpointBuilder proxyPort(String proxyPort) {
@@ -1257,6 +1307,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedBraintreeEndpointBuilder accessToken(String accessToken) {
@@ -1296,6 +1347,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedBraintreeEndpointBuilder httpReadTimeout(
@@ -1309,6 +1361,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedBraintreeEndpointBuilder httpReadTimeout(
@@ -1347,6 +1400,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.logging.Level</code> type.
          * 
+         * Default:
          * Group: logging
          */
         default AdvancedBraintreeEndpointBuilder httpLogLevel(Level httpLogLevel) {
@@ -1359,6 +1413,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.logging.Level</code> type.
          * 
+         * Default:
          * Group: logging
          */
         default AdvancedBraintreeEndpointBuilder httpLogLevel(

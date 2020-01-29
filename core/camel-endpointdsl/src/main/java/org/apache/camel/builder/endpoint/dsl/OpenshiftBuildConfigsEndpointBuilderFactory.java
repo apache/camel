@@ -45,6 +45,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default OpenshiftBuildConfigsEndpointBuilder apiVersion(
@@ -57,6 +58,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default OpenshiftBuildConfigsEndpointBuilder dnsDomain(String dnsDomain) {
@@ -69,6 +71,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default OpenshiftBuildConfigsEndpointBuilder kubernetesClient(
@@ -82,6 +85,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default OpenshiftBuildConfigsEndpointBuilder kubernetesClient(
@@ -136,6 +140,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default OpenshiftBuildConfigsEndpointBuilder operation(String operation) {
@@ -147,6 +152,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default OpenshiftBuildConfigsEndpointBuilder portName(String portName) {
@@ -171,6 +177,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default OpenshiftBuildConfigsEndpointBuilder caCertData(
@@ -183,6 +190,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default OpenshiftBuildConfigsEndpointBuilder caCertFile(
@@ -195,6 +203,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default OpenshiftBuildConfigsEndpointBuilder clientCertData(
@@ -207,6 +216,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default OpenshiftBuildConfigsEndpointBuilder clientCertFile(
@@ -219,6 +229,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default OpenshiftBuildConfigsEndpointBuilder clientKeyAlgo(
@@ -231,6 +242,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default OpenshiftBuildConfigsEndpointBuilder clientKeyData(
@@ -243,6 +255,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default OpenshiftBuildConfigsEndpointBuilder clientKeyFile(
@@ -255,6 +268,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default OpenshiftBuildConfigsEndpointBuilder clientKeyPassphrase(
@@ -267,6 +281,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default OpenshiftBuildConfigsEndpointBuilder oauthToken(
@@ -279,6 +294,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default OpenshiftBuildConfigsEndpointBuilder password(String password) {
@@ -290,6 +306,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default:
          * Group: security
          */
         default OpenshiftBuildConfigsEndpointBuilder trustCerts(
@@ -303,6 +320,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default:
          * Group: security
          */
         default OpenshiftBuildConfigsEndpointBuilder trustCerts(
@@ -315,6 +333,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default OpenshiftBuildConfigsEndpointBuilder username(String username) {
@@ -366,6 +385,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedOpenshiftBuildConfigsEndpointBuilder connectionTimeout(
@@ -380,6 +400,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedOpenshiftBuildConfigsEndpointBuilder connectionTimeout(

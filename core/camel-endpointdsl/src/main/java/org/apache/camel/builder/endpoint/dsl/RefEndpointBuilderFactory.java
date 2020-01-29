@@ -100,6 +100,7 @@ public interface RefEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRefEndpointConsumerBuilder exceptionHandler(
@@ -116,6 +117,7 @@ public interface RefEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRefEndpointConsumerBuilder exceptionHandler(
@@ -128,6 +130,7 @@ public interface RefEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRefEndpointConsumerBuilder exchangePattern(
@@ -141,6 +144,7 @@ public interface RefEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRefEndpointConsumerBuilder exchangePattern(

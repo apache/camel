@@ -105,6 +105,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JettyHttpEndpointBuilder headerFilterStrategy(
@@ -119,6 +120,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JettyHttpEndpointBuilder headerFilterStrategy(
@@ -339,6 +341,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JettyHttpEndpointBuilder httpMethodRestrict(
@@ -405,6 +408,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JettyHttpEndpointBuilder responseBufferSize(
@@ -418,6 +422,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: consumer
          */
         default JettyHttpEndpointBuilder responseBufferSize(
@@ -560,6 +565,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JettyHttpEndpointBuilder useContinuation(boolean useContinuation) {
@@ -571,6 +577,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default JettyHttpEndpointBuilder useContinuation(String useContinuation) {
@@ -583,6 +590,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default JettyHttpEndpointBuilder sslContextParameters(
@@ -596,6 +604,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default JettyHttpEndpointBuilder sslContextParameters(
@@ -621,6 +630,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
+         * Default:
          * Group: common (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder httpBinding(Object httpBinding) {
@@ -634,6 +644,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
+         * Default:
          * Group: common (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder httpBinding(String httpBinding) {
@@ -679,6 +690,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder exceptionHandler(
@@ -695,6 +707,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder exceptionHandler(
@@ -707,6 +720,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder exchangePattern(
@@ -720,6 +734,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder exchangePattern(
@@ -734,6 +749,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder filterInitParameters(
@@ -749,6 +765,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder filterInitParameters(
@@ -763,6 +780,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;javax.servlet.Filter&gt;</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder filters(List<Object> filters) {
@@ -776,6 +794,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;javax.servlet.Filter&gt;</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder filters(String filters) {
@@ -794,6 +813,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * <code>java.util.List&lt;org.eclipse.jetty.server.Handler&gt;</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder handlers(List<Object> handlers) {
@@ -812,6 +832,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * <code>java.util.List&lt;org.eclipse.jetty.server.Handler&gt;</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder handlers(String handlers) {
@@ -824,6 +845,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.servlet.Filter</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder multipartFilter(
@@ -838,6 +860,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * The option will be converted to a <code>javax.servlet.Filter</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder multipartFilter(

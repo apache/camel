@@ -90,6 +90,7 @@ public interface MsvEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MsvEndpointBuilder headerName(String headerName) {
@@ -183,6 +184,7 @@ public interface MsvEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.processor.validation.ValidatorErrorHandler</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder errorHandler(Object errorHandler) {
@@ -197,6 +199,7 @@ public interface MsvEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.processor.validation.ValidatorErrorHandler</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder errorHandler(String errorHandler) {
@@ -209,6 +212,7 @@ public interface MsvEndpointBuilderFactory {
          * 
          * The option is a: <code>org.w3c.dom.ls.LSResourceResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder resourceResolver(
@@ -223,6 +227,7 @@ public interface MsvEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.w3c.dom.ls.LSResourceResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder resourceResolver(
@@ -239,6 +244,7 @@ public interface MsvEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder resourceResolverFactory(
@@ -255,6 +261,7 @@ public interface MsvEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder resourceResolverFactory(
@@ -268,6 +275,7 @@ public interface MsvEndpointBuilderFactory {
          * The option is a: <code>javax.xml.validation.SchemaFactory</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder schemaFactory(Object schemaFactory) {
@@ -280,6 +288,7 @@ public interface MsvEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.xml.validation.SchemaFactory</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder schemaFactory(String schemaFactory) {

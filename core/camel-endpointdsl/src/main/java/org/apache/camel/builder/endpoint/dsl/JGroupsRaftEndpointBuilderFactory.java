@@ -130,6 +130,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder exceptionHandler(
@@ -146,6 +147,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder exceptionHandler(
@@ -158,6 +160,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder exchangePattern(
@@ -171,6 +174,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder exchangePattern(

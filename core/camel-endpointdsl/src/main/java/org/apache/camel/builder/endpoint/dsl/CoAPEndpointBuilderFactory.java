@@ -56,6 +56,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointConsumerBuilder alias(String alias) {
@@ -69,6 +70,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointConsumerBuilder cipherSuites(String cipherSuites) {
@@ -84,6 +86,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointConsumerBuilder clientAuthentication(
@@ -96,6 +99,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointConsumerBuilder privateKey(PrivateKey privateKey) {
@@ -108,6 +112,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.PrivateKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointConsumerBuilder privateKey(String privateKey) {
@@ -121,6 +126,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>org.eclipse.californium.scandium.dtls.pskstore.PskStore</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointConsumerBuilder pskStore(Object pskStore) {
@@ -134,6 +140,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>org.eclipse.californium.scandium.dtls.pskstore.PskStore</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointConsumerBuilder pskStore(String pskStore) {
@@ -145,6 +152,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.PublicKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointConsumerBuilder publicKey(PublicKey publicKey) {
@@ -157,6 +165,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.PublicKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointConsumerBuilder publicKey(String publicKey) {
@@ -201,6 +210,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointConsumerBuilder sslContextParameters(
@@ -216,6 +226,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointConsumerBuilder sslContextParameters(
@@ -229,6 +240,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a:
          * <code>org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointConsumerBuilder trustedRpkStore(
@@ -242,6 +254,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointConsumerBuilder trustedRpkStore(
@@ -293,6 +306,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default CoAPEndpointConsumerBuilder coapMethodRestrict(
@@ -320,6 +334,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCoAPEndpointConsumerBuilder exceptionHandler(
@@ -336,6 +351,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCoAPEndpointConsumerBuilder exceptionHandler(
@@ -348,6 +364,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCoAPEndpointConsumerBuilder exchangePattern(
@@ -361,6 +378,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCoAPEndpointConsumerBuilder exchangePattern(
@@ -447,6 +465,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointProducerBuilder alias(String alias) {
@@ -460,6 +479,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointProducerBuilder cipherSuites(String cipherSuites) {
@@ -475,6 +495,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointProducerBuilder clientAuthentication(
@@ -487,6 +508,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointProducerBuilder privateKey(PrivateKey privateKey) {
@@ -499,6 +521,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.PrivateKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointProducerBuilder privateKey(String privateKey) {
@@ -512,6 +535,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>org.eclipse.californium.scandium.dtls.pskstore.PskStore</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointProducerBuilder pskStore(Object pskStore) {
@@ -525,6 +549,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>org.eclipse.californium.scandium.dtls.pskstore.PskStore</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointProducerBuilder pskStore(String pskStore) {
@@ -536,6 +561,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.PublicKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointProducerBuilder publicKey(PublicKey publicKey) {
@@ -548,6 +574,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.PublicKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointProducerBuilder publicKey(String publicKey) {
@@ -592,6 +619,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointProducerBuilder sslContextParameters(
@@ -607,6 +635,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointProducerBuilder sslContextParameters(
@@ -620,6 +649,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a:
          * <code>org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointProducerBuilder trustedRpkStore(
@@ -633,6 +663,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointProducerBuilder trustedRpkStore(
@@ -773,6 +804,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointBuilder alias(String alias) {
@@ -786,6 +818,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointBuilder cipherSuites(String cipherSuites) {
@@ -801,6 +834,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointBuilder clientAuthentication(
@@ -813,6 +847,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointBuilder privateKey(PrivateKey privateKey) {
@@ -825,6 +860,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.PrivateKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointBuilder privateKey(String privateKey) {
@@ -838,6 +874,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>org.eclipse.californium.scandium.dtls.pskstore.PskStore</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointBuilder pskStore(Object pskStore) {
@@ -851,6 +888,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>org.eclipse.californium.scandium.dtls.pskstore.PskStore</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointBuilder pskStore(String pskStore) {
@@ -862,6 +900,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.PublicKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointBuilder publicKey(PublicKey publicKey) {
@@ -874,6 +913,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.PublicKey</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointBuilder publicKey(String publicKey) {
@@ -918,6 +958,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointBuilder sslContextParameters(
@@ -933,6 +974,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointBuilder sslContextParameters(
@@ -946,6 +988,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a:
          * <code>org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointBuilder trustedRpkStore(Object trustedRpkStore) {
@@ -958,6 +1001,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CoAPEndpointBuilder trustedRpkStore(String trustedRpkStore) {

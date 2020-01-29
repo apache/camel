@@ -269,6 +269,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default MllpEndpointConsumerBuilder charsetName(String charsetName) {
@@ -295,6 +296,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMllpEndpointConsumerBuilder exceptionHandler(
@@ -311,6 +313,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMllpEndpointConsumerBuilder exceptionHandler(
@@ -603,12 +606,40 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the SO_SNDBUF option to the specified value (in bytes).
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 8192
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
+                Integer sendBufferSize) {
+            doSetProperty("sendBufferSize", sendBufferSize);
+            return this;
+        }
+        /**
+         * Sets the SO_SNDBUF option to the specified value (in bytes).
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default: 8192
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
+                String sendBufferSize) {
+            doSetProperty("sendBufferSize", sendBufferSize);
+            return this;
+        }
+        /**
          * The approximate idle time allowed before the Client TCP Connection
          * will be reset. A null value or a value less than or equal to zero
          * will disable the idle timeout.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: timeout
          */
         default AdvancedMllpEndpointConsumerBuilder idleTimeout(
@@ -624,6 +655,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: timeout
          */
         default AdvancedMllpEndpointConsumerBuilder idleTimeout(
@@ -637,6 +669,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: timeout
          */
         @Deprecated
@@ -652,6 +685,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: timeout
          */
         @Deprecated
@@ -685,33 +719,6 @@ public interface MllpEndpointBuilderFactory {
         default AdvancedMllpEndpointConsumerBuilder receiveBufferSize(
                 String receiveBufferSize) {
             doSetProperty("receiveBufferSize", receiveBufferSize);
-            return this;
-        }
-        /**
-         * Sets the SO_SNDBUF option to the specified value (in bytes).
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Default: 8192
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
-                Integer sendBufferSize) {
-            doSetProperty("sendBufferSize", sendBufferSize);
-            return this;
-        }
-        /**
-         * Sets the SO_SNDBUF option to the specified value (in bytes).
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Default: 8192
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
-                String sendBufferSize) {
-            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -1013,6 +1020,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default MllpEndpointProducerBuilder charsetName(String charsetName) {
@@ -1087,63 +1095,6 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Timeout (in milliseconds) for establishing for a TCP connection TCP
-         * Client only.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 30000
-         * Group: timeout
-         */
-        default AdvancedMllpEndpointProducerBuilder connectTimeout(
-                int connectTimeout) {
-            doSetProperty("connectTimeout", connectTimeout);
-            return this;
-        }
-        /**
-         * Timeout (in milliseconds) for establishing for a TCP connection TCP
-         * Client only.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 30000
-         * Group: timeout
-         */
-        default AdvancedMllpEndpointProducerBuilder connectTimeout(
-                String connectTimeout) {
-            doSetProperty("connectTimeout", connectTimeout);
-            return this;
-        }
-        /**
-         * The approximate idle time allowed before the Client TCP Connection
-         * will be reset. A null value or a value less than or equal to zero
-         * will disable the idle timeout.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: timeout
-         */
-        default AdvancedMllpEndpointProducerBuilder idleTimeout(
-                Integer idleTimeout) {
-            doSetProperty("idleTimeout", idleTimeout);
-            return this;
-        }
-        /**
-         * The approximate idle time allowed before the Client TCP Connection
-         * will be reset. A null value or a value less than or equal to zero
-         * will disable the idle timeout.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: timeout
-         */
-        default AdvancedMllpEndpointProducerBuilder idleTimeout(
-                String idleTimeout) {
-            doSetProperty("idleTimeout", idleTimeout);
-            return this;
-        }
-        /**
          * Enable/disable the SO_KEEPALIVE socket option.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
@@ -1166,33 +1117,6 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointProducerBuilder keepAlive(String keepAlive) {
             doSetProperty("keepAlive", keepAlive);
-            return this;
-        }
-        /**
-         * Sets the SO_RCVBUF option to the specified value (in bytes).
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Default: 8192
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointProducerBuilder receiveBufferSize(
-                Integer receiveBufferSize) {
-            doSetProperty("receiveBufferSize", receiveBufferSize);
-            return this;
-        }
-        /**
-         * Sets the SO_RCVBUF option to the specified value (in bytes).
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Default: 8192
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointProducerBuilder receiveBufferSize(
-                String receiveBufferSize) {
-            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -1246,6 +1170,92 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointProducerBuilder tcpNoDelay(String tcpNoDelay) {
             doSetProperty("tcpNoDelay", tcpNoDelay);
+            return this;
+        }
+        /**
+         * Timeout (in milliseconds) for establishing for a TCP connection TCP
+         * Client only.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 30000
+         * Group: timeout
+         */
+        default AdvancedMllpEndpointProducerBuilder connectTimeout(
+                int connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * Timeout (in milliseconds) for establishing for a TCP connection TCP
+         * Client only.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 30000
+         * Group: timeout
+         */
+        default AdvancedMllpEndpointProducerBuilder connectTimeout(
+                String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * The approximate idle time allowed before the Client TCP Connection
+         * will be reset. A null value or a value less than or equal to zero
+         * will disable the idle timeout.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default:
+         * Group: timeout
+         */
+        default AdvancedMllpEndpointProducerBuilder idleTimeout(
+                Integer idleTimeout) {
+            doSetProperty("idleTimeout", idleTimeout);
+            return this;
+        }
+        /**
+         * The approximate idle time allowed before the Client TCP Connection
+         * will be reset. A null value or a value less than or equal to zero
+         * will disable the idle timeout.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default:
+         * Group: timeout
+         */
+        default AdvancedMllpEndpointProducerBuilder idleTimeout(
+                String idleTimeout) {
+            doSetProperty("idleTimeout", idleTimeout);
+            return this;
+        }
+        /**
+         * Sets the SO_RCVBUF option to the specified value (in bytes).
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 8192
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointProducerBuilder receiveBufferSize(
+                Integer receiveBufferSize) {
+            doSetProperty("receiveBufferSize", receiveBufferSize);
+            return this;
+        }
+        /**
+         * Sets the SO_RCVBUF option to the specified value (in bytes).
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default: 8192
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointProducerBuilder receiveBufferSize(
+                String receiveBufferSize) {
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -1502,6 +1512,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default MllpEndpointBuilder charsetName(String charsetName) {
@@ -1575,12 +1586,39 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the SO_SNDBUF option to the specified value (in bytes).
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 8192
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointBuilder sendBufferSize(
+                Integer sendBufferSize) {
+            doSetProperty("sendBufferSize", sendBufferSize);
+            return this;
+        }
+        /**
+         * Sets the SO_SNDBUF option to the specified value (in bytes).
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default: 8192
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointBuilder sendBufferSize(String sendBufferSize) {
+            doSetProperty("sendBufferSize", sendBufferSize);
+            return this;
+        }
+        /**
          * The approximate idle time allowed before the Client TCP Connection
          * will be reset. A null value or a value less than or equal to zero
          * will disable the idle timeout.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: timeout
          */
         default AdvancedMllpEndpointBuilder idleTimeout(Integer idleTimeout) {
@@ -1595,6 +1633,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: timeout
          */
         default AdvancedMllpEndpointBuilder idleTimeout(String idleTimeout) {
@@ -1626,32 +1665,6 @@ public interface MllpEndpointBuilderFactory {
         default AdvancedMllpEndpointBuilder receiveBufferSize(
                 String receiveBufferSize) {
             doSetProperty("receiveBufferSize", receiveBufferSize);
-            return this;
-        }
-        /**
-         * Sets the SO_SNDBUF option to the specified value (in bytes).
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Default: 8192
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointBuilder sendBufferSize(
-                Integer sendBufferSize) {
-            doSetProperty("sendBufferSize", sendBufferSize);
-            return this;
-        }
-        /**
-         * Sets the SO_SNDBUF option to the specified value (in bytes).
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Default: 8192
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointBuilder sendBufferSize(String sendBufferSize) {
-            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**

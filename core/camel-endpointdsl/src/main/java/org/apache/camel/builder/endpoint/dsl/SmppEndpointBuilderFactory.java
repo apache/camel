@@ -174,6 +174,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SmppEndpointConsumerBuilder systemType(String systemType) {
@@ -188,6 +189,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SmppEndpointConsumerBuilder addressRange(String addressRange) {
@@ -239,6 +241,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>byte</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default SmppEndpointConsumerBuilder alphabet(byte alphabet) {
@@ -252,6 +255,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default SmppEndpointConsumerBuilder alphabet(String alphabet) {
@@ -266,6 +270,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>byte</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default SmppEndpointConsumerBuilder dataCoding(byte dataCoding) {
@@ -280,6 +285,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default SmppEndpointConsumerBuilder dataCoding(String dataCoding) {
@@ -305,6 +311,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SmppEndpointConsumerBuilder httpProxyHost(String httpProxyHost) {
@@ -317,6 +324,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SmppEndpointConsumerBuilder httpProxyPassword(
@@ -357,6 +365,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SmppEndpointConsumerBuilder httpProxyUsername(
@@ -371,6 +380,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SmppEndpointConsumerBuilder proxyHeaders(
@@ -386,6 +396,7 @@ public interface SmppEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default SmppEndpointConsumerBuilder proxyHeaders(String proxyHeaders) {
@@ -397,6 +408,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SmppEndpointConsumerBuilder password(String password) {
@@ -459,6 +471,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSmppEndpointConsumerBuilder exceptionHandler(
@@ -475,6 +488,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSmppEndpointConsumerBuilder exceptionHandler(
@@ -487,6 +501,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSmppEndpointConsumerBuilder exchangePattern(
@@ -500,6 +515,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSmppEndpointConsumerBuilder exchangePattern(
@@ -573,6 +589,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a: <code>org.jsmpp.session.SessionStateListener</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSmppEndpointConsumerBuilder sessionStateListener(
@@ -587,6 +604,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.jsmpp.session.SessionStateListener</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSmppEndpointConsumerBuilder sessionStateListener(
@@ -798,6 +816,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SmppEndpointProducerBuilder systemType(String systemType) {
@@ -828,6 +847,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>byte</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder destAddrNpi(byte destAddrNpi) {
@@ -844,6 +864,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder destAddrNpi(String destAddrNpi) {
@@ -859,6 +880,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>byte</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder destAddrTon(byte destAddrTon) {
@@ -874,6 +896,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder destAddrTon(String destAddrTon) {
@@ -965,6 +988,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>byte</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder numberingPlanIndicator(
@@ -981,6 +1005,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder numberingPlanIndicator(
@@ -996,6 +1021,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>byte</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder priorityFlag(byte priorityFlag) {
@@ -1010,6 +1036,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder priorityFlag(String priorityFlag) {
@@ -1021,6 +1048,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>byte</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder protocolId(byte protocolId) {
@@ -1032,6 +1060,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder protocolId(String protocolId) {
@@ -1048,6 +1077,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>byte</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder registeredDelivery(
@@ -1065,6 +1095,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder registeredDelivery(
@@ -1082,6 +1113,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>byte</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder replaceIfPresentFlag(
@@ -1099,6 +1131,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder replaceIfPresentFlag(
@@ -1116,6 +1149,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder serviceType(String serviceType) {
@@ -1144,6 +1178,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>byte</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder sourceAddrNpi(byte sourceAddrNpi) {
@@ -1159,6 +1194,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder sourceAddrNpi(String sourceAddrNpi) {
@@ -1173,6 +1209,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>byte</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder sourceAddrTon(byte sourceAddrTon) {
@@ -1187,6 +1224,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder sourceAddrTon(String sourceAddrTon) {
@@ -1200,6 +1238,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>byte</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder typeOfNumber(byte typeOfNumber) {
@@ -1213,6 +1252,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SmppEndpointProducerBuilder typeOfNumber(String typeOfNumber) {
@@ -1226,6 +1266,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>byte</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default SmppEndpointProducerBuilder alphabet(byte alphabet) {
@@ -1239,6 +1280,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default SmppEndpointProducerBuilder alphabet(String alphabet) {
@@ -1253,6 +1295,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>byte</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default SmppEndpointProducerBuilder dataCoding(byte dataCoding) {
@@ -1267,6 +1310,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default SmppEndpointProducerBuilder dataCoding(String dataCoding) {
@@ -1292,6 +1336,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SmppEndpointProducerBuilder httpProxyHost(String httpProxyHost) {
@@ -1304,6 +1349,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SmppEndpointProducerBuilder httpProxyPassword(
@@ -1344,6 +1390,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SmppEndpointProducerBuilder httpProxyUsername(
@@ -1358,6 +1405,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SmppEndpointProducerBuilder proxyHeaders(
@@ -1373,6 +1421,7 @@ public interface SmppEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default SmppEndpointProducerBuilder proxyHeaders(String proxyHeaders) {
@@ -1384,6 +1433,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SmppEndpointProducerBuilder password(String password) {
@@ -1503,6 +1553,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a: <code>org.jsmpp.session.SessionStateListener</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSmppEndpointProducerBuilder sessionStateListener(
@@ -1517,6 +1568,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.jsmpp.session.SessionStateListener</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSmppEndpointProducerBuilder sessionStateListener(
@@ -1728,6 +1780,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SmppEndpointBuilder systemType(String systemType) {
@@ -1741,6 +1794,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>byte</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default SmppEndpointBuilder alphabet(byte alphabet) {
@@ -1754,6 +1808,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default SmppEndpointBuilder alphabet(String alphabet) {
@@ -1768,6 +1823,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>byte</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default SmppEndpointBuilder dataCoding(byte dataCoding) {
@@ -1782,6 +1838,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte</code> type.
          * 
+         * Default:
          * Group: codec
          */
         default SmppEndpointBuilder dataCoding(String dataCoding) {
@@ -1807,6 +1864,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SmppEndpointBuilder httpProxyHost(String httpProxyHost) {
@@ -1819,6 +1877,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SmppEndpointBuilder httpProxyPassword(String httpProxyPassword) {
@@ -1858,6 +1917,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SmppEndpointBuilder httpProxyUsername(String httpProxyUsername) {
@@ -1871,6 +1931,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default SmppEndpointBuilder proxyHeaders(
@@ -1886,6 +1947,7 @@ public interface SmppEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default SmppEndpointBuilder proxyHeaders(String proxyHeaders) {
@@ -1897,6 +1959,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SmppEndpointBuilder password(String password) {
@@ -2017,6 +2080,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a: <code>org.jsmpp.session.SessionStateListener</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSmppEndpointBuilder sessionStateListener(
@@ -2031,6 +2095,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.jsmpp.session.SessionStateListener</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSmppEndpointBuilder sessionStateListener(

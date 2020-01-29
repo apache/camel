@@ -67,6 +67,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sql.DataSource</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SqlStoredEndpointBuilder dataSource(Object dataSource) {
@@ -79,6 +80,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * The option will be converted to a <code>javax.sql.DataSource</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default SqlStoredEndpointBuilder dataSource(String dataSource) {
@@ -187,6 +189,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SqlStoredEndpointBuilder outputHeader(String outputHeader) {

@@ -52,6 +52,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * type.
          * 
          * Required: true
+         * Default:
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder aggregationStrategy(
@@ -67,6 +68,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * <code>org.apache.camel.AggregationStrategy</code> type.
          * 
          * Required: true
+         * Default:
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder aggregationStrategy(
@@ -182,6 +184,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Predicate</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder completionPredicate(
@@ -200,6 +203,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Predicate</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder completionPredicate(
@@ -460,6 +464,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSjmsBatchEndpointBuilder exceptionHandler(
@@ -476,6 +481,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSjmsBatchEndpointBuilder exceptionHandler(
@@ -488,6 +494,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSjmsBatchEndpointBuilder exchangePattern(
@@ -501,6 +508,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSjmsBatchEndpointBuilder exchangePattern(
@@ -587,6 +595,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsBatchEndpointBuilder headerFilterStrategy(
@@ -601,6 +610,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsBatchEndpointBuilder headerFilterStrategy(
@@ -623,6 +633,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsBatchEndpointBuilder jmsKeyFormatStrategy(
@@ -645,6 +656,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsBatchEndpointBuilder jmsKeyFormatStrategy(
@@ -700,6 +712,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsBatchEndpointBuilder messageCreatedStrategy(
@@ -715,6 +728,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsBatchEndpointBuilder messageCreatedStrategy(
@@ -787,6 +801,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsBatchEndpointBuilder timeoutCheckerExecutorService(
@@ -803,6 +818,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSjmsBatchEndpointBuilder timeoutCheckerExecutorService(

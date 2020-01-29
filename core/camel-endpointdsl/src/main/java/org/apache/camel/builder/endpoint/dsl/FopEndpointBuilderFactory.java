@@ -44,6 +44,7 @@ public interface FopEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.fop.apps.FopFactory</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default FopEndpointBuilder fopFactory(Object fopFactory) {
@@ -57,6 +58,7 @@ public interface FopEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.fop.apps.FopFactory</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default FopEndpointBuilder fopFactory(String fopFactory) {
@@ -109,6 +111,7 @@ public interface FopEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default FopEndpointBuilder userConfigURL(String userConfigURL) {

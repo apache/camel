@@ -46,6 +46,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default RestSwaggerEndpointBuilder basePath(String basePath) {
@@ -61,6 +62,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default RestSwaggerEndpointBuilder componentName(String componentName) {
@@ -76,6 +78,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default RestSwaggerEndpointBuilder consumes(String consumes) {
@@ -93,6 +96,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default RestSwaggerEndpointBuilder host(String host) {
@@ -149,6 +153,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default RestSwaggerEndpointBuilder produces(String produces) {
@@ -161,6 +166,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default RestSwaggerEndpointBuilder sslContextParameters(
@@ -174,6 +180,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default RestSwaggerEndpointBuilder sslContextParameters(

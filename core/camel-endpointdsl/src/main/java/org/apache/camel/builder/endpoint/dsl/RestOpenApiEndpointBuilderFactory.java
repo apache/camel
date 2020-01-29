@@ -46,6 +46,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default RestOpenApiEndpointBuilder basePath(String basePath) {
@@ -61,6 +62,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default RestOpenApiEndpointBuilder componentName(String componentName) {
@@ -76,6 +78,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default RestOpenApiEndpointBuilder consumes(String consumes) {
@@ -93,6 +96,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default RestOpenApiEndpointBuilder host(String host) {
@@ -149,6 +153,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default RestOpenApiEndpointBuilder produces(String produces) {

@@ -47,6 +47,7 @@ public interface RedisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointConsumerBuilder channels(String channels) {
@@ -89,6 +90,7 @@ public interface RedisEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointConsumerBuilder connectionFactory(
@@ -102,6 +104,7 @@ public interface RedisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointConsumerBuilder connectionFactory(
@@ -115,6 +118,7 @@ public interface RedisEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.data.redis.core.RedisTemplate</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointConsumerBuilder redisTemplate(Object redisTemplate) {
@@ -127,6 +131,7 @@ public interface RedisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.data.redis.core.RedisTemplate</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointConsumerBuilder redisTemplate(String redisTemplate) {
@@ -139,6 +144,7 @@ public interface RedisEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.data.redis.serializer.RedisSerializer</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointConsumerBuilder serializer(Object serializer) {
@@ -151,6 +157,7 @@ public interface RedisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.data.redis.serializer.RedisSerializer</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointConsumerBuilder serializer(String serializer) {
@@ -215,6 +222,7 @@ public interface RedisEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRedisEndpointConsumerBuilder exceptionHandler(
@@ -231,6 +239,7 @@ public interface RedisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRedisEndpointConsumerBuilder exceptionHandler(
@@ -243,6 +252,7 @@ public interface RedisEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRedisEndpointConsumerBuilder exchangePattern(
@@ -256,6 +266,7 @@ public interface RedisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRedisEndpointConsumerBuilder exchangePattern(
@@ -270,6 +281,7 @@ public interface RedisEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.data.redis.listener.RedisMessageListenerContainer</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRedisEndpointConsumerBuilder listenerContainer(
@@ -284,6 +296,7 @@ public interface RedisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.data.redis.listener.RedisMessageListenerContainer</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRedisEndpointConsumerBuilder listenerContainer(
@@ -364,6 +377,7 @@ public interface RedisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointProducerBuilder channels(String channels) {
@@ -406,6 +420,7 @@ public interface RedisEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointProducerBuilder connectionFactory(
@@ -419,6 +434,7 @@ public interface RedisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointProducerBuilder connectionFactory(
@@ -432,6 +448,7 @@ public interface RedisEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.data.redis.core.RedisTemplate</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointProducerBuilder redisTemplate(Object redisTemplate) {
@@ -444,6 +461,7 @@ public interface RedisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.data.redis.core.RedisTemplate</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointProducerBuilder redisTemplate(String redisTemplate) {
@@ -456,6 +474,7 @@ public interface RedisEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.data.redis.serializer.RedisSerializer</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointProducerBuilder serializer(Object serializer) {
@@ -468,6 +487,7 @@ public interface RedisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.data.redis.serializer.RedisSerializer</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointProducerBuilder serializer(String serializer) {
@@ -601,6 +621,7 @@ public interface RedisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointBuilder channels(String channels) {
@@ -643,6 +664,7 @@ public interface RedisEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointBuilder connectionFactory(Object connectionFactory) {
@@ -655,6 +677,7 @@ public interface RedisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointBuilder connectionFactory(String connectionFactory) {
@@ -667,6 +690,7 @@ public interface RedisEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.data.redis.core.RedisTemplate</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointBuilder redisTemplate(Object redisTemplate) {
@@ -679,6 +703,7 @@ public interface RedisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.data.redis.core.RedisTemplate</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointBuilder redisTemplate(String redisTemplate) {
@@ -691,6 +716,7 @@ public interface RedisEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.data.redis.serializer.RedisSerializer</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointBuilder serializer(Object serializer) {
@@ -703,6 +729,7 @@ public interface RedisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.data.redis.serializer.RedisSerializer</code> type.
          * 
+         * Default:
          * Group: common
          */
         default RedisEndpointBuilder serializer(String serializer) {

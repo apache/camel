@@ -67,6 +67,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder alias(String alias) {
@@ -79,6 +80,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder certificateName(
@@ -96,6 +98,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.KeyStore</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder keystore(KeyStore keystore) {
@@ -113,6 +116,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option will be converted to a <code>java.security.KeyStore</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder keystore(String keystore) {
@@ -125,6 +129,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder keystoreName(String keystoreName) {
@@ -178,6 +183,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder privateKey(PrivateKey privateKey) {
@@ -190,6 +196,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.PrivateKey</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder privateKey(String privateKey) {
@@ -202,6 +209,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder privateKeyName(
@@ -215,6 +223,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder provider(String provider) {
@@ -226,6 +235,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder publicKeyName(
@@ -239,6 +249,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder secureRandomName(
@@ -252,6 +263,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder signatureHeaderName(
@@ -265,6 +277,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default DigitalSignatureEndpointBuilder password(String password) {
@@ -343,6 +356,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.cert.Certificate</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder certificate(
@@ -357,6 +371,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.cert.Certificate</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder certificate(
@@ -408,6 +423,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder keyStoreParameters(
@@ -427,6 +443,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder keyStoreParameters(
@@ -440,6 +457,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.PublicKey</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder publicKey(
@@ -454,6 +472,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.PublicKey</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder publicKey(
@@ -466,6 +485,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.SecureRandom</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder secureRandom(
@@ -479,6 +499,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.security.SecureRandom</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder secureRandom(

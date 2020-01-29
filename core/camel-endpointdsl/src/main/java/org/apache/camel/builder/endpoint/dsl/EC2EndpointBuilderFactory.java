@@ -42,6 +42,7 @@ public interface EC2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default EC2EndpointBuilder accessKey(String accessKey) {
@@ -54,6 +55,7 @@ public interface EC2EndpointBuilderFactory {
          * The option is a: <code>com.amazonaws.services.ec2.AmazonEC2</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default EC2EndpointBuilder amazonEc2Client(Object amazonEc2Client) {
@@ -66,6 +68,7 @@ public interface EC2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.ec2.AmazonEC2</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default EC2EndpointBuilder amazonEc2Client(String amazonEc2Client) {
@@ -122,6 +125,7 @@ public interface EC2EndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.ec2.EC2Operations</code> type.
          * 
          * Required: true
+         * Default:
          * Group: producer
          */
         default EC2EndpointBuilder operation(EC2Operations operation) {
@@ -138,6 +142,7 @@ public interface EC2EndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.ec2.EC2Operations</code> type.
          * 
          * Required: true
+         * Default:
          * Group: producer
          */
         default EC2EndpointBuilder operation(String operation) {
@@ -149,6 +154,7 @@ public interface EC2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default EC2EndpointBuilder proxyHost(String proxyHost) {
@@ -160,6 +166,7 @@ public interface EC2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default EC2EndpointBuilder proxyPort(Integer proxyPort) {
@@ -172,6 +179,7 @@ public interface EC2EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default EC2EndpointBuilder proxyPort(String proxyPort) {
@@ -211,6 +219,7 @@ public interface EC2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default EC2EndpointBuilder region(String region) {
@@ -222,6 +231,7 @@ public interface EC2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default EC2EndpointBuilder secretKey(String secretKey) {

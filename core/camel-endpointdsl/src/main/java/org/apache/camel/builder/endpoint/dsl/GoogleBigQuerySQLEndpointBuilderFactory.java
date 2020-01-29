@@ -46,6 +46,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default GoogleBigQuerySQLEndpointBuilder connectionFactory(
@@ -60,6 +61,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default GoogleBigQuerySQLEndpointBuilder connectionFactory(

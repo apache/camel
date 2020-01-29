@@ -45,6 +45,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default ChatScriptEndpointBuilder chatUserName(String chatUserName) {

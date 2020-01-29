@@ -77,6 +77,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfEndpointConsumerBuilder wrappedStyle(Boolean wrappedStyle) {
@@ -92,6 +93,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CxfEndpointConsumerBuilder wrappedStyle(String wrappedStyle) {
@@ -225,6 +227,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default CxfEndpointConsumerBuilder password(String password) {
@@ -237,6 +240,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default CxfEndpointConsumerBuilder username(String username) {
@@ -248,6 +252,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointConsumerBuilder bindingId(String bindingId) {
@@ -261,6 +266,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointConsumerBuilder portName(String portName) {
@@ -273,6 +279,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointConsumerBuilder publishedEndpointUrl(
@@ -287,6 +294,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointConsumerBuilder serviceClass(
@@ -301,6 +309,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointConsumerBuilder serviceClass(String serviceClass) {
@@ -313,6 +322,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointConsumerBuilder serviceName(String serviceName) {
@@ -325,6 +335,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointConsumerBuilder wsdlURL(String wsdlURL) {
@@ -351,6 +362,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCxfEndpointConsumerBuilder exceptionHandler(
@@ -367,6 +379,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCxfEndpointConsumerBuilder exceptionHandler(
@@ -379,6 +392,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCxfEndpointConsumerBuilder exchangePattern(
@@ -392,6 +406,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCxfEndpointConsumerBuilder exchangePattern(
@@ -407,6 +422,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder allowStreaming(
@@ -423,6 +439,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder allowStreaming(
@@ -463,6 +480,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.cxf.Bus</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder bus(Object bus) {
@@ -475,6 +493,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a <code>org.apache.cxf.Bus</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder bus(String bus) {
@@ -518,6 +537,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.cxf.CxfBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder cxfBinding(Object cxfBinding) {
@@ -531,6 +551,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.CxfBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder cxfBinding(String cxfBinding) {
@@ -547,6 +568,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.cxf.CxfConfigurer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder cxfConfigurer(
@@ -564,6 +586,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.CxfConfigurer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder cxfConfigurer(
@@ -602,6 +625,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder headerFilterStrategy(
@@ -616,6 +640,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder headerFilterStrategy(
@@ -689,6 +714,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder properties(
@@ -705,6 +731,7 @@ public interface CxfEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder properties(String properties) {
@@ -810,6 +837,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfEndpointProducerBuilder wrappedStyle(Boolean wrappedStyle) {
@@ -825,6 +853,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CxfEndpointProducerBuilder wrappedStyle(String wrappedStyle) {
@@ -837,6 +866,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CxfEndpointProducerBuilder cookieHandler(Object cookieHandler) {
@@ -849,6 +879,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CxfEndpointProducerBuilder cookieHandler(String cookieHandler) {
@@ -861,6 +892,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CxfEndpointProducerBuilder defaultOperationName(
@@ -874,6 +906,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CxfEndpointProducerBuilder defaultOperationNamespace(
@@ -887,6 +920,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CxfEndpointProducerBuilder hostnameVerifier(
@@ -901,6 +935,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CxfEndpointProducerBuilder hostnameVerifier(
@@ -957,6 +992,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CxfEndpointProducerBuilder sslContextParameters(
@@ -971,6 +1007,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default CxfEndpointProducerBuilder sslContextParameters(
@@ -1091,6 +1128,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default CxfEndpointProducerBuilder password(String password) {
@@ -1103,6 +1141,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default CxfEndpointProducerBuilder username(String username) {
@@ -1114,6 +1153,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointProducerBuilder bindingId(String bindingId) {
@@ -1127,6 +1167,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointProducerBuilder portName(String portName) {
@@ -1139,6 +1180,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointProducerBuilder publishedEndpointUrl(
@@ -1153,6 +1195,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointProducerBuilder serviceClass(
@@ -1167,6 +1210,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointProducerBuilder serviceClass(String serviceClass) {
@@ -1179,6 +1223,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointProducerBuilder serviceName(String serviceName) {
@@ -1191,6 +1236,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointProducerBuilder wsdlURL(String wsdlURL) {
@@ -1216,6 +1262,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder allowStreaming(
@@ -1232,6 +1279,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder allowStreaming(
@@ -1272,6 +1320,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.cxf.Bus</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder bus(Object bus) {
@@ -1284,6 +1333,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a <code>org.apache.cxf.Bus</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder bus(String bus) {
@@ -1327,6 +1377,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.cxf.CxfBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder cxfBinding(Object cxfBinding) {
@@ -1340,6 +1391,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.CxfBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder cxfBinding(String cxfBinding) {
@@ -1356,6 +1408,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.cxf.CxfConfigurer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder cxfConfigurer(
@@ -1373,6 +1426,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.CxfConfigurer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder cxfConfigurer(
@@ -1411,6 +1465,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder headerFilterStrategy(
@@ -1425,6 +1480,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder headerFilterStrategy(
@@ -1498,6 +1554,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder properties(
@@ -1514,6 +1571,7 @@ public interface CxfEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder properties(String properties) {
@@ -1620,6 +1678,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CxfEndpointBuilder wrappedStyle(Boolean wrappedStyle) {
@@ -1635,6 +1694,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default CxfEndpointBuilder wrappedStyle(String wrappedStyle) {
@@ -1727,6 +1787,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default CxfEndpointBuilder password(String password) {
@@ -1739,6 +1800,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default CxfEndpointBuilder username(String username) {
@@ -1750,6 +1812,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointBuilder bindingId(String bindingId) {
@@ -1763,6 +1826,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointBuilder portName(String portName) {
@@ -1775,6 +1839,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointBuilder publishedEndpointUrl(
@@ -1789,6 +1854,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointBuilder serviceClass(Class<Object> serviceClass) {
@@ -1802,6 +1868,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointBuilder serviceClass(String serviceClass) {
@@ -1814,6 +1881,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointBuilder serviceName(String serviceName) {
@@ -1826,6 +1894,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: service
          */
         default CxfEndpointBuilder wsdlURL(String wsdlURL) {
@@ -1852,6 +1921,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder allowStreaming(Boolean allowStreaming) {
@@ -1867,6 +1937,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder allowStreaming(String allowStreaming) {
@@ -1906,6 +1977,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.cxf.Bus</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder bus(Object bus) {
@@ -1918,6 +1990,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a <code>org.apache.cxf.Bus</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder bus(String bus) {
@@ -1961,6 +2034,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.cxf.CxfBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder cxfBinding(Object cxfBinding) {
@@ -1974,6 +2048,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.CxfBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder cxfBinding(String cxfBinding) {
@@ -1990,6 +2065,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.cxf.CxfConfigurer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder cxfConfigurer(Object cxfConfigurer) {
@@ -2006,6 +2082,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.CxfConfigurer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder cxfConfigurer(String cxfConfigurer) {
@@ -2043,6 +2120,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder headerFilterStrategy(
@@ -2057,6 +2135,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder headerFilterStrategy(
@@ -2128,6 +2207,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder properties(
@@ -2144,6 +2224,7 @@ public interface CxfEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder properties(String properties) {

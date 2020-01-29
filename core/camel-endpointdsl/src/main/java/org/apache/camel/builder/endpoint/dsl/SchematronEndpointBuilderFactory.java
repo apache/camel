@@ -110,6 +110,7 @@ public interface SchematronEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.xml.transform.Templates</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SchematronEndpointBuilder rules(Object rules) {
@@ -122,6 +123,7 @@ public interface SchematronEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.xml.transform.Templates</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SchematronEndpointBuilder rules(String rules) {
@@ -200,6 +202,7 @@ public interface SchematronEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.xml.transform.URIResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSchematronEndpointBuilder uriResolver(Object uriResolver) {
@@ -213,6 +216,7 @@ public interface SchematronEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.xml.transform.URIResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedSchematronEndpointBuilder uriResolver(String uriResolver) {

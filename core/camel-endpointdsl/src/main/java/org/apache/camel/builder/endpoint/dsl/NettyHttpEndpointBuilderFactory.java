@@ -346,6 +346,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
          * type.
          * 
+         * Default:
          * Group: codec
          */
         default NettyHttpEndpointConsumerBuilder decoders(List<Object> decoders) {
@@ -362,6 +363,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
          * type.
          * 
+         * Default:
          * Group: codec
          */
         default NettyHttpEndpointConsumerBuilder decoders(String decoders) {
@@ -378,6 +380,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
          * type.
          * 
+         * Default:
          * Group: codec
          */
         default NettyHttpEndpointConsumerBuilder encoders(List<Object> encoders) {
@@ -394,6 +397,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
          * type.
          * 
+         * Default:
          * Group: codec
          */
         default NettyHttpEndpointConsumerBuilder encoders(String encoders) {
@@ -418,6 +422,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder keyStoreFile(File keyStoreFile) {
@@ -429,6 +434,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder keyStoreFile(
@@ -442,6 +448,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder keyStoreFormat(
@@ -456,6 +463,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder keyStoreResource(
@@ -497,6 +505,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder passphrase(String passphrase) {
@@ -511,6 +520,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder securityConfiguration(
@@ -526,6 +536,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder securityConfiguration(
@@ -540,6 +551,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder securityOptions(
@@ -555,6 +567,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder securityOptions(
@@ -568,6 +581,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder securityProvider(
@@ -639,6 +653,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder sslContextParameters(
@@ -652,6 +667,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder sslContextParameters(
@@ -664,6 +680,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>io.netty.handler.ssl.SslHandler</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder sslHandler(Object sslHandler) {
@@ -676,6 +693,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.netty.handler.ssl.SslHandler</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder sslHandler(String sslHandler) {
@@ -687,6 +705,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder trustStoreFile(
@@ -699,6 +718,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder trustStoreFile(
@@ -713,6 +733,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder trustStoreResource(
@@ -778,6 +799,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder backlog(int backlog) {
@@ -793,6 +815,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder backlog(String backlog) {
@@ -834,6 +857,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>io.netty.channel.EventLoopGroup</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder bossGroup(
@@ -848,6 +872,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.netty.channel.EventLoopGroup</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder bossGroup(
@@ -945,6 +970,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder httpMethodRestrict(
@@ -1054,6 +1080,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.netty.NettyServerBootstrapFactory</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettyServerBootstrapFactory(
@@ -1067,6 +1094,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.netty.NettyServerBootstrapFactory</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettyServerBootstrapFactory(
@@ -1081,6 +1109,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.netty.http.NettySharedHttpServer</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettySharedHttpServer(
@@ -1095,6 +1124,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.netty.http.NettySharedHttpServer</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettySharedHttpServer(
@@ -1201,6 +1231,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.netty.ServerInitializerFactory</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder serverInitializerFactory(
@@ -1214,6 +1245,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.netty.ServerInitializerFactory</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder serverInitializerFactory(
@@ -1353,6 +1385,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a: <code>io.netty.channel.group.ChannelGroup</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder channelGroup(
@@ -1366,6 +1399,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.netty.channel.group.ChannelGroup</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder channelGroup(
@@ -1380,6 +1414,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder configuration(
@@ -1394,6 +1429,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder configuration(
@@ -1464,6 +1500,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder headerFilterStrategy(
@@ -1478,6 +1515,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder headerFilterStrategy(
@@ -1528,6 +1566,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettyHttpBinding(
@@ -1544,6 +1583,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettyHttpBinding(
@@ -1560,6 +1600,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder options(
@@ -1577,6 +1618,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder options(String options) {
@@ -1617,6 +1659,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder receiveBufferSizePredictor(
@@ -1630,6 +1673,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder receiveBufferSizePredictor(
@@ -1750,6 +1794,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder workerCount(
@@ -1764,6 +1809,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder workerCount(
@@ -1779,6 +1825,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>io.netty.channel.EventLoopGroup</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder workerGroup(
@@ -1795,6 +1842,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.netty.channel.EventLoopGroup</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder workerGroup(
@@ -1811,6 +1859,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder exceptionHandler(
@@ -1827,6 +1876,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder exceptionHandler(
@@ -1839,6 +1889,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder exchangePattern(
@@ -1852,6 +1903,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder exchangePattern(
@@ -2164,6 +2216,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default NettyHttpEndpointProducerBuilder cookieHandler(
@@ -2177,6 +2230,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default NettyHttpEndpointProducerBuilder cookieHandler(
@@ -2192,6 +2246,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default NettyHttpEndpointProducerBuilder requestTimeout(
@@ -2207,6 +2262,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default NettyHttpEndpointProducerBuilder requestTimeout(
@@ -2254,6 +2310,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
          * type.
          * 
+         * Default:
          * Group: codec
          */
         default NettyHttpEndpointProducerBuilder decoders(List<Object> decoders) {
@@ -2270,6 +2327,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
          * type.
          * 
+         * Default:
          * Group: codec
          */
         default NettyHttpEndpointProducerBuilder decoders(String decoders) {
@@ -2286,6 +2344,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
          * type.
          * 
+         * Default:
          * Group: codec
          */
         default NettyHttpEndpointProducerBuilder encoders(List<Object> encoders) {
@@ -2302,6 +2361,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
          * type.
          * 
+         * Default:
          * Group: codec
          */
         default NettyHttpEndpointProducerBuilder encoders(String encoders) {
@@ -2326,6 +2386,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder keyStoreFile(File keyStoreFile) {
@@ -2337,6 +2398,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder keyStoreFile(
@@ -2350,6 +2412,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder keyStoreFormat(
@@ -2364,6 +2427,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder keyStoreResource(
@@ -2377,6 +2441,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder passphrase(String passphrase) {
@@ -2389,6 +2454,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder securityProvider(
@@ -2460,6 +2526,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder sslContextParameters(
@@ -2473,6 +2540,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder sslContextParameters(
@@ -2485,6 +2553,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>io.netty.handler.ssl.SslHandler</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder sslHandler(Object sslHandler) {
@@ -2497,6 +2566,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.netty.handler.ssl.SslHandler</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder sslHandler(String sslHandler) {
@@ -2508,6 +2578,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder trustStoreFile(
@@ -2520,6 +2591,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder trustStoreFile(
@@ -2534,6 +2606,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder trustStoreResource(
@@ -2600,6 +2673,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.netty.ClientInitializerFactory</code> type.
          * 
+         * Default:
          * Group: producer (advanced)
          */
         default AdvancedNettyHttpEndpointProducerBuilder clientInitializerFactory(
@@ -2613,6 +2687,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.netty.ClientInitializerFactory</code> type.
          * 
+         * Default:
          * Group: producer (advanced)
          */
         default AdvancedNettyHttpEndpointProducerBuilder clientInitializerFactory(
@@ -2802,6 +2877,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: producer (advanced)
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMinIdle(
@@ -2815,6 +2891,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: producer (advanced)
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMinIdle(
@@ -2886,6 +2963,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a: <code>io.netty.channel.group.ChannelGroup</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder channelGroup(
@@ -2899,6 +2977,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.netty.channel.group.ChannelGroup</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder channelGroup(
@@ -2913,6 +2992,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder configuration(
@@ -2927,6 +3007,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder configuration(
@@ -2997,6 +3078,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder headerFilterStrategy(
@@ -3011,6 +3093,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder headerFilterStrategy(
@@ -3061,6 +3144,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder nettyHttpBinding(
@@ -3077,6 +3161,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder nettyHttpBinding(
@@ -3093,6 +3178,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder options(
@@ -3110,6 +3196,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder options(String options) {
@@ -3150,6 +3237,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder receiveBufferSizePredictor(
@@ -3163,6 +3251,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder receiveBufferSizePredictor(
@@ -3283,6 +3372,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder workerCount(
@@ -3297,6 +3387,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder workerCount(
@@ -3312,6 +3403,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>io.netty.channel.EventLoopGroup</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder workerGroup(
@@ -3328,6 +3420,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.netty.channel.EventLoopGroup</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder workerGroup(
@@ -3611,6 +3704,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
          * type.
          * 
+         * Default:
          * Group: codec
          */
         default NettyHttpEndpointBuilder decoders(List<Object> decoders) {
@@ -3627,6 +3721,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
          * type.
          * 
+         * Default:
          * Group: codec
          */
         default NettyHttpEndpointBuilder decoders(String decoders) {
@@ -3643,6 +3738,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
          * type.
          * 
+         * Default:
          * Group: codec
          */
         default NettyHttpEndpointBuilder encoders(List<Object> encoders) {
@@ -3659,6 +3755,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
          * type.
          * 
+         * Default:
          * Group: codec
          */
         default NettyHttpEndpointBuilder encoders(String encoders) {
@@ -3683,6 +3780,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointBuilder keyStoreFile(File keyStoreFile) {
@@ -3694,6 +3792,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointBuilder keyStoreFile(String keyStoreFile) {
@@ -3706,6 +3805,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointBuilder keyStoreFormat(String keyStoreFormat) {
@@ -3719,6 +3819,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointBuilder keyStoreResource(
@@ -3732,6 +3833,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointBuilder passphrase(String passphrase) {
@@ -3744,6 +3846,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointBuilder securityProvider(
@@ -3815,6 +3918,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointBuilder sslContextParameters(
@@ -3828,6 +3932,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointBuilder sslContextParameters(
@@ -3840,6 +3945,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>io.netty.handler.ssl.SslHandler</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointBuilder sslHandler(Object sslHandler) {
@@ -3852,6 +3958,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.netty.handler.ssl.SslHandler</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointBuilder sslHandler(String sslHandler) {
@@ -3863,6 +3970,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointBuilder trustStoreFile(File trustStoreFile) {
@@ -3874,6 +3982,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointBuilder trustStoreFile(String trustStoreFile) {
@@ -3887,6 +3996,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default NettyHttpEndpointBuilder trustStoreResource(
@@ -3944,6 +4054,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a: <code>io.netty.channel.group.ChannelGroup</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder channelGroup(
@@ -3957,6 +4068,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.netty.channel.group.ChannelGroup</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder channelGroup(
@@ -3971,6 +4083,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder configuration(
@@ -3985,6 +4098,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder configuration(
@@ -4055,6 +4169,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder headerFilterStrategy(
@@ -4069,6 +4184,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder headerFilterStrategy(
@@ -4119,6 +4235,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder nettyHttpBinding(
@@ -4135,6 +4252,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder nettyHttpBinding(
@@ -4151,6 +4269,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder options(
@@ -4168,6 +4287,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder options(String options) {
@@ -4208,6 +4328,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder receiveBufferSizePredictor(
@@ -4221,6 +4342,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder receiveBufferSizePredictor(
@@ -4341,6 +4463,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder workerCount(int workerCount) {
@@ -4354,6 +4477,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder workerCount(String workerCount) {
@@ -4368,6 +4492,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>io.netty.channel.EventLoopGroup</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder workerGroup(Object workerGroup) {
@@ -4383,6 +4508,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.netty.channel.EventLoopGroup</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder workerGroup(String workerGroup) {

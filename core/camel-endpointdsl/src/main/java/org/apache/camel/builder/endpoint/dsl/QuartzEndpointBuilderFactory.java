@@ -83,6 +83,7 @@ public interface QuartzEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default QuartzEndpointBuilder cron(String cron) {
@@ -288,6 +289,7 @@ public interface QuartzEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default QuartzEndpointBuilder startDelayedSeconds(
@@ -300,6 +302,7 @@ public interface QuartzEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default QuartzEndpointBuilder startDelayedSeconds(
@@ -355,6 +358,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedQuartzEndpointBuilder exceptionHandler(
@@ -371,6 +375,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedQuartzEndpointBuilder exceptionHandler(
@@ -383,6 +388,7 @@ public interface QuartzEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedQuartzEndpointBuilder exchangePattern(
@@ -396,6 +402,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedQuartzEndpointBuilder exchangePattern(
@@ -436,6 +443,7 @@ public interface QuartzEndpointBuilderFactory {
          * 
          * The option is a: <code>org.quartz.Calendar</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder customCalendar(
@@ -449,6 +457,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option will be converted to a <code>org.quartz.Calendar</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder customCalendar(
@@ -462,6 +471,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder jobParameters(
@@ -476,6 +486,7 @@ public interface QuartzEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder jobParameters(String jobParameters) {
@@ -540,6 +551,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder triggerParameters(
@@ -554,6 +566,7 @@ public interface QuartzEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder triggerParameters(

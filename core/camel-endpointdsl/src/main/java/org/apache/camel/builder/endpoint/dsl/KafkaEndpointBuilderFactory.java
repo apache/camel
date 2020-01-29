@@ -57,6 +57,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KafkaEndpointConsumerBuilder additionalProperties(
@@ -76,6 +77,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default KafkaEndpointConsumerBuilder additionalProperties(
@@ -91,6 +93,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KafkaEndpointConsumerBuilder brokers(String brokers) {
@@ -104,6 +107,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KafkaEndpointConsumerBuilder clientId(String clientId) {
@@ -117,6 +121,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KafkaEndpointConsumerBuilder headerFilterStrategy(
@@ -131,6 +136,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KafkaEndpointConsumerBuilder headerFilterStrategy(
@@ -600,6 +606,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder groupId(String groupId) {
@@ -652,6 +659,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder kafkaHeaderDeserializer(
@@ -666,6 +674,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder kafkaHeaderDeserializer(
@@ -736,6 +745,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder maxPollIntervalMs(
@@ -753,6 +763,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder maxPollIntervalMs(
@@ -796,6 +807,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>org.apache.camel.spi.StateRepository&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder offsetRepository(
@@ -812,6 +824,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>org.apache.camel.spi.StateRepository&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder offsetRepository(
@@ -865,6 +878,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder seekTo(String seekTo) {
@@ -985,6 +999,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: monitoring
          */
         default KafkaEndpointConsumerBuilder interceptorClasses(
@@ -1115,6 +1130,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointConsumerBuilder saslJaasConfig(
@@ -1128,6 +1144,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointConsumerBuilder saslKerberosServiceName(
@@ -1172,6 +1189,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointConsumerBuilder sslCipherSuites(
@@ -1186,6 +1204,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointConsumerBuilder sslContextParameters(
@@ -1200,6 +1219,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointConsumerBuilder sslContextParameters(
@@ -1227,6 +1247,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointConsumerBuilder sslEndpointAlgorithm(
@@ -1285,6 +1306,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointConsumerBuilder sslProvider(String sslProvider) {
@@ -1328,6 +1350,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: confluent
          */
         default KafkaEndpointConsumerBuilder schemaRegistryURL(
@@ -1355,6 +1378,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedKafkaEndpointConsumerBuilder exceptionHandler(
@@ -1371,6 +1395,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedKafkaEndpointConsumerBuilder exceptionHandler(
@@ -1383,6 +1408,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedKafkaEndpointConsumerBuilder exchangePattern(
@@ -1396,6 +1422,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedKafkaEndpointConsumerBuilder exchangePattern(
@@ -1481,6 +1508,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KafkaEndpointProducerBuilder additionalProperties(
@@ -1500,6 +1528,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default KafkaEndpointProducerBuilder additionalProperties(
@@ -1515,6 +1544,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KafkaEndpointProducerBuilder brokers(String brokers) {
@@ -1528,6 +1558,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KafkaEndpointProducerBuilder clientId(String clientId) {
@@ -1541,6 +1572,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KafkaEndpointProducerBuilder headerFilterStrategy(
@@ -1555,6 +1587,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KafkaEndpointProducerBuilder headerFilterStrategy(
@@ -1727,6 +1760,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.kafka.serde.KafkaHeaderSerializer</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default KafkaEndpointProducerBuilder kafkaHeaderSerializer(
@@ -1741,6 +1775,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.kafka.serde.KafkaHeaderSerializer</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default KafkaEndpointProducerBuilder kafkaHeaderSerializer(
@@ -1755,6 +1790,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default KafkaEndpointProducerBuilder key(String key) {
@@ -2020,6 +2056,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default KafkaEndpointProducerBuilder metricReporters(
@@ -2102,6 +2139,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default KafkaEndpointProducerBuilder partitionKey(Integer partitionKey) {
@@ -2116,6 +2154,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default KafkaEndpointProducerBuilder partitionKey(String partitionKey) {
@@ -2473,6 +2512,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a: <code>java.util.concurrent.ExecutorService</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default KafkaEndpointProducerBuilder workerPool(
@@ -2488,6 +2528,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ExecutorService</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default KafkaEndpointProducerBuilder workerPool(String workerPool) {
@@ -2567,6 +2608,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: monitoring
          */
         default KafkaEndpointProducerBuilder interceptorClasses(
@@ -2697,6 +2739,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointProducerBuilder saslJaasConfig(
@@ -2710,6 +2753,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointProducerBuilder saslKerberosServiceName(
@@ -2754,6 +2798,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointProducerBuilder sslCipherSuites(
@@ -2768,6 +2813,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointProducerBuilder sslContextParameters(
@@ -2782,6 +2828,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointProducerBuilder sslContextParameters(
@@ -2809,6 +2856,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointProducerBuilder sslEndpointAlgorithm(
@@ -2837,6 +2885,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointProducerBuilder sslKeyPassword(
@@ -2850,6 +2899,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointProducerBuilder sslKeystoreLocation(
@@ -2863,6 +2913,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointProducerBuilder sslKeystorePassword(
@@ -2906,6 +2957,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointProducerBuilder sslProvider(String sslProvider) {
@@ -2932,11 +2984,25 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointProducerBuilder sslTruststoreLocation(
                 String sslTruststoreLocation) {
             doSetProperty("sslTruststoreLocation", sslTruststoreLocation);
+            return this;
+        }
+        /**
+         * The password for the trust store file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * Group: security
+         */
+        default KafkaEndpointProducerBuilder sslTruststorePassword(
+                String sslTruststorePassword) {
+            doSetProperty("sslTruststorePassword", sslTruststorePassword);
             return this;
         }
         /**
@@ -2961,23 +3027,12 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: confluent
          */
         default KafkaEndpointProducerBuilder schemaRegistryURL(
                 String schemaRegistryURL) {
             doSetProperty("schemaRegistryURL", schemaRegistryURL);
-            return this;
-        }
-        /**
-         * The password for the trust store file.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default KafkaEndpointProducerBuilder sslTruststorePassword(
-                String sslTruststorePassword) {
-            doSetProperty("sslTruststorePassword", sslTruststorePassword);
             return this;
         }
     }
@@ -3070,6 +3125,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KafkaEndpointBuilder additionalProperties(
@@ -3089,6 +3145,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default KafkaEndpointBuilder additionalProperties(
@@ -3104,6 +3161,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KafkaEndpointBuilder brokers(String brokers) {
@@ -3117,6 +3175,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KafkaEndpointBuilder clientId(String clientId) {
@@ -3130,6 +3189,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KafkaEndpointBuilder headerFilterStrategy(
@@ -3144,6 +3204,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default KafkaEndpointBuilder headerFilterStrategy(
@@ -3197,6 +3258,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: monitoring
          */
         default KafkaEndpointBuilder interceptorClasses(
@@ -3326,6 +3388,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointBuilder saslJaasConfig(String saslJaasConfig) {
@@ -3338,6 +3401,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointBuilder saslKerberosServiceName(
@@ -3381,6 +3445,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointBuilder sslCipherSuites(String sslCipherSuites) {
@@ -3394,6 +3459,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointBuilder sslContextParameters(
@@ -3408,6 +3474,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointBuilder sslContextParameters(
@@ -3435,6 +3502,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointBuilder sslEndpointAlgorithm(
@@ -3492,6 +3560,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KafkaEndpointBuilder sslProvider(String sslProvider) {
@@ -3534,6 +3603,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: confluent
          */
         default KafkaEndpointBuilder schemaRegistryURL(String schemaRegistryURL) {

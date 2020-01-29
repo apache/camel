@@ -51,6 +51,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SplunkEndpointConsumerBuilder app(String app) {
@@ -100,6 +101,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SplunkEndpointConsumerBuilder owner(String owner) {
@@ -185,6 +187,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SplunkEndpointConsumerBuilder count(int count) {
@@ -196,6 +199,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SplunkEndpointConsumerBuilder count(String count) {
@@ -207,6 +211,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SplunkEndpointConsumerBuilder earliestTime(String earliestTime) {
@@ -218,6 +223,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SplunkEndpointConsumerBuilder initEarliestTime(
@@ -230,6 +236,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SplunkEndpointConsumerBuilder latestTime(String latestTime) {
@@ -241,6 +248,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SplunkEndpointConsumerBuilder savedSearch(String savedSearch) {
@@ -252,6 +260,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default SplunkEndpointConsumerBuilder search(String search) {
@@ -318,6 +327,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder backoffErrorThreshold(
@@ -331,6 +341,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder backoffErrorThreshold(
@@ -344,6 +355,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder backoffIdleThreshold(
@@ -357,6 +369,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder backoffIdleThreshold(
@@ -374,6 +387,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder backoffMultiplier(
@@ -391,6 +405,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder backoffMultiplier(
@@ -545,6 +560,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder scheduledExecutorService(
@@ -560,6 +576,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder scheduledExecutorService(
@@ -587,6 +604,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder schedulerProperties(
@@ -602,6 +620,7 @@ public interface SplunkEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder schedulerProperties(
@@ -692,6 +711,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SplunkEndpointConsumerBuilder password(String password) {
@@ -729,6 +749,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SplunkEndpointConsumerBuilder username(String username) {
@@ -785,6 +806,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSplunkEndpointConsumerBuilder exceptionHandler(
@@ -801,6 +823,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSplunkEndpointConsumerBuilder exceptionHandler(
@@ -813,6 +836,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSplunkEndpointConsumerBuilder exchangePattern(
@@ -826,6 +850,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSplunkEndpointConsumerBuilder exchangePattern(
@@ -842,6 +867,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSplunkEndpointConsumerBuilder pollStrategy(
@@ -858,6 +884,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSplunkEndpointConsumerBuilder pollStrategy(
@@ -937,6 +964,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SplunkEndpointProducerBuilder app(String app) {
@@ -986,6 +1014,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SplunkEndpointProducerBuilder owner(String owner) {
@@ -1033,6 +1062,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SplunkEndpointProducerBuilder eventHost(String eventHost) {
@@ -1044,6 +1074,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SplunkEndpointProducerBuilder index(String index) {
@@ -1121,6 +1152,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SplunkEndpointProducerBuilder source(String source) {
@@ -1132,6 +1164,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SplunkEndpointProducerBuilder sourceType(String sourceType) {
@@ -1143,6 +1176,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SplunkEndpointProducerBuilder tcpReceiverPort(
@@ -1155,6 +1189,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default SplunkEndpointProducerBuilder tcpReceiverPort(
@@ -1167,6 +1202,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SplunkEndpointProducerBuilder password(String password) {
@@ -1204,6 +1240,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SplunkEndpointProducerBuilder username(String username) {
@@ -1324,6 +1361,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SplunkEndpointBuilder app(String app) {
@@ -1371,6 +1409,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default SplunkEndpointBuilder owner(String owner) {
@@ -1418,6 +1457,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SplunkEndpointBuilder password(String password) {
@@ -1455,6 +1495,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SplunkEndpointBuilder username(String username) {

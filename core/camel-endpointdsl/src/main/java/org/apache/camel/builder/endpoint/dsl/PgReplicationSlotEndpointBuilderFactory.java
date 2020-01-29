@@ -51,6 +51,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default PgReplicationSlotEndpointBuilder password(String password) {
@@ -141,6 +142,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder backoffErrorThreshold(
@@ -154,6 +156,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder backoffErrorThreshold(
@@ -167,6 +170,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder backoffIdleThreshold(
@@ -180,6 +184,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder backoffIdleThreshold(
@@ -197,6 +202,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder backoffMultiplier(
@@ -214,6 +220,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder backoffMultiplier(
@@ -369,6 +376,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder scheduledExecutorService(
@@ -384,6 +392,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder scheduledExecutorService(
@@ -411,6 +420,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder schedulerProperties(
@@ -426,6 +436,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder schedulerProperties(
@@ -533,6 +544,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPgReplicationSlotEndpointBuilder exceptionHandler(
@@ -549,6 +561,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPgReplicationSlotEndpointBuilder exceptionHandler(
@@ -561,6 +574,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPgReplicationSlotEndpointBuilder exchangePattern(
@@ -574,6 +588,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPgReplicationSlotEndpointBuilder exchangePattern(
@@ -590,6 +605,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPgReplicationSlotEndpointBuilder pollStrategy(
@@ -606,6 +622,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPgReplicationSlotEndpointBuilder pollStrategy(
@@ -674,6 +691,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedPgReplicationSlotEndpointBuilder slotOptions(
@@ -688,6 +706,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedPgReplicationSlotEndpointBuilder slotOptions(

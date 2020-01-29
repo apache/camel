@@ -103,6 +103,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GooglePubsubEndpointConsumerBuilder connectionFactory(
@@ -117,6 +118,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GooglePubsubEndpointConsumerBuilder connectionFactory(
@@ -129,6 +131,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GooglePubsubEndpointConsumerBuilder loggerId(String loggerId) {
@@ -222,6 +225,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder exceptionHandler(
@@ -238,6 +242,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder exceptionHandler(
@@ -250,6 +255,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder exchangePattern(
@@ -263,6 +269,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder exchangePattern(
@@ -399,6 +406,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GooglePubsubEndpointProducerBuilder connectionFactory(
@@ -413,6 +421,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GooglePubsubEndpointProducerBuilder connectionFactory(
@@ -425,6 +434,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GooglePubsubEndpointProducerBuilder loggerId(String loggerId) {
@@ -643,6 +653,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GooglePubsubEndpointBuilder connectionFactory(
@@ -657,6 +668,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GooglePubsubEndpointBuilder connectionFactory(
@@ -669,6 +681,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default GooglePubsubEndpointBuilder loggerId(String loggerId) {

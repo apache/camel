@@ -45,6 +45,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default KubernetesSecretsEndpointBuilder apiVersion(String apiVersion) {
@@ -56,6 +57,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default KubernetesSecretsEndpointBuilder dnsDomain(String dnsDomain) {
@@ -68,6 +70,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default KubernetesSecretsEndpointBuilder kubernetesClient(
@@ -81,6 +84,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default KubernetesSecretsEndpointBuilder kubernetesClient(
@@ -135,6 +139,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default KubernetesSecretsEndpointBuilder operation(String operation) {
@@ -146,6 +151,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default KubernetesSecretsEndpointBuilder portName(String portName) {
@@ -170,6 +176,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesSecretsEndpointBuilder caCertData(String caCertData) {
@@ -181,6 +188,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesSecretsEndpointBuilder caCertFile(String caCertFile) {
@@ -192,6 +200,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesSecretsEndpointBuilder clientCertData(
@@ -204,6 +213,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesSecretsEndpointBuilder clientCertFile(
@@ -216,6 +226,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesSecretsEndpointBuilder clientKeyAlgo(
@@ -228,6 +239,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesSecretsEndpointBuilder clientKeyData(
@@ -240,6 +252,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesSecretsEndpointBuilder clientKeyFile(
@@ -252,6 +265,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesSecretsEndpointBuilder clientKeyPassphrase(
@@ -264,6 +278,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesSecretsEndpointBuilder oauthToken(String oauthToken) {
@@ -275,6 +290,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesSecretsEndpointBuilder password(String password) {
@@ -286,6 +302,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesSecretsEndpointBuilder trustCerts(Boolean trustCerts) {
@@ -298,6 +315,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesSecretsEndpointBuilder trustCerts(String trustCerts) {
@@ -309,6 +327,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default KubernetesSecretsEndpointBuilder username(String username) {
@@ -360,6 +379,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedKubernetesSecretsEndpointBuilder connectionTimeout(
@@ -374,6 +394,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedKubernetesSecretsEndpointBuilder connectionTimeout(

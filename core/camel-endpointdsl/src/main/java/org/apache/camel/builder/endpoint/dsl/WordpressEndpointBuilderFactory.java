@@ -60,6 +60,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointConsumerBuilder criteria(
@@ -74,6 +75,7 @@ public interface WordpressEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointConsumerBuilder criteria(String criteria) {
@@ -110,6 +112,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointConsumerBuilder id(Integer id) {
@@ -123,6 +126,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointConsumerBuilder id(String id) {
@@ -134,6 +138,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointConsumerBuilder password(String password) {
@@ -146,6 +151,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointConsumerBuilder searchCriteria(
@@ -159,6 +165,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointConsumerBuilder searchCriteria(
@@ -173,6 +180,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: common
          */
         default WordpressEndpointConsumerBuilder url(String url) {
@@ -184,6 +192,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointConsumerBuilder user(String user) {
@@ -248,6 +257,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedWordpressEndpointConsumerBuilder exceptionHandler(
@@ -264,6 +274,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedWordpressEndpointConsumerBuilder exceptionHandler(
@@ -276,6 +287,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedWordpressEndpointConsumerBuilder exchangePattern(
@@ -289,6 +301,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedWordpressEndpointConsumerBuilder exchangePattern(
@@ -381,6 +394,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointProducerBuilder criteria(
@@ -395,6 +409,7 @@ public interface WordpressEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointProducerBuilder criteria(String criteria) {
@@ -431,6 +446,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointProducerBuilder id(Integer id) {
@@ -444,6 +460,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointProducerBuilder id(String id) {
@@ -455,6 +472,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointProducerBuilder password(String password) {
@@ -467,6 +485,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointProducerBuilder searchCriteria(
@@ -480,6 +499,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointProducerBuilder searchCriteria(
@@ -494,6 +514,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: common
          */
         default WordpressEndpointProducerBuilder url(String url) {
@@ -505,6 +526,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointProducerBuilder user(String user) {
@@ -650,6 +672,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointBuilder criteria(Map<String, Object> criteria) {
@@ -663,6 +686,7 @@ public interface WordpressEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointBuilder criteria(String criteria) {
@@ -699,6 +723,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointBuilder id(Integer id) {
@@ -712,6 +737,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointBuilder id(String id) {
@@ -723,6 +749,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointBuilder password(String password) {
@@ -735,6 +762,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointBuilder searchCriteria(Object searchCriteria) {
@@ -747,6 +775,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointBuilder searchCriteria(String searchCriteria) {
@@ -760,6 +789,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: common
          */
         default WordpressEndpointBuilder url(String url) {
@@ -771,6 +801,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default WordpressEndpointBuilder user(String user) {

@@ -123,6 +123,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default MailEndpointConsumerBuilder copyTo(String copyTo) {
@@ -231,6 +232,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default MailEndpointConsumerBuilder maxMessagesPerPoll(
@@ -246,6 +248,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default MailEndpointConsumerBuilder maxMessagesPerPoll(
@@ -408,6 +411,7 @@ public interface MailEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default MailEndpointConsumerBuilder idempotentRepository(
@@ -424,6 +428,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default MailEndpointConsumerBuilder idempotentRepository(
@@ -480,6 +485,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.mail.search.SearchTerm</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default MailEndpointConsumerBuilder searchTerm(Object searchTerm) {
@@ -494,6 +500,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.mail.search.SearchTerm</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default MailEndpointConsumerBuilder searchTerm(String searchTerm) {
@@ -506,6 +513,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder backoffErrorThreshold(
@@ -519,6 +527,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder backoffErrorThreshold(
@@ -532,6 +541,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder backoffIdleThreshold(
@@ -545,6 +555,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder backoffIdleThreshold(
@@ -562,6 +573,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder backoffMultiplier(
@@ -579,6 +591,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder backoffMultiplier(
@@ -729,6 +742,7 @@ public interface MailEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder scheduledExecutorService(
@@ -744,6 +758,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder scheduledExecutorService(
@@ -771,6 +786,7 @@ public interface MailEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder schedulerProperties(
@@ -786,6 +802,7 @@ public interface MailEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder schedulerProperties(
@@ -876,6 +893,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>com.sun.mail.imap.SortTerm[]</code> type.
          * 
+         * Default:
          * Group: sort
          */
         default MailEndpointConsumerBuilder sortTerm(Object[] sortTerm) {
@@ -890,6 +908,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.sun.mail.imap.SortTerm[]</code> type.
          * 
+         * Default:
          * Group: sort
          */
         default MailEndpointConsumerBuilder sortTerm(String sortTerm) {
@@ -901,6 +920,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default MailEndpointConsumerBuilder password(String password) {
@@ -913,6 +933,7 @@ public interface MailEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default MailEndpointConsumerBuilder sslContextParameters(
@@ -926,6 +947,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default MailEndpointConsumerBuilder sslContextParameters(
@@ -938,6 +960,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default MailEndpointConsumerBuilder username(String username) {
@@ -964,6 +987,7 @@ public interface MailEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMailEndpointConsumerBuilder exceptionHandler(
@@ -980,6 +1004,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMailEndpointConsumerBuilder exceptionHandler(
@@ -992,6 +1017,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMailEndpointConsumerBuilder exchangePattern(
@@ -1005,6 +1031,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMailEndpointConsumerBuilder exchangePattern(
@@ -1065,6 +1092,7 @@ public interface MailEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.mail.MailUidGenerator</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMailEndpointConsumerBuilder mailUidGenerator(
@@ -1079,6 +1107,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.mail.MailUidGenerator</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMailEndpointConsumerBuilder mailUidGenerator(
@@ -1135,6 +1164,7 @@ public interface MailEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMailEndpointConsumerBuilder pollStrategy(
@@ -1151,6 +1181,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMailEndpointConsumerBuilder pollStrategy(
@@ -1166,6 +1197,7 @@ public interface MailEndpointBuilderFactory {
          * <code>org.apache.camel.component.mail.MailBoxPostProcessAction</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMailEndpointConsumerBuilder postProcessAction(
@@ -1181,6 +1213,7 @@ public interface MailEndpointBuilderFactory {
          * <code>org.apache.camel.component.mail.MailBoxPostProcessAction</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMailEndpointConsumerBuilder postProcessAction(
@@ -1196,6 +1229,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder additionalJavaMailProperties(
@@ -1212,6 +1246,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder additionalJavaMailProperties(
@@ -1243,6 +1278,7 @@ public interface MailEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder attachmentsContentTransferEncodingResolver(
@@ -1257,6 +1293,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder attachmentsContentTransferEncodingResolver(
@@ -1299,6 +1336,7 @@ public interface MailEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.mail.MailBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder binding(Object binding) {
@@ -1312,6 +1350,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.mail.MailBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder binding(String binding) {
@@ -1364,6 +1403,7 @@ public interface MailEndpointBuilderFactory {
          * <code>org.apache.camel.component.mail.ContentTypeResolver</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder contentTypeResolver(
@@ -1378,6 +1418,7 @@ public interface MailEndpointBuilderFactory {
          * <code>org.apache.camel.component.mail.ContentTypeResolver</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder contentTypeResolver(
@@ -1418,6 +1459,7 @@ public interface MailEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder headerFilterStrategy(
@@ -1432,6 +1474,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder headerFilterStrategy(
@@ -1512,6 +1555,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.mail.Session</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder session(Object session) {
@@ -1528,6 +1572,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a <code>javax.mail.Session</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder session(String session) {
@@ -1605,6 +1650,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MailEndpointProducerBuilder bcc(String bcc) {
@@ -1617,6 +1663,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MailEndpointProducerBuilder cc(String cc) {
@@ -1683,6 +1730,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MailEndpointProducerBuilder replyTo(String replyTo) {
@@ -1695,6 +1743,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MailEndpointProducerBuilder subject(String subject) {
@@ -1707,6 +1756,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default MailEndpointProducerBuilder to(String to) {
@@ -1718,6 +1768,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default MailEndpointProducerBuilder password(String password) {
@@ -1730,6 +1781,7 @@ public interface MailEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default MailEndpointProducerBuilder sslContextParameters(
@@ -1743,6 +1795,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default MailEndpointProducerBuilder sslContextParameters(
@@ -1755,6 +1808,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default MailEndpointProducerBuilder username(String username) {
@@ -1779,6 +1833,7 @@ public interface MailEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.mail.JavaMailSender</code> type.
          * 
+         * Default:
          * Group: producer (advanced)
          */
         default AdvancedMailEndpointProducerBuilder javaMailSender(
@@ -1793,6 +1848,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.mail.JavaMailSender</code> type.
          * 
+         * Default:
          * Group: producer (advanced)
          */
         default AdvancedMailEndpointProducerBuilder javaMailSender(
@@ -1808,6 +1864,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder additionalJavaMailProperties(
@@ -1824,6 +1881,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder additionalJavaMailProperties(
@@ -1855,6 +1913,7 @@ public interface MailEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder attachmentsContentTransferEncodingResolver(
@@ -1869,6 +1928,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder attachmentsContentTransferEncodingResolver(
@@ -1911,6 +1971,7 @@ public interface MailEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.mail.MailBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder binding(Object binding) {
@@ -1924,6 +1985,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.mail.MailBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder binding(String binding) {
@@ -1976,6 +2038,7 @@ public interface MailEndpointBuilderFactory {
          * <code>org.apache.camel.component.mail.ContentTypeResolver</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder contentTypeResolver(
@@ -1990,6 +2053,7 @@ public interface MailEndpointBuilderFactory {
          * <code>org.apache.camel.component.mail.ContentTypeResolver</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder contentTypeResolver(
@@ -2030,6 +2094,7 @@ public interface MailEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder headerFilterStrategy(
@@ -2044,6 +2109,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder headerFilterStrategy(
@@ -2124,6 +2190,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.mail.Session</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder session(Object session) {
@@ -2140,6 +2207,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a <code>javax.mail.Session</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder session(String session) {
@@ -2217,6 +2285,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default MailEndpointBuilder password(String password) {
@@ -2229,6 +2298,7 @@ public interface MailEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default MailEndpointBuilder sslContextParameters(
@@ -2242,6 +2312,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default MailEndpointBuilder sslContextParameters(
@@ -2254,6 +2325,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default MailEndpointBuilder username(String username) {
@@ -2280,6 +2352,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder additionalJavaMailProperties(
@@ -2296,6 +2369,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder additionalJavaMailProperties(
@@ -2327,6 +2401,7 @@ public interface MailEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder attachmentsContentTransferEncodingResolver(
@@ -2341,6 +2416,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder attachmentsContentTransferEncodingResolver(
@@ -2383,6 +2459,7 @@ public interface MailEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.mail.MailBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder binding(Object binding) {
@@ -2396,6 +2473,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.mail.MailBinding</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder binding(String binding) {
@@ -2447,6 +2525,7 @@ public interface MailEndpointBuilderFactory {
          * <code>org.apache.camel.component.mail.ContentTypeResolver</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder contentTypeResolver(
@@ -2461,6 +2540,7 @@ public interface MailEndpointBuilderFactory {
          * <code>org.apache.camel.component.mail.ContentTypeResolver</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder contentTypeResolver(
@@ -2501,6 +2581,7 @@ public interface MailEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder headerFilterStrategy(
@@ -2515,6 +2596,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder headerFilterStrategy(
@@ -2595,6 +2677,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.mail.Session</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder session(Object session) {
@@ -2611,6 +2694,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a <code>javax.mail.Session</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder session(String session) {

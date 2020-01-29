@@ -44,6 +44,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * 
          * The option is a: <code>freemarker.template.Configuration</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default FreemarkerEndpointBuilder configuration(Object configuration) {
@@ -56,6 +57,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>freemarker.template.Configuration</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default FreemarkerEndpointBuilder configuration(String configuration) {
@@ -91,6 +93,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default FreemarkerEndpointBuilder encoding(String encoding) {
@@ -145,6 +148,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default FreemarkerEndpointBuilder templateUpdateDelay(
@@ -158,6 +162,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default FreemarkerEndpointBuilder templateUpdateDelay(

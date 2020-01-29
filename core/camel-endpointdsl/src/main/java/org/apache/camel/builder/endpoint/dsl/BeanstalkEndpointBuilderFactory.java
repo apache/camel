@@ -60,6 +60,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * <code>org.apache.camel.component.beanstalk.BeanstalkCommand</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default BeanstalkEndpointConsumerBuilder command(
@@ -80,6 +81,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * <code>org.apache.camel.component.beanstalk.BeanstalkCommand</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default BeanstalkEndpointConsumerBuilder command(String command) {
@@ -232,6 +234,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * <code>org.apache.camel.component.beanstalk.BeanstalkCommand</code>
          * type.
          * 
+         * Default:
          * Group: consumer
          */
         default BeanstalkEndpointConsumerBuilder onFailure(
@@ -246,6 +249,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * <code>org.apache.camel.component.beanstalk.BeanstalkCommand</code>
          * type.
          * 
+         * Default:
          * Group: consumer
          */
         default BeanstalkEndpointConsumerBuilder onFailure(String onFailure) {
@@ -310,6 +314,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder backoffErrorThreshold(
@@ -323,6 +328,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder backoffErrorThreshold(
@@ -336,6 +342,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder backoffIdleThreshold(
@@ -349,6 +356,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder backoffIdleThreshold(
@@ -366,6 +374,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder backoffMultiplier(
@@ -383,6 +392,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder backoffMultiplier(
@@ -538,6 +548,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder scheduledExecutorService(
@@ -553,6 +564,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder scheduledExecutorService(
@@ -580,6 +592,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder schedulerProperties(
@@ -595,6 +608,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder schedulerProperties(
@@ -701,6 +715,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBeanstalkEndpointConsumerBuilder exceptionHandler(
@@ -717,6 +732,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBeanstalkEndpointConsumerBuilder exceptionHandler(
@@ -729,6 +745,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBeanstalkEndpointConsumerBuilder exchangePattern(
@@ -742,6 +759,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBeanstalkEndpointConsumerBuilder exchangePattern(
@@ -758,6 +776,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBeanstalkEndpointConsumerBuilder pollStrategy(
@@ -774,6 +793,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBeanstalkEndpointConsumerBuilder pollStrategy(
@@ -861,6 +881,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * <code>org.apache.camel.component.beanstalk.BeanstalkCommand</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default BeanstalkEndpointProducerBuilder command(
@@ -881,6 +902,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * <code>org.apache.camel.component.beanstalk.BeanstalkCommand</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default BeanstalkEndpointProducerBuilder command(String command) {
@@ -1096,6 +1118,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * <code>org.apache.camel.component.beanstalk.BeanstalkCommand</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default BeanstalkEndpointBuilder command(BeanstalkCommand command) {
@@ -1115,6 +1138,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * <code>org.apache.camel.component.beanstalk.BeanstalkCommand</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default BeanstalkEndpointBuilder command(String command) {

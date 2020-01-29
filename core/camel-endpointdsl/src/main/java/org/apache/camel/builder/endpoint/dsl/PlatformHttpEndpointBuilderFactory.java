@@ -87,6 +87,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default PlatformHttpEndpointBuilder consumes(String consumes) {
@@ -99,6 +100,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default PlatformHttpEndpointBuilder httpMethodRestrict(
@@ -112,6 +114,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default PlatformHttpEndpointBuilder produces(String produces) {
@@ -138,6 +141,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPlatformHttpEndpointBuilder exceptionHandler(
@@ -154,6 +158,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPlatformHttpEndpointBuilder exceptionHandler(
@@ -166,6 +171,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPlatformHttpEndpointBuilder exchangePattern(
@@ -179,6 +185,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPlatformHttpEndpointBuilder exchangePattern(
@@ -193,6 +200,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPlatformHttpEndpointBuilder fileNameExtWhitelist(
@@ -235,6 +243,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedPlatformHttpEndpointBuilder headerFilterStrategy(
@@ -249,6 +258,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedPlatformHttpEndpointBuilder headerFilterStrategy(
@@ -263,6 +273,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.platform.http.spi.PlatformHttpEngine</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedPlatformHttpEndpointBuilder platformHttpEngine(
@@ -277,6 +288,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.platform.http.spi.PlatformHttpEngine</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedPlatformHttpEndpointBuilder platformHttpEngine(

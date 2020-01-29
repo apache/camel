@@ -52,6 +52,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BoxEndpointConsumerBuilder clientId(String clientId) {
@@ -63,6 +64,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BoxEndpointConsumerBuilder enterpriseId(String enterpriseId) {
@@ -74,6 +76,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BoxEndpointConsumerBuilder inBody(String inBody) {
@@ -85,6 +88,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BoxEndpointConsumerBuilder userId(String userId) {
@@ -163,6 +167,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder backoffErrorThreshold(
@@ -176,6 +181,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder backoffErrorThreshold(
@@ -189,6 +195,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder backoffIdleThreshold(
@@ -202,6 +209,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder backoffIdleThreshold(
@@ -219,6 +227,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder backoffMultiplier(
@@ -236,11 +245,40 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll. You can also specify time values
+         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 500
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder delay(long delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll. You can also specify time values
+         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 500
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder delay(String delay) {
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -334,6 +372,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder scheduledExecutorService(
@@ -349,6 +388,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder scheduledExecutorService(
@@ -376,6 +416,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder schedulerProperties(
@@ -391,6 +432,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder schedulerProperties(
@@ -454,6 +496,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointConsumerBuilder clientSecret(String clientSecret) {
@@ -473,34 +516,6 @@ public interface BoxEndpointBuilderFactory {
         default BoxEndpointConsumerBuilder authenticationType(
                 String authenticationType) {
             doSetProperty("authenticationType", authenticationType);
-            return this;
-        }
-        /**
-         * Milliseconds before the next poll. You can also specify time values
-         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
-         * seconds), and 1h (1 hour).
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 500
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder delay(long delay) {
-            doSetProperty("delay", delay);
-            return this;
-        }
-        /**
-         * Milliseconds before the next poll. You can also specify time values
-         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
-         * seconds), and 1h (1 hour).
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 500
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder delay(String delay) {
-            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -560,6 +575,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointConsumerBuilder privateKeyFile(String privateKeyFile) {
@@ -571,6 +587,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointConsumerBuilder privateKeyPassword(
@@ -583,6 +600,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointConsumerBuilder publicKeyId(String publicKeyId) {
@@ -595,6 +613,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointConsumerBuilder sslContextParameters(
@@ -608,6 +627,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointConsumerBuilder sslContextParameters(
@@ -620,6 +640,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointConsumerBuilder userName(String userName) {
@@ -632,6 +653,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointConsumerBuilder userPassword(String userPassword) {
@@ -658,6 +680,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBoxEndpointConsumerBuilder exceptionHandler(
@@ -674,6 +697,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBoxEndpointConsumerBuilder exceptionHandler(
@@ -686,6 +710,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBoxEndpointConsumerBuilder exchangePattern(
@@ -699,6 +724,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBoxEndpointConsumerBuilder exchangePattern(
@@ -715,6 +741,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBoxEndpointConsumerBuilder pollStrategy(
@@ -731,6 +758,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBoxEndpointConsumerBuilder pollStrategy(
@@ -772,6 +800,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedBoxEndpointConsumerBuilder httpParams(
@@ -786,6 +815,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedBoxEndpointConsumerBuilder httpParams(String httpParams) {
@@ -825,6 +855,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>com.box.sdk.IAccessTokenCache</code> type.
          * 
+         * Default:
          * Group: security
          */
         default AdvancedBoxEndpointConsumerBuilder accessTokenCache(
@@ -838,6 +869,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.box.sdk.IAccessTokenCache</code> type.
          * 
+         * Default:
          * Group: security
          */
         default AdvancedBoxEndpointConsumerBuilder accessTokenCache(
@@ -916,6 +948,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BoxEndpointProducerBuilder clientId(String clientId) {
@@ -927,6 +960,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BoxEndpointProducerBuilder enterpriseId(String enterpriseId) {
@@ -938,6 +972,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BoxEndpointProducerBuilder inBody(String inBody) {
@@ -949,6 +984,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BoxEndpointProducerBuilder userId(String userId) {
@@ -1002,6 +1038,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointProducerBuilder clientSecret(String clientSecret) {
@@ -1028,6 +1065,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointProducerBuilder privateKeyFile(String privateKeyFile) {
@@ -1039,6 +1077,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointProducerBuilder privateKeyPassword(
@@ -1051,6 +1090,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointProducerBuilder publicKeyId(String publicKeyId) {
@@ -1063,6 +1103,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointProducerBuilder sslContextParameters(
@@ -1076,6 +1117,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointProducerBuilder sslContextParameters(
@@ -1088,6 +1130,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointProducerBuilder userName(String userName) {
@@ -1100,6 +1143,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointProducerBuilder userPassword(String userPassword) {
@@ -1151,6 +1195,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedBoxEndpointProducerBuilder httpParams(
@@ -1165,6 +1210,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedBoxEndpointProducerBuilder httpParams(String httpParams) {
@@ -1204,6 +1250,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>com.box.sdk.IAccessTokenCache</code> type.
          * 
+         * Default:
          * Group: security
          */
         default AdvancedBoxEndpointProducerBuilder accessTokenCache(
@@ -1217,6 +1264,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.box.sdk.IAccessTokenCache</code> type.
          * 
+         * Default:
          * Group: security
          */
         default AdvancedBoxEndpointProducerBuilder accessTokenCache(
@@ -1296,6 +1344,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BoxEndpointBuilder clientId(String clientId) {
@@ -1307,6 +1356,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BoxEndpointBuilder enterpriseId(String enterpriseId) {
@@ -1318,6 +1368,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BoxEndpointBuilder inBody(String inBody) {
@@ -1329,6 +1380,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default BoxEndpointBuilder userId(String userId) {
@@ -1340,6 +1392,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointBuilder clientSecret(String clientSecret) {
@@ -1365,6 +1418,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointBuilder privateKeyFile(String privateKeyFile) {
@@ -1376,6 +1430,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointBuilder privateKeyPassword(String privateKeyPassword) {
@@ -1387,6 +1442,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointBuilder publicKeyId(String publicKeyId) {
@@ -1399,6 +1455,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointBuilder sslContextParameters(
@@ -1412,6 +1469,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointBuilder sslContextParameters(
@@ -1424,6 +1482,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointBuilder userName(String userName) {
@@ -1436,6 +1495,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default BoxEndpointBuilder userPassword(String userPassword) {
@@ -1488,6 +1548,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedBoxEndpointBuilder httpParams(
@@ -1502,6 +1563,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedBoxEndpointBuilder httpParams(String httpParams) {
@@ -1539,6 +1601,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>com.box.sdk.IAccessTokenCache</code> type.
          * 
+         * Default:
          * Group: security
          */
         default AdvancedBoxEndpointBuilder accessTokenCache(
@@ -1552,6 +1615,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.box.sdk.IAccessTokenCache</code> type.
          * 
+         * Default:
          * Group: security
          */
         default AdvancedBoxEndpointBuilder accessTokenCache(

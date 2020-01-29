@@ -377,6 +377,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SoroushBotEndpointConsumerBuilder authorizationToken(
@@ -404,6 +405,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSoroushBotEndpointConsumerBuilder exceptionHandler(
@@ -420,6 +422,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSoroushBotEndpointConsumerBuilder exceptionHandler(
@@ -432,6 +435,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSoroushBotEndpointConsumerBuilder exchangePattern(
@@ -445,6 +449,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSoroushBotEndpointConsumerBuilder exchangePattern(
@@ -940,6 +945,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SoroushBotEndpointProducerBuilder authorizationToken(
@@ -1250,6 +1256,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default SoroushBotEndpointBuilder authorizationToken(

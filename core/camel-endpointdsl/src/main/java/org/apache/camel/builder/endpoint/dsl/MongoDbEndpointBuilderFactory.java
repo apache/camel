@@ -46,6 +46,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder collection(String collection) {
@@ -58,6 +59,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder collectionIndex(
@@ -98,6 +100,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder database(String database) {
@@ -109,6 +112,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>com.mongodb.client.MongoClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder mongoConnection(
@@ -122,6 +126,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.mongodb.client.MongoClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder mongoConnection(
@@ -136,6 +141,7 @@ public interface MongoDbEndpointBuilderFactory {
          * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder operation(
@@ -150,6 +156,7 @@ public interface MongoDbEndpointBuilderFactory {
          * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder operation(String operation) {
@@ -166,6 +173,7 @@ public interface MongoDbEndpointBuilderFactory {
          * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder outputType(
@@ -183,6 +191,7 @@ public interface MongoDbEndpointBuilderFactory {
          * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder outputType(String outputType) {
@@ -232,6 +241,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default MongoDbEndpointConsumerBuilder consumerType(String consumerType) {
@@ -243,6 +253,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: changeStream
          */
         default MongoDbEndpointConsumerBuilder streamFilter(String streamFilter) {
@@ -256,6 +267,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: tail
          */
         default MongoDbEndpointConsumerBuilder persistentId(String persistentId) {
@@ -301,6 +313,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: tail
          */
         default MongoDbEndpointConsumerBuilder tailTrackCollection(
@@ -316,6 +329,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: tail
          */
         default MongoDbEndpointConsumerBuilder tailTrackDb(String tailTrackDb) {
@@ -328,6 +342,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: tail
          */
         default MongoDbEndpointConsumerBuilder tailTrackField(
@@ -346,6 +361,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: tail
          */
         default MongoDbEndpointConsumerBuilder tailTrackIncreasingField(
@@ -373,6 +389,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMongoDbEndpointConsumerBuilder exceptionHandler(
@@ -389,6 +406,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMongoDbEndpointConsumerBuilder exceptionHandler(
@@ -401,6 +419,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMongoDbEndpointConsumerBuilder exchangePattern(
@@ -414,6 +433,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMongoDbEndpointConsumerBuilder exchangePattern(
@@ -628,6 +648,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointProducerBuilder collection(String collection) {
@@ -640,6 +661,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointProducerBuilder collectionIndex(
@@ -680,6 +702,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointProducerBuilder database(String database) {
@@ -691,6 +714,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>com.mongodb.client.MongoClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointProducerBuilder mongoConnection(
@@ -704,6 +728,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.mongodb.client.MongoClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointProducerBuilder mongoConnection(
@@ -718,6 +743,7 @@ public interface MongoDbEndpointBuilderFactory {
          * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointProducerBuilder operation(
@@ -732,6 +758,7 @@ public interface MongoDbEndpointBuilderFactory {
          * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointProducerBuilder operation(String operation) {
@@ -748,6 +775,7 @@ public interface MongoDbEndpointBuilderFactory {
          * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointProducerBuilder outputType(
@@ -765,6 +793,7 @@ public interface MongoDbEndpointBuilderFactory {
          * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointProducerBuilder outputType(String outputType) {
@@ -818,6 +847,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: changeStream
          */
         default MongoDbEndpointProducerBuilder streamFilter(String streamFilter) {
@@ -831,6 +861,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: tail
          */
         default MongoDbEndpointProducerBuilder persistentId(String persistentId) {
@@ -876,6 +907,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: tail
          */
         default MongoDbEndpointProducerBuilder tailTrackCollection(
@@ -891,6 +923,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: tail
          */
         default MongoDbEndpointProducerBuilder tailTrackDb(String tailTrackDb) {
@@ -903,6 +936,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: tail
          */
         default MongoDbEndpointProducerBuilder tailTrackField(
@@ -921,6 +955,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: tail
          */
         default MongoDbEndpointProducerBuilder tailTrackIncreasingField(
@@ -1147,6 +1182,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointBuilder collection(String collection) {
@@ -1159,6 +1195,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointBuilder collectionIndex(String collectionIndex) {
@@ -1196,6 +1233,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointBuilder database(String database) {
@@ -1207,6 +1245,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>com.mongodb.client.MongoClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointBuilder mongoConnection(Object mongoConnection) {
@@ -1219,6 +1258,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.mongodb.client.MongoClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointBuilder mongoConnection(String mongoConnection) {
@@ -1232,6 +1272,7 @@ public interface MongoDbEndpointBuilderFactory {
          * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointBuilder operation(MongoDbOperation operation) {
@@ -1245,6 +1286,7 @@ public interface MongoDbEndpointBuilderFactory {
          * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointBuilder operation(String operation) {
@@ -1261,6 +1303,7 @@ public interface MongoDbEndpointBuilderFactory {
          * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointBuilder outputType(MongoDbOutputType outputType) {
@@ -1277,6 +1320,7 @@ public interface MongoDbEndpointBuilderFactory {
          * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default MongoDbEndpointBuilder outputType(String outputType) {
@@ -1288,6 +1332,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: changeStream
          */
         default MongoDbEndpointBuilder streamFilter(String streamFilter) {
@@ -1301,6 +1346,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: tail
          */
         default MongoDbEndpointBuilder persistentId(String persistentId) {
@@ -1346,6 +1392,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: tail
          */
         default MongoDbEndpointBuilder tailTrackCollection(
@@ -1361,6 +1408,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: tail
          */
         default MongoDbEndpointBuilder tailTrackDb(String tailTrackDb) {
@@ -1373,6 +1421,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: tail
          */
         default MongoDbEndpointBuilder tailTrackField(String tailTrackField) {
@@ -1390,6 +1439,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: tail
          */
         default MongoDbEndpointBuilder tailTrackIncreasingField(

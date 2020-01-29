@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -42,6 +43,45 @@ public interface DebeziumPostgresEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default AdvancedDebeziumPostgresEndpointBuilder advanced() {
             return (AdvancedDebeziumPostgresEndpointBuilder) this;
+        }
+        /**
+         * Sets additional properties for debezium components in case they can't
+         * be set directly on the camel configurations (e.g: setting Kafka
+         * Connect properties needed by Debezium engine, for example setting
+         * KafkaOffsetBackingStore), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Default:
+         * Group: common
+         */
+        default DebeziumPostgresEndpointBuilder additionalProperties(
+                Map<String, Object> additionalProperties) {
+            doSetProperty("additionalProperties", additionalProperties);
+            return this;
+        }
+        /**
+         * Sets additional properties for debezium components in case they can't
+         * be set directly on the camel configurations (e.g: setting Kafka
+         * Connect properties needed by Debezium engine, for example setting
+         * KafkaOffsetBackingStore), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Default:
+         * Group: common
+         */
+        default DebeziumPostgresEndpointBuilder additionalProperties(
+                String additionalProperties) {
+            doSetProperty("additionalProperties", additionalProperties);
+            return this;
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
@@ -205,6 +245,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default DebeziumPostgresEndpointBuilder offsetStorageFileName(
@@ -218,6 +259,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default DebeziumPostgresEndpointBuilder offsetStoragePartitions(
@@ -231,6 +273,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default DebeziumPostgresEndpointBuilder offsetStoragePartitions(
@@ -244,6 +287,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default DebeziumPostgresEndpointBuilder offsetStorageReplicationFactor(
@@ -257,6 +301,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default DebeziumPostgresEndpointBuilder offsetStorageReplicationFactor(
@@ -270,6 +315,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default DebeziumPostgresEndpointBuilder offsetStorageTopic(
@@ -283,6 +329,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder columnBlacklist(
@@ -295,6 +342,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder databaseDbname(
@@ -308,6 +356,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder databaseHistoryFileFilename(
@@ -320,6 +369,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder databaseHostname(
@@ -337,6 +387,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder databaseInitialStatements(
@@ -351,6 +402,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder databasePassword(
@@ -391,6 +443,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder databaseServerName(
@@ -404,6 +457,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder databaseSslcert(
@@ -418,6 +472,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder databaseSslfactory(
@@ -431,6 +486,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder databaseSslkey(
@@ -465,6 +521,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder databaseSslpassword(
@@ -478,6 +535,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder databaseSslrootcert(
@@ -519,6 +577,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder databaseUser(String databaseUser) {
@@ -717,6 +776,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder messageKeyColumns(
@@ -785,6 +845,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder schemaBlacklist(
@@ -821,6 +882,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder schemaWhitelist(
@@ -934,6 +996,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder slotStreamParams(
@@ -950,6 +1013,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder snapshotCustomClass(
@@ -989,6 +1053,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder snapshotFetchSize(
@@ -1002,6 +1067,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder snapshotFetchSize(
@@ -1079,6 +1145,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder snapshotSelectStatementOverrides(
@@ -1134,6 +1201,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder tableBlacklist(
@@ -1146,6 +1214,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder tableWhitelist(
@@ -1284,6 +1353,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDebeziumPostgresEndpointBuilder exceptionHandler(
@@ -1300,6 +1370,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDebeziumPostgresEndpointBuilder exceptionHandler(
@@ -1312,6 +1383,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDebeziumPostgresEndpointBuilder exchangePattern(
@@ -1325,6 +1397,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDebeziumPostgresEndpointBuilder exchangePattern(

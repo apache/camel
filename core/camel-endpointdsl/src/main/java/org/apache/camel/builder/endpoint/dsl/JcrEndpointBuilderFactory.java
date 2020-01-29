@@ -75,6 +75,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointConsumerBuilder eventTypes(int eventTypes) {
@@ -88,6 +89,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointConsumerBuilder eventTypes(String eventTypes) {
@@ -101,6 +103,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointConsumerBuilder nodeTypeNames(String nodeTypeNames) {
@@ -140,6 +143,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointConsumerBuilder password(String password) {
@@ -207,6 +211,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointConsumerBuilder username(String username) {
@@ -220,6 +225,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointConsumerBuilder uuids(String uuids) {
@@ -232,6 +238,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointConsumerBuilder workspaceName(String workspaceName) {
@@ -296,6 +303,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJcrEndpointConsumerBuilder exceptionHandler(
@@ -312,6 +320,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJcrEndpointConsumerBuilder exceptionHandler(
@@ -324,6 +333,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJcrEndpointConsumerBuilder exchangePattern(
@@ -337,6 +347,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJcrEndpointConsumerBuilder exchangePattern(
@@ -444,6 +455,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointProducerBuilder eventTypes(int eventTypes) {
@@ -457,6 +469,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointProducerBuilder eventTypes(String eventTypes) {
@@ -470,6 +483,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointProducerBuilder nodeTypeNames(String nodeTypeNames) {
@@ -509,6 +523,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointProducerBuilder password(String password) {
@@ -576,6 +591,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointProducerBuilder username(String username) {
@@ -589,6 +605,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointProducerBuilder uuids(String uuids) {
@@ -601,6 +618,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointProducerBuilder workspaceName(String workspaceName) {
@@ -761,6 +779,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointBuilder eventTypes(int eventTypes) {
@@ -774,6 +793,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointBuilder eventTypes(String eventTypes) {
@@ -787,6 +807,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointBuilder nodeTypeNames(String nodeTypeNames) {
@@ -826,6 +847,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointBuilder password(String password) {
@@ -893,6 +915,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointBuilder username(String username) {
@@ -906,6 +929,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointBuilder uuids(String uuids) {
@@ -918,6 +942,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default JcrEndpointBuilder workspaceName(String workspaceName) {

@@ -49,6 +49,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder atomix(Object atomix) {
@@ -61,6 +62,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a <code>io.atomix.AtomixClient</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder atomix(String atomix) {
@@ -72,6 +74,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder configurationUri(
@@ -113,6 +116,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder nodes(List<Object> nodes) {
@@ -125,6 +129,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder nodes(String nodes) {
@@ -136,6 +141,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder resultHeader(
@@ -214,6 +220,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder exceptionHandler(
@@ -230,6 +237,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder exceptionHandler(
@@ -242,6 +250,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder exchangePattern(
@@ -255,6 +264,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder exchangePattern(
@@ -295,6 +305,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder defaultResourceConfig(
@@ -308,6 +319,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder defaultResourceConfig(
@@ -320,6 +332,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder defaultResourceOptions(
@@ -333,6 +346,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder defaultResourceOptions(
@@ -376,6 +390,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a: <code>io.atomix.resource.ReadConsistency</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder readConsistency(
@@ -389,6 +404,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.atomix.resource.ReadConsistency</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder readConsistency(
@@ -402,6 +418,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder resourceConfigs(
@@ -416,6 +433,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder resourceConfigs(
@@ -429,6 +447,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder resourceOptions(
@@ -443,6 +462,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder resourceOptions(
@@ -494,6 +514,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixQueueEndpointProducerBuilder atomix(Object atomix) {
@@ -506,6 +527,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a <code>io.atomix.AtomixClient</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixQueueEndpointProducerBuilder atomix(String atomix) {
@@ -517,6 +539,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixQueueEndpointProducerBuilder configurationUri(
@@ -558,6 +581,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixQueueEndpointProducerBuilder nodes(List<Object> nodes) {
@@ -570,6 +594,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixQueueEndpointProducerBuilder nodes(String nodes) {
@@ -581,6 +606,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixQueueEndpointProducerBuilder resultHeader(
@@ -687,6 +713,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder defaultResourceConfig(
@@ -700,6 +727,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder defaultResourceConfig(
@@ -712,6 +740,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder defaultResourceOptions(
@@ -725,6 +754,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder defaultResourceOptions(
@@ -768,6 +798,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a: <code>io.atomix.resource.ReadConsistency</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder readConsistency(
@@ -781,6 +812,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.atomix.resource.ReadConsistency</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder readConsistency(
@@ -794,6 +826,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder resourceConfigs(
@@ -808,6 +841,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder resourceConfigs(
@@ -821,6 +855,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder resourceOptions(
@@ -835,6 +870,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder resourceOptions(
@@ -887,6 +923,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixQueueEndpointBuilder atomix(Object atomix) {
@@ -899,6 +936,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a <code>io.atomix.AtomixClient</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixQueueEndpointBuilder atomix(String atomix) {
@@ -910,6 +948,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixQueueEndpointBuilder configurationUri(
@@ -949,6 +988,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixQueueEndpointBuilder nodes(List<Object> nodes) {
@@ -961,6 +1001,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixQueueEndpointBuilder nodes(String nodes) {
@@ -972,6 +1013,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default AtomixQueueEndpointBuilder resultHeader(String resultHeader) {
@@ -1036,6 +1078,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder defaultResourceConfig(
@@ -1049,6 +1092,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder defaultResourceConfig(
@@ -1061,6 +1105,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder defaultResourceOptions(
@@ -1074,6 +1119,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder defaultResourceOptions(
@@ -1115,6 +1161,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a: <code>io.atomix.resource.ReadConsistency</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder readConsistency(
@@ -1128,6 +1175,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.atomix.resource.ReadConsistency</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder readConsistency(
@@ -1141,6 +1189,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder resourceConfigs(
@@ -1155,6 +1204,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder resourceConfigs(
@@ -1168,6 +1218,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder resourceOptions(
@@ -1182,6 +1233,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder resourceOptions(

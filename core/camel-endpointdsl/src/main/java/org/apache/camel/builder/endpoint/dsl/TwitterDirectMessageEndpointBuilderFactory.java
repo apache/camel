@@ -200,6 +200,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default TwitterDirectMessageEndpointConsumerBuilder lang(String lang) {
@@ -266,6 +267,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: filter
          */
         default TwitterDirectMessageEndpointConsumerBuilder userIds(
@@ -279,6 +281,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder backoffErrorThreshold(
@@ -292,6 +295,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder backoffErrorThreshold(
@@ -305,6 +309,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder backoffIdleThreshold(
@@ -318,6 +323,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder backoffIdleThreshold(
@@ -335,6 +341,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder backoffMultiplier(
@@ -352,6 +359,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder backoffMultiplier(
@@ -507,6 +515,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder scheduledExecutorService(
@@ -522,6 +531,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder scheduledExecutorService(
@@ -550,6 +560,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder schedulerProperties(
@@ -565,6 +576,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder schedulerProperties(
@@ -685,6 +697,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterDirectMessageEndpointConsumerBuilder httpProxyHost(
@@ -698,6 +711,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterDirectMessageEndpointConsumerBuilder httpProxyPassword(
@@ -711,6 +725,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterDirectMessageEndpointConsumerBuilder httpProxyPort(
@@ -725,6 +740,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterDirectMessageEndpointConsumerBuilder httpProxyPort(
@@ -738,6 +754,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterDirectMessageEndpointConsumerBuilder httpProxyUser(
@@ -751,6 +768,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterDirectMessageEndpointConsumerBuilder accessToken(
@@ -764,6 +782,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterDirectMessageEndpointConsumerBuilder accessTokenSecret(
@@ -777,6 +796,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterDirectMessageEndpointConsumerBuilder consumerKey(
@@ -790,6 +810,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterDirectMessageEndpointConsumerBuilder consumerSecret(
@@ -834,6 +855,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder exceptionHandler(
@@ -850,6 +872,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder exceptionHandler(
@@ -862,6 +885,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder exchangePattern(
@@ -875,6 +899,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder exchangePattern(
@@ -917,6 +942,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder latitude(
@@ -931,6 +957,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder latitude(
@@ -945,6 +972,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder locations(
@@ -959,6 +987,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder longitude(
@@ -973,6 +1002,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder longitude(
@@ -989,6 +1019,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder pollStrategy(
@@ -1005,6 +1036,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder pollStrategy(
@@ -1019,6 +1051,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder radius(
@@ -1033,6 +1066,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder radius(
@@ -1155,6 +1189,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterDirectMessageEndpointProducerBuilder httpProxyHost(
@@ -1168,6 +1203,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterDirectMessageEndpointProducerBuilder httpProxyPassword(
@@ -1181,6 +1217,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterDirectMessageEndpointProducerBuilder httpProxyPort(
@@ -1195,6 +1232,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterDirectMessageEndpointProducerBuilder httpProxyPort(
@@ -1208,6 +1246,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterDirectMessageEndpointProducerBuilder httpProxyUser(
@@ -1221,6 +1260,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterDirectMessageEndpointProducerBuilder accessToken(
@@ -1234,6 +1274,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterDirectMessageEndpointProducerBuilder accessTokenSecret(
@@ -1247,6 +1288,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterDirectMessageEndpointProducerBuilder consumerKey(
@@ -1260,6 +1302,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterDirectMessageEndpointProducerBuilder consumerSecret(
@@ -1353,6 +1396,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterDirectMessageEndpointBuilder httpProxyHost(
@@ -1366,6 +1410,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterDirectMessageEndpointBuilder httpProxyPassword(
@@ -1379,6 +1424,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterDirectMessageEndpointBuilder httpProxyPort(
@@ -1393,6 +1439,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterDirectMessageEndpointBuilder httpProxyPort(
@@ -1406,6 +1453,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: proxy
          */
         default TwitterDirectMessageEndpointBuilder httpProxyUser(
@@ -1419,6 +1467,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterDirectMessageEndpointBuilder accessToken(
@@ -1432,6 +1481,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterDirectMessageEndpointBuilder accessTokenSecret(
@@ -1445,6 +1495,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterDirectMessageEndpointBuilder consumerKey(
@@ -1458,6 +1509,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: security
          */
         default TwitterDirectMessageEndpointBuilder consumerSecret(

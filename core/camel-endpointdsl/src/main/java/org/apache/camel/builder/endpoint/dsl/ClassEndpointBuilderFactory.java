@@ -44,6 +44,7 @@ public interface ClassEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default:
          * Group: common
          */
         @Deprecated
@@ -57,6 +58,7 @@ public interface ClassEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default:
          * Group: common
          */
         @Deprecated
@@ -69,6 +71,7 @@ public interface ClassEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default ClassEndpointBuilder method(String method) {
@@ -211,6 +214,7 @@ public interface ClassEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedClassEndpointBuilder parameters(
@@ -225,6 +229,7 @@ public interface ClassEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedClassEndpointBuilder parameters(String parameters) {

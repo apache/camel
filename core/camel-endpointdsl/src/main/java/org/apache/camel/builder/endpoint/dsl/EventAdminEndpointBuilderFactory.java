@@ -127,6 +127,7 @@ public interface EventAdminEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedEventAdminEndpointConsumerBuilder exceptionHandler(
@@ -143,6 +144,7 @@ public interface EventAdminEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedEventAdminEndpointConsumerBuilder exceptionHandler(
@@ -155,6 +157,7 @@ public interface EventAdminEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedEventAdminEndpointConsumerBuilder exchangePattern(
@@ -168,6 +171,7 @@ public interface EventAdminEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedEventAdminEndpointConsumerBuilder exchangePattern(

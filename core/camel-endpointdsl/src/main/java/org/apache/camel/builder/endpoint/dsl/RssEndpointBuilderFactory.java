@@ -135,6 +135,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Date</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default RssEndpointBuilder lastUpdate(Date lastUpdate) {
@@ -147,6 +148,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.util.Date</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default RssEndpointBuilder lastUpdate(String lastUpdate) {
@@ -159,6 +161,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default RssEndpointBuilder password(String password) {
@@ -279,6 +282,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default RssEndpointBuilder username(String username) {
@@ -291,6 +295,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default RssEndpointBuilder backoffErrorThreshold(
@@ -304,6 +309,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default RssEndpointBuilder backoffErrorThreshold(
@@ -317,6 +323,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default RssEndpointBuilder backoffIdleThreshold(int backoffIdleThreshold) {
@@ -329,6 +336,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default RssEndpointBuilder backoffIdleThreshold(
@@ -346,6 +354,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default RssEndpointBuilder backoffMultiplier(int backoffMultiplier) {
@@ -362,6 +371,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default RssEndpointBuilder backoffMultiplier(String backoffMultiplier) {
@@ -513,6 +523,7 @@ public interface RssEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default RssEndpointBuilder scheduledExecutorService(
@@ -528,6 +539,7 @@ public interface RssEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default RssEndpointBuilder scheduledExecutorService(
@@ -555,6 +567,7 @@ public interface RssEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default RssEndpointBuilder schedulerProperties(
@@ -570,6 +583,7 @@ public interface RssEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default RssEndpointBuilder schedulerProperties(
@@ -672,6 +686,7 @@ public interface RssEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRssEndpointBuilder exceptionHandler(
@@ -688,6 +703,7 @@ public interface RssEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRssEndpointBuilder exceptionHandler(
@@ -700,6 +716,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRssEndpointBuilder exchangePattern(
@@ -713,6 +730,7 @@ public interface RssEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRssEndpointBuilder exchangePattern(
@@ -729,6 +747,7 @@ public interface RssEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRssEndpointBuilder pollStrategy(
@@ -745,6 +764,7 @@ public interface RssEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRssEndpointBuilder pollStrategy(String pollStrategy) {

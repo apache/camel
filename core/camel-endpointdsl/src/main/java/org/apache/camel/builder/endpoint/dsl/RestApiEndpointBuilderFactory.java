@@ -46,6 +46,7 @@ public interface RestApiEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default RestApiEndpointBuilder apiComponentName(String apiComponentName) {
@@ -100,6 +101,7 @@ public interface RestApiEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: consumer
          */
         default RestApiEndpointBuilder consumerComponentName(
@@ -127,6 +129,7 @@ public interface RestApiEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRestApiEndpointBuilder exceptionHandler(
@@ -143,6 +146,7 @@ public interface RestApiEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRestApiEndpointBuilder exceptionHandler(
@@ -155,6 +159,7 @@ public interface RestApiEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRestApiEndpointBuilder exchangePattern(
@@ -168,6 +173,7 @@ public interface RestApiEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRestApiEndpointBuilder exchangePattern(

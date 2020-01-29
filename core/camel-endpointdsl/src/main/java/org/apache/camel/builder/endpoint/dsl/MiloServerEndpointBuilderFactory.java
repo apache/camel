@@ -99,6 +99,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMiloServerEndpointConsumerBuilder exceptionHandler(
@@ -115,6 +116,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMiloServerEndpointConsumerBuilder exceptionHandler(
@@ -127,6 +129,7 @@ public interface MiloServerEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMiloServerEndpointConsumerBuilder exchangePattern(
@@ -140,6 +143,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMiloServerEndpointConsumerBuilder exchangePattern(

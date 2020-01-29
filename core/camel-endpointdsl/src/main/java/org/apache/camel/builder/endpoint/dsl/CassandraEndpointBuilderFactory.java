@@ -52,6 +52,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>com.datastax.driver.core.Cluster</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointConsumerBuilder cluster(Object cluster) {
@@ -64,6 +65,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.datastax.driver.core.Cluster</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointConsumerBuilder cluster(String cluster) {
@@ -75,6 +77,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointConsumerBuilder clusterName(String clusterName) {
@@ -87,6 +90,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option is a:
          * <code>com.datastax.driver.core.ConsistencyLevel</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointConsumerBuilder consistencyLevel(
@@ -100,6 +104,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.datastax.driver.core.ConsistencyLevel</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointConsumerBuilder consistencyLevel(
@@ -113,6 +118,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointConsumerBuilder cql(String cql) {
@@ -124,6 +130,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointConsumerBuilder loadBalancingPolicy(
@@ -136,6 +143,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointConsumerBuilder password(String password) {
@@ -175,6 +183,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointConsumerBuilder resultSetConversionStrategy(
@@ -189,6 +198,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointConsumerBuilder resultSetConversionStrategy(
@@ -201,6 +211,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>com.datastax.driver.core.Session</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointConsumerBuilder session(Object session) {
@@ -213,6 +224,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.datastax.driver.core.Session</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointConsumerBuilder session(String session) {
@@ -224,6 +236,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointConsumerBuilder username(String username) {
@@ -302,6 +315,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder backoffErrorThreshold(
@@ -315,6 +329,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder backoffErrorThreshold(
@@ -328,6 +343,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder backoffIdleThreshold(
@@ -341,6 +357,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder backoffIdleThreshold(
@@ -358,6 +375,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder backoffMultiplier(
@@ -375,6 +393,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder backoffMultiplier(
@@ -530,6 +549,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder scheduledExecutorService(
@@ -545,6 +565,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder scheduledExecutorService(
@@ -572,6 +593,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
+         * Default:
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder schedulerProperties(
@@ -587,6 +609,7 @@ public interface CassandraEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
+         * Default:
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder schedulerProperties(
@@ -693,6 +716,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCassandraEndpointConsumerBuilder exceptionHandler(
@@ -709,6 +733,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCassandraEndpointConsumerBuilder exceptionHandler(
@@ -721,6 +746,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCassandraEndpointConsumerBuilder exchangePattern(
@@ -734,6 +760,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCassandraEndpointConsumerBuilder exchangePattern(
@@ -750,6 +777,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCassandraEndpointConsumerBuilder pollStrategy(
@@ -766,6 +794,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCassandraEndpointConsumerBuilder pollStrategy(
@@ -845,6 +874,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>com.datastax.driver.core.Cluster</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointProducerBuilder cluster(Object cluster) {
@@ -857,6 +887,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.datastax.driver.core.Cluster</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointProducerBuilder cluster(String cluster) {
@@ -868,6 +899,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointProducerBuilder clusterName(String clusterName) {
@@ -880,6 +912,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option is a:
          * <code>com.datastax.driver.core.ConsistencyLevel</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointProducerBuilder consistencyLevel(
@@ -893,6 +926,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.datastax.driver.core.ConsistencyLevel</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointProducerBuilder consistencyLevel(
@@ -906,6 +940,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointProducerBuilder cql(String cql) {
@@ -917,6 +952,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointProducerBuilder loadBalancingPolicy(
@@ -929,6 +965,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointProducerBuilder password(String password) {
@@ -968,6 +1005,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointProducerBuilder resultSetConversionStrategy(
@@ -982,6 +1020,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointProducerBuilder resultSetConversionStrategy(
@@ -994,6 +1033,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>com.datastax.driver.core.Session</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointProducerBuilder session(Object session) {
@@ -1006,6 +1046,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.datastax.driver.core.Session</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointProducerBuilder session(String session) {
@@ -1017,6 +1058,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointProducerBuilder username(String username) {
@@ -1149,6 +1191,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>com.datastax.driver.core.Cluster</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointBuilder cluster(Object cluster) {
@@ -1161,6 +1204,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.datastax.driver.core.Cluster</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointBuilder cluster(String cluster) {
@@ -1172,6 +1216,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointBuilder clusterName(String clusterName) {
@@ -1184,6 +1229,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option is a:
          * <code>com.datastax.driver.core.ConsistencyLevel</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointBuilder consistencyLevel(
@@ -1197,6 +1243,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.datastax.driver.core.ConsistencyLevel</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointBuilder consistencyLevel(
@@ -1210,6 +1257,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointBuilder cql(String cql) {
@@ -1221,6 +1269,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointBuilder loadBalancingPolicy(
@@ -1233,6 +1282,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointBuilder password(String password) {
@@ -1272,6 +1322,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointBuilder resultSetConversionStrategy(
@@ -1286,6 +1337,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointBuilder resultSetConversionStrategy(
@@ -1298,6 +1350,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>com.datastax.driver.core.Session</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointBuilder session(Object session) {
@@ -1310,6 +1363,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.datastax.driver.core.Session</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointBuilder session(String session) {
@@ -1321,6 +1375,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
          * Group: common
          */
         default CassandraEndpointBuilder username(String username) {

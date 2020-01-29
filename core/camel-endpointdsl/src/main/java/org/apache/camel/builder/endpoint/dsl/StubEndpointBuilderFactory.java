@@ -156,6 +156,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedStubEndpointConsumerBuilder exceptionHandler(
@@ -172,6 +173,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedStubEndpointConsumerBuilder exceptionHandler(
@@ -184,6 +186,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedStubEndpointConsumerBuilder exchangePattern(
@@ -197,6 +200,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedStubEndpointConsumerBuilder exchangePattern(
@@ -365,6 +369,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a: <code>java.util.concurrent.BlockingQueue</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedStubEndpointConsumerBuilder queue(BlockingQueue queue) {
@@ -379,6 +384,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.BlockingQueue</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedStubEndpointConsumerBuilder queue(String queue) {
@@ -631,6 +637,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default StubEndpointProducerBuilder offerTimeout(long offerTimeout) {
@@ -644,6 +651,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default StubEndpointProducerBuilder offerTimeout(String offerTimeout) {
@@ -763,6 +771,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a: <code>java.util.concurrent.BlockingQueue</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedStubEndpointProducerBuilder queue(BlockingQueue queue) {
@@ -777,6 +786,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.BlockingQueue</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedStubEndpointProducerBuilder queue(String queue) {
@@ -899,6 +909,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a: <code>java.util.concurrent.BlockingQueue</code>
          * type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedStubEndpointBuilder queue(BlockingQueue queue) {
@@ -913,6 +924,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.BlockingQueue</code> type.
          * 
+         * Default:
          * Group: advanced
          */
         default AdvancedStubEndpointBuilder queue(String queue) {

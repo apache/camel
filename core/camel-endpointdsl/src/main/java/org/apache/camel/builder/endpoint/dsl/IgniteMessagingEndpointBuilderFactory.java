@@ -157,6 +157,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder exceptionHandler(
@@ -173,6 +174,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder exceptionHandler(
@@ -185,6 +187,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder exchangePattern(
@@ -198,6 +201,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder exchangePattern(
@@ -335,6 +339,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default IgniteMessagingEndpointProducerBuilder clusterGroupExpression(
@@ -349,6 +354,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
          * type.
          * 
+         * Default:
          * Group: producer
          */
         default IgniteMessagingEndpointProducerBuilder clusterGroupExpression(
@@ -430,6 +436,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default IgniteMessagingEndpointProducerBuilder timeout(Long timeout) {
@@ -441,6 +448,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default:
          * Group: producer
          */
         default IgniteMessagingEndpointProducerBuilder timeout(String timeout) {
