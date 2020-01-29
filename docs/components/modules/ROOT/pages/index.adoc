@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 311 in 249 JAR artifacts (1 deprecated)
+Number of Components: 312 in 250 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -47,6 +47,8 @@ Number of Components: 311 in 249 JAR artifacts (1 deprecated)
 | xref:avro-component.adoc[Avro] (camel-avro) | 2.10 | Working with Apache Avro for data serialization.
 
 | xref:aws2-ecs-component.adoc[AWS 2 ECS] (camel-aws2-ecs) | 3.1 | The aws2-ecs is used for managing Amazon ECS
+
+| xref:aws2-eks-component.adoc[AWS 2 EKS] (camel-aws2-eks) | 3.1 | The aws-eks is used for managing Amazon EKS
 
 | xref:aws2-translate-component.adoc[AWS 2 Translate] (camel-aws2-translate) | 3.1 | The aws2-translate component is used for managing Amazon Translate
 
