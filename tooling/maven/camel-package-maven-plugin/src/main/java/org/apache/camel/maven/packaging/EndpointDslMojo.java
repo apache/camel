@@ -936,7 +936,7 @@ public class EndpointDslMojo extends AbstractMojo {
         for (Map.Entry<File, Supplier<String>> entry : jsonFiles.entrySet()) {
             if (entry.getKey().getName().equals(modelName + PackageHelper.JSON_SUFIX)) {
                 String json = entry.getValue().get();
-                if ("type".equals(PackageHelper.getSchemaKind(json))) {
+                if (type.equals(PackageHelper.getSchemaKind(json))) {
                     return json;
                 }
             }
