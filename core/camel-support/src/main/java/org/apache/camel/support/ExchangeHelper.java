@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -295,7 +296,7 @@ public final class ExchangeHelper {
      * @param source the source exchange which is not modified
      */
     public static void copyResults(Exchange target, Exchange source) {
-        doCopyResults(target, source, false);
+        doCopyResults((ExtendedExchange) target, (ExtendedExchange) source, false);
     }
 
     /**
@@ -306,10 +307,10 @@ public final class ExchangeHelper {
      * @param source source exchange.
      */
     public static void copyResultsPreservePattern(Exchange target, Exchange source) {
-        doCopyResults(target, source, true);
+        doCopyResults((ExtendedExchange) target, (ExtendedExchange) source, true);
     }
 
-    private static void doCopyResults(Exchange result, Exchange source, boolean preserverPattern) {
+    private static void doCopyResults(ExtendedExchange result, ExtendedExchange source, boolean preserverPattern) {
         if (result == source) {
             // we just need to ensure MEP is as expected (eg copy result to OUT if out capable)
             // and the result is not failed
@@ -356,6 +357,13 @@ public final class ExchangeHelper {
             result.getProperties().putAll(source.getProperties());
         }
 
+        // copy over state
+        result.setRouteStop(source.isRouteStop());
+        result.setRollbackOnly(source.isRollbackOnly());
+        result.setRollbackOnlyLast(source.isRollbackOnlyLast());
+        result.setNotifyEvent(source.isNotifyEvent());
+        result.setRedeliveryExhausted(source.isRedeliveryExhausted());
+        result.setErrorHandlerHandled(source.getErrorHandlerHandled());
         result.setException(source.getException());
     }
 
@@ -655,17 +663,6 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Tests whether the exchange has already been handled by the error handler
-     *
-     * @param exchange the exchange
-     * @return <tt>true</tt> if handled already by error handler, <tt>false</tt> otherwise
-     */
-    public static boolean hasExceptionBeenHandledByErrorHandler(Exchange exchange) {
-        // TODO: optimize this
-        return Boolean.TRUE.equals(exchange.getProperty(Exchange.ERRORHANDLER_HANDLED));
-    }
-
-    /**
      * Extracts the body from the given future, that represents a handle to an asynchronous exchange.
      * <p/>
      * Will wait until the future task is complete.
@@ -878,7 +875,7 @@ public final class ExchangeHelper {
             return null;
         }
 
-        Map<String, Object> answer = new HashMap<>(properties);
+        Map<String, Object> answer = new ConcurrentHashMap<>(properties);
 
         // safe copy message history using a defensive copy
         List<MessageHistory> history = (List<MessageHistory>) answer.remove(Exchange.MESSAGE_HISTORY);

@@ -152,7 +152,8 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         boolean stop = ee.isRouteStop();
         ee.setRouteStop(false);
         Object failureHandled = ee.removeProperty(Exchange.FAILURE_HANDLED);
-        Object errorhandlerHandled = ee.removeProperty(Exchange.ERRORHANDLER_HANDLED);
+        Boolean errorhandlerHandled = ee.getErrorHandlerHandled();
+        ee.setErrorHandlerHandled(null);
         boolean rollbackOnly = ee.isRollbackOnly();
         ee.setRollbackOnly(false);
         boolean rollbackOnlyLast = ee.isRollbackOnlyLast();
@@ -175,7 +176,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
                 ee.setProperty(Exchange.FAILURE_HANDLED, failureHandled);
             }
             if (errorhandlerHandled != null) {
-                ee.setProperty(Exchange.ERRORHANDLER_HANDLED, errorhandlerHandled);
+                ee.setErrorHandlerHandled(errorhandlerHandled);
             }
             ee.setRollbackOnly(rollbackOnly);
             ee.setRollbackOnlyLast(rollbackOnlyLast);

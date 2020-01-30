@@ -603,6 +603,33 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the SO_SNDBUF option to the specified value (in bytes).
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 8192
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
+                Integer sendBufferSize) {
+            doSetProperty("sendBufferSize", sendBufferSize);
+            return this;
+        }
+        /**
+         * Sets the SO_SNDBUF option to the specified value (in bytes).
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default: 8192
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
+                String sendBufferSize) {
+            doSetProperty("sendBufferSize", sendBufferSize);
+            return this;
+        }
+        /**
          * The approximate idle time allowed before the Client TCP Connection
          * will be reset. A null value or a value less than or equal to zero
          * will disable the idle timeout.
@@ -685,33 +712,6 @@ public interface MllpEndpointBuilderFactory {
         default AdvancedMllpEndpointConsumerBuilder receiveBufferSize(
                 String receiveBufferSize) {
             doSetProperty("receiveBufferSize", receiveBufferSize);
-            return this;
-        }
-        /**
-         * Sets the SO_SNDBUF option to the specified value (in bytes).
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Default: 8192
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
-                Integer sendBufferSize) {
-            doSetProperty("sendBufferSize", sendBufferSize);
-            return this;
-        }
-        /**
-         * Sets the SO_SNDBUF option to the specified value (in bytes).
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Default: 8192
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
-                String sendBufferSize) {
-            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -1087,6 +1087,84 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Enable/disable the SO_KEEPALIVE socket option.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: true
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointProducerBuilder keepAlive(Boolean keepAlive) {
+            doSetProperty("keepAlive", keepAlive);
+            return this;
+        }
+        /**
+         * Enable/disable the SO_KEEPALIVE socket option.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: true
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointProducerBuilder keepAlive(String keepAlive) {
+            doSetProperty("keepAlive", keepAlive);
+            return this;
+        }
+        /**
+         * Sets the SO_SNDBUF option to the specified value (in bytes).
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 8192
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointProducerBuilder sendBufferSize(
+                Integer sendBufferSize) {
+            doSetProperty("sendBufferSize", sendBufferSize);
+            return this;
+        }
+        /**
+         * Sets the SO_SNDBUF option to the specified value (in bytes).
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default: 8192
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointProducerBuilder sendBufferSize(
+                String sendBufferSize) {
+            doSetProperty("sendBufferSize", sendBufferSize);
+            return this;
+        }
+        /**
+         * Enable/disable the TCP_NODELAY socket option.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: true
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointProducerBuilder tcpNoDelay(
+                Boolean tcpNoDelay) {
+            doSetProperty("tcpNoDelay", tcpNoDelay);
+            return this;
+        }
+        /**
+         * Enable/disable the TCP_NODELAY socket option.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: true
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointProducerBuilder tcpNoDelay(String tcpNoDelay) {
+            doSetProperty("tcpNoDelay", tcpNoDelay);
+            return this;
+        }
+        /**
          * Timeout (in milliseconds) for establishing for a TCP connection TCP
          * Client only.
          * 
@@ -1144,31 +1222,6 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enable/disable the SO_KEEPALIVE socket option.
-         * 
-         * The option is a: <code>java.lang.Boolean</code> type.
-         * 
-         * Default: true
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointProducerBuilder keepAlive(Boolean keepAlive) {
-            doSetProperty("keepAlive", keepAlive);
-            return this;
-        }
-        /**
-         * Enable/disable the SO_KEEPALIVE socket option.
-         * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * 
-         * Default: true
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointProducerBuilder keepAlive(String keepAlive) {
-            doSetProperty("keepAlive", keepAlive);
-            return this;
-        }
-        /**
          * Sets the SO_RCVBUF option to the specified value (in bytes).
          * 
          * The option is a: <code>java.lang.Integer</code> type.
@@ -1193,59 +1246,6 @@ public interface MllpEndpointBuilderFactory {
         default AdvancedMllpEndpointProducerBuilder receiveBufferSize(
                 String receiveBufferSize) {
             doSetProperty("receiveBufferSize", receiveBufferSize);
-            return this;
-        }
-        /**
-         * Sets the SO_SNDBUF option to the specified value (in bytes).
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Default: 8192
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointProducerBuilder sendBufferSize(
-                Integer sendBufferSize) {
-            doSetProperty("sendBufferSize", sendBufferSize);
-            return this;
-        }
-        /**
-         * Sets the SO_SNDBUF option to the specified value (in bytes).
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Default: 8192
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointProducerBuilder sendBufferSize(
-                String sendBufferSize) {
-            doSetProperty("sendBufferSize", sendBufferSize);
-            return this;
-        }
-        /**
-         * Enable/disable the TCP_NODELAY socket option.
-         * 
-         * The option is a: <code>java.lang.Boolean</code> type.
-         * 
-         * Default: true
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointProducerBuilder tcpNoDelay(
-                Boolean tcpNoDelay) {
-            doSetProperty("tcpNoDelay", tcpNoDelay);
-            return this;
-        }
-        /**
-         * Enable/disable the TCP_NODELAY socket option.
-         * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * 
-         * Default: true
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointProducerBuilder tcpNoDelay(String tcpNoDelay) {
-            doSetProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
         /**
@@ -1575,6 +1575,32 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the SO_SNDBUF option to the specified value (in bytes).
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 8192
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointBuilder sendBufferSize(
+                Integer sendBufferSize) {
+            doSetProperty("sendBufferSize", sendBufferSize);
+            return this;
+        }
+        /**
+         * Sets the SO_SNDBUF option to the specified value (in bytes).
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default: 8192
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointBuilder sendBufferSize(String sendBufferSize) {
+            doSetProperty("sendBufferSize", sendBufferSize);
+            return this;
+        }
+        /**
          * The approximate idle time allowed before the Client TCP Connection
          * will be reset. A null value or a value less than or equal to zero
          * will disable the idle timeout.
@@ -1626,32 +1652,6 @@ public interface MllpEndpointBuilderFactory {
         default AdvancedMllpEndpointBuilder receiveBufferSize(
                 String receiveBufferSize) {
             doSetProperty("receiveBufferSize", receiveBufferSize);
-            return this;
-        }
-        /**
-         * Sets the SO_SNDBUF option to the specified value (in bytes).
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Default: 8192
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointBuilder sendBufferSize(
-                Integer sendBufferSize) {
-            doSetProperty("sendBufferSize", sendBufferSize);
-            return this;
-        }
-        /**
-         * Sets the SO_SNDBUF option to the specified value (in bytes).
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Default: 8192
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointBuilder sendBufferSize(String sendBufferSize) {
-            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**

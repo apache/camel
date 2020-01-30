@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
@@ -44,6 +45,11 @@ public interface ExtendedExchange extends Exchange {
      * zero, one or more physical transactions
      */
     void setUnitOfWork(UnitOfWork unitOfWork);
+
+    /**
+     * Sets the properties on the exchange
+     */
+    void setProperties(Map<String, Object> properties);
 
     /**
      * Adds a {@link org.apache.camel.spi.Synchronization} to be invoked as callback when
@@ -120,12 +126,32 @@ public interface ExtendedExchange extends Exchange {
 
     /**
      * Whether the exchange has exhausted (attempted all) its redeliveries and still failed.
+     * This is used internally by Camel.
      */
     boolean isRedeliveryExhausted();
 
     /**
      * Used to signal that this exchange has exhausted (attempted all) its redeliveries and still failed.
+     * This is used internally by Camel.
      */
     void setRedeliveryExhausted(boolean redeliveryExhausted);
+
+    /**
+     * Whether the exchange has been handled by the error handler.
+     * This is used internally by Camel.
+     */
+    boolean isErrorHandlerHandled();
+
+    /**
+     * Whether the exchange has been handled by the error handler.
+     * This is used internally by Camel.
+     */
+    Boolean getErrorHandlerHandled();
+
+    /**
+     * Used to signal that this exchange has been handled by the error handler.
+     * This is used internally by Camel.
+     */
+    void setErrorHandlerHandled(Boolean errorHandlerHandled);
 
 }

@@ -30,10 +30,16 @@ import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
 import org.apache.camel.tooling.model.DataFormatModel.DataFormatOptionModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
 import org.apache.camel.tooling.model.LanguageModel.LanguageOptionModel;
+import org.apache.camel.tooling.model.MainModel.MainGroupModel;
+import org.apache.camel.tooling.model.MainModel.MainOptionModel;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-public class JsonMapper {
+public final class JsonMapper {
+
+    private JsonMapper() {
+    }
 
     public static BaseModel<?> generateModel(Path file) {
         try {
@@ -87,25 +93,29 @@ public class JsonMapper {
         model.setArtifactId(mobj.getString("artifactId"));
         model.setVersion(mobj.getString("version"));
         JsonObject mcprp = (JsonObject) obj.get("componentProperties");
-        for (Map.Entry<String, Object> entry : mcprp.entrySet()) {
-            JsonObject mp = (JsonObject) entry.getValue();
-            ComponentOptionModel option = new ComponentOptionModel();
-            parseOption(mp, option, entry.getKey());
-            model.addComponentOption(option);
+        if (mcprp != null) {
+            for (Map.Entry<String, Object> entry : mcprp.entrySet()) {
+                JsonObject mp = (JsonObject) entry.getValue();
+                ComponentOptionModel option = new ComponentOptionModel();
+                parseOption(mp, option, entry.getKey());
+                model.addComponentOption(option);
+            }
         }
         JsonObject mprp = (JsonObject) obj.get("properties");
-        for (Map.Entry<String, Object> entry : mprp.entrySet()) {
-            JsonObject mp = (JsonObject) entry.getValue();
-            EndpointOptionModel option = new EndpointOptionModel();
-            parseOption(mp, option, entry.getKey());
-            model.addEndpointOption(option);
+        if (mprp != null) {
+            for (Map.Entry<String, Object> entry : mprp.entrySet()) {
+                JsonObject mp = (JsonObject) entry.getValue();
+                EndpointOptionModel option = new EndpointOptionModel();
+                parseOption(mp, option, entry.getKey());
+                model.addEndpointOption(option);
+            }
         }
         return model;
     }
 
     public static String createParameterJsonSchema(ComponentModel model) {
         JsonObject wrapper = asJsonObject(model);
-        return Jsoner.prettyPrint(Jsoner.serialize(wrapper), 2, 2);
+        return serialize(wrapper);
     }
 
     public static JsonObject asJsonObject(ComponentModel model) {
@@ -166,7 +176,7 @@ public class JsonMapper {
 
     public static String createParameterJsonSchema(DataFormatModel model) {
         JsonObject wrapper = asJsonObject(model);
-        return Jsoner.prettyPrint(Jsoner.serialize(wrapper), 2, 2);
+        return serialize(wrapper);
     }
 
     public static JsonObject asJsonObject(DataFormatModel model) {
@@ -215,7 +225,7 @@ public class JsonMapper {
 
     public static String createParameterJsonSchema(EipModel model) {
         JsonObject wrapper = asJsonObject(model);
-        return Jsoner.prettyPrint(Jsoner.serialize(wrapper), 2, 2);
+        return serialize(wrapper);
     }
 
     public static JsonObject asJsonObject(EipModel model) {
@@ -264,7 +274,7 @@ public class JsonMapper {
 
     public static String createParameterJsonSchema(LanguageModel model) {
         JsonObject wrapper = asJsonObject(model);
-        return Jsoner.prettyPrint(Jsoner.serialize(wrapper), 2, 2);
+        return serialize(wrapper);
     }
 
     public static JsonObject asJsonObject(LanguageModel model) {
@@ -307,7 +317,7 @@ public class JsonMapper {
 
     public static String createJsonSchema(OtherModel model) {
         JsonObject wrapper = asJsonObject(model);
-        return Jsoner.prettyPrint(Jsoner.serialize(wrapper), 2, 2);
+        return serialize(wrapper);
     }
 
     public static JsonObject asJsonObject(OtherModel model) {
@@ -364,6 +374,12 @@ public class JsonMapper {
         option.setDescription(mp.getString("description"));
     }
 
+    private static void parseGroup(JsonObject mp, MainGroupModel option) {
+        option.setName(mp.getString("name"));
+        option.setDescription(mp.getString("description"));
+        option.setSourceType(mp.getString("sourceType"));
+    }
+
     public static JsonObject asJsonObject(List<? extends BaseOptionModel> options) {
         JsonObject json = new JsonObject();
         options.forEach(option -> json.put(option.getName(), asJsonObject(option)));
@@ -395,9 +411,74 @@ public class JsonMapper {
         prop.entrySet().removeIf(e -> e.getValue() == null);
         prop.remove("prefix", "");
         prop.remove("optionalPrefix", "");
+        prop.remove("defaultValue", "");
         prop.remove("multiValue", Boolean.FALSE);
         prop.remove("asPredicate", Boolean.FALSE);
         return prop;
+    }
+
+    public static MainModel generateMainModel(String json) {
+        JsonObject obj = deserialize(json);
+        return generateMainModel(obj);
+    }
+
+    public static MainModel generateMainModel(JsonObject obj) {
+        MainModel model = new MainModel();
+        JsonArray mgrp = (JsonArray) obj.get("groups");
+        for (Object entry : mgrp) {
+            JsonObject mg = (JsonObject) entry;
+            MainGroupModel group = new MainGroupModel();
+            parseGroup(mg, group);
+            model.addGroup(group);
+        }
+        JsonArray mprp = (JsonArray) obj.get("properties");
+        for (Object entry : mprp) {
+            JsonObject mp = (JsonObject) entry;
+            MainOptionModel option = new MainOptionModel();
+            parseOption(mp, option, mp.getString("name"));
+            option.setSourceType(mp.getString("sourceType"));
+            model.addOption(option);
+        }
+        return model;
+    }
+
+    public static JsonObject asJsonObject(MainModel model) {
+        JsonObject json = new JsonObject();
+        JsonArray groups = new JsonArray();
+        for (MainGroupModel group : model.getGroups()) {
+            JsonObject j = new JsonObject();
+            j.put("name", group.getName());
+            j.put("description", group.getDescription());
+            j.put("sourceType", group.getSourceType());
+            groups.add(j);
+        }
+        json.put("groups", groups);
+        JsonArray props = new JsonArray();
+        for (MainOptionModel prop : model.getOptions()) {
+            JsonObject j = new JsonObject();
+            j.put("name", prop.getName());
+            j.put("description", prop.getDescription());
+            j.put("sourceType", prop.getSourceType());
+            j.put("type", prop.getType());
+            j.put("javaType", prop.getJavaType());
+            if (prop.getDefaultValue() != null) {
+                j.put("defaultValue", prop.getDefaultValue());
+            }
+            if (prop.getEnums() != null) {
+                j.put("enum", prop.getEnums());
+            }
+            if (prop.isDeprecated()) {
+                j.put("deprecated", prop.isDeprecated());
+            }
+            props.add(j);
+        }
+        json.put("properties", props);
+        return json;
+    }
+
+    public static String createJsonSchema(MainModel model) {
+        JsonObject wrapper = asJsonObject(model);
+        return serialize(wrapper);
     }
 
     public static JsonObject deserialize(String json) {
@@ -407,6 +488,10 @@ public class JsonMapper {
             // wrap parsing exceptions as runtime
             throw new RuntimeException("Cannot parse json", e);
         }
+    }
+
+    public static String serialize(Object json) {
+        return Jsoner.prettyPrint(Jsoner.serialize(json), 2, 2);
     }
 
     protected static List<String> asStringList(Collection<?> col) {

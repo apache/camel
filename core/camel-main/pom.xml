@@ -107,12 +107,21 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-main-package-maven-plugin</artifactId>
+                <artifactId>camel-package-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <executions>
                     <execution>
+                        <id>generate-legal</id>
+                        <goals>
+                            <goal>generate-legal</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                    </execution>
+                    <execution>
                         <id>generate</id>
                         <goals>
+                            <goal>jandex</goal>
+                            <goal>generate-jaxb-list</goal>
                             <goal>prepare-main</goal>
                         </goals>
                         <phase>process-classes</phase>

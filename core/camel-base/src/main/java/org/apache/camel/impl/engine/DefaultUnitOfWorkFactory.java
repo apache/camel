@@ -28,22 +28,27 @@ public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
 
     private boolean usedMDCLogging;
     private String mdcLoggingKeysPattern;
+    private boolean allowUseOriginalMessage;
+    private boolean useBreadcrumb;
 
     @Override
     public UnitOfWork createUnitOfWork(Exchange exchange) {
         UnitOfWork answer;
         if (usedMDCLogging) {
-            answer = new MDCUnitOfWork(exchange, mdcLoggingKeysPattern);
+            answer = new MDCUnitOfWork(exchange, mdcLoggingKeysPattern, allowUseOriginalMessage, useBreadcrumb);
         } else {
-            answer = new DefaultUnitOfWork(exchange);
+            answer = new DefaultUnitOfWork(exchange, allowUseOriginalMessage, useBreadcrumb);
         }
         return answer;
     }
 
     @Override
     public void afterPropertiesConfigured(CamelContext camelContext) {
+        // optimize to read configuration once
         usedMDCLogging = camelContext.isUseMDCLogging() != null && camelContext.isUseMDCLogging();
         mdcLoggingKeysPattern = camelContext.getMDCLoggingKeysPattern();
+        allowUseOriginalMessage = camelContext.isAllowUseOriginalMessage() != null ? camelContext.isAllowUseOriginalMessage() : false;
+        useBreadcrumb = camelContext.isUseBreadcrumb() != null ? camelContext.isUseBreadcrumb() : false;
     }
 
 }

@@ -71,6 +71,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     private List<TransformerBuilder> transformerBuilders = new ArrayList<>();
     private List<ValidatorBuilder> validatorBuilders = new ArrayList<>();
     private RoutesDefinition routeCollection = new RoutesDefinition();
+    private final List<RouteBuilderLifecycleStrategy> lifecycleInterceptors = new ArrayList<>();
 
     public RouteBuilder() {
         this(null);
@@ -96,7 +97,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     /**
      * Add routes to a context using a lambda expression. It can be used as
      * following:
-     * 
+     *
      * <pre>
      * RouteBuilder.addRoutes(context, rb ->
      *     rb.from("direct:inbound").bean(ProduceTemplateBean.class)));
@@ -209,7 +210,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     /**
      * Create a new {@code TransformerBuilder}.
-     * 
+     *
      * @return the builder
      */
     public TransformerBuilder transformer() {
@@ -220,7 +221,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     /**
      * Create a new {@code ValidatorBuilder}.
-     * 
+     *
      * @return the builder
      */
     public ValidatorBuilder validator() {
@@ -469,6 +470,20 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         getRouteCollection().setErrorHandlerFactory(getErrorHandlerBuilder());
     }
 
+    /**
+     * Adds the given {@link RouteBuilderLifecycleStrategy} to be used.
+     */
+    public void addLifecycleInterceptor(RouteBuilderLifecycleStrategy interceptor) {
+        lifecycleInterceptors.add(interceptor);
+    }
+
+    /**
+     * Adds the given {@link RouteBuilderLifecycleStrategy}.
+     */
+    public void removeLifecycleInterceptor(RouteBuilderLifecycleStrategy interceptor) {
+        lifecycleInterceptors.remove(interceptor);
+    }
+
     // Implementation methods
     // -----------------------------------------------------------------------
     protected void checkInitialized() throws Exception {
@@ -478,11 +493,20 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             if (camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory() instanceof ErrorHandlerBuilder) {
                 setErrorHandlerBuilder((ErrorHandlerBuilder)camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory());
             }
+
+            for (RouteBuilderLifecycleStrategy interceptor : lifecycleInterceptors) {
+                interceptor.beforeConfigure(this);
+            }
+
             configure();
             // mark all route definitions as custom prepared because
             // a route builder prepares the route definitions correctly already
             for (RouteDefinition route : getRouteCollection().getRoutes()) {
                 route.markPrepared();
+            }
+
+            for (RouteBuilderLifecycleStrategy interceptor : lifecycleInterceptors) {
+                interceptor.afterConfigure(this);
             }
         }
     }

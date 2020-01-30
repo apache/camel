@@ -118,6 +118,7 @@ public interface Exchange {
     String EXCEPTION_HANDLED             = "CamelExceptionHandled";
     String EVALUATE_EXPRESSION_RESULT    = "CamelEvaluateExpressionResult";
     String ERRORHANDLER_CIRCUIT_DETECTED = "CamelFErrorHandlerCircuitDetected";
+    @Deprecated
     String ERRORHANDLER_HANDLED          = "CamelErrorHandlerHandled";
     @Deprecated
     String EXTERNAL_REDELIVERED          = "CamelExternalRedelivered";

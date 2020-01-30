@@ -18,11 +18,7 @@ package org.apache.camel.tooling.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 
 public class ComponentModel extends BaseModel<ComponentModel.ComponentOptionModel> {
 

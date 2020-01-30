@@ -16,11 +16,6 @@
  */
 package org.apache.camel.tooling.model;
 
-import java.util.Map;
-
-import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
-
 public class DataFormatModel extends BaseModel<DataFormatModel.DataFormatOptionModel> {
 
     protected String modelName;

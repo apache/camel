@@ -64,13 +64,11 @@ public class PackageModelMojo extends AbstractGeneratorMojo {
         Set<File> jsonFiles = new TreeSet<>();
 
         // find all json files in camel-core
-        List<String> models = PackageHelper.findJsonFiles(buildDir.toPath().resolve("classes/org/apache/camel/model"))
-                .map(p -> p.getFileName().toString())
-                // strip out .json from the name
-                .map(s -> s.substring(0, s.length() - PackageHelper.JSON_SUFIX.length()))
-                // sort
-                .sorted()
-                .collect(Collectors.toList());
+        List<String> models = PackageHelper.findJsonFiles(buildDir.toPath().resolve("classes/org/apache/camel/model")).map(p -> p.getFileName().toString())
+            // strip out .json from the name
+            .map(s -> s.substring(0, s.length() - PackageHelper.JSON_SUFIX.length()))
+            // sort
+            .sorted().collect(Collectors.toList());
 
         StringBuilder sb = new StringBuilder();
         sb.append("# " + GENERATED_MSG + NL);

@@ -118,7 +118,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         try {
             List<ComponentModel> models = new ArrayList<>();
             for (File file : componentFiles) {
-                String json =  PackageHelper.loadText(file);
+                String json = PackageHelper.loadText(file);
                 ComponentModel model = JsonMapper.generateComponentModel(json);
 
                 // filter out alternative schemas which reuses documentation
@@ -229,7 +229,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         try {
             List<DataFormatModel> models = new ArrayList<>();
             for (File file : dataFormatFiles) {
-                String json =  PackageHelper.loadText(file);
+                String json = PackageHelper.loadText(file);
                 DataFormatModel model = JsonMapper.generateDataFormatModel(json);
                 models.add(model);
             }
@@ -273,7 +273,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         try {
             List<LanguageModel> models = new ArrayList<>();
             for (File file : languageFiles) {
-                String json =  PackageHelper.loadText(file);
+                String json = PackageHelper.loadText(file);
                 LanguageModel model = JsonMapper.generateLanguageModel(json);
                 models.add(model);
             }
@@ -310,7 +310,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         }
 
         try {
-            String text =  PackageHelper.loadText(file);
+            String text = PackageHelper.loadText(file);
 
             String existing = Strings.between(text, "<!-- core components: START -->", "<!-- core components: END -->");
             if (existing != null) {
@@ -344,7 +344,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         }
 
         try {
-            String text =  PackageHelper.loadText(file);
+            String text = PackageHelper.loadText(file);
 
             String existing = Strings.between(text, "<!-- components: START -->", "<!-- components: END -->");
             if (existing != null) {
@@ -378,7 +378,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         }
 
         try {
-            String text =  PackageHelper.loadText(file);
+            String text = PackageHelper.loadText(file);
 
             String existing = Strings.between(text, "<!-- others: START -->", "<!-- others: END -->");
             if (existing != null) {
@@ -412,7 +412,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         }
 
         try {
-            String text =  PackageHelper.loadText(file);
+            String text = PackageHelper.loadText(file);
 
             String existing = Strings.between(text, "<!-- dataformats: START -->", "<!-- dataformats: END -->");
             if (existing != null) {
@@ -446,7 +446,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         }
 
         try {
-            String text =  PackageHelper.loadText(file);
+            String text = PackageHelper.loadText(file);
 
             String existing = Strings.between(text, "<!-- languages: START -->", "<!-- languages: END -->");
             if (existing != null) {

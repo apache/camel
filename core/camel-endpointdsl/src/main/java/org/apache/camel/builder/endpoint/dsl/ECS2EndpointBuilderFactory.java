@@ -31,7 +31,7 @@ public interface ECS2EndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the AWS2 ECS component.
+     * Builder for endpoint for the AWS 2 ECS component.
      */
     public interface ECS2EndpointBuilder extends EndpointProducerBuilder {
         default AdvancedECS2EndpointBuilder advanced() {
@@ -226,7 +226,7 @@ public interface ECS2EndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the AWS2 ECS component.
+     * Advanced builder for endpoint for the AWS 2 ECS component.
      */
     public interface AdvancedECS2EndpointBuilder
             extends
@@ -311,7 +311,7 @@ public interface ECS2EndpointBuilderFactory {
 
     public interface ECS2Builders {
         /**
-         * AWS2 ECS (camel-aws2-ecs)
+         * AWS 2 ECS (camel-aws2-ecs)
          * The aws2-ecs is used for managing Amazon ECS
          * 
          * Category: cloud,management
@@ -328,7 +328,7 @@ public interface ECS2EndpointBuilderFactory {
         }
     }
     /**
-     * AWS2 ECS (camel-aws2-ecs)
+     * AWS 2 ECS (camel-aws2-ecs)
      * The aws2-ecs is used for managing Amazon ECS
      * 
      * Category: cloud,management

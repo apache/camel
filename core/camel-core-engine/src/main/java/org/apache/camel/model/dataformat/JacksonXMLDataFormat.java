@@ -281,9 +281,4 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
         this.allowUnmarshallType = allowUnmarshallType;
     }
 
-    @Override
-    public String getDataFormatName() {
-        return "jacksonxml";
-    }
-
 }

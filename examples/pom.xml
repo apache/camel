@@ -111,6 +111,8 @@
         <module>camel-example-sql-blueprint</module>
         <module>camel-example-swagger-cdi</module>
         <module>camel-example-swagger-osgi</module>
+        <module>camel-example-openapi-cdi</module>
+        <module>camel-example-openapi-osgi</module>
         <module>camel-example-telegram</module>
         <module>camel-example-transformer-blueprint</module>
         <module>camel-example-transformer-cdi</module>

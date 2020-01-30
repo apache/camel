@@ -49,8 +49,6 @@ import javax.tools.Diagnostic;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
-import org.apache.camel.tooling.util.Strings;
-
 import static org.apache.camel.tooling.util.Strings.canonicalClassName;
 import static org.apache.camel.tooling.util.Strings.isNullOrEmpty;
 
@@ -58,8 +56,6 @@ import static org.apache.camel.tooling.util.Strings.isNullOrEmpty;
  * Abstract class for Camel apt plugins.
  */
 public final class AnnotationProcessorHelper {
-
-    private static final String VALID_CHARS = ".,-='/\\!&%():;#${}";
 
     private AnnotationProcessorHelper() {
     }
@@ -92,7 +88,8 @@ public final class AnnotationProcessorHelper {
             // lets try builder pattern
             if (answer == null && builderPattern) {
                 List<ExecutableElement> methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
-                // lets try the builder pattern using annotation name (optional) as the method name
+                // lets try the builder pattern using annotation name (optional)
+                // as the method name
                 if (name != null) {
                     for (ExecutableElement method : methods) {
                         String methodName = method.getSimpleName().toString();
@@ -104,7 +101,8 @@ public final class AnnotationProcessorHelper {
                             }
                         }
                     }
-                    // there may be builder pattern with no-parameter methods, such as more common for boolean types
+                    // there may be builder pattern with no-parameter methods,
+                    // such as more common for boolean types
                     // so lets try those as well
                     for (ExecutableElement method : methods) {
                         String methodName = method.getSimpleName().toString();
@@ -128,7 +126,8 @@ public final class AnnotationProcessorHelper {
                         }
                     }
                 }
-                // there may be builder pattern with no-parameter methods, such as more common for boolean types
+                // there may be builder pattern with no-parameter methods, such
+                // as more common for boolean types
                 // so lets try those as well
                 for (ExecutableElement method : methods) {
                     String methodName = method.getSimpleName().toString();
@@ -150,7 +149,7 @@ public final class AnnotationProcessorHelper {
         if (fieldName.length() > 1) {
             setter += fieldName.substring(1);
         }
-        //  lets find the setter
+        // lets find the setter
         List<ExecutableElement> methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
         for (ExecutableElement method : methods) {
             String methodName = method.getSimpleName().toString();
@@ -171,7 +170,7 @@ public final class AnnotationProcessorHelper {
         if (fieldName.length() > 1) {
             getter2 += fieldName.substring(1);
         }
-        //  lets find the getter
+        // lets find the getter
         List<ExecutableElement> methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
         for (ExecutableElement method : methods) {
             String methodName = method.getSimpleName().toString();
@@ -206,7 +205,7 @@ public final class AnnotationProcessorHelper {
         Set<? extends Element> rootElements = roundEnv.getRootElements();
         for (Element rootElement : rootElements) {
             if (rootElement instanceof TypeElement) {
-                TypeElement typeElement = (TypeElement) rootElement;
+                TypeElement typeElement = (TypeElement)rootElement;
                 String aRootName = canonicalClassName(typeElement.getQualifiedName().toString());
                 if (className.equals(aRootName)) {
                     return typeElement;
@@ -225,7 +224,7 @@ public final class AnnotationProcessorHelper {
                 List<? extends Element> enclosedElements = getEnclosedElements(pe);
                 for (Element rootElement : enclosedElements) {
                     if (rootElement instanceof TypeElement) {
-                        TypeElement typeElement = (TypeElement) rootElement;
+                        TypeElement typeElement = (TypeElement)rootElement;
                         String aRootName = canonicalClassName(typeElement.getQualifiedName().toString());
                         if (className.equals(aRootName)) {
                             return typeElement;
@@ -240,7 +239,8 @@ public final class AnnotationProcessorHelper {
 
     @SuppressWarnings("unchecked")
     public static List<? extends Element> getEnclosedElements(PackageElement pe) {
-        // some components like hadoop/spark has bad classes that causes javac scanning issues
+        // some components like hadoop/spark has bad classes that causes javac
+        // scanning issues
         try {
             return pe.getEnclosedElements();
         } catch (Throwable e) {
@@ -260,7 +260,7 @@ public final class AnnotationProcessorHelper {
                 List<? extends Element> enclosedElements = pe.getEnclosedElements();
                 for (Element rootElement : enclosedElements) {
                     if (rootElement instanceof TypeElement) {
-                        TypeElement typeElement = (TypeElement) rootElement;
+                        TypeElement typeElement = (TypeElement)rootElement;
                         String aSuperClassName = canonicalClassName(typeElement.getSuperclass().toString());
                         if (superClassName.equals(aSuperClassName)) {
                             found.add(typeElement);
@@ -372,8 +372,9 @@ public final class AnnotationProcessorHelper {
     /**
      * Gets the JSon schema type.
      *
-     * @param   type the java type
-     * @return  the json schema type, is never null, but returns <tt>object</tt> as the generic type
+     * @param type the java type
+     * @return the json schema type, is never null, but returns <tt>object</tt>
+     *         as the generic type
      */
     public static String getType(String type, boolean enumType) {
         if (enumType) {
@@ -404,8 +405,9 @@ public final class AnnotationProcessorHelper {
     /**
      * Gets the JSon schema primitive type.
      *
-     * @param   name the java type
-     * @return  the json schema primitive type, or <tt>null</tt> if not a primitive
+     * @param name the java type
+     * @return the json schema primitive type, or <tt>null</tt> if not a
+     *         primitive
      */
     public static String getPrimitiveType(String name) {
         // special for byte[] or Object[] as its common to use
@@ -440,90 +442,4 @@ public final class AnnotationProcessorHelper {
         return null;
     }
 
-    /**
-     * Sanitizes the javadoc to removed invalid characters so it can be used as json description
-     *
-     * @param javadoc  the javadoc
-     * @return the text that is valid as json
-     */
-    public static String sanitizeDescription(String javadoc, boolean summary) {
-        if (isNullOrEmpty(javadoc)) {
-            return null;
-        }
-
-        // lets just use what java accepts as identifiers
-        StringBuilder sb = new StringBuilder();
-
-        // split into lines
-        String[] lines = javadoc.split("\n");
-
-        boolean first = true;
-        for (String line : lines) {
-            line = line.trim();
-
-            if (line.startsWith("**")) {
-                continue;
-            }
-            // remove leading javadoc *
-            if (line.startsWith("*")) {
-                line = line.substring(1);
-                line = line.trim();
-            }
-
-            // terminate if we reach @param, @return or @deprecated as we only want the javadoc summary
-            if (line.startsWith("@param") || line.startsWith("@return") || line.startsWith("@deprecated")) {
-                break;
-            }
-
-            // skip lines that are javadoc references
-            if (line.startsWith("@")) {
-                continue;
-            }
-
-            // remove all XML tags
-            line = line.replaceAll("<.*?>", "");
-
-            // remove all inlined javadoc links, eg such as {@link org.apache.camel.spi.Registry}
-            // use #? to remove leading # in case its a local reference
-            line = line.replaceAll("\\{\\@\\w+\\s#?([\\w.#(\\d,)]+)\\}", "$1");
-
-            // we are starting from a new line, so add a whitespace
-            if (!first) {
-                sb.append(' ');
-            }
-
-            // create a new line
-            StringBuilder cb = new StringBuilder();
-            for (char c : line.toCharArray()) {
-                if (Character.isJavaIdentifierPart(c) || VALID_CHARS.indexOf(c) != -1) {
-                    cb.append(c);
-                } else if (Character.isWhitespace(c)) {
-                    // always use space as whitespace, also for line feeds etc
-                    cb.append(' ');
-                }
-            }
-
-            // append data
-            String s = cb.toString().trim();
-            sb.append(s);
-
-            boolean empty = isNullOrEmpty(s);
-            boolean endWithDot = s.endsWith(".");
-            boolean haveText = sb.length() > 0;
-
-            if (haveText && summary && (empty || endWithDot)) {
-                // if we only want a summary, then skip at first empty line we encounter, or if the sentence ends with a dot
-                break;
-            }
-
-            first = false;
-        }
-
-        String s = sb.toString();
-        // remove double whitespaces, and trim
-        s = s.replaceAll("\\s+", " ");
-        // unescape http links
-        s = s.replaceAll("\\\\(http:|https:)", "$1");
-        return s.trim();
-    }
 }

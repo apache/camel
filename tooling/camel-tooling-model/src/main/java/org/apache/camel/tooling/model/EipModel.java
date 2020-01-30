@@ -16,12 +16,6 @@
  */
 package org.apache.camel.tooling.model;
 
-import java.util.List;
-import java.util.Map;
-
-import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
-
 public class EipModel extends BaseModel<EipModel.EipOptionModel> {
 
     protected boolean input;          // used in models from camel-core-engine

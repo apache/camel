@@ -73,8 +73,9 @@
                         <phase>prepare-package</phase>
                     </execution>
                     <execution>
-                        <id>jaxb-list</id>
+                        <id>generate</id>
                         <goals>
+                            <goal>jandex</goal>
                             <goal>generate-jaxb-list</goal>
                         </goals>
                         <phase>process-classes</phase>

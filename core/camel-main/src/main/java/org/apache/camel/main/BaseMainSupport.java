@@ -579,8 +579,8 @@ public abstract class BaseMainSupport extends ServiceSupport {
             listener.beforeConfigure(this);
         }
 
-        configureLifecycle(camelContext);
         autoconfigure(camelContext);
+        configureLifecycle(camelContext);
         configureRoutes(camelContext);
 
         // allow to do configuration before its started

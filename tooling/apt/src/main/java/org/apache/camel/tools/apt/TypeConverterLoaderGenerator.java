@@ -77,7 +77,7 @@ public class TypeConverterLoaderGenerator extends AbstractTypeConverterGenerator
         for (AnnotationMirror ann : element.getAnnotationMirrors()) {
             for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : ann.getElementValues().entrySet()) {
                 if ("generateLoader".equals(entry.getKey().getSimpleName().toString())) {
-                    return (Boolean) entry.getValue().getValue();
+                    return (Boolean)entry.getValue().getValue();
                 }
             }
         }

@@ -20,10 +20,9 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
-
-import static org.apache.camel.support.ExchangeHelper.hasExceptionBeenHandledByErrorHandler;
 
 /**
  * An {@link AggregationStrategy} which are used when the option <tt>shareUnitOfWork</tt> is enabled
@@ -105,9 +104,9 @@ public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport imp
     }
 
     protected void propagateFailure(Exchange answer, Exchange newExchange) {
+        ExtendedExchange nee = (ExtendedExchange) newExchange;
         // if new exchange failed then propagate all the error related properties to the answer
-        boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(newExchange);
-        if (exceptionHandled || newExchange.isFailed() || newExchange.isRollbackOnly() || newExchange.isRollbackOnlyLast()) {
+        if (nee.isFailed() || nee.isRollbackOnly() || nee.isRollbackOnlyLast() || nee.isErrorHandlerHandled()) {
             if (newExchange.getException() != null) {
                 answer.setException(newExchange.getException());
             }
@@ -120,8 +119,8 @@ public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport imp
             if (newExchange.getProperty(Exchange.FAILURE_ROUTE_ID) != null) {
                 answer.setProperty(Exchange.FAILURE_ROUTE_ID, newExchange.getProperty(Exchange.FAILURE_ROUTE_ID));
             }
-            if (newExchange.getProperty(Exchange.ERRORHANDLER_HANDLED) != null) {
-                answer.setProperty(Exchange.ERRORHANDLER_HANDLED, newExchange.getProperty(Exchange.ERRORHANDLER_HANDLED));
+            if (newExchange.adapt(ExtendedExchange.class).getErrorHandlerHandled() != null) {
+                answer.adapt(ExtendedExchange.class).setErrorHandlerHandled(newExchange.adapt(ExtendedExchange.class).getErrorHandlerHandled());
             }
             if (newExchange.getProperty(Exchange.FAILURE_HANDLED) != null) {
                 answer.setProperty(Exchange.FAILURE_HANDLED, newExchange.getProperty(Exchange.FAILURE_HANDLED));

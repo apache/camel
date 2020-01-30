@@ -22,8 +22,8 @@ import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExt
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorHelper;
-import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ecs.EcsClient;
@@ -67,9 +67,9 @@ public class ECS2ComponentVerifierExtension extends DefaultComponentVerifierExte
 
         try {
             ECS2Configuration configuration = setProperties(new ECS2Configuration(), parameters);
-            AwsCredentialsProvider credentialsProvider = DefaultCredentialsProvider.create();
+            AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             EcsClientBuilder clientBuilder = EcsClient.builder();
-            EcsClient client = clientBuilder.credentialsProvider(credentialsProvider).region(Region.of(configuration.getRegion())).build();
+            EcsClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();
             client.listClusters(ListClustersRequest.builder().build());
         } catch (SdkClientException e) {
             ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())

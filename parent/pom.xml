@@ -67,7 +67,7 @@
         <asciidoctorj-version>2.2.0</asciidoctorj-version>
         <asm-version>5.0.4</asm-version>
         <aspectj-version>1.9.5</aspectj-version>
-        <assertj-version>3.14.0</assertj-version>
+        <assertj-version>3.15.0</assertj-version>
         <asterisk-java-version>1.0.0-final</asterisk-java-version>
         <asterisk-java-bundle-version>1.0.0-final_1</asterisk-java-bundle-version>
         <atlassian-fugue-version>3.0.0</atlassian-fugue-version>
@@ -88,7 +88,7 @@
         <awaitility-version>4.0.2</awaitility-version>
         <aws-java-sdk-bundle-version>1.11.699_1</aws-java-sdk-bundle-version>
         <aws-java-sdk-version>1.11.699</aws-java-sdk-version>
-        <aws-java-sdk2-version>2.10.49</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.10.56</aws-java-sdk2-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.4.0</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
@@ -103,7 +103,7 @@
         <bouncycastle-version>1.64</bouncycastle-version>
         <box-java-sdk-version>2.44.0</box-java-sdk-version>
         <braintree-gateway-version>2.106.0</braintree-gateway-version>
-        <brave-zipkin-version>5.9.1</brave-zipkin-version>
+        <brave-zipkin-version>5.9.2</brave-zipkin-version>
         <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
         <c3p0-version>0.9.5.5</c3p0-version>
         <c3p0-bundle-version>0.9.5.5_1</c3p0-bundle-version>
@@ -171,7 +171,7 @@
         <docker-java-version>3.1.5</docker-java-version>
         <docker-java-bundle-version>3.1.5_1</docker-java-bundle-version>
         <dozer-version>6.5.0</dozer-version>
-        <drools-version>7.31.0.Final</drools-version>
+        <drools-version>7.32.0.Final</drools-version>
         <dropbox-version>3.1.3</dropbox-version>
         <debezium-version>1.0.0.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.15</debezium-mysql-connector-version>
@@ -283,7 +283,6 @@
         <ical4j-version>1.0.7</ical4j-version>
         <ignite-version>2.7.6</ignite-version>
         <infinispan-version>10.1.1.Final</infinispan-version>
-        <infinispan-spring-boot-version>2.1.7.Final</infinispan-spring-boot-version>
         <influx-java-driver-version>2.17</influx-java-driver-version>
         <influx-java-driver-bundle-version>2.17_1</influx-java-driver-bundle-version>
         <influx-guava-version>20.0</influx-guava-version>
@@ -332,7 +331,7 @@
         <glassfish-javax-json>1.0.4</glassfish-javax-json>
         <glassfish-jaxb-runtime-version>2.3.2</glassfish-jaxb-runtime-version>
         <jaxb2-maven-plugin-version>2.5.0</jaxb2-maven-plugin-version>
-        <jbpm-version>7.31.0.Final</jbpm-version>
+        <jbpm-version>7.32.0.Final</jbpm-version>
         <jboss-logging-version>3.4.0.Final</jboss-logging-version>
         <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
         <jboss-transaction-spi.version>7.5.1.Final</jboss-transaction-spi.version>
@@ -405,7 +404,7 @@
         <kafka-version>2.4.0</kafka-version>
         <kafka-bundle-version>2.4.0_1</kafka-bundle-version>
         <karaf4-version>4.2.8</karaf4-version>
-        <kie-version>7.31.0.Final</kie-version>
+        <kie-version>7.32.0.Final</kie-version>
         <kubernetes-client-version>4.7.1</kubernetes-client-version>
         <kubernetes-model-version>4.7.1</kubernetes-model-version>
 	<kudu-version>1.10.0</kudu-version>
@@ -507,7 +506,7 @@
         <opentracing-version>0.33.0</opentracing-version>
         <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
         <ops4j-base-version>1.5.0</ops4j-base-version>
-        <optaplanner-version>7.31.0.Final</optaplanner-version>
+        <optaplanner-version>7.32.0.Final</optaplanner-version>
         <oro-bundle-version>2.0.8_6</oro-bundle-version>
         <os-maven-plugin-version>1.6.0</os-maven-plugin-version>
         <osgi-version>6.0.0</osgi-version>
@@ -1013,6 +1012,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-ecs</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-aws2-eks</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

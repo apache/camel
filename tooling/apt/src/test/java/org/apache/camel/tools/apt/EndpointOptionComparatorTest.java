@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tools.apt.helper.EndpointHelper;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -38,14 +37,12 @@ public class EndpointOptionComparatorTest {
         String group3 = EndpointHelper.labelAsGroupName(label3, false, false);
         String group4 = EndpointHelper.labelAsGroupName(label4, false, false);
 
-        EndpointOptionModel op1 = new EndpointOptionModel("first", "First", "string", true, "", "", "blah", null, false,
-            false, null, false, group1, label1, null, null, null);
-        EndpointOptionModel op2 = new EndpointOptionModel("synchronous", "Synchronous", "string", true, "", "blah", null, null, false,
-            false, null, false, group2, label2, null, null, null);
-        EndpointOptionModel op3 = new EndpointOptionModel("second", "Second", "string", true, "", "blah", null, null, false,
-            false, null, false, group3, label3, null, null, null);
-        EndpointOptionModel op4 = new EndpointOptionModel("country", "Country", "string", true, "", "blah", null, null, false,
-            false, null, false, group4, label4, null, null, null);
+        EndpointOptionModel op1 = new EndpointOptionModel("first", "First", "string", true, "", "", "blah", null, false, false, null, false, group1, label1, null, null, null);
+        EndpointOptionModel op2 = new EndpointOptionModel("synchronous", "Synchronous", "string", true, "", "blah", null, null, false, false, null, false, group2, label2, null,
+                                                          null, null);
+        EndpointOptionModel op3 = new EndpointOptionModel("second", "Second", "string", true, "", "blah", null, null, false, false, null, false, group3, label3, null, null, null);
+        EndpointOptionModel op4 = new EndpointOptionModel("country", "Country", "string", true, "", "blah", null, null, false, false, null, false, group4, label4, null, null,
+                                                          null);
 
         List<EndpointOptionModel> list = new ArrayList<>();
         list.add(op1);
@@ -63,10 +60,8 @@ public class EndpointOptionComparatorTest {
     }
 
     public static class EndpointOptionModel extends BaseOptionModel {
-        public EndpointOptionModel(String name, String displayName, String type, boolean required, String defaultValue,
-                                   String description, String optionalPrefix, String prefix,
-                                   boolean multiValue, boolean deprecated, String deprecationNote, boolean secret,
-                                   String group, String label, List<String> enums,
+        public EndpointOptionModel(String name, String displayName, String type, boolean required, String defaultValue, String description, String optionalPrefix, String prefix,
+                                   boolean multiValue, boolean deprecated, String deprecationNote, boolean secret, String group, String label, List<String> enums,
                                    String configurationClass, String nestedFieldName) {
             this.name = name;
             this.displayName = displayName;

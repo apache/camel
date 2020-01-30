@@ -123,6 +123,7 @@ public interface TranslateEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.translate.TranslateOperations</code> type.
          * 
          * Required: true
+         * Default: translateText
          * Group: producer
          */
         default TranslateEndpointBuilder operation(TranslateOperations operation) {
@@ -136,6 +137,7 @@ public interface TranslateEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.translate.TranslateOperations</code> type.
          * 
          * Required: true
+         * Default: translateText
          * Group: producer
          */
         default TranslateEndpointBuilder operation(String operation) {

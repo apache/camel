@@ -41,19 +41,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.tooling.model.JsonMapper;
-import org.apache.camel.tooling.util.PackageHelper;
-import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
+import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.tooling.util.JavadocHelper;
+import org.apache.camel.tooling.util.PackageHelper;
+import org.apache.camel.tooling.util.Strings;
 
 /**
  * Process camel-spring's <camelContext> and generate json schema documentation
  */
 public class SpringAnnotationProcessorHelper {
 
-    protected void processModelClass(final ProcessingEnvironment processingEnv, final RoundEnvironment roundEnv,
-                                     final TypeElement classElement) {
+    protected void processModelClass(final ProcessingEnvironment processingEnv, final RoundEnvironment roundEnv, final TypeElement classElement) {
         final String javaTypeName = Strings.canonicalClassName(classElement.getQualifiedName().toString());
         String packageName = javaTypeName.substring(0, javaTypeName.lastIndexOf("."));
 
@@ -83,7 +83,8 @@ public class SpringAnnotationProcessorHelper {
         }
 
         // write json schema
-        AnnotationProcessorHelper.processFile(processingEnv, packageName, fileName, writer -> writeJSonSchemeDocumentation(processingEnv, writer, roundEnv, classElement, rootElement, javaTypeName, name));
+        AnnotationProcessorHelper.processFile(processingEnv, packageName, fileName,
+            writer -> writeJSonSchemeDocumentation(processingEnv, writer, roundEnv, classElement, rootElement, javaTypeName, name));
     }
 
     protected void writeJSonSchemeDocumentation(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement,
@@ -128,7 +129,7 @@ public class SpringAnnotationProcessorHelper {
                 if (doc != null) {
                     // need to sanitize the description first (we only want a
                     // summary)
-                    doc = AnnotationProcessorHelper.sanitizeDescription(doc, true);
+                    doc = JavadocHelper.sanitizeDescription(doc, true);
                     // the javadoc may actually be empty, so only change the doc
                     // if we got something
                     if (!Strings.isNullOrEmpty(doc)) {
@@ -141,8 +142,8 @@ public class SpringAnnotationProcessorHelper {
         return model;
     }
 
-    protected void findClassProperties(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, Set<EipOptionModel> eipOptions, TypeElement originalClassType,
-                                       TypeElement classElement, String prefix, String modelName) {
+    protected void findClassProperties(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, Set<EipOptionModel> eipOptions,
+                                       TypeElement originalClassType, TypeElement classElement, String prefix, String modelName) {
         while (true) {
             List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
             for (VariableElement fieldElement : fieldElements) {
@@ -260,7 +261,7 @@ public class SpringAnnotationProcessorHelper {
         }
 
         EipOptionModel ep = createOption(name, displayName, "attribute", fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, isEnum, enums, false, null,
-                                     false);
+                                         false);
         eipOptions.add(ep);
 
         return false;
@@ -294,8 +295,8 @@ public class SpringAnnotationProcessorHelper {
         Set<String> oneOfTypes = new TreeSet<>();
         oneOfTypes.add("rest");
 
-        EipOptionModel ep = createOption("rest", "Rest", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, null, false, null, true,
-                                     oneOfTypes, false);
+        EipOptionModel ep = createOption("rest", "Rest", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, null, false, null,
+                                         true, oneOfTypes, false);
         eipOptions.add(ep);
     }
 
@@ -384,8 +385,8 @@ public class SpringAnnotationProcessorHelper {
                 deprecationNote = metadata.deprecationNote();
             }
 
-            EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, isEnum, enums, oneOf, oneOfTypes,
-                                         asPredicate);
+            EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, isEnum, enums, oneOf,
+                                             oneOfTypes, asPredicate);
             eipOptions.add(ep);
         }
     }
@@ -431,7 +432,7 @@ public class SpringAnnotationProcessorHelper {
             }
 
             EipOptionModel ep = createOption(name, kind, displayName, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, false, null, true, oneOfTypes,
-                                         false);
+                                             false);
             eipOptions.add(ep);
         }
     }
@@ -470,7 +471,7 @@ public class SpringAnnotationProcessorHelper {
         option.setKind(kind);
         option.setRequired(required);
         option.setDefaultValue(defaultValue);
-        option.setDescription(AnnotationProcessorHelper.sanitizeDescription(description, false));
+        option.setDescription(JavadocHelper.sanitizeDescription(description, false));
         option.setDeprecated(deprecated);
         option.setDeprecationNote(deprecationNote);
         option.setType(AnnotationProcessorHelper.getType(type, enumType));

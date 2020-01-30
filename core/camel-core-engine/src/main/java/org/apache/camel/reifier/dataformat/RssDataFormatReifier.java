@@ -16,10 +16,10 @@
  */
 package org.apache.camel.reifier.dataformat;
 
-import org.apache.camel.CamelContext;
+import java.util.Map;
+
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.RssDataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class RssDataFormatReifier extends DataFormatReifier<RssDataFormat> {
 
@@ -28,7 +28,7 @@ public class RssDataFormatReifier extends DataFormatReifier<RssDataFormat> {
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
     }
 
 }

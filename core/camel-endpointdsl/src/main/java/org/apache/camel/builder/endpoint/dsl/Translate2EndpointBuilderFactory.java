@@ -125,6 +125,7 @@ public interface Translate2EndpointBuilderFactory {
          * <code>org.apache.camel.component.aws2.translate.Translate2Operations</code> type.
          * 
          * Required: true
+         * Default: translateText
          * Group: producer
          */
         default Translate2EndpointBuilder operation(
@@ -139,6 +140,7 @@ public interface Translate2EndpointBuilderFactory {
          * <code>org.apache.camel.component.aws2.translate.Translate2Operations</code> type.
          * 
          * Required: true
+         * Default: translateText
          * Group: producer
          */
         default Translate2EndpointBuilder operation(String operation) {
