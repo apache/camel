@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +34,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
+import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.ObjectHelper;
@@ -155,7 +157,15 @@ public final class DefaultExchange implements ExtendedExchange {
             return null;
         }
 
-        return context.adapt(ExtendedCamelContext.class).getHeadersMapFactory().newMap(headers);
+        if (context != null) {
+            ExtendedCamelContext ecc = (ExtendedCamelContext) context;
+            HeadersMapFactory factory = ecc.getHeadersMapFactory();
+            if (factory != null) {
+                return factory.newMap(headers);
+            }
+        }
+        // should not really happen but some tests dont start camel context
+        return new HashMap<>(headers);
     }
 
     @SuppressWarnings("unchecked")
