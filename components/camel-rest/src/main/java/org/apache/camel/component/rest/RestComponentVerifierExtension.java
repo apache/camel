@@ -76,11 +76,16 @@ public class RestComponentVerifierExtension extends DefaultComponentVerifierExte
     // Helpers
     // *********************************
 
-    protected void verifyUnderlyingComponent(Scope scope, ResultBuilder builder, Map<String, Object> parameters) {
+    protected void verifyUnderlyingComponent(Scope scope, ResultBuilder builder, Map<String, Object> map) {
         // componentName is required for validation even at runtime camel might
         // be able to find a suitable component at runtime.
-        String componentName = (String)parameters.get("componentName");
+
+        String componentName = (String) map.get("componentName");
         if (ObjectHelper.isNotEmpty(componentName)) {
+
+            // make a defensive copy of the parameters as we mutate the map
+            final Map<String, Object> parameters = new HashMap<>(map);
+
             try {
                 final Component component = getTransportComponent(componentName);
                 final Optional<ComponentVerifierExtension> extension = component.getExtension(ComponentVerifierExtension.class);
@@ -90,6 +95,11 @@ public class RestComponentVerifierExtension extends DefaultComponentVerifierExte
                     final RuntimeCamelCatalog catalog = getCamelContext().getExtension(RuntimeCamelCatalog.class);
                     final String json = catalog.componentJSonSchema("rest");
                     final ComponentModel model = JsonMapper.generateComponentModel(json);
+
+                    // remove endpoint path parameters as they cannot be validated on component level
+                    model.getEndpointPathOptions().stream()
+                            .filter(o -> o.getKind().equals("path")).forEach(o -> parameters.remove(o.getName()));
+
                     final Map<String, Object> restParameters = new HashMap<>(parameters);
                     Stream.concat(model.getComponentOptions().stream(),
                                   model.getOptions().stream()).forEach(o -> {
@@ -102,6 +112,20 @@ public class RestComponentVerifierExtension extends DefaultComponentVerifierExte
                             restParameters.put("rest." + name, parameters.get(name));
                         }
                     });
+
+                    if (scope == Scope.CONNECTIVITY) {
+                        // need to include endpoint path parameters as otherwise we cannot verify connectivity
+                        model.getEndpointPathOptions().forEach(o -> {
+                            String name = o.getName();
+                            Object val = map.get(name);
+                            if (val != null) {
+                                // Add rest prefix to properties belonging to the rest
+                                // component so the underlying component know we want
+                                // to validate rest-related stuffs.
+                                restParameters.put("rest." + name, val);
+                            }
+                        });
+                    }
 
                     // restParameters now should contains rest-component related
                     // properties with "rest." prefix and all the remaining can
