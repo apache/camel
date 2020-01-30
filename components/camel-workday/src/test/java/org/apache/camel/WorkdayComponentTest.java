@@ -6,7 +6,7 @@ import org.apache.camel.component.workday.WorkdayEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class WorkdayComponentConfigurationTest extends CamelTestSupport {
+public class WorkdayComponentTest extends CamelTestSupport {
 
     @Test
     public void createProducerMinimalConfiguration() throws Exception {
