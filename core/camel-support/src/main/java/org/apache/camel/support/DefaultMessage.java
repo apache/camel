@@ -23,9 +23,7 @@ import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.HeadersMapFactory;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * The default implementation of {@link org.apache.camel.Message}
@@ -42,7 +40,9 @@ public class DefaultMessage extends MessageSupport {
 
     public DefaultMessage(Exchange exchange) {
         setExchange(exchange);
-        setCamelContext(exchange != null ? exchange.getContext() : null);
+        if (exchange != null) {
+            setCamelContext(exchange.getContext());
+        }
     }
 
     public DefaultMessage(CamelContext camelContext) {
@@ -52,7 +52,7 @@ public class DefaultMessage extends MessageSupport {
     @Override
     public Object getHeader(String name) {
         if (hasHeaders()) {
-            return getHeaders().get(name);
+            return headers.get(name);
         } else {
             return null;
         }
@@ -60,22 +60,29 @@ public class DefaultMessage extends MessageSupport {
 
     @Override
     public Object getHeader(String name, Object defaultValue) {
-        Object answer = getHeaders().get(name);
+        Object answer = null;
+        if (hasHeaders()) {
+            answer = headers.get(name);
+        }
         return answer != null ? answer : defaultValue;
     }
 
     @Override
     public Object getHeader(String name, Supplier<Object> defaultValueSupplier) {
-        ObjectHelper.notNull(name, "name");
-        ObjectHelper.notNull(defaultValueSupplier, "defaultValueSupplier");
-        Object answer = getHeaders().get(name);
+        Object answer = null;
+        if (hasHeaders()) {
+            answer = headers.get(name);
+        }
         return answer != null ? answer : defaultValueSupplier.get();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Class<T> type) {
-        Object value = getHeader(name);
+        Object value = null;
+        if (hasHeaders()) {
+            value = headers.get(name);
+        }
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
             if (boolean.class == type) {
@@ -87,21 +94,27 @@ public class DefaultMessage extends MessageSupport {
         // eager same instance type test to avoid the overhead of invoking the type converter
         // if already same type
         if (type.isInstance(value)) {
-            return type.cast(value);
+            return (T) value;
         }
 
         Exchange e = getExchange();
         if (e != null) {
-            return e.getContext().getTypeConverter().convertTo(type, e, value);
+            return typeConverter.convertTo(type, e, value);
         } else {
-            return type.cast(value);
+            return typeConverter.convertTo(type, value);
         }
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Object defaultValue, Class<T> type) {
-        Object value = getHeader(name, defaultValue);
+        Object value = null;
+        if (hasHeaders()) {
+            value = headers.get(name);
+        }
+        if (value == null) {
+            value = defaultValue;
+        }
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
             if (boolean.class == type) {
@@ -113,23 +126,20 @@ public class DefaultMessage extends MessageSupport {
         // eager same instance type test to avoid the overhead of invoking the type converter
         // if already same type
         if (type.isInstance(value)) {
-            return type.cast(value);
+            return (T) value;
         }
 
         Exchange e = getExchange();
         if (e != null) {
-            return e.getContext().getTypeConverter().convertTo(type, e, value);
+            return typeConverter.convertTo(type, e, value);
         } else {
-            return type.cast(value);
+            return typeConverter.convertTo(type, value);
         }
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Supplier<Object> defaultValueSupplier, Class<T> type) {
-        ObjectHelper.notNull(name, "name");
-        ObjectHelper.notNull(type, "type");
-        ObjectHelper.notNull(defaultValueSupplier, "defaultValueSupplier");
         Object value = getHeader(name, defaultValueSupplier);
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
@@ -147,9 +157,9 @@ public class DefaultMessage extends MessageSupport {
 
         Exchange e = getExchange();
         if (e != null) {
-            return e.getContext().getTypeConverter().convertTo(type, e, value);
+            return typeConverter.convertTo(type, e, value);
         } else {
-            return type.cast(value);
+            return typeConverter.convertTo(type, value);
         }
     }
 
@@ -211,13 +221,11 @@ public class DefaultMessage extends MessageSupport {
 
     @Override
     public void setHeaders(Map<String, Object> headers) {
-        ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
-
-        if (getCamelContext().adapt(ExtendedCamelContext.class).getHeadersMapFactory().isInstanceOf(headers)) {
+        if (camelContext.getHeadersMapFactory().isInstanceOf(headers)) {
             this.headers = headers;
         } else {
             // create a new map
-            this.headers = getCamelContext().adapt(ExtendedCamelContext.class).getHeadersMapFactory().newMap(headers);
+            this.headers = camelContext.getHeadersMapFactory().newMap(headers);
         }
     }
 
@@ -232,9 +240,7 @@ public class DefaultMessage extends MessageSupport {
 
     @Override
     public DefaultMessage newInstance() {
-        ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
-
-        return new DefaultMessage(getCamelContext());
+        return new DefaultMessage(camelContext);
     }
 
     /**
@@ -246,9 +252,7 @@ public class DefaultMessage extends MessageSupport {
      *         the underlying inbound transport
      */
     protected Map<String, Object> createHeaders() {
-        ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
-
-        Map<String, Object> map = getCamelContext().adapt(ExtendedCamelContext.class).getHeadersMapFactory().newMap();
+        Map<String, Object> map = camelContext.getHeadersMapFactory().newMap();
         populateInitialHeaders(map);
         return map;
     }
