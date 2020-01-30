@@ -79,6 +79,129 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
+         * This option is used to specify the encoding of the file. You can use
+         * this on the consumer, to specify the encodings of the files, which
+         * allow Camel to know the charset it should load the file content in
+         * case the file content is being accessed. Likewise when writing a
+         * file, you can use this option to specify which charset to write the
+         * file as well. Do mind that when writing the file Camel may have to
+         * read the message content into memory to be able to convert the data
+         * into the configured charset, so do not use this if you have big
+         * messages.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default FtpEndpointConsumerBuilder charset(String charset) {
+            doSetProperty("charset", charset);
+            return this;
+        }
+        /**
+         * Whether or not to disconnect from remote FTP server right after use.
+         * Disconnect will only disconnect the current connection to the FTP
+         * server. If you have a consumer which you want to stop, then you need
+         * to stop the consumer/route instead.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default FtpEndpointConsumerBuilder disconnect(boolean disconnect) {
+            doSetProperty("disconnect", disconnect);
+            return this;
+        }
+        /**
+         * Whether or not to disconnect from remote FTP server right after use.
+         * Disconnect will only disconnect the current connection to the FTP
+         * server. If you have a consumer which you want to stop, then you need
+         * to stop the consumer/route instead.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default FtpEndpointConsumerBuilder disconnect(String disconnect) {
+            doSetProperty("disconnect", disconnect);
+            return this;
+        }
+        /**
+         * Producer: If provided, then Camel will write a 2nd done file when the
+         * original file has been written. The done file will be empty. This
+         * option configures what file name to use. Either you can specify a
+         * fixed name. Or you can use dynamic placeholders. The done file will
+         * always be written in the same folder as the original file. Consumer:
+         * If provided, Camel will only consume files if a done file exists.
+         * This option configures what file name to use. Either you can specify
+         * a fixed name. Or you can use dynamic placeholders.The done file is
+         * always expected in the same folder as the original file. Only
+         * ${file.name} and ${file.name.next} is supported as dynamic
+         * placeholders.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default FtpEndpointConsumerBuilder doneFileName(String doneFileName) {
+            doSetProperty("doneFileName", doneFileName);
+            return this;
+        }
+        /**
+         * Use Expression such as File Language to dynamically set the filename.
+         * For consumers, it's used as a filename filter. For producers, it's
+         * used to evaluate the filename to write. If an expression is set, it
+         * take precedence over the CamelFileName header. (Note: The header
+         * itself can also be an Expression). The expression options support
+         * both String and Expression types. If the expression is a String type,
+         * it is always evaluated using the File Language. If the expression is
+         * an Expression type, the specified Expression type is used - this
+         * allows you, for instance, to use OGNL expressions. For the consumer,
+         * you can use it to filter filenames, so you can for instance consume
+         * today's file using the File Language syntax:
+         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
+         * CamelOverruleFileName header which takes precedence over any existing
+         * CamelFileName header; the CamelOverruleFileName is a header that is
+         * used only once, and makes it easier as this avoids to temporary store
+         * CamelFileName and have to restore it afterwards.
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Group: common
+         */
+        default FtpEndpointConsumerBuilder fileName(Expression fileName) {
+            doSetProperty("fileName", fileName);
+            return this;
+        }
+        /**
+         * Use Expression such as File Language to dynamically set the filename.
+         * For consumers, it's used as a filename filter. For producers, it's
+         * used to evaluate the filename to write. If an expression is set, it
+         * take precedence over the CamelFileName header. (Note: The header
+         * itself can also be an Expression). The expression options support
+         * both String and Expression types. If the expression is a String type,
+         * it is always evaluated using the File Language. If the expression is
+         * an Expression type, the specified Expression type is used - this
+         * allows you, for instance, to use OGNL expressions. For the consumer,
+         * you can use it to filter filenames, so you can for instance consume
+         * today's file using the File Language syntax:
+         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
+         * CamelOverruleFileName header which takes precedence over any existing
+         * CamelFileName header; the CamelOverruleFileName is a header that is
+         * used only once, and makes it easier as this avoids to temporary store
+         * CamelFileName and have to restore it afterwards.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.Expression</code> type.
+         * 
+         * Group: common
+         */
+        default FtpEndpointConsumerBuilder fileName(String fileName) {
+            doSetProperty("fileName", fileName);
+            return this;
+        }
+        /**
          * Sets passive mode connections. Default is active mode connections.
          * 
          * The option is a: <code>boolean</code> type.
@@ -217,194 +340,6 @@ public interface FtpEndpointBuilderFactory {
         default FtpEndpointConsumerBuilder transferLoggingVerbose(
                 String transferLoggingVerbose) {
             doSetProperty("transferLoggingVerbose", transferLoggingVerbose);
-            return this;
-        }
-        /**
-         * Configures whether resume download is enabled. This must be supported
-         * by the FTP server (almost all FTP servers support it). In addition
-         * the options localWorkDirectory must be configured so downloaded files
-         * are stored in a local directory, and the option binary must be
-         * enabled, which is required to support resuming of downloads.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default FtpEndpointConsumerBuilder resumeDownload(boolean resumeDownload) {
-            doSetProperty("resumeDownload", resumeDownload);
-            return this;
-        }
-        /**
-         * Configures whether resume download is enabled. This must be supported
-         * by the FTP server (almost all FTP servers support it). In addition
-         * the options localWorkDirectory must be configured so downloaded files
-         * are stored in a local directory, and the option binary must be
-         * enabled, which is required to support resuming of downloads.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default FtpEndpointConsumerBuilder resumeDownload(String resumeDownload) {
-            doSetProperty("resumeDownload", resumeDownload);
-            return this;
-        }
-        /**
-         * Sets the download method to use when not using a local working
-         * directory. If set to true, the remote files are streamed to the route
-         * as they are read. When set to false, the remote files are loaded into
-         * memory before being sent into the route.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default FtpEndpointConsumerBuilder streamDownload(boolean streamDownload) {
-            doSetProperty("streamDownload", streamDownload);
-            return this;
-        }
-        /**
-         * Sets the download method to use when not using a local working
-         * directory. If set to true, the remote files are streamed to the route
-         * as they are read. When set to false, the remote files are loaded into
-         * memory before being sent into the route.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default FtpEndpointConsumerBuilder streamDownload(String streamDownload) {
-            doSetProperty("streamDownload", streamDownload);
-            return this;
-        }
-        /**
-         * Account to use for login.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default FtpEndpointConsumerBuilder account(String account) {
-            doSetProperty("account", account);
-            return this;
-        }
-        /**
-         * Password to use for login.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default FtpEndpointConsumerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
-         * Username to use for login.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default FtpEndpointConsumerBuilder username(String username) {
-            doSetProperty("username", username);
-            return this;
-        }
-        /**
-         * This option is used to specify the encoding of the file. You can use
-         * this on the consumer, to specify the encodings of the files, which
-         * allow Camel to know the charset it should load the file content in
-         * case the file content is being accessed. Likewise when writing a
-         * file, you can use this option to specify which charset to write the
-         * file as well. Do mind that when writing the file Camel may have to
-         * read the message content into memory to be able to convert the data
-         * into the configured charset, so do not use this if you have big
-         * messages.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointConsumerBuilder charset(String charset) {
-            doSetProperty("charset", charset);
-            return this;
-        }
-        /**
-         * Producer: If provided, then Camel will write a 2nd done file when the
-         * original file has been written. The done file will be empty. This
-         * option configures what file name to use. Either you can specify a
-         * fixed name. Or you can use dynamic placeholders. The done file will
-         * always be written in the same folder as the original file. Consumer:
-         * If provided, Camel will only consume files if a done file exists.
-         * This option configures what file name to use. Either you can specify
-         * a fixed name. Or you can use dynamic placeholders.The done file is
-         * always expected in the same folder as the original file. Only
-         * ${file.name} and ${file.name.noext} is supported as dynamic
-         * placeholders.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointConsumerBuilder doneFileName(String doneFileName) {
-            doSetProperty("doneFileName", doneFileName);
-            return this;
-        }
-        /**
-         * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
-         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
-         * CamelOverruleFileName header which takes precedence over any existing
-         * CamelFileName header; the CamelOverruleFileName is a header that is
-         * used only once, and makes it easier as this avoids to temporary store
-         * CamelFileName and have to restore it afterwards.
-         * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointConsumerBuilder fileName(Expression fileName) {
-            doSetProperty("fileName", fileName);
-            return this;
-        }
-        /**
-         * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
-         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
-         * CamelOverruleFileName header which takes precedence over any existing
-         * CamelFileName header; the CamelOverruleFileName is a header that is
-         * used only once, and makes it easier as this avoids to temporary store
-         * CamelFileName and have to restore it afterwards.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointConsumerBuilder fileName(String fileName) {
-            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -616,6 +551,38 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Configures whether resume download is enabled. This must be supported
+         * by the FTP server (almost all FTP servers support it). In addition
+         * the options localWorkDirectory must be configured so downloaded files
+         * are stored in a local directory, and the option binary must be
+         * enabled, which is required to support resuming of downloads.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default FtpEndpointConsumerBuilder resumeDownload(boolean resumeDownload) {
+            doSetProperty("resumeDownload", resumeDownload);
+            return this;
+        }
+        /**
+         * Configures whether resume download is enabled. This must be supported
+         * by the FTP server (almost all FTP servers support it). In addition
+         * the options localWorkDirectory must be configured so downloaded files
+         * are stored in a local directory, and the option binary must be
+         * enabled, which is required to support resuming of downloads.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default FtpEndpointConsumerBuilder resumeDownload(String resumeDownload) {
+            doSetProperty("resumeDownload", resumeDownload);
+            return this;
+        }
+        /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
@@ -641,6 +608,36 @@ public interface FtpEndpointBuilderFactory {
         default FtpEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * Sets the download method to use when not using a local working
+         * directory. If set to true, the remote files are streamed to the route
+         * as they are read. When set to false, the remote files are loaded into
+         * memory before being sent into the route.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default FtpEndpointConsumerBuilder streamDownload(boolean streamDownload) {
+            doSetProperty("streamDownload", streamDownload);
+            return this;
+        }
+        /**
+         * Sets the download method to use when not using a local working
+         * directory. If set to true, the remote files are streamed to the route
+         * as they are read. When set to false, the remote files are loaded into
+         * memory before being sent into the route.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default FtpEndpointConsumerBuilder streamDownload(String streamDownload) {
+            doSetProperty("streamDownload", streamDownload);
             return this;
         }
         /**
@@ -1925,6 +1922,39 @@ public interface FtpEndpointBuilderFactory {
             doSetProperty("sorter", sorter);
             return this;
         }
+        /**
+         * Account to use for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default FtpEndpointConsumerBuilder account(String account) {
+            doSetProperty("account", account);
+            return this;
+        }
+        /**
+         * Password to use for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default FtpEndpointConsumerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Username to use for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default FtpEndpointConsumerBuilder username(String username) {
+            doSetProperty("username", username);
+            return this;
+        }
     }
 
     /**
@@ -1935,6 +1965,135 @@ public interface FtpEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default FtpEndpointConsumerBuilder basic() {
             return (FtpEndpointConsumerBuilder) this;
+        }
+        /**
+         * If set this option to be true, camel-ftp will use the list file
+         * directly to check if the file exists. Since some FTP server may not
+         * support to list the file directly, if the option is false, camel-ftp
+         * will use the old way to list the directory and check if the file
+         * exists. This option also influences readLock=changed to control
+         * whether it performs a fast check to update file information or not.
+         * This can be used to speed up the process if the FTP server has a lot
+         * of files.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common (advanced)
+         */
+        default AdvancedFtpEndpointConsumerBuilder fastExistsCheck(
+                boolean fastExistsCheck) {
+            doSetProperty("fastExistsCheck", fastExistsCheck);
+            return this;
+        }
+        /**
+         * If set this option to be true, camel-ftp will use the list file
+         * directly to check if the file exists. Since some FTP server may not
+         * support to list the file directly, if the option is false, camel-ftp
+         * will use the old way to list the directory and check if the file
+         * exists. This option also influences readLock=changed to control
+         * whether it performs a fast check to update file information or not.
+         * This can be used to speed up the process if the FTP server has a lot
+         * of files.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common (advanced)
+         */
+        default AdvancedFtpEndpointConsumerBuilder fastExistsCheck(
+                String fastExistsCheck) {
+            doSetProperty("fastExistsCheck", fastExistsCheck);
+            return this;
+        }
+        /**
+         * Whether the FTP consumer should download the file. If this option is
+         * set to false, then the message body will be null, but the consumer
+         * will still trigger a Camel Exchange that has details about the file
+         * such as file name, file size, etc. It's just that the file will not
+         * be downloaded.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         */
+        default AdvancedFtpEndpointConsumerBuilder download(boolean download) {
+            doSetProperty("download", download);
+            return this;
+        }
+        /**
+         * Whether the FTP consumer should download the file. If this option is
+         * set to false, then the message body will be null, but the consumer
+         * will still trigger a Camel Exchange that has details about the file
+         * such as file name, file size, etc. It's just that the file will not
+         * be downloaded.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         */
+        default AdvancedFtpEndpointConsumerBuilder download(String download) {
+            doSetProperty("download", download);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedFtpEndpointConsumerBuilder exceptionHandler(
+                ExceptionHandler exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedFtpEndpointConsumerBuilder exceptionHandler(
+                String exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedFtpEndpointConsumerBuilder exchangePattern(
+                ExchangePattern exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedFtpEndpointConsumerBuilder exchangePattern(
+                String exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
         }
         /**
          * Allows you to set how the consumer will handle subfolders and files
@@ -2002,386 +2161,6 @@ public interface FtpEndpointBuilderFactory {
         default AdvancedFtpEndpointConsumerBuilder ignoreFileNotFoundOrPermissionError(
                 String ignoreFileNotFoundOrPermissionError) {
             doSetProperty("ignoreFileNotFoundOrPermissionError", ignoreFileNotFoundOrPermissionError);
-            return this;
-        }
-        /**
-         * Whether to allow using LIST command when downloading a file. Default
-         * is true. In some use cases you may want to download a specific file
-         * and are not allowed to use the LIST command, and therefore you can
-         * set this option to false. Notice when using this option, then the
-         * specific file to download does not include meta-data information such
-         * as file size, timestamp, permissions etc, because those information
-         * is only possible to retrieve when LIST command is in use.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: consumer (advanced)
-         */
-        default AdvancedFtpEndpointConsumerBuilder useList(boolean useList) {
-            doSetProperty("useList", useList);
-            return this;
-        }
-        /**
-         * Whether to allow using LIST command when downloading a file. Default
-         * is true. In some use cases you may want to download a specific file
-         * and are not allowed to use the LIST command, and therefore you can
-         * set this option to false. Notice when using this option, then the
-         * specific file to download does not include meta-data information such
-         * as file size, timestamp, permissions etc, because those information
-         * is only possible to retrieve when LIST command is in use.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: consumer (advanced)
-         */
-        default AdvancedFtpEndpointConsumerBuilder useList(String useList) {
-            doSetProperty("useList", useList);
-            return this;
-        }
-        /**
-         * Set the client side port range in active mode. The syntax is:
-         * minPort-maxPort Both port numbers are inclusive, eg 10000-19999 to
-         * include all 1xxxx ports.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointConsumerBuilder activePortRange(
-                String activePortRange) {
-            doSetProperty("activePortRange", activePortRange);
-            return this;
-        }
-        /**
-         * Sets the connect timeout for waiting for a connection to be
-         * established Used by both FTPClient and JSCH.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 10000
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointConsumerBuilder connectTimeout(
-                int connectTimeout) {
-            doSetProperty("connectTimeout", connectTimeout);
-            return this;
-        }
-        /**
-         * Sets the connect timeout for waiting for a connection to be
-         * established Used by both FTPClient and JSCH.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 10000
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointConsumerBuilder connectTimeout(
-                String connectTimeout) {
-            doSetProperty("connectTimeout", connectTimeout);
-            return this;
-        }
-        /**
-         * To use a custom instance of FTPClient.
-         * 
-         * The option is a: <code>org.apache.commons.net.ftp.FTPClient</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointConsumerBuilder ftpClient(Object ftpClient) {
-            doSetProperty("ftpClient", ftpClient);
-            return this;
-        }
-        /**
-         * To use a custom instance of FTPClient.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.commons.net.ftp.FTPClient</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointConsumerBuilder ftpClient(String ftpClient) {
-            doSetProperty("ftpClient", ftpClient);
-            return this;
-        }
-        /**
-         * To use a custom instance of FTPClientConfig to configure the FTP
-         * client the endpoint should use.
-         * 
-         * The option is a:
-         * <code>org.apache.commons.net.ftp.FTPClientConfig</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointConsumerBuilder ftpClientConfig(
-                Object ftpClientConfig) {
-            doSetProperty("ftpClientConfig", ftpClientConfig);
-            return this;
-        }
-        /**
-         * To use a custom instance of FTPClientConfig to configure the FTP
-         * client the endpoint should use.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.commons.net.ftp.FTPClientConfig</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointConsumerBuilder ftpClientConfig(
-                String ftpClientConfig) {
-            doSetProperty("ftpClientConfig", ftpClientConfig);
-            return this;
-        }
-        /**
-         * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointConsumerBuilder ftpClientConfigParameters(
-                Map<String, Object> ftpClientConfigParameters) {
-            doSetProperty("ftpClientConfigParameters", ftpClientConfigParameters);
-            return this;
-        }
-        /**
-         * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
-         * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointConsumerBuilder ftpClientConfigParameters(
-                String ftpClientConfigParameters) {
-            doSetProperty("ftpClientConfigParameters", ftpClientConfigParameters);
-            return this;
-        }
-        /**
-         * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointConsumerBuilder ftpClientParameters(
-                Map<String, Object> ftpClientParameters) {
-            doSetProperty("ftpClientParameters", ftpClientParameters);
-            return this;
-        }
-        /**
-         * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
-         * 
-         * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointConsumerBuilder ftpClientParameters(
-                String ftpClientParameters) {
-            doSetProperty("ftpClientParameters", ftpClientParameters);
-            return this;
-        }
-        /**
-         * Sets optional site command(s) to be executed after successful login.
-         * Multiple site commands can be separated using a new line character.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointConsumerBuilder siteCommand(
-                String siteCommand) {
-            doSetProperty("siteCommand", siteCommand);
-            return this;
-        }
-        /**
-         * Sets the so timeout FTP and FTPS Only for Camel 2.4. SFTP for Camel
-         * 2.14.3/2.15.3/2.16 onwards. Is the SocketOptions.SO_TIMEOUT value in
-         * millis. Recommended option is to set this to 300000 so as not have a
-         * hanged connection. On SFTP this option is set as timeout on the JSCH
-         * Session instance.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 300000
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointConsumerBuilder soTimeout(int soTimeout) {
-            doSetProperty("soTimeout", soTimeout);
-            return this;
-        }
-        /**
-         * Sets the so timeout FTP and FTPS Only for Camel 2.4. SFTP for Camel
-         * 2.14.3/2.15.3/2.16 onwards. Is the SocketOptions.SO_TIMEOUT value in
-         * millis. Recommended option is to set this to 300000 so as not have a
-         * hanged connection. On SFTP this option is set as timeout on the JSCH
-         * Session instance.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 300000
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointConsumerBuilder soTimeout(String soTimeout) {
-            doSetProperty("soTimeout", soTimeout);
-            return this;
-        }
-        /**
-         * Sets whether we should stepwise change directories while traversing
-         * file structures when downloading files, or as well when uploading a
-         * file to a directory. You can disable this if you for example are in a
-         * situation where you cannot change directory on the FTP server due
-         * security reasons.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointConsumerBuilder stepwise(boolean stepwise) {
-            doSetProperty("stepwise", stepwise);
-            return this;
-        }
-        /**
-         * Sets whether we should stepwise change directories while traversing
-         * file structures when downloading files, or as well when uploading a
-         * file to a directory. You can disable this if you for example are in a
-         * situation where you cannot change directory on the FTP server due
-         * security reasons.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointConsumerBuilder stepwise(String stepwise) {
-            doSetProperty("stepwise", stepwise);
-            return this;
-        }
-        /**
-         * Should an exception be thrown if connection failed (exhausted) By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointConsumerBuilder throwExceptionOnConnectFailed(
-                boolean throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
-            return this;
-        }
-        /**
-         * Should an exception be thrown if connection failed (exhausted) By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointConsumerBuilder throwExceptionOnConnectFailed(
-                String throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
-            return this;
-        }
-        /**
-         * Sets the data timeout for waiting for reply Used only by FTPClient.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 30000
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointConsumerBuilder timeout(int timeout) {
-            doSetProperty("timeout", timeout);
-            return this;
-        }
-        /**
-         * Sets the data timeout for waiting for reply Used only by FTPClient.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 30000
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointConsumerBuilder timeout(String timeout) {
-            doSetProperty("timeout", timeout);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedFtpEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedFtpEndpointConsumerBuilder exceptionHandler(
-                String exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedFtpEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedFtpEndpointConsumerBuilder exchangePattern(
-                String exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -2532,6 +2311,56 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to allow using LIST command when downloading a file. Default
+         * is true. In some use cases you may want to download a specific file
+         * and are not allowed to use the LIST command, and therefore you can
+         * set this option to false. Notice when using this option, then the
+         * specific file to download does not include meta-data information such
+         * as file size, timestamp, permissions etc, because those information
+         * is only possible to retrieve when LIST command is in use.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         */
+        default AdvancedFtpEndpointConsumerBuilder useList(boolean useList) {
+            doSetProperty("useList", useList);
+            return this;
+        }
+        /**
+         * Whether to allow using LIST command when downloading a file. Default
+         * is true. In some use cases you may want to download a specific file
+         * and are not allowed to use the LIST command, and therefore you can
+         * set this option to false. Notice when using this option, then the
+         * specific file to download does not include meta-data information such
+         * as file size, timestamp, permissions etc, because those information
+         * is only possible to retrieve when LIST command is in use.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         */
+        default AdvancedFtpEndpointConsumerBuilder useList(String useList) {
+            doSetProperty("useList", useList);
+            return this;
+        }
+        /**
+         * Set the client side port range in active mode. The syntax is:
+         * minPort-maxPort Both port numbers are inclusive, eg 10000-19999 to
+         * include all 1xxxx ports.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder activePortRange(
+                String activePortRange) {
+            doSetProperty("activePortRange", activePortRange);
+            return this;
+        }
+        /**
          * Automatically create missing directories in the file's pathname. For
          * the file consumer, that means creating the starting directory. For
          * the file producer, it means the directory the files should be written
@@ -2616,6 +2445,273 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the connect timeout for waiting for a connection to be
+         * established Used by both FTPClient and JSCH.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10000
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder connectTimeout(
+                int connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * Sets the connect timeout for waiting for a connection to be
+         * established Used by both FTPClient and JSCH.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10000
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder connectTimeout(
+                String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * To use a custom instance of FTPClient.
+         * 
+         * The option is a: <code>org.apache.commons.net.ftp.FTPClient</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder ftpClient(Object ftpClient) {
+            doSetProperty("ftpClient", ftpClient);
+            return this;
+        }
+        /**
+         * To use a custom instance of FTPClient.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.commons.net.ftp.FTPClient</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder ftpClient(String ftpClient) {
+            doSetProperty("ftpClient", ftpClient);
+            return this;
+        }
+        /**
+         * To use a custom instance of FTPClientConfig to configure the FTP
+         * client the endpoint should use.
+         * 
+         * The option is a:
+         * <code>org.apache.commons.net.ftp.FTPClientConfig</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder ftpClientConfig(
+                Object ftpClientConfig) {
+            doSetProperty("ftpClientConfig", ftpClientConfig);
+            return this;
+        }
+        /**
+         * To use a custom instance of FTPClientConfig to configure the FTP
+         * client the endpoint should use.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.commons.net.ftp.FTPClientConfig</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder ftpClientConfig(
+                String ftpClientConfig) {
+            doSetProperty("ftpClientConfig", ftpClientConfig);
+            return this;
+        }
+        /**
+         * Used by FtpComponent to provide additional parameters for the
+         * FTPClientConfig.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder ftpClientConfigParameters(
+                Map<String, Object> ftpClientConfigParameters) {
+            doSetProperty("ftpClientConfigParameters", ftpClientConfigParameters);
+            return this;
+        }
+        /**
+         * Used by FtpComponent to provide additional parameters for the
+         * FTPClientConfig.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder ftpClientConfigParameters(
+                String ftpClientConfigParameters) {
+            doSetProperty("ftpClientConfigParameters", ftpClientConfigParameters);
+            return this;
+        }
+        /**
+         * Used by FtpComponent to provide additional parameters for the
+         * FTPClient.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder ftpClientParameters(
+                Map<String, Object> ftpClientParameters) {
+            doSetProperty("ftpClientParameters", ftpClientParameters);
+            return this;
+        }
+        /**
+         * Used by FtpComponent to provide additional parameters for the
+         * FTPClient.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder ftpClientParameters(
+                String ftpClientParameters) {
+            doSetProperty("ftpClientParameters", ftpClientParameters);
+            return this;
+        }
+        /**
+         * Specifies the maximum reconnect attempts Camel performs when it tries
+         * to connect to the remote FTP server. Use 0 to disable this behavior.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder maximumReconnectAttempts(
+                int maximumReconnectAttempts) {
+            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
+            return this;
+        }
+        /**
+         * Specifies the maximum reconnect attempts Camel performs when it tries
+         * to connect to the remote FTP server. Use 0 to disable this behavior.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder maximumReconnectAttempts(
+                String maximumReconnectAttempts) {
+            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
+            return this;
+        }
+        /**
+         * Delay in millis Camel will wait before performing a reconnect
+         * attempt.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder reconnectDelay(
+                long reconnectDelay) {
+            doSetProperty("reconnectDelay", reconnectDelay);
+            return this;
+        }
+        /**
+         * Delay in millis Camel will wait before performing a reconnect
+         * attempt.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder reconnectDelay(
+                String reconnectDelay) {
+            doSetProperty("reconnectDelay", reconnectDelay);
+            return this;
+        }
+        /**
+         * Sets optional site command(s) to be executed after successful login.
+         * Multiple site commands can be separated using a new line character.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder siteCommand(
+                String siteCommand) {
+            doSetProperty("siteCommand", siteCommand);
+            return this;
+        }
+        /**
+         * Sets the so timeout FTP and FTPS Only for Camel 2.4. SFTP for Camel
+         * 2.14.3/2.15.3/2.16 onwards. Is the SocketOptions.SO_TIMEOUT value in
+         * millis. Recommended option is to set this to 300000 so as not have a
+         * hanged connection. On SFTP this option is set as timeout on the JSCH
+         * Session instance.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 300000
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder soTimeout(int soTimeout) {
+            doSetProperty("soTimeout", soTimeout);
+            return this;
+        }
+        /**
+         * Sets the so timeout FTP and FTPS Only for Camel 2.4. SFTP for Camel
+         * 2.14.3/2.15.3/2.16 onwards. Is the SocketOptions.SO_TIMEOUT value in
+         * millis. Recommended option is to set this to 300000 so as not have a
+         * hanged connection. On SFTP this option is set as timeout on the JSCH
+         * Session instance.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 300000
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder soTimeout(String soTimeout) {
+            doSetProperty("soTimeout", soTimeout);
+            return this;
+        }
+        /**
+         * Sets whether we should stepwise change directories while traversing
+         * file structures when downloading files, or as well when uploading a
+         * file to a directory. You can disable this if you for example are in a
+         * situation where you cannot change directory on the FTP server due
+         * security reasons.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder stepwise(boolean stepwise) {
+            doSetProperty("stepwise", stepwise);
+            return this;
+        }
+        /**
+         * Sets whether we should stepwise change directories while traversing
+         * file structures when downloading files, or as well when uploading a
+         * file to a directory. You can disable this if you for example are in a
+         * situation where you cannot change directory on the FTP server due
+         * security reasons.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder stepwise(String stepwise) {
+            doSetProperty("stepwise", stepwise);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -2641,6 +2737,64 @@ public interface FtpEndpointBuilderFactory {
         default AdvancedFtpEndpointConsumerBuilder synchronous(
                 String synchronous) {
             doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Should an exception be thrown if connection failed (exhausted) By
+         * default exception is not thrown and a WARN is logged. You can use
+         * this to enable exception being thrown and handle the thrown exception
+         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
+         * method.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder throwExceptionOnConnectFailed(
+                boolean throwExceptionOnConnectFailed) {
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            return this;
+        }
+        /**
+         * Should an exception be thrown if connection failed (exhausted) By
+         * default exception is not thrown and a WARN is logged. You can use
+         * this to enable exception being thrown and handle the thrown exception
+         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
+         * method.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder throwExceptionOnConnectFailed(
+                String throwExceptionOnConnectFailed) {
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            return this;
+        }
+        /**
+         * Sets the data timeout for waiting for reply Used only by FTPClient.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder timeout(int timeout) {
+            doSetProperty("timeout", timeout);
+            return this;
+        }
+        /**
+         * Sets the data timeout for waiting for reply Used only by FTPClient.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointConsumerBuilder timeout(String timeout) {
+            doSetProperty("timeout", timeout);
             return this;
         }
     }
@@ -2678,6 +2832,129 @@ public interface FtpEndpointBuilderFactory {
          */
         default FtpEndpointProducerBuilder binary(String binary) {
             doSetProperty("binary", binary);
+            return this;
+        }
+        /**
+         * This option is used to specify the encoding of the file. You can use
+         * this on the consumer, to specify the encodings of the files, which
+         * allow Camel to know the charset it should load the file content in
+         * case the file content is being accessed. Likewise when writing a
+         * file, you can use this option to specify which charset to write the
+         * file as well. Do mind that when writing the file Camel may have to
+         * read the message content into memory to be able to convert the data
+         * into the configured charset, so do not use this if you have big
+         * messages.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default FtpEndpointProducerBuilder charset(String charset) {
+            doSetProperty("charset", charset);
+            return this;
+        }
+        /**
+         * Whether or not to disconnect from remote FTP server right after use.
+         * Disconnect will only disconnect the current connection to the FTP
+         * server. If you have a consumer which you want to stop, then you need
+         * to stop the consumer/route instead.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default FtpEndpointProducerBuilder disconnect(boolean disconnect) {
+            doSetProperty("disconnect", disconnect);
+            return this;
+        }
+        /**
+         * Whether or not to disconnect from remote FTP server right after use.
+         * Disconnect will only disconnect the current connection to the FTP
+         * server. If you have a consumer which you want to stop, then you need
+         * to stop the consumer/route instead.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default FtpEndpointProducerBuilder disconnect(String disconnect) {
+            doSetProperty("disconnect", disconnect);
+            return this;
+        }
+        /**
+         * Producer: If provided, then Camel will write a 2nd done file when the
+         * original file has been written. The done file will be empty. This
+         * option configures what file name to use. Either you can specify a
+         * fixed name. Or you can use dynamic placeholders. The done file will
+         * always be written in the same folder as the original file. Consumer:
+         * If provided, Camel will only consume files if a done file exists.
+         * This option configures what file name to use. Either you can specify
+         * a fixed name. Or you can use dynamic placeholders.The done file is
+         * always expected in the same folder as the original file. Only
+         * ${file.name} and ${file.name.next} is supported as dynamic
+         * placeholders.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default FtpEndpointProducerBuilder doneFileName(String doneFileName) {
+            doSetProperty("doneFileName", doneFileName);
+            return this;
+        }
+        /**
+         * Use Expression such as File Language to dynamically set the filename.
+         * For consumers, it's used as a filename filter. For producers, it's
+         * used to evaluate the filename to write. If an expression is set, it
+         * take precedence over the CamelFileName header. (Note: The header
+         * itself can also be an Expression). The expression options support
+         * both String and Expression types. If the expression is a String type,
+         * it is always evaluated using the File Language. If the expression is
+         * an Expression type, the specified Expression type is used - this
+         * allows you, for instance, to use OGNL expressions. For the consumer,
+         * you can use it to filter filenames, so you can for instance consume
+         * today's file using the File Language syntax:
+         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
+         * CamelOverruleFileName header which takes precedence over any existing
+         * CamelFileName header; the CamelOverruleFileName is a header that is
+         * used only once, and makes it easier as this avoids to temporary store
+         * CamelFileName and have to restore it afterwards.
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Group: common
+         */
+        default FtpEndpointProducerBuilder fileName(Expression fileName) {
+            doSetProperty("fileName", fileName);
+            return this;
+        }
+        /**
+         * Use Expression such as File Language to dynamically set the filename.
+         * For consumers, it's used as a filename filter. For producers, it's
+         * used to evaluate the filename to write. If an expression is set, it
+         * take precedence over the CamelFileName header. (Note: The header
+         * itself can also be an Expression). The expression options support
+         * both String and Expression types. If the expression is a String type,
+         * it is always evaluated using the File Language. If the expression is
+         * an Expression type, the specified Expression type is used - this
+         * allows you, for instance, to use OGNL expressions. For the consumer,
+         * you can use it to filter filenames, so you can for instance consume
+         * today's file using the File Language syntax:
+         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
+         * CamelOverruleFileName header which takes precedence over any existing
+         * CamelFileName header; the CamelOverruleFileName is a header that is
+         * used only once, and makes it easier as this avoids to temporary store
+         * CamelFileName and have to restore it afterwards.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.Expression</code> type.
+         * 
+         * Group: common
+         */
+        default FtpEndpointProducerBuilder fileName(String fileName) {
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -2822,147 +3099,21 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Account to use for login.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default FtpEndpointProducerBuilder account(String account) {
-            doSetProperty("account", account);
-            return this;
-        }
-        /**
-         * Password to use for login.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default FtpEndpointProducerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
-         * Username to use for login.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default FtpEndpointProducerBuilder username(String username) {
-            doSetProperty("username", username);
-            return this;
-        }
-        /**
-         * This option is used to specify the encoding of the file. You can use
-         * this on the consumer, to specify the encodings of the files, which
-         * allow Camel to know the charset it should load the file content in
-         * case the file content is being accessed. Likewise when writing a
-         * file, you can use this option to specify which charset to write the
-         * file as well. Do mind that when writing the file Camel may have to
-         * read the message content into memory to be able to convert the data
-         * into the configured charset, so do not use this if you have big
-         * messages.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointProducerBuilder charset(String charset) {
-            doSetProperty("charset", charset);
-            return this;
-        }
-        /**
-         * Producer: If provided, then Camel will write a 2nd done file when the
-         * original file has been written. The done file will be empty. This
-         * option configures what file name to use. Either you can specify a
-         * fixed name. Or you can use dynamic placeholders. The done file will
-         * always be written in the same folder as the original file. Consumer:
-         * If provided, Camel will only consume files if a done file exists.
-         * This option configures what file name to use. Either you can specify
-         * a fixed name. Or you can use dynamic placeholders.The done file is
-         * always expected in the same folder as the original file. Only
-         * ${file.name} and ${file.name.noext} is supported as dynamic
-         * placeholders.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointProducerBuilder doneFileName(String doneFileName) {
-            doSetProperty("doneFileName", doneFileName);
-            return this;
-        }
-        /**
-         * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
-         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
-         * CamelOverruleFileName header which takes precedence over any existing
-         * CamelFileName header; the CamelOverruleFileName is a header that is
-         * used only once, and makes it easier as this avoids to temporary store
-         * CamelFileName and have to restore it afterwards.
-         * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointProducerBuilder fileName(Expression fileName) {
-            doSetProperty("fileName", fileName);
-            return this;
-        }
-        /**
-         * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
-         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
-         * CamelOverruleFileName header which takes precedence over any existing
-         * CamelFileName header; the CamelOverruleFileName is a header that is
-         * used only once, and makes it easier as this avoids to temporary store
-         * CamelFileName and have to restore it afterwards.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointProducerBuilder fileName(String fileName) {
-            doSetProperty("fileName", fileName);
-            return this;
-        }
-        /**
          * What to do if a file already exists with the same name. Override,
-         * which is the default, replaces the existing file. \n\n - Append -
-         * adds content to the existing file.\n - Fail - throws a
+         * which is the default, replaces the existing file. - Append - adds
+         * content to the existing file. - Fail - throws a
          * GenericFileOperationException, indicating that there is already an
-         * existing file.\n - Ignore - silently ignores the problem and does not
-         * override the existing file, but assumes everything is okay.\n - Move
-         * - option requires to use the moveExisting option to be configured as
+         * existing file. - Ignore - silently ignores the problem and does not
+         * override the existing file, but assumes everything is okay. - Move -
+         * option requires to use the moveExisting option to be configured as
          * well. The option eagerDeleteTargetFile can be used to control what to
          * do if an moving the file, and there exists already an existing file,
          * otherwise causing the move operation to fail. The Move option will
-         * move any existing files, before writing the target file.\n -
-         * TryRename is only applicable if tempFileName option is in use. This
-         * allows to try renaming the file from the temporary name to the actual
-         * name, without doing any exists check. This check may be faster on
-         * some file systems and especially FTP servers.
+         * move any existing files, before writing the target file. - TryRename
+         * is only applicable if tempFileName option is in use. This allows to
+         * try renaming the file from the temporary name to the actual name,
+         * without doing any exists check. This check may be faster on some file
+         * systems and especially FTP servers.
          * 
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
@@ -2976,20 +3127,20 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * What to do if a file already exists with the same name. Override,
-         * which is the default, replaces the existing file. \n\n - Append -
-         * adds content to the existing file.\n - Fail - throws a
+         * which is the default, replaces the existing file. - Append - adds
+         * content to the existing file. - Fail - throws a
          * GenericFileOperationException, indicating that there is already an
-         * existing file.\n - Ignore - silently ignores the problem and does not
-         * override the existing file, but assumes everything is okay.\n - Move
-         * - option requires to use the moveExisting option to be configured as
+         * existing file. - Ignore - silently ignores the problem and does not
+         * override the existing file, but assumes everything is okay. - Move -
+         * option requires to use the moveExisting option to be configured as
          * well. The option eagerDeleteTargetFile can be used to control what to
          * do if an moving the file, and there exists already an existing file,
          * otherwise causing the move operation to fail. The Move option will
-         * move any existing files, before writing the target file.\n -
-         * TryRename is only applicable if tempFileName option is in use. This
-         * allows to try renaming the file from the temporary name to the actual
-         * name, without doing any exists check. This check may be faster on
-         * some file systems and especially FTP servers.
+         * move any existing files, before writing the target file. - TryRename
+         * is only applicable if tempFileName option is in use. This allows to
+         * try renaming the file from the temporary name to the actual name,
+         * without doing any exists check. This check may be faster on some file
+         * systems and especially FTP servers.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
@@ -3200,6 +3351,39 @@ public interface FtpEndpointBuilderFactory {
             doSetProperty("tempPrefix", tempPrefix);
             return this;
         }
+        /**
+         * Account to use for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default FtpEndpointProducerBuilder account(String account) {
+            doSetProperty("account", account);
+            return this;
+        }
+        /**
+         * Password to use for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default FtpEndpointProducerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Username to use for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default FtpEndpointProducerBuilder username(String username) {
+            doSetProperty("username", username);
+            return this;
+        }
     }
 
     /**
@@ -3212,6 +3396,84 @@ public interface FtpEndpointBuilderFactory {
             return (FtpEndpointProducerBuilder) this;
         }
         /**
+         * If set this option to be true, camel-ftp will use the list file
+         * directly to check if the file exists. Since some FTP server may not
+         * support to list the file directly, if the option is false, camel-ftp
+         * will use the old way to list the directory and check if the file
+         * exists. This option also influences readLock=changed to control
+         * whether it performs a fast check to update file information or not.
+         * This can be used to speed up the process if the FTP server has a lot
+         * of files.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common (advanced)
+         */
+        default AdvancedFtpEndpointProducerBuilder fastExistsCheck(
+                boolean fastExistsCheck) {
+            doSetProperty("fastExistsCheck", fastExistsCheck);
+            return this;
+        }
+        /**
+         * If set this option to be true, camel-ftp will use the list file
+         * directly to check if the file exists. Since some FTP server may not
+         * support to list the file directly, if the option is false, camel-ftp
+         * will use the old way to list the directory and check if the file
+         * exists. This option also influences readLock=changed to control
+         * whether it performs a fast check to update file information or not.
+         * This can be used to speed up the process if the FTP server has a lot
+         * of files.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common (advanced)
+         */
+        default AdvancedFtpEndpointProducerBuilder fastExistsCheck(
+                String fastExistsCheck) {
+            doSetProperty("fastExistsCheck", fastExistsCheck);
+            return this;
+        }
+        /**
+         * Used to specify if a null body is allowed during file writing. If set
+         * to true then an empty file will be created, when set to false, and
+         * attempting to send a null body to the file component, a
+         * GenericFileWriteException of 'Cannot write null body to file.' will
+         * be thrown. If the fileExist option is set to 'Override', then the
+         * file will be truncated, and if set to append the file will remain
+         * unchanged.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         */
+        default AdvancedFtpEndpointProducerBuilder allowNullBody(
+                boolean allowNullBody) {
+            doSetProperty("allowNullBody", allowNullBody);
+            return this;
+        }
+        /**
+         * Used to specify if a null body is allowed during file writing. If set
+         * to true then an empty file will be created, when set to false, and
+         * attempting to send a null body to the file component, a
+         * GenericFileWriteException of 'Cannot write null body to file.' will
+         * be thrown. If the fileExist option is set to 'Override', then the
+         * file will be truncated, and if set to append the file will remain
+         * unchanged.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         */
+        default AdvancedFtpEndpointProducerBuilder allowNullBody(
+                String allowNullBody) {
+            doSetProperty("allowNullBody", allowNullBody);
+            return this;
+        }
+        /**
          * Allows you to set chmod on the stored file. For example chmod=640.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -3220,6 +3482,154 @@ public interface FtpEndpointBuilderFactory {
          */
         default AdvancedFtpEndpointProducerBuilder chmod(String chmod) {
             doSetProperty("chmod", chmod);
+            return this;
+        }
+        /**
+         * Whether or not to disconnect from remote FTP server right after a
+         * Batch upload is complete. disconnectOnBatchComplete will only
+         * disconnect the current connection to the FTP server.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         */
+        default AdvancedFtpEndpointProducerBuilder disconnectOnBatchComplete(
+                boolean disconnectOnBatchComplete) {
+            doSetProperty("disconnectOnBatchComplete", disconnectOnBatchComplete);
+            return this;
+        }
+        /**
+         * Whether or not to disconnect from remote FTP server right after a
+         * Batch upload is complete. disconnectOnBatchComplete will only
+         * disconnect the current connection to the FTP server.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         */
+        default AdvancedFtpEndpointProducerBuilder disconnectOnBatchComplete(
+                String disconnectOnBatchComplete) {
+            doSetProperty("disconnectOnBatchComplete", disconnectOnBatchComplete);
+            return this;
+        }
+        /**
+         * Whether or not to eagerly delete any existing target file. This
+         * option only applies when you use fileExists=Override and the
+         * tempFileName option as well. You can use this to disable (set it to
+         * false) deleting the target file before the temp file is written. For
+         * example you may write big files and want the target file to exists
+         * during the temp file is being written. This ensure the target file is
+         * only deleted until the very last moment, just before the temp file is
+         * being renamed to the target filename. This option is also used to
+         * control whether to delete any existing files when fileExist=Move is
+         * enabled, and an existing file exists. If this option
+         * copyAndDeleteOnRenameFails false, then an exception will be thrown if
+         * an existing file existed, if its true, then the existing file is
+         * deleted before the move operation.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         */
+        default AdvancedFtpEndpointProducerBuilder eagerDeleteTargetFile(
+                boolean eagerDeleteTargetFile) {
+            doSetProperty("eagerDeleteTargetFile", eagerDeleteTargetFile);
+            return this;
+        }
+        /**
+         * Whether or not to eagerly delete any existing target file. This
+         * option only applies when you use fileExists=Override and the
+         * tempFileName option as well. You can use this to disable (set it to
+         * false) deleting the target file before the temp file is written. For
+         * example you may write big files and want the target file to exists
+         * during the temp file is being written. This ensure the target file is
+         * only deleted until the very last moment, just before the temp file is
+         * being renamed to the target filename. This option is also used to
+         * control whether to delete any existing files when fileExist=Move is
+         * enabled, and an existing file exists. If this option
+         * copyAndDeleteOnRenameFails false, then an exception will be thrown if
+         * an existing file existed, if its true, then the existing file is
+         * deleted before the move operation.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         */
+        default AdvancedFtpEndpointProducerBuilder eagerDeleteTargetFile(
+                String eagerDeleteTargetFile) {
+            doSetProperty("eagerDeleteTargetFile", eagerDeleteTargetFile);
+            return this;
+        }
+        /**
+         * Will keep the last modified timestamp from the source file (if any).
+         * Will use the Exchange.FILE_LAST_MODIFIED header to located the
+         * timestamp. This header can contain either a java.util.Date or long
+         * with the timestamp. If the timestamp exists and the option is enabled
+         * it will set this timestamp on the written file. Note: This option
+         * only applies to the file producer. You cannot use this option with
+         * any of the ftp producers.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         */
+        default AdvancedFtpEndpointProducerBuilder keepLastModified(
+                boolean keepLastModified) {
+            doSetProperty("keepLastModified", keepLastModified);
+            return this;
+        }
+        /**
+         * Will keep the last modified timestamp from the source file (if any).
+         * Will use the Exchange.FILE_LAST_MODIFIED header to located the
+         * timestamp. This header can contain either a java.util.Date or long
+         * with the timestamp. If the timestamp exists and the option is enabled
+         * it will set this timestamp on the written file. Note: This option
+         * only applies to the file producer. You cannot use this option with
+         * any of the ftp producers.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         */
+        default AdvancedFtpEndpointProducerBuilder keepLastModified(
+                String keepLastModified) {
+            doSetProperty("keepLastModified", keepLastModified);
+            return this;
+        }
+        /**
+         * Strategy (Custom Strategy) used to move file with special naming
+         * token to use when fileExist=Move is configured. By default, there is
+         * an implementation used if no custom strategy is provided.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default AdvancedFtpEndpointProducerBuilder moveExistingFileStrategy(
+                Object moveExistingFileStrategy) {
+            doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
+            return this;
+        }
+        /**
+         * Strategy (Custom Strategy) used to move file with special naming
+         * token to use when fileExist=Move is configured. By default, there is
+         * an implementation used if no custom strategy is provided.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default AdvancedFtpEndpointProducerBuilder moveExistingFileStrategy(
+                String moveExistingFileStrategy) {
+            doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
             return this;
         }
         /**
@@ -3266,6 +3676,90 @@ public interface FtpEndpointBuilderFactory {
         default AdvancedFtpEndpointProducerBuilder activePortRange(
                 String activePortRange) {
             doSetProperty("activePortRange", activePortRange);
+            return this;
+        }
+        /**
+         * Automatically create missing directories in the file's pathname. For
+         * the file consumer, that means creating the starting directory. For
+         * the file producer, it means the directory the files should be written
+         * to.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointProducerBuilder autoCreate(boolean autoCreate) {
+            doSetProperty("autoCreate", autoCreate);
+            return this;
+        }
+        /**
+         * Automatically create missing directories in the file's pathname. For
+         * the file consumer, that means creating the starting directory. For
+         * the file producer, it means the directory the files should be written
+         * to.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointProducerBuilder autoCreate(String autoCreate) {
+            doSetProperty("autoCreate", autoCreate);
+            return this;
+        }
+        /**
+         * Whether the endpoint should use basic property binding (Camel 2.x) or
+         * the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointProducerBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Whether the endpoint should use basic property binding (Camel 2.x) or
+         * the newer property binding with additional capabilities.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointProducerBuilder basicPropertyBinding(
+                String basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 131072
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointProducerBuilder bufferSize(int bufferSize) {
+            doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 131072
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointProducerBuilder bufferSize(String bufferSize) {
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -3407,6 +3901,58 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies the maximum reconnect attempts Camel performs when it tries
+         * to connect to the remote FTP server. Use 0 to disable this behavior.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointProducerBuilder maximumReconnectAttempts(
+                int maximumReconnectAttempts) {
+            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
+            return this;
+        }
+        /**
+         * Specifies the maximum reconnect attempts Camel performs when it tries
+         * to connect to the remote FTP server. Use 0 to disable this behavior.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointProducerBuilder maximumReconnectAttempts(
+                String maximumReconnectAttempts) {
+            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
+            return this;
+        }
+        /**
+         * Delay in millis Camel will wait before performing a reconnect
+         * attempt.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointProducerBuilder reconnectDelay(
+                long reconnectDelay) {
+            doSetProperty("reconnectDelay", reconnectDelay);
+            return this;
+        }
+        /**
+         * Delay in millis Camel will wait before performing a reconnect
+         * attempt.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointProducerBuilder reconnectDelay(
+                String reconnectDelay) {
+            doSetProperty("reconnectDelay", reconnectDelay);
+            return this;
+        }
+        /**
          * Sets optional site command(s) to be executed after successful login.
          * Multiple site commands can be separated using a new line character.
          * 
@@ -3484,6 +4030,34 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointProducerBuilder synchronous(
+                boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointProducerBuilder synchronous(
+                String synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
          * Should an exception be thrown if connection failed (exhausted) By
          * default exception is not thrown and a WARN is logged. You can use
          * this to enable exception being thrown and handle the thrown exception
@@ -3541,274 +4115,6 @@ public interface FtpEndpointBuilderFactory {
             doSetProperty("timeout", timeout);
             return this;
         }
-        /**
-         * Used to specify if a null body is allowed during file writing. If set
-         * to true then an empty file will be created, when set to false, and
-         * attempting to send a null body to the file component, a
-         * GenericFileWriteException of 'Cannot write null body to file.' will
-         * be thrown. If the fileExist option is set to 'Override', then the
-         * file will be truncated, and if set to append the file will remain
-         * unchanged.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         */
-        default AdvancedFtpEndpointProducerBuilder allowNullBody(
-                boolean allowNullBody) {
-            doSetProperty("allowNullBody", allowNullBody);
-            return this;
-        }
-        /**
-         * Used to specify if a null body is allowed during file writing. If set
-         * to true then an empty file will be created, when set to false, and
-         * attempting to send a null body to the file component, a
-         * GenericFileWriteException of 'Cannot write null body to file.' will
-         * be thrown. If the fileExist option is set to 'Override', then the
-         * file will be truncated, and if set to append the file will remain
-         * unchanged.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         */
-        default AdvancedFtpEndpointProducerBuilder allowNullBody(
-                String allowNullBody) {
-            doSetProperty("allowNullBody", allowNullBody);
-            return this;
-        }
-        /**
-         * Whether or not to eagerly delete any existing target file. This
-         * option only applies when you use fileExists=Override and the
-         * tempFileName option as well. You can use this to disable (set it to
-         * false) deleting the target file before the temp file is written. For
-         * example you may write big files and want the target file to exists
-         * during the temp file is being written. This ensure the target file is
-         * only deleted until the very last moment, just before the temp file is
-         * being renamed to the target filename. This option is also used to
-         * control whether to delete any existing files when fileExist=Move is
-         * enabled, and an existing file exists. If this option
-         * copyAndDeleteOnRenameFails false, then an exception will be thrown if
-         * an existing file existed, if its true, then the existing file is
-         * deleted before the move operation.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer (advanced)
-         */
-        default AdvancedFtpEndpointProducerBuilder eagerDeleteTargetFile(
-                boolean eagerDeleteTargetFile) {
-            doSetProperty("eagerDeleteTargetFile", eagerDeleteTargetFile);
-            return this;
-        }
-        /**
-         * Whether or not to eagerly delete any existing target file. This
-         * option only applies when you use fileExists=Override and the
-         * tempFileName option as well. You can use this to disable (set it to
-         * false) deleting the target file before the temp file is written. For
-         * example you may write big files and want the target file to exists
-         * during the temp file is being written. This ensure the target file is
-         * only deleted until the very last moment, just before the temp file is
-         * being renamed to the target filename. This option is also used to
-         * control whether to delete any existing files when fileExist=Move is
-         * enabled, and an existing file exists. If this option
-         * copyAndDeleteOnRenameFails false, then an exception will be thrown if
-         * an existing file existed, if its true, then the existing file is
-         * deleted before the move operation.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer (advanced)
-         */
-        default AdvancedFtpEndpointProducerBuilder eagerDeleteTargetFile(
-                String eagerDeleteTargetFile) {
-            doSetProperty("eagerDeleteTargetFile", eagerDeleteTargetFile);
-            return this;
-        }
-        /**
-         * Will keep the last modified timestamp from the source file (if any).
-         * Will use the Exchange.FILE_LAST_MODIFIED header to located the
-         * timestamp. This header can contain either a java.util.Date or long
-         * with the timestamp. If the timestamp exists and the option is enabled
-         * it will set this timestamp on the written file. Note: This option
-         * only applies to the file producer. You cannot use this option with
-         * any of the ftp producers.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         */
-        default AdvancedFtpEndpointProducerBuilder keepLastModified(
-                boolean keepLastModified) {
-            doSetProperty("keepLastModified", keepLastModified);
-            return this;
-        }
-        /**
-         * Will keep the last modified timestamp from the source file (if any).
-         * Will use the Exchange.FILE_LAST_MODIFIED header to located the
-         * timestamp. This header can contain either a java.util.Date or long
-         * with the timestamp. If the timestamp exists and the option is enabled
-         * it will set this timestamp on the written file. Note: This option
-         * only applies to the file producer. You cannot use this option with
-         * any of the ftp producers.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         */
-        default AdvancedFtpEndpointProducerBuilder keepLastModified(
-                String keepLastModified) {
-            doSetProperty("keepLastModified", keepLastModified);
-            return this;
-        }
-        /**
-         * Strategy (Custom Strategy) used to move file with special naming
-         * token to use when fileExist=Move is configured. By default, there is
-         * an implementation used if no custom strategy is provided.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
-         * 
-         * Group: producer (advanced)
-         */
-        default AdvancedFtpEndpointProducerBuilder moveExistingFileStrategy(
-                Object moveExistingFileStrategy) {
-            doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
-            return this;
-        }
-        /**
-         * Strategy (Custom Strategy) used to move file with special naming
-         * token to use when fileExist=Move is configured. By default, there is
-         * an implementation used if no custom strategy is provided.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
-         * 
-         * Group: producer (advanced)
-         */
-        default AdvancedFtpEndpointProducerBuilder moveExistingFileStrategy(
-                String moveExistingFileStrategy) {
-            doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
-            return this;
-        }
-        /**
-         * Automatically create missing directories in the file's pathname. For
-         * the file consumer, that means creating the starting directory. For
-         * the file producer, it means the directory the files should be written
-         * to.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointProducerBuilder autoCreate(boolean autoCreate) {
-            doSetProperty("autoCreate", autoCreate);
-            return this;
-        }
-        /**
-         * Automatically create missing directories in the file's pathname. For
-         * the file consumer, that means creating the starting directory. For
-         * the file producer, it means the directory the files should be written
-         * to.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointProducerBuilder autoCreate(String autoCreate) {
-            doSetProperty("autoCreate", autoCreate);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Buffer size in bytes used for writing files (or in case of FTP for
-         * downloading and uploading files).
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 131072
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointProducerBuilder bufferSize(int bufferSize) {
-            doSetProperty("bufferSize", bufferSize);
-            return this;
-        }
-        /**
-         * Buffer size in bytes used for writing files (or in case of FTP for
-         * downloading and uploading files).
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 131072
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointProducerBuilder bufferSize(String bufferSize) {
-            doSetProperty("bufferSize", bufferSize);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointProducerBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointProducerBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
     }
 
     /**
@@ -3845,6 +4151,129 @@ public interface FtpEndpointBuilderFactory {
          */
         default FtpEndpointBuilder binary(String binary) {
             doSetProperty("binary", binary);
+            return this;
+        }
+        /**
+         * This option is used to specify the encoding of the file. You can use
+         * this on the consumer, to specify the encodings of the files, which
+         * allow Camel to know the charset it should load the file content in
+         * case the file content is being accessed. Likewise when writing a
+         * file, you can use this option to specify which charset to write the
+         * file as well. Do mind that when writing the file Camel may have to
+         * read the message content into memory to be able to convert the data
+         * into the configured charset, so do not use this if you have big
+         * messages.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default FtpEndpointBuilder charset(String charset) {
+            doSetProperty("charset", charset);
+            return this;
+        }
+        /**
+         * Whether or not to disconnect from remote FTP server right after use.
+         * Disconnect will only disconnect the current connection to the FTP
+         * server. If you have a consumer which you want to stop, then you need
+         * to stop the consumer/route instead.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default FtpEndpointBuilder disconnect(boolean disconnect) {
+            doSetProperty("disconnect", disconnect);
+            return this;
+        }
+        /**
+         * Whether or not to disconnect from remote FTP server right after use.
+         * Disconnect will only disconnect the current connection to the FTP
+         * server. If you have a consumer which you want to stop, then you need
+         * to stop the consumer/route instead.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default FtpEndpointBuilder disconnect(String disconnect) {
+            doSetProperty("disconnect", disconnect);
+            return this;
+        }
+        /**
+         * Producer: If provided, then Camel will write a 2nd done file when the
+         * original file has been written. The done file will be empty. This
+         * option configures what file name to use. Either you can specify a
+         * fixed name. Or you can use dynamic placeholders. The done file will
+         * always be written in the same folder as the original file. Consumer:
+         * If provided, Camel will only consume files if a done file exists.
+         * This option configures what file name to use. Either you can specify
+         * a fixed name. Or you can use dynamic placeholders.The done file is
+         * always expected in the same folder as the original file. Only
+         * ${file.name} and ${file.name.next} is supported as dynamic
+         * placeholders.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default FtpEndpointBuilder doneFileName(String doneFileName) {
+            doSetProperty("doneFileName", doneFileName);
+            return this;
+        }
+        /**
+         * Use Expression such as File Language to dynamically set the filename.
+         * For consumers, it's used as a filename filter. For producers, it's
+         * used to evaluate the filename to write. If an expression is set, it
+         * take precedence over the CamelFileName header. (Note: The header
+         * itself can also be an Expression). The expression options support
+         * both String and Expression types. If the expression is a String type,
+         * it is always evaluated using the File Language. If the expression is
+         * an Expression type, the specified Expression type is used - this
+         * allows you, for instance, to use OGNL expressions. For the consumer,
+         * you can use it to filter filenames, so you can for instance consume
+         * today's file using the File Language syntax:
+         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
+         * CamelOverruleFileName header which takes precedence over any existing
+         * CamelFileName header; the CamelOverruleFileName is a header that is
+         * used only once, and makes it easier as this avoids to temporary store
+         * CamelFileName and have to restore it afterwards.
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Group: common
+         */
+        default FtpEndpointBuilder fileName(Expression fileName) {
+            doSetProperty("fileName", fileName);
+            return this;
+        }
+        /**
+         * Use Expression such as File Language to dynamically set the filename.
+         * For consumers, it's used as a filename filter. For producers, it's
+         * used to evaluate the filename to write. If an expression is set, it
+         * take precedence over the CamelFileName header. (Note: The header
+         * itself can also be an Expression). The expression options support
+         * both String and Expression types. If the expression is a String type,
+         * it is always evaluated using the File Language. If the expression is
+         * an Expression type, the specified Expression type is used - this
+         * allows you, for instance, to use OGNL expressions. For the consumer,
+         * you can use it to filter filenames, so you can for instance consume
+         * today's file using the File Language syntax:
+         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
+         * CamelOverruleFileName header which takes precedence over any existing
+         * CamelFileName header; the CamelOverruleFileName is a header that is
+         * used only once, and makes it easier as this avoids to temporary store
+         * CamelFileName and have to restore it afterwards.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.Expression</code> type.
+         * 
+         * Group: common
+         */
+        default FtpEndpointBuilder fileName(String fileName) {
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -4021,99 +4450,6 @@ public interface FtpEndpointBuilderFactory {
             doSetProperty("username", username);
             return this;
         }
-        /**
-         * This option is used to specify the encoding of the file. You can use
-         * this on the consumer, to specify the encodings of the files, which
-         * allow Camel to know the charset it should load the file content in
-         * case the file content is being accessed. Likewise when writing a
-         * file, you can use this option to specify which charset to write the
-         * file as well. Do mind that when writing the file Camel may have to
-         * read the message content into memory to be able to convert the data
-         * into the configured charset, so do not use this if you have big
-         * messages.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointBuilder charset(String charset) {
-            doSetProperty("charset", charset);
-            return this;
-        }
-        /**
-         * Producer: If provided, then Camel will write a 2nd done file when the
-         * original file has been written. The done file will be empty. This
-         * option configures what file name to use. Either you can specify a
-         * fixed name. Or you can use dynamic placeholders. The done file will
-         * always be written in the same folder as the original file. Consumer:
-         * If provided, Camel will only consume files if a done file exists.
-         * This option configures what file name to use. Either you can specify
-         * a fixed name. Or you can use dynamic placeholders.The done file is
-         * always expected in the same folder as the original file. Only
-         * ${file.name} and ${file.name.noext} is supported as dynamic
-         * placeholders.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointBuilder doneFileName(String doneFileName) {
-            doSetProperty("doneFileName", doneFileName);
-            return this;
-        }
-        /**
-         * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
-         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
-         * CamelOverruleFileName header which takes precedence over any existing
-         * CamelFileName header; the CamelOverruleFileName is a header that is
-         * used only once, and makes it easier as this avoids to temporary store
-         * CamelFileName and have to restore it afterwards.
-         * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointBuilder fileName(Expression fileName) {
-            doSetProperty("fileName", fileName);
-            return this;
-        }
-        /**
-         * Use Expression such as File Language to dynamically set the filename.
-         * For consumers, it's used as a filename filter. For producers, it's
-         * used to evaluate the filename to write. If an expression is set, it
-         * take precedence over the CamelFileName header. (Note: The header
-         * itself can also be an Expression). The expression options support
-         * both String and Expression types. If the expression is a String type,
-         * it is always evaluated using the File Language. If the expression is
-         * an Expression type, the specified Expression type is used - this
-         * allows you, for instance, to use OGNL expressions. For the consumer,
-         * you can use it to filter filenames, so you can for instance consume
-         * today's file using the File Language syntax:
-         * mydata-${date:now:yyyyMMdd}.txt. The producers support the
-         * CamelOverruleFileName header which takes precedence over any existing
-         * CamelFileName header; the CamelOverruleFileName is a header that is
-         * used only once, and makes it easier as this avoids to temporary store
-         * CamelFileName and have to restore it afterwards.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointBuilder fileName(String fileName) {
-            doSetProperty("fileName", fileName);
-            return this;
-        }
     }
 
     /**
@@ -4127,6 +4463,46 @@ public interface FtpEndpointBuilderFactory {
             return (FtpEndpointBuilder) this;
         }
         /**
+         * If set this option to be true, camel-ftp will use the list file
+         * directly to check if the file exists. Since some FTP server may not
+         * support to list the file directly, if the option is false, camel-ftp
+         * will use the old way to list the directory and check if the file
+         * exists. This option also influences readLock=changed to control
+         * whether it performs a fast check to update file information or not.
+         * This can be used to speed up the process if the FTP server has a lot
+         * of files.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common (advanced)
+         */
+        default AdvancedFtpEndpointBuilder fastExistsCheck(
+                boolean fastExistsCheck) {
+            doSetProperty("fastExistsCheck", fastExistsCheck);
+            return this;
+        }
+        /**
+         * If set this option to be true, camel-ftp will use the list file
+         * directly to check if the file exists. Since some FTP server may not
+         * support to list the file directly, if the option is false, camel-ftp
+         * will use the old way to list the directory and check if the file
+         * exists. This option also influences readLock=changed to control
+         * whether it performs a fast check to update file information or not.
+         * This can be used to speed up the process if the FTP server has a lot
+         * of files.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common (advanced)
+         */
+        default AdvancedFtpEndpointBuilder fastExistsCheck(
+                String fastExistsCheck) {
+            doSetProperty("fastExistsCheck", fastExistsCheck);
+            return this;
+        }
+        /**
          * Set the client side port range in active mode. The syntax is:
          * minPort-maxPort Both port numbers are inclusive, eg 10000-19999 to
          * include all 1xxxx ports.
@@ -4138,6 +4514,90 @@ public interface FtpEndpointBuilderFactory {
         default AdvancedFtpEndpointBuilder activePortRange(
                 String activePortRange) {
             doSetProperty("activePortRange", activePortRange);
+            return this;
+        }
+        /**
+         * Automatically create missing directories in the file's pathname. For
+         * the file consumer, that means creating the starting directory. For
+         * the file producer, it means the directory the files should be written
+         * to.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointBuilder autoCreate(boolean autoCreate) {
+            doSetProperty("autoCreate", autoCreate);
+            return this;
+        }
+        /**
+         * Automatically create missing directories in the file's pathname. For
+         * the file consumer, that means creating the starting directory. For
+         * the file producer, it means the directory the files should be written
+         * to.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointBuilder autoCreate(String autoCreate) {
+            doSetProperty("autoCreate", autoCreate);
+            return this;
+        }
+        /**
+         * Whether the endpoint should use basic property binding (Camel 2.x) or
+         * the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Whether the endpoint should use basic property binding (Camel 2.x) or
+         * the newer property binding with additional capabilities.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointBuilder basicPropertyBinding(
+                String basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 131072
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointBuilder bufferSize(int bufferSize) {
+            doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 131072
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointBuilder bufferSize(String bufferSize) {
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -4277,6 +4737,56 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies the maximum reconnect attempts Camel performs when it tries
+         * to connect to the remote FTP server. Use 0 to disable this behavior.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointBuilder maximumReconnectAttempts(
+                int maximumReconnectAttempts) {
+            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
+            return this;
+        }
+        /**
+         * Specifies the maximum reconnect attempts Camel performs when it tries
+         * to connect to the remote FTP server. Use 0 to disable this behavior.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointBuilder maximumReconnectAttempts(
+                String maximumReconnectAttempts) {
+            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
+            return this;
+        }
+        /**
+         * Delay in millis Camel will wait before performing a reconnect
+         * attempt.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointBuilder reconnectDelay(long reconnectDelay) {
+            doSetProperty("reconnectDelay", reconnectDelay);
+            return this;
+        }
+        /**
+         * Delay in millis Camel will wait before performing a reconnect
+         * attempt.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointBuilder reconnectDelay(String reconnectDelay) {
+            doSetProperty("reconnectDelay", reconnectDelay);
+            return this;
+        }
+        /**
          * Sets optional site command(s) to be executed after successful login.
          * Multiple site commands can be separated using a new line character.
          * 
@@ -4353,6 +4863,32 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedFtpEndpointBuilder synchronous(String synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
          * Should an exception be thrown if connection failed (exhausted) By
          * default exception is not thrown and a WARN is logged. You can use
          * this to enable exception being thrown and handle the thrown exception
@@ -4408,116 +4944,6 @@ public interface FtpEndpointBuilderFactory {
          */
         default AdvancedFtpEndpointBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
-            return this;
-        }
-        /**
-         * Automatically create missing directories in the file's pathname. For
-         * the file consumer, that means creating the starting directory. For
-         * the file producer, it means the directory the files should be written
-         * to.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointBuilder autoCreate(boolean autoCreate) {
-            doSetProperty("autoCreate", autoCreate);
-            return this;
-        }
-        /**
-         * Automatically create missing directories in the file's pathname. For
-         * the file consumer, that means creating the starting directory. For
-         * the file producer, it means the directory the files should be written
-         * to.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointBuilder autoCreate(String autoCreate) {
-            doSetProperty("autoCreate", autoCreate);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Buffer size in bytes used for writing files (or in case of FTP for
-         * downloading and uploading files).
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 131072
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointBuilder bufferSize(int bufferSize) {
-            doSetProperty("bufferSize", bufferSize);
-            return this;
-        }
-        /**
-         * Buffer size in bytes used for writing files (or in case of FTP for
-         * downloading and uploading files).
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 131072
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointBuilder bufferSize(String bufferSize) {
-            doSetProperty("bufferSize", bufferSize);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFtpEndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
