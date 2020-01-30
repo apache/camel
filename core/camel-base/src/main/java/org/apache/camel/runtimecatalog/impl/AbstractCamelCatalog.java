@@ -167,7 +167,7 @@ public abstract class AbstractCamelCatalog {
         model.getComponentOptions().forEach(o -> rows.put(o.getName(), o));
         // endpoint options have higher priority so overwrite component options
         model.getEndpointOptions().forEach(o -> rows.put(o.getName(), o));
-
+        model.getEndpointPathOptions().forEach(o -> rows.put(o.getName(), o));
 
         // the dataformat component refers to a data format so lets add the properties for the selected
         // data format to the list of rows
@@ -514,7 +514,9 @@ public abstract class AbstractCamelCatalog {
 
         Map<String, BaseOptionModel> rows = new HashMap<>();
         model.getComponentOptions().forEach(o -> rows.put(o.getName(), o));
+        // endpoint options have higher priority so overwrite component options
         model.getEndpointOptions().forEach(o -> rows.put(o.getName(), o));
+        model.getEndpointPathOptions().forEach(o -> rows.put(o.getName(), o));
 
         // word contains the syntax path elements
         Iterator<String> it = word2.iterator();
@@ -623,7 +625,9 @@ public abstract class AbstractCamelCatalog {
         }
         Map<String, BaseOptionModel> rows = new HashMap<>();
         model.getComponentOptions().forEach(o -> rows.put(o.getName(), o));
+        // endpoint options have higher priority so overwrite component options
         model.getEndpointOptions().forEach(o -> rows.put(o.getName(), o));
+        model.getEndpointPathOptions().forEach(o -> rows.put(o.getName(), o));
 
         // now parse the uri parameters
         Map<String, Object> parameters = URISupport.parseParameters(u);
@@ -688,7 +692,9 @@ public abstract class AbstractCamelCatalog {
 
         Map<String, BaseOptionModel> rows = new HashMap<>();
         model.getComponentOptions().forEach(o -> rows.put(o.getName(), o));
+        // endpoint options have higher priority so overwrite component options
         model.getEndpointOptions().forEach(o -> rows.put(o.getName(), o));
+        model.getEndpointPathOptions().forEach(o -> rows.put(o.getName(), o));
 
         // clip the scheme from the syntax
         String syntax = "";
