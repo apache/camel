@@ -3297,6 +3297,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
      * components and create routes
      */
     protected void forceLazyInitialization() {
+        initEagerMandatoryServices();
+
         if (initialization != Initialization.Lazy) {
             doStartStandardServices();
 
@@ -3305,6 +3307,22 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             }
         }
     }
+
+    /**
+     * Initializes eager some mandatory services which needs to warmup and
+     * be ready as this helps optimize Camel at runtime.
+     */
+    protected void initEagerMandatoryServices() {
+        if (headersMapFactory == null) {
+            // we want headers map to be created as then JVM can optimize using it as we use it per exchange/message
+            synchronized (lock) {
+                if (headersMapFactory == null) {
+                    setHeadersMapFactory(createHeadersMapFactory());
+                }
+            }
+        }
+    }
+
 
     protected void doStartStandardServices() {
         getVersion();
@@ -4081,13 +4099,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public HeadersMapFactory getHeadersMapFactory() {
-        if (headersMapFactory == null) {
-            synchronized (lock) {
-                if (headersMapFactory == null) {
-                    setHeadersMapFactory(createHeadersMapFactory());
-                }
-            }
-        }
         return headersMapFactory;
     }
 
