@@ -36,7 +36,10 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-public class JsonMapper {
+public final class JsonMapper {
+
+    private JsonMapper() {
+    }
 
     public static BaseModel<?> generateModel(Path file) {
         try {
