@@ -42,7 +42,7 @@ public interface RestApiEndpointBuilderFactory {
         }
         /**
          * The Camel Rest API component to use for generating the API of the
-         * REST services, such as swagger.
+         * REST services, such as openapi.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
