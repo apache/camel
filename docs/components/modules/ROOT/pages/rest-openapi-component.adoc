@@ -206,12 +206,12 @@ Here are our dependencies defined in Maven POM file:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-undertow-starter</artifactId>
 </dependency>
 
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-rest-openapi-starter</artifactId>
 </dependency>
 ----
