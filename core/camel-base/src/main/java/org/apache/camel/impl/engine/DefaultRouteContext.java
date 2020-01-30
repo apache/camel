@@ -177,7 +177,7 @@ public class DefaultRouteContext implements RouteContext {
 
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
             CamelInternalProcessor internal = new CamelInternalProcessor(getCamelContext(), target);
-            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(this));
+            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(this, getCamelContext()));
 
             // and then optionally add route policy processor if a custom policy is set
             List<RoutePolicy> routePolicyList = getRoutePolicyList();

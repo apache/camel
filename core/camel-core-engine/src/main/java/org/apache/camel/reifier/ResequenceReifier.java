@@ -76,7 +76,7 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
 
         // and wrap in unit of work
         CamelInternalProcessor internal = new CamelInternalProcessor(routeContext.getCamelContext(), processor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, routeContext.getCamelContext()));
 
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);
@@ -109,7 +109,7 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         Expression expression = definition.getExpression().createExpression(routeContext);
 
         CamelInternalProcessor internal = new CamelInternalProcessor(routeContext.getCamelContext(), processor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, routeContext.getCamelContext()));
 
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);
