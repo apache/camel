@@ -41,7 +41,8 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
- * Prepares camel-main by generating Camel Main configuration metadata for tooling support.
+ * Prepares camel-main by generating Camel Main configuration metadata for
+ * tooling support.
  */
 @Mojo(name = "prepare-main", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class PrepareCamelMainMojo extends AbstractMojo {
@@ -71,7 +72,7 @@ public class PrepareCamelMainMojo extends AbstractMojo {
     public static List<MainModel.MainOptionModel> parseConfigurationSource(File file) throws FileNotFoundException {
         final List<MainModel.MainOptionModel> answer = new ArrayList<>();
 
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(file);
+        JavaClassSource clazz = (JavaClassSource)Roaster.parse(file);
         List<FieldSource<JavaClassSource>> fields = clazz.getFields();
         // filter out final or static fields
         fields = fields.stream().filter(f -> !f.isFinal() && !f.isStatic()).collect(Collectors.toList());
@@ -149,8 +150,7 @@ public class PrepareCamelMainMojo extends AbstractMojo {
         final List<MainModel.MainOptionModel> data = new ArrayList<>();
 
         // scan for configuration files
-        File[] files = new File(buildDir, "../src/main/java/org/apache/camel/main").listFiles(f ->
-                f.isFile() && f.getName().endsWith("Properties.java"));
+        File[] files = new File(buildDir, "../src/main/java/org/apache/camel/main").listFiles(f -> f.isFile() && f.getName().endsWith("Properties.java"));
 
         for (File file : files) {
             getLog().info("Parsing Camel Main configuration file: " + file);

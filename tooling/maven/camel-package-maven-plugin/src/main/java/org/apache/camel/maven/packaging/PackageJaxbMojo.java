@@ -62,7 +62,8 @@ import org.jboss.jandex.Indexer;
 public class PackageJaxbMojo extends AbstractGeneratorMojo {
 
     /**
-     * The name of the index file. Default's to 'target/classes/META-INF/jandex.idx'
+     * The name of the index file. Default's to
+     * 'target/classes/META-INF/jandex.idx'
      */
     @Parameter(defaultValue = "${project.build.directory}/META-INF/jandex.idx")
     private File index;

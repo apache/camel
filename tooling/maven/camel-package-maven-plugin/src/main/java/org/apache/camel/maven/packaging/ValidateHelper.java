@@ -42,7 +42,7 @@ public final class ValidateHelper {
     public static void validate(File file, ErrorDetail errorDetail) {
         try {
             String json = PackageHelper.loadText(file);
-            JsonObject obj = (JsonObject) Jsoner.deserialize(json);
+            JsonObject obj = (JsonObject)Jsoner.deserialize(json);
 
             Map<String, Object> model;
             boolean isComponent = (model = obj.getMap("component")) != null;
@@ -54,14 +54,14 @@ public final class ValidateHelper {
                 return;
             }
 
-            errorDetail.setKind((String) model.get("kind"));
+            errorDetail.setKind((String)model.get("kind"));
             errorDetail.setMissingDescription(isNullOrEmpty(model.get("description")));
             errorDetail.setMissingLabel(isNullOrEmpty(model.get("label")));
             if (isComponent) {
                 errorDetail.setMissingSyntax(isNullOrEmpty(model.get("syntax")));
                 Map<String, Object> componentProps = obj.getMap("componentProperties");
                 for (Map.Entry<String, Object> entry : componentProps.entrySet()) {
-                    if (isNullOrEmpty(((JsonObject) entry.getValue()).get("description"))) {
+                    if (isNullOrEmpty(((JsonObject)entry.getValue()).get("description"))) {
                         errorDetail.addMissingComponentDoc(entry.getKey());
                     }
                 }
@@ -69,7 +69,7 @@ public final class ValidateHelper {
             Map<String, Object> props = obj.getMap("properties");
             boolean path = false;
             for (Map.Entry<String, Object> entry : props.entrySet()) {
-                JsonObject value = (JsonObject) entry.getValue();
+                JsonObject value = (JsonObject)entry.getValue();
                 if (isNullOrEmpty(value.get("description"))) {
                     errorDetail.addMissingEndpointDoc(entry.getKey());
                 }
@@ -79,7 +79,7 @@ public final class ValidateHelper {
         } catch (DeserializationException e) {
             // wrap parsing exceptions as runtime
             throw new RuntimeException("Cannot parse json", e);
-        } catch (IOException  e) {
+        } catch (IOException e) {
             // ignore
         }
     }

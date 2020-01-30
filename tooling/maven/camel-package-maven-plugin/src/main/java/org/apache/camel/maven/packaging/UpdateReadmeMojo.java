@@ -152,12 +152,11 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     }
 
                     // Fix description in options
-                    Stream.concat(model.getComponentOptions().stream(), model.getEndpointOptions().stream())
-                            .forEach(option -> {
-                                String desc = option.getDescription();
-                                desc = desc.replaceAll("\\\\n", "\n");
-                                option.setDescription(desc);
-                            });
+                    Stream.concat(model.getComponentOptions().stream(), model.getEndpointOptions().stream()).forEach(option -> {
+                        String desc = option.getDescription();
+                        desc = desc.replaceAll("\\\\n", "\n");
+                        option.setDescription(desc);
+                    });
 
                     String options = evaluateTemplate("component-options.mvel", model);
                     updated |= updateOptionsIn(file, "component", options);
@@ -199,12 +198,11 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     File file = new File(docDir, dataFormatName + "-dataformat.adoc");
 
                     DataFormatModel model = generateDataFormatModel(json);
-                    // Bindy has 3 derived dataformats, but only one doc, so avoid any differences
+                    // Bindy has 3 derived dataformats, but only one doc, so
+                    // avoid any differences
                     // to make sure the build is stable
                     if ("bindy".equals(dataFormatName)) {
-                        model.getOptions().stream()
-                                .filter(o -> "type".equals(o.getName()))
-                                .forEach(o -> o.setDefaultValue(null));
+                        model.getOptions().stream().filter(o -> "type".equals(o.getName())).forEach(o -> o.setDefaultValue(null));
                     }
 
                     String title = asDataFormatTitle(model.getName(), model.getTitle());
@@ -266,22 +264,19 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
                     LanguageModel model = JsonMapper.generateLanguageModel(json);
                     // skip option named id
-                    model.getOptions().removeIf(opt -> Objects.equals(opt.getName(), "id")
-                                                    || Objects.equals(opt.getName(), "expression"));
+                    model.getOptions().removeIf(opt -> Objects.equals(opt.getName(), "id") || Objects.equals(opt.getName(), "expression"));
                     // enhance description for deprecated options
-                    model.getOptions().stream()
-                            .filter(BaseOptionModel::isDeprecated)
-                            .forEach(option -> {
-                                String desc = "*Deprecated* " + option.getDescription();
-                                if (!Strings.isEmpty(option.getDeprecationNote())) {
-                                    desc = option.getDescription();
-                                    if (!desc.endsWith(".")) {
-                                        desc = desc + ".";
-                                    }
-                                    desc += " Deprecation note: " + option.getDeprecationNote();
-                                }
-                                option.setDescription(desc);
-                            });
+                    model.getOptions().stream().filter(BaseOptionModel::isDeprecated).forEach(option -> {
+                        String desc = "*Deprecated* " + option.getDescription();
+                        if (!Strings.isEmpty(option.getDeprecationNote())) {
+                            desc = option.getDescription();
+                            if (!desc.endsWith(".")) {
+                                desc = desc + ".";
+                            }
+                            desc += " Deprecation note: " + option.getDeprecationNote();
+                        }
+                        option.setDescription(desc);
+                    });
 
                     String docTitle = model.getTitle() + " Language";
                     boolean deprecated = model.isDeprecated();
@@ -337,30 +332,25 @@ public class UpdateReadmeMojo extends AbstractMojo {
                 if (json != null) {
                     EipModel model = JsonMapper.generateEipModel(json);
                     // skip option named id/description/expression/outputs
-                    model.getOptions().removeIf(option -> "id".equals(option.getName())
-                            || "description".equals(option.getName())
-                            || "expression".equals(option.getName())
-                            || "outputs".equals(option.getName()));
+                    model.getOptions().removeIf(option -> "id".equals(option.getName()) || "description".equals(option.getName()) || "expression".equals(option.getName())
+                                                          || "outputs".equals(option.getName()));
                     // lets put required in the description
-                    model.getOptions().stream()
-                            .filter(EipOptionModel::isRequired)
-                            .forEach(option -> {
-                                String desc = "*Required* " + option.getDescription();
-                                option.setDescription(desc);
-                            });
-                    // is the option deprecated then include that as well in the description
-                    model.getOptions().stream()
-                            .filter(EipOptionModel::isDeprecated)
-                            .forEach(option -> {
-                                String desc = "*Deprecated* " + option.getDescription();
-                                if (!Strings.isEmpty(option.getDeprecationNote())) {
-                                    if (!desc.endsWith(".")) {
-                                        desc += ".";
-                                    }
-                                    desc = desc + " Deprecation note: " + option.getDeprecationNote();
-                                }
-                                option.setDescription(desc);
-                            });
+                    model.getOptions().stream().filter(EipOptionModel::isRequired).forEach(option -> {
+                        String desc = "*Required* " + option.getDescription();
+                        option.setDescription(desc);
+                    });
+                    // is the option deprecated then include that as well in the
+                    // description
+                    model.getOptions().stream().filter(EipOptionModel::isDeprecated).forEach(option -> {
+                        String desc = "*Deprecated* " + option.getDescription();
+                        if (!Strings.isEmpty(option.getDeprecationNote())) {
+                            if (!desc.endsWith(".")) {
+                                desc += ".";
+                            }
+                            desc = desc + " Deprecation note: " + option.getDeprecationNote();
+                        }
+                        option.setDescription(desc);
+                    });
 
                     String eipName = model.getName();
 
@@ -731,26 +721,20 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
     private static ComponentModel generateComponentModel(String json) {
         ComponentModel component = JsonMapper.generateComponentModel(json);
-        Stream.concat(component.getComponentOptions().stream(),
-                      component.getEndpointOptions().stream())
-                .filter(BaseOptionModel::isRequired)
-                .forEach(option -> {
-                    String desc = "*Required* " + option.getDescription();
-                    option.setDescription(desc);
-                });
-        Stream.concat(component.getComponentOptions().stream(),
-                      component.getEndpointOptions().stream())
-                .filter(BaseOptionModel::isDeprecated)
-                .forEach(option -> {
-                    String desc = "*Deprecated* " + option.getDescription();
-                    if (!Strings.isEmpty(option.getDeprecationNote())) {
-                        if (!desc.endsWith(".")) {
-                            desc += ".";
-                        }
-                        desc = desc + " Deprecation note: " + option.getDeprecationNote();
-                    }
-                    option.setDescription(desc);
-                });
+        Stream.concat(component.getComponentOptions().stream(), component.getEndpointOptions().stream()).filter(BaseOptionModel::isRequired).forEach(option -> {
+            String desc = "*Required* " + option.getDescription();
+            option.setDescription(desc);
+        });
+        Stream.concat(component.getComponentOptions().stream(), component.getEndpointOptions().stream()).filter(BaseOptionModel::isDeprecated).forEach(option -> {
+            String desc = "*Deprecated* " + option.getDescription();
+            if (!Strings.isEmpty(option.getDeprecationNote())) {
+                if (!desc.endsWith(".")) {
+                    desc += ".";
+                }
+                desc = desc + " Deprecation note: " + option.getDeprecationNote();
+            }
+            option.setDescription(desc);
+        });
         return component;
     }
 
@@ -759,19 +743,17 @@ public class UpdateReadmeMojo extends AbstractMojo {
         // skip option named id
         model.getOptions().removeIf(opt -> Objects.equals(opt.getName(), "id"));
         // enhance description for deprecated options
-        model.getOptions().stream()
-                .filter(BaseOptionModel::isDeprecated)
-                .forEach(option -> {
-                    String desc = "*Deprecated* " + option.getDescription();
-                    if (!Strings.isEmpty(option.getDeprecationNote())) {
-                        desc = option.getDescription();
-                        if (!desc.endsWith(".")) {
-                            desc = desc + ".";
-                        }
-                        desc += " Deprecation note: " + option.getDeprecationNote();
-                    }
-                    option.setDescription(desc);
-                });
+        model.getOptions().stream().filter(BaseOptionModel::isDeprecated).forEach(option -> {
+            String desc = "*Deprecated* " + option.getDescription();
+            if (!Strings.isEmpty(option.getDeprecationNote())) {
+                desc = option.getDescription();
+                if (!desc.endsWith(".")) {
+                    desc = desc + ".";
+                }
+                desc += " Deprecation note: " + option.getDeprecationNote();
+            }
+            option.setDescription(desc);
+        });
         return model;
     }
 

@@ -47,7 +47,8 @@ public class PackageJandexMojo extends AbstractMojo {
     protected File classesDirectory;
 
     /**
-     * The name of the index file. Default's to 'target/classes/META-INF/jandex.idx'
+     * The name of the index file. Default's to
+     * 'target/classes/META-INF/jandex.idx'
      */
     @Parameter(defaultValue = "${project.build.directory}/classes/META-INF/jandex.idx")
     private File index;
@@ -61,15 +62,10 @@ public class PackageJandexMojo extends AbstractMojo {
             return;
         }
         try {
-            List<Path> inputs = Files.walk(classesDirectory.toPath())
-                    .filter(f -> f.getFileName().toString().endsWith(".class"))
-                    .collect(Collectors.toList());
+            List<Path> inputs = Files.walk(classesDirectory.toPath()).filter(f -> f.getFileName().toString().endsWith(".class")).collect(Collectors.toList());
             if (index.exists()) {
                 long lastmod = lastmod(index.toPath());
-                String stale = inputs.stream()
-                        .filter(p -> lastmod(p) > lastmod)
-                        .map(Path::toString)
-                        .collect(Collectors.joining(", "));
+                String stale = inputs.stream().filter(p -> lastmod(p) > lastmod).map(Path::toString).collect(Collectors.joining(", "));
                 if (!stale.isEmpty()) {
                     getLog().info("Stale files detected, re-generating index.");
                     if (showStaleFiles) {

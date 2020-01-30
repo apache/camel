@@ -56,8 +56,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * Analyses the Camel plugins in a project and generates extra descriptor
  * information for easier auto-discovery in Camel.
  */
-@Mojo(name = "generate-dataformats-list", threadSafe = true,
-        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
+@Mojo(name = "generate-dataformats-list", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
     /**
@@ -97,9 +96,8 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, configurerSourceOutDir, configurerResourceOutDir, schemaOutDir, buildContext);
     }
 
-    public static int prepareDataFormat(Log log, MavenProject project, MavenProjectHelper projectHelper,
-                                        File dataFormatOutDir, File configurerSourceOutDir, File configurerResourceOutDir,
-                                        File schemaOutDir, BuildContext buildContext)
+    public static int prepareDataFormat(Log log, MavenProject project, MavenProjectHelper projectHelper, File dataFormatOutDir, File configurerSourceOutDir,
+                                        File configurerResourceOutDir, File schemaOutDir, BuildContext buildContext)
         throws MojoExecutionException {
 
         File camelMetaDir = new File(dataFormatOutDir, "META-INF/services/org/apache/camel/");
@@ -153,8 +151,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                         String javaType = entry.getValue();
                         String modelName = asModelName(name);
 
-                        String json = PackageHelper.loadText(new File(core, "target/classes/org/apache/camel/model/dataformat/"
-                                + modelName + PackageHelper.JSON_SUFIX));
+                        String json = PackageHelper.loadText(new File(core, "target/classes/org/apache/camel/model/dataformat/" + modelName + PackageHelper.JSON_SUFIX));
 
                         DataFormatModel dataFormatModel = extractDataFormatModel(project, json, name, javaType);
                         if (log.isDebugEnabled()) {
@@ -183,12 +180,10 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                         if (!names.isEmpty()) {
                             log.warn("Unmapped options: " + String.join(",", names));
                         }
-                        updateResource(buildContext,
-                                configurerSourceOutDir.toPath().resolve(pn.replace('.', '/')).resolve(cn + "Configurer.java"),
-                                generatePropertyConfigurer(pn, cn + "Configurer", cn, options));
-                        updateResource(buildContext,
-                                configurerResourceOutDir.toPath().resolve("META-INF/services/org/apache/camel/configurer/" + name + "-dataformat-configurer"),
-                                generateMetaInfConfigurer(pn + "." + cn + "Configurer"));
+                        updateResource(buildContext, configurerSourceOutDir.toPath().resolve(pn.replace('.', '/')).resolve(cn + "Configurer.java"),
+                                       generatePropertyConfigurer(pn, cn + "Configurer", cn, options));
+                        updateResource(buildContext, configurerResourceOutDir.toPath().resolve("META-INF/services/org/apache/camel/configurer/" + name + "-dataformat-configurer"),
+                                       generateMetaInfConfigurer(pn + "." + cn + "Configurer"));
                     }
                 } else {
                     throw new MojoExecutionException("Error finding core/camel-core/target/camel-core-engine-" + project.getVersion()
@@ -256,18 +251,34 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
             if ("type".equals(option.getName()) && "bindy".equals(model.getModelName())) {
                 switch (name) {
-                    case "bindy-csv": option.setDefaultValue("Csv"); break;
-                    case "bindy-fixed": option.setDefaultValue("Fixed"); break;
-                    case "bindy-kvp": option.setDefaultValue("KeyValue"); break;
+                case "bindy-csv":
+                    option.setDefaultValue("Csv");
+                    break;
+                case "bindy-fixed":
+                    option.setDefaultValue("Fixed");
+                    break;
+                case "bindy-kvp":
+                    option.setDefaultValue("KeyValue");
+                    break;
                 }
             }
             if ("library".equals(option.getName()) && "json".equals(model.getModelName())) {
                 switch (name) {
-                    case "json-gson": option.setDefaultValue("Gson"); break;
-                    case "json-jackson": option.setDefaultValue("Jackson"); break;
-                    case "json-johnzon": option.setDefaultValue("Johnzon"); break;
-                    case "json-fastson": option.setDefaultValue("Fastjson"); break;
-                    case "json-xstream": option.setDefaultValue("XStream"); break;
+                case "json-gson":
+                    option.setDefaultValue("Gson");
+                    break;
+                case "json-jackson":
+                    option.setDefaultValue("Jackson");
+                    break;
+                case "json-johnzon":
+                    option.setDefaultValue("Johnzon");
+                    break;
+                case "json-fastson":
+                    option.setDefaultValue("Fastjson");
+                    break;
+                case "json-xstream":
+                    option.setDefaultValue("XStream");
+                    break;
                 }
             }
             model.addOption(option);
@@ -320,12 +331,18 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
     private static String asModelFirstVersion(String name, String firstVersion) {
         switch (name) {
-            case "json-gson": return "2.10.0";
-            case "json-jackson": return "2.0.0";
-            case "json-johnzon": return "2.18.0";
-            case "json-xstream": return "2.0.0";
-            case "json-fastjson": return "2.20.0";
-            default: return firstVersion;
+        case "json-gson":
+            return "2.10.0";
+        case "json-jackson":
+            return "2.0.0";
+        case "json-johnzon":
+            return "2.18.0";
+        case "json-xstream":
+            return "2.0.0";
+        case "json-fastjson":
+            return "2.20.0";
+        default:
+            return firstVersion;
         }
     }
 
@@ -370,7 +387,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             return Collections.emptyList();
         }
 
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(file);
+        JavaClassSource clazz = (JavaClassSource)Roaster.parse(file);
         List<FieldSource<JavaClassSource>> fields = clazz.getFields();
         // filter out final or static fields
         fields = fields.stream().filter(f -> !f.isFinal() && !f.isStatic()).collect(Collectors.toList());
@@ -397,9 +414,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         return answer;
     }
 
-    public static String generatePropertyConfigurer(
-            String pn, String cn, String en,
-            Collection<DataFormatOptionModel> options) throws IOException {
+    public static String generatePropertyConfigurer(String pn, String cn, String en, Collection<DataFormatOptionModel> options) throws IOException {
 
         try (StringWriter w = new StringWriter()) {
             w.write("/* Generated by camel-package-maven-plugin - do not edit this file! */\n");
@@ -432,8 +447,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                 if (!name.toLowerCase().equals(name)) {
                     w.write(String.format("        case \"%s\":\n", name.toLowerCase()));
                 }
-                w.write(String.format("        case \"%s\": dataformat.%s(property(camelContext, %s.class, value)); return true;\n",
-                        name, setter, type));
+                w.write(String.format("        case \"%s\": dataformat.%s(property(camelContext, %s.class, value)); return true;\n", name, setter, type));
             }
             w.write("        default: return false;\n");
             w.write("        }\n");

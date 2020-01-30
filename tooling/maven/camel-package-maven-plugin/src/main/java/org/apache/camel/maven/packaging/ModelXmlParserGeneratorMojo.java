@@ -463,8 +463,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         for (Class<?> root : elementRefs) {
-            parser.addMethod()
-                .setSignature("protected " + root.getSimpleName() + " doParse" + root.getSimpleName() + "Ref(String key) throws IOException, XmlPullParserException")
+            parser.addMethod().setSignature("protected " + root.getSimpleName() + " doParse" + root.getSimpleName() + "Ref(String key) throws IOException, XmlPullParserException")
                 .setBody("switch (key) {\n" + model.stream().filter(root::isAssignableFrom).filter(cl -> cl.getAnnotation(XmlRootElement.class) != null).map(cl -> {
                     String en = cl.getAnnotation(XmlRootElement.class).name();
                     if ("##default".equals(en)) {

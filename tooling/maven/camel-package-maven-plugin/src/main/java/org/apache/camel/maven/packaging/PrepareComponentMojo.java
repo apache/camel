@@ -121,7 +121,8 @@ public class PrepareComponentMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         int count = 0;
         count += PackageComponentMojo.prepareComponent(getLog(), project, projectHelper, buildDir, componentOutDir, buildContext);
-        count += PackageDataFormatMojo.prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, configurerSourceOutDir, configurerResourceOutDir, schemaOutDir, buildContext);
+        count += PackageDataFormatMojo.prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, configurerSourceOutDir, configurerResourceOutDir, schemaOutDir,
+                                                         buildContext);
         count += PackageLanguageMojo.prepareLanguage(getLog(), project, projectHelper, buildDir, languageOutDir, schemaOutDir, buildContext);
         if (count == 0) {
             // okay its not any of the above then its other
