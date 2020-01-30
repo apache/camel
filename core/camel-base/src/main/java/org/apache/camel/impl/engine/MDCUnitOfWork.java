@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.PatternHelper;
@@ -47,8 +48,9 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     private final String originalCamelContextId;
     private final String originalTransactionKey;
 
-    public MDCUnitOfWork(Exchange exchange, String pattern, boolean allowUseOriginalMessage, boolean useBreadcrumb) {
-        super(exchange, LOG, allowUseOriginalMessage, useBreadcrumb);
+    public MDCUnitOfWork(Exchange exchange, InflightRepository inflightRepository,
+                         String pattern, boolean allowUseOriginalMessage, boolean useBreadcrumb) {
+        super(exchange, LOG, inflightRepository, allowUseOriginalMessage, useBreadcrumb);
         this.pattern = pattern;
 
         // remember existing values
@@ -81,7 +83,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
 
     @Override
     public UnitOfWork newInstance(Exchange exchange) {
-        return new MDCUnitOfWork(exchange, pattern, allowUseOriginalMessage, useBreadcrumb);
+        return new MDCUnitOfWork(exchange, inflightRepository, pattern, allowUseOriginalMessage, useBreadcrumb);
     }
 
     @Override

@@ -58,7 +58,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     private final Exchange exchange;
     private final CamelContext context;
-    private final InflightRepository inflightRepository;
+    final InflightRepository inflightRepository;
     final boolean allowUseOriginalMessage;
     final boolean useBreadcrumb;
     private Logger log;
@@ -69,21 +69,22 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private Set<Object> transactedBy;
 
     public DefaultUnitOfWork(Exchange exchange) {
-        this(exchange, exchange.getContext().isAllowUseOriginalMessage(), exchange.getContext().isUseBreadcrumb());
+        this(exchange, exchange.getContext().getInflightRepository(), exchange.getContext().isAllowUseOriginalMessage(), exchange.getContext().isUseBreadcrumb());
     }
 
-    protected DefaultUnitOfWork(Exchange exchange, Logger logger, boolean allowUseOriginalMessage, boolean useBreadcrumb) {
-        this(exchange, allowUseOriginalMessage, useBreadcrumb);
+    protected DefaultUnitOfWork(Exchange exchange, Logger logger, InflightRepository inflightRepository,
+                                boolean allowUseOriginalMessage, boolean useBreadcrumb) {
+        this(exchange, inflightRepository, allowUseOriginalMessage, useBreadcrumb);
         this.log = logger;
     }
 
-    public DefaultUnitOfWork(Exchange exchange, boolean allowUseOriginalMessage, boolean useBreadcrumb) {
+    public DefaultUnitOfWork(Exchange exchange, InflightRepository inflightRepository, boolean allowUseOriginalMessage, boolean useBreadcrumb) {
         this.exchange = exchange;
         this.log = LOG;
         this.allowUseOriginalMessage = allowUseOriginalMessage;
         this.useBreadcrumb = useBreadcrumb;
         this.context = exchange.getContext();
-        this.inflightRepository = exchange.getContext().getInflightRepository();
+        this.inflightRepository = inflightRepository;
 
         if (allowUseOriginalMessage) {
             // special for JmsMessage as it can cause it to loose headers later.
@@ -126,7 +127,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     }
 
     UnitOfWork newInstance(Exchange exchange) {
-        return new DefaultUnitOfWork(exchange, allowUseOriginalMessage, useBreadcrumb);
+        return new DefaultUnitOfWork(exchange, inflightRepository, allowUseOriginalMessage, useBreadcrumb);
     }
 
     @Override
