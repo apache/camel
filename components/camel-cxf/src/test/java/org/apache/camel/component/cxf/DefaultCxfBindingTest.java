@@ -30,6 +30,7 @@ import javax.activation.FileDataSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import junit.framework.TestCase;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -53,13 +54,12 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class DefaultCxfBindingTest extends Assert {
+public class DefaultCxfBindingTest extends TestCase {
     
     private static final String SOAP_MESSAGE_1 = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\""
         + " xmlns=\"http://www.mycompany.com/test/\" xmlns:ns1=\"http://www.mycompany.com/test/1/\">"
@@ -70,8 +70,15 @@ public class DefaultCxfBindingTest extends Assert {
         + " xmlns=\"http://www.mycompany.com/test/\" xmlns:ns1=\"http://www.mycompany.com/test/1/\">"
         + " <soap:Body> <ns1:identifier xmlns:ns1=\"http://www.mycompany.com/test/\" xmlns=\"http://www.mycompany.com/test/1/\">TEST</ns1:identifier>"
         + " </soap:Body> </soap:Envelope>";
-    
-    private DefaultCamelContext context = new DefaultCamelContext();
+
+    private DefaultCamelContext context;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        context = new DefaultCamelContext();
+        context.start();
+    }
 
     @Test
     public void testSetGetHeaderFilterStrategy() {
