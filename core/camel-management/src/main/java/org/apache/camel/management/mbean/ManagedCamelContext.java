@@ -143,7 +143,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     @Override
     public String getHeadersMapFactoryClassName() {
-        return context.getHeadersMapFactory().getClass().getName();
+        return context.adapt(ExtendedCamelContext.class).getHeadersMapFactory().getClass().getName();
     }
 
     @Override

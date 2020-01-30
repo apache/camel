@@ -32,7 +32,6 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
-import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -134,9 +133,15 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
         // if we have a producer then use that as its optimized
         if (producer != null) {
 
-            final Exchange target = configureExchange(exchange, pattern);
+            final Exchange target = exchange;
+            // we can send with a different MEP pattern
+            if (destinationExchangePattern != null || pattern != null) {
+                target.setPattern(destinationExchangePattern != null ? destinationExchangePattern : pattern);
+            }
+            // set property which endpoint we send to
+            target.setProperty(Exchange.TO_ENDPOINT, destination.getEndpointUri());
 
-            final boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);
+            final boolean sending = camelContext.isEventNotificationApplicable() && EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);
             // record timing for sending the exchange using the producer
             StopWatch watch;
             if (sending) {
@@ -173,7 +178,13 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
 
             return true;
         } else {
-            configureExchange(exchange, pattern);
+            // we can send with a different MEP pattern
+            if (destinationExchangePattern != null || pattern != null) {
+                exchange.setPattern(destinationExchangePattern != null ? destinationExchangePattern : pattern);
+            }
+            // set property which endpoint we send to
+            exchange.setProperty(Exchange.TO_ENDPOINT, destination.getEndpointUri());
+
             LOG.debug(">>>> {} {}", destination, exchange);
 
             // send the exchange to the destination using the producer cache for the non optimized producers
@@ -192,18 +203,6 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
 
     public ExchangePattern getPattern() {
         return pattern;
-    }
-
-    protected Exchange configureExchange(Exchange exchange, ExchangePattern pattern) {
-        // destination exchange pattern overrides pattern
-        if (destinationExchangePattern != null) {
-            exchange.setPattern(destinationExchangePattern);
-        } else if (pattern != null) {
-            exchange.setPattern(pattern);
-        }
-        // set property which endpoint we send to
-        exchange.setProperty(Exchange.TO_ENDPOINT, destination.getEndpointUri());
-        return exchange;
     }
 
     public long getCounter() {

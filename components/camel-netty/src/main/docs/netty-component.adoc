@@ -61,7 +61,7 @@ The Netty component supports 8 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *maximumPoolSize* (consumer) | Sets a maximum thread pool size for the netty consumer ordered thread pool. The default size is 2 x cpu core 1. Setting this value to eg 10 will then use 10 threads unless 2 x cpu core 1 is a higher value, which then will override and be used. For example if there are 8 cores, then the consumer thread pool will be 17. This thread pool is used to route messages received from Netty by Camel. We use a separate thread pool to ensure ordering of messages and also in case some messages will block, then nettys worker threads (event loop) wont be affected. |  | int
+| *maximumPoolSize* (consumer) | Sets a maximum thread pool size for the netty consumer ordered thread pool. The default size is 2 x cpu_core plus 1. Setting this value to eg 10 will then use 10 threads unless 2 x cpu_core plus 1 is a higher value, which then will override and be used. For example if there are 8 cores, then the consumer thread pool will be 17. This thread pool is used to route messages received from Netty by Camel. We use a separate thread pool to ensure ordering of messages and also in case some messages will block, then nettys worker threads (event loop) wont be affected. |  | int
 | *configuration* (advanced) | To use the NettyConfiguration as configuration when creating endpoints. |  | NettyConfiguration
 | *executorService* (consumer) | To use the given EventExecutorGroup. |  | EventExecutorGroup
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean

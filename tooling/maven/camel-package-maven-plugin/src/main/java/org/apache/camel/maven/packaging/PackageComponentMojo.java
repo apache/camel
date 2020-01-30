@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.tooling.util.PackageHelper;
@@ -33,8 +32,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
-
-import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor
@@ -132,7 +129,7 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
 
     private static void enrichComponentJsonFiles(Log log, MavenProject project, File buildDir, Set<String> components) throws MojoExecutionException {
         Set<File> files = new HashSet<>();
-        PackageHelper.findJsonFiles(buildDir, files, p -> p.isDirectory() || p.getName().endsWith(".json"));
+        PackageHelper.findJsonFiles(buildDir, files);
 
         for (File file : files) {
             // clip the .json suffix
@@ -140,7 +137,7 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
             if (components.contains(name)) {
                 log.debug("Enriching component: " + name);
                 try {
-                    String text = loadText(file);
+                    String text = PackageHelper.loadText(file);
                     text = text.replace("@@@DESCRIPTION@@@", project.getDescription());
                     text = text.replace("@@@GROUPID@@@", project.getGroupId());
                     text = text.replace("@@@ARTIFACTID@@@", project.getArtifactId());

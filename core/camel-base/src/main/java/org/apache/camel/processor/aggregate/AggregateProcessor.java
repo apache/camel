@@ -42,6 +42,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.NoSuchEndpointException;
@@ -55,6 +56,7 @@ import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
+import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.ShutdownAware;
@@ -106,6 +108,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
     private volatile Lock lock;
     private final AtomicBoolean aggregateRepositoryWarned = new AtomicBoolean();
     private final CamelContext camelContext;
+    private final ReactiveExecutor reactiveExecutor;
     private final AsyncProcessor processor;
     private String id;
     private String routeId;
@@ -259,6 +262,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         ObjectHelper.notNull(aggregationStrategy, "aggregationStrategy");
         ObjectHelper.notNull(executorService, "executorService");
         this.camelContext = camelContext;
+        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
         this.processor = processor;
         this.correlationExpression = correlationExpression;
         this.aggregationStrategy = aggregationStrategy;
@@ -857,7 +861,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
 
         // send this exchange
         // the call to schedule last if needed to ensure in-order processing of the aggregates
-        executorService.submit(() -> camelContext.getReactiveExecutor().scheduleSync(() -> processor.process(exchange, done -> {
+        executorService.submit(() -> reactiveExecutor.scheduleSync(() -> processor.process(exchange, done -> {
             // log exception if there was a problem
             if (exchange.getException() != null) {
                 // if there was an exception then let the exception handler handle it
@@ -889,7 +893,9 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             // grab the timeout value
             long timeout = exchange.hasProperties() ? exchange.getProperty(Exchange.AGGREGATED_TIMEOUT, 0, long.class) : 0;
             if (timeout > 0) {
-                LOG.trace("Restoring CompletionTimeout for exchangeId: {} with timeout: {} millis.", exchange.getExchangeId(), timeout);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Restoring CompletionTimeout for exchangeId: {} with timeout: {} millis.", exchange.getExchangeId(), timeout);
+                }
                 addExchangeToTimeoutMap(key, exchange, timeout);
             }
         }
@@ -1375,7 +1381,9 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                                 try {
                                     // set redelivery counter
                                     exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, data.redeliveryCounter);
-                                    exchange.getIn().setHeader(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
+                                    // and prepare for sending to DLC
+                                    exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
+                                    exchange.adapt(ExtendedExchange.class).setRollbackOnly(false);
                                     deadLetterProducerTemplate.send(recoverable.getDeadLetterUri(), exchange);
                                 } catch (Throwable e) {
                                     exchange.setException(e);

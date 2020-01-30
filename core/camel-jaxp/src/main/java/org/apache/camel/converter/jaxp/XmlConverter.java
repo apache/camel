@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -102,6 +103,14 @@ public class XmlConverter {
 
     public XmlConverter(DocumentBuilderFactory documentBuilderFactory) {
         this.documentBuilderFactory = documentBuilderFactory;
+    }
+
+    /**
+     * Converts the given string to a QName.
+     */
+    @Converter
+    public QName toQName(String str) {
+        return QName.valueOf(str);
     }
 
     /**

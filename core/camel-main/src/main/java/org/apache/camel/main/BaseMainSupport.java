@@ -73,6 +73,8 @@ public abstract class BaseMainSupport extends ServiceSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseMainSupport.class);
 
+    private static final String SENSITIVE_KEYS = "passphrase|password|secretkey|accesstoken|clientsecret|authorizationtoken|sasljaasconfig";
+
     protected final AtomicBoolean completed = new AtomicBoolean(false);
     protected volatile CamelContext camelContext;
     protected volatile ProducerTemplate camelTemplate;
@@ -550,7 +552,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
         if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
             LOG.info("Auto-configuration summary:");
             autoConfiguredProperties.forEach((k, v) -> {
-                boolean sensitive = k.toLowerCase(Locale.US).contains("password") || k.contains("secret") || k.contains("passphrase") || k.contains("token");
+                boolean sensitive = SENSITIVE_KEYS.contains(k.toLowerCase(Locale.US));
                 if (sensitive) {
                     LOG.info("\t{}=xxxxxx", k);
                 } else {
@@ -571,8 +573,14 @@ public abstract class BaseMainSupport extends ServiceSupport {
 
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
         configurePropertiesService(camelContext);
-        configureLifecycle(camelContext);
+
+        // allow to do configuration before its started
+        for (MainListener listener : listeners) {
+            listener.beforeConfigure(this);
+        }
+
         autoconfigure(camelContext);
+        configureLifecycle(camelContext);
         configureRoutes(camelContext);
 
         // allow to do configuration before its started

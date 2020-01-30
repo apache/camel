@@ -26,11 +26,13 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.MessageHelper;
@@ -86,26 +88,34 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
     }
 
     public void await(Exchange exchange, CountDownLatch latch) {
+        ReactiveExecutor reactiveExecutor = exchange.getContext().adapt(ExtendedCamelContext.class).getReactiveExecutor();
         // Early exit for pending reactive queued work
         do {
             if (latch.getCount() <= 0) {
                 return;
             }
-        } while (exchange.getContext().getReactiveExecutor().executeFromQueue());
-        LOG.trace("Waiting for asynchronous callback before continuing for exchangeId: {} -> {}",
-                exchange.getExchangeId(), exchange);
+        } while (reactiveExecutor.executeFromQueue());
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Waiting for asynchronous callback before continuing for exchangeId: {} -> {}",
+                    exchange.getExchangeId(), exchange);
+        }
         try {
             if (statistics.isStatisticsEnabled()) {
                 blockedCounter.incrementAndGet();
             }
             inflight.put(exchange, new AwaitThreadEntry(Thread.currentThread(), exchange, latch));
             latch.await();
-            LOG.trace("Asynchronous callback received, will continue routing exchangeId: {} -> {}",
-                    exchange.getExchangeId(), exchange);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Asynchronous callback received, will continue routing exchangeId: {} -> {}",
+                        exchange.getExchangeId(), exchange);
+            }
 
         } catch (InterruptedException e) {
-            LOG.trace("Interrupted while waiting for callback, will continue routing exchangeId: {} -> {}",
-                    exchange.getExchangeId(), exchange);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Interrupted while waiting for callback, will continue routing exchangeId: {} -> {}",
+                        exchange.getExchangeId(), exchange);
+            }
             exchange.setException(e);
         } finally {
             AwaitThread thread = inflight.remove(exchange);
@@ -130,7 +140,9 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
     }
 
     public void countDown(Exchange exchange, CountDownLatch latch) {
-        LOG.trace("Asynchronous callback received for exchangeId: {}", exchange.getExchangeId());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Asynchronous callback received for exchangeId: {}", exchange.getExchangeId());
+        }
         latch.countDown();
     }
 
@@ -187,7 +199,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
                     interruptedCounter.incrementAndGet();
                 }
                 exchange.setException(new RejectedExecutionException("Interrupted while waiting for asynchronous callback for exchangeId: " + exchange.getExchangeId()));
-                exchange.setProperty(Exchange.INTERRUPTED, Boolean.TRUE);
+                exchange.adapt(ExtendedExchange.class).setInterrupted(true);
                 entry.getLatch().countDown();
             }
         }

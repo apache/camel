@@ -35,8 +35,9 @@ import java.util.TreeSet;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.catalog.JSonSchemaHelper;
 import org.apache.camel.catalog.maven.MavenVersionManager;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -163,23 +164,16 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
                 continue;
             }
 
-            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
-            String componentJavaType = getComponentJavaType(rows);
-            String componentDescription = getComponentDescription(rows);
-
-            rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
-            Set<String> names = JSonSchemaHelper.getNames(rows);
-            for (String name : names) {
-                Map<String, String> row = JSonSchemaHelper.getRow(rows, name);
-                String type = row.get("type");
-                String javaType = safeJavaType(row.get("javaType"));
-                String desc = safeValue(row.get("description"));
-                String defaultValue = row.get("defaultValue");
-                boolean deprecated = "true".equals(row.getOrDefault("deprecated", "false"));
-
-                callback.onOption(componentName, componentJavaType, componentDescription,
-                        name, type, javaType, desc, defaultValue, deprecated);
-            }
+            ComponentModel model = JsonMapper.generateComponentModel(json);
+            String componentJavaType = model.getJavaType();
+            String componentDescription = model.getDescription();
+            model.getComponentOptions().forEach(option ->
+                    callback.onOption(componentName, componentJavaType, componentDescription,
+                            option.getName(), option.getType(),
+                            safeJavaType(option.getJavaType()),
+                            safeValue(option.getDescription()),
+                            option.getDefaultValue() != null ? option.getDefaultValue().toString() : null,
+                            option.isDeprecated()));
         }
     }
 

@@ -73,6 +73,7 @@
 
     <modules>
         <module>parent</module>
+        <module>init</module>
         <module>etc</module>
         <module>bom</module>
         <module>buildingtools</module>
@@ -163,7 +164,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.1.0</version>
             </plugin>
         </plugins>
 
@@ -324,7 +324,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
-                    <version>1.1.0</version>
+                    <version>1.2.1</version>
                     <executions>
                         <execution>
                             <id>default-cli</id>

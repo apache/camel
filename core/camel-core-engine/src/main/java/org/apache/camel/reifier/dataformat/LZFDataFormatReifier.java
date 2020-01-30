@@ -16,10 +16,10 @@
  */
 package org.apache.camel.reifier.dataformat;
 
-import org.apache.camel.CamelContext;
+import java.util.Map;
+
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.LZFDataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class LZFDataFormatReifier extends DataFormatReifier<LZFDataFormat> {
 
@@ -28,10 +28,8 @@ public class LZFDataFormatReifier extends DataFormatReifier<LZFDataFormat> {
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (definition.getUsingParallelCompression() != null) {
-            setProperty(camelContext, dataFormat, "usingParallelCompression", definition.getUsingParallelCompression());
-        }
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("usingParallelCompression", definition.getUsingParallelCompression());
     }
 
 }

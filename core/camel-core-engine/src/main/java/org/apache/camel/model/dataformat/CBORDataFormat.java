@@ -222,9 +222,4 @@ public class CBORDataFormat extends DataFormatDefinition {
         this.disableFeatures = disableFeatures;
     }
 
-    @Override
-    public String getDataFormatName() {
-        return "cbor";
-    }
-
 }

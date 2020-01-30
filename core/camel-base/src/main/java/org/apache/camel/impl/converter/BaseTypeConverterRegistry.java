@@ -564,7 +564,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             String line;
             do {
                 line = reader.readLine();
-                if (line != null && !line.startsWith("#")) {
+                if (line != null && !line.startsWith("#") && !line.isEmpty()) {
                     loaders.add(line);
                 }
             } while (line != null);

@@ -17,14 +17,18 @@
 package org.apache.camel.tools.apt;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -360,4 +364,76 @@ public final class AnnotationProcessorHelper {
             // ignore
         }
     }
+
+    /**
+     * Gets the JSon schema type.
+     *
+     * @param   type the java type
+     * @return  the json schema type, is never null, but returns <tt>object</tt> as the generic type
+     */
+    public static String getType(String type, boolean enumType) {
+        if (enumType) {
+            return "enum";
+        } else if (type == null) {
+            // return generic type for unknown type
+            return "object";
+        } else if (type.equals(URI.class.getName()) || type.equals(URL.class.getName())) {
+            return "string";
+        } else if (type.equals(File.class.getName())) {
+            return "string";
+        } else if (type.equals(Date.class.getName())) {
+            return "string";
+        } else if (type.startsWith("java.lang.Class")) {
+            return "string";
+        } else if (type.startsWith("java.util.List") || type.startsWith("java.util.Collection")) {
+            return "array";
+        }
+
+        String primitive = getPrimitiveType(type);
+        if (primitive != null) {
+            return primitive;
+        }
+
+        return "object";
+    }
+
+    /**
+     * Gets the JSon schema primitive type.
+     *
+     * @param   name the java type
+     * @return  the json schema primitive type, or <tt>null</tt> if not a primitive
+     */
+    public static String getPrimitiveType(String name) {
+        // special for byte[] or Object[] as its common to use
+        if ("java.lang.byte[]".equals(name) || "byte[]".equals(name)) {
+            return "string";
+        } else if ("java.lang.Byte[]".equals(name) || "Byte[]".equals(name)) {
+            return "array";
+        } else if ("java.lang.Object[]".equals(name) || "Object[]".equals(name)) {
+            return "array";
+        } else if ("java.lang.String[]".equals(name) || "String[]".equals(name)) {
+            return "array";
+        } else if ("java.lang.Character".equals(name) || "Character".equals(name) || "char".equals(name)) {
+            return "string";
+        } else if ("java.lang.String".equals(name) || "String".equals(name)) {
+            return "string";
+        } else if ("java.lang.Boolean".equals(name) || "Boolean".equals(name) || "boolean".equals(name)) {
+            return "boolean";
+        } else if ("java.lang.Integer".equals(name) || "Integer".equals(name) || "int".equals(name)) {
+            return "integer";
+        } else if ("java.lang.Long".equals(name) || "Long".equals(name) || "long".equals(name)) {
+            return "integer";
+        } else if ("java.lang.Short".equals(name) || "Short".equals(name) || "short".equals(name)) {
+            return "integer";
+        } else if ("java.lang.Byte".equals(name) || "Byte".equals(name) || "byte".equals(name)) {
+            return "integer";
+        } else if ("java.lang.Float".equals(name) || "Float".equals(name) || "float".equals(name)) {
+            return "number";
+        } else if ("java.lang.Double".equals(name) || "Double".equals(name) || "double".equals(name)) {
+            return "number";
+        }
+
+        return null;
+    }
+
 }

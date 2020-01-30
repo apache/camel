@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.util.ArrayList;
 import java.util.List;
 
 public final class CatalogHelper {
@@ -44,6 +45,20 @@ public final class CatalogHelper {
                 lines.add(line);
             }
         }
+    }
+
+    /**
+     * Loads the entire stream into memory as a String and returns it.
+     * <p/>
+     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line
+     * terminator at the of the text.
+     * <p/>
+     * Warning, don't use for crazy big streams :)
+     */
+    public static List<String> loadLines(InputStream in) throws IOException {
+        List<String> lines = new ArrayList<>();
+        loadLines(in, lines);
+        return lines;
     }
 
     /**

@@ -32,6 +32,7 @@
     <description>Processes Camel endpoint source code</description>
 
     <properties>
+        <camel.osgi.manifest></camel.osgi.manifest>
         <camel.osgi.import.pkg>
             *
         </camel.osgi.import.pkg>
@@ -56,6 +57,10 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-tooling-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-tooling-model</artifactId>
         </dependency>
 
         <!-- logging -->
@@ -82,8 +87,21 @@
 
         <!-- testing -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit-jupiter-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit-jupiter-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit-jupiter-version}</version>
             <scope>test</scope>
         </dependency>
 

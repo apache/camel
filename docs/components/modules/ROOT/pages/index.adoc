@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 310 in 248 JAR artifacts (1 deprecated)
+Number of Components: 312 in 250 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -45,6 +45,10 @@ Number of Components: 310 in 248 JAR artifacts (1 deprecated)
 | xref:atomix-value-component.adoc[Atomix Value] (camel-atomix) | 2.20 | The atomix-value component is used to access Atomix's distributed value.
 
 | xref:avro-component.adoc[Avro] (camel-avro) | 2.10 | Working with Apache Avro for data serialization.
+
+| xref:aws2-ecs-component.adoc[AWS 2 ECS] (camel-aws2-ecs) | 3.1 | The aws2-ecs is used for managing Amazon ECS
+
+| xref:aws2-eks-component.adoc[AWS 2 EKS] (camel-aws2-eks) | 3.1 | The aws-eks is used for managing Amazon EKS
 
 | xref:aws2-translate-component.adoc[AWS 2 Translate] (camel-aws2-translate) | 3.1 | The aws2-translate component is used for managing Amazon Translate
 
@@ -196,7 +200,7 @@ Number of Components: 310 in 248 JAR artifacts (1 deprecated)
 
 | xref:file-component.adoc[File] (camel-file) | 1.0 | The file component is used for reading or writing files.
 
-| xref:file-watch-component.adoc[file-watch] (camel-file-watch) | 3.0 | The file-watch is used to monitor file events in directory using java.nio.file.WatchService
+| xref:file-watch-component.adoc[File Watch] (camel-file-watch) | 3.0 | The file-watch is used to monitor file events in directory using java.nio.file.WatchService
 
 | xref:flatpack-component.adoc[Flatpack] (camel-flatpack) | 1.4 | The flatpack component supports fixed width and delimited file parsing via the FlatPack library.
 
@@ -224,7 +228,7 @@ Number of Components: 310 in 248 JAR artifacts (1 deprecated)
 
 | xref:google-calendar-component.adoc[Google Calendar] (camel-google-calendar) | 2.15 | The google-calendar component provides access to Google Calendar.
 
-| xref:google-calendar-stream-component.adoc[Google Calendar Stream] (camel-google-calendar) | 2.23 | The google-calendar component provides access to Google Calendar in a streaming mode.
+| xref:google-calendar-stream-component.adoc[Google Calendar Stream] (camel-google-calendar) | 2.23 | The google-calendar-stream component provides access to Google Calendar in a streaming mode.
 
 | xref:google-drive-component.adoc[Google Drive] (camel-google-drive) | 2.14 | The google-drive component provides access to Google Drive file storage service.
 
@@ -236,7 +240,7 @@ Number of Components: 310 in 248 JAR artifacts (1 deprecated)
 
 | xref:google-sheets-component.adoc[Google Sheets] (camel-google-sheets) | 2.23 | The google-sheets component provides access to Google Sheets.
 
-| xref:google-sheets-stream-component.adoc[Google Sheets Stream] (camel-google-sheets) | 2.23 | The google-sheets component provides access to Google Sheets.
+| xref:google-sheets-stream-component.adoc[Google Sheets Stream] (camel-google-sheets) | 2.23 | The google-sheets-stream component provides access to Google Sheets.
 
 | xref:gora-component.adoc[Gora] (camel-gora) | 2.14 | The gora component allows you to work with NoSQL databases using the Apache Gora framework.
 

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.debezium.configuration;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import io.debezium.config.Configuration;
 import io.debezium.config.Field;
 import io.debezium.embedded.EmbeddedEngine;
@@ -68,6 +71,9 @@ public abstract class EmbeddedDebeziumConfiguration {
     // internal.value.converter
     @UriParam(label = LABEL_NAME, defaultValue = "org.apache.kafka.connect.json.JsonConverter")
     private String internalValueConverter = JsonConverter.class.getName();
+    // Additional properties
+    @UriParam(label = "common", prefix = "additionalProperties.", multiValue = true)
+    private Map<String, Object> additionalProperties = new HashMap<>();
 
     public EmbeddedDebeziumConfiguration() {
         ObjectHelper.notNull(configureConnectorClass(), "connectorClass");
@@ -139,6 +145,9 @@ public abstract class EmbeddedDebeziumConfiguration {
             configBuilder.with("internal.value.converter", internalValueConverter);
         }
 
+        // additional properties
+        applyAdditionalProperties(configBuilder, getAdditionalProperties());
+
         return configBuilder.build();
     }
 
@@ -153,6 +162,12 @@ public abstract class EmbeddedDebeziumConfiguration {
                                                    final String key, final T value) {
         if (value != null) {
             configBuilder.with(key, value);
+        }
+    }
+
+    private void applyAdditionalProperties(final Configuration.Builder configBuilder, final Map<String, Object> additionalProperties) {
+        if (!ObjectHelper.isEmpty(getAdditionalProperties())) {
+            additionalProperties.forEach((property, value) -> addPropertyIfNotNull(configBuilder, property, value));
         }
     }
 
@@ -339,5 +354,18 @@ public abstract class EmbeddedDebeziumConfiguration {
 
     public void setInternalValueConverter(String internalValueConverter) {
         this.internalValueConverter = internalValueConverter;
+    }
+
+    /**
+     * Sets additional properties for debezium components in case they can't be set directly on the camel configurations
+     * (e.g: setting Kafka Connect properties needed by Debezium engine, for example setting KafkaOffsetBackingStore), the properties have to be prefixed with
+     * `additionalProperties.`. E.g: `additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro`
+     */
+    public void setAdditionalProperties(Map<String, Object> additionalProperties) {
+        this.additionalProperties = additionalProperties;
+    }
+
+    public Map<String, Object> getAdditionalProperties() {
+        return additionalProperties;
     }
 }

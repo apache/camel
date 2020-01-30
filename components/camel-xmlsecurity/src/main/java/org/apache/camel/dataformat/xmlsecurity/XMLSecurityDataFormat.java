@@ -101,7 +101,6 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     private String keyPassword;
 
     private KeyStoreParameters keyOrTrustStoreParameters;
-    private String keyOrTrustStoreParametersRef;
 
     private CamelContext camelContext;
     private DefaultNamespaceContext nsContext = new DefaultNamespaceContext();
@@ -181,58 +180,6 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         this.setSecureTagContents(secureTagContents);
         this.setPassPhrase(passPhrase);
         this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
-    }
-
-    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias,
-                                 String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersRef) {
-        this();
-        this.setSecureTag(secureTag);
-        this.setSecureTagContents(secureTagContents);
-        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
-        this.setRecipientKeyAlias(recipientKeyAlias);
-        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
-        this.setKeyOrTrustStoreParametersRef(keyOrTrustStoreParametersRef);
-    }
-
-    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias,
-            String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersRef, String keyPassword) {
-        this();
-        this.setSecureTag(secureTag);
-        this.setSecureTagContents(secureTagContents);
-        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
-        this.setRecipientKeyAlias(recipientKeyAlias);
-        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
-        this.setKeyOrTrustStoreParametersRef(keyOrTrustStoreParametersRef);
-        this.setKeyPassword(keyPassword);
-    }
-
-    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
-            String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersRef) {
-        this();
-        this.setSecureTag(secureTag);
-        this.setSecureTagContents(secureTagContents);
-        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
-        this.setRecipientKeyAlias(recipientKeyAlias);
-        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
-        this.setNamespaces(namespaces);
-        if (null != keyOrTrustStoreParametersRef && !keyOrTrustStoreParametersRef.equals("")) {
-            this.keyOrTrustStoreParametersRef = keyOrTrustStoreParametersRef;
-        }
-    }
-
-    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
-            String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersRef, String keyPassword) {
-        this();
-        this.setSecureTag(secureTag);
-        this.setSecureTagContents(secureTagContents);
-        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
-        this.setRecipientKeyAlias(recipientKeyAlias);
-        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
-        this.setNamespaces(namespaces);
-        if (null != keyOrTrustStoreParametersRef && !keyOrTrustStoreParametersRef.equals("")) {
-            this.keyOrTrustStoreParametersRef = keyOrTrustStoreParametersRef;
-        }
-        this.setKeyPassword(keyPassword);
     }
 
     public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias,
@@ -888,24 +835,6 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
 
     public KeyStoreParameters getKeyOrTrustStoreParameters() {
         return this.keyOrTrustStoreParameters;
-    }
-
-    public void setKeyOrTrustStoreParametersRef(String registryId) {
-        this.keyOrTrustStoreParametersRef = registryId;
-        if (camelContext != null) {
-            Object parametersObj = camelContext.getRegistry().lookupByName(this.keyOrTrustStoreParametersRef);
-            if (parametersObj instanceof KeyStoreParameters) {
-                this.keyOrTrustStoreParameters = (KeyStoreParameters)parametersObj;
-            } else {
-                throw new IllegalStateException("Could not initialize XMLSecurityDataFormat with camelContext."
-                        + " The id for the keyOrTrustStoreParameters specified [ " + keyOrTrustStoreParametersRef
-                        + " ] does not identify a KeyStoreParameters bean.");
-            }
-        }
-    }
-
-    public String getKeyOrTrustStoreParametersRef() {
-        return this.keyOrTrustStoreParametersRef;
     }
 
     public void setNamespaces(Map<String, String> namespaces) {

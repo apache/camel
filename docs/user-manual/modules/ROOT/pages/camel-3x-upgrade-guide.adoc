@@ -171,15 +171,56 @@ You can use these methods by adapting to the extended exchange as shown below:
 exchange.adapt(ExtendedExchange.class).addOnCompletion(...);
 ----
 
+==== Message
+
+The message ID will now default to use the same id as Exchange ID as messages are associated with the exchange
+and using different IDs does not offer much value. Another reason is to optimize for performance to avoid generating new IDs.
+A few Camel components do provide their own message IDs such as the JMS components.
+
 ==== UnitOfWork
 
 For advanced Camel users whom implement custom `UnitOfWork` should implement the new `isBeforeAfterProcess()' method and return true of false,
 whether Camel should invoke the before and after processor methods.
 
+The method `getId` has been removed.
+
 ==== Cookies
 
 Cookies from `camel-http-common` has been moved into a new `camel-http-base` JAR.
 The package `org.apache.camel.http.common.cookie` is renamed to `org.apache.camel.http.base.cookie`.
+
+==== Exchange.ROUTE_STOP
+
+To signal an `Exchange` to stop continue routing has changed from setting the exchange property `Exchange.ROUTE_STOP` to true.
+Instead you should now use the `setRouteStop` method on the `Exchange` API.
+
+[source,java]
+----
+    exchange.setProperty(Exchange.ROUTE_STOP, Boolean.TRUE);
+----
+
+Should now be:
+[source,java]
+----
+    exchange.setRouteStop(true);
+----
+
+==== Exchange.ROLLBACK_ONLY and Exchange.ROLLBACK_ONLY_LAST
+
+To signal an `Exchange` to rollback a transaction has changed from setting the exchange property `Exchange.ROLLBACK_ONLY` to true.
+Instead you should now use the `setRollbackOnly` method on the `Exchange` API (the same for rollback only last).
+
+[source,java]
+----
+    exchange.setProperty(Exchange.ROLLBACK_ONLY, Boolean.TRUE);
+----
+
+Should now be:
+
+[source,java]
+----
+    exchange.setRollbackOnly(true);
+----
 
 ==== Java DSL
 

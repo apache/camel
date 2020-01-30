@@ -29,6 +29,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
@@ -37,13 +38,14 @@ import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A default implementation of {@link Exchange}
+ * The default and only implementation of {@link Exchange}.
  */
 public final class DefaultExchange implements ExtendedExchange {
 
     private final CamelContext context;
     private final long created;
-    private Map<String, Object> properties;
+    // optimize to create properties always
+    private final Map<String, Object> properties = new ConcurrentHashMap<>();
     private Message in;
     private Message out;
     private Exception exception;
@@ -56,6 +58,14 @@ public final class DefaultExchange implements ExtendedExchange {
     private Boolean externalRedelivered;
     private String historyNodeId;
     private String historyNodeLabel;
+    private boolean transacted;
+    private boolean routeStop;
+    private boolean rollbackOnly;
+    private boolean rollbackOnlyLast;
+    private boolean notifyEvent;
+    private boolean interrupted;
+    private boolean redeliveryExhausted;
+    private Boolean errorHandlerHandled;
 
     public DefaultExchange(CamelContext context) {
         this(context, ExchangePattern.InOnly);
@@ -117,11 +127,17 @@ public final class DefaultExchange implements ExtendedExchange {
             }
         }
 
-        exchange.setException(getException());
+        exchange.setException(exception);
+        exchange.setRouteStop(routeStop);
+        exchange.setRollbackOnly(rollbackOnly);
+        exchange.setRollbackOnlyLast(rollbackOnlyLast);
+        exchange.setNotifyEvent(notifyEvent);
+        exchange.setRedeliveryExhausted(redeliveryExhausted);
+        exchange.setErrorHandlerHandled(errorHandlerHandled);
 
         // copy properties after body as body may trigger lazy init
         if (hasProperties()) {
-            exchange.setProperties(safeCopyProperties(getProperties()));
+            safeCopyProperties(getProperties(), exchange.getProperties());
         }
 
         return exchange;
@@ -132,24 +148,19 @@ public final class DefaultExchange implements ExtendedExchange {
             return null;
         }
 
-        return context.getHeadersMapFactory().newMap(headers);
+        return context.adapt(ExtendedCamelContext.class).getHeadersMapFactory().newMap(headers);
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> safeCopyProperties(Map<String, Object> properties) {
-        if (properties == null) {
-            return null;
+    private void safeCopyProperties(Map<String, Object> source, Map<String, Object> target) {
+        target.putAll(source);
+        if (getContext().isMessageHistory()) {
+            // safe copy message history using a defensive copy
+            List<MessageHistory> history = (List<MessageHistory>) target.remove(Exchange.MESSAGE_HISTORY);
+            if (history != null) {
+                target.put(Exchange.MESSAGE_HISTORY, new LinkedList<>(history));
+            }
         }
-
-        Map<String, Object> answer = createProperties(properties);
-
-        // safe copy message history using a defensive copy
-        List<MessageHistory> history = (List<MessageHistory>) answer.remove(Exchange.MESSAGE_HISTORY);
-        if (history != null) {
-            answer.put(Exchange.MESSAGE_HISTORY, new LinkedList<>(history));
-        }
-
-        return answer;
     }
 
     @Override
@@ -159,10 +170,7 @@ public final class DefaultExchange implements ExtendedExchange {
 
     @Override
     public Object getProperty(String name) {
-        if (properties != null) {
-            return properties.get(name);
-        }
-        return null;
+        return properties.get(name);
     }
 
     @Override
@@ -195,7 +203,10 @@ public final class DefaultExchange implements ExtendedExchange {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getProperty(String name, Object defaultValue, Class<T> type) {
-        Object value = getProperty(name, defaultValue);
+        Object value = getProperty(name);
+        if (value == null) {
+            value = defaultValue;
+        }
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
             if (boolean.class == type) {
@@ -217,13 +228,19 @@ public final class DefaultExchange implements ExtendedExchange {
     public void setProperty(String name, Object value) {
         if (value != null) {
             // avoid the NullPointException
-            getProperties().put(name, value);
+            properties.put(name, value);
         } else {
             // if the value is null, we just remove the key from the map
             if (name != null) {
-                getProperties().remove(name);
+                properties.remove(name);
             }
         }
+    }
+
+    @Override
+    public void setProperties(Map<String, Object> properties) {
+        this.properties.clear();
+        this.properties.putAll(properties);
     }
 
     @Override
@@ -231,7 +248,7 @@ public final class DefaultExchange implements ExtendedExchange {
         if (!hasProperties()) {
             return null;
         }
-        return getProperties().remove(name);
+        return properties.remove(name);
     }
 
     @Override
@@ -272,19 +289,12 @@ public final class DefaultExchange implements ExtendedExchange {
 
     @Override
     public Map<String, Object> getProperties() {
-        if (properties == null) {
-            properties = createProperties();
-        }
         return properties;
     }
 
     @Override
     public boolean hasProperties() {
-        return properties != null && !properties.isEmpty();
-    }
-
-    public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
+        return !properties.isEmpty();
     }
 
     @Override
@@ -398,7 +408,7 @@ public final class DefaultExchange implements ExtendedExchange {
         }
         if (t instanceof InterruptedException) {
             // mark the exchange as interrupted due to the interrupt exception
-            setProperty(Exchange.INTERRUPTED, Boolean.TRUE);
+            setInterrupted(true);
         }
     }
 
@@ -457,12 +467,22 @@ public final class DefaultExchange implements ExtendedExchange {
 
     @Override
     public boolean isTransacted() {
-        UnitOfWork uow = getUnitOfWork();
-        if (uow != null) {
-            return uow.isTransacted();
-        } else {
-            return false;
-        }
+        return transacted;
+    }
+
+    @Override
+    public void setTransacted(boolean transacted) {
+        this.transacted = true;
+    }
+
+    @Override
+    public boolean isRouteStop() {
+        return routeStop;
+    }
+
+    @Override
+    public void setRouteStop(boolean routeStop) {
+        this.routeStop = routeStop;
     }
 
     @Override
@@ -485,7 +505,22 @@ public final class DefaultExchange implements ExtendedExchange {
 
     @Override
     public boolean isRollbackOnly() {
-        return Boolean.TRUE.equals(getProperty(Exchange.ROLLBACK_ONLY)) || Boolean.TRUE.equals(getProperty(Exchange.ROLLBACK_ONLY_LAST));
+        return rollbackOnly;
+    }
+
+    @Override
+    public void setRollbackOnly(boolean rollbackOnly) {
+        this.rollbackOnly = rollbackOnly;
+    }
+
+    @Override
+    public boolean isRollbackOnlyLast() {
+        return rollbackOnlyLast;
+    }
+
+    @Override
+    public void setRollbackOnlyLast(boolean rollbackOnlyLast) {
+        this.rollbackOnlyLast = rollbackOnlyLast;
     }
 
     @Override
@@ -580,6 +615,50 @@ public final class DefaultExchange implements ExtendedExchange {
         this.historyNodeLabel = historyNodeLabel;
     }
 
+    @Override
+    public boolean isNotifyEvent() {
+        return notifyEvent;
+    }
+
+    @Override
+    public void setNotifyEvent(boolean notifyEvent) {
+        this.notifyEvent = notifyEvent;
+    }
+
+    @Override
+    public boolean isInterrupted() {
+        return interrupted;
+    }
+
+    @Override
+    public void setInterrupted(boolean interrupted) {
+        this.interrupted = interrupted;
+    }
+
+    @Override
+    public boolean isRedeliveryExhausted() {
+        return redeliveryExhausted;
+    }
+
+    @Override
+    public void setRedeliveryExhausted(boolean redeliveryExhausted) {
+        this.redeliveryExhausted = redeliveryExhausted;
+    }
+
+    public Boolean getErrorHandlerHandled() {
+        return errorHandlerHandled;
+    }
+
+    @Override
+    public boolean isErrorHandlerHandled() {
+        return errorHandlerHandled != null && errorHandlerHandled;
+    }
+
+    @Override
+    public void setErrorHandlerHandled(Boolean errorHandlerHandled) {
+        this.errorHandlerHandled = errorHandlerHandled;
+    }
+
     /**
      * Configures the message after it has been set on the exchange
      */
@@ -593,14 +672,6 @@ public final class DefaultExchange implements ExtendedExchange {
 
     protected String createExchangeId() {
         return context.getUuidGenerator().generateUuid();
-    }
-
-    protected Map<String, Object> createProperties() {
-        return new ConcurrentHashMap<>();
-    }
-
-    protected Map<String, Object> createProperties(Map<String, Object> properties) {
-        return new ConcurrentHashMap<>(properties);
     }
 
 }

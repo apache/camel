@@ -34,6 +34,7 @@ import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
+import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
@@ -43,6 +44,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.UnitOfWorkFactory;
@@ -359,4 +361,28 @@ public interface ExtendedCamelContext extends CamelContext {
      */
     void setBeanIntrospection(BeanIntrospection beanIntrospection);
 
+    /**
+     * Gets the {@link HeadersMapFactory} to use.
+     */
+    HeadersMapFactory getHeadersMapFactory();
+
+    /**
+     * Sets a custom {@link HeadersMapFactory} to be used.
+     */
+    void setHeadersMapFactory(HeadersMapFactory factory);
+
+    /**
+     * Gets the {@link ReactiveExecutor} to use.
+     */
+    ReactiveExecutor getReactiveExecutor();
+
+    /**
+     * Sets a custom {@link ReactiveExecutor} to be used.
+     */
+    void setReactiveExecutor(ReactiveExecutor reactiveExecutor);
+
+    /**
+     * Used as internal optimization in Camel to flag whether event notification is applicable or not.
+     */
+    void setEventNotificationApplicable(boolean eventNotificationApplicable);
 }

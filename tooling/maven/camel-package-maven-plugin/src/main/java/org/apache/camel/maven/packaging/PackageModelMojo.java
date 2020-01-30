@@ -18,11 +18,10 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -65,22 +64,13 @@ public class PackageModelMojo extends AbstractGeneratorMojo {
         Set<File> jsonFiles = new TreeSet<>();
 
         // find all json files in camel-core
-        if (buildDir != null && buildDir.isDirectory()) {
-            File target = new File(buildDir, "classes/org/apache/camel/model");
-            PackageHelper.findJsonFiles(target, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
-        }
-
-        List<String> models = new ArrayList<>();
-        // sort the names
-        for (File file : jsonFiles) {
-            String name = file.getName();
-            if (name.endsWith(".json")) {
+        List<String> models = PackageHelper.findJsonFiles(buildDir.toPath().resolve("classes/org/apache/camel/model"))
+                .map(p -> p.getFileName().toString())
                 // strip out .json from the name
-                String modelName = name.substring(0, name.length() - 5);
-                models.add(modelName);
-            }
-        }
-        Collections.sort(models);
+                .map(s -> s.substring(0, s.length() - PackageHelper.JSON_SUFIX.length()))
+                // sort
+                .sorted()
+                .collect(Collectors.toList());
 
         StringBuilder sb = new StringBuilder();
         sb.append("# " + GENERATED_MSG + NL);

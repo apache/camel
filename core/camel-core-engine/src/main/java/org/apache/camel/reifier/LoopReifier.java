@@ -43,7 +43,7 @@ public class LoopReifier extends ExpressionReifier<LoopDefinition> {
         } else {
             expression = definition.getExpression().createExpression(routeContext);
         }
-        return new LoopProcessor(output, expression, predicate, isCopy);
+        return new LoopProcessor(routeContext.getCamelContext(), output, expression, predicate, isCopy);
     }
 
 }

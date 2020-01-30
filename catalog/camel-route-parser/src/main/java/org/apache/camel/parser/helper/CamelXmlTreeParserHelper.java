@@ -18,16 +18,15 @@ package org.apache.camel.parser.helper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.catalog.JSonSchemaHelper;
 import org.apache.camel.parser.model.CamelNodeDetails;
 import org.apache.camel.parser.model.CamelNodeDetailsFactory;
+import org.apache.camel.tooling.model.JsonMapper;
 
 public final class CamelXmlTreeParserHelper {
 
@@ -105,32 +104,12 @@ public final class CamelXmlTreeParserHelper {
 
     private boolean hasOutput(String name) {
         String json = camelCatalog.modelJSonSchema(name);
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
-        return isModelOutput(rows);
-    }
-
-    private static boolean isModelOutput(List<Map<String, String>> rows) {
-        for (Map<String, String> row : rows) {
-            if (row.containsKey("output")) {
-                return "true".equals(row.get("output"));
-            }
-        }
-        return false;
+        return JsonMapper.generateEipModel(json).isOutput();
     }
 
     private boolean hasInput(String name) {
         String json = camelCatalog.modelJSonSchema(name);
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
-        return isModelInput(rows);
-    }
-
-    private static boolean isModelInput(List<Map<String, String>> rows) {
-        for (Map<String, String> row : rows) {
-            if (row.containsKey("input")) {
-                return "true".equals(row.get("input"));
-            }
-        }
-        return false;
+        return JsonMapper.generateEipModel(json).isInput();
     }
 
 }

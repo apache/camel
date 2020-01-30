@@ -16,11 +16,12 @@
  */
 package org.apache.camel.reifier.dataformat;
 
-import org.apache.camel.CamelContext;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat;
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.support.CamelContextHelper;
 
 public class UniVocityFixedWidthDataFormatReifier extends UniVocityAbstractDataFormatReifier<UniVocityFixedWidthDataFormat> {
 
@@ -29,28 +30,27 @@ public class UniVocityFixedWidthDataFormatReifier extends UniVocityAbstractDataF
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        super.configureDataFormat(dataFormat, camelContext);
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        super.prepareDataFormatConfig(properties);
+        properties.put("fieldLengths", getFieldLengths());
+        properties.put("skipTrailingCharsUntilNewline", definition.getSkipTrailingCharsUntilNewline());
+        properties.put("recordEndsOnNewline", definition.getRecordEndsOnNewline());
+        properties.put("padding", definition.getPadding());
+    }
 
+    private List<String> getFieldLengths() {
         if (definition.getHeaders() != null) {
-            int[] lengths = new int[definition.getHeaders().size()];
-            for (int i = 0; i < lengths.length; i++) {
-                String length = definition.getHeaders().get(i).getLength();
-                if (length == null) {
-                    throw new IllegalArgumentException("The length of all headers must be defined.");
-                }
-                lengths[i] = CamelContextHelper.parseInteger(camelContext, length);
-            }
-            setProperty(camelContext, dataFormat, "fieldLengths", lengths);
-        }
-        if (definition.getSkipTrailingCharsUntilNewline() != null) {
-            setProperty(camelContext, dataFormat, "skipTrailingCharsUntilNewline", definition.getSkipTrailingCharsUntilNewline());
-        }
-        if (definition.getRecordEndsOnNewline() != null) {
-            setProperty(camelContext, dataFormat, "recordEndsOnNewline", definition.getRecordEndsOnNewline());
-        }
-        if (definition.getPadding() != null) {
-            setProperty(camelContext, dataFormat, "padding", singleCharOf("padding", definition.getPadding()));
+            return definition.getHeaders().stream()
+                    .map(header -> {
+                        String length = header.getLength();
+                        if (length == null) {
+                            throw new IllegalArgumentException("The length of all headers must be defined.");
+                        }
+                        return length;
+                    })
+                    .collect(Collectors.toList());
+        } else {
+            return null;
         }
     }
 

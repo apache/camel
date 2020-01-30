@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.telegram.model;
 
-import java.util.Arrays;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * An outgoing photo message.
@@ -33,6 +32,9 @@ public class OutgoingPhotoMessage extends OutgoingMessage {
     private String filenameWithExtension;
 
     private String caption;
+
+    @JsonProperty("reply_markup")
+    private ReplyMarkup replyMarkup;
 
     public OutgoingPhotoMessage() {
     }
@@ -61,12 +63,25 @@ public class OutgoingPhotoMessage extends OutgoingMessage {
         this.caption = caption;
     }
 
+    public ReplyMarkup getReplyMarkup() {
+        return replyMarkup;
+    }
+
+    public void setReplyMarkup(ReplyMarkup replyMarkup) {
+        this.replyMarkup = replyMarkup;
+    }
+
+    public String replyMarkupJson() {
+        return replyMarkup == null ? null : replyMarkup.toJson();
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("OutgoingPhotoMessage{");
         sb.append("photo(length)=").append(photo != null ? photo.length : null);
         sb.append(", filenameWithExtension='").append(filenameWithExtension).append('\'');
         sb.append(", caption='").append(caption).append('\'');
+        sb.append(", replyMarkup='").append(replyMarkup).append('\'');
         sb.append('}');
         sb.append(' ');
         sb.append(super.toString());

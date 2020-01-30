@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -203,5 +204,22 @@ public final class CollectionHelper {
         return Collections.unmodifiableMap(
             mapOf(HashMap::new, key, value, keyVals)
         );
+    }
+
+    /**
+     * Build a {@link java.util.Properties} from varargs.
+     */
+    public static Properties propertiesOf(String key, String value, String... keyVals) {
+        Properties properties = new Properties();
+        properties.setProperty(key, value);
+
+        for (int i = 0; i < keyVals.length; i += 2) {
+            properties.setProperty(
+                keyVals[i],
+                keyVals[i + 1]
+            );
+        }
+
+        return properties;
     }
 }

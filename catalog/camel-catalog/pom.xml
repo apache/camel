@@ -47,6 +47,11 @@
             <artifactId>camel-util-json</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-tooling-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- testing -->
         <dependency>
@@ -148,14 +153,6 @@
                                         <include>URISupport.java</include>
                                     </includes>
                                 </resource>
-                                <resource>
-                                    <directory>../../core/camel-support/src/main/java/org/apache/camel/support
-                                    </directory>
-                                    <!-- the following files are maintained in camel-base and not here, so they are copied over -->
-                                    <includes>
-                                        <include>JSonSchemaHelper.java</include>
-                                    </includes>
-                                </resource>
                             </resources>
                         </configuration>
                     </execution>
@@ -229,6 +226,7 @@
                             <artifactSet>
                                 <includes>
                                     <include>org.apache.camel:camel-util-json</include>
+                                    <include>org.apache.camel:camel-tooling-model</include>
                                 </includes>
                             </artifactSet>
                         </configuration>

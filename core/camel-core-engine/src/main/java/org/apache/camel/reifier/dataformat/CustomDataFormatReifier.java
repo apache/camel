@@ -16,6 +16,8 @@
  */
 package org.apache.camel.reifier.dataformat;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.CustomDataFormat;
@@ -33,7 +35,7 @@ public class CustomDataFormatReifier extends DataFormatReifier<CustomDataFormat>
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
     }
 
 }

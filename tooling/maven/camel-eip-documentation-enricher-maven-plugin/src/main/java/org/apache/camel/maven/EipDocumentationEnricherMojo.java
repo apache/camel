@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -144,16 +146,13 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         DomFinder domFinder = new DomFinder(document, xPath);
         DocumentationEnricher documentationEnricher = new DocumentationEnricher(document);
 
-        // include schema files from camel-core, camel-corem-xml and from camel-spring
-        File rootDir = new File(camelCoreDir, pathToModelDir);
-        Map<String, File> jsonFiles = PackageHelper.findJsonFiles(rootDir);
-        File rootDir2 = new File(camelCoreXmlDir, pathToCoreXmlModelDir);
-        Map<String, File> jsonFiles2 = PackageHelper.findJsonFiles(rootDir2);
-        File rootDir3 = new File(camelSpringDir, pathToSpringModelDir);
-        Map<String, File> jsonFiles3 = PackageHelper.findJsonFiles(rootDir3);
-        // merge the json files together
-        jsonFiles.putAll(jsonFiles2);
-        jsonFiles.putAll(jsonFiles3);
+        // include schema files from camel-core, camel-core-xml and from camel-spring
+        Set<File> files = new HashSet<>();
+        PackageHelper.findJsonFiles(new File(camelCoreDir, pathToModelDir), files);
+        PackageHelper.findJsonFiles(new File(camelCoreXmlDir, pathToCoreXmlModelDir), files);
+        PackageHelper.findJsonFiles(new File(camelSpringDir, pathToSpringModelDir), files);
+        Map<String, File> jsonFiles = new HashMap<>();
+        files.forEach(f -> jsonFiles.put(PackageHelper.asName(f.toPath()), f));
 
         NodeList elementsAndTypes = domFinder.findElementsAndTypes();
         documentationEnricher.enrichTopLevelElementsDocumentation(elementsAndTypes, jsonFiles);

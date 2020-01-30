@@ -83,7 +83,7 @@ public class RouteStopTest extends ContextTestSupport {
                     .to("mock:result");
                 // END SNIPPET: e1
 
-                from("direct:foo").to("mock:foo").setProperty(Exchange.ROUTE_STOP, constant("true")).to("mock:result");
+                from("direct:foo").to("mock:foo").process(e -> e.setRouteStop(true)).to("mock:result");
             }
         };
     }

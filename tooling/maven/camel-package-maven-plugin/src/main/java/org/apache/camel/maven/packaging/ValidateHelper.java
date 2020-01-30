@@ -18,13 +18,12 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.tooling.util.JSonSchemaHelper;
-import org.apache.camel.tooling.util.Strings;
-
-import static org.apache.camel.tooling.util.PackageHelper.loadText;
+import org.apache.camel.tooling.util.PackageHelper;
+import org.apache.camel.util.json.DeserializationException;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * Validation helper for validating components, data formats and languages
@@ -42,102 +41,51 @@ public final class ValidateHelper {
      */
     public static void validate(File file, ErrorDetail errorDetail) {
         try {
-            String json = loadText(file);
+            String json = PackageHelper.loadText(file);
+            JsonObject obj = (JsonObject) Jsoner.deserialize(json);
 
-            boolean isComponent = json.contains("\"kind\": \"component\"");
-            boolean isDataFormat = json.contains("\"kind\": \"dataformat\"");
-            boolean isLanguage = json.contains("\"kind\": \"language\"");
+            Map<String, Object> model;
+            boolean isComponent = (model = obj.getMap("component")) != null;
+            boolean isDataFormat = !isComponent && (model = obj.getMap("dataformat")) != null;
+            boolean isLanguage = !isComponent && !isDataFormat && (model = obj.getMap("language")) != null;
 
             // only check these kind
             if (!isComponent && !isDataFormat && !isLanguage) {
                 return;
             }
 
+            errorDetail.setKind((String) model.get("kind"));
+            errorDetail.setMissingDescription(isNullOrEmpty(model.get("description")));
+            errorDetail.setMissingLabel(isNullOrEmpty(model.get("label")));
             if (isComponent) {
-                errorDetail.setKind("component");
-            } else if (isDataFormat) {
-                errorDetail.setKind("dataformat");
-            } else if (isLanguage) {
-                errorDetail.setKind("language");
-            }
-
-            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema(errorDetail.getKind(), json, false);
-            boolean label = false;
-            boolean description = false;
-            boolean syntax = false;
-            for (Map<String, String> row : rows) {
-                String value = row.get("label");
-                if (!Strings.isEmpty(value)) {
-                    label = true;
-                }
-                value = row.get("description");
-                if (!Strings.isEmpty(value)) {
-                    description = true;
-                }
-                value = row.get("syntax");
-                if (!Strings.isEmpty(value)) {
-                    syntax = true;
-                }
-            }
-
-            if (!label) {
-                errorDetail.setMissingLabel(true);
-            }
-
-            if (!description) {
-                errorDetail.setMissingDescription(true);
-            }
-
-            // syntax check is only for the components
-            if (!syntax && isComponent) {
-                errorDetail.setMissingSyntax(true);
-            }
-
-            if (isComponent) {
-                // check all the component properties if they have description
-                rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
-                for (Map<String, String> row : rows) {
-                    String key = row.get("name");
-                    String doc = row.get("description");
-                    if (doc == null || doc.isEmpty()) {
-                        errorDetail.addMissingComponentDoc(key);
+                errorDetail.setMissingSyntax(isNullOrEmpty(model.get("syntax")));
+                Map<String, Object> componentProps = obj.getMap("componentProperties");
+                for (Map.Entry<String, Object> entry : componentProps.entrySet()) {
+                    if (isNullOrEmpty(((JsonObject) entry.getValue()).get("description"))) {
+                        errorDetail.addMissingComponentDoc(entry.getKey());
                     }
                 }
             }
-
-            // check all the endpoint properties if they have description
-            rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+            Map<String, Object> props = obj.getMap("properties");
             boolean path = false;
-            for (Map<String, String> row : rows) {
-                String key = row.get("name");
-                String doc = row.get("description");
-                if (doc == null || doc.isEmpty()) {
-                    errorDetail.addMissingEndpointDoc(key);
+            for (Map.Entry<String, Object> entry : props.entrySet()) {
+                JsonObject value = (JsonObject) entry.getValue();
+                if (isNullOrEmpty(value.get("description"))) {
+                    errorDetail.addMissingEndpointDoc(entry.getKey());
                 }
-                String kind = row.get("kind");
-                if ("path".equals(kind)) {
-                    path = true;
-                }
+                path |= "path".equals(value.get("kind"));
             }
-            if (isComponent && !path) {
-                // only components can have missing @UriPath
-                errorDetail.setMissingUriPath(true);
-            }
-        } catch (IOException e) {
+            errorDetail.setMissingUriPath(isComponent && !path);
+        } catch (DeserializationException e) {
+            // wrap parsing exceptions as runtime
+            throw new RuntimeException("Cannot parse json", e);
+        } catch (IOException  e) {
             // ignore
         }
     }
 
-    /**
-     * Returns the name of the component, data format or language from the given
-     * json file
-     */
-    public static String asName(File file) {
-        String name = file.getName();
-        if (name.endsWith(".json")) {
-            return name.substring(0, name.length() - 5);
-        }
-        return name;
+    private static boolean isNullOrEmpty(Object obj) {
+        return obj == null || "".equals(obj);
     }
 
 }

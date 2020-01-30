@@ -20,14 +20,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 
 /**
  * This object represents an inline keyboard that appears right next to the message it belongs to.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class InlineKeyboardMarkup implements Serializable {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class InlineKeyboardMarkup implements Serializable, ReplyMarkup {
 
     private static final long serialVersionUID = -8608993809697387977L;
 

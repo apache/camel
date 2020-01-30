@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -42,6 +43,43 @@ public interface DebeziumMongodbEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default AdvancedDebeziumMongodbEndpointBuilder advanced() {
             return (AdvancedDebeziumMongodbEndpointBuilder) this;
+        }
+        /**
+         * Sets additional properties for debezium components in case they can't
+         * be set directly on the camel configurations (e.g: setting Kafka
+         * Connect properties needed by Debezium engine, for example setting
+         * KafkaOffsetBackingStore), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Group: common
+         */
+        default DebeziumMongodbEndpointBuilder additionalProperties(
+                Map<String, Object> additionalProperties) {
+            doSetProperty("additionalProperties", additionalProperties);
+            return this;
+        }
+        /**
+         * Sets additional properties for debezium components in case they can't
+         * be set directly on the camel configurations (e.g: setting Kafka
+         * Connect properties needed by Debezium engine, for example setting
+         * KafkaOffsetBackingStore), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default DebeziumMongodbEndpointBuilder additionalProperties(
+                String additionalProperties) {
+            doSetProperty("additionalProperties", additionalProperties);
+            return this;
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,

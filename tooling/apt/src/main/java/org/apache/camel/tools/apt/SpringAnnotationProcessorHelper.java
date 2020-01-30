@@ -17,6 +17,7 @@
 package org.apache.camel.tools.apt;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -40,16 +41,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.tooling.util.JSonSchemaHelper;
+import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
-
-import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findJavaDoc;
-import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findTypeElement;
-import static org.apache.camel.tools.apt.AnnotationProcessorHelper.processFile;
-import static org.apache.camel.tooling.util.JSonSchemaHelper.sanitizeDescription;
-import static org.apache.camel.tooling.util.Strings.canonicalClassName;
-import static org.apache.camel.tooling.util.Strings.isNullOrEmpty;
-import static org.apache.camel.tooling.util.Strings.safeNull;
+import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.EipModel.EipOptionModel;
+import org.apache.camel.tooling.util.JavadocHelper;
 
 /**
  * Process camel-spring's <camelContext> and generate json schema documentation
@@ -58,7 +55,7 @@ public class SpringAnnotationProcessorHelper {
 
     protected void processModelClass(final ProcessingEnvironment processingEnv, final RoundEnvironment roundEnv,
                                      final TypeElement classElement) {
-        final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());
+        final String javaTypeName = Strings.canonicalClassName(classElement.getQualifiedName().toString());
         String packageName = javaTypeName.substring(0, javaTypeName.lastIndexOf("."));
 
         // skip abstract classes
@@ -72,7 +69,7 @@ public class SpringAnnotationProcessorHelper {
         }
 
         String aName = rootElement.name();
-        if (isNullOrEmpty(aName) || "##default".equals(aName)) {
+        if (Strings.isNullOrEmpty(aName) || "##default".equals(aName)) {
             XmlType typeElement = classElement.getAnnotation(XmlType.class);
             aName = typeElement.name();
         }
@@ -80,14 +77,14 @@ public class SpringAnnotationProcessorHelper {
 
         // lets use the xsd name as the file name
         String fileName;
-        if (isNullOrEmpty(name) || "##default".equals(name)) {
-            fileName = classElement.getSimpleName().toString() + ".json";
+        if (Strings.isNullOrEmpty(name) || "##default".equals(name)) {
+            fileName = classElement.getSimpleName().toString() + PackageHelper.JSON_SUFIX;
         } else {
-            fileName = name + ".json";
+            fileName = name + PackageHelper.JSON_SUFIX;
         }
 
         // write json schema
-        processFile(processingEnv, packageName, fileName, writer -> writeJSonSchemeDocumentation(processingEnv, writer, roundEnv, classElement, rootElement, javaTypeName, name));
+        AnnotationProcessorHelper.processFile(processingEnv, packageName, fileName, writer -> writeJSonSchemeDocumentation(processingEnv, writer, roundEnv, classElement, rootElement, javaTypeName, name));
     }
 
     protected void writeJSonSchemeDocumentation(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement,
@@ -96,55 +93,12 @@ public class SpringAnnotationProcessorHelper {
         EipModel eipModel = findEipModelProperties(processingEnv, roundEnv, classElement, javaTypeName, modelName);
 
         // collect eip information
-        Set<EipOption> eipOptions = new TreeSet<>(new EipOptionComparator(eipModel));
+        Set<EipOptionModel> eipOptions = new TreeSet<>(new EipOptionComparator(eipModel));
         findClassProperties(processingEnv, writer, roundEnv, eipOptions, classElement, classElement, "", modelName);
 
-        String json = createParameterJsonSchema(eipModel, eipOptions);
+        eipOptions.forEach(eipModel::addOption);
+        String json = JsonMapper.createParameterJsonSchema(eipModel);
         writer.println(json);
-    }
-
-    public String createParameterJsonSchema(EipModel eipModel, Set<EipOption> options) {
-        StringBuilder buffer = new StringBuilder("{");
-        // eip model
-        buffer.append("\n \"model\": {");
-        buffer.append("\n    \"kind\": \"").append("model").append("\",");
-        buffer.append("\n    \"name\": \"").append(eipModel.getName()).append("\",");
-        if (eipModel.getTitle() != null) {
-            buffer.append("\n    \"title\": \"").append(eipModel.getTitle()).append("\",");
-        } else {
-            // fallback and use name as title
-            buffer.append("\n    \"title\": \"").append(Strings.asTitle(eipModel.getName())).append("\",");
-        }
-        buffer.append("\n    \"description\": \"").append(safeNull(eipModel.getDescription())).append("\",");
-        buffer.append("\n    \"javaType\": \"").append(eipModel.getJavaType()).append("\",");
-        buffer.append("\n    \"label\": \"").append(safeNull(eipModel.getLabel())).append("\",");
-        buffer.append("\n    \"deprecated\": false,");
-        buffer.append("\n    \"input\": false,");
-        buffer.append("\n    \"output\": false");
-        buffer.append("\n  },");
-
-        buffer.append("\n  \"properties\": {");
-        boolean first = true;
-        for (EipOption entry : options) {
-            if (first) {
-                first = false;
-            } else {
-                buffer.append(",");
-            }
-            buffer.append("\n    ");
-
-            // as its json we need to sanitize the docs
-            String doc = entry.getDocumentation();
-            doc = sanitizeDescription(doc, false);
-
-            buffer.append(JSonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), entry.getKind(), entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc,
-                                                  entry.isDeprecated(), entry.getDeprecationNote(), false, null, null, entry.isEnumType(), entry.getEnums(), entry.isOneOf(),
-                                                  entry.getOneOfTypes(), entry.isAsPredicate(), null, null, false, null, null));
-        }
-        buffer.append("\n  }");
-
-        buffer.append("\n}\n");
-        return buffer.toString();
     }
 
     protected EipModel findEipModelProperties(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv, TypeElement classElement, String javaTypeName, String name) {
@@ -162,16 +116,20 @@ public class SpringAnnotationProcessorHelper {
             }
         }
 
+        if (Strings.isNullOrEmpty(model.getTitle())) {
+            model.setTitle(Strings.asTitle(model.getName()));
+        }
+
         // favor to use class javadoc of component as description
         if (model.getJavaType() != null) {
             Elements elementUtils = processingEnv.getElementUtils();
-            TypeElement typeElement = findTypeElement(processingEnv, roundEnv, model.getJavaType());
+            TypeElement typeElement = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, model.getJavaType());
             if (typeElement != null) {
                 String doc = elementUtils.getDocComment(typeElement);
                 if (doc != null) {
                     // need to sanitize the description first (we only want a
                     // summary)
-                    doc = sanitizeDescription(doc, true);
+                    doc = JavadocHelper.sanitizeDescription(doc, true);
                     // the javadoc may actually be empty, so only change the doc
                     // if we got something
                     if (!Strings.isNullOrEmpty(doc)) {
@@ -184,7 +142,7 @@ public class SpringAnnotationProcessorHelper {
         return model;
     }
 
-    protected void findClassProperties(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, Set<EipOption> eipOptions, TypeElement originalClassType,
+    protected void findClassProperties(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, Set<EipOptionModel> eipOptions, TypeElement originalClassType,
                                        TypeElement classElement, String prefix, String modelName) {
         while (true) {
             List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
@@ -226,8 +184,8 @@ public class SpringAnnotationProcessorHelper {
             TypeElement baseTypeElement = null;
             TypeMirror superclass = classElement.getSuperclass();
             if (superclass != null) {
-                String superClassName = canonicalClassName(superclass.toString());
-                baseTypeElement = findTypeElement(processingEnv, roundEnv, superClassName);
+                String superClassName = Strings.canonicalClassName(superclass.toString());
+                baseTypeElement = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, superClassName);
             }
             if (baseTypeElement != null) {
                 classElement = baseTypeElement;
@@ -238,27 +196,27 @@ public class SpringAnnotationProcessorHelper {
     }
 
     private boolean processAttribute(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv, TypeElement originalClassType, TypeElement classElement,
-                                     VariableElement fieldElement, String fieldName, XmlAttribute attribute, Set<EipOption> eipOptions, String prefix, String modelName) {
+                                     VariableElement fieldElement, String fieldName, XmlAttribute attribute, Set<EipOptionModel> eipOptions, String prefix, String modelName) {
         Elements elementUtils = processingEnv.getElementUtils();
 
         String name = attribute.name();
-        if (isNullOrEmpty(name) || "##default".equals(name)) {
+        if (Strings.isNullOrEmpty(name) || "##default".equals(name)) {
             name = fieldName;
         }
 
         name = prefix + name;
         TypeMirror fieldType = fieldElement.asType();
         String fieldTypeName = fieldType.toString();
-        TypeElement fieldTypeElement = findTypeElement(processingEnv, roundEnv, fieldTypeName);
+        TypeElement fieldTypeElement = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, fieldTypeName);
 
         String defaultValue = findDefaultValue(fieldElement, fieldTypeName);
         String docComment;
         if ("mdcLoggingKeysPattern".equals(fieldName)) {
-            docComment = findJavaDoc(elementUtils, fieldElement, "MDCLoggingKeysPattern", name, classElement, true);
+            docComment = AnnotationProcessorHelper.findJavaDoc(elementUtils, fieldElement, "MDCLoggingKeysPattern", name, classElement, true);
         } else {
-            docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
+            docComment = AnnotationProcessorHelper.findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
         }
-        if (isNullOrEmpty(docComment)) {
+        if (Strings.isNullOrEmpty(docComment)) {
             Metadata metadata = fieldElement.getAnnotation(Metadata.class);
             docComment = metadata != null ? metadata.description() : null;
         }
@@ -270,7 +228,7 @@ public class SpringAnnotationProcessorHelper {
         Set<String> enums = new TreeSet<>();
         boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
         if (isEnum) {
-            TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
+            TypeElement enumClass = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
             // find all the enum constants which has the possible enum value
             // that can be used
             List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
@@ -294,7 +252,7 @@ public class SpringAnnotationProcessorHelper {
         }
 
         // special for id as its inherited from camel-core
-        if ("id".equals(name) && isNullOrEmpty(docComment)) {
+        if ("id".equals(name) && Strings.isNullOrEmpty(docComment)) {
             if ("CamelContextFactoryBean".equals(originalClassType.getSimpleName().toString())) {
                 docComment = "Sets the id (name) of this CamelContext";
             } else {
@@ -302,7 +260,7 @@ public class SpringAnnotationProcessorHelper {
             }
         }
 
-        EipOption ep = new EipOption(name, displayName, "attribute", fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, isEnum, enums, false, null,
+        EipOptionModel ep = createOption(name, displayName, "attribute", fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, isEnum, enums, false, null,
                                      false);
         eipOptions.add(ep);
 
@@ -313,7 +271,7 @@ public class SpringAnnotationProcessorHelper {
      * Special for processing an @XmlElement routes field
      */
     private void processRoutes(RoundEnvironment roundEnv, TypeElement originalClassType, XmlElement element, VariableElement fieldElement, String fieldName,
-                               Set<EipOption> eipOptions, String prefix) {
+                               Set<EipOptionModel> eipOptions, String prefix) {
 
         TypeMirror fieldType = fieldElement.asType();
         String fieldTypeName = fieldType.toString();
@@ -321,7 +279,7 @@ public class SpringAnnotationProcessorHelper {
         Set<String> oneOfTypes = new TreeSet<>();
         oneOfTypes.add("route");
 
-        EipOption ep = new EipOption("route", "Route", "element", fieldTypeName, false, "", "Contains the Camel routes", false, null, false, null, true, oneOfTypes, false);
+        EipOptionModel ep = createOption("route", "Route", "element", fieldTypeName, false, "", "Contains the Camel routes", false, null, false, null, true, oneOfTypes, false);
         eipOptions.add(ep);
     }
 
@@ -329,7 +287,7 @@ public class SpringAnnotationProcessorHelper {
      * Special for processing an @XmlElement rests field
      */
     private void processRests(RoundEnvironment roundEnv, TypeElement originalClassType, XmlElement element, VariableElement fieldElement, String fieldName,
-                              Set<EipOption> eipOptions, String prefix) {
+                              Set<EipOptionModel> eipOptions, String prefix) {
 
         TypeMirror fieldType = fieldElement.asType();
         String fieldTypeName = fieldType.toString();
@@ -337,13 +295,13 @@ public class SpringAnnotationProcessorHelper {
         Set<String> oneOfTypes = new TreeSet<>();
         oneOfTypes.add("rest");
 
-        EipOption ep = new EipOption("rest", "Rest", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, null, false, null, true,
+        EipOptionModel ep = createOption("rest", "Rest", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, null, false, null, true,
                                      oneOfTypes, false);
         eipOptions.add(ep);
     }
 
     private void processElement(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv, TypeElement classElement, XmlElement element, XmlElementRef elementRef,
-                                VariableElement fieldElement, Set<EipOption> eipOptions, String prefix) {
+                                VariableElement fieldElement, Set<EipOptionModel> eipOptions, String prefix) {
         Elements elementUtils = processingEnv.getElementUtils();
 
         String fieldName;
@@ -352,17 +310,17 @@ public class SpringAnnotationProcessorHelper {
 
             String kind = "element";
             String name = element != null ? element.name() : elementRef.name();
-            if (isNullOrEmpty(name) || "##default".equals(name)) {
+            if (Strings.isNullOrEmpty(name) || "##default".equals(name)) {
                 name = fieldName;
             }
             name = prefix + name;
             TypeMirror fieldType = fieldElement.asType();
             String fieldTypeName = fieldType.toString();
-            TypeElement fieldTypeElement = findTypeElement(processingEnv, roundEnv, fieldTypeName);
+            TypeElement fieldTypeElement = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, fieldTypeName);
 
             String defaultValue = findDefaultValue(fieldElement, fieldTypeName);
-            String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
-            if (isNullOrEmpty(docComment)) {
+            String docComment = AnnotationProcessorHelper.findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
+            if (Strings.isNullOrEmpty(docComment)) {
                 Metadata metadata = fieldElement.getAnnotation(Metadata.class);
                 docComment = metadata != null ? metadata.description() : null;
             }
@@ -374,7 +332,7 @@ public class SpringAnnotationProcessorHelper {
             Set<String> enums = new LinkedHashSet<>();
             boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
             if (isEnum) {
-                TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
+                TypeElement enumClass = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
                 // find all the enum constants which has the possible enum value
                 // that can be used
                 List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
@@ -389,7 +347,7 @@ public class SpringAnnotationProcessorHelper {
             // is it a definition/factory-bean type then its a oneOf
             TreeSet oneOfTypes = new TreeSet<String>();
             if (fieldTypeName.endsWith("Definition") || fieldTypeName.endsWith("FactoryBean")) {
-                TypeElement definitionClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
+                TypeElement definitionClass = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
                 if (definitionClass != null) {
                     XmlRootElement rootElement = definitionClass.getAnnotation(XmlRootElement.class);
                     if (rootElement != null) {
@@ -402,7 +360,7 @@ public class SpringAnnotationProcessorHelper {
             } else if (fieldTypeName.endsWith("Definition>") || fieldTypeName.endsWith("FactoryBean>")) {
                 // its a list so we need to load the generic type
                 String typeName = Strings.between(fieldTypeName, "<", ">");
-                TypeElement definitionClass = findTypeElement(processingEnv, roundEnv, typeName);
+                TypeElement definitionClass = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, typeName);
                 if (definitionClass != null) {
                     XmlRootElement rootElement = definitionClass.getAnnotation(XmlRootElement.class);
                     if (rootElement != null) {
@@ -427,14 +385,14 @@ public class SpringAnnotationProcessorHelper {
                 deprecationNote = metadata.deprecationNote();
             }
 
-            EipOption ep = new EipOption(name, displayName, kind, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, isEnum, enums, oneOf, oneOfTypes,
+            EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, isEnum, enums, oneOf, oneOfTypes,
                                          asPredicate);
             eipOptions.add(ep);
         }
     }
 
     private void processElements(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv, TypeElement classElement, XmlElements elements, VariableElement fieldElement,
-                                 Set<EipOption> eipOptions, String prefix) {
+                                 Set<EipOptionModel> eipOptions, String prefix) {
         Elements elementUtils = processingEnv.getElementUtils();
 
         String fieldName;
@@ -448,8 +406,8 @@ public class SpringAnnotationProcessorHelper {
             String fieldTypeName = fieldType.toString();
 
             String defaultValue = findDefaultValue(fieldElement, fieldTypeName);
-            String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
-            if (isNullOrEmpty(docComment)) {
+            String docComment = AnnotationProcessorHelper.findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
+            if (Strings.isNullOrEmpty(docComment)) {
                 Metadata metadata = fieldElement.getAnnotation(Metadata.class);
                 docComment = metadata != null ? metadata.description() : null;
             }
@@ -473,7 +431,7 @@ public class SpringAnnotationProcessorHelper {
                 deprecationNote = metadata.deprecationNote();
             }
 
-            EipOption ep = new EipOption(name, kind, displayName, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, false, null, true, oneOfTypes,
+            EipOptionModel ep = createOption(name, kind, displayName, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, false, null, true, oneOfTypes,
                                          false);
             eipOptions.add(ep);
         }
@@ -505,172 +463,26 @@ public class SpringAnnotationProcessorHelper {
         return defaultValue;
     }
 
-    private static final class EipModel {
-
-        private String name;
-        private String title;
-        private String javaType;
-        private String label;
-        private String description;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public String getJavaType() {
-            return javaType;
-        }
-
-        public void setJavaType(String javaType) {
-            this.javaType = javaType;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public void setLabel(String label) {
-            this.label = label;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
+    private EipOptionModel createOption(String name, String displayName, String kind, String type, boolean required, String defaultValue, String description, boolean deprecated,
+                                        String deprecationNote, boolean enumType, Set<String> enums, boolean oneOf, Set<String> oneOfs, boolean asPredicate) {
+        EipOptionModel option = new EipOptionModel();
+        option.setName(name);
+        option.setDisplayName(Strings.isNullOrEmpty(displayName) ? Strings.asTitle(name) : displayName);
+        option.setKind(kind);
+        option.setRequired(required);
+        option.setDefaultValue(defaultValue);
+        option.setDescription(JavadocHelper.sanitizeDescription(description, false));
+        option.setDeprecated(deprecated);
+        option.setDeprecationNote(deprecationNote);
+        option.setType(AnnotationProcessorHelper.getType(type, enumType));
+        option.setJavaType(type);
+        option.setEnums(enums != null && !enums.isEmpty() ? new ArrayList<>(enums) : null);
+        option.setOneOfs(oneOfs != null && !oneOfs.isEmpty() ? new ArrayList<>(oneOfs) : null);
+        option.setAsPredicate(asPredicate);
+        return option;
     }
 
-    private static final class EipOption {
-
-        private String name;
-        private String displayName;
-        private String kind;
-        private String type;
-        private boolean required;
-        private String defaultValue;
-        private String documentation;
-        private boolean deprecated;
-        private String deprecationNote;
-        private boolean enumType;
-        private Set<String> enums;
-        private boolean oneOf;
-        private Set<String> oneOfTypes;
-        private boolean asPredicate;
-
-        private EipOption(String name, String displayName, String kind, String type, boolean required, String defaultValue, String documentation, boolean deprecated,
-                          String deprecationNote, boolean enumType, Set<String> enums, boolean oneOf, Set<String> oneOfTypes, boolean asPredicate) {
-            this.name = name;
-            this.displayName = displayName;
-            this.kind = kind;
-            this.type = type;
-            this.required = required;
-            this.defaultValue = defaultValue;
-            this.documentation = documentation;
-            this.deprecated = deprecated;
-            this.deprecationNote = deprecationNote;
-            this.enumType = enumType;
-            this.enums = enums;
-            this.oneOf = oneOf;
-            this.oneOfTypes = oneOfTypes;
-            this.asPredicate = asPredicate;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getDisplayName() {
-            return displayName;
-        }
-
-        public String getKind() {
-            return kind;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public boolean isRequired() {
-            return required;
-        }
-
-        public String getDefaultValue() {
-            return defaultValue;
-        }
-
-        public String getDocumentation() {
-            return documentation;
-        }
-
-        public boolean isDeprecated() {
-            return deprecated;
-        }
-
-        public String getDeprecationNote() {
-            return deprecationNote;
-        }
-
-        public boolean isEnumType() {
-            return enumType;
-        }
-
-        public Set<String> getEnums() {
-            return enums;
-        }
-
-        public boolean isOneOf() {
-            return oneOf;
-        }
-
-        public Set<String> getOneOfTypes() {
-            return oneOfTypes;
-        }
-
-        public boolean isAsPredicate() {
-            return asPredicate;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            EipOption that = (EipOption)o;
-
-            if (!name.equals(that.name)) {
-                return false;
-            }
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            return name.hashCode();
-        }
-    }
-
-    private static final class EipOptionComparator implements Comparator<EipOption> {
+    private static final class EipOptionComparator implements Comparator<EipOptionModel> {
 
         private final EipModel model;
 
@@ -679,7 +491,7 @@ public class SpringAnnotationProcessorHelper {
         }
 
         @Override
-        public int compare(EipOption o1, EipOption o2) {
+        public int compare(EipOptionModel o1, EipOptionModel o2) {
             int weigth = weigth(o1);
             int weigth2 = weigth(o2);
 
@@ -692,7 +504,7 @@ public class SpringAnnotationProcessorHelper {
             }
         }
 
-        private int weigth(EipOption o) {
+        private int weigth(EipOptionModel o) {
             String name = o.getName();
 
             // these should be first

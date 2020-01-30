@@ -49,7 +49,7 @@ public class CryptoDataFormat extends DataFormatDefinition {
     @Metadata(defaultValue = "HmacSHA1")
     private String macAlgorithm = "HmacSHA1";
     @XmlAttribute
-    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String shouldAppendHMAC;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")

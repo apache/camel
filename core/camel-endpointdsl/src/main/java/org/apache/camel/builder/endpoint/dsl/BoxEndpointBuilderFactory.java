@@ -244,6 +244,34 @@ public interface BoxEndpointBuilderFactory {
             return this;
         }
         /**
+         * Milliseconds before the next poll. You can also specify time values
+         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 500
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder delay(long delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll. You can also specify time values
+         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 500
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder delay(String delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
@@ -473,34 +501,6 @@ public interface BoxEndpointBuilderFactory {
         default BoxEndpointConsumerBuilder authenticationType(
                 String authenticationType) {
             doSetProperty("authenticationType", authenticationType);
-            return this;
-        }
-        /**
-         * Milliseconds before the next poll. You can also specify time values
-         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
-         * seconds), and 1h (1 hour).
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 500
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder delay(long delay) {
-            doSetProperty("delay", delay);
-            return this;
-        }
-        /**
-         * Milliseconds before the next poll. You can also specify time values
-         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
-         * seconds), and 1h (1 hour).
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 500
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder delay(String delay) {
-            doSetProperty("delay", delay);
             return this;
         }
         /**

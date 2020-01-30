@@ -16,11 +16,10 @@
  */
 package org.apache.camel.reifier.dataformat;
 
-import org.apache.camel.CamelContext;
+import java.util.Map;
+
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.FhirDataformat;
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.ObjectHelper;
 
 public class FhirDataFormatReifier<T extends FhirDataformat> extends DataFormatReifier<T> {
 
@@ -29,69 +28,24 @@ public class FhirDataFormatReifier<T extends FhirDataformat> extends DataFormatR
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (definition.getContentTypeHeader() != null) {
-            setProperty(camelContext, dataFormat, "contentTypeHeader", definition.getContentTypeHeader());
-        }
-        if (definition.getFhirContext() != null) {
-            setProperty(camelContext, dataFormat, "fhirContext", definition.getFhirContext());
-        }
-        if (definition.getFhirVersion() != null) {
-            setProperty(camelContext, dataFormat, "fhirVersion", definition.getFhirVersion());
-        }
-        if (ObjectHelper.isNotEmpty(definition.getDontStripVersionsFromReferencesAtPaths())) {
-            setProperty(camelContext, dataFormat, "dontStripVersionsFromReferencesAtPaths", definition.getDontStripVersionsFromReferencesAtPaths());
-        }
-        if (ObjectHelper.isNotEmpty(definition.getDontEncodeElements())) {
-            setProperty(camelContext, dataFormat, "dontEncodeElements", definition.getDontEncodeElements());
-        }
-        if (ObjectHelper.isNotEmpty(definition.getEncodeElements())) {
-            setProperty(camelContext, dataFormat, "encodeElements", definition.getEncodeElements());
-        }
-        if (ObjectHelper.isNotEmpty(definition.getServerBaseUrl())) {
-            setProperty(camelContext, dataFormat, "serverBaseUrl", definition.getServerBaseUrl());
-        }
-        if (ObjectHelper.isNotEmpty(definition.getForceResourceId())) {
-            setProperty(camelContext, dataFormat, "forceResourceId", definition.getForceResourceId());
-        }
-        if (ObjectHelper.isNotEmpty(definition.getPreferTypes())) {
-            setProperty(camelContext, dataFormat, "preferTypes", definition.getPreferTypes());
-        }
-        if (ObjectHelper.isNotEmpty(definition.getParserOptions())) {
-            setProperty(camelContext, dataFormat, "parserOptions", definition.getParserOptions());
-        }
-        if (ObjectHelper.isNotEmpty(definition.getParserErrorHandler())) {
-            setProperty(camelContext, dataFormat, "parserErrorHandler", definition.getParserErrorHandler());
-        }
-
-        Boolean answer = ObjectHelper.toBoolean(definition.isEncodeElementsAppliesToChildResourcesOnly());
-        if (answer != null) {
-            setProperty(camelContext, dataFormat, "encodeElementsAppliesToChildResourcesOnly", answer);
-        }
-        answer = ObjectHelper.toBoolean(definition.isOmitResourceId());
-        if (answer != null) {
-            setProperty(camelContext, dataFormat, "omitResourceId", answer);
-        }
-        answer = ObjectHelper.toBoolean(definition.isPrettyPrint());
-        if (answer != null) {
-            setProperty(camelContext, dataFormat, "prettyPrint", answer);
-        }
-        answer = ObjectHelper.toBoolean(definition.isSuppressNarratives());
-        if (answer != null) {
-            setProperty(camelContext, dataFormat, "suppressNarratives", answer);
-        }
-        answer = ObjectHelper.toBoolean(definition.isSummaryMode());
-        if (answer != null) {
-            setProperty(camelContext, dataFormat, "summaryMode", answer);
-        }
-        answer = ObjectHelper.toBoolean(definition.getOverrideResourceIdWithBundleEntryFullUrl());
-        if (answer != null) {
-            setProperty(camelContext, dataFormat, "overrideResourceIdWithBundleEntryFullUrl", answer);
-        }
-        answer = ObjectHelper.toBoolean(definition.getStripVersionsFromReferences());
-        if (answer != null) {
-            setProperty(camelContext, dataFormat, "stripVersionsFromReferences", answer);
-        }
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("fhirContext", definition.getFhirContext());
+        properties.put("fhirVersion", definition.getFhirVersion());
+        properties.put("dontStripVersionsFromReferencesAtPaths", definition.getDontStripVersionsFromReferencesAtPaths());
+        properties.put("dontEncodeElements", definition.getDontEncodeElements());
+        properties.put("encodeElements", definition.getEncodeElements());
+        properties.put("serverBaseUrl", definition.getServerBaseUrl());
+        properties.put("forceResourceId", definition.getForceResourceId());
+        properties.put("preferTypes", definition.getPreferTypes());
+        properties.put("parserOptions", definition.getParserOptions());
+        properties.put("parserErrorHandler", definition.getParserErrorHandler());
+        properties.put("encodeElementsAppliesToChildResourcesOnly", definition.isEncodeElementsAppliesToChildResourcesOnly());
+        properties.put("omitResourceId", definition.isOmitResourceId());
+        properties.put("prettyPrint", definition.isPrettyPrint());
+        properties.put("suppressNarratives", definition.isSuppressNarratives());
+        properties.put("summaryMode", definition.isSummaryMode());
+        properties.put("overrideResourceIdWithBundleEntryFullUrl", definition.getOverrideResourceIdWithBundleEntryFullUrl());
+        properties.put("stripVersionsFromReferences", definition.getStripVersionsFromReferences());
     }
 
 }

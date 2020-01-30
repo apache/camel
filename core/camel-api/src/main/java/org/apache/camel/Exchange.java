@@ -118,6 +118,7 @@ public interface Exchange {
     String EXCEPTION_HANDLED             = "CamelExceptionHandled";
     String EVALUATE_EXPRESSION_RESULT    = "CamelEvaluateExpressionResult";
     String ERRORHANDLER_CIRCUIT_DETECTED = "CamelFErrorHandlerCircuitDetected";
+    @Deprecated
     String ERRORHANDLER_HANDLED          = "CamelErrorHandlerHandled";
     @Deprecated
     String EXTERNAL_REDELIVERED          = "CamelExternalRedelivered";
@@ -166,6 +167,7 @@ public interface Exchange {
 
     String INTERCEPTED_ENDPOINT = "CamelInterceptedEndpoint";
     String INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED = "CamelInterceptSendToEndpointWhenMatched";
+    @Deprecated
     String INTERRUPTED = "CamelInterrupted";
 
     String LANGUAGE_SCRIPT          = "CamelLanguageScript";
@@ -190,6 +192,7 @@ public interface Exchange {
     String MULTICAST_INDEX             = "CamelMulticastIndex";
     String MULTICAST_COMPLETE          = "CamelMulticastComplete";
 
+    @Deprecated
     String NOTIFY_EVENT = "CamelNotifyEvent";
 
     String ON_COMPLETION      = "CamelOnCompletion";
@@ -203,12 +206,16 @@ public interface Exchange {
     String REDELIVERED             = "CamelRedelivered";
     String REDELIVERY_COUNTER      = "CamelRedeliveryCounter";
     String REDELIVERY_MAX_COUNTER  = "CamelRedeliveryMaxCounter";
+    @Deprecated
     String REDELIVERY_EXHAUSTED    = "CamelRedeliveryExhausted";
     String REDELIVERY_DELAY        = "CamelRedeliveryDelay";
     String REST_HTTP_URI           = "CamelRestHttpUri";
     String REST_HTTP_QUERY         = "CamelRestHttpQuery";
+    @Deprecated
     String ROLLBACK_ONLY           = "CamelRollbackOnly";
+    @Deprecated
     String ROLLBACK_ONLY_LAST      = "CamelRollbackOnlyLast";
+    @Deprecated
     String ROUTE_STOP              = "CamelRouteStop";
 
     String REUSE_SCRIPT_ENGINE = "CamelReuseScripteEngine";
@@ -300,6 +307,7 @@ public interface Exchange {
      * @return the value of the given property or <tt>defaultValue</tt> if there is no
      *         property for the given name
      */
+    @Deprecated
     Object getProperty(String name, Object defaultValue);
 
     /**
@@ -520,6 +528,18 @@ public interface Exchange {
     boolean isTransacted();
 
     /**
+     * Returns true if this exchange is marked to stop and not continue routing.
+     */
+    boolean isRouteStop();
+
+    /**
+     * Sets whether this exchange is marked to stop and not continue routing.
+     *
+     * @param routeStop <tt>true</tt> to stop routing
+     */
+    void setRouteStop(boolean routeStop);
+
+    /**
      * Returns true if this exchange is an external initiated redelivered message (such as a JMS broker).
      * <p/>
      * <b>Important: </b> It is not always possible to determine if the message is a redelivery
@@ -534,6 +554,21 @@ public interface Exchange {
      * Returns true if this exchange is marked for rollback
      */
     boolean isRollbackOnly();
+
+    /**
+     * Sets whether to mark this exchange for rollback
+     */
+    void setRollbackOnly(boolean rollbackOnly);
+
+    /**
+     * Returns true if this exchange is marked for rollback (only last transaction section)
+     */
+    boolean isRollbackOnlyLast();
+
+    /**
+     * Sets whether to mark this exchange for rollback (only last transaction section)
+     */
+    void setRollbackOnlyLast(boolean rollbackOnlyLast);
 
     /**
      * Returns the container so that a processor can resolve endpoints from URIs

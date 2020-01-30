@@ -27,6 +27,7 @@ import org.apache.camel.component.telegram.model.EditMessageDelete;
 import org.apache.camel.component.telegram.model.EditMessageMediaMessage;
 import org.apache.camel.component.telegram.model.EditMessageReplyMarkupMessage;
 import org.apache.camel.component.telegram.model.EditMessageTextMessage;
+import org.apache.camel.component.telegram.model.ForceReply;
 import org.apache.camel.component.telegram.model.IncomingMessage;
 import org.apache.camel.component.telegram.model.InlineKeyboardButton;
 import org.apache.camel.component.telegram.model.InlineKeyboardMarkup;
@@ -47,6 +48,10 @@ import org.apache.camel.component.telegram.model.OutgoingStickerMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
 import org.apache.camel.component.telegram.model.ReplyKeyboardMarkup;
+import org.apache.camel.component.telegram.model.ReplyKeyboardRemove;
+import org.apache.camel.component.telegram.model.ReplyMarkup;
+import org.apache.camel.component.telegram.model.SendLocationMessage;
+import org.apache.camel.component.telegram.model.SendVenueMessage;
 import org.apache.camel.component.telegram.util.TelegramApiConfig;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
@@ -129,9 +134,31 @@ public class TelegramServiceTest extends TelegramTestSupport {
             .oneTimeKeyboard(true)
             .build();
 
-        msg.setReplyKeyboardMarkup(replyMarkup);
+        msg.setReplyMarkup(replyMarkup);
 
         template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+    }
+
+    @Test
+    public void testSendMessageWithForceReply() {
+        OutgoingTextMessage msg = new OutgoingTextMessage();
+        msg.setChatId(chatId);
+        msg.setText("Choose one option!");
+        msg.setReplyMarkup(new ForceReply(true));
+
+        MessageResult result = sendMessage(msg);
+        Assertions.assertTrue(result.isOk());
+    }
+
+    @Test
+    public void testSendMessageWithReplyKeyboardRemove() {
+        OutgoingTextMessage msg = new OutgoingTextMessage();
+        msg.setChatId(chatId);
+        msg.setText("Choose one option!");
+        msg.setReplyMarkup(new ReplyKeyboardRemove(true));
+
+        MessageResult result = sendMessage(msg);
+        Assertions.assertTrue(result.isOk());
     }
 
     @Test
@@ -144,7 +171,7 @@ public class TelegramServiceTest extends TelegramTestSupport {
             .removeKeyboard(true)
             .build();
 
-        msg.setReplyKeyboardMarkup(replyMarkup);
+        msg.setReplyMarkup(replyMarkup);
 
         template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
     }
@@ -171,6 +198,40 @@ public class TelegramServiceTest extends TelegramTestSupport {
         msg.setFilenameWithExtension("file.png");
 
         template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+    }
+
+    @Test
+    public void testSendPhotoWithForceReply() throws IOException {
+        byte[] image = TelegramTestUtil.createSampleImage("PNG");
+
+        OutgoingPhotoMessage msg = new OutgoingPhotoMessage();
+        msg.setPhoto(image);
+        msg.setChatId(chatId);
+        msg.setFilenameWithExtension("file.png");
+        msg.setReplyMarkup(
+            new ForceReply(true)
+        );
+
+        MessageResult result = sendMessage(msg);
+        Assertions.assertTrue(result.isOk());
+    }
+
+    @Test
+    public void testSendPhotoWithInlineKeyboardMarkup() throws IOException {
+        byte[] image = TelegramTestUtil.createSampleImage("PNG");
+
+        OutgoingPhotoMessage msg = new OutgoingPhotoMessage();
+        msg.setPhoto(image);
+        msg.setChatId(chatId);
+        msg.setFilenameWithExtension("file.png");
+        msg.setReplyMarkup(
+            InlineKeyboardMarkup.builder()
+                .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
+                    .url("https://camel.apache.org").build())).build()
+        );
+
+        MessageResult result = sendMessage(msg);
+        Assertions.assertTrue(result.isOk());
     }
 
     @Test
@@ -210,8 +271,13 @@ public class TelegramServiceTest extends TelegramTestSupport {
         msg.setTitle("Audio");
         msg.setDurationSeconds(5);
         msg.setPerformer("Myself");
+        ReplyMarkup replyMarkup = InlineKeyboardMarkup.builder()
+            .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
+                .url("https://camel.apache.org").build())).build();
+        msg.setReplyMarkup(replyMarkup);
 
-        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        MessageResult result = sendMessage(msg);
+        Assertions.assertTrue(result.isOk());
     }
 
     @Test
@@ -239,7 +305,13 @@ public class TelegramServiceTest extends TelegramTestSupport {
         msg.setWidth(90);
         msg.setHeight(50);
 
-        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        ReplyMarkup replyMarkup = InlineKeyboardMarkup.builder()
+            .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
+                .url("https://camel.apache.org").build())).build();
+        msg.setReplyMarkup(replyMarkup);
+
+        MessageResult result = sendMessage(msg);
+        Assertions.assertTrue(result.isOk());
     }
 
     @Test
@@ -263,35 +335,77 @@ public class TelegramServiceTest extends TelegramTestSupport {
         msg.setChatId(chatId);
         msg.setFilenameWithExtension("file.txt");
         msg.setCaption("A document");
+        ReplyMarkup replyMarkup = InlineKeyboardMarkup.builder()
+            .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
+                .url("https://camel.apache.org").build())).build();
+        msg.setReplyMarkup(
+            replyMarkup
+        );
 
-        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        MessageResult result = sendMessage(msg);
+        Assertions.assertTrue(result.isOk());
+    }
+
+    @Test
+    public void testSendLocationFull() {
+
+        double latitude = 39.220409;
+        double longitude = -8.894500;
+        SendLocationMessage msg = new SendLocationMessage();
+        msg.setLatitude(latitude);
+        msg.setLongitude(longitude);
+        msg.setReplyMarkup(InlineKeyboardMarkup.builder()
+            .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
+                .url("https://camel.apache.org").build())).build());
+
+        MessageResult result = sendMessage(msg);
+        Assertions.assertTrue(result.isOk());
+    }
+
+    @Test
+    public void testSendVenueFull() {
+
+        double latitude = 39.220409;
+        double longitude = -8.894500;
+        SendVenueMessage msg = new SendVenueMessage();
+        msg.setLatitude(latitude);
+        msg.setLongitude(longitude);
+        msg.setReplyMarkup(InlineKeyboardMarkup.builder()
+            .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
+                .url("https://camel.apache.org").build())).build());
+
+        MessageResult result = sendMessage(msg);
+        Assertions.assertTrue(result.isOk());
     }
 
     @Test
     public void testSendStickerViaImage() throws IOException {
         byte[] document = TelegramTestUtil.createSampleImage("WEBP");
 
-        OutgoingStickerMessage msg = OutgoingStickerMessage.createWithImage(document, "file.webp", chatId, null, null);
+        OutgoingStickerMessage msg = OutgoingStickerMessage.createWithImage(document, "file.webp", null, null, null);
 
-        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        MessageResult result = sendMessage(msg);
+        Assertions.assertTrue(result.isOk());
     }
 
     @Test
     public void testSendStickerViaFileId() {
         String fileId = "CAADBAADEQADmDVxAkmg3XnDZam0FgQ";
 
-        OutgoingStickerMessage msg = OutgoingStickerMessage.createWithFileId(fileId, chatId, null, null);
+        OutgoingStickerMessage msg = OutgoingStickerMessage.createWithFileId(fileId, null, null, null);
 
-        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        MessageResult result = sendMessage(msg);
+        Assertions.assertTrue(result.isOk());
     }
 
     @Test
     public void testSendStickerViaUrl() {
         String imageUri = "https://www.gstatic.com/webp/gallery/1.sm.webp?dcb_=0.7185987052045011";
 
-        OutgoingStickerMessage msg = OutgoingStickerMessage.createWithUrl(imageUri, chatId, null, null);
+        OutgoingStickerMessage msg = OutgoingStickerMessage.createWithUrl(imageUri, null, null, null);
 
-        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        MessageResult result = sendMessage(msg);
+        Assertions.assertTrue(result.isOk());
     }
 
     @Test
@@ -521,7 +635,8 @@ public class TelegramServiceTest extends TelegramTestSupport {
         MessageResult incomingMessage = sendMessage(editMessageReplyMarkupMessage);
         Assertions.assertTrue(incomingMessage.isOk());
 
-        Assertions.assertEquals(buttonOptionOneI, incomingMessage.getMessage().getReplyMarkup().getInlineKeyboard()
+        Assertions.assertEquals(buttonOptionOneI,
+            ((InlineKeyboardMarkup)incomingMessage.getMessage().getReplyMarkup()).getInlineKeyboard()
         .get(0).get(0));
     }
 

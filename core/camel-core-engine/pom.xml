@@ -136,6 +136,7 @@
                     <execution>
                         <id>generate</id>
                         <goals>
+                            <goal>jandex</goal>
                             <goal>generate-jaxb-list</goal>
                             <goal>generate-eips-list</goal>
                             <goal>generate-components-list</goal>
@@ -214,8 +215,8 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
                         <_plugin>

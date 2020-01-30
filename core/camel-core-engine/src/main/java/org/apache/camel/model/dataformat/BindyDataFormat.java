@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model.dataformat;
 
+import java.util.Objects;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -65,6 +67,17 @@ public class BindyDataFormat extends DataFormatDefinition {
 
     public String getClassTypeAsString() {
         return classType;
+    }
+
+    @Override
+    public String getDataFormatName() {
+        if (type == BindyType.Csv) {
+            return "bindy-csv";
+        } else if (type == BindyType.Fixed) {
+            return "bindy-fixed";
+        } else {
+            return "bindy-kvp";
+        }
     }
 
     /**

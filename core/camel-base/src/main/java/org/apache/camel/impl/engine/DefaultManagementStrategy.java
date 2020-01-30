@@ -21,6 +21,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.impl.event.DefaultEventFactory;
 import org.apache.camel.spi.CamelEvent;
@@ -79,6 +80,10 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     @Override
     public void addEventNotifier(EventNotifier eventNotifier) {
         this.eventNotifiers.add(eventNotifier);
+        if (getCamelContext() != null) {
+            // okay we have an event notifier so its applicable
+            getCamelContext().adapt(ExtendedCamelContext.class).setEventNotificationApplicable(true);
+        }
     }
 
     @Override
@@ -183,6 +188,12 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     @Override
     protected void doStart() throws Exception {
         LOG.info("JMX is disabled");
+
+        ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
+        if (!getEventNotifiers().isEmpty()) {
+            getCamelContext().adapt(ExtendedCamelContext.class).setEventNotificationApplicable(true);
+        }
+
         doStartManagementStrategy();
     }
 

@@ -16,17 +16,21 @@
  */
 package org.apache.camel.tools.apt;
 
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.io.StringReader;
+import java.io.Writer;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.Element;
@@ -39,6 +43,7 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
+import javax.tools.Diagnostic;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
@@ -49,26 +54,16 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.tooling.util.JSonSchemaHelper;
+import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.ComponentModel.ComponentOptionModel;
+import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
+import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tools.apt.helper.EndpointHelper;
-import org.apache.camel.tools.apt.model.ComponentModel;
-import org.apache.camel.tools.apt.model.ComponentOption;
-import org.apache.camel.tools.apt.model.EndpointOption;
-import org.apache.camel.tools.apt.model.EndpointPath;
-import org.apache.camel.tools.apt.model.PropertyOption;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.tooling.util.JavadocHelper;
 import org.apache.camel.util.json.Jsoner;
-
-import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findFieldElement;
-import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findJavaDoc;
-import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findTypeElement;
-import static org.apache.camel.tools.apt.AnnotationProcessorHelper.implementsInterface;
-import static org.apache.camel.tools.apt.AnnotationProcessorHelper.processFile;
-import static org.apache.camel.tooling.util.JSonSchemaHelper.sanitizeDescription;
-import static org.apache.camel.tooling.util.Strings.canonicalClassName;
-import static org.apache.camel.tooling.util.Strings.getOrElse;
-import static org.apache.camel.tooling.util.Strings.isNullOrEmpty;
 
 /**
  * Processes all Camel {@link UriEndpoint}s and generate json schema documentation for the endpoint/component.
@@ -81,7 +76,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
     private static final String HEADER_FILTER_STRATEGY_JAVADOC = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.";
 
     @Override
-    protected void doProcess(Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) throws Exception {
+    protected void doProcess(Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
         Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(UriEndpoint.class);
         for (Element element : elements) {
             if (element instanceof TypeElement) {
@@ -98,7 +93,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             String title = uriEndpoint.title();
             final String label = uriEndpoint.label();
             validateSchemaName(scheme, classElement);
-            if (!isNullOrEmpty(scheme)) {
+            if (!Strings.isNullOrEmpty(scheme)) {
                 // support multiple schemes separated by comma, which maps to the exact same component
                 // for example camel-mail has a bunch of component schema names that does that
                 String[] schemes = scheme.split(",");
@@ -116,10 +111,10 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                     final String aliasTitle = aTitle;
 
                     // write json schema
-                    String name = canonicalClassName(classElement.getQualifiedName().toString());
+                    String name = Strings.canonicalClassName(classElement.getQualifiedName().toString());
                     String packageName = name.substring(0, name.lastIndexOf("."));
-                    String fileName = alias + ".json";
-                    processFile(processingEnv, packageName, fileName,
+                    String fileName = alias + PackageHelper.JSON_SUFIX;
+                    AnnotationProcessorHelper.processFile(processingEnv, packageName, fileName,
                             writer -> writeJSonSchemeAndPropertyConfigurer(writer, roundEnv, classElement, uriEndpoint, aliasTitle, alias, extendsAlias, label, schemes));
                 }
             }
@@ -135,70 +130,137 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
 
     protected void writeJSonSchemeAndPropertyConfigurer(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint,
                                                         String title, String scheme, String extendsScheme, String label, String[] schemes) {
+        String parentScheme = isNullOrEmpty(extendsScheme) ? null : extendsScheme;
+
         // gather component information
-        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, classElement, title, scheme, extendsScheme, label);
+        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, classElement, title, scheme, parentScheme, label, schemes);
 
         // get endpoint information which is divided into paths and options (though there should really only be one path)
-        Set<EndpointPath> endpointPaths = new LinkedHashSet<>();
-        Set<EndpointOption> endpointOptions = new LinkedHashSet<>();
-        Set<ComponentOption> componentOptions = new LinkedHashSet<>();
-
-        JsonObject parentData = null;
+        ComponentModel parentData = null;
         TypeMirror superclass = classElement.getSuperclass();
         if (superclass != null) {
-            String superClassName = canonicalClassName(superclass.toString());
-            TypeElement baseTypeElement = findTypeElement(processingEnv, roundEnv, superClassName);
+            String superClassName = Strings.canonicalClassName(superclass.toString());
+            TypeElement baseTypeElement = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, superClassName);
             if (baseTypeElement != null && !roundEnv.getRootElements().contains(baseTypeElement)) {
                 UriEndpoint parentUriEndpoint = baseTypeElement.getAnnotation(UriEndpoint.class);
                 if (parentUriEndpoint != null) {
-                    String parentScheme = parentUriEndpoint.scheme().split(",")[0];
-                    String packageName = superClassName.substring(0, superClassName.lastIndexOf("."));
-                    String fileName = parentScheme + ".json";
-                    try {
-                        FileObject res = processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH, packageName, fileName);
-                        String json = res.getCharContent(false).toString();
-                        parentData = Jsoner.deserialize(json, (JsonObject) null);
-                    } catch (Exception e) {
-                        // ignore
-                        throw new RuntimeException("Error: " + e.toString(), e);
-                    }
+                    parentScheme = parentUriEndpoint.scheme().split(",")[0];
+                }
+            }
+        }
+        if (parentScheme != null) {
+            try {
+                FileObject res = processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH,
+                        "", "META-INF/services/org/apache/camel/component/" + parentScheme);
+                String propsStr = res.getCharContent(false).toString();
+                Properties props = new Properties();
+                props.load(new StringReader(propsStr));
+                String clazzName = props.getProperty("class");
+                String packageName = clazzName.substring(0, clazzName.lastIndexOf("."));
+                res = processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH,
+                        packageName, parentScheme + PackageHelper.JSON_SUFIX);
+                String json = res.getCharContent(false).toString();
+                parentData = JsonMapper.generateComponentModel(json);
+            } catch (Exception e) {
+                // ignore
+                if (!Objects.equals(parentScheme, extendsScheme)) {
+                    throw new RuntimeException("Error: " + e.toString(), e);
                 }
             }
         }
 
-        // remove excluded properties from parent as we dont want to inherit them again
-        if (parentData != null && parentData.get("properties") != null) {
-            Map map = (Map<String, Object>) parentData.get("properties");
-            for (String exclude : uriEndpoint.excludeProperties().split(",")) {
-                map.remove(exclude);
-            }
-        }
-
         // component options
-        TypeElement componentClassElement = findTypeElement(processingEnv, roundEnv, componentModel.getJavaType());
+        TypeElement componentClassElement = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, componentModel.getJavaType());
         if (componentClassElement != null) {
-            findComponentClassProperties(writer, roundEnv, componentModel, componentOptions, componentClassElement, "", parentData, null, null);
-        }
-        // if the component has known class name
-        if (!"@@@JAVATYPE@@@".equals(componentModel.getJavaType())) {
-            generateComponentConfigurer(roundEnv, uriEndpoint, scheme, schemes, componentModel, componentOptions);
+            findComponentClassProperties(roundEnv, componentModel, componentClassElement, "", parentData, null, null);
         }
 
         // endpoint options
-        findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, classElement, "", uriEndpoint.excludeProperties(), parentData, null, null);
-        String json = createParameterJsonSchema(componentModel, componentOptions, endpointPaths, endpointOptions, schemes, parentData);
+        findClassProperties(roundEnv, componentModel, classElement, "", uriEndpoint.excludeProperties(), parentData, null, null);
+
+        // enhance and generate
+        enhanceComponentModel(componentModel, parentData, uriEndpoint.excludeProperties());
+
+        // if the component has known class name
+        if (!"@@@JAVATYPE@@@".equals(componentModel.getJavaType())) {
+            generateComponentConfigurer(roundEnv, uriEndpoint, scheme, schemes, componentModel);
+        }
+
+        String json = JsonMapper.createParameterJsonSchema(componentModel);
         writer.println(json);
-        generateEndpointConfigurer(roundEnv, classElement, uriEndpoint, scheme, schemes, componentModel, endpointOptions);
+        generateEndpointConfigurer(roundEnv, classElement, uriEndpoint, scheme, schemes, componentModel);
+    }
+
+    private void enhanceComponentModel(ComponentModel componentModel, ComponentModel parentData, String excludeProperties) {
+        componentModel.getComponentOptions().removeIf(option -> filterOutOption(componentModel, option));
+        componentModel.getComponentOptions().forEach(option -> fixDoc(option, parentData != null ? parentData.getComponentOptions() : null));
+        componentModel.getEndpointOptions().removeIf(option -> filterOutOption(componentModel, option));
+        componentModel.getEndpointOptions().forEach(option -> fixDoc(option, parentData != null ? parentData.getEndpointOptions() : null));
+        componentModel.getEndpointOptions().sort(EndpointHelper.createOverallComparator(componentModel.getSyntax()));
+        // merge with parent, removing excluded and overriden properties
+        if (parentData != null) {
+            Set<String> componentOptionNames = componentModel.getComponentOptions().stream().map(BaseOptionModel::getName).collect(Collectors.toSet());
+            Set<String> endpointOptionNames = componentModel.getEndpointOptions().stream().map(BaseOptionModel::getName).collect(Collectors.toSet());
+            Collections.addAll(endpointOptionNames, excludeProperties.split(","));
+            parentData.getComponentOptions().removeIf(option -> componentOptionNames.contains(option.getName()));
+            parentData.getEndpointOptions().removeIf(option -> endpointOptionNames.contains(option.getName()));
+            componentModel.getComponentOptions().addAll(parentData.getComponentOptions());
+            componentModel.getEndpointOptions().addAll(parentData.getEndpointOptions());
+        }
+
+    }
+
+    private void fixDoc(BaseOptionModel option, List<? extends BaseOptionModel> parentOptions) {
+        String doc = getDocumentationWithNotes(option);
+        if (Strings.isNullOrEmpty(doc) && parentOptions != null) {
+            doc = parentOptions.stream()
+                    .filter(opt -> Objects.equals(opt.getName(), option.getName()))
+                    .map(BaseOptionModel::getDescription)
+                    .findFirst().orElse(null);
+        }
+        // as its json we need to sanitize the docs
+        doc = JavadocHelper.sanitizeDescription(doc, false);
+        option.setDescription(doc);
+
+        if (isNullOrEmpty(doc)) {
+            throw new IllegalStateException("Empty doc for option: " + option.getName() + ", parent options:\n" +
+                    (parentOptions != null ? Jsoner.serialize(JsonMapper.asJsonObject(parentOptions)) : "<null>"));
+        }
+    }
+
+    private boolean filterOutOption(ComponentModel component, BaseOptionModel option) {
+        String label = option.getLabel();
+        if (label != null) {
+            return component.isConsumerOnly() && label.contains("producer")
+                    || component.isProducerOnly() && label.contains("consumer");
+        } else {
+            return false;
+        }
+    }
+
+    public String getDocumentationWithNotes(BaseOptionModel option) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(option.getDescription());
+
+        if (!Strings.isNullOrEmpty(option.getDefaultValueNote())) {
+            sb.append(". Default value notice: ").append(option.getDefaultValueNote());
+        }
+
+        if (!Strings.isNullOrEmpty(option.getDeprecationNote())) {
+            sb.append(". Deprecation note: ").append(option.getDeprecationNote());
+        }
+
+        return sb.toString();
     }
 
     private void generateComponentConfigurer(RoundEnvironment roundEnv, UriEndpoint uriEndpoint, String scheme, String[] schemes,
-                                             ComponentModel componentModel, Set<ComponentOption> componentOptions) {
+                                             ComponentModel componentModel) {
         TypeElement parent;
         if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
             // special for activemq and amqp scheme which should reuse jms
-            parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.component.jms.JmsComponentConfigurer");
+            parent = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, "org.apache.camel.component.jms.JmsComponentConfigurer");
         } else {
-            parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.spi.GeneratedPropertyConfigurer");
+            parent = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, "org.apache.camel.spi.GeneratedPropertyConfigurer");
         }
         String fqComponentClassName = componentModel.getJavaType();
         String componentClassName = fqComponentClassName.substring(fqComponentClassName.lastIndexOf('.') + 1);
@@ -207,27 +269,27 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         String fqClassName = packageName + "." + className;
 
         if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
-            PropertyConfigurerGenerator.generateExtendConfigurer(processingEnv, parent, packageName, className, fqClassName);
-            PropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-component", fqClassName);
-        } else if (uriEndpoint.generateConfigurer() && !componentOptions.isEmpty()) {
+            generateExtendConfigurer(processingEnv, parent, packageName, className, fqClassName, componentModel.getScheme() + "-component");
+        } else if (uriEndpoint.generateConfigurer() && !componentModel.getComponentOptions().isEmpty()) {
             // only generate this once for the first scheme
             if (schemes == null || schemes[0].equals(scheme)) {
-                Set<PropertyOption> set = new LinkedHashSet<>();
-                set.addAll(componentOptions);
-                PropertyConfigurerGenerator.generatePropertyConfigurer(processingEnv, parent, packageName, className, fqClassName, componentClassName, set);
-                PropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-component", fqClassName);
+                generatePropertyConfigurer(processingEnv, parent, packageName, className, fqClassName, componentClassName, componentModel.getScheme() + "-component", componentModel.getComponentOptions());
             }
         }
     }
 
-    private void generateEndpointConfigurer(RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint, String scheme, String[] schemes,
-                                            ComponentModel componentModel, Set<EndpointOption> endpointOptions) {
+    private void generateEndpointConfigurer(RoundEnvironment roundEnv,
+                                            TypeElement classElement,
+                                            UriEndpoint uriEndpoint,
+                                            String scheme,
+                                            String[] schemes,
+                                            ComponentModel componentModel) {
         TypeElement parent;
         if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
             // special for activemq and amqp scheme which should reuse jms
-            parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.component.jms.JmsEndpointConfigurer");
+            parent = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, "org.apache.camel.component.jms.JmsEndpointConfigurer");
         } else {
-            parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.spi.GeneratedPropertyConfigurer");
+            parent = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, "org.apache.camel.spi.GeneratedPropertyConfigurer");
         }
         String fqEndpointClassName = classElement.getQualifiedName().toString();
         String packageName = fqEndpointClassName.substring(0, fqEndpointClassName.lastIndexOf('.'));
@@ -236,247 +298,24 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         String fqClassName = packageName + "." + className;
 
         if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
-            PropertyConfigurerGenerator.generateExtendConfigurer(processingEnv, parent, packageName, className, fqClassName);
-            PropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-endpoint", fqClassName);
-        } else if (uriEndpoint.generateConfigurer() && !endpointOptions.isEmpty()) {
+            generateExtendConfigurer(processingEnv, parent, packageName, className, fqClassName, componentModel.getScheme() + "-endpoint");
+        } else if (uriEndpoint.generateConfigurer() && !componentModel.getComponentOptions().isEmpty()) {
             // only generate this once for the first scheme
             if (schemes == null || schemes[0].equals(scheme)) {
-                Set<PropertyOption> set = new LinkedHashSet<>();
-                set.addAll(endpointOptions);
-                PropertyConfigurerGenerator.generatePropertyConfigurer(processingEnv, parent, packageName, className, fqClassName, endpointClassName, set);
-                PropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-endpoint", fqClassName);
+                generatePropertyConfigurer(processingEnv, parent, packageName, className, fqClassName, endpointClassName, componentModel.getScheme() + "-endpoint", componentModel.getEndpointParameterOptions());
             }
         }
-    }
-
-    public String createParameterJsonSchema(ComponentModel componentModel, Set<ComponentOption> componentOptions,
-                                            Set<EndpointPath> endpointPaths, Set<EndpointOption> endpointOptions, String[] schemes,
-                                            Map<String, Object> parentData) {
-        StringBuilder buffer = new StringBuilder("{");
-        // component model
-        buffer.append("\n \"component\": {");
-        buffer.append("\n    \"kind\": \"").append("component").append("\",");
-        buffer.append("\n    \"scheme\": \"").append(componentModel.getScheme()).append("\",");
-        if (!Strings.isNullOrEmpty(componentModel.getExtendsScheme())) {
-            buffer.append("\n    \"extendsScheme\": \"").append(componentModel.getExtendsScheme()).append("\",");
-        }
-        // the first scheme is the regular so only output if there is alternatives
-        if (schemes != null && schemes.length > 1) {
-            buffer.append("\n    \"alternativeSchemes\": \"").append(String.join(",", schemes)).append("\",");
-        }
-        buffer.append("\n    \"syntax\": \"").append(componentModel.getSyntax()).append("\",");
-        if (componentModel.getAlternativeSyntax() != null) {
-            buffer.append("\n    \"alternativeSyntax\": \"").append(componentModel.getAlternativeSyntax()).append("\",");
-        }
-        buffer.append("\n    \"title\": \"").append(componentModel.getTitle()).append("\",");
-        buffer.append("\n    \"description\": \"").append(componentModel.getDescription()).append("\",");
-        buffer.append("\n    \"label\": \"").append(getOrElse(componentModel.getLabel(), "")).append("\",");
-        buffer.append("\n    \"deprecated\": ").append(componentModel.isDeprecated()).append(",");
-        buffer.append("\n    \"deprecationNote\": \"").append(getOrElse(componentModel.getDeprecationNote(), "")).append("\",");
-        buffer.append("\n    \"async\": ").append(componentModel.isAsync()).append(",");
-        buffer.append("\n    \"consumerOnly\": ").append(componentModel.isConsumerOnly()).append(",");
-        buffer.append("\n    \"producerOnly\": ").append(componentModel.isProducerOnly()).append(",");
-        buffer.append("\n    \"lenientProperties\": ").append(componentModel.isLenientProperties()).append(",");
-        buffer.append("\n    \"javaType\": \"").append(componentModel.getJavaType()).append("\",");
-        if (componentModel.getFirstVersion() != null) {
-            buffer.append("\n    \"firstVersion\": \"").append(componentModel.getFirstVersion()).append("\",");
-        }
-        buffer.append("\n    \"groupId\": \"").append(componentModel.getGroupId()).append("\",");
-        buffer.append("\n    \"artifactId\": \"").append(componentModel.getArtifactId()).append("\",");
-        if (componentModel.getVerifiers() != null) {
-            buffer.append("\n    \"verifiers\": \"").append(componentModel.getVerifiers()).append("\",");
-        }
-        buffer.append("\n    \"version\": \"").append(componentModel.getVersionId()).append("\"");
-
-        buffer.append("\n  },");
-
-        // and component properties
-        Map<String, Object> parentComponentProperties;
-        if (parentData != null && parentData.get("componentProperties") != null) {
-            parentComponentProperties = (Map<String, Object>) parentData.get("componentProperties");
-        } else {
-            parentComponentProperties = new HashMap<>();
-        }
-        buffer.append("\n  \"componentProperties\": {");
-        boolean first = true;
-        for (ComponentOption entry : componentOptions) {
-            if (first) {
-                first = false;
-            } else {
-                buffer.append(",");
-            }
-            buffer.append("\n    ");
-            // either we have the documentation from this apt plugin or we need help to find it from extended component
-            String doc = entry.getDocumentationWithNotes();
-            if (Strings.isNullOrEmpty(doc)) {
-                doc = DocumentationHelper.findComponentJavaDoc(componentModel.getScheme(), componentModel.getExtendsScheme(), entry.getName());
-            }
-            // as its json we need to sanitize the docs
-            doc = sanitizeDescription(doc, false);
-            Boolean required = entry.isRequired();
-            String defaultValue = entry.getDefaultValue();
-            if (Strings.isNullOrEmpty(defaultValue) && "boolean".equals(entry.getType())) {
-                // fallback as false for boolean types
-                defaultValue = "false";
-            }
-
-            // component options do not have prefix
-            String optionalPrefix = "";
-            String prefix = "";
-            boolean multiValue = false;
-            boolean asPredicate = false;
-
-            buffer.append(JSonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "property", required, entry.getType(), defaultValue, doc,
-                entry.isDeprecated(), entry.getDeprecationNote(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
-                false, null, asPredicate, optionalPrefix, prefix, multiValue, entry.getConfigurationClass(), entry.getConfigurationField()));
-
-            parentComponentProperties.remove(entry.getName());
-        }
-
-        for (Map.Entry<String, Object> prop : parentComponentProperties.entrySet()) {
-            if (first) {
-                first = false;
-            } else {
-                buffer.append(",");
-            }
-            buffer.append("\n    ");
-            buffer.append(Strings.doubleQuote(prop.getKey()));
-            buffer.append(": ");
-            buffer.append(Jsoner.serialize(prop.getValue()));
-        }
-
-        buffer.append("\n  },");
-
-        Map<String, Object> parentProperties;
-        if (parentData != null && parentData.get("properties") != null) {
-            parentProperties = (Map<String, Object>) parentData.get("properties");
-        } else {
-            parentProperties = new HashMap<>();
-        }
-
-        buffer.append("\n  \"properties\": {");
-        first = true;
-
-        // sort the endpoint options in the standard order we prefer
-        List<EndpointPath> paths = new ArrayList<>();
-        paths.addAll(endpointPaths);
-        Collections.sort(paths, EndpointHelper.createPathComparator(componentModel.getSyntax()));
-
-        // include paths in the top
-        for (EndpointPath entry : paths) {
-            String label = entry.getLabel();
-            if (label != null) {
-                // skip options which are either consumer or producer labels but the component does not support them
-                if (label.contains("consumer") && componentModel.isProducerOnly()) {
-                    continue;
-                } else if (label.contains("producer") && componentModel.isConsumerOnly()) {
-                    continue;
-                }
-            }
-
-            if (first) {
-                first = false;
-            } else {
-                buffer.append(",");
-            }
-            buffer.append("\n    ");
-            // either we have the documentation from this apt plugin or we need help to find it from extended component
-            String doc = entry.getDocumentation();
-            if (Strings.isNullOrEmpty(doc)) {
-                doc = DocumentationHelper.findEndpointJavaDoc(componentModel.getScheme(), componentModel.getExtendsScheme(), entry.getName());
-            }
-            // as its json we need to sanitize the docs
-            doc = sanitizeDescription(doc, false);
-            boolean required = entry.isRequired();
-            String defaultValue = entry.getDefaultValue();
-            if (Strings.isNullOrEmpty(defaultValue) && "boolean".equals(entry.getType())) {
-                // fallback as false for boolean types
-                defaultValue = "false";
-            }
-
-            // @UriPath options do not have prefix
-            String optionalPrefix = "";
-            String prefix = "";
-            boolean multiValue = false;
-            boolean asPredicate = false;
-
-            buffer.append(JSonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "path", required, entry.getType(), defaultValue, doc,
-                entry.isDeprecated(), entry.getDeprecationNote(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
-                false, null, asPredicate, optionalPrefix, prefix, multiValue, null, null));
-
-            parentProperties.remove(entry.getName());
-        }
-
-        // sort the endpoint options in the standard order we prefer
-        List<EndpointOption> options = new ArrayList<>();
-        options.addAll(endpointOptions);
-        Collections.sort(options, EndpointHelper.createGroupAndLabelComparator());
-
-        // and then regular parameter options
-        for (EndpointOption entry : options) {
-            String label = entry.getLabel();
-            if (label != null) {
-                // skip options which are either consumer or producer labels but the component does not support them
-                if (label.contains("consumer") && componentModel.isProducerOnly()) {
-                    continue;
-                } else if (label.contains("producer") && componentModel.isConsumerOnly()) {
-                    continue;
-                }
-            }
-
-            if (first) {
-                first = false;
-            } else {
-                buffer.append(",");
-            }
-            buffer.append("\n    ");
-            // either we have the documentation from this apt plugin or we need help to find it from extended component
-            String doc = entry.getDocumentationWithNotes();
-            if (Strings.isNullOrEmpty(doc)) {
-                doc = DocumentationHelper.findEndpointJavaDoc(componentModel.getScheme(), componentModel.getExtendsScheme(), entry.getName());
-            }
-            // as its json we need to sanitize the docs
-            doc = sanitizeDescription(doc, false);
-            Boolean required = entry.isRequired();
-            String defaultValue = entry.getDefaultValue();
-            if (Strings.isNullOrEmpty(defaultValue) && "boolean".equals(entry.getType())) {
-                // fallback as false for boolean types
-                defaultValue = "false";
-            }
-            String optionalPrefix = entry.getOptionalPrefix();
-            String prefix = entry.getPrefix();
-            boolean multiValue = entry.isMultiValue();
-            boolean asPredicate = false;
-
-            buffer.append(JSonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "parameter", required, entry.getType(), defaultValue,
-                doc, entry.isDeprecated(), entry.getDeprecationNote(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
-                false, null, asPredicate, optionalPrefix, prefix, multiValue, entry.getConfigurationClass(), entry.getConfigurationField()));
-
-            parentProperties.remove(entry.getName());
-        }
-
-        for (Map.Entry<String, Object> prop : parentProperties.entrySet()) {
-            if (first) {
-                first = false;
-            } else {
-                buffer.append(",");
-            }
-            buffer.append("\n    ");
-            buffer.append(Strings.doubleQuote(prop.getKey()));
-            buffer.append(": ");
-            buffer.append(Jsoner.serialize(prop.getValue()));
-        }
-
-        buffer.append("\n  }");
-
-        buffer.append("\n}\n");
-        return buffer.toString();
     }
 
     protected ComponentModel findComponentProperties(RoundEnvironment roundEnv, UriEndpoint uriEndpoint, TypeElement endpointClassElement,
-                                                     String title, String scheme, String extendsScheme, String label) {
-        ComponentModel model = new ComponentModel(scheme);
-
+                                                     String title, String scheme, String extendsScheme, String label, String[] schemes) {
+        ComponentModel model = new ComponentModel();
+        model.setScheme(scheme);
+        model.setExtendsScheme(extendsScheme);
+        // alternative schemes
+        if (schemes != null && schemes.length > 1) {
+            model.setAlternativeSchemes(String.join(",", schemes));
+        }
         // if the scheme is an alias then replace the scheme name from the syntax with the alias
         String syntax = scheme + ":" + Strings.after(uriEndpoint.syntax(), ":");
         // alternative syntax is optional
@@ -484,15 +323,13 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             String alternativeSyntax = scheme + ":" + Strings.after(uriEndpoint.alternativeSyntax(), ":");
             model.setAlternativeSyntax(alternativeSyntax);
         }
-
-        model.setExtendsScheme(extendsScheme);
         model.setSyntax(syntax);
         model.setTitle(title);
         model.setLabel(label);
         model.setConsumerOnly(uriEndpoint.consumerOnly());
         model.setProducerOnly(uriEndpoint.producerOnly());
         model.setLenientProperties(uriEndpoint.lenientProperties());
-        model.setAsync(implementsInterface(processingEnv, roundEnv, endpointClassElement, "org.apache.camel.AsyncEndpoint"));
+        model.setAsync(AnnotationProcessorHelper.implementsInterface(processingEnv, roundEnv, endpointClassElement, "org.apache.camel.AsyncEndpoint"));
 
         // what is the first version this component was added to Apache Camel
         String firstVersion = uriEndpoint.firstVersion();
@@ -509,8 +346,8 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         if (elements != null) {
             for (Element e : elements) {
                 Component comp = e.getAnnotation(Component.class);
-                String[] schemes = comp.value().split(",");
-                if (Arrays.asList(schemes).contains(scheme) && e.getKind() == ElementKind.CLASS) {
+                String[] cschemes = comp.value().split(",");
+                if (Arrays.asList(cschemes).contains(scheme) && e.getKind() == ElementKind.CLASS) {
                     TypeElement te = (TypeElement) e;
                     String name = te.getQualifiedName().toString();
                     model.setJavaType(name);
@@ -535,16 +372,16 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         model.setDescription("@@@DESCRIPTION@@@");
         model.setGroupId("@@@GROUPID@@@");
         model.setArtifactId("@@@ARTIFACTID@@@");
-        model.setVersionId("@@@VERSIONID@@@");
+        model.setVersion("@@@VERSIONID@@@");
 
         // favor to use endpoint class javadoc as description
         Elements elementUtils = processingEnv.getElementUtils();
-        TypeElement typeElement = findTypeElement(processingEnv, roundEnv, endpointClassElement.getQualifiedName().toString());
+        TypeElement typeElement = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, endpointClassElement.getQualifiedName().toString());
         if (typeElement != null) {
             String doc = elementUtils.getDocComment(typeElement);
             if (doc != null) {
                 // need to sanitize the description first (we only want a summary)
-                doc = sanitizeDescription(doc, true);
+                doc = JavadocHelper.sanitizeDescription(doc, true);
                 // the javadoc may actually be empty, so only change the doc if we got something
                 if (!Strings.isNullOrEmpty(doc)) {
                     model.setDescription(doc);
@@ -555,9 +392,9 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         return model;
     }
 
-    protected void findComponentClassProperties(PrintWriter writer, RoundEnvironment roundEnv, ComponentModel componentModel,
-                                                Set<ComponentOption> componentOptions, TypeElement classElement, String prefix,
-                                                Map<String, Object> parentData, String nestedTypeName, String nestedFieldName) {
+    protected void findComponentClassProperties(RoundEnvironment roundEnv, ComponentModel componentModel,
+                                                TypeElement classElement, String prefix,
+                                                ComponentModel parentData, String nestedTypeName, String nestedFieldName) {
         Elements elementUtils = processingEnv.getElementUtils();
         while (true) {
             Metadata componentAnnotation = classElement.getAnnotation(Metadata.class);
@@ -598,7 +435,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                 // we usually favor putting the @Metadata annotation on the field instead of the setter, so try to use it if its there
                 String fieldName = methodName.substring(3);
                 fieldName = fieldName.substring(0, 1).toLowerCase() + fieldName.substring(1);
-                VariableElement field = findFieldElement(classElement, fieldName);
+                VariableElement field = AnnotationProcessorHelper.findFieldElement(classElement, fieldName);
                 if (field != null && metadata == null) {
                     metadata = field.getAnnotation(Metadata.class);
                 }
@@ -609,25 +446,28 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                 boolean required = metadata != null && metadata.required();
                 String label = metadata != null ? metadata.label() : null;
                 boolean secret = metadata != null && metadata.secret();
-                String displayName = metadata != null ? metadata.displayName() : null;
 
                 // we do not yet have default values / notes / as no annotation support yet
                 // String defaultValueNote = param.defaultValueNote();
-                String defaultValue = metadata != null ? metadata.defaultValue() : null;
+                Object defaultValue = metadata != null ? metadata.defaultValue() : "";
                 String defaultValueNote = null;
 
-                ExecutableElement setter = method;
-                String name = fieldName;
-                name = prefix + name;
-                TypeMirror fieldType = setter.getParameters().get(0).asType();
-                String fieldTypeName = fieldType.toString();
-                TypeElement fieldTypeElement = findTypeElement(processingEnv, roundEnv, fieldTypeName);
+                String name = prefix + fieldName;
+                String displayName = metadata != null ? metadata.displayName() : null;
+                // compute a display name if we don't have anything
+                if (Strings.isNullOrEmpty(displayName)) {
+                    displayName = Strings.asTitle(name);
+                }
 
-                String docComment = findJavaDoc(elementUtils, method, fieldName, name, classElement, false);
-                if (isNullOrEmpty(docComment)) {
+                TypeMirror fieldType = method.getParameters().get(0).asType();
+                String fieldTypeName = fieldType.toString();
+                TypeElement fieldTypeElement = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, fieldTypeName);
+
+                String docComment = AnnotationProcessorHelper.findJavaDoc(elementUtils, method, fieldName, name, classElement, false);
+                if (Strings.isNullOrEmpty(docComment)) {
                     docComment = metadata != null ? metadata.description() : null;
                 }
-                if (isNullOrEmpty(docComment)) {
+                if (Strings.isNullOrEmpty(docComment)) {
                     // apt cannot grab javadoc from camel-core, only from annotations
                     if ("setHeaderFilterStrategy".equals(methodName)) {
                         docComment = HEADER_FILTER_STRATEGY_JAVADOC;
@@ -637,28 +477,23 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                 }
 
                 // gather enums
-                Set<String> enums = new LinkedHashSet<>();
+                List<String> enums = null;
 
                 boolean isEnum;
                 if (metadata != null && !Strings.isNullOrEmpty(metadata.enums())) {
                     isEnum = true;
                     String[] values = metadata.enums().split(",");
-                    for (String val : values) {
-                        enums.add(val);
-                    }
+                    enums = Stream.of(values).map(String::trim).collect(Collectors.toList());
                 } else {
                     isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
                     if (isEnum) {
-                        TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
+                        TypeElement enumClass = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
                         if (enumClass != null) {
                             // find all the enum constants which has the possible enum value that can be used
-                            List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
-                            for (VariableElement var : fields) {
-                                if (var.getKind() == ElementKind.ENUM_CONSTANT) {
-                                    String val = var.toString();
-                                    enums.add(val);
-                                }
-                            }
+                            enums = ElementFilter.fieldsIn(enumClass.getEnclosedElements()).stream()
+                                    .filter(var -> var.getKind() == ElementKind.ENUM_CONSTANT)
+                                    .map(Object::toString)
+                                    .collect(Collectors.toList());
                         }
                     }
                 }
@@ -666,6 +501,13 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                 // the field type may be overloaded by another type
                 if (metadata != null && !Strings.isNullOrEmpty(metadata.javaType())) {
                     fieldTypeName = metadata.javaType();
+                }
+
+                if (isNullOrEmpty(defaultValue) && "boolean".equals(fieldTypeName)) {
+                    defaultValue = false;
+                }
+                if (isNullOrEmpty(defaultValue)) {
+                    defaultValue = "";
                 }
 
                 String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
@@ -677,9 +519,27 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                     accept = false;
                 }
                 if (accept) {
-                    ComponentOption option = new ComponentOption(name, displayName, fieldTypeName, required, defaultValue, defaultValueNote,
-                            docComment.trim(), deprecated, deprecationNote, secret, group, label, isEnum, enums, nestedTypeName, nestedFieldName);
-                    componentOptions.add(option);
+                    ComponentOptionModel option = new ComponentOptionModel();
+                    option.setKind("property");
+                    option.setName(name);
+                    option.setDisplayName(displayName);
+                    option.setType(AnnotationProcessorHelper.getType(fieldTypeName, false));
+                    option.setJavaType(fieldTypeName);
+                    option.setRequired(required);
+                    option.setDefaultValue(defaultValue);
+                    option.setDefaultValueNote(defaultValueNote);
+                    option.setDescription(docComment.trim());
+                    option.setDeprecated(deprecated);
+                    option.setDeprecationNote(deprecationNote);
+                    option.setSecret(secret);
+                    option.setGroup(group);
+                    option.setLabel(label);
+                    option.setEnums(enums);
+                    option.setConfigurationClass(nestedTypeName);
+                    option.setConfigurationField(nestedFieldName);
+                    if (componentModel.getComponentOptions().stream().noneMatch(opt -> name.equals(opt.getName()))) {
+                        componentModel.addComponentOption(option);
+                    }
                 }
             }
 
@@ -688,8 +548,8 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             if (parentData == null) {
                 TypeMirror superclass = classElement.getSuperclass();
                 if (superclass != null) {
-                    String superClassName = canonicalClassName(superclass.toString());
-                    baseTypeElement = findTypeElement(processingEnv, roundEnv, superClassName);
+                    String superClassName = Strings.canonicalClassName(superclass.toString());
+                    baseTypeElement = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, superClassName);
                 }
             }
             if (baseTypeElement != null) {
@@ -700,10 +560,9 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         }
     }
 
-    protected void findClassProperties(PrintWriter writer, RoundEnvironment roundEnv, ComponentModel componentModel,
-                                       Set<EndpointPath> endpointPaths, Set<EndpointOption> endpointOptions,
+    protected void findClassProperties(RoundEnvironment roundEnv, ComponentModel componentModel,
                                        TypeElement classElement, String prefix, String excludeProperties,
-                                       Map<String, Object> parentData, String nestedTypeName, String nestedFieldName) {
+                                       ComponentModel parentData, String nestedTypeName, String nestedFieldName) {
         Elements elementUtils = processingEnv.getElementUtils();
         while (true) {
             List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
@@ -723,19 +582,15 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                 UriPath path = fieldElement.getAnnotation(UriPath.class);
                 String fieldName = fieldElement.getSimpleName().toString();
                 if (path != null) {
-                    String name = path.name();
-                    if (isNullOrEmpty(name)) {
-                        name = fieldName;
-                    }
-                    name = prefix + name;
+                    String name = prefix + (Strings.isNullOrEmpty(path.name()) ? fieldName : path.name());
 
                     // should we exclude the name?
                     if (excludeProperty(excludeProperties, name)) {
                         continue;
                     }
 
-                    String defaultValue = path.defaultValue();
-                    if (Strings.isNullOrEmpty(defaultValue) && metadata != null) {
+                    Object defaultValue = path.defaultValue();
+                    if ("".equals(defaultValue) && metadata != null) {
                         defaultValue = metadata.defaultValue();
                     }
                     boolean required = metadata != null && metadata.required();
@@ -747,40 +602,34 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                     if (Strings.isNullOrEmpty(displayName)) {
                         displayName = metadata != null ? metadata.displayName() : null;
                     }
+                    // compute a display name if we don't have anything
+                    if (Strings.isNullOrEmpty(displayName)) {
+                        displayName = Strings.asTitle(name);
+                    }
 
                     TypeMirror fieldType = fieldElement.asType();
                     String fieldTypeName = fieldType.toString();
-                    TypeElement fieldTypeElement = findTypeElement(processingEnv, roundEnv, fieldTypeName);
+                    TypeElement fieldTypeElement = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, fieldTypeName);
 
-                    String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, false);
-                    if (isNullOrEmpty(docComment)) {
+                    String docComment = AnnotationProcessorHelper.findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, false);
+                    if (Strings.isNullOrEmpty(docComment)) {
                         docComment = path.description();
                     }
 
                     // gather enums
-                    Set<String> enums = new LinkedHashSet<>();
+                    List<String> enums = null;
 
-                    boolean isEnum;
                     if (!Strings.isNullOrEmpty(path.enums())) {
-                        isEnum = true;
                         String[] values = path.enums().split(",");
-                        for (String val : values) {
-                            enums.add(val.trim());
-                        }
-                    } else {
-                        isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
-                        if (isEnum) {
-                            TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
-                            // find all the enum constants which has the possible enum value that can be used
-                            if (enumClass != null) {
-                                List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
-                                for (VariableElement var : fields) {
-                                    if (var.getKind() == ElementKind.ENUM_CONSTANT) {
-                                        String val = var.toString();
-                                        enums.add(val);
-                                    }
-                                }
-                            }
+                        enums = Stream.of(values).map(String::trim).collect(Collectors.toList());
+                    } else if (fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM) {
+                        TypeElement enumClass = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
+                        // find all the enum constants which has the possible enum value that can be used
+                        if (enumClass != null) {
+                            enums = ElementFilter.fieldsIn(enumClass.getEnclosedElements()).stream()
+                                    .filter(var -> var.getKind() == ElementKind.ENUM_CONSTANT)
+                                    .map(Object::toString)
+                                    .collect(Collectors.toList());
                         }
                     }
 
@@ -788,22 +637,42 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                     if (!Strings.isNullOrEmpty(path.javaType())) {
                         fieldTypeName = path.javaType();
                     }
+                    if (isNullOrEmpty(defaultValue) && "boolean".equals(fieldTypeName)) {
+                        defaultValue = false;
+                    }
+                    if (isNullOrEmpty(defaultValue)) {
+                        defaultValue = null;
+                    }
 
                     boolean isSecret = secret != null && secret || path.secret();
                     String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
-                    EndpointPath ep = new EndpointPath(name, displayName, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote,
-                        isSecret, group, label, isEnum, enums);
-                    endpointPaths.add(ep);
+                    EndpointOptionModel option = new EndpointOptionModel();
+                    option.setKind("path");
+                    option.setName(name);
+                    option.setDisplayName(displayName);
+                    option.setType(AnnotationProcessorHelper.getType(fieldTypeName, false));
+                    option.setJavaType(fieldTypeName);
+                    option.setRequired(required);
+                    option.setDefaultValue(defaultValue);
+//                    option.setDefaultValueNote(defaultValueNote);
+                    option.setDescription(docComment.trim());
+                    option.setDeprecated(deprecated);
+                    option.setDeprecationNote(deprecationNote);
+                    option.setSecret(isSecret);
+                    option.setGroup(group);
+                    option.setLabel(label);
+                    option.setEnums(enums);
+                    option.setConfigurationClass(nestedTypeName);
+                    option.setConfigurationField(nestedFieldName);
+                    if (componentModel.getEndpointOptions().stream().noneMatch(opt -> name.equals(opt.getName()))) {
+                        componentModel.addEndpointOption(option);
+                    }
                 }
 
                 UriParam param = fieldElement.getAnnotation(UriParam.class);
                 fieldName = fieldElement.getSimpleName().toString();
                 if (param != null) {
-                    String name = param.name();
-                    if (isNullOrEmpty(name)) {
-                        name = fieldName;
-                    }
-                    name = prefix + name;
+                    String name = prefix + (Strings.isNullOrEmpty(param.name()) ? fieldName : param.name());
 
                     // should we exclude the name?
                     if (excludeProperty(excludeProperties, name)) {
@@ -813,8 +682,8 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                     String paramOptionalPrefix = param.optionalPrefix();
                     String paramPrefix = param.prefix();
                     boolean multiValue = param.multiValue();
-                    String defaultValue = param.defaultValue();
-                    if (defaultValue == null && metadata != null) {
+                    Object defaultValue = param.defaultValue();
+                    if (isNullOrEmpty(defaultValue) && metadata != null) {
                         defaultValue = metadata.defaultValue();
                     }
                     String defaultValueNote = param.defaultValueNote();
@@ -827,11 +696,15 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                     if (Strings.isNullOrEmpty(displayName)) {
                         displayName = metadata != null ? metadata.displayName() : null;
                     }
+                    // compute a display name if we don't have anything
+                    if (Strings.isNullOrEmpty(displayName)) {
+                        displayName = Strings.asTitle(name);
+                    }
 
                     // if the field type is a nested parameter then iterate through its fields
                     TypeMirror fieldType = fieldElement.asType();
                     String fieldTypeName = fieldType.toString();
-                    TypeElement fieldTypeElement = findTypeElement(processingEnv, roundEnv, fieldTypeName);
+                    TypeElement fieldTypeElement = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, fieldTypeName);
                     UriParams fieldParams = null;
                     if (fieldTypeElement != null) {
                         fieldParams = fieldTypeElement.getAnnotation(UriParams.class);
@@ -839,47 +712,37 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                     if (fieldParams != null) {
                         String nestedPrefix = prefix;
                         String extraPrefix = fieldParams.prefix();
-                        if (!isNullOrEmpty(extraPrefix)) {
+                        if (!Strings.isNullOrEmpty(extraPrefix)) {
                             nestedPrefix += extraPrefix;
                         }
                         nestedTypeName = fieldTypeName;
                         nestedFieldName = fieldElement.getSimpleName().toString();
-                        findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, fieldTypeElement, nestedPrefix, excludeProperties, null, nestedTypeName, nestedFieldName);
+                        findClassProperties(roundEnv, componentModel, fieldTypeElement, nestedPrefix, excludeProperties, null, nestedTypeName, nestedFieldName);
                         nestedTypeName = null;
                         nestedFieldName = null;
                     } else {
-                        String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, false);
-                        if (isNullOrEmpty(docComment)) {
+                        String docComment = AnnotationProcessorHelper.findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, false);
+                        if (Strings.isNullOrEmpty(docComment)) {
                             docComment = param.description();
                         }
-                        if (isNullOrEmpty(docComment)) {
+                        if (Strings.isNullOrEmpty(docComment)) {
                             docComment = "";
                         }
 
                         // gather enums
-                        Set<String> enums = new LinkedHashSet<>();
+                        List<String> enums = null;
 
-                        boolean isEnum;
                         if (!Strings.isNullOrEmpty(param.enums())) {
-                            isEnum = true;
                             String[] values = param.enums().split(",");
-                            for (String val : values) {
-                                enums.add(val);
-                            }
-                        } else {
-                            isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
-                            if (isEnum) {
-                                TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
-                                if (enumClass != null) {
-                                    // find all the enum constants which has the possible enum value that can be used
-                                    List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
-                                    for (VariableElement var : fields) {
-                                        if (var.getKind() == ElementKind.ENUM_CONSTANT) {
-                                            String val = var.toString();
-                                            enums.add(val);
-                                        }
-                                    }
-                                }
+                            enums = Stream.of(values).map(String::trim).collect(Collectors.toList());
+                        } else if (fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM) {
+                            TypeElement enumClass = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
+                            if (enumClass != null) {
+                                // find all the enum constants which has the possible enum value that can be used
+                                enums = ElementFilter.fieldsIn(enumClass.getEnclosedElements()).stream()
+                                        .filter(var -> var.getKind() == ElementKind.ENUM_CONSTANT)
+                                        .map(Object::toString)
+                                        .collect(Collectors.toList());
                             }
                         }
 
@@ -888,12 +751,39 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                             fieldTypeName = param.javaType();
                         }
 
+                        if (isNullOrEmpty(defaultValue) && "boolean".equals(fieldTypeName)) {
+                            defaultValue = false;
+                        }
+                        if (isNullOrEmpty(defaultValue)) {
+                            defaultValue = "";
+                        }
+
                         boolean isSecret = secret != null && secret || param.secret();
                         String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
-                        EndpointOption option = new EndpointOption(name, displayName, fieldTypeName, required, defaultValue, defaultValueNote,
-                                docComment.trim(), paramOptionalPrefix, paramPrefix, multiValue, deprecated, deprecationNote, isSecret, group, label,
-                                isEnum, enums, nestedTypeName, nestedFieldName);
-                        endpointOptions.add(option);
+                        EndpointOptionModel option = new EndpointOptionModel();
+                        option.setKind("parameter");
+                        option.setName(name);
+                        option.setDisplayName(displayName);
+                        option.setType(AnnotationProcessorHelper.getType(fieldTypeName, false));
+                        option.setJavaType(fieldTypeName);
+                        option.setRequired(required);
+                        option.setDefaultValue(defaultValue);
+                        option.setDefaultValueNote(defaultValueNote);
+                        option.setDescription(docComment.trim());
+                        option.setDeprecated(deprecated);
+                        option.setDeprecationNote(deprecationNote);
+                        option.setSecret(isSecret);
+                        option.setGroup(group);
+                        option.setLabel(label);
+                        option.setEnums(enums);
+                        option.setConfigurationClass(nestedTypeName);
+                        option.setConfigurationField(nestedFieldName);
+                        option.setPrefix(paramPrefix);
+                        option.setOptionalPrefix(paramOptionalPrefix);
+                        option.setMultiValue(multiValue);
+                        if (componentModel.getEndpointOptions().stream().noneMatch(opt -> name.equals(opt.getName()))) {
+                            componentModel.addEndpointOption(option);
+                        }
                     }
                 }
             }
@@ -903,8 +793,8 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             if (parentData == null) {
                 TypeMirror superclass = classElement.getSuperclass();
                 if (superclass != null) {
-                    String superClassName = canonicalClassName(superclass.toString());
-                    baseTypeElement = findTypeElement(processingEnv, roundEnv, superClassName);
+                    String superClassName = Strings.canonicalClassName(superclass.toString());
+                    baseTypeElement = AnnotationProcessorHelper.findTypeElement(processingEnv, roundEnv, superClassName);
                 }
             }
             if (baseTypeElement != null) {
@@ -913,6 +803,10 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                 break;
             }
         }
+    }
+
+    private static boolean isNullOrEmpty(Object value) {
+        return value == null || "".equals(value) || "null".equals(value);
     }
 
     private static boolean excludeProperty(String excludeProperties, String name) {
@@ -954,6 +848,46 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         } else {
             // Eclipse (Groovy?) compiler returns javax.lang.model.type.NoType, no other way to check but to look at toString output
             return method.toString().contains("(groovy.lang.MetaClass)");
+        }
+    }
+
+    protected void generateExtendConfigurer(ProcessingEnvironment processingEnv, TypeElement parent,
+                                            String pn, String cn, String fqn, String scheme) {
+
+        String pfqn = parent.getQualifiedName().toString();
+        String psn = pfqn.substring(pfqn.lastIndexOf('.') + 1);
+        try (Writer w = processingEnv.getFiler().createSourceFile(fqn, parent).openWriter()) {
+            PropertyConfigurerGenerator.generateExtendConfigurer(pn, cn, pfqn, psn, w);
+            generateMetaInfConfigurer(processingEnv, scheme, fqn);
+        } catch (Exception e) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Unable to generate source code file: " + fqn + ": " + e.getMessage());
+            AnnotationProcessorHelper.dumpExceptionToErrorFile("camel-apt-error.log", "Unable to generate source code file: " + fqn, e);
+        }
+    }
+
+    protected void generatePropertyConfigurer(ProcessingEnvironment processingEnv, TypeElement parent,
+                                              String pn, String cn, String fqn, String en, String scheme,
+                                              Collection<? extends BaseOptionModel> options) {
+
+        try (Writer w = processingEnv.getFiler().createSourceFile(fqn, parent).openWriter()) {
+            PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, options, w);
+            generateMetaInfConfigurer(processingEnv, scheme, fqn);
+        } catch (Exception e) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Unable to generate source code file: " + fqn + ": " + e.getMessage());
+            AnnotationProcessorHelper.dumpExceptionToErrorFile("camel-apt-error.log", "Unable to generate source code file: " + fqn, e);
+        }
+    }
+
+    protected void generateMetaInfConfigurer(ProcessingEnvironment processingEnv, String name, String fqn) {
+        try {
+            FileObject resource = processingEnv.getFiler().createResource(StandardLocation.CLASS_OUTPUT, "",
+                    "META-INF/services/org/apache/camel/configurer/" + name);
+            try (Writer w = resource.openWriter()) {
+                w.append("# Generated by camel annotation processor\n");
+                w.append("class=").append(fqn).append("\n");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

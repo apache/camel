@@ -2940,6 +2940,18 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The password for the trust store file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default KafkaEndpointProducerBuilder sslTruststorePassword(
+                String sslTruststorePassword) {
+            doSetProperty("sslTruststorePassword", sslTruststorePassword);
+            return this;
+        }
+        /**
          * The file format of the trust store file. Default value is JKS.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2966,18 +2978,6 @@ public interface KafkaEndpointBuilderFactory {
         default KafkaEndpointProducerBuilder schemaRegistryURL(
                 String schemaRegistryURL) {
             doSetProperty("schemaRegistryURL", schemaRegistryURL);
-            return this;
-        }
-        /**
-         * The password for the trust store file.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default KafkaEndpointProducerBuilder sslTruststorePassword(
-                String sslTruststorePassword) {
-            doSetProperty("sslTruststorePassword", sslTruststorePassword);
             return this;
         }
     }

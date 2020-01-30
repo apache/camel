@@ -50,10 +50,6 @@
             <artifactId>bcprov-jdk15on</artifactId>
             <version>${bouncycastle-version}</version>
         </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-        </dependency>
 
         <!-- for testing -->
         <dependency>

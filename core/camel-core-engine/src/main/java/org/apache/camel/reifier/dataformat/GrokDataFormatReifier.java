@@ -16,11 +16,10 @@
  */
 package org.apache.camel.reifier.dataformat;
 
-import org.apache.camel.CamelContext;
+import java.util.Map;
+
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.GrokDataFormat;
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.ObjectHelper;
 
 public class GrokDataFormatReifier extends DataFormatReifier<GrokDataFormat> {
 
@@ -29,11 +28,10 @@ public class GrokDataFormatReifier extends DataFormatReifier<GrokDataFormat> {
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        ObjectHelper.notNull(definition.getPattern(), "pattern");
-        setProperty(camelContext, dataFormat, "pattern", definition.getPattern());
-        setProperty(camelContext, dataFormat, "flattened", definition.isFlattened());
-        setProperty(camelContext, dataFormat, "allowMultipleMatchesPerLine", definition.isAllowMultipleMatchesPerLine());
-        setProperty(camelContext, dataFormat, "namedOnly", definition.isNamedOnly());
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("pattern", definition.getPattern());
+        properties.put("flattened", definition.isFlattened());
+        properties.put("allowMultipleMatchesPerLine", definition.isAllowMultipleMatchesPerLine());
+        properties.put("namedOnly", definition.isNamedOnly());
     }
 }

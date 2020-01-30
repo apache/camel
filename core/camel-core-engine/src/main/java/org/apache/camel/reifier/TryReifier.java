@@ -59,7 +59,7 @@ public class TryReifier extends ProcessorReifier<TryDefinition> {
             throw new IllegalArgumentException("doTry must have one or more catch or finally blocks on " + this);
         }
 
-        return new TryProcessor(tryProcessor, catchProcessors, finallyProcessor);
+        return new TryProcessor(routeContext.getCamelContext(), tryProcessor, catchProcessors, finallyProcessor);
     }
 
 }

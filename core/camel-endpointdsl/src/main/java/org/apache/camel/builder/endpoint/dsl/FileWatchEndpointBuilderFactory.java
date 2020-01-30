@@ -35,7 +35,7 @@ public interface FileWatchEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the file-watch component.
+     * Builder for endpoint for the File Watch component.
      */
     public interface FileWatchEndpointBuilder extends EndpointConsumerBuilder {
         default AdvancedFileWatchEndpointBuilder advanced() {
@@ -316,7 +316,7 @@ public interface FileWatchEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the file-watch component.
+     * Advanced builder for endpoint for the File Watch component.
      */
     public interface AdvancedFileWatchEndpointBuilder
             extends
@@ -449,7 +449,7 @@ public interface FileWatchEndpointBuilderFactory {
 
     public interface FileWatchBuilders {
         /**
-         * file-watch (camel-file-watch)
+         * File Watch (camel-file-watch)
          * The file-watch is used to monitor file events in directory using
          * java.nio.file.WatchService
          * 
@@ -467,7 +467,7 @@ public interface FileWatchEndpointBuilderFactory {
         }
     }
     /**
-     * file-watch (camel-file-watch)
+     * File Watch (camel-file-watch)
      * The file-watch is used to monitor file events in directory using
      * java.nio.file.WatchService
      * 

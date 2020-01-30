@@ -115,8 +115,6 @@ public final class ExchangeHeaders {
     public static final HttpString MULTICAST_INDEX = new HttpString("CamelMulticastIndex");
     public static final HttpString MULTICAST_COMPLETE = new HttpString("CamelMulticastComplete");
 
-    public static final HttpString NOTIFY_EVENT = new HttpString("CamelNotifyEvent");
-
     public static final HttpString ON_COMPLETION = new HttpString("CamelOnCompletion");
     public static final HttpString OVERRULE_FILE_NAME = new HttpString("CamelOverruleFileName");
 

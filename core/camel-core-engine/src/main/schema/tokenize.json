@@ -1,5 +1,5 @@
 {
- "model": {
+  "model": {
     "kind": "model",
     "name": "tokenize",
     "title": "Tokenize",
@@ -13,8 +13,8 @@
   },
   "properties": {
     "token": { "kind": "attribute", "displayName": "Token", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The (start) token to use as tokenizer, for example you can use the new line token. You can use simple language as the token to support dynamic tokens." },
-    "endToken": { "kind": "attribute", "displayName": "End Token", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The end token to use as tokenizer if using start/end token pairs. You can use simple language as the token to support dynamic tokens." },
-    "inheritNamespaceTagName": { "kind": "attribute", "displayName": "Inherit Namespace Tag Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To inherit namespaces from a root/parent tag name when using XML You can use simple language as the tag name to support dynamic names." },
+    "endToken": { "kind": "attribute", "displayName": "End Token", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The end token to use as tokenizer if using start\/end token pairs. You can use simple language as the token to support dynamic tokens." },
+    "inheritNamespaceTagName": { "kind": "attribute", "displayName": "Inherit Namespace Tag Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To inherit namespaces from a root\/parent tag name when using XML You can use simple language as the tag name to support dynamic names." },
     "headerName": { "kind": "attribute", "displayName": "Header Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Name of header to tokenize instead of using the message body." },
     "regex": { "kind": "attribute", "displayName": "Regex", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "If the token is a regular expression pattern. The default value is false" },
     "xml": { "kind": "attribute", "displayName": "Xml", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the input is XML messages. This option must be set to true if working with XML payloads." },

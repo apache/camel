@@ -16,10 +16,10 @@
  */
 package org.apache.camel.reifier.dataformat;
 
-import org.apache.camel.CamelContext;
+import java.util.Map;
+
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class ProtobufDataFormatReifier extends DataFormatReifier<ProtobufDataFormat> {
 
@@ -28,16 +28,10 @@ public class ProtobufDataFormatReifier extends DataFormatReifier<ProtobufDataFor
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (definition.getInstanceClass() != null) {
-            setProperty(camelContext, dataFormat, "instanceClass", definition.getInstanceClass());
-        }
-        if (definition.getContentTypeFormat() != null) {
-            setProperty(camelContext, dataFormat, "contentTypeFormat", definition.getContentTypeFormat());
-        }
-        if (definition.getDefaultInstance() != null) {
-            setProperty(camelContext, dataFormat, "defaultInstance", definition.getDefaultInstance());
-        }
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("instanceClass", definition.getInstanceClass());
+        properties.put("contentTypeFormat", definition.getContentTypeFormat());
+        properties.put("defaultInstance", definition.getDefaultInstance());
     }
 
 }
