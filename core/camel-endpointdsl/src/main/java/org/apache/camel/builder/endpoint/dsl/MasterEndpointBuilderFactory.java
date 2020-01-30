@@ -98,7 +98,6 @@ public interface MasterEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMasterEndpointBuilder exceptionHandler(
@@ -115,7 +114,6 @@ public interface MasterEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMasterEndpointBuilder exceptionHandler(
@@ -128,7 +126,6 @@ public interface MasterEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMasterEndpointBuilder exchangePattern(
@@ -142,7 +139,6 @@ public interface MasterEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMasterEndpointBuilder exchangePattern(

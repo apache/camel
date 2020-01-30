@@ -253,7 +253,6 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder exceptionHandler(
@@ -270,7 +269,6 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder exceptionHandler(
@@ -283,7 +281,6 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder exchangePattern(
@@ -297,7 +294,6 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder exchangePattern(
@@ -379,7 +375,6 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ReactiveStreamsEndpointProducerBuilder backpressureStrategy(
@@ -394,7 +389,6 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ReactiveStreamsEndpointProducerBuilder backpressureStrategy(

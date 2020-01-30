@@ -156,7 +156,6 @@ public interface SedaEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSedaEndpointConsumerBuilder exceptionHandler(
@@ -173,7 +172,6 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSedaEndpointConsumerBuilder exceptionHandler(
@@ -186,7 +184,6 @@ public interface SedaEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSedaEndpointConsumerBuilder exchangePattern(
@@ -200,7 +197,6 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSedaEndpointConsumerBuilder exchangePattern(
@@ -369,7 +365,6 @@ public interface SedaEndpointBuilderFactory {
          * The option is a: <code>java.util.concurrent.BlockingQueue</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSedaEndpointConsumerBuilder queue(BlockingQueue queue) {
@@ -384,7 +379,6 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.BlockingQueue</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSedaEndpointConsumerBuilder queue(String queue) {
@@ -637,7 +631,6 @@ public interface SedaEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SedaEndpointProducerBuilder offerTimeout(long offerTimeout) {
@@ -651,7 +644,6 @@ public interface SedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SedaEndpointProducerBuilder offerTimeout(String offerTimeout) {
@@ -771,7 +763,6 @@ public interface SedaEndpointBuilderFactory {
          * The option is a: <code>java.util.concurrent.BlockingQueue</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSedaEndpointProducerBuilder queue(BlockingQueue queue) {
@@ -786,7 +777,6 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.BlockingQueue</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSedaEndpointProducerBuilder queue(String queue) {
@@ -909,7 +899,6 @@ public interface SedaEndpointBuilderFactory {
          * The option is a: <code>java.util.concurrent.BlockingQueue</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSedaEndpointBuilder queue(BlockingQueue queue) {
@@ -924,7 +913,6 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.BlockingQueue</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSedaEndpointBuilder queue(String queue) {

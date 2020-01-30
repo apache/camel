@@ -82,7 +82,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ScpEndpointBuilder knownHostsFile(String knownHostsFile) {
@@ -94,7 +93,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ScpEndpointBuilder password(String password) {
@@ -110,7 +108,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ScpEndpointBuilder preferredAuthentications(
@@ -125,7 +122,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>byte[]</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ScpEndpointBuilder privateKeyBytes(Byte[] privateKeyBytes) {
@@ -139,7 +135,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ScpEndpointBuilder privateKeyBytes(String privateKeyBytes) {
@@ -153,7 +148,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ScpEndpointBuilder privateKeyFile(String privateKeyFile) {
@@ -166,7 +160,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ScpEndpointBuilder privateKeyFilePassphrase(
@@ -179,7 +172,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ScpEndpointBuilder username(String username) {
@@ -264,7 +256,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: common
          */
         default ScpEndpointBuilder fileName(Expression fileName) {
@@ -292,7 +283,6 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: common
          */
         default ScpEndpointBuilder fileName(String fileName) {
@@ -367,7 +357,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default ScpEndpointBuilder moveFailed(Expression moveFailed) {
@@ -383,7 +372,6 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default ScpEndpointBuilder moveFailed(String moveFailed) {
@@ -427,7 +415,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default ScpEndpointBuilder preMove(Expression preMove) {
@@ -442,7 +429,6 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default ScpEndpointBuilder preMove(String preMove) {
@@ -654,7 +640,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default ScpEndpointBuilder antExclude(String antExclude) {
@@ -693,7 +678,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default ScpEndpointBuilder antInclude(String antInclude) {
@@ -745,7 +729,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default ScpEndpointBuilder exclude(String exclude) {
@@ -760,7 +743,6 @@ public interface ScpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileFilter&lt;org.apache.camel.component.scp.ScpFile&gt;</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default ScpEndpointBuilder filter(Object filter) {
@@ -775,7 +757,6 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileFilter&lt;org.apache.camel.component.scp.ScpFile&gt;</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default ScpEndpointBuilder filter(String filter) {
@@ -789,7 +770,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Predicate</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default ScpEndpointBuilder filterDirectory(Predicate filterDirectory) {
@@ -804,7 +784,6 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Predicate</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default ScpEndpointBuilder filterDirectory(String filterDirectory) {
@@ -817,7 +796,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Predicate</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default ScpEndpointBuilder filterFile(Predicate filterFile) {
@@ -831,7 +809,6 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Predicate</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default ScpEndpointBuilder filterFile(String filterFile) {
@@ -877,7 +854,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default ScpEndpointBuilder idempotentKey(Expression idempotentKey) {
@@ -893,7 +869,6 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default ScpEndpointBuilder idempotentKey(String idempotentKey) {
@@ -908,7 +883,6 @@ public interface ScpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default ScpEndpointBuilder idempotentRepository(
@@ -924,7 +898,6 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default ScpEndpointBuilder idempotentRepository(
@@ -941,7 +914,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default ScpEndpointBuilder include(String include) {
@@ -987,7 +959,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default ScpEndpointBuilder maxMessagesPerPoll(int maxMessagesPerPoll) {
@@ -1007,7 +978,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default ScpEndpointBuilder maxMessagesPerPoll(String maxMessagesPerPoll) {
@@ -1021,7 +991,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default ScpEndpointBuilder minDepth(int minDepth) {
@@ -1035,7 +1004,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default ScpEndpointBuilder minDepth(String minDepth) {
@@ -1049,7 +1017,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default ScpEndpointBuilder move(Expression move) {
@@ -1064,7 +1031,6 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default ScpEndpointBuilder move(String move) {
@@ -1079,7 +1045,6 @@ public interface ScpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;org.apache.camel.component.scp.ScpFile&gt;</code> type.
          * 
-         * Default:
          * Group: lock
          */
         default ScpEndpointBuilder exclusiveReadLockStrategy(
@@ -1095,7 +1060,6 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;org.apache.camel.component.scp.ScpFile&gt;</code> type.
          * 
-         * Default:
          * Group: lock
          */
         default ScpEndpointBuilder exclusiveReadLockStrategy(
@@ -1497,7 +1461,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ScpEndpointBuilder backoffErrorThreshold(
@@ -1511,7 +1474,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ScpEndpointBuilder backoffErrorThreshold(
@@ -1525,7 +1487,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ScpEndpointBuilder backoffIdleThreshold(int backoffIdleThreshold) {
@@ -1538,7 +1499,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ScpEndpointBuilder backoffIdleThreshold(
@@ -1556,7 +1516,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ScpEndpointBuilder backoffMultiplier(int backoffMultiplier) {
@@ -1573,7 +1532,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ScpEndpointBuilder backoffMultiplier(String backoffMultiplier) {
@@ -1725,7 +1683,6 @@ public interface ScpEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ScpEndpointBuilder scheduledExecutorService(
@@ -1741,7 +1698,6 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ScpEndpointBuilder scheduledExecutorService(
@@ -1769,7 +1725,6 @@ public interface ScpEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ScpEndpointBuilder schedulerProperties(
@@ -1785,7 +1740,6 @@ public interface ScpEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ScpEndpointBuilder schedulerProperties(
@@ -1901,7 +1855,6 @@ public interface ScpEndpointBuilderFactory {
          * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
          * type.
          * 
-         * Default:
          * Group: sort
          */
         default ScpEndpointBuilder sortBy(Comparator<Exchange> sortBy) {
@@ -1917,7 +1870,6 @@ public interface ScpEndpointBuilderFactory {
          * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
          * type.
          * 
-         * Default:
          * Group: sort
          */
         default ScpEndpointBuilder sortBy(String sortBy) {
@@ -1930,7 +1882,6 @@ public interface ScpEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.camel.component.scp.ScpFile&gt;&gt;</code> type.
          * 
-         * Default:
          * Group: sort
          */
         default ScpEndpointBuilder sorter(Comparator<Object> sorter) {
@@ -1943,7 +1894,6 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.camel.component.scp.ScpFile&gt;&gt;</code> type.
          * 
-         * Default:
          * Group: sort
          */
         default ScpEndpointBuilder sorter(String sorter) {
@@ -2051,7 +2001,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security (advanced)
          */
         default AdvancedScpEndpointBuilder ciphers(String ciphers) {
@@ -2137,7 +2086,6 @@ public interface ScpEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedScpEndpointBuilder exceptionHandler(
@@ -2154,7 +2102,6 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedScpEndpointBuilder exceptionHandler(
@@ -2167,7 +2114,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedScpEndpointBuilder exchangePattern(
@@ -2181,7 +2127,6 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedScpEndpointBuilder exchangePattern(
@@ -2198,7 +2143,6 @@ public interface ScpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedScpEndpointBuilder inProgressRepository(
@@ -2215,7 +2159,6 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedScpEndpointBuilder inProgressRepository(
@@ -2231,7 +2174,6 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedScpEndpointBuilder localWorkDirectory(
@@ -2248,7 +2190,6 @@ public interface ScpEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedScpEndpointBuilder onCompletionExceptionHandler(
@@ -2265,7 +2206,6 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedScpEndpointBuilder onCompletionExceptionHandler(
@@ -2282,7 +2222,6 @@ public interface ScpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedScpEndpointBuilder pollStrategy(
@@ -2299,7 +2238,6 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedScpEndpointBuilder pollStrategy(String pollStrategy) {
@@ -2317,7 +2255,6 @@ public interface ScpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.camel.component.scp.ScpFile&gt;</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedScpEndpointBuilder processStrategy(
@@ -2336,7 +2273,6 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.camel.component.scp.ScpFile&gt;</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedScpEndpointBuilder processStrategy(
@@ -2388,7 +2324,6 @@ public interface ScpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedScpEndpointBuilder moveExistingFileStrategy(
@@ -2404,7 +2339,6 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedScpEndpointBuilder moveExistingFileStrategy(

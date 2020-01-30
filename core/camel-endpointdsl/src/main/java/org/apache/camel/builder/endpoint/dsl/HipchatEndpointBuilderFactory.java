@@ -52,7 +52,6 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default HipchatEndpointConsumerBuilder authToken(String authToken) {
@@ -65,7 +64,6 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default HipchatEndpointConsumerBuilder consumeUsers(String consumeUsers) {
@@ -172,7 +170,6 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder backoffErrorThreshold(
@@ -186,7 +183,6 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder backoffErrorThreshold(
@@ -200,7 +196,6 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder backoffIdleThreshold(
@@ -214,7 +209,6 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder backoffIdleThreshold(
@@ -232,7 +226,6 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder backoffMultiplier(
@@ -250,7 +243,6 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder backoffMultiplier(
@@ -401,7 +393,6 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder scheduledExecutorService(
@@ -417,7 +408,6 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder scheduledExecutorService(
@@ -445,7 +435,6 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder schedulerProperties(
@@ -461,7 +450,6 @@ public interface HipchatEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder schedulerProperties(
@@ -568,7 +556,6 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHipchatEndpointConsumerBuilder exceptionHandler(
@@ -585,7 +572,6 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHipchatEndpointConsumerBuilder exceptionHandler(
@@ -598,7 +584,6 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHipchatEndpointConsumerBuilder exchangePattern(
@@ -612,7 +597,6 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHipchatEndpointConsumerBuilder exchangePattern(
@@ -629,7 +613,6 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHipchatEndpointConsumerBuilder pollStrategy(
@@ -646,7 +629,6 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHipchatEndpointConsumerBuilder pollStrategy(
@@ -726,7 +708,6 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default HipchatEndpointProducerBuilder authToken(String authToken) {
@@ -739,7 +720,6 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default HipchatEndpointProducerBuilder consumeUsers(String consumeUsers) {
@@ -900,7 +880,6 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default HipchatEndpointBuilder authToken(String authToken) {
@@ -913,7 +892,6 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default HipchatEndpointBuilder consumeUsers(String consumeUsers) {

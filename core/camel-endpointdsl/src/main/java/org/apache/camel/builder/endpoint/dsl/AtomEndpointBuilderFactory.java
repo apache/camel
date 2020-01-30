@@ -136,7 +136,6 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Date</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default AtomEndpointBuilder lastUpdate(Date lastUpdate) {
@@ -149,7 +148,6 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.util.Date</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default AtomEndpointBuilder lastUpdate(String lastUpdate) {
@@ -162,7 +160,6 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default AtomEndpointBuilder password(String password) {
@@ -283,7 +280,6 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default AtomEndpointBuilder username(String username) {
@@ -296,7 +292,6 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default AtomEndpointBuilder backoffErrorThreshold(
@@ -310,7 +305,6 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default AtomEndpointBuilder backoffErrorThreshold(
@@ -324,7 +318,6 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default AtomEndpointBuilder backoffIdleThreshold(
@@ -338,7 +331,6 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default AtomEndpointBuilder backoffIdleThreshold(
@@ -356,7 +348,6 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default AtomEndpointBuilder backoffMultiplier(int backoffMultiplier) {
@@ -373,7 +364,6 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default AtomEndpointBuilder backoffMultiplier(String backoffMultiplier) {
@@ -525,7 +515,6 @@ public interface AtomEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default AtomEndpointBuilder scheduledExecutorService(
@@ -541,7 +530,6 @@ public interface AtomEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default AtomEndpointBuilder scheduledExecutorService(
@@ -569,7 +557,6 @@ public interface AtomEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default AtomEndpointBuilder schedulerProperties(
@@ -585,7 +572,6 @@ public interface AtomEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default AtomEndpointBuilder schedulerProperties(
@@ -688,7 +674,6 @@ public interface AtomEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtomEndpointBuilder exceptionHandler(
@@ -705,7 +690,6 @@ public interface AtomEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtomEndpointBuilder exceptionHandler(
@@ -718,7 +702,6 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtomEndpointBuilder exchangePattern(
@@ -732,7 +715,6 @@ public interface AtomEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtomEndpointBuilder exchangePattern(
@@ -749,7 +731,6 @@ public interface AtomEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtomEndpointBuilder pollStrategy(
@@ -766,7 +747,6 @@ public interface AtomEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAtomEndpointBuilder pollStrategy(String pollStrategy) {

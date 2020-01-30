@@ -46,7 +46,6 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GitHubEndpointConsumerBuilder oauthToken(String oauthToken) {
@@ -58,7 +57,6 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GitHubEndpointConsumerBuilder password(String password) {
@@ -71,7 +69,6 @@ public interface GitHubEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default GitHubEndpointConsumerBuilder repoName(String repoName) {
@@ -84,7 +81,6 @@ public interface GitHubEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default GitHubEndpointConsumerBuilder repoOwner(String repoOwner) {
@@ -96,7 +92,6 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GitHubEndpointConsumerBuilder username(String username) {
@@ -161,7 +156,6 @@ public interface GitHubEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGitHubEndpointConsumerBuilder exceptionHandler(
@@ -178,7 +172,6 @@ public interface GitHubEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGitHubEndpointConsumerBuilder exceptionHandler(
@@ -191,7 +184,6 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGitHubEndpointConsumerBuilder exchangePattern(
@@ -205,7 +197,6 @@ public interface GitHubEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGitHubEndpointConsumerBuilder exchangePattern(
@@ -285,7 +276,6 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GitHubEndpointProducerBuilder oauthToken(String oauthToken) {
@@ -297,7 +287,6 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GitHubEndpointProducerBuilder password(String password) {
@@ -310,7 +299,6 @@ public interface GitHubEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default GitHubEndpointProducerBuilder repoName(String repoName) {
@@ -323,7 +311,6 @@ public interface GitHubEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default GitHubEndpointProducerBuilder repoOwner(String repoOwner) {
@@ -335,7 +322,6 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GitHubEndpointProducerBuilder username(String username) {
@@ -347,7 +333,6 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default GitHubEndpointProducerBuilder encoding(String encoding) {
@@ -401,7 +386,6 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default GitHubEndpointProducerBuilder state(String state) {
@@ -413,7 +397,6 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default GitHubEndpointProducerBuilder targetUrl(String targetUrl) {
@@ -504,7 +487,6 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GitHubEndpointBuilder oauthToken(String oauthToken) {
@@ -516,7 +498,6 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GitHubEndpointBuilder password(String password) {
@@ -529,7 +510,6 @@ public interface GitHubEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default GitHubEndpointBuilder repoName(String repoName) {
@@ -542,7 +522,6 @@ public interface GitHubEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default GitHubEndpointBuilder repoOwner(String repoOwner) {
@@ -554,7 +533,6 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GitHubEndpointBuilder username(String username) {

@@ -149,7 +149,6 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default WebsocketEndpointConsumerBuilder staticResources(
@@ -162,7 +161,6 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: cors
          */
         default WebsocketEndpointConsumerBuilder allowedOrigins(
@@ -201,7 +199,6 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: cors
          */
         default WebsocketEndpointConsumerBuilder filterPath(String filterPath) {
@@ -240,7 +237,6 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default WebsocketEndpointConsumerBuilder sslContextParameters(
@@ -254,7 +250,6 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default WebsocketEndpointConsumerBuilder sslContextParameters(
@@ -283,7 +278,6 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedWebsocketEndpointConsumerBuilder exceptionHandler(
@@ -300,7 +294,6 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedWebsocketEndpointConsumerBuilder exceptionHandler(
@@ -313,7 +306,6 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedWebsocketEndpointConsumerBuilder exchangePattern(
@@ -327,7 +319,6 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedWebsocketEndpointConsumerBuilder exchangePattern(
@@ -427,7 +418,6 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedWebsocketEndpointConsumerBuilder maxTextMessageSize(
@@ -442,7 +432,6 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedWebsocketEndpointConsumerBuilder maxTextMessageSize(
@@ -625,7 +614,6 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default WebsocketEndpointProducerBuilder sendToAll(Boolean sendToAll) {
@@ -640,7 +628,6 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default WebsocketEndpointProducerBuilder sendToAll(String sendToAll) {
@@ -652,7 +639,6 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: cors
          */
         default WebsocketEndpointProducerBuilder allowedOrigins(
@@ -691,7 +677,6 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: cors
          */
         default WebsocketEndpointProducerBuilder filterPath(String filterPath) {
@@ -730,7 +715,6 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default WebsocketEndpointProducerBuilder sslContextParameters(
@@ -744,7 +728,6 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default WebsocketEndpointProducerBuilder sslContextParameters(
@@ -856,7 +839,6 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedWebsocketEndpointProducerBuilder maxTextMessageSize(
@@ -871,7 +853,6 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedWebsocketEndpointProducerBuilder maxTextMessageSize(
@@ -984,7 +965,6 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: cors
          */
         default WebsocketEndpointBuilder allowedOrigins(String allowedOrigins) {
@@ -1022,7 +1002,6 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: cors
          */
         default WebsocketEndpointBuilder filterPath(String filterPath) {
@@ -1061,7 +1040,6 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default WebsocketEndpointBuilder sslContextParameters(
@@ -1075,7 +1053,6 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default WebsocketEndpointBuilder sslContextParameters(
@@ -1183,7 +1160,6 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedWebsocketEndpointBuilder maxTextMessageSize(
@@ -1198,7 +1174,6 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedWebsocketEndpointBuilder maxTextMessageSize(

@@ -84,7 +84,6 @@ public interface GraphqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default GraphqlEndpointBuilder operationName(String operationName) {
@@ -96,7 +95,6 @@ public interface GraphqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default GraphqlEndpointBuilder proxyHost(String proxyHost) {
@@ -108,7 +106,6 @@ public interface GraphqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default GraphqlEndpointBuilder query(String query) {
@@ -120,7 +117,6 @@ public interface GraphqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default GraphqlEndpointBuilder queryFile(String queryFile) {
@@ -133,7 +129,6 @@ public interface GraphqlEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.util.json.JsonObject</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default GraphqlEndpointBuilder variables(Object variables) {
@@ -146,7 +141,6 @@ public interface GraphqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.util.json.JsonObject</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default GraphqlEndpointBuilder variables(String variables) {
@@ -158,7 +152,6 @@ public interface GraphqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GraphqlEndpointBuilder accessToken(String accessToken) {
@@ -170,7 +163,6 @@ public interface GraphqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GraphqlEndpointBuilder password(String password) {
@@ -182,7 +174,6 @@ public interface GraphqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GraphqlEndpointBuilder username(String username) {

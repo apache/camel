@@ -42,7 +42,6 @@ public interface MQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default MQEndpointBuilder accessKey(String accessKey) {
@@ -55,7 +54,6 @@ public interface MQEndpointBuilderFactory {
          * The option is a: <code>com.amazonaws.services.mq.AmazonMQ</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default MQEndpointBuilder amazonMqClient(Object amazonMqClient) {
@@ -68,7 +66,6 @@ public interface MQEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.mq.AmazonMQ</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default MQEndpointBuilder amazonMqClient(String amazonMqClient) {
@@ -123,7 +120,6 @@ public interface MQEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.mq.MQOperations</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default MQEndpointBuilder operation(MQOperations operation) {
@@ -138,7 +134,6 @@ public interface MQEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.mq.MQOperations</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default MQEndpointBuilder operation(String operation) {
@@ -150,7 +145,6 @@ public interface MQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default MQEndpointBuilder proxyHost(String proxyHost) {
@@ -162,7 +156,6 @@ public interface MQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default MQEndpointBuilder proxyPort(Integer proxyPort) {
@@ -175,7 +168,6 @@ public interface MQEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default MQEndpointBuilder proxyPort(String proxyPort) {
@@ -215,7 +207,6 @@ public interface MQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default MQEndpointBuilder region(String region) {
@@ -227,7 +218,6 @@ public interface MQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default MQEndpointBuilder secretKey(String secretKey) {

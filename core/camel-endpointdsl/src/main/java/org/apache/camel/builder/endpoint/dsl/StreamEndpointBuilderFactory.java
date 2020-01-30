@@ -49,7 +49,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default StreamEndpointConsumerBuilder encoding(String encoding) {
@@ -62,7 +61,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default StreamEndpointConsumerBuilder fileName(String fileName) {
@@ -140,7 +138,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder groupLines(int groupLines) {
@@ -154,7 +151,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder groupLines(String groupLines) {
@@ -167,7 +163,6 @@ public interface StreamEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.stream.GroupStrategy</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder groupStrategy(Object groupStrategy) {
@@ -180,7 +175,6 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.stream.GroupStrategy</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder groupStrategy(String groupStrategy) {
@@ -224,7 +218,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder promptDelay(long promptDelay) {
@@ -236,7 +229,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder promptDelay(String promptDelay) {
@@ -249,7 +241,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder promptMessage(String promptMessage) {
@@ -315,7 +306,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder scanStreamDelay(
@@ -328,7 +318,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder scanStreamDelay(
@@ -356,7 +345,6 @@ public interface StreamEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedStreamEndpointConsumerBuilder exceptionHandler(
@@ -373,7 +361,6 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedStreamEndpointConsumerBuilder exceptionHandler(
@@ -386,7 +373,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedStreamEndpointConsumerBuilder exchangePattern(
@@ -400,7 +386,6 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedStreamEndpointConsumerBuilder exchangePattern(
@@ -446,7 +431,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedStreamEndpointConsumerBuilder readTimeout(
@@ -464,7 +448,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedStreamEndpointConsumerBuilder readTimeout(
@@ -518,7 +501,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default StreamEndpointProducerBuilder encoding(String encoding) {
@@ -531,7 +513,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default StreamEndpointProducerBuilder fileName(String fileName) {
@@ -546,7 +527,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default StreamEndpointProducerBuilder autoCloseCount(int autoCloseCount) {
@@ -561,7 +541,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default StreamEndpointProducerBuilder autoCloseCount(
@@ -604,7 +583,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default StreamEndpointProducerBuilder delay(long delay) {
@@ -616,7 +594,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default StreamEndpointProducerBuilder delay(String delay) {
@@ -714,7 +691,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedStreamEndpointProducerBuilder readTimeout(
@@ -732,7 +708,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedStreamEndpointProducerBuilder readTimeout(
@@ -787,7 +762,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default StreamEndpointBuilder encoding(String encoding) {
@@ -800,7 +774,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default StreamEndpointBuilder fileName(String fileName) {
@@ -857,7 +830,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedStreamEndpointBuilder readTimeout(int readTimeout) {
@@ -874,7 +846,6 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedStreamEndpointBuilder readTimeout(String readTimeout) {

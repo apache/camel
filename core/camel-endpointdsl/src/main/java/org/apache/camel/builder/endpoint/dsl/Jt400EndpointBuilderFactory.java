@@ -52,7 +52,6 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Jt400EndpointConsumerBuilder ccsid(int ccsid) {
@@ -64,7 +63,6 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Jt400EndpointConsumerBuilder ccsid(String ccsid) {
@@ -152,7 +150,6 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Jt400EndpointConsumerBuilder searchKey(String searchKey) {
@@ -283,7 +280,6 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder backoffErrorThreshold(
@@ -297,7 +293,6 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder backoffErrorThreshold(
@@ -311,7 +306,6 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder backoffIdleThreshold(
@@ -325,7 +319,6 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder backoffIdleThreshold(
@@ -343,7 +336,6 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder backoffMultiplier(
@@ -361,7 +353,6 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder backoffMultiplier(
@@ -516,7 +507,6 @@ public interface Jt400EndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder scheduledExecutorService(
@@ -532,7 +522,6 @@ public interface Jt400EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder scheduledExecutorService(
@@ -560,7 +549,6 @@ public interface Jt400EndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder schedulerProperties(
@@ -576,7 +564,6 @@ public interface Jt400EndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder schedulerProperties(
@@ -705,7 +692,6 @@ public interface Jt400EndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJt400EndpointConsumerBuilder exceptionHandler(
@@ -722,7 +708,6 @@ public interface Jt400EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJt400EndpointConsumerBuilder exceptionHandler(
@@ -735,7 +720,6 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJt400EndpointConsumerBuilder exchangePattern(
@@ -749,7 +733,6 @@ public interface Jt400EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJt400EndpointConsumerBuilder exchangePattern(
@@ -766,7 +749,6 @@ public interface Jt400EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJt400EndpointConsumerBuilder pollStrategy(
@@ -783,7 +765,6 @@ public interface Jt400EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJt400EndpointConsumerBuilder pollStrategy(
@@ -863,7 +844,6 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Jt400EndpointProducerBuilder ccsid(int ccsid) {
@@ -875,7 +855,6 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Jt400EndpointProducerBuilder ccsid(String ccsid) {
@@ -963,7 +942,6 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Jt400EndpointProducerBuilder searchKey(String searchKey) {
@@ -1017,7 +995,6 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer[]</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default Jt400EndpointProducerBuilder outputFieldsIdxArray(
@@ -1031,7 +1008,6 @@ public interface Jt400EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer[]</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default Jt400EndpointProducerBuilder outputFieldsIdxArray(
@@ -1045,7 +1021,6 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer[]</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default Jt400EndpointProducerBuilder outputFieldsLengthArray(
@@ -1060,7 +1035,6 @@ public interface Jt400EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer[]</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default Jt400EndpointProducerBuilder outputFieldsLengthArray(
@@ -1073,7 +1047,6 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default Jt400EndpointProducerBuilder procedureName(String procedureName) {
@@ -1188,7 +1161,6 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Jt400EndpointBuilder ccsid(int ccsid) {
@@ -1200,7 +1172,6 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Jt400EndpointBuilder ccsid(String ccsid) {
@@ -1288,7 +1259,6 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Jt400EndpointBuilder searchKey(String searchKey) {

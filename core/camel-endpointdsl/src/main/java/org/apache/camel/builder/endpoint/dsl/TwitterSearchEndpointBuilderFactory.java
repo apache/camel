@@ -196,7 +196,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default TwitterSearchEndpointConsumerBuilder lang(String lang) {
@@ -262,7 +261,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default TwitterSearchEndpointConsumerBuilder userIds(String userIds) {
@@ -275,7 +273,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder backoffErrorThreshold(
@@ -289,7 +286,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder backoffErrorThreshold(
@@ -303,7 +299,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder backoffIdleThreshold(
@@ -317,7 +312,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder backoffIdleThreshold(
@@ -335,7 +329,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder backoffMultiplier(
@@ -353,7 +346,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder backoffMultiplier(
@@ -508,7 +500,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder scheduledExecutorService(
@@ -524,7 +515,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder scheduledExecutorService(
@@ -552,7 +542,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder schedulerProperties(
@@ -568,7 +557,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder schedulerProperties(
@@ -685,7 +673,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default TwitterSearchEndpointConsumerBuilder httpProxyHost(
@@ -699,7 +686,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default TwitterSearchEndpointConsumerBuilder httpProxyPassword(
@@ -713,7 +699,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default TwitterSearchEndpointConsumerBuilder httpProxyPort(
@@ -728,7 +713,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: proxy
          */
         default TwitterSearchEndpointConsumerBuilder httpProxyPort(
@@ -742,7 +726,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default TwitterSearchEndpointConsumerBuilder httpProxyUser(
@@ -756,7 +739,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default TwitterSearchEndpointConsumerBuilder accessToken(
@@ -770,7 +752,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default TwitterSearchEndpointConsumerBuilder accessTokenSecret(
@@ -784,7 +765,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default TwitterSearchEndpointConsumerBuilder consumerKey(
@@ -798,7 +778,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default TwitterSearchEndpointConsumerBuilder consumerSecret(
@@ -842,7 +821,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder exceptionHandler(
@@ -859,7 +837,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder exceptionHandler(
@@ -872,7 +849,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder exchangePattern(
@@ -886,7 +862,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder exchangePattern(
@@ -929,7 +904,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder latitude(
@@ -944,7 +918,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder latitude(
@@ -959,7 +932,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder locations(
@@ -974,7 +946,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder longitude(
@@ -989,7 +960,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder longitude(
@@ -1006,7 +976,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder pollStrategy(
@@ -1023,7 +992,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder pollStrategy(
@@ -1038,7 +1006,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder radius(
@@ -1053,7 +1020,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder radius(
@@ -1176,7 +1142,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default TwitterSearchEndpointProducerBuilder httpProxyHost(
@@ -1190,7 +1155,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default TwitterSearchEndpointProducerBuilder httpProxyPassword(
@@ -1204,7 +1168,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default TwitterSearchEndpointProducerBuilder httpProxyPort(
@@ -1219,7 +1182,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: proxy
          */
         default TwitterSearchEndpointProducerBuilder httpProxyPort(
@@ -1233,7 +1195,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default TwitterSearchEndpointProducerBuilder httpProxyUser(
@@ -1247,7 +1208,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default TwitterSearchEndpointProducerBuilder accessToken(
@@ -1261,7 +1221,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default TwitterSearchEndpointProducerBuilder accessTokenSecret(
@@ -1275,7 +1234,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default TwitterSearchEndpointProducerBuilder consumerKey(
@@ -1289,7 +1247,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default TwitterSearchEndpointProducerBuilder consumerSecret(
@@ -1382,7 +1339,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default TwitterSearchEndpointBuilder httpProxyHost(String httpProxyHost) {
@@ -1395,7 +1351,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default TwitterSearchEndpointBuilder httpProxyPassword(
@@ -1409,7 +1364,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default TwitterSearchEndpointBuilder httpProxyPort(Integer httpProxyPort) {
@@ -1423,7 +1377,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: proxy
          */
         default TwitterSearchEndpointBuilder httpProxyPort(String httpProxyPort) {
@@ -1436,7 +1389,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default TwitterSearchEndpointBuilder httpProxyUser(String httpProxyUser) {
@@ -1449,7 +1401,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default TwitterSearchEndpointBuilder accessToken(String accessToken) {
@@ -1462,7 +1413,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default TwitterSearchEndpointBuilder accessTokenSecret(
@@ -1476,7 +1426,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default TwitterSearchEndpointBuilder consumerKey(String consumerKey) {
@@ -1489,7 +1438,6 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default TwitterSearchEndpointBuilder consumerSecret(

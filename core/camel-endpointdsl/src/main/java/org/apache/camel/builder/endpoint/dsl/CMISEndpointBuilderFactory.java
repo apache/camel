@@ -97,7 +97,6 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default CMISEndpointConsumerBuilder readCount(int readCount) {
@@ -109,7 +108,6 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default CMISEndpointConsumerBuilder readCount(String readCount) {
@@ -122,7 +120,6 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default CMISEndpointConsumerBuilder repositoryId(String repositoryId) {
@@ -174,7 +171,6 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default CMISEndpointConsumerBuilder query(String query) {
@@ -186,7 +182,6 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default CMISEndpointConsumerBuilder password(String password) {
@@ -198,7 +193,6 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default CMISEndpointConsumerBuilder username(String username) {
@@ -225,7 +219,6 @@ public interface CMISEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCMISEndpointConsumerBuilder exceptionHandler(
@@ -242,7 +235,6 @@ public interface CMISEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCMISEndpointConsumerBuilder exceptionHandler(
@@ -255,7 +247,6 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCMISEndpointConsumerBuilder exchangePattern(
@@ -269,7 +260,6 @@ public interface CMISEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCMISEndpointConsumerBuilder exchangePattern(
@@ -313,7 +303,6 @@ public interface CMISEndpointBuilderFactory {
          * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedCMISEndpointConsumerBuilder sessionFacadeFactory(
@@ -329,7 +318,6 @@ public interface CMISEndpointBuilderFactory {
          * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedCMISEndpointConsumerBuilder sessionFacadeFactory(
@@ -431,7 +419,6 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default CMISEndpointProducerBuilder readCount(int readCount) {
@@ -443,7 +430,6 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default CMISEndpointProducerBuilder readCount(String readCount) {
@@ -456,7 +442,6 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default CMISEndpointProducerBuilder repositoryId(String repositoryId) {
@@ -536,7 +521,6 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default CMISEndpointProducerBuilder password(String password) {
@@ -548,7 +532,6 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default CMISEndpointProducerBuilder username(String username) {
@@ -602,7 +585,6 @@ public interface CMISEndpointBuilderFactory {
          * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedCMISEndpointProducerBuilder sessionFacadeFactory(
@@ -618,7 +600,6 @@ public interface CMISEndpointBuilderFactory {
          * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedCMISEndpointProducerBuilder sessionFacadeFactory(
@@ -721,7 +702,6 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default CMISEndpointBuilder readCount(int readCount) {
@@ -733,7 +713,6 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default CMISEndpointBuilder readCount(String readCount) {
@@ -746,7 +725,6 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default CMISEndpointBuilder repositoryId(String repositoryId) {
@@ -758,7 +736,6 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default CMISEndpointBuilder password(String password) {
@@ -770,7 +747,6 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default CMISEndpointBuilder username(String username) {
@@ -825,7 +801,6 @@ public interface CMISEndpointBuilderFactory {
          * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedCMISEndpointBuilder sessionFacadeFactory(
@@ -841,7 +816,6 @@ public interface CMISEndpointBuilderFactory {
          * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedCMISEndpointBuilder sessionFacadeFactory(

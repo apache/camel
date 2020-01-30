@@ -45,7 +45,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KubernetesConfigMapsEndpointBuilder apiVersion(String apiVersion) {
@@ -57,7 +56,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KubernetesConfigMapsEndpointBuilder dnsDomain(String dnsDomain) {
@@ -70,7 +68,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KubernetesConfigMapsEndpointBuilder kubernetesClient(
@@ -84,7 +81,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KubernetesConfigMapsEndpointBuilder kubernetesClient(
@@ -139,7 +135,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KubernetesConfigMapsEndpointBuilder operation(String operation) {
@@ -151,7 +146,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KubernetesConfigMapsEndpointBuilder portName(String portName) {
@@ -176,7 +170,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder caCertData(String caCertData) {
@@ -188,7 +181,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder caCertFile(String caCertFile) {
@@ -200,7 +192,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder clientCertData(
@@ -213,7 +204,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder clientCertFile(
@@ -226,7 +216,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder clientKeyAlgo(
@@ -239,7 +228,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder clientKeyData(
@@ -252,7 +240,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder clientKeyFile(
@@ -265,7 +252,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder clientKeyPassphrase(
@@ -278,7 +264,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder oauthToken(String oauthToken) {
@@ -290,7 +275,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder password(String password) {
@@ -302,7 +286,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder trustCerts(
@@ -316,7 +299,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder trustCerts(String trustCerts) {
@@ -328,7 +310,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder username(String username) {
@@ -380,7 +361,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedKubernetesConfigMapsEndpointBuilder connectionTimeout(
@@ -395,7 +375,6 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedKubernetesConfigMapsEndpointBuilder connectionTimeout(

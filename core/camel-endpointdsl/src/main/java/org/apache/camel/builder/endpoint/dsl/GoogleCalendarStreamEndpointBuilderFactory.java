@@ -54,7 +54,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder accessToken(
@@ -68,7 +67,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder applicationName(
@@ -131,7 +129,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder clientId(String clientId) {
@@ -143,7 +140,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder clientSecret(
@@ -234,7 +230,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder query(String query) {
@@ -248,7 +243,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder refreshToken(
@@ -264,7 +258,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder scopes(List<String> scopes) {
@@ -279,7 +272,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder scopes(String scopes) {
@@ -320,7 +312,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder backoffErrorThreshold(
@@ -334,7 +325,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder backoffErrorThreshold(
@@ -348,7 +338,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder backoffIdleThreshold(
@@ -362,7 +351,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder backoffIdleThreshold(
@@ -380,7 +368,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder backoffMultiplier(
@@ -398,7 +385,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder backoffMultiplier(
@@ -556,7 +542,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder scheduledExecutorService(
@@ -572,7 +557,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder scheduledExecutorService(
@@ -600,7 +584,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder schedulerProperties(
@@ -616,7 +599,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder schedulerProperties(
@@ -723,7 +705,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder exceptionHandler(
@@ -740,7 +721,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder exceptionHandler(
@@ -753,7 +733,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder exchangePattern(
@@ -767,7 +746,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder exchangePattern(
@@ -784,7 +762,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder pollStrategy(
@@ -801,7 +778,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder pollStrategy(

@@ -44,7 +44,6 @@ public interface Translate2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default Translate2EndpointBuilder accessKey(String accessKey) {
@@ -153,7 +152,6 @@ public interface Translate2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default Translate2EndpointBuilder proxyHost(String proxyHost) {
@@ -165,7 +163,6 @@ public interface Translate2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default Translate2EndpointBuilder proxyPort(Integer proxyPort) {
@@ -178,7 +175,6 @@ public interface Translate2EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default Translate2EndpointBuilder proxyPort(String proxyPort) {
@@ -219,7 +215,6 @@ public interface Translate2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default Translate2EndpointBuilder region(String region) {
@@ -231,7 +226,6 @@ public interface Translate2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default Translate2EndpointBuilder secretKey(String secretKey) {
@@ -243,7 +237,6 @@ public interface Translate2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default Translate2EndpointBuilder sourceLanguage(String sourceLanguage) {
@@ -255,7 +248,6 @@ public interface Translate2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default Translate2EndpointBuilder targetLanguage(String targetLanguage) {
@@ -268,7 +260,6 @@ public interface Translate2EndpointBuilderFactory {
          * The option is a:
          * <code>software.amazon.awssdk.services.translate.TranslateClient</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default Translate2EndpointBuilder translateClient(Object translateClient) {
@@ -281,7 +272,6 @@ public interface Translate2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>software.amazon.awssdk.services.translate.TranslateClient</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default Translate2EndpointBuilder translateClient(String translateClient) {

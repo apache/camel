@@ -48,7 +48,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RestEndpointConsumerBuilder consumes(String consumes) {
@@ -60,7 +59,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RestEndpointConsumerBuilder inType(String inType) {
@@ -72,7 +70,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RestEndpointConsumerBuilder outType(String outType) {
@@ -85,7 +82,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RestEndpointConsumerBuilder produces(String produces) {
@@ -97,7 +93,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RestEndpointConsumerBuilder routeId(String routeId) {
@@ -152,7 +147,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default RestEndpointConsumerBuilder consumerComponentName(
@@ -165,7 +159,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default RestEndpointConsumerBuilder description(String description) {
@@ -192,7 +185,6 @@ public interface RestEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRestEndpointConsumerBuilder exceptionHandler(
@@ -209,7 +201,6 @@ public interface RestEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRestEndpointConsumerBuilder exceptionHandler(
@@ -222,7 +213,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRestEndpointConsumerBuilder exchangePattern(
@@ -236,7 +226,6 @@ public interface RestEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRestEndpointConsumerBuilder exchangePattern(
@@ -317,7 +306,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RestEndpointProducerBuilder consumes(String consumes) {
@@ -329,7 +317,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RestEndpointProducerBuilder inType(String inType) {
@@ -341,7 +328,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RestEndpointProducerBuilder outType(String outType) {
@@ -354,7 +340,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RestEndpointProducerBuilder produces(String produces) {
@@ -366,7 +351,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RestEndpointProducerBuilder routeId(String routeId) {
@@ -379,7 +363,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default RestEndpointProducerBuilder apiDoc(String apiDoc) {
@@ -396,7 +379,6 @@ public interface RestEndpointBuilderFactory {
          * <code>org.apache.camel.spi.RestConfiguration$RestBindingMode</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default RestEndpointProducerBuilder bindingMode(
@@ -414,7 +396,6 @@ public interface RestEndpointBuilderFactory {
          * <code>org.apache.camel.spi.RestConfiguration$RestBindingMode</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default RestEndpointProducerBuilder bindingMode(String bindingMode) {
@@ -427,7 +408,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default RestEndpointProducerBuilder host(String host) {
@@ -486,7 +466,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default RestEndpointProducerBuilder producerComponentName(
@@ -499,7 +478,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default RestEndpointProducerBuilder queryParameters(
@@ -592,7 +570,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RestEndpointBuilder consumes(String consumes) {
@@ -604,7 +581,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RestEndpointBuilder inType(String inType) {
@@ -616,7 +592,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RestEndpointBuilder outType(String outType) {
@@ -629,7 +604,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RestEndpointBuilder produces(String produces) {
@@ -641,7 +615,6 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RestEndpointBuilder routeId(String routeId) {

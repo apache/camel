@@ -50,7 +50,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.spring.ws.filter.MessageFilter</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SpringWebserviceEndpointConsumerBuilder messageFilter(
@@ -65,7 +64,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.spring.ws.filter.MessageFilter</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SpringWebserviceEndpointConsumerBuilder messageFilter(
@@ -120,7 +118,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default SpringWebserviceEndpointConsumerBuilder endpointDispatcher(
@@ -137,7 +134,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default SpringWebserviceEndpointConsumerBuilder endpointDispatcher(
@@ -157,7 +153,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default SpringWebserviceEndpointConsumerBuilder endpointMapping(
@@ -177,7 +172,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default SpringWebserviceEndpointConsumerBuilder endpointMapping(
@@ -191,7 +185,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SpringWebserviceEndpointConsumerBuilder sslContextParameters(
@@ -205,7 +198,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SpringWebserviceEndpointConsumerBuilder sslContextParameters(
@@ -234,7 +226,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSpringWebserviceEndpointConsumerBuilder exceptionHandler(
@@ -251,7 +242,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSpringWebserviceEndpointConsumerBuilder exceptionHandler(
@@ -264,7 +254,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSpringWebserviceEndpointConsumerBuilder exchangePattern(
@@ -278,7 +267,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSpringWebserviceEndpointConsumerBuilder exchangePattern(
@@ -360,7 +348,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.spring.ws.filter.MessageFilter</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SpringWebserviceEndpointProducerBuilder messageFilter(
@@ -375,7 +362,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.spring.ws.filter.MessageFilter</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SpringWebserviceEndpointProducerBuilder messageFilter(
@@ -457,7 +443,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.net.URI</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder faultAction(
@@ -471,7 +456,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.net.URI</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder faultAction(
@@ -485,7 +469,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.net.URI</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder faultTo(URI faultTo) {
@@ -498,7 +481,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.net.URI</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder faultTo(String faultTo) {
@@ -554,7 +536,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.ws.WebServiceMessageFactory</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder messageFactory(
@@ -569,7 +550,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.ws.WebServiceMessageFactory</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder messageFactory(
@@ -584,7 +564,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder messageIdStrategy(
@@ -599,7 +578,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder messageIdStrategy(
@@ -615,7 +593,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.springframework.ws.transport.WebServiceMessageSender</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder messageSender(
@@ -631,7 +608,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.springframework.ws.transport.WebServiceMessageSender</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder messageSender(
@@ -645,7 +621,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.net.URI</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder outputAction(
@@ -659,7 +634,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.net.URI</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder outputAction(
@@ -673,7 +647,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.net.URI</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder replyTo(URI replyTo) {
@@ -686,7 +659,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.net.URI</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder replyTo(String replyTo) {
@@ -699,7 +671,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder soapAction(
@@ -723,7 +694,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder timeout(int timeout) {
@@ -746,7 +716,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder timeout(String timeout) {
@@ -763,7 +732,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.springframework.ws.client.core.WebServiceTemplate</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder webServiceTemplate(
@@ -781,7 +749,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.springframework.ws.client.core.WebServiceTemplate</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder webServiceTemplate(
@@ -796,7 +763,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.net.URI</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder wsAddressingAction(
@@ -811,7 +777,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.net.URI</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder wsAddressingAction(
@@ -825,7 +790,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SpringWebserviceEndpointProducerBuilder sslContextParameters(
@@ -839,7 +803,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SpringWebserviceEndpointProducerBuilder sslContextParameters(
@@ -934,7 +897,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.spring.ws.filter.MessageFilter</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SpringWebserviceEndpointBuilder messageFilter(
@@ -949,7 +911,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.spring.ws.filter.MessageFilter</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SpringWebserviceEndpointBuilder messageFilter(
@@ -963,7 +924,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SpringWebserviceEndpointBuilder sslContextParameters(
@@ -977,7 +937,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SpringWebserviceEndpointBuilder sslContextParameters(

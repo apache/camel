@@ -44,7 +44,6 @@ public interface CwEndpointBuilderFactory {
          * The option is a:
          * <code>com.amazonaws.services.cloudwatch.AmazonCloudWatch</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default CwEndpointBuilder amazonCwClient(Object amazonCwClient) {
@@ -57,7 +56,6 @@ public interface CwEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.cloudwatch.AmazonCloudWatch</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default CwEndpointBuilder amazonCwClient(String amazonCwClient) {
@@ -109,7 +107,6 @@ public interface CwEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default CwEndpointBuilder name(String name) {
@@ -121,7 +118,6 @@ public interface CwEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default CwEndpointBuilder proxyHost(String proxyHost) {
@@ -133,7 +129,6 @@ public interface CwEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default CwEndpointBuilder proxyPort(Integer proxyPort) {
@@ -146,7 +141,6 @@ public interface CwEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default CwEndpointBuilder proxyPort(String proxyPort) {
@@ -186,7 +180,6 @@ public interface CwEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default CwEndpointBuilder region(String region) {
@@ -198,7 +191,6 @@ public interface CwEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Date</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default CwEndpointBuilder timestamp(Date timestamp) {
@@ -210,7 +202,6 @@ public interface CwEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.util.Date</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default CwEndpointBuilder timestamp(String timestamp) {
@@ -222,7 +213,6 @@ public interface CwEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default CwEndpointBuilder unit(String unit) {
@@ -234,7 +224,6 @@ public interface CwEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default CwEndpointBuilder value(Double value) {
@@ -246,7 +235,6 @@ public interface CwEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default CwEndpointBuilder value(String value) {
@@ -258,7 +246,6 @@ public interface CwEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default CwEndpointBuilder accessKey(String accessKey) {
@@ -270,7 +257,6 @@ public interface CwEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default CwEndpointBuilder secretKey(String secretKey) {

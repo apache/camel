@@ -46,7 +46,6 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DockerEndpointConsumerBuilder email(String email) {
@@ -96,7 +95,6 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DockerEndpointConsumerBuilder requestTimeout(
@@ -110,7 +108,6 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default DockerEndpointConsumerBuilder requestTimeout(
@@ -161,7 +158,6 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default DockerEndpointConsumerBuilder certPath(String certPath) {
@@ -173,7 +169,6 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default DockerEndpointConsumerBuilder password(String password) {
@@ -233,7 +228,6 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default DockerEndpointConsumerBuilder username(String username) {
@@ -260,7 +254,6 @@ public interface DockerEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDockerEndpointConsumerBuilder exceptionHandler(
@@ -277,7 +270,6 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDockerEndpointConsumerBuilder exceptionHandler(
@@ -290,7 +282,6 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDockerEndpointConsumerBuilder exchangePattern(
@@ -304,7 +295,6 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDockerEndpointConsumerBuilder exchangePattern(
@@ -541,7 +531,6 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DockerEndpointProducerBuilder email(String email) {
@@ -591,7 +580,6 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DockerEndpointProducerBuilder requestTimeout(
@@ -605,7 +593,6 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default DockerEndpointProducerBuilder requestTimeout(
@@ -660,7 +647,6 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default DockerEndpointProducerBuilder certPath(String certPath) {
@@ -672,7 +658,6 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default DockerEndpointProducerBuilder password(String password) {
@@ -732,7 +717,6 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default DockerEndpointProducerBuilder username(String username) {
@@ -980,7 +964,6 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DockerEndpointBuilder email(String email) {
@@ -1030,7 +1013,6 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DockerEndpointBuilder requestTimeout(Integer requestTimeout) {
@@ -1043,7 +1025,6 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default DockerEndpointBuilder requestTimeout(String requestTimeout) {
@@ -1055,7 +1036,6 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default DockerEndpointBuilder certPath(String certPath) {
@@ -1067,7 +1047,6 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default DockerEndpointBuilder password(String password) {
@@ -1127,7 +1106,6 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default DockerEndpointBuilder username(String username) {

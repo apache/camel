@@ -44,7 +44,6 @@ public interface DdbEndpointBuilderFactory {
          * The option is a:
          * <code>com.amazonaws.services.dynamodbv2.AmazonDynamoDB</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DdbEndpointBuilder amazonDDBClient(Object amazonDDBClient) {
@@ -57,7 +56,6 @@ public interface DdbEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.dynamodbv2.AmazonDynamoDB</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DdbEndpointBuilder amazonDDBClient(String amazonDDBClient) {
@@ -95,7 +93,6 @@ public interface DdbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DdbEndpointBuilder keyAttributeName(String keyAttributeName) {
@@ -107,7 +104,6 @@ public interface DdbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DdbEndpointBuilder keyAttributeType(String keyAttributeType) {
@@ -185,7 +181,6 @@ public interface DdbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DdbEndpointBuilder proxyHost(String proxyHost) {
@@ -200,7 +195,6 @@ public interface DdbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DdbEndpointBuilder proxyPort(Integer proxyPort) {
@@ -216,7 +210,6 @@ public interface DdbEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default DdbEndpointBuilder proxyPort(String proxyPort) {
@@ -254,7 +247,6 @@ public interface DdbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DdbEndpointBuilder readCapacity(Long readCapacity) {
@@ -267,7 +259,6 @@ public interface DdbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DdbEndpointBuilder readCapacity(String readCapacity) {
@@ -279,7 +270,6 @@ public interface DdbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DdbEndpointBuilder region(String region) {
@@ -292,7 +282,6 @@ public interface DdbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DdbEndpointBuilder writeCapacity(Long writeCapacity) {
@@ -305,7 +294,6 @@ public interface DdbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DdbEndpointBuilder writeCapacity(String writeCapacity) {
@@ -317,7 +305,6 @@ public interface DdbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default DdbEndpointBuilder accessKey(String accessKey) {
@@ -329,7 +316,6 @@ public interface DdbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default DdbEndpointBuilder secretKey(String secretKey) {

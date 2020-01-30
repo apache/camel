@@ -141,7 +141,6 @@ public interface DigitalOceanEndpointBuilderFactory {
          * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanResources</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default DigitalOceanEndpointBuilder resource(
@@ -156,7 +155,6 @@ public interface DigitalOceanEndpointBuilderFactory {
          * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanResources</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default DigitalOceanEndpointBuilder resource(String resource) {
@@ -168,7 +166,6 @@ public interface DigitalOceanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default DigitalOceanEndpointBuilder httpProxyHost(String httpProxyHost) {
@@ -180,7 +177,6 @@ public interface DigitalOceanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default DigitalOceanEndpointBuilder httpProxyPassword(
@@ -193,7 +189,6 @@ public interface DigitalOceanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default DigitalOceanEndpointBuilder httpProxyPort(Integer httpProxyPort) {
@@ -206,7 +201,6 @@ public interface DigitalOceanEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: proxy
          */
         default DigitalOceanEndpointBuilder httpProxyPort(String httpProxyPort) {
@@ -218,7 +212,6 @@ public interface DigitalOceanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default DigitalOceanEndpointBuilder httpProxyUser(String httpProxyUser) {
@@ -230,7 +223,6 @@ public interface DigitalOceanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default DigitalOceanEndpointBuilder oAuthToken(String oAuthToken) {
@@ -282,7 +274,6 @@ public interface DigitalOceanEndpointBuilderFactory {
          * The option is a:
          * <code>com.myjeeva.digitalocean.impl.DigitalOceanClient</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedDigitalOceanEndpointBuilder digitalOceanClient(
@@ -296,7 +287,6 @@ public interface DigitalOceanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.myjeeva.digitalocean.impl.DigitalOceanClient</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedDigitalOceanEndpointBuilder digitalOceanClient(

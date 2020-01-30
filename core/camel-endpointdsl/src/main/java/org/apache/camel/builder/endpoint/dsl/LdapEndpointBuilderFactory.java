@@ -99,7 +99,6 @@ public interface LdapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default LdapEndpointBuilder pageSize(Integer pageSize) {
@@ -116,7 +115,6 @@ public interface LdapEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default LdapEndpointBuilder pageSize(String pageSize) {
@@ -129,7 +127,6 @@ public interface LdapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default LdapEndpointBuilder returnedAttributes(String returnedAttributes) {

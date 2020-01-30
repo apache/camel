@@ -42,7 +42,6 @@ public interface SolrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SolrEndpointBuilder allowCompression(Boolean allowCompression) {
@@ -55,7 +54,6 @@ public interface SolrEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SolrEndpointBuilder allowCompression(String allowCompression) {
@@ -67,7 +65,6 @@ public interface SolrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SolrEndpointBuilder connectionTimeout(Integer connectionTimeout) {
@@ -80,7 +77,6 @@ public interface SolrEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SolrEndpointBuilder connectionTimeout(String connectionTimeout) {
@@ -92,7 +88,6 @@ public interface SolrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SolrEndpointBuilder defaultMaxConnectionsPerHost(
@@ -106,7 +101,6 @@ public interface SolrEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SolrEndpointBuilder defaultMaxConnectionsPerHost(
@@ -119,7 +113,6 @@ public interface SolrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SolrEndpointBuilder followRedirects(Boolean followRedirects) {
@@ -132,7 +125,6 @@ public interface SolrEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SolrEndpointBuilder followRedirects(String followRedirects) {
@@ -185,7 +177,6 @@ public interface SolrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SolrEndpointBuilder maxRetries(Integer maxRetries) {
@@ -199,7 +190,6 @@ public interface SolrEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SolrEndpointBuilder maxRetries(String maxRetries) {
@@ -211,7 +201,6 @@ public interface SolrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SolrEndpointBuilder maxTotalConnections(
@@ -225,7 +214,6 @@ public interface SolrEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SolrEndpointBuilder maxTotalConnections(
@@ -238,7 +226,6 @@ public interface SolrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SolrEndpointBuilder requestHandler(String requestHandler) {
@@ -251,7 +238,6 @@ public interface SolrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SolrEndpointBuilder soTimeout(Integer soTimeout) {
@@ -265,7 +251,6 @@ public interface SolrEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SolrEndpointBuilder soTimeout(String soTimeout) {
@@ -327,7 +312,6 @@ public interface SolrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SolrEndpointBuilder password(String password) {
@@ -339,7 +323,6 @@ public interface SolrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SolrEndpointBuilder username(String username) {
@@ -351,7 +334,6 @@ public interface SolrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: solrCloud
          */
         default SolrEndpointBuilder collection(String collection) {
@@ -364,7 +346,6 @@ public interface SolrEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: solrCloud
          */
         default SolrEndpointBuilder zkHost(String zkHost) {

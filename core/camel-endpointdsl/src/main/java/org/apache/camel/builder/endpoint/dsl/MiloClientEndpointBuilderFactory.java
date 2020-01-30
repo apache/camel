@@ -49,7 +49,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointConsumerBuilder clientId(String clientId) {
@@ -87,7 +86,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointConsumerBuilder discoveryEndpointSuffix(
@@ -100,7 +98,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointConsumerBuilder discoveryEndpointUri(
@@ -113,7 +110,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointConsumerBuilder method(String method) {
@@ -125,7 +121,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointConsumerBuilder node(String node) {
@@ -137,7 +132,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointConsumerBuilder samplingInterval(
@@ -150,7 +144,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointConsumerBuilder samplingInterval(
@@ -203,7 +196,6 @@ public interface MiloClientEndpointBuilderFactory {
          * The option is a: <code>java.util.Set&lt;java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder allowedSecurityPolicies(
@@ -218,7 +210,6 @@ public interface MiloClientEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.Set&lt;java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder allowedSecurityPolicies(
@@ -257,7 +248,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder channelLifetime(
@@ -270,7 +260,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder channelLifetime(
@@ -283,7 +272,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder keyAlias(String keyAlias) {
@@ -295,7 +283,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder keyPassword(String keyPassword) {
@@ -307,7 +294,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder keyStorePassword(
@@ -320,7 +306,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder keyStoreType(
@@ -333,7 +318,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder keyStoreUrl(String keyStoreUrl) {
@@ -345,7 +329,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder maxPendingPublishRequests(
@@ -358,7 +341,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder maxPendingPublishRequests(
@@ -371,7 +353,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder maxResponseMessageSize(
@@ -384,7 +365,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder maxResponseMessageSize(
@@ -437,7 +417,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder requestTimeout(
@@ -450,7 +429,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder requestTimeout(
@@ -463,7 +441,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder sessionName(String sessionName) {
@@ -475,7 +452,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder sessionTimeout(
@@ -488,7 +464,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder sessionTimeout(
@@ -516,7 +491,6 @@ public interface MiloClientEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMiloClientEndpointConsumerBuilder exceptionHandler(
@@ -533,7 +507,6 @@ public interface MiloClientEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMiloClientEndpointConsumerBuilder exceptionHandler(
@@ -546,7 +519,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMiloClientEndpointConsumerBuilder exchangePattern(
@@ -560,7 +532,6 @@ public interface MiloClientEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMiloClientEndpointConsumerBuilder exchangePattern(
@@ -641,7 +612,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointProducerBuilder clientId(String clientId) {
@@ -679,7 +649,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointProducerBuilder discoveryEndpointSuffix(
@@ -692,7 +661,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointProducerBuilder discoveryEndpointUri(
@@ -705,7 +673,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointProducerBuilder method(String method) {
@@ -717,7 +684,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointProducerBuilder node(String node) {
@@ -729,7 +695,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointProducerBuilder samplingInterval(
@@ -742,7 +707,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointProducerBuilder samplingInterval(
@@ -799,7 +763,6 @@ public interface MiloClientEndpointBuilderFactory {
          * The option is a: <code>java.util.Set&lt;java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointProducerBuilder allowedSecurityPolicies(
@@ -814,7 +777,6 @@ public interface MiloClientEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.Set&lt;java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointProducerBuilder allowedSecurityPolicies(
@@ -853,7 +815,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointProducerBuilder channelLifetime(
@@ -866,7 +827,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointProducerBuilder channelLifetime(
@@ -879,7 +839,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointProducerBuilder keyAlias(String keyAlias) {
@@ -891,7 +850,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointProducerBuilder keyPassword(String keyPassword) {
@@ -903,7 +861,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointProducerBuilder keyStorePassword(
@@ -916,7 +873,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointProducerBuilder keyStoreType(
@@ -929,7 +885,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointProducerBuilder keyStoreUrl(String keyStoreUrl) {
@@ -941,7 +896,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointProducerBuilder maxPendingPublishRequests(
@@ -954,7 +908,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointProducerBuilder maxPendingPublishRequests(
@@ -967,7 +920,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointProducerBuilder maxResponseMessageSize(
@@ -980,7 +932,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointProducerBuilder maxResponseMessageSize(
@@ -1033,7 +984,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointProducerBuilder requestTimeout(
@@ -1046,7 +996,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointProducerBuilder requestTimeout(
@@ -1059,7 +1008,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointProducerBuilder sessionName(String sessionName) {
@@ -1071,7 +1019,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointProducerBuilder sessionTimeout(
@@ -1084,7 +1031,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointProducerBuilder sessionTimeout(
@@ -1177,7 +1123,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointBuilder clientId(String clientId) {
@@ -1215,7 +1160,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointBuilder discoveryEndpointSuffix(
@@ -1228,7 +1172,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointBuilder discoveryEndpointUri(
@@ -1241,7 +1184,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointBuilder method(String method) {
@@ -1253,7 +1195,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointBuilder node(String node) {
@@ -1265,7 +1206,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointBuilder samplingInterval(
@@ -1278,7 +1218,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
-         * Default:
          * Group: common
          */
         default MiloClientEndpointBuilder samplingInterval(
@@ -1293,7 +1232,6 @@ public interface MiloClientEndpointBuilderFactory {
          * The option is a: <code>java.util.Set&lt;java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointBuilder allowedSecurityPolicies(
@@ -1308,7 +1246,6 @@ public interface MiloClientEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.Set&lt;java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointBuilder allowedSecurityPolicies(
@@ -1345,7 +1282,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointBuilder channelLifetime(Long channelLifetime) {
@@ -1357,7 +1293,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointBuilder channelLifetime(String channelLifetime) {
@@ -1369,7 +1304,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointBuilder keyAlias(String keyAlias) {
@@ -1381,7 +1315,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointBuilder keyPassword(String keyPassword) {
@@ -1393,7 +1326,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointBuilder keyStorePassword(
@@ -1406,7 +1338,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointBuilder keyStoreType(String keyStoreType) {
@@ -1418,7 +1349,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointBuilder keyStoreUrl(String keyStoreUrl) {
@@ -1430,7 +1360,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointBuilder maxPendingPublishRequests(
@@ -1443,7 +1372,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointBuilder maxPendingPublishRequests(
@@ -1456,7 +1384,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointBuilder maxResponseMessageSize(
@@ -1469,7 +1396,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointBuilder maxResponseMessageSize(
@@ -1520,7 +1446,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointBuilder requestTimeout(Long requestTimeout) {
@@ -1532,7 +1457,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointBuilder requestTimeout(String requestTimeout) {
@@ -1544,7 +1468,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointBuilder sessionName(String sessionName) {
@@ -1556,7 +1479,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointBuilder sessionTimeout(Long sessionTimeout) {
@@ -1568,7 +1490,6 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: client
          */
         default MiloClientEndpointBuilder sessionTimeout(String sessionTimeout) {

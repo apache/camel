@@ -84,7 +84,6 @@ public interface CordaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default CordaEndpointConsumerBuilder password(String password) {
@@ -96,7 +95,6 @@ public interface CordaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default CordaEndpointConsumerBuilder username(String username) {
@@ -123,7 +121,6 @@ public interface CordaEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCordaEndpointConsumerBuilder exceptionHandler(
@@ -140,7 +137,6 @@ public interface CordaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCordaEndpointConsumerBuilder exceptionHandler(
@@ -153,7 +149,6 @@ public interface CordaEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCordaEndpointConsumerBuilder exchangePattern(
@@ -167,7 +162,6 @@ public interface CordaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCordaEndpointConsumerBuilder exchangePattern(
@@ -289,7 +283,6 @@ public interface CordaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default CordaEndpointProducerBuilder operation(String operation) {
@@ -301,7 +294,6 @@ public interface CordaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default CordaEndpointProducerBuilder password(String password) {
@@ -313,7 +305,6 @@ public interface CordaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default CordaEndpointProducerBuilder username(String username) {
@@ -404,7 +395,6 @@ public interface CordaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default CordaEndpointBuilder password(String password) {
@@ -416,7 +406,6 @@ public interface CordaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default CordaEndpointBuilder username(String username) {

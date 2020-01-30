@@ -42,7 +42,6 @@ public interface KMSEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KMSEndpointBuilder accessKey(String accessKey) {
@@ -54,7 +53,6 @@ public interface KMSEndpointBuilderFactory {
          * 
          * The option is a: <code>com.amazonaws.services.kms.AWSKMS</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KMSEndpointBuilder kmsClient(Object kmsClient) {
@@ -67,7 +65,6 @@ public interface KMSEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.kms.AWSKMS</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KMSEndpointBuilder kmsClient(String kmsClient) {
@@ -121,7 +118,6 @@ public interface KMSEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.kms.KMSOperations</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default KMSEndpointBuilder operation(KMSOperations operation) {
@@ -135,7 +131,6 @@ public interface KMSEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.kms.KMSOperations</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default KMSEndpointBuilder operation(String operation) {
@@ -147,7 +142,6 @@ public interface KMSEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KMSEndpointBuilder proxyHost(String proxyHost) {
@@ -159,7 +153,6 @@ public interface KMSEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KMSEndpointBuilder proxyPort(Integer proxyPort) {
@@ -172,7 +165,6 @@ public interface KMSEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default KMSEndpointBuilder proxyPort(String proxyPort) {
@@ -212,7 +204,6 @@ public interface KMSEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KMSEndpointBuilder region(String region) {
@@ -224,7 +215,6 @@ public interface KMSEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KMSEndpointBuilder secretKey(String secretKey) {

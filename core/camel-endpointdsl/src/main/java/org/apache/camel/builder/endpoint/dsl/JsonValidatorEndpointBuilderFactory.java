@@ -120,7 +120,6 @@ public interface JsonValidatorEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default JsonValidatorEndpointBuilder headerName(String headerName) {
@@ -215,7 +214,6 @@ public interface JsonValidatorEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJsonValidatorEndpointBuilder errorHandler(
@@ -230,7 +228,6 @@ public interface JsonValidatorEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJsonValidatorEndpointBuilder errorHandler(
@@ -246,7 +243,6 @@ public interface JsonValidatorEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jsonvalidator.JsonSchemaLoader</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJsonValidatorEndpointBuilder schemaLoader(
@@ -262,7 +258,6 @@ public interface JsonValidatorEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jsonvalidator.JsonSchemaLoader</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJsonValidatorEndpointBuilder schemaLoader(

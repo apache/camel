@@ -85,7 +85,6 @@ public interface KuduEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.kudu.KuduOperations</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KuduEndpointBuilder operation(KuduOperations operation) {
@@ -98,7 +97,6 @@ public interface KuduEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.kudu.KuduOperations</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KuduEndpointBuilder operation(String operation) {

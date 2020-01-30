@@ -83,7 +83,6 @@ public interface TikaEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.tika.config.TikaConfig</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default TikaEndpointBuilder tikaConfig(Object tikaConfig) {
@@ -96,7 +95,6 @@ public interface TikaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.tika.config.TikaConfig</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default TikaEndpointBuilder tikaConfig(String tikaConfig) {
@@ -108,7 +106,6 @@ public interface TikaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default TikaEndpointBuilder tikaConfigUri(String tikaConfigUri) {
@@ -121,7 +118,6 @@ public interface TikaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default TikaEndpointBuilder tikaParseOutputEncoding(

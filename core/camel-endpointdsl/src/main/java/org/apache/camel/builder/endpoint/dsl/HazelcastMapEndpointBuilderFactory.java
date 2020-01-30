@@ -49,7 +49,6 @@ public interface HazelcastMapEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default HazelcastMapEndpointConsumerBuilder defaultOperation(
@@ -65,7 +64,6 @@ public interface HazelcastMapEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default HazelcastMapEndpointConsumerBuilder defaultOperation(
@@ -80,7 +78,6 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default HazelcastMapEndpointConsumerBuilder hazelcastInstance(
@@ -95,7 +92,6 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * 
-         * Default:
          * Group: common
          */
         default HazelcastMapEndpointConsumerBuilder hazelcastInstance(
@@ -110,7 +106,6 @@ public interface HazelcastMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default HazelcastMapEndpointConsumerBuilder hazelcastInstanceName(
@@ -176,7 +171,6 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHazelcastMapEndpointConsumerBuilder exceptionHandler(
@@ -193,7 +187,6 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHazelcastMapEndpointConsumerBuilder exceptionHandler(
@@ -206,7 +199,6 @@ public interface HazelcastMapEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHazelcastMapEndpointConsumerBuilder exchangePattern(
@@ -220,7 +212,6 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHazelcastMapEndpointConsumerBuilder exchangePattern(
@@ -303,7 +294,6 @@ public interface HazelcastMapEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default HazelcastMapEndpointProducerBuilder defaultOperation(
@@ -319,7 +309,6 @@ public interface HazelcastMapEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default HazelcastMapEndpointProducerBuilder defaultOperation(
@@ -334,7 +323,6 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default HazelcastMapEndpointProducerBuilder hazelcastInstance(
@@ -349,7 +337,6 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * 
-         * Default:
          * Group: common
          */
         default HazelcastMapEndpointProducerBuilder hazelcastInstance(
@@ -364,7 +351,6 @@ public interface HazelcastMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default HazelcastMapEndpointProducerBuilder hazelcastInstanceName(
@@ -501,7 +487,6 @@ public interface HazelcastMapEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default HazelcastMapEndpointBuilder defaultOperation(
@@ -517,7 +502,6 @@ public interface HazelcastMapEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default HazelcastMapEndpointBuilder defaultOperation(
@@ -532,7 +516,6 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default HazelcastMapEndpointBuilder hazelcastInstance(
@@ -547,7 +530,6 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * 
-         * Default:
          * Group: common
          */
         default HazelcastMapEndpointBuilder hazelcastInstance(
@@ -562,7 +544,6 @@ public interface HazelcastMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default HazelcastMapEndpointBuilder hazelcastInstanceName(

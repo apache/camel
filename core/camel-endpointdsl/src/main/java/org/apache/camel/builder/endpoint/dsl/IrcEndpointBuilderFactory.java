@@ -70,7 +70,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default IrcEndpointConsumerBuilder channels(String channels) {
@@ -108,7 +107,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default IrcEndpointConsumerBuilder keys(String keys) {
@@ -148,7 +146,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default IrcEndpointConsumerBuilder nickname(String nickname) {
@@ -186,7 +183,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default IrcEndpointConsumerBuilder realname(String realname) {
@@ -454,7 +450,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointConsumerBuilder nickPassword(String nickPassword) {
@@ -466,7 +461,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointConsumerBuilder password(String password) {
@@ -483,7 +477,6 @@ public interface IrcEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointConsumerBuilder sslContextParameters(
@@ -501,7 +494,6 @@ public interface IrcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointConsumerBuilder sslContextParameters(
@@ -515,7 +507,6 @@ public interface IrcEndpointBuilderFactory {
          * The option is a:
          * <code>org.schwering.irc.lib.ssl.SSLTrustManager</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointConsumerBuilder trustManager(Object trustManager) {
@@ -528,7 +519,6 @@ public interface IrcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.schwering.irc.lib.ssl.SSLTrustManager</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointConsumerBuilder trustManager(String trustManager) {
@@ -540,7 +530,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointConsumerBuilder username(String username) {
@@ -567,7 +556,6 @@ public interface IrcEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIrcEndpointConsumerBuilder exceptionHandler(
@@ -584,7 +572,6 @@ public interface IrcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIrcEndpointConsumerBuilder exceptionHandler(
@@ -597,7 +584,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIrcEndpointConsumerBuilder exchangePattern(
@@ -611,7 +597,6 @@ public interface IrcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIrcEndpointConsumerBuilder exchangePattern(
@@ -739,7 +724,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default IrcEndpointProducerBuilder channels(String channels) {
@@ -777,7 +761,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default IrcEndpointProducerBuilder keys(String keys) {
@@ -817,7 +800,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default IrcEndpointProducerBuilder nickname(String nickname) {
@@ -855,7 +837,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default IrcEndpointProducerBuilder realname(String realname) {
@@ -1127,7 +1108,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointProducerBuilder nickPassword(String nickPassword) {
@@ -1139,7 +1119,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointProducerBuilder password(String password) {
@@ -1156,7 +1135,6 @@ public interface IrcEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointProducerBuilder sslContextParameters(
@@ -1174,7 +1152,6 @@ public interface IrcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointProducerBuilder sslContextParameters(
@@ -1188,7 +1165,6 @@ public interface IrcEndpointBuilderFactory {
          * The option is a:
          * <code>org.schwering.irc.lib.ssl.SSLTrustManager</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointProducerBuilder trustManager(Object trustManager) {
@@ -1201,7 +1177,6 @@ public interface IrcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.schwering.irc.lib.ssl.SSLTrustManager</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointProducerBuilder trustManager(String trustManager) {
@@ -1213,7 +1188,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointProducerBuilder username(String username) {
@@ -1352,7 +1326,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default IrcEndpointBuilder channels(String channels) {
@@ -1390,7 +1363,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default IrcEndpointBuilder keys(String keys) {
@@ -1430,7 +1402,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default IrcEndpointBuilder nickname(String nickname) {
@@ -1468,7 +1439,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default IrcEndpointBuilder realname(String realname) {
@@ -1698,7 +1668,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointBuilder nickPassword(String nickPassword) {
@@ -1710,7 +1679,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointBuilder password(String password) {
@@ -1727,7 +1695,6 @@ public interface IrcEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointBuilder sslContextParameters(
@@ -1745,7 +1712,6 @@ public interface IrcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointBuilder sslContextParameters(
@@ -1759,7 +1725,6 @@ public interface IrcEndpointBuilderFactory {
          * The option is a:
          * <code>org.schwering.irc.lib.ssl.SSLTrustManager</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointBuilder trustManager(Object trustManager) {
@@ -1772,7 +1737,6 @@ public interface IrcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.schwering.irc.lib.ssl.SSLTrustManager</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointBuilder trustManager(String trustManager) {
@@ -1784,7 +1748,6 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default IrcEndpointBuilder username(String username) {

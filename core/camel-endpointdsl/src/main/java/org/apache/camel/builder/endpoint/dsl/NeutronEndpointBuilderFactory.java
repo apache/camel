@@ -56,7 +56,6 @@ public interface NeutronEndpointBuilderFactory {
          * The option is a: <code>org.openstack4j.core.transport.Config</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default NeutronEndpointBuilder config(Object config) {
@@ -69,7 +68,6 @@ public interface NeutronEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.openstack4j.core.transport.Config</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default NeutronEndpointBuilder config(String config) {
@@ -135,7 +133,6 @@ public interface NeutronEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default NeutronEndpointBuilder operation(String operation) {
@@ -148,7 +145,6 @@ public interface NeutronEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default NeutronEndpointBuilder password(String password) {
@@ -161,7 +157,6 @@ public interface NeutronEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default NeutronEndpointBuilder project(String project) {
@@ -174,7 +169,6 @@ public interface NeutronEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default NeutronEndpointBuilder subsystem(String subsystem) {
@@ -187,7 +181,6 @@ public interface NeutronEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default NeutronEndpointBuilder username(String username) {

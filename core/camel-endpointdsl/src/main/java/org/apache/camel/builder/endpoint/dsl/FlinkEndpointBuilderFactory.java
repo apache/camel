@@ -66,7 +66,6 @@ public interface FlinkEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.flink.api.java.DataSet</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default FlinkEndpointBuilder dataSet(Object dataSet) {
@@ -79,7 +78,6 @@ public interface FlinkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.flink.api.java.DataSet</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default FlinkEndpointBuilder dataSet(String dataSet) {
@@ -92,7 +90,6 @@ public interface FlinkEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.flink.DataSetCallback</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default FlinkEndpointBuilder dataSetCallback(Object dataSetCallback) {
@@ -105,7 +102,6 @@ public interface FlinkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.flink.DataSetCallback</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default FlinkEndpointBuilder dataSetCallback(String dataSetCallback) {
@@ -119,7 +115,6 @@ public interface FlinkEndpointBuilderFactory {
          * <code>org.apache.flink.streaming.api.datastream.DataStream</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default FlinkEndpointBuilder dataStream(Object dataStream) {
@@ -133,7 +128,6 @@ public interface FlinkEndpointBuilderFactory {
          * <code>org.apache.flink.streaming.api.datastream.DataStream</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default FlinkEndpointBuilder dataStream(String dataStream) {
@@ -147,7 +141,6 @@ public interface FlinkEndpointBuilderFactory {
          * <code>org.apache.camel.component.flink.DataStreamCallback</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default FlinkEndpointBuilder dataStreamCallback(
@@ -162,7 +155,6 @@ public interface FlinkEndpointBuilderFactory {
          * <code>org.apache.camel.component.flink.DataStreamCallback</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default FlinkEndpointBuilder dataStreamCallback(

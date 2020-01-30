@@ -45,7 +45,6 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteIdGenEndpointBuilder batchSize(Integer batchSize) {
@@ -58,7 +57,6 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteIdGenEndpointBuilder batchSize(String batchSize) {
@@ -140,7 +138,6 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.ignite.idgen.IgniteIdGenOperation</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteIdGenEndpointBuilder operation(
@@ -157,7 +154,6 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.ignite.idgen.IgniteIdGenOperation</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteIdGenEndpointBuilder operation(String operation) {

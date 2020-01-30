@@ -52,7 +52,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default CouchbaseEndpointConsumerBuilder bucket(String bucket) {
@@ -64,7 +63,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default CouchbaseEndpointConsumerBuilder key(String key) {
@@ -188,7 +186,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default CouchbaseEndpointConsumerBuilder rangeEndKey(String rangeEndKey) {
@@ -200,7 +197,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default CouchbaseEndpointConsumerBuilder rangeStartKey(
@@ -278,7 +274,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder backoffErrorThreshold(
@@ -292,7 +287,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder backoffErrorThreshold(
@@ -306,7 +300,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder backoffIdleThreshold(
@@ -320,7 +313,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder backoffIdleThreshold(
@@ -338,7 +330,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder backoffMultiplier(
@@ -356,7 +347,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder backoffMultiplier(
@@ -512,7 +502,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder scheduledExecutorService(
@@ -528,7 +517,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder scheduledExecutorService(
@@ -556,7 +544,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder schedulerProperties(
@@ -572,7 +559,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder schedulerProperties(
@@ -664,7 +650,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default CouchbaseEndpointConsumerBuilder password(String password) {
@@ -676,7 +661,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default CouchbaseEndpointConsumerBuilder username(String username) {
@@ -703,7 +687,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCouchbaseEndpointConsumerBuilder exceptionHandler(
@@ -720,7 +703,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCouchbaseEndpointConsumerBuilder exceptionHandler(
@@ -733,7 +715,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCouchbaseEndpointConsumerBuilder exchangePattern(
@@ -747,7 +728,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCouchbaseEndpointConsumerBuilder exchangePattern(
@@ -764,7 +744,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCouchbaseEndpointConsumerBuilder pollStrategy(
@@ -781,7 +760,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCouchbaseEndpointConsumerBuilder pollStrategy(
@@ -794,7 +772,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointConsumerBuilder additionalHosts(
@@ -1082,7 +1059,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default CouchbaseEndpointProducerBuilder bucket(String bucket) {
@@ -1094,7 +1070,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default CouchbaseEndpointProducerBuilder key(String key) {
@@ -1288,7 +1263,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default CouchbaseEndpointProducerBuilder startingIdForInsertsFrom(
@@ -1301,7 +1275,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default CouchbaseEndpointProducerBuilder startingIdForInsertsFrom(
@@ -1314,7 +1287,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default CouchbaseEndpointProducerBuilder password(String password) {
@@ -1326,7 +1298,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default CouchbaseEndpointProducerBuilder username(String username) {
@@ -1349,7 +1320,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointProducerBuilder additionalHosts(
@@ -1638,7 +1608,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default CouchbaseEndpointBuilder bucket(String bucket) {
@@ -1650,7 +1619,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default CouchbaseEndpointBuilder key(String key) {
@@ -1662,7 +1630,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default CouchbaseEndpointBuilder password(String password) {
@@ -1674,7 +1641,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default CouchbaseEndpointBuilder username(String username) {
@@ -1698,7 +1664,6 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointBuilder additionalHosts(

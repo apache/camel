@@ -75,7 +75,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder excludeReferenceLink(
@@ -90,7 +89,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder excludeReferenceLink(
@@ -104,7 +102,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder favorites(Boolean favorites) {
@@ -118,7 +115,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder favorites(String favorites) {
@@ -133,7 +129,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder includeAggregates(
@@ -150,7 +145,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder includeAggregates(
@@ -166,7 +160,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder includeAvailableAggregates(
@@ -183,7 +176,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder includeAvailableAggregates(
@@ -198,7 +190,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder includeAvailableBreakdowns(
@@ -214,7 +205,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder includeAvailableBreakdowns(
@@ -229,7 +219,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder includeScoreNotes(
@@ -245,7 +234,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder includeScoreNotes(
@@ -260,7 +248,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder includeScores(Boolean includeScores) {
@@ -275,7 +262,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder includeScores(String includeScores) {
@@ -287,7 +273,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder inputDisplayValue(
@@ -301,7 +286,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder inputDisplayValue(
@@ -315,7 +299,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder key(Boolean key) {
@@ -329,7 +312,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder key(String key) {
@@ -384,7 +366,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder models(
@@ -399,7 +380,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder models(String models) {
@@ -469,7 +449,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder requestModels(
@@ -484,7 +463,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder requestModels(String requestModels) {
@@ -497,7 +475,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder resource(String resource) {
@@ -510,7 +487,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder responseModels(
@@ -525,7 +501,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder responseModels(String responseModels) {
@@ -538,7 +513,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder sortBy(String sortBy) {
@@ -552,7 +526,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder sortDir(String sortDir) {
@@ -564,7 +537,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder suppressAutoSysField(
@@ -578,7 +550,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder suppressAutoSysField(
@@ -593,7 +564,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder suppressPaginationHeader(
@@ -609,7 +579,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder suppressPaginationHeader(
@@ -622,7 +591,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder table(String table) {
@@ -635,7 +603,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder target(Boolean target) {
@@ -649,7 +616,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder target(String target) {
@@ -661,7 +627,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder topLevelOnly(Boolean topLevelOnly) {
@@ -674,7 +639,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default ServiceNowEndpointBuilder topLevelOnly(String topLevelOnly) {
@@ -686,7 +650,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default ServiceNowEndpointBuilder proxyHost(String proxyHost) {
@@ -698,7 +661,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default ServiceNowEndpointBuilder proxyPort(Integer proxyPort) {
@@ -711,7 +673,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: proxy
          */
         default ServiceNowEndpointBuilder proxyPort(String proxyPort) {
@@ -723,7 +684,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ServiceNowEndpointBuilder apiUrl(String apiUrl) {
@@ -735,7 +695,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ServiceNowEndpointBuilder oauthClientId(String oauthClientId) {
@@ -747,7 +706,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ServiceNowEndpointBuilder oauthClientSecret(
@@ -760,7 +718,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ServiceNowEndpointBuilder oauthTokenUrl(String oauthTokenUrl) {
@@ -773,7 +730,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: security
          */
         default ServiceNowEndpointBuilder password(String password) {
@@ -785,7 +741,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ServiceNowEndpointBuilder proxyPassword(String proxyPassword) {
@@ -797,7 +752,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ServiceNowEndpointBuilder proxyUserName(String proxyUserName) {
@@ -811,7 +765,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ServiceNowEndpointBuilder sslContextParameters(
@@ -826,7 +779,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ServiceNowEndpointBuilder sslContextParameters(
@@ -840,7 +792,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: security
          */
         default ServiceNowEndpointBuilder userName(String userName) {
@@ -863,7 +814,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder apiVersion(String apiVersion) {
@@ -929,7 +879,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.cxf.transports.http.configuration.HTTPClientPolicy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder httpClientPolicy(
@@ -943,7 +892,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.cxf.transports.http.configuration.HTTPClientPolicy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder httpClientPolicy(
@@ -957,7 +905,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a:
          * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder mapper(Object mapper) {
@@ -970,7 +917,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder mapper(String mapper) {
@@ -983,7 +929,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.cxf.configuration.security.ProxyAuthorizationPolicy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder proxyAuthorizationPolicy(
@@ -997,7 +942,6 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.cxf.configuration.security.ProxyAuthorizationPolicy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder proxyAuthorizationPolicy(

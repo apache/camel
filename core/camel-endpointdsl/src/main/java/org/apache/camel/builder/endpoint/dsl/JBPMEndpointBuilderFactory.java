@@ -49,7 +49,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder attachmentId(Long attachmentId) {
@@ -61,7 +60,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder attachmentId(String attachmentId) {
@@ -73,7 +71,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder contentId(Long contentId) {
@@ -85,7 +82,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder contentId(String contentId) {
@@ -98,7 +94,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder deploymentId(String deploymentId) {
@@ -111,7 +106,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder emitterSendItems(
@@ -126,7 +120,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder emitterSendItems(
@@ -140,7 +133,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder event(Object event) {
@@ -153,7 +145,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder event(String event) {
@@ -165,7 +156,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder eventType(String eventType) {
@@ -177,7 +167,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder identifier(String identifier) {
@@ -189,7 +178,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder maxNumber(Integer maxNumber) {
@@ -202,7 +190,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder maxNumber(String maxNumber) {
@@ -214,7 +201,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder page(Integer page) {
@@ -227,7 +213,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder page(String page) {
@@ -239,7 +224,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder pageSize(Integer pageSize) {
@@ -252,7 +236,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder pageSize(String pageSize) {
@@ -264,7 +247,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder processId(String processId) {
@@ -276,7 +258,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder processInstanceId(
@@ -289,7 +270,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder processInstanceId(
@@ -302,7 +282,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder targetUserId(String targetUserId) {
@@ -314,7 +293,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>org.kie.api.task.model.Task</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder task(Object task) {
@@ -327,7 +305,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.kie.api.task.model.Task</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder task(String task) {
@@ -339,7 +316,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder taskId(Long taskId) {
@@ -351,7 +327,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder taskId(String taskId) {
@@ -363,7 +338,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder timeout(Integer timeout) {
@@ -376,7 +350,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder timeout(String timeout) {
@@ -388,7 +361,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder userId(String userId) {
@@ -400,7 +372,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder value(Object value) {
@@ -412,7 +383,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder value(String value) {
@@ -424,7 +394,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder workItemId(Long workItemId) {
@@ -436,7 +405,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointConsumerBuilder workItemId(String workItemId) {
@@ -487,7 +455,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: filter
          */
         default JBPMEndpointConsumerBuilder statuses(List<String> statuses) {
@@ -500,7 +467,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default JBPMEndpointConsumerBuilder statuses(String statuses) {
@@ -512,7 +478,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JBPMEndpointConsumerBuilder password(String password) {
@@ -524,7 +489,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JBPMEndpointConsumerBuilder userName(String userName) {
@@ -551,7 +515,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJBPMEndpointConsumerBuilder exceptionHandler(
@@ -568,7 +531,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJBPMEndpointConsumerBuilder exceptionHandler(
@@ -581,7 +543,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJBPMEndpointConsumerBuilder exchangePattern(
@@ -595,7 +556,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJBPMEndpointConsumerBuilder exchangePattern(
@@ -637,7 +597,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJBPMEndpointConsumerBuilder entities(
@@ -651,7 +610,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJBPMEndpointConsumerBuilder entities(String entities) {
@@ -663,7 +621,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Class[]</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJBPMEndpointConsumerBuilder extraJaxbClasses(
@@ -677,7 +634,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Class[]</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJBPMEndpointConsumerBuilder extraJaxbClasses(
@@ -691,7 +647,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJBPMEndpointConsumerBuilder parameters(
@@ -706,7 +661,6 @@ public interface JBPMEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJBPMEndpointConsumerBuilder parameters(String parameters) {
@@ -757,7 +711,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder attachmentId(Long attachmentId) {
@@ -769,7 +722,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder attachmentId(String attachmentId) {
@@ -781,7 +733,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder contentId(Long contentId) {
@@ -793,7 +744,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder contentId(String contentId) {
@@ -806,7 +756,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder deploymentId(String deploymentId) {
@@ -819,7 +768,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder emitterSendItems(
@@ -834,7 +782,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder emitterSendItems(
@@ -848,7 +795,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder event(Object event) {
@@ -861,7 +807,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder event(String event) {
@@ -873,7 +818,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder eventType(String eventType) {
@@ -885,7 +829,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder identifier(String identifier) {
@@ -897,7 +840,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder maxNumber(Integer maxNumber) {
@@ -910,7 +852,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder maxNumber(String maxNumber) {
@@ -922,7 +863,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder page(Integer page) {
@@ -935,7 +875,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder page(String page) {
@@ -947,7 +886,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder pageSize(Integer pageSize) {
@@ -960,7 +898,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder pageSize(String pageSize) {
@@ -972,7 +909,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder processId(String processId) {
@@ -984,7 +920,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder processInstanceId(
@@ -997,7 +932,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder processInstanceId(
@@ -1010,7 +944,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder targetUserId(String targetUserId) {
@@ -1022,7 +955,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>org.kie.api.task.model.Task</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder task(Object task) {
@@ -1035,7 +967,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.kie.api.task.model.Task</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder task(String task) {
@@ -1047,7 +978,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder taskId(Long taskId) {
@@ -1059,7 +989,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder taskId(String taskId) {
@@ -1071,7 +1000,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder timeout(Integer timeout) {
@@ -1084,7 +1012,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder timeout(String timeout) {
@@ -1096,7 +1023,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder userId(String userId) {
@@ -1108,7 +1034,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder value(Object value) {
@@ -1120,7 +1045,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder value(String value) {
@@ -1132,7 +1056,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder workItemId(Long workItemId) {
@@ -1144,7 +1067,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointProducerBuilder workItemId(String workItemId) {
@@ -1211,7 +1133,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: filter
          */
         default JBPMEndpointProducerBuilder statuses(List<String> statuses) {
@@ -1224,7 +1145,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default JBPMEndpointProducerBuilder statuses(String statuses) {
@@ -1236,7 +1156,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JBPMEndpointProducerBuilder password(String password) {
@@ -1248,7 +1167,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JBPMEndpointProducerBuilder userName(String userName) {
@@ -1300,7 +1218,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJBPMEndpointProducerBuilder entities(
@@ -1314,7 +1231,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJBPMEndpointProducerBuilder entities(String entities) {
@@ -1326,7 +1242,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Class[]</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJBPMEndpointProducerBuilder extraJaxbClasses(
@@ -1340,7 +1255,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Class[]</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJBPMEndpointProducerBuilder extraJaxbClasses(
@@ -1354,7 +1268,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJBPMEndpointProducerBuilder parameters(
@@ -1369,7 +1282,6 @@ public interface JBPMEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJBPMEndpointProducerBuilder parameters(String parameters) {
@@ -1421,7 +1333,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder attachmentId(Long attachmentId) {
@@ -1433,7 +1344,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder attachmentId(String attachmentId) {
@@ -1445,7 +1355,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder contentId(Long contentId) {
@@ -1457,7 +1366,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder contentId(String contentId) {
@@ -1470,7 +1378,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder deploymentId(String deploymentId) {
@@ -1483,7 +1390,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder emitterSendItems(Boolean emitterSendItems) {
@@ -1497,7 +1403,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder emitterSendItems(String emitterSendItems) {
@@ -1510,7 +1415,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder event(Object event) {
@@ -1523,7 +1427,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder event(String event) {
@@ -1535,7 +1438,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder eventType(String eventType) {
@@ -1547,7 +1449,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder identifier(String identifier) {
@@ -1559,7 +1460,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder maxNumber(Integer maxNumber) {
@@ -1572,7 +1472,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder maxNumber(String maxNumber) {
@@ -1584,7 +1483,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder page(Integer page) {
@@ -1597,7 +1495,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder page(String page) {
@@ -1609,7 +1506,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder pageSize(Integer pageSize) {
@@ -1622,7 +1518,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder pageSize(String pageSize) {
@@ -1634,7 +1529,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder processId(String processId) {
@@ -1646,7 +1540,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder processInstanceId(Long processInstanceId) {
@@ -1658,7 +1551,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder processInstanceId(String processInstanceId) {
@@ -1670,7 +1562,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder targetUserId(String targetUserId) {
@@ -1682,7 +1573,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>org.kie.api.task.model.Task</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder task(Object task) {
@@ -1695,7 +1585,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.kie.api.task.model.Task</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder task(String task) {
@@ -1707,7 +1596,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder taskId(Long taskId) {
@@ -1719,7 +1607,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder taskId(String taskId) {
@@ -1731,7 +1618,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder timeout(Integer timeout) {
@@ -1744,7 +1630,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder timeout(String timeout) {
@@ -1756,7 +1641,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder userId(String userId) {
@@ -1768,7 +1652,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder value(Object value) {
@@ -1780,7 +1663,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder value(String value) {
@@ -1792,7 +1674,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder workItemId(Long workItemId) {
@@ -1804,7 +1685,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JBPMEndpointBuilder workItemId(String workItemId) {
@@ -1817,7 +1697,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: filter
          */
         default JBPMEndpointBuilder statuses(List<String> statuses) {
@@ -1830,7 +1709,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default JBPMEndpointBuilder statuses(String statuses) {
@@ -1842,7 +1720,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JBPMEndpointBuilder password(String password) {
@@ -1854,7 +1731,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JBPMEndpointBuilder userName(String userName) {
@@ -1907,7 +1783,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJBPMEndpointBuilder entities(List<String> entities) {
@@ -1920,7 +1795,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJBPMEndpointBuilder entities(String entities) {
@@ -1932,7 +1806,6 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Class[]</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJBPMEndpointBuilder extraJaxbClasses(
@@ -1946,7 +1819,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Class[]</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJBPMEndpointBuilder extraJaxbClasses(
@@ -1960,7 +1832,6 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJBPMEndpointBuilder parameters(
@@ -1975,7 +1846,6 @@ public interface JBPMEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJBPMEndpointBuilder parameters(String parameters) {

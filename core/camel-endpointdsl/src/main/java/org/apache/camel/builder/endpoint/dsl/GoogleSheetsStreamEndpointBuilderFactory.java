@@ -53,7 +53,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder accessToken(String accessToken) {
@@ -66,7 +65,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder applicationName(
@@ -117,7 +115,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder clientId(String clientId) {
@@ -129,7 +126,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder clientSecret(
@@ -209,7 +205,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder range(String range) {
@@ -223,7 +218,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder refreshToken(
@@ -240,7 +234,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder scopes(List<String> scopes) {
@@ -256,7 +249,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder scopes(String scopes) {
@@ -329,7 +321,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder spreadsheetId(
@@ -356,7 +347,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder backoffErrorThreshold(
@@ -370,7 +360,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder backoffErrorThreshold(
@@ -384,7 +373,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder backoffIdleThreshold(
@@ -398,7 +386,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder backoffIdleThreshold(
@@ -416,7 +403,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder backoffMultiplier(
@@ -434,7 +420,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder backoffMultiplier(
@@ -590,7 +575,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder scheduledExecutorService(
@@ -606,7 +590,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder scheduledExecutorService(
@@ -634,7 +617,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder schedulerProperties(
@@ -650,7 +632,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder schedulerProperties(
@@ -757,7 +738,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder exceptionHandler(
@@ -774,7 +754,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder exceptionHandler(
@@ -787,7 +766,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder exchangePattern(
@@ -801,7 +779,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder exchangePattern(
@@ -818,7 +795,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder pollStrategy(
@@ -835,7 +811,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder pollStrategy(

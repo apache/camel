@@ -70,7 +70,6 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default LogEndpointBuilder groupDelay(Long groupDelay) {
@@ -82,7 +81,6 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default LogEndpointBuilder groupDelay(String groupDelay) {
@@ -95,7 +93,6 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default LogEndpointBuilder groupInterval(Long groupInterval) {
@@ -108,7 +105,6 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default LogEndpointBuilder groupInterval(String groupInterval) {
@@ -120,7 +116,6 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default LogEndpointBuilder groupSize(Integer groupSize) {
@@ -133,7 +128,6 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default LogEndpointBuilder groupSize(String groupSize) {
@@ -198,7 +192,6 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default LogEndpointBuilder logMask(Boolean logMask) {
@@ -212,7 +205,6 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default LogEndpointBuilder logMask(String logMask) {
@@ -224,7 +216,6 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default LogEndpointBuilder marker(String marker) {
@@ -720,7 +711,6 @@ public interface LogEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExchangeFormatter</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedLogEndpointBuilder exchangeFormatter(
@@ -734,7 +724,6 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExchangeFormatter</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedLogEndpointBuilder exchangeFormatter(

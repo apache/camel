@@ -43,7 +43,6 @@ public interface SdbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SdbEndpointBuilder accessKey(String accessKey) {
@@ -56,7 +55,6 @@ public interface SdbEndpointBuilderFactory {
          * The option is a:
          * <code>com.amazonaws.services.simpledb.AmazonSimpleDB</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SdbEndpointBuilder amazonSDBClient(Object amazonSDBClient) {
@@ -69,7 +67,6 @@ public interface SdbEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.simpledb.AmazonSimpleDB</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SdbEndpointBuilder amazonSDBClient(String amazonSDBClient) {
@@ -148,7 +145,6 @@ public interface SdbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SdbEndpointBuilder maxNumberOfDomains(Integer maxNumberOfDomains) {
@@ -162,7 +158,6 @@ public interface SdbEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SdbEndpointBuilder maxNumberOfDomains(String maxNumberOfDomains) {
@@ -200,7 +195,6 @@ public interface SdbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SdbEndpointBuilder proxyHost(String proxyHost) {
@@ -212,7 +206,6 @@ public interface SdbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SdbEndpointBuilder proxyPort(Integer proxyPort) {
@@ -225,7 +218,6 @@ public interface SdbEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SdbEndpointBuilder proxyPort(String proxyPort) {
@@ -265,7 +257,6 @@ public interface SdbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SdbEndpointBuilder region(String region) {
@@ -277,7 +268,6 @@ public interface SdbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SdbEndpointBuilder secretKey(String secretKey) {

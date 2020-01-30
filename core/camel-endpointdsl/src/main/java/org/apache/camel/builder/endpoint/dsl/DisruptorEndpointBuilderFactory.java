@@ -227,7 +227,6 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDisruptorEndpointConsumerBuilder exceptionHandler(
@@ -244,7 +243,6 @@ public interface DisruptorEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDisruptorEndpointConsumerBuilder exceptionHandler(
@@ -257,7 +255,6 @@ public interface DisruptorEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDisruptorEndpointConsumerBuilder exchangePattern(
@@ -271,7 +268,6 @@ public interface DisruptorEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDisruptorEndpointConsumerBuilder exchangePattern(

@@ -44,7 +44,6 @@ public interface SesEndpointBuilderFactory {
          * The option is a:
          * <code>com.amazonaws.services.simpleemail.AmazonSimpleEmailService</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SesEndpointBuilder amazonSESClient(Object amazonSESClient) {
@@ -57,7 +56,6 @@ public interface SesEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.simpleemail.AmazonSimpleEmailService</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SesEndpointBuilder amazonSESClient(String amazonSESClient) {
@@ -109,7 +107,6 @@ public interface SesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SesEndpointBuilder proxyHost(String proxyHost) {
@@ -121,7 +118,6 @@ public interface SesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SesEndpointBuilder proxyPort(Integer proxyPort) {
@@ -134,7 +130,6 @@ public interface SesEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SesEndpointBuilder proxyPort(String proxyPort) {
@@ -174,7 +169,6 @@ public interface SesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SesEndpointBuilder region(String region) {
@@ -188,7 +182,6 @@ public interface SesEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SesEndpointBuilder replyToAddresses(
@@ -203,7 +196,6 @@ public interface SesEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SesEndpointBuilder replyToAddresses(String replyToAddresses) {
@@ -216,7 +208,6 @@ public interface SesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SesEndpointBuilder returnPath(String returnPath) {
@@ -229,7 +220,6 @@ public interface SesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SesEndpointBuilder subject(String subject) {
@@ -243,7 +233,6 @@ public interface SesEndpointBuilderFactory {
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SesEndpointBuilder to(List<String> to) {
@@ -257,7 +246,6 @@ public interface SesEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SesEndpointBuilder to(String to) {
@@ -269,7 +257,6 @@ public interface SesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SesEndpointBuilder accessKey(String accessKey) {
@@ -281,7 +268,6 @@ public interface SesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SesEndpointBuilder secretKey(String secretKey) {

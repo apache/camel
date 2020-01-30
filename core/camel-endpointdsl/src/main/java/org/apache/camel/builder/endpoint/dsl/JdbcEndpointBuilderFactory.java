@@ -111,7 +111,6 @@ public interface JdbcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default JdbcEndpointBuilder outputClass(String outputClass) {
@@ -151,7 +150,6 @@ public interface JdbcEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default JdbcEndpointBuilder parameters(Map<String, Object> parameters) {
@@ -166,7 +164,6 @@ public interface JdbcEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default JdbcEndpointBuilder parameters(String parameters) {
@@ -179,7 +176,6 @@ public interface JdbcEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default JdbcEndpointBuilder readSize(int readSize) {
@@ -192,7 +188,6 @@ public interface JdbcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default JdbcEndpointBuilder readSize(String readSize) {
@@ -406,7 +401,6 @@ public interface JdbcEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jdbc.BeanRowMapper</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJdbcEndpointBuilder beanRowMapper(Object beanRowMapper) {
@@ -422,7 +416,6 @@ public interface JdbcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jdbc.BeanRowMapper</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJdbcEndpointBuilder beanRowMapper(String beanRowMapper) {
@@ -437,7 +430,6 @@ public interface JdbcEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJdbcEndpointBuilder prepareStatementStrategy(
@@ -453,7 +445,6 @@ public interface JdbcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedJdbcEndpointBuilder prepareStatementStrategy(

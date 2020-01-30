@@ -269,7 +269,6 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: codec
          */
         default MllpEndpointConsumerBuilder charsetName(String charsetName) {
@@ -296,7 +295,6 @@ public interface MllpEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMllpEndpointConsumerBuilder exceptionHandler(
@@ -313,7 +311,6 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMllpEndpointConsumerBuilder exceptionHandler(
@@ -639,7 +636,6 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: timeout
          */
         default AdvancedMllpEndpointConsumerBuilder idleTimeout(
@@ -655,7 +651,6 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: timeout
          */
         default AdvancedMllpEndpointConsumerBuilder idleTimeout(
@@ -669,7 +664,6 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: timeout
          */
         @Deprecated
@@ -685,7 +679,6 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: timeout
          */
         @Deprecated
@@ -1020,7 +1013,6 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: codec
          */
         default MllpEndpointProducerBuilder charsetName(String charsetName) {
@@ -1207,7 +1199,6 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: timeout
          */
         default AdvancedMllpEndpointProducerBuilder idleTimeout(
@@ -1223,7 +1214,6 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: timeout
          */
         default AdvancedMllpEndpointProducerBuilder idleTimeout(
@@ -1512,7 +1502,6 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: codec
          */
         default MllpEndpointBuilder charsetName(String charsetName) {
@@ -1618,7 +1607,6 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: timeout
          */
         default AdvancedMllpEndpointBuilder idleTimeout(Integer idleTimeout) {
@@ -1633,7 +1621,6 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: timeout
          */
         default AdvancedMllpEndpointBuilder idleTimeout(String idleTimeout) {

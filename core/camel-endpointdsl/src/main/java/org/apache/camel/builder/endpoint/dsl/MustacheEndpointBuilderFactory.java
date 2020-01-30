@@ -66,7 +66,6 @@ public interface MustacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default MustacheEndpointBuilder encoding(String encoding) {

@@ -265,7 +265,6 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default YammerEndpointConsumerBuilder threaded(String threaded) {
@@ -277,7 +276,6 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default YammerEndpointConsumerBuilder userId(String userId) {
@@ -290,7 +288,6 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder backoffErrorThreshold(
@@ -304,7 +301,6 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder backoffErrorThreshold(
@@ -318,7 +314,6 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder backoffIdleThreshold(
@@ -332,7 +327,6 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder backoffIdleThreshold(
@@ -350,7 +344,6 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder backoffMultiplier(
@@ -368,7 +361,6 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder backoffMultiplier(
@@ -495,7 +487,6 @@ public interface YammerEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder scheduledExecutorService(
@@ -511,7 +502,6 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder scheduledExecutorService(
@@ -539,7 +529,6 @@ public interface YammerEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder schedulerProperties(
@@ -555,7 +544,6 @@ public interface YammerEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder schedulerProperties(
@@ -647,7 +635,6 @@ public interface YammerEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: security
          */
         default YammerEndpointConsumerBuilder accessToken(String accessToken) {
@@ -660,7 +647,6 @@ public interface YammerEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: security
          */
         default YammerEndpointConsumerBuilder consumerKey(String consumerKey) {
@@ -673,7 +659,6 @@ public interface YammerEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: security
          */
         default YammerEndpointConsumerBuilder consumerSecret(
@@ -701,7 +686,6 @@ public interface YammerEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedYammerEndpointConsumerBuilder exceptionHandler(
@@ -718,7 +702,6 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedYammerEndpointConsumerBuilder exceptionHandler(
@@ -731,7 +714,6 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedYammerEndpointConsumerBuilder exchangePattern(
@@ -745,7 +727,6 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedYammerEndpointConsumerBuilder exchangePattern(
@@ -762,7 +743,6 @@ public interface YammerEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedYammerEndpointConsumerBuilder pollStrategy(
@@ -779,7 +759,6 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedYammerEndpointConsumerBuilder pollStrategy(
@@ -928,7 +907,6 @@ public interface YammerEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: security
          */
         default YammerEndpointProducerBuilder accessToken(String accessToken) {
@@ -941,7 +919,6 @@ public interface YammerEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: security
          */
         default YammerEndpointProducerBuilder consumerKey(String consumerKey) {
@@ -954,7 +931,6 @@ public interface YammerEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: security
          */
         default YammerEndpointProducerBuilder consumerSecret(
@@ -1073,7 +1049,6 @@ public interface YammerEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: security
          */
         default YammerEndpointBuilder accessToken(String accessToken) {
@@ -1086,7 +1061,6 @@ public interface YammerEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: security
          */
         default YammerEndpointBuilder consumerKey(String consumerKey) {
@@ -1099,7 +1073,6 @@ public interface YammerEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: security
          */
         default YammerEndpointBuilder consumerSecret(String consumerSecret) {

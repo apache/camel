@@ -47,7 +47,6 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default AsteriskEndpointConsumerBuilder hostname(String hostname) {
@@ -60,7 +59,6 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default AsteriskEndpointConsumerBuilder password(String password) {
@@ -73,7 +71,6 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default AsteriskEndpointConsumerBuilder username(String username) {
@@ -138,7 +135,6 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAsteriskEndpointConsumerBuilder exceptionHandler(
@@ -155,7 +151,6 @@ public interface AsteriskEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAsteriskEndpointConsumerBuilder exceptionHandler(
@@ -168,7 +163,6 @@ public interface AsteriskEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAsteriskEndpointConsumerBuilder exchangePattern(
@@ -182,7 +176,6 @@ public interface AsteriskEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAsteriskEndpointConsumerBuilder exchangePattern(
@@ -263,7 +256,6 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default AsteriskEndpointProducerBuilder hostname(String hostname) {
@@ -276,7 +268,6 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default AsteriskEndpointProducerBuilder password(String password) {
@@ -289,7 +280,6 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default AsteriskEndpointProducerBuilder username(String username) {
@@ -303,7 +293,6 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.asterisk.AsteriskAction</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default AsteriskEndpointProducerBuilder action(AsteriskAction action) {
@@ -317,7 +306,6 @@ public interface AsteriskEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.asterisk.AsteriskAction</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default AsteriskEndpointProducerBuilder action(String action) {
@@ -451,7 +439,6 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default AsteriskEndpointBuilder hostname(String hostname) {
@@ -464,7 +451,6 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default AsteriskEndpointBuilder password(String password) {
@@ -477,7 +463,6 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default AsteriskEndpointBuilder username(String username) {

@@ -45,7 +45,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KubernetesServiceAccountsEndpointBuilder apiVersion(
@@ -58,7 +57,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KubernetesServiceAccountsEndpointBuilder dnsDomain(
@@ -72,7 +70,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KubernetesServiceAccountsEndpointBuilder kubernetesClient(
@@ -86,7 +83,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KubernetesServiceAccountsEndpointBuilder kubernetesClient(
@@ -141,7 +137,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KubernetesServiceAccountsEndpointBuilder operation(
@@ -154,7 +149,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KubernetesServiceAccountsEndpointBuilder portName(
@@ -180,7 +174,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder caCertData(
@@ -193,7 +186,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder caCertFile(
@@ -206,7 +198,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder clientCertData(
@@ -219,7 +210,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder clientCertFile(
@@ -232,7 +222,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder clientKeyAlgo(
@@ -245,7 +234,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder clientKeyData(
@@ -258,7 +246,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder clientKeyFile(
@@ -271,7 +258,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder clientKeyPassphrase(
@@ -284,7 +270,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder oauthToken(
@@ -297,7 +282,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder password(
@@ -310,7 +294,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder trustCerts(
@@ -324,7 +307,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder trustCerts(
@@ -337,7 +319,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder username(
@@ -391,7 +372,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedKubernetesServiceAccountsEndpointBuilder connectionTimeout(
@@ -406,7 +386,6 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedKubernetesServiceAccountsEndpointBuilder connectionTimeout(

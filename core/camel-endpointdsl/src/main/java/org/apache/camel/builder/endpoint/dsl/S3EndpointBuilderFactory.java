@@ -53,7 +53,6 @@ public interface S3EndpointBuilderFactory {
          * The option is a: <code>com.amazonaws.services.s3.AmazonS3</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointConsumerBuilder amazonS3Client(Object amazonS3Client) {
@@ -66,7 +65,6 @@ public interface S3EndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.s3.AmazonS3</code> type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointConsumerBuilder amazonS3Client(String amazonS3Client) {
@@ -130,7 +128,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointConsumerBuilder policy(String policy) {
@@ -142,7 +139,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointConsumerBuilder proxyHost(String proxyHost) {
@@ -154,7 +150,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointConsumerBuilder proxyPort(Integer proxyPort) {
@@ -167,7 +162,6 @@ public interface S3EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointConsumerBuilder proxyPort(String proxyPort) {
@@ -207,7 +201,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointConsumerBuilder region(String region) {
@@ -324,7 +317,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default S3EndpointConsumerBuilder delimiter(String delimiter) {
@@ -336,7 +328,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default S3EndpointConsumerBuilder fileName(String fileName) {
@@ -442,7 +433,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default S3EndpointConsumerBuilder prefix(String prefix) {
@@ -483,7 +473,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder backoffErrorThreshold(
@@ -497,7 +486,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder backoffErrorThreshold(
@@ -511,7 +499,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder backoffIdleThreshold(
@@ -525,7 +512,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder backoffIdleThreshold(
@@ -543,7 +529,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder backoffMultiplier(
@@ -561,7 +546,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder backoffMultiplier(
@@ -715,7 +699,6 @@ public interface S3EndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder scheduledExecutorService(
@@ -731,7 +714,6 @@ public interface S3EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder scheduledExecutorService(
@@ -759,7 +741,6 @@ public interface S3EndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder schedulerProperties(
@@ -775,7 +756,6 @@ public interface S3EndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder schedulerProperties(
@@ -863,7 +843,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default S3EndpointConsumerBuilder accessKey(String accessKey) {
@@ -875,7 +854,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default S3EndpointConsumerBuilder secretKey(String secretKey) {
@@ -902,7 +880,6 @@ public interface S3EndpointBuilderFactory {
          * <code>com.amazonaws.services.s3.model.EncryptionMaterials</code>
          * type.
          * 
-         * Default:
          * Group: common (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder encryptionMaterials(
@@ -918,7 +895,6 @@ public interface S3EndpointBuilderFactory {
          * <code>com.amazonaws.services.s3.model.EncryptionMaterials</code>
          * type.
          * 
-         * Default:
          * Group: common (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder encryptionMaterials(
@@ -997,7 +973,6 @@ public interface S3EndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder exceptionHandler(
@@ -1014,7 +989,6 @@ public interface S3EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder exceptionHandler(
@@ -1027,7 +1001,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder exchangePattern(
@@ -1041,7 +1014,6 @@ public interface S3EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder exchangePattern(
@@ -1058,7 +1030,6 @@ public interface S3EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder pollStrategy(
@@ -1075,7 +1046,6 @@ public interface S3EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder pollStrategy(
@@ -1285,7 +1255,6 @@ public interface S3EndpointBuilderFactory {
          * The option is a: <code>com.amazonaws.services.s3.AmazonS3</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointProducerBuilder amazonS3Client(Object amazonS3Client) {
@@ -1298,7 +1267,6 @@ public interface S3EndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.s3.AmazonS3</code> type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointProducerBuilder amazonS3Client(String amazonS3Client) {
@@ -1362,7 +1330,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointProducerBuilder policy(String policy) {
@@ -1374,7 +1341,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointProducerBuilder proxyHost(String proxyHost) {
@@ -1386,7 +1352,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointProducerBuilder proxyPort(Integer proxyPort) {
@@ -1399,7 +1364,6 @@ public interface S3EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointProducerBuilder proxyPort(String proxyPort) {
@@ -1439,7 +1403,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointProducerBuilder region(String region) {
@@ -1506,7 +1469,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default S3EndpointProducerBuilder keyName(String keyName) {
@@ -1588,7 +1550,6 @@ public interface S3EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.aws.s3.S3Operations</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default S3EndpointProducerBuilder operation(S3Operations operation) {
@@ -1601,7 +1562,6 @@ public interface S3EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.aws.s3.S3Operations</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default S3EndpointProducerBuilder operation(String operation) {
@@ -1640,7 +1600,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default S3EndpointProducerBuilder serverSideEncryption(
@@ -1654,7 +1613,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default S3EndpointProducerBuilder storageClass(String storageClass) {
@@ -1666,7 +1624,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default S3EndpointProducerBuilder accessKey(String accessKey) {
@@ -1678,7 +1635,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default S3EndpointProducerBuilder secretKey(String secretKey) {
@@ -1705,7 +1661,6 @@ public interface S3EndpointBuilderFactory {
          * <code>com.amazonaws.services.s3.model.EncryptionMaterials</code>
          * type.
          * 
-         * Default:
          * Group: common (advanced)
          */
         default AdvancedS3EndpointProducerBuilder encryptionMaterials(
@@ -1721,7 +1676,6 @@ public interface S3EndpointBuilderFactory {
          * <code>com.amazonaws.services.s3.model.EncryptionMaterials</code>
          * type.
          * 
-         * Default:
          * Group: common (advanced)
          */
         default AdvancedS3EndpointProducerBuilder encryptionMaterials(
@@ -1760,7 +1714,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedS3EndpointProducerBuilder awsKMSKeyId(String awsKMSKeyId) {
@@ -1994,7 +1947,6 @@ public interface S3EndpointBuilderFactory {
          * The option is a: <code>com.amazonaws.services.s3.AmazonS3</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointBuilder amazonS3Client(Object amazonS3Client) {
@@ -2007,7 +1959,6 @@ public interface S3EndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.s3.AmazonS3</code> type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointBuilder amazonS3Client(String amazonS3Client) {
@@ -2068,7 +2019,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointBuilder policy(String policy) {
@@ -2080,7 +2030,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointBuilder proxyHost(String proxyHost) {
@@ -2092,7 +2041,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointBuilder proxyPort(Integer proxyPort) {
@@ -2105,7 +2053,6 @@ public interface S3EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointBuilder proxyPort(String proxyPort) {
@@ -2145,7 +2092,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default S3EndpointBuilder region(String region) {
@@ -2183,7 +2129,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default S3EndpointBuilder accessKey(String accessKey) {
@@ -2195,7 +2140,6 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default S3EndpointBuilder secretKey(String secretKey) {
@@ -2222,7 +2166,6 @@ public interface S3EndpointBuilderFactory {
          * <code>com.amazonaws.services.s3.model.EncryptionMaterials</code>
          * type.
          * 
-         * Default:
          * Group: common (advanced)
          */
         default AdvancedS3EndpointBuilder encryptionMaterials(
@@ -2238,7 +2181,6 @@ public interface S3EndpointBuilderFactory {
          * <code>com.amazonaws.services.s3.model.EncryptionMaterials</code>
          * type.
          * 
-         * Default:
          * Group: common (advanced)
          */
         default AdvancedS3EndpointBuilder encryptionMaterials(

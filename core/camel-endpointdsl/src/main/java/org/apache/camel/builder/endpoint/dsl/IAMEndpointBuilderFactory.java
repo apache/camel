@@ -42,7 +42,6 @@ public interface IAMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IAMEndpointBuilder accessKey(String accessKey) {
@@ -55,7 +54,6 @@ public interface IAMEndpointBuilderFactory {
          * The option is a:
          * <code>com.amazonaws.services.identitymanagement.AmazonIdentityManagement</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IAMEndpointBuilder iamClient(Object iamClient) {
@@ -68,7 +66,6 @@ public interface IAMEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.identitymanagement.AmazonIdentityManagement</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IAMEndpointBuilder iamClient(String iamClient) {
@@ -122,7 +119,6 @@ public interface IAMEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.iam.IAMOperations</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default IAMEndpointBuilder operation(IAMOperations operation) {
@@ -136,7 +132,6 @@ public interface IAMEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.iam.IAMOperations</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default IAMEndpointBuilder operation(String operation) {
@@ -148,7 +143,6 @@ public interface IAMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IAMEndpointBuilder proxyHost(String proxyHost) {
@@ -160,7 +154,6 @@ public interface IAMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IAMEndpointBuilder proxyPort(Integer proxyPort) {
@@ -173,7 +166,6 @@ public interface IAMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default IAMEndpointBuilder proxyPort(String proxyPort) {
@@ -213,7 +205,6 @@ public interface IAMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IAMEndpointBuilder region(String region) {
@@ -225,7 +216,6 @@ public interface IAMEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IAMEndpointBuilder secretKey(String secretKey) {

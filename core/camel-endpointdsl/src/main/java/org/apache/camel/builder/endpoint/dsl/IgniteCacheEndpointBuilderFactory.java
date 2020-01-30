@@ -250,7 +250,6 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.ignite.cache.CacheEntryEventSerializableFilter&lt;java.lang.Object, java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default IgniteCacheEndpointConsumerBuilder remoteFilter(
@@ -264,7 +263,6 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.ignite.cache.CacheEntryEventSerializableFilter&lt;java.lang.Object, java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default IgniteCacheEndpointConsumerBuilder remoteFilter(
@@ -318,7 +316,6 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder exceptionHandler(
@@ -335,7 +332,6 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder exceptionHandler(
@@ -348,7 +344,6 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder exchangePattern(
@@ -362,7 +357,6 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder exchangePattern(
@@ -500,7 +494,6 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.ignite.cache.query.Query&lt;javax.cache.Cache$Entry&lt;java.lang.Object, java.lang.Object&gt;&gt;</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default IgniteCacheEndpointProducerBuilder query(Object query) {
@@ -514,7 +507,6 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.ignite.cache.query.Query&lt;javax.cache.Cache$Entry&lt;java.lang.Object, java.lang.Object&gt;&gt;</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default IgniteCacheEndpointProducerBuilder query(String query) {
@@ -626,7 +618,6 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.ignite.cache.IgniteCacheOperation</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteCacheEndpointProducerBuilder operation(
@@ -641,7 +632,6 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.ignite.cache.IgniteCacheOperation</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteCacheEndpointProducerBuilder operation(String operation) {

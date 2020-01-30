@@ -42,7 +42,6 @@ public interface MSKEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default MSKEndpointBuilder accessKey(String accessKey) {
@@ -95,7 +94,6 @@ public interface MSKEndpointBuilderFactory {
          * The option is a: <code>com.amazonaws.services.kafka.AWSKafka</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default MSKEndpointBuilder mskClient(Object mskClient) {
@@ -108,7 +106,6 @@ public interface MSKEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.kafka.AWSKafka</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default MSKEndpointBuilder mskClient(String mskClient) {
@@ -122,7 +119,6 @@ public interface MSKEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.msk.MSKOperations</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default MSKEndpointBuilder operation(MSKOperations operation) {
@@ -136,7 +132,6 @@ public interface MSKEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.msk.MSKOperations</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default MSKEndpointBuilder operation(String operation) {
@@ -148,7 +143,6 @@ public interface MSKEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default MSKEndpointBuilder proxyHost(String proxyHost) {
@@ -160,7 +154,6 @@ public interface MSKEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default MSKEndpointBuilder proxyPort(Integer proxyPort) {
@@ -173,7 +166,6 @@ public interface MSKEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default MSKEndpointBuilder proxyPort(String proxyPort) {
@@ -213,7 +205,6 @@ public interface MSKEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default MSKEndpointBuilder region(String region) {
@@ -225,7 +216,6 @@ public interface MSKEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default MSKEndpointBuilder secretKey(String secretKey) {

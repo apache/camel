@@ -52,7 +52,6 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default ApnsEndpointConsumerBuilder tokens(String tokens) {
@@ -131,7 +130,6 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ApnsEndpointConsumerBuilder backoffErrorThreshold(
@@ -145,7 +143,6 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ApnsEndpointConsumerBuilder backoffErrorThreshold(
@@ -159,7 +156,6 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ApnsEndpointConsumerBuilder backoffIdleThreshold(
@@ -173,7 +169,6 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ApnsEndpointConsumerBuilder backoffIdleThreshold(
@@ -191,7 +186,6 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ApnsEndpointConsumerBuilder backoffMultiplier(
@@ -209,7 +203,6 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ApnsEndpointConsumerBuilder backoffMultiplier(
@@ -364,7 +357,6 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ApnsEndpointConsumerBuilder scheduledExecutorService(
@@ -380,7 +372,6 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ApnsEndpointConsumerBuilder scheduledExecutorService(
@@ -408,7 +399,6 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ApnsEndpointConsumerBuilder schedulerProperties(
@@ -424,7 +414,6 @@ public interface ApnsEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ApnsEndpointConsumerBuilder schedulerProperties(
@@ -528,7 +517,6 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedApnsEndpointConsumerBuilder exceptionHandler(
@@ -545,7 +533,6 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedApnsEndpointConsumerBuilder exceptionHandler(
@@ -558,7 +545,6 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedApnsEndpointConsumerBuilder exchangePattern(
@@ -572,7 +558,6 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedApnsEndpointConsumerBuilder exchangePattern(
@@ -589,7 +574,6 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedApnsEndpointConsumerBuilder pollStrategy(
@@ -606,7 +590,6 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedApnsEndpointConsumerBuilder pollStrategy(
@@ -687,7 +670,6 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default ApnsEndpointProducerBuilder tokens(String tokens) {
@@ -821,7 +803,6 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default ApnsEndpointBuilder tokens(String tokens) {

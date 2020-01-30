@@ -72,7 +72,6 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default XmppEndpointConsumerBuilder nickname(String nickname) {
@@ -115,7 +114,6 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default XmppEndpointConsumerBuilder room(String room) {
@@ -128,7 +126,6 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default XmppEndpointConsumerBuilder serviceName(String serviceName) {
@@ -278,7 +275,6 @@ public interface XmppEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default XmppEndpointConsumerBuilder headerFilterStrategy(
@@ -293,7 +289,6 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default XmppEndpointConsumerBuilder headerFilterStrategy(
@@ -306,7 +301,6 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default XmppEndpointConsumerBuilder password(String password) {
@@ -318,7 +312,6 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default XmppEndpointConsumerBuilder roomPassword(String roomPassword) {
@@ -331,7 +324,6 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default XmppEndpointConsumerBuilder user(String user) {
@@ -398,7 +390,6 @@ public interface XmppEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedXmppEndpointConsumerBuilder exceptionHandler(
@@ -415,7 +406,6 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedXmppEndpointConsumerBuilder exceptionHandler(
@@ -428,7 +418,6 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedXmppEndpointConsumerBuilder exchangePattern(
@@ -442,7 +431,6 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedXmppEndpointConsumerBuilder exchangePattern(
@@ -486,7 +474,6 @@ public interface XmppEndpointBuilderFactory {
          * The option is a:
          * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedXmppEndpointConsumerBuilder connectionConfig(
@@ -502,7 +489,6 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedXmppEndpointConsumerBuilder connectionConfig(
@@ -579,7 +565,6 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default XmppEndpointProducerBuilder nickname(String nickname) {
@@ -622,7 +607,6 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default XmppEndpointProducerBuilder room(String room) {
@@ -635,7 +619,6 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default XmppEndpointProducerBuilder serviceName(String serviceName) {
@@ -729,7 +712,6 @@ public interface XmppEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default XmppEndpointProducerBuilder headerFilterStrategy(
@@ -744,7 +726,6 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default XmppEndpointProducerBuilder headerFilterStrategy(
@@ -757,7 +738,6 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default XmppEndpointProducerBuilder password(String password) {
@@ -769,7 +749,6 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default XmppEndpointProducerBuilder roomPassword(String roomPassword) {
@@ -782,7 +761,6 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default XmppEndpointProducerBuilder user(String user) {
@@ -876,7 +854,6 @@ public interface XmppEndpointBuilderFactory {
          * The option is a:
          * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedXmppEndpointProducerBuilder connectionConfig(
@@ -892,7 +869,6 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedXmppEndpointProducerBuilder connectionConfig(
@@ -970,7 +946,6 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default XmppEndpointBuilder nickname(String nickname) {
@@ -1013,7 +988,6 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default XmppEndpointBuilder room(String room) {
@@ -1026,7 +1000,6 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default XmppEndpointBuilder serviceName(String serviceName) {
@@ -1078,7 +1051,6 @@ public interface XmppEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default XmppEndpointBuilder headerFilterStrategy(
@@ -1093,7 +1065,6 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default XmppEndpointBuilder headerFilterStrategy(
@@ -1106,7 +1077,6 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default XmppEndpointBuilder password(String password) {
@@ -1118,7 +1088,6 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default XmppEndpointBuilder roomPassword(String roomPassword) {
@@ -1131,7 +1100,6 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default XmppEndpointBuilder user(String user) {
@@ -1224,7 +1192,6 @@ public interface XmppEndpointBuilderFactory {
          * The option is a:
          * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedXmppEndpointBuilder connectionConfig(
@@ -1240,7 +1207,6 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedXmppEndpointBuilder connectionConfig(

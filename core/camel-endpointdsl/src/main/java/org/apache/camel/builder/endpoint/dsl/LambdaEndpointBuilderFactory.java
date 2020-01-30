@@ -116,7 +116,6 @@ public interface LambdaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default LambdaEndpointBuilder region(String region) {
@@ -128,7 +127,6 @@ public interface LambdaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default LambdaEndpointBuilder proxyHost(String proxyHost) {
@@ -140,7 +138,6 @@ public interface LambdaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default LambdaEndpointBuilder proxyPort(Integer proxyPort) {
@@ -153,7 +150,6 @@ public interface LambdaEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: proxy
          */
         default LambdaEndpointBuilder proxyPort(String proxyPort) {
@@ -190,7 +186,6 @@ public interface LambdaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default LambdaEndpointBuilder accessKey(String accessKey) {
@@ -202,7 +197,6 @@ public interface LambdaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default LambdaEndpointBuilder secretKey(String secretKey) {
@@ -226,7 +220,6 @@ public interface LambdaEndpointBuilderFactory {
          * The option is a: <code>com.amazonaws.services.lambda.AWSLambda</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedLambdaEndpointBuilder awsLambdaClient(
@@ -240,7 +233,6 @@ public interface LambdaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.lambda.AWSLambda</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedLambdaEndpointBuilder awsLambdaClient(

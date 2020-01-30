@@ -56,7 +56,6 @@ public interface NovaEndpointBuilderFactory {
          * The option is a: <code>org.openstack4j.core.transport.Config</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default NovaEndpointBuilder config(Object config) {
@@ -69,7 +68,6 @@ public interface NovaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.openstack4j.core.transport.Config</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default NovaEndpointBuilder config(String config) {
@@ -133,7 +131,6 @@ public interface NovaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default NovaEndpointBuilder operation(String operation) {
@@ -146,7 +143,6 @@ public interface NovaEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default NovaEndpointBuilder password(String password) {
@@ -159,7 +155,6 @@ public interface NovaEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default NovaEndpointBuilder project(String project) {
@@ -172,7 +167,6 @@ public interface NovaEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default NovaEndpointBuilder subsystem(String subsystem) {
@@ -185,7 +179,6 @@ public interface NovaEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default NovaEndpointBuilder username(String username) {

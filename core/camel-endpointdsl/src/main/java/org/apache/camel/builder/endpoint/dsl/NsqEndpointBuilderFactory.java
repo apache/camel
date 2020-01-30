@@ -47,7 +47,6 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default NsqEndpointConsumerBuilder servers(String servers) {
@@ -59,7 +58,6 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default NsqEndpointConsumerBuilder userAgent(String userAgent) {
@@ -136,7 +134,6 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default NsqEndpointConsumerBuilder channel(String channel) {
@@ -295,7 +292,6 @@ public interface NsqEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default NsqEndpointConsumerBuilder sslContextParameters(
@@ -309,7 +305,6 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default NsqEndpointConsumerBuilder sslContextParameters(
@@ -337,7 +332,6 @@ public interface NsqEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNsqEndpointConsumerBuilder exceptionHandler(
@@ -354,7 +348,6 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNsqEndpointConsumerBuilder exceptionHandler(
@@ -367,7 +360,6 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNsqEndpointConsumerBuilder exchangePattern(
@@ -381,7 +373,6 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNsqEndpointConsumerBuilder exchangePattern(
@@ -462,7 +453,6 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default NsqEndpointProducerBuilder servers(String servers) {
@@ -474,7 +464,6 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default NsqEndpointProducerBuilder userAgent(String userAgent) {
@@ -577,7 +566,6 @@ public interface NsqEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default NsqEndpointProducerBuilder sslContextParameters(
@@ -591,7 +579,6 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default NsqEndpointProducerBuilder sslContextParameters(
@@ -684,7 +671,6 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default NsqEndpointBuilder servers(String servers) {
@@ -696,7 +682,6 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default NsqEndpointBuilder userAgent(String userAgent) {
@@ -733,7 +718,6 @@ public interface NsqEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default NsqEndpointBuilder sslContextParameters(
@@ -747,7 +731,6 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default NsqEndpointBuilder sslContextParameters(

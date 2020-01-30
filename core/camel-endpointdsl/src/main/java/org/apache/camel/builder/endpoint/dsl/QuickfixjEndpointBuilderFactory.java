@@ -85,7 +85,6 @@ public interface QuickfixjEndpointBuilderFactory {
          * 
          * The option is a: <code>quickfix.SessionID</code> type.
          * 
-         * Default:
          * Group: common
          */
         default QuickfixjEndpointConsumerBuilder sessionID(Object sessionID) {
@@ -100,7 +99,6 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option will be converted to a <code>quickfix.SessionID</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default QuickfixjEndpointConsumerBuilder sessionID(String sessionID) {
@@ -165,7 +163,6 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedQuickfixjEndpointConsumerBuilder exceptionHandler(
@@ -182,7 +179,6 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedQuickfixjEndpointConsumerBuilder exceptionHandler(
@@ -195,7 +191,6 @@ public interface QuickfixjEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedQuickfixjEndpointConsumerBuilder exchangePattern(
@@ -209,7 +204,6 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedQuickfixjEndpointConsumerBuilder exchangePattern(
@@ -327,7 +321,6 @@ public interface QuickfixjEndpointBuilderFactory {
          * 
          * The option is a: <code>quickfix.SessionID</code> type.
          * 
-         * Default:
          * Group: common
          */
         default QuickfixjEndpointProducerBuilder sessionID(Object sessionID) {
@@ -342,7 +335,6 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option will be converted to a <code>quickfix.SessionID</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default QuickfixjEndpointProducerBuilder sessionID(String sessionID) {
@@ -513,7 +505,6 @@ public interface QuickfixjEndpointBuilderFactory {
          * 
          * The option is a: <code>quickfix.SessionID</code> type.
          * 
-         * Default:
          * Group: common
          */
         default QuickfixjEndpointBuilder sessionID(Object sessionID) {
@@ -528,7 +519,6 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option will be converted to a <code>quickfix.SessionID</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default QuickfixjEndpointBuilder sessionID(String sessionID) {

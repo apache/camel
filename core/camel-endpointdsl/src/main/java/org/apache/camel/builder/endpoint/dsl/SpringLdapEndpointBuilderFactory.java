@@ -90,7 +90,6 @@ public interface SpringLdapEndpointBuilderFactory {
          * type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default SpringLdapEndpointBuilder operation(LdapOperation operation) {
@@ -105,7 +104,6 @@ public interface SpringLdapEndpointBuilderFactory {
          * type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default SpringLdapEndpointBuilder operation(String operation) {

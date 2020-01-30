@@ -42,7 +42,6 @@ public interface TranslateEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default TranslateEndpointBuilder accessKey(String accessKey) {
@@ -150,7 +149,6 @@ public interface TranslateEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default TranslateEndpointBuilder proxyHost(String proxyHost) {
@@ -162,7 +160,6 @@ public interface TranslateEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default TranslateEndpointBuilder proxyPort(Integer proxyPort) {
@@ -175,7 +172,6 @@ public interface TranslateEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default TranslateEndpointBuilder proxyPort(String proxyPort) {
@@ -215,7 +211,6 @@ public interface TranslateEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default TranslateEndpointBuilder region(String region) {
@@ -227,7 +222,6 @@ public interface TranslateEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default TranslateEndpointBuilder secretKey(String secretKey) {
@@ -239,7 +233,6 @@ public interface TranslateEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default TranslateEndpointBuilder sourceLanguage(String sourceLanguage) {
@@ -251,7 +244,6 @@ public interface TranslateEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default TranslateEndpointBuilder targetLanguage(String targetLanguage) {
@@ -264,7 +256,6 @@ public interface TranslateEndpointBuilderFactory {
          * The option is a:
          * <code>com.amazonaws.services.translate.AmazonTranslate</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default TranslateEndpointBuilder translateClient(Object translateClient) {
@@ -277,7 +268,6 @@ public interface TranslateEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.translate.AmazonTranslate</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default TranslateEndpointBuilder translateClient(String translateClient) {

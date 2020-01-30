@@ -52,7 +52,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder accessToken(String accessToken) {
@@ -64,7 +63,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder applicationName(
@@ -115,7 +113,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder clientId(String clientId) {
@@ -127,7 +124,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder clientSecret(String clientSecret) {
@@ -139,7 +135,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder labels(String labels) {
@@ -213,7 +208,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder refreshToken(String refreshToken) {
@@ -254,7 +248,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder backoffErrorThreshold(
@@ -268,7 +261,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder backoffErrorThreshold(
@@ -282,7 +274,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder backoffIdleThreshold(
@@ -296,7 +287,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder backoffIdleThreshold(
@@ -314,7 +304,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder backoffMultiplier(
@@ -332,7 +321,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder backoffMultiplier(
@@ -487,7 +475,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder scheduledExecutorService(
@@ -503,7 +490,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder scheduledExecutorService(
@@ -531,7 +517,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder schedulerProperties(
@@ -547,7 +532,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder schedulerProperties(
@@ -654,7 +638,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleMailStreamEndpointBuilder exceptionHandler(
@@ -671,7 +654,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleMailStreamEndpointBuilder exceptionHandler(
@@ -684,7 +666,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleMailStreamEndpointBuilder exchangePattern(
@@ -698,7 +679,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleMailStreamEndpointBuilder exchangePattern(
@@ -715,7 +695,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleMailStreamEndpointBuilder pollStrategy(
@@ -732,7 +711,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleMailStreamEndpointBuilder pollStrategy(

@@ -52,7 +52,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder argumentFile(
@@ -65,7 +64,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder argumentFile(
@@ -79,7 +77,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder combinedTagStats(
@@ -118,7 +115,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder criticalTags(
@@ -131,7 +127,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder debugFile(File debugFile) {
@@ -143,7 +138,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder debugFile(String debugFile) {
@@ -155,7 +149,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder document(String document) {
@@ -195,7 +188,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder excludes(String excludes) {
@@ -233,7 +225,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder includes(String includes) {
@@ -245,7 +236,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder listener(String listener) {
@@ -258,7 +248,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder listeners(String listeners) {
@@ -270,7 +259,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder log(File log) {
@@ -282,7 +270,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder log(String log) {
@@ -294,7 +281,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder logLevel(String logLevel) {
@@ -306,7 +292,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder logTitle(String logTitle) {
@@ -319,7 +304,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder metadata(String metadata) {
@@ -334,7 +318,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder monitorColors(
@@ -360,7 +343,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder name(String name) {
@@ -372,7 +354,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder nonCriticalTags(
@@ -413,7 +394,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder output(File output) {
@@ -425,7 +405,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder output(String output) {
@@ -437,7 +416,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder outputDirectory(
@@ -450,7 +428,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder outputDirectory(
@@ -464,7 +441,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder randomize(String randomize) {
@@ -476,7 +452,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder report(File report) {
@@ -488,7 +463,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder report(String report) {
@@ -500,7 +474,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder reportBackground(
@@ -513,7 +486,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder reportTitle(
@@ -556,7 +528,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder runFailed(File runFailed) {
@@ -568,7 +539,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder runFailed(String runFailed) {
@@ -582,7 +552,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder runMode(String runMode) {
@@ -622,7 +591,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder splitOutputs(
@@ -635,7 +603,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder suites(String suites) {
@@ -648,7 +615,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder suiteStatLevel(
@@ -661,7 +627,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder summaryTitle(
@@ -674,7 +639,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder tagDocs(String tagDocs) {
@@ -686,7 +650,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder tags(String tags) {
@@ -699,7 +662,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder tagStatExcludes(
@@ -713,7 +675,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder tagStatIncludes(
@@ -727,7 +688,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder tagStatLinks(
@@ -740,7 +700,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder tests(String tests) {
@@ -778,7 +737,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder variableFiles(
@@ -791,7 +749,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder variables(String variables) {
@@ -832,7 +789,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder xunitFile(File xunitFile) {
@@ -847,7 +803,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder xunitFile(String xunitFile) {
@@ -926,7 +881,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder backoffErrorThreshold(
@@ -940,7 +894,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder backoffErrorThreshold(
@@ -954,7 +907,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder backoffIdleThreshold(
@@ -968,7 +920,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder backoffIdleThreshold(
@@ -986,7 +937,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder backoffMultiplier(
@@ -1004,7 +954,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder backoffMultiplier(
@@ -1163,7 +1112,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder scheduledExecutorService(
@@ -1179,7 +1127,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder scheduledExecutorService(
@@ -1207,7 +1154,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder schedulerProperties(
@@ -1223,7 +1169,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder schedulerProperties(
@@ -1331,7 +1276,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRobotFrameworkEndpointConsumerBuilder exceptionHandler(
@@ -1348,7 +1292,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRobotFrameworkEndpointConsumerBuilder exceptionHandler(
@@ -1361,7 +1304,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRobotFrameworkEndpointConsumerBuilder exchangePattern(
@@ -1375,7 +1317,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRobotFrameworkEndpointConsumerBuilder exchangePattern(
@@ -1392,7 +1333,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRobotFrameworkEndpointConsumerBuilder pollStrategy(
@@ -1409,7 +1349,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRobotFrameworkEndpointConsumerBuilder pollStrategy(
@@ -1489,7 +1428,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder argumentFile(
@@ -1502,7 +1440,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder argumentFile(
@@ -1516,7 +1453,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder combinedTagStats(
@@ -1555,7 +1491,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder criticalTags(
@@ -1568,7 +1503,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder debugFile(File debugFile) {
@@ -1580,7 +1514,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder debugFile(String debugFile) {
@@ -1592,7 +1525,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder document(String document) {
@@ -1632,7 +1564,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder excludes(String excludes) {
@@ -1670,7 +1601,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder includes(String includes) {
@@ -1682,7 +1612,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder listener(String listener) {
@@ -1695,7 +1624,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder listeners(String listeners) {
@@ -1707,7 +1635,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder log(File log) {
@@ -1719,7 +1646,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder log(String log) {
@@ -1731,7 +1657,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder logLevel(String logLevel) {
@@ -1743,7 +1668,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder logTitle(String logTitle) {
@@ -1756,7 +1680,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder metadata(String metadata) {
@@ -1771,7 +1694,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder monitorColors(
@@ -1797,7 +1719,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder name(String name) {
@@ -1809,7 +1730,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder nonCriticalTags(
@@ -1850,7 +1770,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder output(File output) {
@@ -1862,7 +1781,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder output(String output) {
@@ -1874,7 +1792,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder outputDirectory(
@@ -1887,7 +1804,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder outputDirectory(
@@ -1901,7 +1817,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder randomize(String randomize) {
@@ -1913,7 +1828,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder report(File report) {
@@ -1925,7 +1839,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder report(String report) {
@@ -1937,7 +1850,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder reportBackground(
@@ -1950,7 +1862,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder reportTitle(
@@ -1993,7 +1904,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder runFailed(File runFailed) {
@@ -2005,7 +1915,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder runFailed(String runFailed) {
@@ -2019,7 +1928,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder runMode(String runMode) {
@@ -2059,7 +1967,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder splitOutputs(
@@ -2072,7 +1979,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder suites(String suites) {
@@ -2085,7 +1991,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder suiteStatLevel(
@@ -2098,7 +2003,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder summaryTitle(
@@ -2111,7 +2015,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder tagDocs(String tagDocs) {
@@ -2123,7 +2026,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder tags(String tags) {
@@ -2136,7 +2038,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder tagStatExcludes(
@@ -2150,7 +2051,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder tagStatIncludes(
@@ -2164,7 +2064,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder tagStatLinks(
@@ -2177,7 +2076,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder tests(String tests) {
@@ -2215,7 +2113,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder variableFiles(
@@ -2228,7 +2125,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder variables(String variables) {
@@ -2269,7 +2165,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder xunitFile(File xunitFile) {
@@ -2284,7 +2179,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder xunitFile(String xunitFile) {
@@ -2418,7 +2312,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder argumentFile(File argumentFile) {
@@ -2430,7 +2323,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder argumentFile(String argumentFile) {
@@ -2443,7 +2335,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder combinedTagStats(
@@ -2480,7 +2371,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder criticalTags(String criticalTags) {
@@ -2492,7 +2382,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder debugFile(File debugFile) {
@@ -2504,7 +2393,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder debugFile(String debugFile) {
@@ -2516,7 +2404,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder document(String document) {
@@ -2556,7 +2443,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder excludes(String excludes) {
@@ -2593,7 +2479,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder includes(String includes) {
@@ -2605,7 +2490,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder listener(String listener) {
@@ -2618,7 +2502,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder listeners(String listeners) {
@@ -2630,7 +2513,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder log(File log) {
@@ -2642,7 +2524,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder log(String log) {
@@ -2654,7 +2535,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder logLevel(String logLevel) {
@@ -2666,7 +2546,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder logTitle(String logTitle) {
@@ -2679,7 +2558,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder metadata(String metadata) {
@@ -2694,7 +2572,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder monitorColors(String monitorColors) {
@@ -2718,7 +2595,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder name(String name) {
@@ -2730,7 +2606,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder nonCriticalTags(
@@ -2771,7 +2646,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder output(File output) {
@@ -2783,7 +2657,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder output(String output) {
@@ -2795,7 +2668,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder outputDirectory(
@@ -2808,7 +2680,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder outputDirectory(
@@ -2822,7 +2693,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder randomize(String randomize) {
@@ -2834,7 +2704,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder report(File report) {
@@ -2846,7 +2715,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder report(String report) {
@@ -2858,7 +2726,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder reportBackground(
@@ -2871,7 +2738,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder reportTitle(String reportTitle) {
@@ -2912,7 +2778,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder runFailed(File runFailed) {
@@ -2924,7 +2789,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder runFailed(String runFailed) {
@@ -2938,7 +2802,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder runMode(String runMode) {
@@ -2978,7 +2841,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder splitOutputs(String splitOutputs) {
@@ -2990,7 +2852,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder suites(String suites) {
@@ -3003,7 +2864,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder suiteStatLevel(
@@ -3016,7 +2876,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder summaryTitle(String summaryTitle) {
@@ -3028,7 +2887,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder tagDocs(String tagDocs) {
@@ -3040,7 +2898,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder tags(String tags) {
@@ -3053,7 +2910,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder tagStatExcludes(
@@ -3067,7 +2923,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder tagStatIncludes(
@@ -3081,7 +2936,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder tagStatLinks(String tagStatLinks) {
@@ -3093,7 +2947,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder tests(String tests) {
@@ -3131,7 +2984,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder variableFiles(String variableFiles) {
@@ -3143,7 +2995,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder variables(String variables) {
@@ -3184,7 +3035,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder xunitFile(File xunitFile) {
@@ -3199,7 +3049,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RobotFrameworkEndpointBuilder xunitFile(String xunitFile) {

@@ -52,7 +52,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder accessToken(
@@ -66,7 +65,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder applicationName(
@@ -79,7 +77,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder clientId(String clientId) {
@@ -91,7 +88,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder clientSecret(
@@ -104,7 +100,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder emailAddress(
@@ -117,7 +112,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder inBody(String inBody) {
@@ -130,7 +124,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder p12FileName(
@@ -145,7 +138,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder refreshToken(
@@ -174,7 +166,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder user(String user) {
@@ -253,7 +244,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder backoffErrorThreshold(
@@ -267,7 +257,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder backoffErrorThreshold(
@@ -281,7 +270,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder backoffIdleThreshold(
@@ -295,7 +283,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder backoffIdleThreshold(
@@ -313,7 +300,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder backoffMultiplier(
@@ -331,7 +317,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder backoffMultiplier(
@@ -490,7 +475,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder scheduledExecutorService(
@@ -506,7 +490,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder scheduledExecutorService(
@@ -534,7 +517,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder schedulerProperties(
@@ -550,7 +532,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder schedulerProperties(
@@ -658,7 +639,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder exceptionHandler(
@@ -675,7 +655,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder exceptionHandler(
@@ -688,7 +667,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder exchangePattern(
@@ -702,7 +680,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder exchangePattern(
@@ -719,7 +696,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder pollStrategy(
@@ -736,7 +712,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder pollStrategy(
@@ -817,7 +792,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder accessToken(
@@ -831,7 +805,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder applicationName(
@@ -844,7 +817,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder clientId(String clientId) {
@@ -856,7 +828,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder clientSecret(
@@ -869,7 +840,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder emailAddress(
@@ -882,7 +852,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder inBody(String inBody) {
@@ -895,7 +864,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder p12FileName(
@@ -910,7 +878,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder refreshToken(
@@ -939,7 +906,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder user(String user) {
@@ -1074,7 +1040,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointBuilder accessToken(String accessToken) {
@@ -1087,7 +1052,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointBuilder applicationName(
@@ -1100,7 +1064,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointBuilder clientId(String clientId) {
@@ -1112,7 +1075,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointBuilder clientSecret(String clientSecret) {
@@ -1124,7 +1086,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointBuilder emailAddress(String emailAddress) {
@@ -1136,7 +1097,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointBuilder inBody(String inBody) {
@@ -1149,7 +1109,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointBuilder p12FileName(String p12FileName) {
@@ -1163,7 +1122,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointBuilder refreshToken(String refreshToken) {
@@ -1191,7 +1149,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleCalendarEndpointBuilder user(String user) {

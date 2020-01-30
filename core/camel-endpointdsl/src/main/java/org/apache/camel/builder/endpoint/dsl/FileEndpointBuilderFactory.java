@@ -64,7 +64,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FileEndpointConsumerBuilder charset(String charset) {
@@ -86,7 +85,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FileEndpointConsumerBuilder doneFileName(String doneFileName) {
@@ -113,7 +111,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FileEndpointConsumerBuilder fileName(Expression fileName) {
@@ -141,7 +138,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FileEndpointConsumerBuilder fileName(String fileName) {
@@ -218,7 +214,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default FileEndpointConsumerBuilder moveFailed(Expression moveFailed) {
@@ -234,7 +229,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default FileEndpointConsumerBuilder moveFailed(String moveFailed) {
@@ -278,7 +272,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default FileEndpointConsumerBuilder preMove(Expression preMove) {
@@ -293,7 +286,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default FileEndpointConsumerBuilder preMove(String preMove) {
@@ -395,7 +387,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FileEndpointConsumerBuilder antExclude(String antExclude) {
@@ -434,7 +425,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FileEndpointConsumerBuilder antInclude(String antInclude) {
@@ -486,7 +476,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FileEndpointConsumerBuilder exclude(String exclude) {
@@ -501,7 +490,6 @@ public interface FileEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileFilter&lt;java.io.File&gt;</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FileEndpointConsumerBuilder filter(Object filter) {
@@ -516,7 +504,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileFilter&lt;java.io.File&gt;</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FileEndpointConsumerBuilder filter(String filter) {
@@ -530,7 +517,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Predicate</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FileEndpointConsumerBuilder filterDirectory(
@@ -546,7 +532,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Predicate</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FileEndpointConsumerBuilder filterDirectory(
@@ -560,7 +545,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Predicate</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FileEndpointConsumerBuilder filterFile(Predicate filterFile) {
@@ -574,7 +558,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Predicate</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FileEndpointConsumerBuilder filterFile(String filterFile) {
@@ -620,7 +603,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FileEndpointConsumerBuilder idempotentKey(
@@ -637,7 +619,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FileEndpointConsumerBuilder idempotentKey(String idempotentKey) {
@@ -652,7 +633,6 @@ public interface FileEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FileEndpointConsumerBuilder idempotentRepository(
@@ -668,7 +648,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FileEndpointConsumerBuilder idempotentRepository(
@@ -685,7 +664,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FileEndpointConsumerBuilder include(String include) {
@@ -731,7 +709,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FileEndpointConsumerBuilder maxMessagesPerPoll(
@@ -752,7 +729,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FileEndpointConsumerBuilder maxMessagesPerPoll(
@@ -767,7 +743,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FileEndpointConsumerBuilder minDepth(int minDepth) {
@@ -781,7 +756,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FileEndpointConsumerBuilder minDepth(String minDepth) {
@@ -795,7 +769,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FileEndpointConsumerBuilder move(Expression move) {
@@ -810,7 +783,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FileEndpointConsumerBuilder move(String move) {
@@ -825,7 +797,6 @@ public interface FileEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;java.io.File&gt;</code> type.
          * 
-         * Default:
          * Group: lock
          */
         default FileEndpointConsumerBuilder exclusiveReadLockStrategy(
@@ -841,7 +812,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;java.io.File&gt;</code> type.
          * 
-         * Default:
          * Group: lock
          */
         default FileEndpointConsumerBuilder exclusiveReadLockStrategy(
@@ -1024,7 +994,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
@@ -1044,7 +1013,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
@@ -1064,7 +1032,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseDelay(
@@ -1084,7 +1051,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseDelay(
@@ -1099,7 +1065,6 @@ public interface FileEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
@@ -1114,7 +1079,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
@@ -1388,7 +1352,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder backoffErrorThreshold(
@@ -1402,7 +1365,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder backoffErrorThreshold(
@@ -1416,7 +1378,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder backoffIdleThreshold(
@@ -1430,7 +1391,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder backoffIdleThreshold(
@@ -1448,7 +1408,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder backoffMultiplier(
@@ -1466,7 +1425,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder backoffMultiplier(
@@ -1621,7 +1579,6 @@ public interface FileEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder scheduledExecutorService(
@@ -1637,7 +1594,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder scheduledExecutorService(
@@ -1665,7 +1621,6 @@ public interface FileEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder schedulerProperties(
@@ -1681,7 +1636,6 @@ public interface FileEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder schedulerProperties(
@@ -1798,7 +1752,6 @@ public interface FileEndpointBuilderFactory {
          * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
          * type.
          * 
-         * Default:
          * Group: sort
          */
         default FileEndpointConsumerBuilder sortBy(Comparator<Exchange> sortBy) {
@@ -1814,7 +1767,6 @@ public interface FileEndpointBuilderFactory {
          * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
          * type.
          * 
-         * Default:
          * Group: sort
          */
         default FileEndpointConsumerBuilder sortBy(String sortBy) {
@@ -1827,7 +1779,6 @@ public interface FileEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;java.io.File&gt;&gt;</code> type.
          * 
-         * Default:
          * Group: sort
          */
         default FileEndpointConsumerBuilder sorter(Comparator<Object> sorter) {
@@ -1840,7 +1791,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;java.io.File&gt;&gt;</code> type.
          * 
-         * Default:
          * Group: sort
          */
         default FileEndpointConsumerBuilder sorter(String sorter) {
@@ -1895,7 +1845,6 @@ public interface FileEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFileEndpointConsumerBuilder exceptionHandler(
@@ -1912,7 +1861,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFileEndpointConsumerBuilder exceptionHandler(
@@ -1925,7 +1873,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFileEndpointConsumerBuilder exchangePattern(
@@ -1939,7 +1886,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFileEndpointConsumerBuilder exchangePattern(
@@ -1954,7 +1900,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFileEndpointConsumerBuilder extendedAttributes(
@@ -1971,7 +1916,6 @@ public interface FileEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFileEndpointConsumerBuilder inProgressRepository(
@@ -1988,7 +1932,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFileEndpointConsumerBuilder inProgressRepository(
@@ -2004,7 +1947,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFileEndpointConsumerBuilder localWorkDirectory(
@@ -2021,7 +1963,6 @@ public interface FileEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFileEndpointConsumerBuilder onCompletionExceptionHandler(
@@ -2038,7 +1979,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFileEndpointConsumerBuilder onCompletionExceptionHandler(
@@ -2055,7 +1995,6 @@ public interface FileEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFileEndpointConsumerBuilder pollStrategy(
@@ -2072,7 +2011,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFileEndpointConsumerBuilder pollStrategy(
@@ -2123,7 +2061,6 @@ public interface FileEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;java.io.File&gt;</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFileEndpointConsumerBuilder processStrategy(
@@ -2142,7 +2079,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;java.io.File&gt;</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFileEndpointConsumerBuilder processStrategy(
@@ -2419,7 +2355,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FileEndpointProducerBuilder charset(String charset) {
@@ -2441,7 +2376,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FileEndpointProducerBuilder doneFileName(String doneFileName) {
@@ -2468,7 +2402,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FileEndpointProducerBuilder fileName(Expression fileName) {
@@ -2496,7 +2429,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FileEndpointProducerBuilder fileName(String fileName) {
@@ -2512,7 +2444,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default FileEndpointProducerBuilder appendChars(String appendChars) {
@@ -2697,7 +2628,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default FileEndpointProducerBuilder moveExisting(Expression moveExisting) {
@@ -2717,7 +2647,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default FileEndpointProducerBuilder moveExisting(String moveExisting) {
@@ -2735,7 +2664,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default FileEndpointProducerBuilder tempFileName(Expression tempFileName) {
@@ -2754,7 +2682,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default FileEndpointProducerBuilder tempFileName(String tempFileName) {
@@ -2770,7 +2697,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default FileEndpointProducerBuilder tempPrefix(String tempPrefix) {
@@ -2833,7 +2759,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedFileEndpointProducerBuilder chmod(String chmod) {
@@ -2847,7 +2772,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedFileEndpointProducerBuilder chmodDirectory(
@@ -2983,7 +2907,6 @@ public interface FileEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedFileEndpointProducerBuilder moveExistingFileStrategy(
@@ -2999,7 +2922,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedFileEndpointProducerBuilder moveExistingFileStrategy(
@@ -3211,7 +3133,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FileEndpointBuilder charset(String charset) {
@@ -3233,7 +3154,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FileEndpointBuilder doneFileName(String doneFileName) {
@@ -3260,7 +3180,6 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FileEndpointBuilder fileName(Expression fileName) {
@@ -3288,7 +3207,6 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FileEndpointBuilder fileName(String fileName) {

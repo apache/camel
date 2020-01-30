@@ -80,7 +80,6 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.elsql.ElSqlDatabaseVendor</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default ElsqlEndpointConsumerBuilder databaseVendor(
@@ -95,7 +94,6 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.elsql.ElSqlDatabaseVendor</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default ElsqlEndpointConsumerBuilder databaseVendor(
@@ -108,7 +106,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sql.DataSource</code> type.
          * 
-         * Default:
          * Group: common
          */
         default ElsqlEndpointConsumerBuilder dataSource(Object dataSource) {
@@ -121,7 +118,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>javax.sql.DataSource</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default ElsqlEndpointConsumerBuilder dataSource(String dataSource) {
@@ -134,7 +130,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         @Deprecated
@@ -148,7 +143,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default ElsqlEndpointConsumerBuilder outputClass(String outputClass) {
@@ -164,7 +158,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default ElsqlEndpointConsumerBuilder outputHeader(String outputHeader) {
@@ -346,7 +339,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default ElsqlEndpointConsumerBuilder maxMessagesPerPoll(
@@ -359,7 +351,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default ElsqlEndpointConsumerBuilder maxMessagesPerPoll(
@@ -374,7 +365,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default ElsqlEndpointConsumerBuilder onConsume(String onConsume) {
@@ -387,7 +377,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default ElsqlEndpointConsumerBuilder onConsumeBatchComplete(
@@ -402,7 +391,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default ElsqlEndpointConsumerBuilder onConsumeFailed(
@@ -526,7 +514,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder backoffErrorThreshold(
@@ -540,7 +527,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder backoffErrorThreshold(
@@ -554,7 +540,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder backoffIdleThreshold(
@@ -568,7 +553,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder backoffIdleThreshold(
@@ -586,7 +570,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder backoffMultiplier(
@@ -604,7 +587,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder backoffMultiplier(
@@ -759,7 +741,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder scheduledExecutorService(
@@ -775,7 +756,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder scheduledExecutorService(
@@ -803,7 +783,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder schedulerProperties(
@@ -819,7 +798,6 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder schedulerProperties(
@@ -924,7 +902,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedElsqlEndpointConsumerBuilder exceptionHandler(
@@ -941,7 +918,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedElsqlEndpointConsumerBuilder exceptionHandler(
@@ -954,7 +930,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedElsqlEndpointConsumerBuilder exchangePattern(
@@ -968,7 +943,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedElsqlEndpointConsumerBuilder exchangePattern(
@@ -985,7 +959,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedElsqlEndpointConsumerBuilder pollStrategy(
@@ -1002,7 +975,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedElsqlEndpointConsumerBuilder pollStrategy(
@@ -1019,7 +991,6 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlProcessingStrategy</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedElsqlEndpointConsumerBuilder processingStrategy(
@@ -1036,7 +1007,6 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlProcessingStrategy</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedElsqlEndpointConsumerBuilder processingStrategy(
@@ -1114,7 +1084,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>com.opengamma.elsql.ElSqlConfig</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointConsumerBuilder elSqlConfig(
@@ -1129,7 +1098,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.opengamma.elsql.ElSqlConfig</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointConsumerBuilder elSqlConfig(
@@ -1145,7 +1113,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointConsumerBuilder parametersCount(
@@ -1161,7 +1128,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointConsumerBuilder parametersCount(
@@ -1192,7 +1158,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointConsumerBuilder prepareStatementStrategy(
@@ -1208,7 +1173,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointConsumerBuilder prepareStatementStrategy(
@@ -1250,7 +1214,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointConsumerBuilder templateOptions(
@@ -1265,7 +1228,6 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointConsumerBuilder templateOptions(
@@ -1345,7 +1307,6 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.elsql.ElSqlDatabaseVendor</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default ElsqlEndpointProducerBuilder databaseVendor(
@@ -1360,7 +1321,6 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.elsql.ElSqlDatabaseVendor</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default ElsqlEndpointProducerBuilder databaseVendor(
@@ -1373,7 +1333,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sql.DataSource</code> type.
          * 
-         * Default:
          * Group: common
          */
         default ElsqlEndpointProducerBuilder dataSource(Object dataSource) {
@@ -1386,7 +1345,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>javax.sql.DataSource</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default ElsqlEndpointProducerBuilder dataSource(String dataSource) {
@@ -1399,7 +1357,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         @Deprecated
@@ -1413,7 +1370,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default ElsqlEndpointProducerBuilder outputClass(String outputClass) {
@@ -1429,7 +1385,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default ElsqlEndpointProducerBuilder outputHeader(String outputHeader) {
@@ -1719,7 +1674,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>com.opengamma.elsql.ElSqlConfig</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointProducerBuilder elSqlConfig(
@@ -1734,7 +1688,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.opengamma.elsql.ElSqlConfig</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointProducerBuilder elSqlConfig(
@@ -1750,7 +1703,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointProducerBuilder parametersCount(
@@ -1766,7 +1718,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointProducerBuilder parametersCount(
@@ -1797,7 +1748,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointProducerBuilder prepareStatementStrategy(
@@ -1813,7 +1763,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointProducerBuilder prepareStatementStrategy(
@@ -1855,7 +1804,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointProducerBuilder templateOptions(
@@ -1870,7 +1818,6 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointProducerBuilder templateOptions(
@@ -1951,7 +1898,6 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.elsql.ElSqlDatabaseVendor</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default ElsqlEndpointBuilder databaseVendor(
@@ -1966,7 +1912,6 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.elsql.ElSqlDatabaseVendor</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default ElsqlEndpointBuilder databaseVendor(String databaseVendor) {
@@ -1978,7 +1923,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sql.DataSource</code> type.
          * 
-         * Default:
          * Group: common
          */
         default ElsqlEndpointBuilder dataSource(Object dataSource) {
@@ -1991,7 +1935,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>javax.sql.DataSource</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default ElsqlEndpointBuilder dataSource(String dataSource) {
@@ -2004,7 +1947,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         @Deprecated
@@ -2018,7 +1960,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default ElsqlEndpointBuilder outputClass(String outputClass) {
@@ -2034,7 +1975,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default ElsqlEndpointBuilder outputHeader(String outputHeader) {
@@ -2203,7 +2143,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>com.opengamma.elsql.ElSqlConfig</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointBuilder elSqlConfig(Object elSqlConfig) {
@@ -2217,7 +2156,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.opengamma.elsql.ElSqlConfig</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointBuilder elSqlConfig(String elSqlConfig) {
@@ -2232,7 +2170,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointBuilder parametersCount(int parametersCount) {
@@ -2247,7 +2184,6 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointBuilder parametersCount(
@@ -2277,7 +2213,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointBuilder prepareStatementStrategy(
@@ -2293,7 +2228,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointBuilder prepareStatementStrategy(
@@ -2333,7 +2267,6 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointBuilder templateOptions(
@@ -2348,7 +2281,6 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElsqlEndpointBuilder templateOptions(

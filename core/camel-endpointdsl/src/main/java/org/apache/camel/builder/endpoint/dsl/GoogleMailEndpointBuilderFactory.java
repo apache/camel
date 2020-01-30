@@ -52,7 +52,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleMailEndpointConsumerBuilder accessToken(String accessToken) {
@@ -64,7 +63,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleMailEndpointConsumerBuilder applicationName(
@@ -77,7 +75,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleMailEndpointConsumerBuilder clientId(String clientId) {
@@ -89,7 +86,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleMailEndpointConsumerBuilder clientSecret(
@@ -102,7 +98,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleMailEndpointConsumerBuilder inBody(String inBody) {
@@ -116,7 +111,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleMailEndpointConsumerBuilder refreshToken(
@@ -196,7 +190,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder backoffErrorThreshold(
@@ -210,7 +203,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder backoffErrorThreshold(
@@ -224,7 +216,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder backoffIdleThreshold(
@@ -238,7 +229,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder backoffIdleThreshold(
@@ -256,7 +246,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder backoffMultiplier(
@@ -274,7 +263,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder backoffMultiplier(
@@ -430,7 +418,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder scheduledExecutorService(
@@ -446,7 +433,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder scheduledExecutorService(
@@ -474,7 +460,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder schedulerProperties(
@@ -490,7 +475,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder schedulerProperties(
@@ -597,7 +581,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleMailEndpointConsumerBuilder exceptionHandler(
@@ -614,7 +597,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleMailEndpointConsumerBuilder exceptionHandler(
@@ -627,7 +609,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleMailEndpointConsumerBuilder exchangePattern(
@@ -641,7 +622,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleMailEndpointConsumerBuilder exchangePattern(
@@ -658,7 +638,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleMailEndpointConsumerBuilder pollStrategy(
@@ -675,7 +654,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGoogleMailEndpointConsumerBuilder pollStrategy(
@@ -756,7 +734,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleMailEndpointProducerBuilder accessToken(String accessToken) {
@@ -768,7 +745,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleMailEndpointProducerBuilder applicationName(
@@ -781,7 +757,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleMailEndpointProducerBuilder clientId(String clientId) {
@@ -793,7 +768,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleMailEndpointProducerBuilder clientSecret(
@@ -806,7 +780,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleMailEndpointProducerBuilder inBody(String inBody) {
@@ -820,7 +793,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleMailEndpointProducerBuilder refreshToken(
@@ -955,7 +927,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleMailEndpointBuilder accessToken(String accessToken) {
@@ -967,7 +938,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleMailEndpointBuilder applicationName(String applicationName) {
@@ -979,7 +949,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleMailEndpointBuilder clientId(String clientId) {
@@ -991,7 +960,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleMailEndpointBuilder clientSecret(String clientSecret) {
@@ -1003,7 +971,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleMailEndpointBuilder inBody(String inBody) {
@@ -1017,7 +984,6 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GoogleMailEndpointBuilder refreshToken(String refreshToken) {

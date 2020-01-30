@@ -53,7 +53,6 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default GuavaEventBusEndpointConsumerBuilder eventClass(
@@ -72,7 +71,6 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GuavaEventBusEndpointConsumerBuilder eventClass(
@@ -90,7 +88,6 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default GuavaEventBusEndpointConsumerBuilder listenerInterface(
@@ -108,7 +105,6 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GuavaEventBusEndpointConsumerBuilder listenerInterface(
@@ -174,7 +170,6 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder exceptionHandler(
@@ -191,7 +186,6 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder exceptionHandler(
@@ -204,7 +198,6 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder exchangePattern(
@@ -218,7 +211,6 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder exchangePattern(
@@ -304,7 +296,6 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default GuavaEventBusEndpointProducerBuilder eventClass(
@@ -323,7 +314,6 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GuavaEventBusEndpointProducerBuilder eventClass(
@@ -341,7 +331,6 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default GuavaEventBusEndpointProducerBuilder listenerInterface(
@@ -359,7 +348,6 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GuavaEventBusEndpointProducerBuilder listenerInterface(
@@ -499,7 +487,6 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default GuavaEventBusEndpointBuilder eventClass(Class<Object> eventClass) {
@@ -517,7 +504,6 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GuavaEventBusEndpointBuilder eventClass(String eventClass) {
@@ -534,7 +520,6 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default GuavaEventBusEndpointBuilder listenerInterface(
@@ -552,7 +537,6 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GuavaEventBusEndpointBuilder listenerInterface(

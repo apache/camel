@@ -48,7 +48,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PubNubEndpointConsumerBuilder uuid(String uuid) {
@@ -123,7 +122,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PubNubEndpointConsumerBuilder authKey(String authKey) {
@@ -136,7 +134,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PubNubEndpointConsumerBuilder cipherKey(String cipherKey) {
@@ -149,7 +146,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PubNubEndpointConsumerBuilder publishKey(String publishKey) {
@@ -161,7 +157,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PubNubEndpointConsumerBuilder secretKey(String secretKey) {
@@ -198,7 +193,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PubNubEndpointConsumerBuilder subscribeKey(String subscribeKey) {
@@ -225,7 +219,6 @@ public interface PubNubEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPubNubEndpointConsumerBuilder exceptionHandler(
@@ -242,7 +235,6 @@ public interface PubNubEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPubNubEndpointConsumerBuilder exceptionHandler(
@@ -255,7 +247,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPubNubEndpointConsumerBuilder exchangePattern(
@@ -269,7 +260,6 @@ public interface PubNubEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPubNubEndpointConsumerBuilder exchangePattern(
@@ -310,7 +300,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>com.pubnub.api.PubNub</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedPubNubEndpointConsumerBuilder pubnub(Object pubnub) {
@@ -323,7 +312,6 @@ public interface PubNubEndpointBuilderFactory {
          * The option will be converted to a <code>com.pubnub.api.PubNub</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedPubNubEndpointConsumerBuilder pubnub(String pubnub) {
@@ -375,7 +363,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PubNubEndpointProducerBuilder uuid(String uuid) {
@@ -440,7 +427,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default PubNubEndpointProducerBuilder operation(String operation) {
@@ -453,7 +439,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PubNubEndpointProducerBuilder authKey(String authKey) {
@@ -466,7 +451,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PubNubEndpointProducerBuilder cipherKey(String cipherKey) {
@@ -479,7 +463,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PubNubEndpointProducerBuilder publishKey(String publishKey) {
@@ -491,7 +474,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PubNubEndpointProducerBuilder secretKey(String secretKey) {
@@ -528,7 +510,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PubNubEndpointProducerBuilder subscribeKey(String subscribeKey) {
@@ -579,7 +560,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>com.pubnub.api.PubNub</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedPubNubEndpointProducerBuilder pubnub(Object pubnub) {
@@ -592,7 +572,6 @@ public interface PubNubEndpointBuilderFactory {
          * The option will be converted to a <code>com.pubnub.api.PubNub</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedPubNubEndpointProducerBuilder pubnub(String pubnub) {
@@ -645,7 +624,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PubNubEndpointBuilder uuid(String uuid) {
@@ -658,7 +636,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PubNubEndpointBuilder authKey(String authKey) {
@@ -671,7 +648,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PubNubEndpointBuilder cipherKey(String cipherKey) {
@@ -684,7 +660,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PubNubEndpointBuilder publishKey(String publishKey) {
@@ -696,7 +671,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PubNubEndpointBuilder secretKey(String secretKey) {
@@ -733,7 +707,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PubNubEndpointBuilder subscribeKey(String subscribeKey) {
@@ -785,7 +758,6 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>com.pubnub.api.PubNub</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedPubNubEndpointBuilder pubnub(Object pubnub) {
@@ -798,7 +770,6 @@ public interface PubNubEndpointBuilderFactory {
          * The option will be converted to a <code>com.pubnub.api.PubNub</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedPubNubEndpointBuilder pubnub(String pubnub) {

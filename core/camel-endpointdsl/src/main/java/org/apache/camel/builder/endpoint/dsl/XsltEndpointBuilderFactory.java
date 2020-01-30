@@ -274,7 +274,6 @@ public interface XsltEndpointBuilderFactory {
          * 
          * The option is a: <code>org.xml.sax.EntityResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder entityResolver(Object entityResolver) {
@@ -288,7 +287,6 @@ public interface XsltEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.xml.sax.EntityResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder entityResolver(String entityResolver) {
@@ -304,7 +302,6 @@ public interface XsltEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.xml.transform.ErrorListener</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder errorListener(Object errorListener) {
@@ -321,7 +318,6 @@ public interface XsltEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.xml.transform.ErrorListener</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder errorListener(String errorListener) {
@@ -337,7 +333,6 @@ public interface XsltEndpointBuilderFactory {
          * <code>org.apache.camel.component.xslt.ResultHandlerFactory</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder resultHandlerFactory(
@@ -354,7 +349,6 @@ public interface XsltEndpointBuilderFactory {
          * <code>org.apache.camel.component.xslt.ResultHandlerFactory</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder resultHandlerFactory(
@@ -394,7 +388,6 @@ public interface XsltEndpointBuilderFactory {
          * The option is a: <code>javax.xml.transform.TransformerFactory</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder transformerFactory(
@@ -408,7 +401,6 @@ public interface XsltEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.xml.transform.TransformerFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder transformerFactory(
@@ -422,7 +414,6 @@ public interface XsltEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder transformerFactoryClass(
@@ -437,7 +428,6 @@ public interface XsltEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder transformerFactoryConfigurationStrategy(
@@ -452,7 +442,6 @@ public interface XsltEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder transformerFactoryConfigurationStrategy(
@@ -465,7 +454,6 @@ public interface XsltEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.xml.transform.URIResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder uriResolver(Object uriResolver) {
@@ -478,7 +466,6 @@ public interface XsltEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.xml.transform.URIResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder uriResolver(String uriResolver) {

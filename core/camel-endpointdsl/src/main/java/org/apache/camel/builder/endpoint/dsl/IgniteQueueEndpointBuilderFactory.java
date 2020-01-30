@@ -45,7 +45,6 @@ public interface IgniteQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteQueueEndpointBuilder capacity(int capacity) {
@@ -57,7 +56,6 @@ public interface IgniteQueueEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteQueueEndpointBuilder capacity(String capacity) {
@@ -73,7 +71,6 @@ public interface IgniteQueueEndpointBuilderFactory {
          * <code>org.apache.ignite.configuration.CollectionConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteQueueEndpointBuilder configuration(Object configuration) {
@@ -89,7 +86,6 @@ public interface IgniteQueueEndpointBuilderFactory {
          * <code>org.apache.ignite.configuration.CollectionConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteQueueEndpointBuilder configuration(String configuration) {
@@ -147,7 +143,6 @@ public interface IgniteQueueEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.ignite.queue.IgniteQueueOperation</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteQueueEndpointBuilder operation(
@@ -164,7 +159,6 @@ public interface IgniteQueueEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.ignite.queue.IgniteQueueOperation</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteQueueEndpointBuilder operation(String operation) {
@@ -204,7 +198,6 @@ public interface IgniteQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteQueueEndpointBuilder timeoutMillis(Long timeoutMillis) {
@@ -216,7 +209,6 @@ public interface IgniteQueueEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteQueueEndpointBuilder timeoutMillis(String timeoutMillis) {
