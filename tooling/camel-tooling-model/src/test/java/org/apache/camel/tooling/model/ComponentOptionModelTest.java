@@ -16,7 +16,6 @@
  */
 package org.apache.camel.tooling.model;
 
-import org.apache.camel.tooling.model.ComponentModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
