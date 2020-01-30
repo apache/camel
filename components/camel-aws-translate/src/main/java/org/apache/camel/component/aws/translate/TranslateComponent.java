@@ -62,9 +62,9 @@ public class TranslateComponent extends DefaultComponent {
         endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
-        if (configuration.getTranslateClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("Amazon translate client or accessKey and secretKey must be specified");
-        }
+        //if (configuration.getTranslateClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        //    throw new IllegalArgumentException("Amazon translate client or accessKey and secretKey must be specified");
+        //}
         return endpoint;
     }
 

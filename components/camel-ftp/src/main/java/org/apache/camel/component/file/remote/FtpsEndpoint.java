@@ -46,11 +46,11 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "2.2.0", scheme = "ftps", extendsScheme = "file", title = "FTPS",
         syntax = "ftps:host:port/directoryName", alternativeSyntax = "ftps:username:password@host:port/directoryName",
         label = "file",
-        excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize," +
-                "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService," +
-                "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist," +
-                "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail," +
-                "renameUsingCopy")
+        excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize," 
+                + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService," 
+                + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist," 
+                + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail," 
+                + "renameUsingCopy")
 @ManagedResource(description = "Managed FtpsEndpoint")
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     private static final Logger LOG = LoggerFactory.getLogger(FtpsEndpoint.class);
