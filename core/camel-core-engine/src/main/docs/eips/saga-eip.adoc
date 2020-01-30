@@ -127,14 +127,14 @@ include the *camel-lra-starter* module in their project:
 [source,xml]
 ----
 <dependency>
- <groupId>org.apache.camel</groupId>
+ <groupId>org.apache.camel.springboot</groupId>
  <artifactId>camel-lra-starter</artifactId>
  <!-- use the same version as your Camel core version -->
  <version>x.y.z</version>
 </dependency>
 
 <dependency>
- <groupId>org.apache.camel</groupId>
+ <groupId>org.apache.camel.springboot</groupId>
  <artifactId>camel-undertow-starter</artifactId>
  <!-- use the same version as your Camel core version -->
  <version>x.y.z</version>
