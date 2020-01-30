@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.jms.JmsComponent;
@@ -58,7 +59,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JmsComponentBuilder setAllowAutoWiredConnectionFactory(
+        default JmsComponentBuilder allowAutoWiredConnectionFactory(
                 boolean allowAutoWiredConnectionFactory) {
             doSetProperty("allowAutoWiredConnectionFactory", allowAutoWiredConnectionFactory);
             return this;
@@ -74,7 +75,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JmsComponentBuilder setAllowAutoWiredDestinationResolver(
+        default JmsComponentBuilder allowAutoWiredDestinationResolver(
                 boolean allowAutoWiredDestinationResolver) {
             doSetProperty("allowAutoWiredDestinationResolver", allowAutoWiredDestinationResolver);
             return this;
@@ -85,10 +86,9 @@ public interface JmsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.JmsConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default JmsComponentBuilder setConfiguration(
+        default JmsComponentBuilder configuration(
                 org.apache.camel.component.jms.JmsConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -108,7 +108,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: consumer (advanced)
          */
-        default JmsComponentBuilder setAcceptMessagesWhileStopping(
+        default JmsComponentBuilder acceptMessagesWhileStopping(
                 boolean acceptMessagesWhileStopping) {
             doSetProperty("acceptMessagesWhileStopping", acceptMessagesWhileStopping);
             return this;
@@ -127,7 +127,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: consumer (advanced)
          */
-        default JmsComponentBuilder setAllowReplyManagerQuickStop(
+        default JmsComponentBuilder allowReplyManagerQuickStop(
                 boolean allowReplyManagerQuickStop) {
             doSetProperty("allowReplyManagerQuickStop", allowReplyManagerQuickStop);
             return this;
@@ -140,11 +140,9 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default JmsComponentBuilder setAcknowledgementMode(
-                int acknowledgementMode) {
+        default JmsComponentBuilder acknowledgementMode(int acknowledgementMode) {
             doSetProperty("acknowledgementMode", acknowledgementMode);
             return this;
         }
@@ -161,7 +159,7 @@ public interface JmsComponentBuilderFactory {
          * Default: Poison JMS message due to ${exception.message}
          * Group: consumer (advanced)
          */
-        default JmsComponentBuilder setEagerPoisonBody(
+        default JmsComponentBuilder eagerPoisonBody(
                 java.lang.String eagerPoisonBody) {
             doSetProperty("eagerPoisonBody", eagerPoisonBody);
             return this;
@@ -178,7 +176,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: consumer (advanced)
          */
-        default JmsComponentBuilder setEagerLoadingOfProperties(
+        default JmsComponentBuilder eagerLoadingOfProperties(
                 boolean eagerLoadingOfProperties) {
             doSetProperty("eagerLoadingOfProperties", eagerLoadingOfProperties);
             return this;
@@ -192,7 +190,7 @@ public interface JmsComponentBuilderFactory {
          * Default: AUTO_ACKNOWLEDGE
          * Group: consumer
          */
-        default JmsComponentBuilder setAcknowledgementModeName(
+        default JmsComponentBuilder acknowledgementModeName(
                 java.lang.String acknowledgementModeName) {
             doSetProperty("acknowledgementModeName", acknowledgementModeName);
             return this;
@@ -205,7 +203,7 @@ public interface JmsComponentBuilderFactory {
          * Default: true
          * Group: consumer
          */
-        default JmsComponentBuilder setAutoStartup(boolean autoStartup) {
+        default JmsComponentBuilder autoStartup(boolean autoStartup) {
             doSetProperty("autoStartup", autoStartup);
             return this;
         }
@@ -215,10 +213,9 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default JmsComponentBuilder setCacheLevel(int cacheLevel) {
+        default JmsComponentBuilder cacheLevel(int cacheLevel) {
             doSetProperty("cacheLevel", cacheLevel);
             return this;
         }
@@ -234,7 +231,7 @@ public interface JmsComponentBuilderFactory {
          * Default: CACHE_AUTO
          * Group: consumer
          */
-        default JmsComponentBuilder setCacheLevelName(
+        default JmsComponentBuilder cacheLevelName(
                 java.lang.String cacheLevelName) {
             doSetProperty("cacheLevelName", cacheLevelName);
             return this;
@@ -252,10 +249,9 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
-        default JmsComponentBuilder setReplyToCacheLevelName(
+        default JmsComponentBuilder replyToCacheLevelName(
                 java.lang.String replyToCacheLevelName) {
             doSetProperty("replyToCacheLevelName", replyToCacheLevelName);
             return this;
@@ -269,10 +265,9 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default JmsComponentBuilder setClientId(java.lang.String clientId) {
+        default JmsComponentBuilder clientId(java.lang.String clientId) {
             doSetProperty("clientId", clientId);
             return this;
         }
@@ -289,8 +284,7 @@ public interface JmsComponentBuilderFactory {
          * Default: 1
          * Group: consumer
          */
-        default JmsComponentBuilder setConcurrentConsumers(
-                int concurrentConsumers) {
+        default JmsComponentBuilder concurrentConsumers(int concurrentConsumers) {
             doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
@@ -304,7 +298,7 @@ public interface JmsComponentBuilderFactory {
          * Default: 1
          * Group: producer
          */
-        default JmsComponentBuilder setReplyToConcurrentConsumers(
+        default JmsComponentBuilder replyToConcurrentConsumers(
                 int replyToConcurrentConsumers) {
             doSetProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
             return this;
@@ -315,10 +309,9 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ConnectionFactory</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default JmsComponentBuilder setConnectionFactory(
+        default JmsComponentBuilder connectionFactory(
                 javax.jms.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
@@ -329,10 +322,9 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default JmsComponentBuilder setUsername(java.lang.String username) {
+        default JmsComponentBuilder username(java.lang.String username) {
             doSetProperty("username", username);
             return this;
         }
@@ -342,10 +334,9 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default JmsComponentBuilder setPassword(java.lang.String password) {
+        default JmsComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
             return this;
         }
@@ -357,7 +348,7 @@ public interface JmsComponentBuilderFactory {
          * Default: true
          * Group: producer
          */
-        default JmsComponentBuilder setDeliveryPersistent(
+        default JmsComponentBuilder deliveryPersistent(
                 boolean deliveryPersistent) {
             doSetProperty("deliveryPersistent", deliveryPersistent);
             return this;
@@ -369,11 +360,9 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default JmsComponentBuilder setDeliveryMode(
-                java.lang.Integer deliveryMode) {
+        default JmsComponentBuilder deliveryMode(java.lang.Integer deliveryMode) {
             doSetProperty("deliveryMode", deliveryMode);
             return this;
         }
@@ -383,10 +372,9 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default JmsComponentBuilder setDurableSubscriptionName(
+        default JmsComponentBuilder durableSubscriptionName(
                 java.lang.String durableSubscriptionName) {
             doSetProperty("durableSubscriptionName", durableSubscriptionName);
             return this;
@@ -397,10 +385,9 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ExceptionListener</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default JmsComponentBuilder setExceptionListener(
+        default JmsComponentBuilder exceptionListener(
                 javax.jms.ExceptionListener exceptionListener) {
             doSetProperty("exceptionListener", exceptionListener);
             return this;
@@ -417,10 +404,9 @@ public interface JmsComponentBuilderFactory {
          * The option is a: <code>org.springframework.util.ErrorHandler</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default JmsComponentBuilder setErrorHandler(
+        default JmsComponentBuilder errorHandler(
                 org.springframework.util.ErrorHandler errorHandler) {
             doSetProperty("errorHandler", errorHandler);
             return this;
@@ -434,7 +420,7 @@ public interface JmsComponentBuilderFactory {
          * Default: WARN
          * Group: logging
          */
-        default JmsComponentBuilder setErrorHandlerLoggingLevel(
+        default JmsComponentBuilder errorHandlerLoggingLevel(
                 org.apache.camel.LoggingLevel errorHandlerLoggingLevel) {
             doSetProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
             return this;
@@ -448,7 +434,7 @@ public interface JmsComponentBuilderFactory {
          * Default: true
          * Group: logging
          */
-        default JmsComponentBuilder setErrorHandlerLogStackTrace(
+        default JmsComponentBuilder errorHandlerLogStackTrace(
                 boolean errorHandlerLogStackTrace) {
             doSetProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
             return this;
@@ -466,7 +452,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default JmsComponentBuilder setExplicitQosEnabled(
+        default JmsComponentBuilder explicitQosEnabled(
                 boolean explicitQosEnabled) {
             doSetProperty("explicitQosEnabled", explicitQosEnabled);
             return this;
@@ -480,7 +466,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: consumer (advanced)
          */
-        default JmsComponentBuilder setExposeListenerSession(
+        default JmsComponentBuilder exposeListenerSession(
                 boolean exposeListenerSession) {
             doSetProperty("exposeListenerSession", exposeListenerSession);
             return this;
@@ -497,7 +483,7 @@ public interface JmsComponentBuilderFactory {
          * Default: 1
          * Group: advanced
          */
-        default JmsComponentBuilder setIdleTaskExecutionLimit(
+        default JmsComponentBuilder idleTaskExecutionLimit(
                 int idleTaskExecutionLimit) {
             doSetProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
@@ -511,7 +497,7 @@ public interface JmsComponentBuilderFactory {
          * Default: 1
          * Group: advanced
          */
-        default JmsComponentBuilder setIdleConsumerLimit(int idleConsumerLimit) {
+        default JmsComponentBuilder idleConsumerLimit(int idleConsumerLimit) {
             doSetProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
         }
@@ -525,10 +511,9 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default JmsComponentBuilder setMaxConcurrentConsumers(
+        default JmsComponentBuilder maxConcurrentConsumers(
                 int maxConcurrentConsumers) {
             doSetProperty("maxConcurrentConsumers", maxConcurrentConsumers);
             return this;
@@ -540,10 +525,9 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default JmsComponentBuilder setReplyToMaxConcurrentConsumers(
+        default JmsComponentBuilder replyToMaxConcurrentConsumers(
                 int replyToMaxConcurrentConsumers) {
             doSetProperty("replyToMaxConcurrentConsumers", replyToMaxConcurrentConsumers);
             return this;
@@ -557,7 +541,7 @@ public interface JmsComponentBuilderFactory {
          * Default: 1
          * Group: producer
          */
-        default JmsComponentBuilder setReplyOnTimeoutToMaxConcurrentConsumers(
+        default JmsComponentBuilder replyOnTimeoutToMaxConcurrentConsumers(
                 int replyOnTimeoutToMaxConcurrentConsumers) {
             doSetProperty("replyOnTimeoutToMaxConcurrentConsumers", replyOnTimeoutToMaxConcurrentConsumers);
             return this;
@@ -573,7 +557,7 @@ public interface JmsComponentBuilderFactory {
          * Default: -1
          * Group: advanced
          */
-        default JmsComponentBuilder setMaxMessagesPerTask(int maxMessagesPerTask) {
+        default JmsComponentBuilder maxMessagesPerTask(int maxMessagesPerTask) {
             doSetProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
         }
@@ -585,10 +569,9 @@ public interface JmsComponentBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default JmsComponentBuilder setMessageConverter(
+        default JmsComponentBuilder messageConverter(
                 org.springframework.jms.support.converter.MessageConverter messageConverter) {
             doSetProperty("messageConverter", messageConverter);
             return this;
@@ -603,7 +586,7 @@ public interface JmsComponentBuilderFactory {
          * Default: true
          * Group: advanced
          */
-        default JmsComponentBuilder setMapJmsMessage(boolean mapJmsMessage) {
+        default JmsComponentBuilder mapJmsMessage(boolean mapJmsMessage) {
             doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
@@ -619,7 +602,7 @@ public interface JmsComponentBuilderFactory {
          * Default: true
          * Group: advanced
          */
-        default JmsComponentBuilder setMessageIdEnabled(boolean messageIdEnabled) {
+        default JmsComponentBuilder messageIdEnabled(boolean messageIdEnabled) {
             doSetProperty("messageIdEnabled", messageIdEnabled);
             return this;
         }
@@ -635,7 +618,7 @@ public interface JmsComponentBuilderFactory {
          * Default: true
          * Group: advanced
          */
-        default JmsComponentBuilder setMessageTimestampEnabled(
+        default JmsComponentBuilder messageTimestampEnabled(
                 boolean messageTimestampEnabled) {
             doSetProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
@@ -653,8 +636,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: producer (advanced)
          */
-        default JmsComponentBuilder setAlwaysCopyMessage(
-                boolean alwaysCopyMessage) {
+        default JmsComponentBuilder alwaysCopyMessage(boolean alwaysCopyMessage) {
             doSetProperty("alwaysCopyMessage", alwaysCopyMessage);
             return this;
         }
@@ -667,7 +649,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JmsComponentBuilder setUseMessageIDAsCorrelationID(
+        default JmsComponentBuilder useMessageIDAsCorrelationID(
                 boolean useMessageIDAsCorrelationID) {
             doSetProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
@@ -683,7 +665,7 @@ public interface JmsComponentBuilderFactory {
          * Default: 4
          * Group: producer
          */
-        default JmsComponentBuilder setPriority(int priority) {
+        default JmsComponentBuilder priority(int priority) {
             doSetProperty("priority", priority);
             return this;
         }
@@ -696,7 +678,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JmsComponentBuilder setPubSubNoLocal(boolean pubSubNoLocal) {
+        default JmsComponentBuilder pubSubNoLocal(boolean pubSubNoLocal) {
             doSetProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
         }
@@ -708,7 +690,7 @@ public interface JmsComponentBuilderFactory {
          * Default: 1000
          * Group: advanced
          */
-        default JmsComponentBuilder setReceiveTimeout(long receiveTimeout) {
+        default JmsComponentBuilder receiveTimeout(long receiveTimeout) {
             doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
@@ -722,7 +704,7 @@ public interface JmsComponentBuilderFactory {
          * Default: 5000
          * Group: advanced
          */
-        default JmsComponentBuilder setRecoveryInterval(long recoveryInterval) {
+        default JmsComponentBuilder recoveryInterval(long recoveryInterval) {
             doSetProperty("recoveryInterval", recoveryInterval);
             return this;
         }
@@ -732,10 +714,9 @@ public interface JmsComponentBuilderFactory {
          * The option is a:
          * <code>org.springframework.core.task.TaskExecutor</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
-        default JmsComponentBuilder setTaskExecutor(
+        default JmsComponentBuilder taskExecutor(
                 org.springframework.core.task.TaskExecutor taskExecutor) {
             doSetProperty("taskExecutor", taskExecutor);
             return this;
@@ -749,7 +730,7 @@ public interface JmsComponentBuilderFactory {
          * Default: -1
          * Group: producer
          */
-        default JmsComponentBuilder setTimeToLive(long timeToLive) {
+        default JmsComponentBuilder timeToLive(long timeToLive) {
             doSetProperty("timeToLive", timeToLive);
             return this;
         }
@@ -761,7 +742,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: transaction
          */
-        default JmsComponentBuilder setTransacted(boolean transacted) {
+        default JmsComponentBuilder transacted(boolean transacted) {
             doSetProperty("transacted", transacted);
             return this;
         }
@@ -774,7 +755,7 @@ public interface JmsComponentBuilderFactory {
          * Default: true
          * Group: transaction (advanced)
          */
-        default JmsComponentBuilder setLazyCreateTransactionManager(
+        default JmsComponentBuilder lazyCreateTransactionManager(
                 boolean lazyCreateTransactionManager) {
             doSetProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
@@ -785,10 +766,9 @@ public interface JmsComponentBuilderFactory {
          * The option is a:
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
-         * Default:
          * Group: transaction (advanced)
          */
-        default JmsComponentBuilder setTransactionManager(
+        default JmsComponentBuilder transactionManager(
                 org.springframework.transaction.PlatformTransactionManager transactionManager) {
             doSetProperty("transactionManager", transactionManager);
             return this;
@@ -798,10 +778,9 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: transaction (advanced)
          */
-        default JmsComponentBuilder setTransactionName(
+        default JmsComponentBuilder transactionName(
                 java.lang.String transactionName) {
             doSetProperty("transactionName", transactionName);
             return this;
@@ -815,7 +794,7 @@ public interface JmsComponentBuilderFactory {
          * Default: -1
          * Group: transaction (advanced)
          */
-        default JmsComponentBuilder setTransactionTimeout(int transactionTimeout) {
+        default JmsComponentBuilder transactionTimeout(int transactionTimeout) {
             doSetProperty("transactionTimeout", transactionTimeout);
             return this;
         }
@@ -831,7 +810,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: common
          */
-        default JmsComponentBuilder setTestConnectionOnStartup(
+        default JmsComponentBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
             doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -853,7 +832,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JmsComponentBuilder setAsyncStartListener(
+        default JmsComponentBuilder asyncStartListener(
                 boolean asyncStartListener) {
             doSetProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -867,8 +846,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JmsComponentBuilder setAsyncStopListener(
-                boolean asyncStopListener) {
+        default JmsComponentBuilder asyncStopListener(boolean asyncStopListener) {
             doSetProperty("asyncStopListener", asyncStopListener);
             return this;
         }
@@ -883,7 +861,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: producer (advanced)
          */
-        default JmsComponentBuilder setForceSendOriginalMessage(
+        default JmsComponentBuilder forceSendOriginalMessage(
                 boolean forceSendOriginalMessage) {
             doSetProperty("forceSendOriginalMessage", forceSendOriginalMessage);
             return this;
@@ -900,7 +878,7 @@ public interface JmsComponentBuilderFactory {
          * Default: 20000
          * Group: producer
          */
-        default JmsComponentBuilder setRequestTimeout(long requestTimeout) {
+        default JmsComponentBuilder requestTimeout(long requestTimeout) {
             doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
@@ -916,7 +894,7 @@ public interface JmsComponentBuilderFactory {
          * Default: 1000
          * Group: advanced
          */
-        default JmsComponentBuilder setRequestTimeoutCheckerInterval(
+        default JmsComponentBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
             doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
@@ -936,7 +914,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JmsComponentBuilder setTransferExchange(boolean transferExchange) {
+        default JmsComponentBuilder transferExchange(boolean transferExchange) {
             doSetProperty("transferExchange", transferExchange);
             return this;
         }
@@ -961,8 +939,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JmsComponentBuilder setTransferException(
-                boolean transferException) {
+        default JmsComponentBuilder transferException(boolean transferException) {
             doSetProperty("transferException", transferException);
             return this;
         }
@@ -975,10 +952,9 @@ public interface JmsComponentBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.core.JmsOperations</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default JmsComponentBuilder setJmsOperations(
+        default JmsComponentBuilder jmsOperations(
                 org.springframework.jms.core.JmsOperations jmsOperations) {
             doSetProperty("jmsOperations", jmsOperations);
             return this;
@@ -992,10 +968,9 @@ public interface JmsComponentBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default JmsComponentBuilder setDestinationResolver(
+        default JmsComponentBuilder destinationResolver(
                 org.springframework.jms.support.destination.DestinationResolver destinationResolver) {
             doSetProperty("destinationResolver", destinationResolver);
             return this;
@@ -1014,10 +989,9 @@ public interface JmsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.ReplyToType</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default JmsComponentBuilder setReplyToType(
+        default JmsComponentBuilder replyToType(
                 org.apache.camel.component.jms.ReplyToType replyToType) {
             doSetProperty("replyToType", replyToType);
             return this;
@@ -1038,7 +1012,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default JmsComponentBuilder setPreserveMessageQos(
+        default JmsComponentBuilder preserveMessageQos(
                 boolean preserveMessageQos) {
             doSetProperty("preserveMessageQos", preserveMessageQos);
             return this;
@@ -1060,7 +1034,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default JmsComponentBuilder setAsyncConsumer(boolean asyncConsumer) {
+        default JmsComponentBuilder asyncConsumer(boolean asyncConsumer) {
             doSetProperty("asyncConsumer", asyncConsumer);
             return this;
         }
@@ -1073,7 +1047,7 @@ public interface JmsComponentBuilderFactory {
          * Default: true
          * Group: producer (advanced)
          */
-        default JmsComponentBuilder setAllowNullBody(boolean allowNullBody) {
+        default JmsComponentBuilder allowNullBody(boolean allowNullBody) {
             doSetProperty("allowNullBody", allowNullBody);
             return this;
         }
@@ -1088,7 +1062,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: producer (advanced)
          */
-        default JmsComponentBuilder setIncludeSentJMSMessageID(
+        default JmsComponentBuilder includeSentJMSMessageID(
                 boolean includeSentJMSMessageID) {
             doSetProperty("includeSentJMSMessageID", includeSentJMSMessageID);
             return this;
@@ -1104,7 +1078,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JmsComponentBuilder setIncludeAllJMSXProperties(
+        default JmsComponentBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
             doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -1125,10 +1099,9 @@ public interface JmsComponentBuilderFactory {
          * <code>org.apache.camel.component.jms.DefaultTaskExecutorType</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
-        default JmsComponentBuilder setDefaultTaskExecutorType(
+        default JmsComponentBuilder defaultTaskExecutorType(
                 org.apache.camel.component.jms.DefaultTaskExecutorType defaultTaskExecutorType) {
             doSetProperty("defaultTaskExecutorType", defaultTaskExecutorType);
             return this;
@@ -1148,10 +1121,9 @@ public interface JmsComponentBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default JmsComponentBuilder setJmsKeyFormatStrategy(
+        default JmsComponentBuilder jmsKeyFormatStrategy(
                 org.apache.camel.component.jms.JmsKeyFormatStrategy jmsKeyFormatStrategy) {
             doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -1166,10 +1138,9 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
-        default JmsComponentBuilder setAllowAdditionalHeaders(
+        default JmsComponentBuilder allowAdditionalHeaders(
                 java.lang.String allowAdditionalHeaders) {
             doSetProperty("allowAdditionalHeaders", allowAdditionalHeaders);
             return this;
@@ -1180,10 +1151,9 @@ public interface JmsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.QueueBrowseStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default JmsComponentBuilder setQueueBrowseStrategy(
+        default JmsComponentBuilder queueBrowseStrategy(
                 org.apache.camel.component.jms.QueueBrowseStrategy queueBrowseStrategy) {
             doSetProperty("queueBrowseStrategy", queueBrowseStrategy);
             return this;
@@ -1197,10 +1167,9 @@ public interface JmsComponentBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default JmsComponentBuilder setMessageCreatedStrategy(
+        default JmsComponentBuilder messageCreatedStrategy(
                 org.apache.camel.component.jms.MessageCreatedStrategy messageCreatedStrategy) {
             doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -1215,7 +1184,7 @@ public interface JmsComponentBuilderFactory {
          * Default: 50
          * Group: advanced
          */
-        default JmsComponentBuilder setWaitForProvisionCorrelationToBeUpdatedCounter(
+        default JmsComponentBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 int waitForProvisionCorrelationToBeUpdatedCounter) {
             doSetProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
@@ -1229,7 +1198,7 @@ public interface JmsComponentBuilderFactory {
          * Default: 100
          * Group: advanced
          */
-        default JmsComponentBuilder setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
+        default JmsComponentBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
             doSetProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
@@ -1245,10 +1214,9 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
-        default JmsComponentBuilder setCorrelationProperty(
+        default JmsComponentBuilder correlationProperty(
                 java.lang.String correlationProperty) {
             doSetProperty("correlationProperty", correlationProperty);
             return this;
@@ -1268,7 +1236,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default JmsComponentBuilder setSubscriptionDurable(
+        default JmsComponentBuilder subscriptionDurable(
                 boolean subscriptionDurable) {
             doSetProperty("subscriptionDurable", subscriptionDurable);
             return this;
@@ -1291,7 +1259,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default JmsComponentBuilder setSubscriptionShared(
+        default JmsComponentBuilder subscriptionShared(
                 boolean subscriptionShared) {
             doSetProperty("subscriptionShared", subscriptionShared);
             return this;
@@ -1307,10 +1275,9 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default JmsComponentBuilder setSubscriptionName(
+        default JmsComponentBuilder subscriptionName(
                 java.lang.String subscriptionName) {
             doSetProperty("subscriptionName", subscriptionName);
             return this;
@@ -1329,7 +1296,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: producer (advanced)
          */
-        default JmsComponentBuilder setStreamMessageTypeEnabled(
+        default JmsComponentBuilder streamMessageTypeEnabled(
                 boolean streamMessageTypeEnabled) {
             doSetProperty("streamMessageTypeEnabled", streamMessageTypeEnabled);
             return this;
@@ -1343,7 +1310,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default JmsComponentBuilder setFormatDateHeadersToIso8601(
+        default JmsComponentBuilder formatDateHeadersToIso8601(
                 boolean formatDateHeadersToIso8601) {
             doSetProperty("formatDateHeadersToIso8601", formatDateHeadersToIso8601);
             return this;
@@ -1355,10 +1322,9 @@ public interface JmsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: filter
          */
-        default JmsComponentBuilder setHeaderFilterStrategy(
+        default JmsComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1372,7 +1338,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JmsComponentBuilder setBasicPropertyBinding(
+        default JmsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1393,8 +1359,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default JmsComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default JmsComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -1412,7 +1377,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default JmsComponentBuilder setBridgeErrorHandler(
+        default JmsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -1427,6 +1392,99 @@ public interface JmsComponentBuilderFactory {
         @Override
         protected JmsComponent buildConcreteComponent() {
             return new JmsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "allowAutoWiredConnectionFactory": ((JmsComponent) component).setAllowAutoWiredConnectionFactory((boolean) value); return true;
+            case "allowAutoWiredDestinationResolver": ((JmsComponent) component).setAllowAutoWiredDestinationResolver((boolean) value); return true;
+            case "configuration": ((JmsComponent) component).setConfiguration((org.apache.camel.component.jms.JmsConfiguration) value); return true;
+            case "acceptMessagesWhileStopping": ((JmsComponent) component).setAcceptMessagesWhileStopping((boolean) value); return true;
+            case "allowReplyManagerQuickStop": ((JmsComponent) component).setAllowReplyManagerQuickStop((boolean) value); return true;
+            case "acknowledgementMode": ((JmsComponent) component).setAcknowledgementMode((int) value); return true;
+            case "eagerPoisonBody": ((JmsComponent) component).setEagerPoisonBody((java.lang.String) value); return true;
+            case "eagerLoadingOfProperties": ((JmsComponent) component).setEagerLoadingOfProperties((boolean) value); return true;
+            case "acknowledgementModeName": ((JmsComponent) component).setAcknowledgementModeName((java.lang.String) value); return true;
+            case "autoStartup": ((JmsComponent) component).setAutoStartup((boolean) value); return true;
+            case "cacheLevel": ((JmsComponent) component).setCacheLevel((int) value); return true;
+            case "cacheLevelName": ((JmsComponent) component).setCacheLevelName((java.lang.String) value); return true;
+            case "replyToCacheLevelName": ((JmsComponent) component).setReplyToCacheLevelName((java.lang.String) value); return true;
+            case "clientId": ((JmsComponent) component).setClientId((java.lang.String) value); return true;
+            case "concurrentConsumers": ((JmsComponent) component).setConcurrentConsumers((int) value); return true;
+            case "replyToConcurrentConsumers": ((JmsComponent) component).setReplyToConcurrentConsumers((int) value); return true;
+            case "connectionFactory": ((JmsComponent) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
+            case "username": ((JmsComponent) component).setUsername((java.lang.String) value); return true;
+            case "password": ((JmsComponent) component).setPassword((java.lang.String) value); return true;
+            case "deliveryPersistent": ((JmsComponent) component).setDeliveryPersistent((boolean) value); return true;
+            case "deliveryMode": ((JmsComponent) component).setDeliveryMode((java.lang.Integer) value); return true;
+            case "durableSubscriptionName": ((JmsComponent) component).setDurableSubscriptionName((java.lang.String) value); return true;
+            case "exceptionListener": ((JmsComponent) component).setExceptionListener((javax.jms.ExceptionListener) value); return true;
+            case "errorHandler": ((JmsComponent) component).setErrorHandler((org.springframework.util.ErrorHandler) value); return true;
+            case "errorHandlerLoggingLevel": ((JmsComponent) component).setErrorHandlerLoggingLevel((org.apache.camel.LoggingLevel) value); return true;
+            case "errorHandlerLogStackTrace": ((JmsComponent) component).setErrorHandlerLogStackTrace((boolean) value); return true;
+            case "explicitQosEnabled": ((JmsComponent) component).setExplicitQosEnabled((boolean) value); return true;
+            case "exposeListenerSession": ((JmsComponent) component).setExposeListenerSession((boolean) value); return true;
+            case "idleTaskExecutionLimit": ((JmsComponent) component).setIdleTaskExecutionLimit((int) value); return true;
+            case "idleConsumerLimit": ((JmsComponent) component).setIdleConsumerLimit((int) value); return true;
+            case "maxConcurrentConsumers": ((JmsComponent) component).setMaxConcurrentConsumers((int) value); return true;
+            case "replyToMaxConcurrentConsumers": ((JmsComponent) component).setReplyToMaxConcurrentConsumers((int) value); return true;
+            case "replyOnTimeoutToMaxConcurrentConsumers": ((JmsComponent) component).setReplyOnTimeoutToMaxConcurrentConsumers((int) value); return true;
+            case "maxMessagesPerTask": ((JmsComponent) component).setMaxMessagesPerTask((int) value); return true;
+            case "messageConverter": ((JmsComponent) component).setMessageConverter((org.springframework.jms.support.converter.MessageConverter) value); return true;
+            case "mapJmsMessage": ((JmsComponent) component).setMapJmsMessage((boolean) value); return true;
+            case "messageIdEnabled": ((JmsComponent) component).setMessageIdEnabled((boolean) value); return true;
+            case "messageTimestampEnabled": ((JmsComponent) component).setMessageTimestampEnabled((boolean) value); return true;
+            case "alwaysCopyMessage": ((JmsComponent) component).setAlwaysCopyMessage((boolean) value); return true;
+            case "useMessageIDAsCorrelationID": ((JmsComponent) component).setUseMessageIDAsCorrelationID((boolean) value); return true;
+            case "priority": ((JmsComponent) component).setPriority((int) value); return true;
+            case "pubSubNoLocal": ((JmsComponent) component).setPubSubNoLocal((boolean) value); return true;
+            case "receiveTimeout": ((JmsComponent) component).setReceiveTimeout((long) value); return true;
+            case "recoveryInterval": ((JmsComponent) component).setRecoveryInterval((long) value); return true;
+            case "taskExecutor": ((JmsComponent) component).setTaskExecutor((org.springframework.core.task.TaskExecutor) value); return true;
+            case "timeToLive": ((JmsComponent) component).setTimeToLive((long) value); return true;
+            case "transacted": ((JmsComponent) component).setTransacted((boolean) value); return true;
+            case "lazyCreateTransactionManager": ((JmsComponent) component).setLazyCreateTransactionManager((boolean) value); return true;
+            case "transactionManager": ((JmsComponent) component).setTransactionManager((org.springframework.transaction.PlatformTransactionManager) value); return true;
+            case "transactionName": ((JmsComponent) component).setTransactionName((java.lang.String) value); return true;
+            case "transactionTimeout": ((JmsComponent) component).setTransactionTimeout((int) value); return true;
+            case "testConnectionOnStartup": ((JmsComponent) component).setTestConnectionOnStartup((boolean) value); return true;
+            case "asyncStartListener": ((JmsComponent) component).setAsyncStartListener((boolean) value); return true;
+            case "asyncStopListener": ((JmsComponent) component).setAsyncStopListener((boolean) value); return true;
+            case "forceSendOriginalMessage": ((JmsComponent) component).setForceSendOriginalMessage((boolean) value); return true;
+            case "requestTimeout": ((JmsComponent) component).setRequestTimeout((long) value); return true;
+            case "requestTimeoutCheckerInterval": ((JmsComponent) component).setRequestTimeoutCheckerInterval((long) value); return true;
+            case "transferExchange": ((JmsComponent) component).setTransferExchange((boolean) value); return true;
+            case "transferException": ((JmsComponent) component).setTransferException((boolean) value); return true;
+            case "jmsOperations": ((JmsComponent) component).setJmsOperations((org.springframework.jms.core.JmsOperations) value); return true;
+            case "destinationResolver": ((JmsComponent) component).setDestinationResolver((org.springframework.jms.support.destination.DestinationResolver) value); return true;
+            case "replyToType": ((JmsComponent) component).setReplyToType((org.apache.camel.component.jms.ReplyToType) value); return true;
+            case "preserveMessageQos": ((JmsComponent) component).setPreserveMessageQos((boolean) value); return true;
+            case "asyncConsumer": ((JmsComponent) component).setAsyncConsumer((boolean) value); return true;
+            case "allowNullBody": ((JmsComponent) component).setAllowNullBody((boolean) value); return true;
+            case "includeSentJMSMessageID": ((JmsComponent) component).setIncludeSentJMSMessageID((boolean) value); return true;
+            case "includeAllJMSXProperties": ((JmsComponent) component).setIncludeAllJMSXProperties((boolean) value); return true;
+            case "defaultTaskExecutorType": ((JmsComponent) component).setDefaultTaskExecutorType((org.apache.camel.component.jms.DefaultTaskExecutorType) value); return true;
+            case "jmsKeyFormatStrategy": ((JmsComponent) component).setJmsKeyFormatStrategy((org.apache.camel.component.jms.JmsKeyFormatStrategy) value); return true;
+            case "allowAdditionalHeaders": ((JmsComponent) component).setAllowAdditionalHeaders((java.lang.String) value); return true;
+            case "queueBrowseStrategy": ((JmsComponent) component).setQueueBrowseStrategy((org.apache.camel.component.jms.QueueBrowseStrategy) value); return true;
+            case "messageCreatedStrategy": ((JmsComponent) component).setMessageCreatedStrategy((org.apache.camel.component.jms.MessageCreatedStrategy) value); return true;
+            case "waitForProvisionCorrelationToBeUpdatedCounter": ((JmsComponent) component).setWaitForProvisionCorrelationToBeUpdatedCounter((int) value); return true;
+            case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": ((JmsComponent) component).setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime((long) value); return true;
+            case "correlationProperty": ((JmsComponent) component).setCorrelationProperty((java.lang.String) value); return true;
+            case "subscriptionDurable": ((JmsComponent) component).setSubscriptionDurable((boolean) value); return true;
+            case "subscriptionShared": ((JmsComponent) component).setSubscriptionShared((boolean) value); return true;
+            case "subscriptionName": ((JmsComponent) component).setSubscriptionName((java.lang.String) value); return true;
+            case "streamMessageTypeEnabled": ((JmsComponent) component).setStreamMessageTypeEnabled((boolean) value); return true;
+            case "formatDateHeadersToIso8601": ((JmsComponent) component).setFormatDateHeadersToIso8601((boolean) value); return true;
+            case "headerFilterStrategy": ((JmsComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "basicPropertyBinding": ((JmsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((JmsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((JmsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

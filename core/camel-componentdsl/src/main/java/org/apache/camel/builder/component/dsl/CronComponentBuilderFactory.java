@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.cron.CronComponent;
@@ -51,10 +52,9 @@ public interface CronComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default CronComponentBuilder setCronService(java.lang.String cronService) {
+        default CronComponentBuilder cronService(java.lang.String cronService) {
             doSetProperty("cronService", cronService);
             return this;
         }
@@ -67,7 +67,7 @@ public interface CronComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default CronComponentBuilder setBasicPropertyBinding(
+        default CronComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -86,7 +86,7 @@ public interface CronComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default CronComponentBuilder setBridgeErrorHandler(
+        default CronComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -101,6 +101,18 @@ public interface CronComponentBuilderFactory {
         @Override
         protected CronComponent buildConcreteComponent() {
             return new CronComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "cronService": ((CronComponent) component).setCronService((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((CronComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((CronComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

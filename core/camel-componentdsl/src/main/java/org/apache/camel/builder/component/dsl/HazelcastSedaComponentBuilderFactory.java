@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.hazelcast.seda.HazelcastSedaComponent;
@@ -55,10 +56,9 @@ public interface HazelcastSedaComponentBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default HazelcastSedaComponentBuilder setHazelcastInstance(
+        default HazelcastSedaComponentBuilder hazelcastInstance(
                 com.hazelcast.core.HazelcastInstance hazelcastInstance) {
             doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -73,7 +73,7 @@ public interface HazelcastSedaComponentBuilderFactory {
          * Default: node
          * Group: advanced
          */
-        default HazelcastSedaComponentBuilder setHazelcastMode(
+        default HazelcastSedaComponentBuilder hazelcastMode(
                 java.lang.String hazelcastMode) {
             doSetProperty("hazelcastMode", hazelcastMode);
             return this;
@@ -87,7 +87,7 @@ public interface HazelcastSedaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default HazelcastSedaComponentBuilder setBasicPropertyBinding(
+        default HazelcastSedaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -108,7 +108,7 @@ public interface HazelcastSedaComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default HazelcastSedaComponentBuilder setLazyStartProducer(
+        default HazelcastSedaComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -127,7 +127,7 @@ public interface HazelcastSedaComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default HazelcastSedaComponentBuilder setBridgeErrorHandler(
+        default HazelcastSedaComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -142,6 +142,20 @@ public interface HazelcastSedaComponentBuilderFactory {
         @Override
         protected HazelcastSedaComponent buildConcreteComponent() {
             return new HazelcastSedaComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "hazelcastInstance": ((HazelcastSedaComponent) component).setHazelcastInstance((com.hazelcast.core.HazelcastInstance) value); return true;
+            case "hazelcastMode": ((HazelcastSedaComponent) component).setHazelcastMode((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((HazelcastSedaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((HazelcastSedaComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((HazelcastSedaComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.sjms.SjmsComponent;
@@ -53,10 +54,9 @@ public interface SjmsComponentBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ConnectionFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SjmsComponentBuilder setConnectionFactory(
+        default SjmsComponentBuilder connectionFactory(
                 javax.jms.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
@@ -70,10 +70,9 @@ public interface SjmsComponentBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.ConnectionResource</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SjmsComponentBuilder setConnectionResource(
+        default SjmsComponentBuilder connectionResource(
                 org.apache.camel.component.sjms.jms.ConnectionResource connectionResource) {
             doSetProperty("connectionResource", connectionResource);
             return this;
@@ -87,7 +86,7 @@ public interface SjmsComponentBuilderFactory {
          * Default: 1
          * Group: common
          */
-        default SjmsComponentBuilder setConnectionCount(
+        default SjmsComponentBuilder connectionCount(
                 java.lang.Integer connectionCount) {
             doSetProperty("connectionCount", connectionCount);
             return this;
@@ -106,10 +105,9 @@ public interface SjmsComponentBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SjmsComponentBuilder setJmsKeyFormatStrategy(
+        default SjmsComponentBuilder jmsKeyFormatStrategy(
                 org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy jmsKeyFormatStrategy) {
             doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -121,10 +119,9 @@ public interface SjmsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sjms.TransactionCommitStrategy</code> type.
          * 
-         * Default:
          * Group: transaction
          */
-        default SjmsComponentBuilder setTransactionCommitStrategy(
+        default SjmsComponentBuilder transactionCommitStrategy(
                 org.apache.camel.component.sjms.TransactionCommitStrategy transactionCommitStrategy) {
             doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
             return this;
@@ -135,10 +132,9 @@ public interface SjmsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sjms.jms.DestinationCreationStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SjmsComponentBuilder setDestinationCreationStrategy(
+        default SjmsComponentBuilder destinationCreationStrategy(
                 org.apache.camel.component.sjms.jms.DestinationCreationStrategy destinationCreationStrategy) {
             doSetProperty("destinationCreationStrategy", destinationCreationStrategy);
             return this;
@@ -149,10 +145,9 @@ public interface SjmsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sjms.taskmanager.TimedTaskManager</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SjmsComponentBuilder setTimedTaskManager(
+        default SjmsComponentBuilder timedTaskManager(
                 org.apache.camel.component.sjms.taskmanager.TimedTaskManager timedTaskManager) {
             doSetProperty("timedTaskManager", timedTaskManager);
             return this;
@@ -165,10 +160,9 @@ public interface SjmsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SjmsComponentBuilder setMessageCreatedStrategy(
+        default SjmsComponentBuilder messageCreatedStrategy(
                 org.apache.camel.component.sjms.jms.MessageCreatedStrategy messageCreatedStrategy) {
             doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -184,7 +178,7 @@ public interface SjmsComponentBuilderFactory {
          * Default: true
          * Group: advanced
          */
-        default SjmsComponentBuilder setConnectionTestOnBorrow(
+        default SjmsComponentBuilder connectionTestOnBorrow(
                 boolean connectionTestOnBorrow) {
             doSetProperty("connectionTestOnBorrow", connectionTestOnBorrow);
             return this;
@@ -196,10 +190,9 @@ public interface SjmsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SjmsComponentBuilder setConnectionUsername(
+        default SjmsComponentBuilder connectionUsername(
                 java.lang.String connectionUsername) {
             doSetProperty("connectionUsername", connectionUsername);
             return this;
@@ -211,10 +204,9 @@ public interface SjmsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SjmsComponentBuilder setConnectionPassword(
+        default SjmsComponentBuilder connectionPassword(
                 java.lang.String connectionPassword) {
             doSetProperty("connectionPassword", connectionPassword);
             return this;
@@ -226,10 +218,9 @@ public interface SjmsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SjmsComponentBuilder setConnectionClientId(
+        default SjmsComponentBuilder connectionClientId(
                 java.lang.String connectionClientId) {
             doSetProperty("connectionClientId", connectionClientId);
             return this;
@@ -244,7 +235,7 @@ public interface SjmsComponentBuilderFactory {
          * Default: 5000
          * Group: advanced
          */
-        default SjmsComponentBuilder setConnectionMaxWait(long connectionMaxWait) {
+        default SjmsComponentBuilder connectionMaxWait(long connectionMaxWait) {
             doSetProperty("connectionMaxWait", connectionMaxWait);
             return this;
         }
@@ -255,10 +246,9 @@ public interface SjmsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: filter
          */
-        default SjmsComponentBuilder setHeaderFilterStrategy(
+        default SjmsComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -272,7 +262,7 @@ public interface SjmsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default SjmsComponentBuilder setBasicPropertyBinding(
+        default SjmsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -293,8 +283,7 @@ public interface SjmsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SjmsComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default SjmsComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -312,7 +301,7 @@ public interface SjmsComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default SjmsComponentBuilder setBridgeErrorHandler(
+        default SjmsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -327,6 +316,32 @@ public interface SjmsComponentBuilderFactory {
         @Override
         protected SjmsComponent buildConcreteComponent() {
             return new SjmsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "connectionFactory": ((SjmsComponent) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
+            case "connectionResource": ((SjmsComponent) component).setConnectionResource((org.apache.camel.component.sjms.jms.ConnectionResource) value); return true;
+            case "connectionCount": ((SjmsComponent) component).setConnectionCount((java.lang.Integer) value); return true;
+            case "jmsKeyFormatStrategy": ((SjmsComponent) component).setJmsKeyFormatStrategy((org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy) value); return true;
+            case "transactionCommitStrategy": ((SjmsComponent) component).setTransactionCommitStrategy((org.apache.camel.component.sjms.TransactionCommitStrategy) value); return true;
+            case "destinationCreationStrategy": ((SjmsComponent) component).setDestinationCreationStrategy((org.apache.camel.component.sjms.jms.DestinationCreationStrategy) value); return true;
+            case "timedTaskManager": ((SjmsComponent) component).setTimedTaskManager((org.apache.camel.component.sjms.taskmanager.TimedTaskManager) value); return true;
+            case "messageCreatedStrategy": ((SjmsComponent) component).setMessageCreatedStrategy((org.apache.camel.component.sjms.jms.MessageCreatedStrategy) value); return true;
+            case "connectionTestOnBorrow": ((SjmsComponent) component).setConnectionTestOnBorrow((boolean) value); return true;
+            case "connectionUsername": ((SjmsComponent) component).setConnectionUsername((java.lang.String) value); return true;
+            case "connectionPassword": ((SjmsComponent) component).setConnectionPassword((java.lang.String) value); return true;
+            case "connectionClientId": ((SjmsComponent) component).setConnectionClientId((java.lang.String) value); return true;
+            case "connectionMaxWait": ((SjmsComponent) component).setConnectionMaxWait((long) value); return true;
+            case "headerFilterStrategy": ((SjmsComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "basicPropertyBinding": ((SjmsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((SjmsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((SjmsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

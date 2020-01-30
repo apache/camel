@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.jooq.JooqComponent;
@@ -54,10 +55,9 @@ public interface JooqComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jooq.JooqConfiguration</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default JooqComponentBuilder setConfiguration(
+        default JooqComponentBuilder configuration(
                 org.apache.camel.component.jooq.JooqConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -71,7 +71,7 @@ public interface JooqComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JooqComponentBuilder setBasicPropertyBinding(
+        default JooqComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -92,8 +92,7 @@ public interface JooqComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default JooqComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default JooqComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -111,7 +110,7 @@ public interface JooqComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default JooqComponentBuilder setBridgeErrorHandler(
+        default JooqComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -126,6 +125,19 @@ public interface JooqComponentBuilderFactory {
         @Override
         protected JooqComponent buildConcreteComponent() {
             return new JooqComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((JooqComponent) component).setConfiguration((org.apache.camel.component.jooq.JooqConfiguration) value); return true;
+            case "basicPropertyBinding": ((JooqComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((JooqComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((JooqComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

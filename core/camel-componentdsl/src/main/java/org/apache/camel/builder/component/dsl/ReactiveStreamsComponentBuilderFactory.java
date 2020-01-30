@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsComponent;
@@ -53,10 +54,9 @@ public interface ReactiveStreamsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ReactiveStreamsComponentBuilder setInternalEngineConfiguration(
+        default ReactiveStreamsComponentBuilder internalEngineConfiguration(
                 org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration internalEngineConfiguration) {
             doSetProperty("internalEngineConfiguration", internalEngineConfiguration);
             return this;
@@ -71,7 +71,7 @@ public interface ReactiveStreamsComponentBuilderFactory {
          * Default: BUFFER
          * Group: producer
          */
-        default ReactiveStreamsComponentBuilder setBackpressureStrategy(
+        default ReactiveStreamsComponentBuilder backpressureStrategy(
                 org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy backpressureStrategy) {
             doSetProperty("backpressureStrategy", backpressureStrategy);
             return this;
@@ -84,10 +84,9 @@ public interface ReactiveStreamsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ReactiveStreamsComponentBuilder setServiceType(
+        default ReactiveStreamsComponentBuilder serviceType(
                 java.lang.String serviceType) {
             doSetProperty("serviceType", serviceType);
             return this;
@@ -101,7 +100,7 @@ public interface ReactiveStreamsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ReactiveStreamsComponentBuilder setBasicPropertyBinding(
+        default ReactiveStreamsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -122,7 +121,7 @@ public interface ReactiveStreamsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default ReactiveStreamsComponentBuilder setLazyStartProducer(
+        default ReactiveStreamsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -141,7 +140,7 @@ public interface ReactiveStreamsComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default ReactiveStreamsComponentBuilder setBridgeErrorHandler(
+        default ReactiveStreamsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -156,6 +155,21 @@ public interface ReactiveStreamsComponentBuilderFactory {
         @Override
         protected ReactiveStreamsComponent buildConcreteComponent() {
             return new ReactiveStreamsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "internalEngineConfiguration": ((ReactiveStreamsComponent) component).setInternalEngineConfiguration((org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration) value); return true;
+            case "backpressureStrategy": ((ReactiveStreamsComponent) component).setBackpressureStrategy((org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy) value); return true;
+            case "serviceType": ((ReactiveStreamsComponent) component).setServiceType((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((ReactiveStreamsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((ReactiveStreamsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((ReactiveStreamsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

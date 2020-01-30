@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.jetty9.JettyHttpComponent9;
@@ -54,10 +55,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default JettyHttpComponent9Builder setSslKeyPassword(
+        default JettyHttpComponent9Builder sslKeyPassword(
                 java.lang.String sslKeyPassword) {
             doSetProperty("sslKeyPassword", sslKeyPassword);
             return this;
@@ -69,10 +69,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default JettyHttpComponent9Builder setSslPassword(
+        default JettyHttpComponent9Builder sslPassword(
                 java.lang.String sslPassword) {
             doSetProperty("sslPassword", sslPassword);
             return this;
@@ -83,10 +82,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default JettyHttpComponent9Builder setKeystore(java.lang.String keystore) {
+        default JettyHttpComponent9Builder keystore(java.lang.String keystore) {
             doSetProperty("keystore", keystore);
             return this;
         }
@@ -96,10 +94,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * The option is a:
          * <code>org.eclipse.jetty.server.handler.ErrorHandler</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default JettyHttpComponent9Builder setErrorHandler(
+        default JettyHttpComponent9Builder errorHandler(
                 org.eclipse.jetty.server.handler.ErrorHandler errorHandler) {
             doSetProperty("errorHandler", errorHandler);
             return this;
@@ -110,10 +107,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * The option is a:
          * <code>java.util.Map<java.lang.Integer,org.eclipse.jetty.server.Connector></code> type.
          * 
-         * Default:
          * Group: security
          */
-        default JettyHttpComponent9Builder setSslSocketConnectors(
+        default JettyHttpComponent9Builder sslSocketConnectors(
                 java.util.Map<java.lang.Integer,org.eclipse.jetty.server.Connector> sslSocketConnectors) {
             doSetProperty("sslSocketConnectors", sslSocketConnectors);
             return this;
@@ -125,10 +121,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * The option is a:
          * <code>java.util.Map<java.lang.Integer,org.eclipse.jetty.server.Connector></code> type.
          * 
-         * Default:
          * Group: security
          */
-        default JettyHttpComponent9Builder setSocketConnectors(
+        default JettyHttpComponent9Builder socketConnectors(
                 java.util.Map<java.lang.Integer,org.eclipse.jetty.server.Connector> socketConnectors) {
             doSetProperty("socketConnectors", socketConnectors);
             return this;
@@ -139,10 +134,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default JettyHttpComponent9Builder setMinThreads(
+        default JettyHttpComponent9Builder minThreads(
                 java.lang.Integer minThreads) {
             doSetProperty("minThreads", minThreads);
             return this;
@@ -153,10 +147,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default JettyHttpComponent9Builder setMaxThreads(
+        default JettyHttpComponent9Builder maxThreads(
                 java.lang.Integer maxThreads) {
             doSetProperty("maxThreads", maxThreads);
             return this;
@@ -168,10 +161,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * The option is a:
          * <code>org.eclipse.jetty.util.thread.ThreadPool</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
-        default JettyHttpComponent9Builder setThreadPool(
+        default JettyHttpComponent9Builder threadPool(
                 org.eclipse.jetty.util.thread.ThreadPool threadPool) {
             doSetProperty("threadPool", threadPool);
             return this;
@@ -185,7 +177,7 @@ public interface JettyHttpComponent9BuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default JettyHttpComponent9Builder setEnableJmx(boolean enableJmx) {
+        default JettyHttpComponent9Builder enableJmx(boolean enableJmx) {
             doSetProperty("enableJmx", enableJmx);
             return this;
         }
@@ -197,10 +189,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jetty.JettyHttpBinding</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default JettyHttpComponent9Builder setJettyHttpBinding(
+        default JettyHttpComponent9Builder jettyHttpBinding(
                 org.apache.camel.component.jetty.JettyHttpBinding jettyHttpBinding) {
             doSetProperty("jettyHttpBinding", jettyHttpBinding);
             return this;
@@ -211,10 +202,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default JettyHttpComponent9Builder setHttpBinding(
+        default JettyHttpComponent9Builder httpBinding(
                 org.apache.camel.http.common.HttpBinding httpBinding) {
             doSetProperty("httpBinding", httpBinding);
             return this;
@@ -225,10 +215,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.common.HttpConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default JettyHttpComponent9Builder setHttpConfiguration(
+        default JettyHttpComponent9Builder httpConfiguration(
                 org.apache.camel.http.common.HttpConfiguration httpConfiguration) {
             doSetProperty("httpConfiguration", httpConfiguration);
             return this;
@@ -240,10 +229,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * The option is a: <code>org.eclipse.jetty.jmx.MBeanContainer</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default JettyHttpComponent9Builder setMbContainer(
+        default JettyHttpComponent9Builder mbContainer(
                 org.eclipse.jetty.jmx.MBeanContainer mbContainer) {
             doSetProperty("mbContainer", mbContainer);
             return this;
@@ -254,10 +242,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * The option is a:
          * <code>java.util.Map<java.lang.String,java.lang.Object></code> type.
          * 
-         * Default:
          * Group: security
          */
-        default JettyHttpComponent9Builder setSslSocketConnectorProperties(
+        default JettyHttpComponent9Builder sslSocketConnectorProperties(
                 java.util.Map<java.lang.String,java.lang.Object> sslSocketConnectorProperties) {
             doSetProperty("sslSocketConnectorProperties", sslSocketConnectorProperties);
             return this;
@@ -269,10 +256,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * The option is a:
          * <code>java.util.Map<java.lang.String,java.lang.Object></code> type.
          * 
-         * Default:
          * Group: security
          */
-        default JettyHttpComponent9Builder setSocketConnectorProperties(
+        default JettyHttpComponent9Builder socketConnectorProperties(
                 java.util.Map<java.lang.String,java.lang.Object> socketConnectorProperties) {
             doSetProperty("socketConnectorProperties", socketConnectorProperties);
             return this;
@@ -290,7 +276,7 @@ public interface JettyHttpComponent9BuilderFactory {
          * Default: 30000
          * Group: consumer
          */
-        default JettyHttpComponent9Builder setContinuationTimeout(
+        default JettyHttpComponent9Builder continuationTimeout(
                 java.lang.Long continuationTimeout) {
             doSetProperty("continuationTimeout", continuationTimeout);
             return this;
@@ -303,7 +289,7 @@ public interface JettyHttpComponent9BuilderFactory {
          * Default: true
          * Group: consumer
          */
-        default JettyHttpComponent9Builder setUseContinuation(
+        default JettyHttpComponent9Builder useContinuation(
                 boolean useContinuation) {
             doSetProperty("useContinuation", useContinuation);
             return this;
@@ -314,10 +300,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default JettyHttpComponent9Builder setSslContextParameters(
+        default JettyHttpComponent9Builder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -330,7 +315,7 @@ public interface JettyHttpComponent9BuilderFactory {
          * Default: false
          * Group: security
          */
-        default JettyHttpComponent9Builder setUseGlobalSslContextParameters(
+        default JettyHttpComponent9Builder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
@@ -341,10 +326,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default JettyHttpComponent9Builder setResponseBufferSize(
+        default JettyHttpComponent9Builder responseBufferSize(
                 java.lang.Integer responseBufferSize) {
             doSetProperty("responseBufferSize", responseBufferSize);
             return this;
@@ -355,10 +339,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default JettyHttpComponent9Builder setRequestBufferSize(
+        default JettyHttpComponent9Builder requestBufferSize(
                 java.lang.Integer requestBufferSize) {
             doSetProperty("requestBufferSize", requestBufferSize);
             return this;
@@ -369,10 +352,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default JettyHttpComponent9Builder setRequestHeaderSize(
+        default JettyHttpComponent9Builder requestHeaderSize(
                 java.lang.Integer requestHeaderSize) {
             doSetProperty("requestHeaderSize", requestHeaderSize);
             return this;
@@ -383,10 +365,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default JettyHttpComponent9Builder setResponseHeaderSize(
+        default JettyHttpComponent9Builder responseHeaderSize(
                 java.lang.Integer responseHeaderSize) {
             doSetProperty("responseHeaderSize", responseHeaderSize);
             return this;
@@ -396,11 +377,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
-        default JettyHttpComponent9Builder setProxyHost(
-                java.lang.String proxyHost) {
+        default JettyHttpComponent9Builder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
             return this;
         }
@@ -409,11 +388,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: proxy
          */
-        default JettyHttpComponent9Builder setProxyPort(
-                java.lang.Integer proxyPort) {
+        default JettyHttpComponent9Builder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
             return this;
         }
@@ -426,7 +403,7 @@ public interface JettyHttpComponent9BuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default JettyHttpComponent9Builder setUseXForwardedForHeader(
+        default JettyHttpComponent9Builder useXForwardedForHeader(
                 boolean useXForwardedForHeader) {
             doSetProperty("useXForwardedForHeader", useXForwardedForHeader);
             return this;
@@ -442,7 +419,7 @@ public interface JettyHttpComponent9BuilderFactory {
          * Default: true
          * Group: consumer
          */
-        default JettyHttpComponent9Builder setSendServerVersion(
+        default JettyHttpComponent9Builder sendServerVersion(
                 boolean sendServerVersion) {
             doSetProperty("sendServerVersion", sendServerVersion);
             return this;
@@ -459,7 +436,7 @@ public interface JettyHttpComponent9BuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JettyHttpComponent9Builder setAllowJavaSerializedObject(
+        default JettyHttpComponent9Builder allowJavaSerializedObject(
                 boolean allowJavaSerializedObject) {
             doSetProperty("allowJavaSerializedObject", allowJavaSerializedObject);
             return this;
@@ -471,10 +448,9 @@ public interface JettyHttpComponent9BuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: filter
          */
-        default JettyHttpComponent9Builder setHeaderFilterStrategy(
+        default JettyHttpComponent9Builder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -488,7 +464,7 @@ public interface JettyHttpComponent9BuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JettyHttpComponent9Builder setBasicPropertyBinding(
+        default JettyHttpComponent9Builder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -507,7 +483,7 @@ public interface JettyHttpComponent9BuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default JettyHttpComponent9Builder setBridgeErrorHandler(
+        default JettyHttpComponent9Builder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -522,6 +498,47 @@ public interface JettyHttpComponent9BuilderFactory {
         @Override
         protected JettyHttpComponent9 buildConcreteComponent() {
             return new JettyHttpComponent9();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "sslKeyPassword": ((JettyHttpComponent9) component).setSslKeyPassword((java.lang.String) value); return true;
+            case "sslPassword": ((JettyHttpComponent9) component).setSslPassword((java.lang.String) value); return true;
+            case "keystore": ((JettyHttpComponent9) component).setKeystore((java.lang.String) value); return true;
+            case "errorHandler": ((JettyHttpComponent9) component).setErrorHandler((org.eclipse.jetty.server.handler.ErrorHandler) value); return true;
+            case "sslSocketConnectors": ((JettyHttpComponent9) component).setSslSocketConnectors((java.util.Map<java.lang.Integer,org.eclipse.jetty.server.Connector>) value); return true;
+            case "socketConnectors": ((JettyHttpComponent9) component).setSocketConnectors((java.util.Map<java.lang.Integer,org.eclipse.jetty.server.Connector>) value); return true;
+            case "minThreads": ((JettyHttpComponent9) component).setMinThreads((java.lang.Integer) value); return true;
+            case "maxThreads": ((JettyHttpComponent9) component).setMaxThreads((java.lang.Integer) value); return true;
+            case "threadPool": ((JettyHttpComponent9) component).setThreadPool((org.eclipse.jetty.util.thread.ThreadPool) value); return true;
+            case "enableJmx": ((JettyHttpComponent9) component).setEnableJmx((boolean) value); return true;
+            case "jettyHttpBinding": ((JettyHttpComponent9) component).setJettyHttpBinding((org.apache.camel.component.jetty.JettyHttpBinding) value); return true;
+            case "httpBinding": ((JettyHttpComponent9) component).setHttpBinding((org.apache.camel.http.common.HttpBinding) value); return true;
+            case "httpConfiguration": ((JettyHttpComponent9) component).setHttpConfiguration((org.apache.camel.http.common.HttpConfiguration) value); return true;
+            case "mbContainer": ((JettyHttpComponent9) component).setMbContainer((org.eclipse.jetty.jmx.MBeanContainer) value); return true;
+            case "sslSocketConnectorProperties": ((JettyHttpComponent9) component).setSslSocketConnectorProperties((java.util.Map<java.lang.String,java.lang.Object>) value); return true;
+            case "socketConnectorProperties": ((JettyHttpComponent9) component).setSocketConnectorProperties((java.util.Map<java.lang.String,java.lang.Object>) value); return true;
+            case "continuationTimeout": ((JettyHttpComponent9) component).setContinuationTimeout((java.lang.Long) value); return true;
+            case "useContinuation": ((JettyHttpComponent9) component).setUseContinuation((boolean) value); return true;
+            case "sslContextParameters": ((JettyHttpComponent9) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "useGlobalSslContextParameters": ((JettyHttpComponent9) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "responseBufferSize": ((JettyHttpComponent9) component).setResponseBufferSize((java.lang.Integer) value); return true;
+            case "requestBufferSize": ((JettyHttpComponent9) component).setRequestBufferSize((java.lang.Integer) value); return true;
+            case "requestHeaderSize": ((JettyHttpComponent9) component).setRequestHeaderSize((java.lang.Integer) value); return true;
+            case "responseHeaderSize": ((JettyHttpComponent9) component).setResponseHeaderSize((java.lang.Integer) value); return true;
+            case "proxyHost": ((JettyHttpComponent9) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": ((JettyHttpComponent9) component).setProxyPort((java.lang.Integer) value); return true;
+            case "useXForwardedForHeader": ((JettyHttpComponent9) component).setUseXForwardedForHeader((boolean) value); return true;
+            case "sendServerVersion": ((JettyHttpComponent9) component).setSendServerVersion((boolean) value); return true;
+            case "allowJavaSerializedObject": ((JettyHttpComponent9) component).setAllowJavaSerializedObject((boolean) value); return true;
+            case "headerFilterStrategy": ((JettyHttpComponent9) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "basicPropertyBinding": ((JettyHttpComponent9) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((JettyHttpComponent9) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.mock.MockComponent;
@@ -56,7 +57,7 @@ public interface MockComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default MockComponentBuilder setBasicPropertyBinding(
+        default MockComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -77,8 +78,7 @@ public interface MockComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default MockComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default MockComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -92,6 +92,17 @@ public interface MockComponentBuilderFactory {
         @Override
         protected MockComponent buildConcreteComponent() {
             return new MockComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((MockComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((MockComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

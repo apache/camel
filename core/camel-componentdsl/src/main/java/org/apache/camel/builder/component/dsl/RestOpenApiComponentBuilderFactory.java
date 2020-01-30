@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.rest.openapi.RestOpenApiComponent;
@@ -53,11 +54,9 @@ public interface RestOpenApiComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default RestOpenApiComponentBuilder setBasePath(
-                java.lang.String basePath) {
+        default RestOpenApiComponentBuilder basePath(java.lang.String basePath) {
             doSetProperty("basePath", basePath);
             return this;
         }
@@ -70,10 +69,9 @@ public interface RestOpenApiComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default RestOpenApiComponentBuilder setComponentName(
+        default RestOpenApiComponentBuilder componentName(
                 java.lang.String componentName) {
             doSetProperty("componentName", componentName);
             return this;
@@ -87,11 +85,9 @@ public interface RestOpenApiComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default RestOpenApiComponentBuilder setConsumes(
-                java.lang.String consumes) {
+        default RestOpenApiComponentBuilder consumes(java.lang.String consumes) {
             doSetProperty("consumes", consumes);
             return this;
         }
@@ -107,10 +103,9 @@ public interface RestOpenApiComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default RestOpenApiComponentBuilder setHost(java.lang.String host) {
+        default RestOpenApiComponentBuilder host(java.lang.String host) {
             doSetProperty("host", host);
             return this;
         }
@@ -123,11 +118,9 @@ public interface RestOpenApiComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default RestOpenApiComponentBuilder setProduces(
-                java.lang.String produces) {
+        default RestOpenApiComponentBuilder produces(java.lang.String produces) {
             doSetProperty("produces", produces);
             return this;
         }
@@ -146,7 +139,7 @@ public interface RestOpenApiComponentBuilderFactory {
          * Default: openapi.json
          * Group: producer
          */
-        default RestOpenApiComponentBuilder setSpecificationUri(
+        default RestOpenApiComponentBuilder specificationUri(
                 java.net.URI specificationUri) {
             doSetProperty("specificationUri", specificationUri);
             return this;
@@ -158,10 +151,9 @@ public interface RestOpenApiComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default RestOpenApiComponentBuilder setSslContextParameters(
+        default RestOpenApiComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -174,7 +166,7 @@ public interface RestOpenApiComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default RestOpenApiComponentBuilder setUseGlobalSslContextParameters(
+        default RestOpenApiComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
@@ -188,7 +180,7 @@ public interface RestOpenApiComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default RestOpenApiComponentBuilder setBasicPropertyBinding(
+        default RestOpenApiComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -209,7 +201,7 @@ public interface RestOpenApiComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default RestOpenApiComponentBuilder setLazyStartProducer(
+        default RestOpenApiComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -224,6 +216,25 @@ public interface RestOpenApiComponentBuilderFactory {
         @Override
         protected RestOpenApiComponent buildConcreteComponent() {
             return new RestOpenApiComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basePath": ((RestOpenApiComponent) component).setBasePath((java.lang.String) value); return true;
+            case "componentName": ((RestOpenApiComponent) component).setComponentName((java.lang.String) value); return true;
+            case "consumes": ((RestOpenApiComponent) component).setConsumes((java.lang.String) value); return true;
+            case "host": ((RestOpenApiComponent) component).setHost((java.lang.String) value); return true;
+            case "produces": ((RestOpenApiComponent) component).setProduces((java.lang.String) value); return true;
+            case "specificationUri": ((RestOpenApiComponent) component).setSpecificationUri((java.net.URI) value); return true;
+            case "sslContextParameters": ((RestOpenApiComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "useGlobalSslContextParameters": ((RestOpenApiComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "basicPropertyBinding": ((RestOpenApiComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((RestOpenApiComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

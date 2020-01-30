@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.mongodb.MongoDbComponent;
@@ -53,10 +54,9 @@ public interface MongoDbComponentBuilderFactory {
          * 
          * The option is a: <code>com.mongodb.client.MongoClient</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MongoDbComponentBuilder setMongoConnection(
+        default MongoDbComponentBuilder mongoConnection(
                 com.mongodb.client.MongoClient mongoConnection) {
             doSetProperty("mongoConnection", mongoConnection);
             return this;
@@ -70,7 +70,7 @@ public interface MongoDbComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default MongoDbComponentBuilder setBasicPropertyBinding(
+        default MongoDbComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -91,7 +91,7 @@ public interface MongoDbComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default MongoDbComponentBuilder setLazyStartProducer(
+        default MongoDbComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -110,7 +110,7 @@ public interface MongoDbComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default MongoDbComponentBuilder setBridgeErrorHandler(
+        default MongoDbComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -125,6 +125,19 @@ public interface MongoDbComponentBuilderFactory {
         @Override
         protected MongoDbComponent buildConcreteComponent() {
             return new MongoDbComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "mongoConnection": ((MongoDbComponent) component).setMongoConnection((com.mongodb.client.MongoClient) value); return true;
+            case "basicPropertyBinding": ((MongoDbComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((MongoDbComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((MongoDbComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

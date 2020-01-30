@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.bean.BeanComponent;
@@ -54,7 +55,7 @@ public interface BeanComponentBuilderFactory {
          * Group: producer
          */
         @Deprecated
-        default BeanComponentBuilder setCache(java.lang.Boolean cache) {
+        default BeanComponentBuilder cache(java.lang.Boolean cache) {
             doSetProperty("cache", cache);
             return this;
         }
@@ -79,7 +80,7 @@ public interface BeanComponentBuilderFactory {
          * Default: Singleton
          * Group: producer
          */
-        default BeanComponentBuilder setScope(org.apache.camel.BeanScope scope) {
+        default BeanComponentBuilder scope(org.apache.camel.BeanScope scope) {
             doSetProperty("scope", scope);
             return this;
         }
@@ -92,7 +93,7 @@ public interface BeanComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default BeanComponentBuilder setBasicPropertyBinding(
+        default BeanComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -113,8 +114,7 @@ public interface BeanComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default BeanComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default BeanComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -128,6 +128,19 @@ public interface BeanComponentBuilderFactory {
         @Override
         protected BeanComponent buildConcreteComponent() {
             return new BeanComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "cache": ((BeanComponent) component).setCache((java.lang.Boolean) value); return true;
+            case "scope": ((BeanComponent) component).setScope((org.apache.camel.BeanScope) value); return true;
+            case "basicPropertyBinding": ((BeanComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((BeanComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

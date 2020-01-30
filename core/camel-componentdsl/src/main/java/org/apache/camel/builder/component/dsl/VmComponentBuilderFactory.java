@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.vm.VmComponent;
@@ -56,7 +57,7 @@ public interface VmComponentBuilderFactory {
          * Default: 1000
          * Group: advanced
          */
-        default VmComponentBuilder setQueueSize(int queueSize) {
+        default VmComponentBuilder queueSize(int queueSize) {
             doSetProperty("queueSize", queueSize);
             return this;
         }
@@ -68,8 +69,7 @@ public interface VmComponentBuilderFactory {
          * Default: 1
          * Group: consumer
          */
-        default VmComponentBuilder setConcurrentConsumers(
-                int concurrentConsumers) {
+        default VmComponentBuilder concurrentConsumers(int concurrentConsumers) {
             doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
@@ -79,10 +79,9 @@ public interface VmComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange></code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default VmComponentBuilder setDefaultQueueFactory(
+        default VmComponentBuilder defaultQueueFactory(
                 org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange> defaultQueueFactory) {
             doSetProperty("defaultQueueFactory", defaultQueueFactory);
             return this;
@@ -99,7 +98,7 @@ public interface VmComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default VmComponentBuilder setDefaultBlockWhenFull(
+        default VmComponentBuilder defaultBlockWhenFull(
                 boolean defaultBlockWhenFull) {
             doSetProperty("defaultBlockWhenFull", defaultBlockWhenFull);
             return this;
@@ -116,7 +115,7 @@ public interface VmComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default VmComponentBuilder setDefaultDiscardWhenFull(
+        default VmComponentBuilder defaultDiscardWhenFull(
                 boolean defaultDiscardWhenFull) {
             doSetProperty("defaultDiscardWhenFull", defaultDiscardWhenFull);
             return this;
@@ -131,11 +130,9 @@ public interface VmComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default VmComponentBuilder setDefaultOfferTimeout(
-                long defaultOfferTimeout) {
+        default VmComponentBuilder defaultOfferTimeout(long defaultOfferTimeout) {
             doSetProperty("defaultOfferTimeout", defaultOfferTimeout);
             return this;
         }
@@ -148,7 +145,7 @@ public interface VmComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default VmComponentBuilder setBasicPropertyBinding(
+        default VmComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -169,8 +166,7 @@ public interface VmComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default VmComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default VmComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -188,8 +184,7 @@ public interface VmComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default VmComponentBuilder setBridgeErrorHandler(
-                boolean bridgeErrorHandler) {
+        default VmComponentBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
@@ -203,6 +198,24 @@ public interface VmComponentBuilderFactory {
         @Override
         protected VmComponent buildConcreteComponent() {
             return new VmComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "queueSize": ((VmComponent) component).setQueueSize((int) value); return true;
+            case "concurrentConsumers": ((VmComponent) component).setConcurrentConsumers((int) value); return true;
+            case "defaultQueueFactory": ((VmComponent) component).setDefaultQueueFactory((org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>) value); return true;
+            case "defaultBlockWhenFull": ((VmComponent) component).setDefaultBlockWhenFull((boolean) value); return true;
+            case "defaultDiscardWhenFull": ((VmComponent) component).setDefaultDiscardWhenFull((boolean) value); return true;
+            case "defaultOfferTimeout": ((VmComponent) component).setDefaultOfferTimeout((long) value); return true;
+            case "basicPropertyBinding": ((VmComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((VmComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((VmComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

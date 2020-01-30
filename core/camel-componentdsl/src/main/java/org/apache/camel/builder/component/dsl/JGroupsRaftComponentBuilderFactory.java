@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.jgroups.raft.JGroupsRaftComponent;
@@ -54,10 +55,9 @@ public interface JGroupsRaftComponentBuilderFactory {
          * 
          * The option is a: <code>org.jgroups.raft.RaftHandle</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default JGroupsRaftComponentBuilder setRaftHandle(
+        default JGroupsRaftComponentBuilder raftHandle(
                 org.jgroups.raft.RaftHandle raftHandle) {
             doSetProperty("raftHandle", raftHandle);
             return this;
@@ -71,7 +71,7 @@ public interface JGroupsRaftComponentBuilderFactory {
          * Default: NopStateMachine
          * Group: common
          */
-        default JGroupsRaftComponentBuilder setStateMachine(
+        default JGroupsRaftComponentBuilder stateMachine(
                 org.jgroups.protocols.raft.StateMachine stateMachine) {
             doSetProperty("stateMachine", stateMachine);
             return this;
@@ -81,10 +81,9 @@ public interface JGroupsRaftComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default JGroupsRaftComponentBuilder setRaftId(java.lang.String raftId) {
+        default JGroupsRaftComponentBuilder raftId(java.lang.String raftId) {
             doSetProperty("raftId", raftId);
             return this;
         }
@@ -97,7 +96,7 @@ public interface JGroupsRaftComponentBuilderFactory {
          * Default: raft.xml
          * Group: common
          */
-        default JGroupsRaftComponentBuilder setChannelProperties(
+        default JGroupsRaftComponentBuilder channelProperties(
                 java.lang.String channelProperties) {
             doSetProperty("channelProperties", channelProperties);
             return this;
@@ -111,7 +110,7 @@ public interface JGroupsRaftComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JGroupsRaftComponentBuilder setBasicPropertyBinding(
+        default JGroupsRaftComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -132,7 +131,7 @@ public interface JGroupsRaftComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default JGroupsRaftComponentBuilder setLazyStartProducer(
+        default JGroupsRaftComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -151,7 +150,7 @@ public interface JGroupsRaftComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default JGroupsRaftComponentBuilder setBridgeErrorHandler(
+        default JGroupsRaftComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -166,6 +165,22 @@ public interface JGroupsRaftComponentBuilderFactory {
         @Override
         protected JGroupsRaftComponent buildConcreteComponent() {
             return new JGroupsRaftComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "raftHandle": ((JGroupsRaftComponent) component).setRaftHandle((org.jgroups.raft.RaftHandle) value); return true;
+            case "stateMachine": ((JGroupsRaftComponent) component).setStateMachine((org.jgroups.protocols.raft.StateMachine) value); return true;
+            case "raftId": ((JGroupsRaftComponent) component).setRaftId((java.lang.String) value); return true;
+            case "channelProperties": ((JGroupsRaftComponent) component).setChannelProperties((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((JGroupsRaftComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((JGroupsRaftComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((JGroupsRaftComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

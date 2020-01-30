@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.rest.RestComponent;
@@ -57,10 +58,9 @@ public interface RestComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default RestComponentBuilder setConsumerComponentName(
+        default RestComponentBuilder consumerComponentName(
                 java.lang.String consumerComponentName) {
             doSetProperty("consumerComponentName", consumerComponentName);
             return this;
@@ -75,10 +75,9 @@ public interface RestComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default RestComponentBuilder setProducerComponentName(
+        default RestComponentBuilder producerComponentName(
                 java.lang.String producerComponentName) {
             doSetProperty("producerComponentName", producerComponentName);
             return this;
@@ -93,11 +92,10 @@ public interface RestComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         @Deprecated
-        default RestComponentBuilder setComponentName(
+        default RestComponentBuilder componentName(
                 java.lang.String componentName) {
             doSetProperty("componentName", componentName);
             return this;
@@ -108,10 +106,9 @@ public interface RestComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default RestComponentBuilder setApiDoc(java.lang.String apiDoc) {
+        default RestComponentBuilder apiDoc(java.lang.String apiDoc) {
             doSetProperty("apiDoc", apiDoc);
             return this;
         }
@@ -121,10 +118,9 @@ public interface RestComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default RestComponentBuilder setHost(java.lang.String host) {
+        default RestComponentBuilder host(java.lang.String host) {
             doSetProperty("host", host);
             return this;
         }
@@ -137,7 +133,7 @@ public interface RestComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default RestComponentBuilder setBasicPropertyBinding(
+        default RestComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -158,8 +154,7 @@ public interface RestComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default RestComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default RestComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -177,7 +172,7 @@ public interface RestComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default RestComponentBuilder setBridgeErrorHandler(
+        default RestComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -192,6 +187,23 @@ public interface RestComponentBuilderFactory {
         @Override
         protected RestComponent buildConcreteComponent() {
             return new RestComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "consumerComponentName": ((RestComponent) component).setConsumerComponentName((java.lang.String) value); return true;
+            case "producerComponentName": ((RestComponent) component).setProducerComponentName((java.lang.String) value); return true;
+            case "componentName": ((RestComponent) component).setComponentName((java.lang.String) value); return true;
+            case "apiDoc": ((RestComponent) component).setApiDoc((java.lang.String) value); return true;
+            case "host": ((RestComponent) component).setHost((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((RestComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((RestComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((RestComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

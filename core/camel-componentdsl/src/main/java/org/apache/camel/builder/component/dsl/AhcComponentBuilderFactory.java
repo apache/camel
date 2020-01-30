@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.ahc.AhcComponent;
@@ -51,10 +52,9 @@ public interface AhcComponentBuilderFactory {
          * The option is a: <code>org.asynchttpclient.AsyncHttpClient</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default AhcComponentBuilder setClient(
+        default AhcComponentBuilder client(
                 org.asynchttpclient.AsyncHttpClient client) {
             doSetProperty("client", client);
             return this;
@@ -66,10 +66,9 @@ public interface AhcComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default AhcComponentBuilder setBinding(
+        default AhcComponentBuilder binding(
                 org.apache.camel.component.ahc.AhcBinding binding) {
             doSetProperty("binding", binding);
             return this;
@@ -81,10 +80,9 @@ public interface AhcComponentBuilderFactory {
          * The option is a:
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default AhcComponentBuilder setClientConfig(
+        default AhcComponentBuilder clientConfig(
                 org.asynchttpclient.AsyncHttpClientConfig clientConfig) {
             doSetProperty("clientConfig", clientConfig);
             return this;
@@ -98,10 +96,9 @@ public interface AhcComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default AhcComponentBuilder setSslContextParameters(
+        default AhcComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -118,7 +115,7 @@ public interface AhcComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default AhcComponentBuilder setAllowJavaSerializedObject(
+        default AhcComponentBuilder allowJavaSerializedObject(
                 boolean allowJavaSerializedObject) {
             doSetProperty("allowJavaSerializedObject", allowJavaSerializedObject);
             return this;
@@ -131,7 +128,7 @@ public interface AhcComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default AhcComponentBuilder setUseGlobalSslContextParameters(
+        default AhcComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
@@ -143,10 +140,9 @@ public interface AhcComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: filter
          */
-        default AhcComponentBuilder setHeaderFilterStrategy(
+        default AhcComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -160,7 +156,7 @@ public interface AhcComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default AhcComponentBuilder setBasicPropertyBinding(
+        default AhcComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -181,8 +177,7 @@ public interface AhcComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default AhcComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default AhcComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -196,6 +191,24 @@ public interface AhcComponentBuilderFactory {
         @Override
         protected AhcComponent buildConcreteComponent() {
             return new AhcComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "client": ((AhcComponent) component).setClient((org.asynchttpclient.AsyncHttpClient) value); return true;
+            case "binding": ((AhcComponent) component).setBinding((org.apache.camel.component.ahc.AhcBinding) value); return true;
+            case "clientConfig": ((AhcComponent) component).setClientConfig((org.asynchttpclient.AsyncHttpClientConfig) value); return true;
+            case "sslContextParameters": ((AhcComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "allowJavaSerializedObject": ((AhcComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
+            case "useGlobalSslContextParameters": ((AhcComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "headerFilterStrategy": ((AhcComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "basicPropertyBinding": ((AhcComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((AhcComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

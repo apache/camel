@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.stax.StAXComponent;
@@ -56,7 +57,7 @@ public interface StAXComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default StAXComponentBuilder setBasicPropertyBinding(
+        default StAXComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -77,8 +78,7 @@ public interface StAXComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default StAXComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default StAXComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -92,6 +92,17 @@ public interface StAXComponentBuilderFactory {
         @Override
         protected StAXComponent buildConcreteComponent() {
             return new StAXComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((StAXComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((StAXComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

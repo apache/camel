@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.jira.JiraComponent;
@@ -51,10 +52,9 @@ public interface JiraComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jira.JiraConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default JiraComponentBuilder setConfiguration(
+        default JiraComponentBuilder configuration(
                 org.apache.camel.component.jira.JiraConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -68,7 +68,7 @@ public interface JiraComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JiraComponentBuilder setBasicPropertyBinding(
+        default JiraComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -89,8 +89,7 @@ public interface JiraComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default JiraComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default JiraComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -108,7 +107,7 @@ public interface JiraComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default JiraComponentBuilder setBridgeErrorHandler(
+        default JiraComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -123,6 +122,19 @@ public interface JiraComponentBuilderFactory {
         @Override
         protected JiraComponent buildConcreteComponent() {
             return new JiraComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((JiraComponent) component).setConfiguration((org.apache.camel.component.jira.JiraConfiguration) value); return true;
+            case "basicPropertyBinding": ((JiraComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((JiraComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((JiraComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

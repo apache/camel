@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.directvm.DirectVmComponent;
@@ -59,7 +60,7 @@ public interface DirectVmComponentBuilderFactory {
          * Default: true
          * Group: producer
          */
-        default DirectVmComponentBuilder setBlock(boolean block) {
+        default DirectVmComponentBuilder block(boolean block) {
             doSetProperty("block", block);
             return this;
         }
@@ -71,7 +72,7 @@ public interface DirectVmComponentBuilderFactory {
          * Default: 30000
          * Group: producer
          */
-        default DirectVmComponentBuilder setTimeout(long timeout) {
+        default DirectVmComponentBuilder timeout(long timeout) {
             doSetProperty("timeout", timeout);
             return this;
         }
@@ -83,10 +84,9 @@ public interface DirectVmComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default DirectVmComponentBuilder setHeaderFilterStrategy(
+        default DirectVmComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -100,7 +100,7 @@ public interface DirectVmComponentBuilderFactory {
          * Default: true
          * Group: advanced
          */
-        default DirectVmComponentBuilder setPropagateProperties(
+        default DirectVmComponentBuilder propagateProperties(
                 boolean propagateProperties) {
             doSetProperty("propagateProperties", propagateProperties);
             return this;
@@ -114,7 +114,7 @@ public interface DirectVmComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default DirectVmComponentBuilder setBasicPropertyBinding(
+        default DirectVmComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -135,7 +135,7 @@ public interface DirectVmComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default DirectVmComponentBuilder setLazyStartProducer(
+        default DirectVmComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -154,7 +154,7 @@ public interface DirectVmComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default DirectVmComponentBuilder setBridgeErrorHandler(
+        default DirectVmComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -169,6 +169,22 @@ public interface DirectVmComponentBuilderFactory {
         @Override
         protected DirectVmComponent buildConcreteComponent() {
             return new DirectVmComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "block": ((DirectVmComponent) component).setBlock((boolean) value); return true;
+            case "timeout": ((DirectVmComponent) component).setTimeout((long) value); return true;
+            case "headerFilterStrategy": ((DirectVmComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "propagateProperties": ((DirectVmComponent) component).setPropagateProperties((boolean) value); return true;
+            case "basicPropertyBinding": ((DirectVmComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((DirectVmComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((DirectVmComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

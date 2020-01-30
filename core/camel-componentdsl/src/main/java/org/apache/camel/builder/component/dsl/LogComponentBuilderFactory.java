@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.log.LogComponent;
@@ -54,10 +55,9 @@ public interface LogComponentBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExchangeFormatter</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default LogComponentBuilder setExchangeFormatter(
+        default LogComponentBuilder exchangeFormatter(
                 org.apache.camel.spi.ExchangeFormatter exchangeFormatter) {
             doSetProperty("exchangeFormatter", exchangeFormatter);
             return this;
@@ -71,7 +71,7 @@ public interface LogComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default LogComponentBuilder setBasicPropertyBinding(
+        default LogComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -92,8 +92,7 @@ public interface LogComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default LogComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default LogComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -107,6 +106,18 @@ public interface LogComponentBuilderFactory {
         @Override
         protected LogComponent buildConcreteComponent() {
             return new LogComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "exchangeFormatter": ((LogComponent) component).setExchangeFormatter((org.apache.camel.spi.ExchangeFormatter) value); return true;
+            case "basicPropertyBinding": ((LogComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((LogComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.xmlsecurity.XmlSignatureComponent;
@@ -54,10 +55,9 @@ public interface XmlSignatureComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XmlSignatureComponentBuilder setSignerConfiguration(
+        default XmlSignatureComponentBuilder signerConfiguration(
                 org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration signerConfiguration) {
             doSetProperty("signerConfiguration", signerConfiguration);
             return this;
@@ -69,10 +69,9 @@ public interface XmlSignatureComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XmlSignatureComponentBuilder setVerifierConfiguration(
+        default XmlSignatureComponentBuilder verifierConfiguration(
                 org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration verifierConfiguration) {
             doSetProperty("verifierConfiguration", verifierConfiguration);
             return this;
@@ -86,7 +85,7 @@ public interface XmlSignatureComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default XmlSignatureComponentBuilder setBasicPropertyBinding(
+        default XmlSignatureComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -107,7 +106,7 @@ public interface XmlSignatureComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default XmlSignatureComponentBuilder setLazyStartProducer(
+        default XmlSignatureComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -122,6 +121,19 @@ public interface XmlSignatureComponentBuilderFactory {
         @Override
         protected XmlSignatureComponent buildConcreteComponent() {
             return new XmlSignatureComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "signerConfiguration": ((XmlSignatureComponent) component).setSignerConfiguration((org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration) value); return true;
+            case "verifierConfiguration": ((XmlSignatureComponent) component).setVerifierConfiguration((org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration) value); return true;
+            case "basicPropertyBinding": ((XmlSignatureComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((XmlSignatureComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

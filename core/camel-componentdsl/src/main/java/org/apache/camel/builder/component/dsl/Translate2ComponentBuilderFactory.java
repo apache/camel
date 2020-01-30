@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.aws2.translate.Translate2Component;
@@ -53,10 +54,9 @@ public interface Translate2ComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.aws2.translate.Translate2Configuration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default Translate2ComponentBuilder setConfiguration(
+        default Translate2ComponentBuilder configuration(
                 org.apache.camel.component.aws2.translate.Translate2Configuration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -66,11 +66,9 @@ public interface Translate2ComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default Translate2ComponentBuilder setAccessKey(
-                java.lang.String accessKey) {
+        default Translate2ComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
             return this;
         }
@@ -79,11 +77,9 @@ public interface Translate2ComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default Translate2ComponentBuilder setSecretKey(
-                java.lang.String secretKey) {
+        default Translate2ComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
             return this;
         }
@@ -92,10 +88,9 @@ public interface Translate2ComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default Translate2ComponentBuilder setRegion(java.lang.String region) {
+        default Translate2ComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
             return this;
         }
@@ -108,7 +103,7 @@ public interface Translate2ComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default Translate2ComponentBuilder setBasicPropertyBinding(
+        default Translate2ComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -129,7 +124,7 @@ public interface Translate2ComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default Translate2ComponentBuilder setLazyStartProducer(
+        default Translate2ComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -144,6 +139,21 @@ public interface Translate2ComponentBuilderFactory {
         @Override
         protected Translate2Component buildConcreteComponent() {
             return new Translate2Component();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((Translate2Component) component).setConfiguration((org.apache.camel.component.aws2.translate.Translate2Configuration) value); return true;
+            case "accessKey": ((Translate2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": ((Translate2Component) component).setSecretKey((java.lang.String) value); return true;
+            case "region": ((Translate2Component) component).setRegion((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((Translate2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((Translate2Component) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

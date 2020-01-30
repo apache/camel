@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.github.GitHubComponent;
@@ -56,7 +57,7 @@ public interface GitHubComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default GitHubComponentBuilder setBasicPropertyBinding(
+        default GitHubComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -77,7 +78,7 @@ public interface GitHubComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default GitHubComponentBuilder setLazyStartProducer(
+        default GitHubComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -96,7 +97,7 @@ public interface GitHubComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default GitHubComponentBuilder setBridgeErrorHandler(
+        default GitHubComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -111,6 +112,18 @@ public interface GitHubComponentBuilderFactory {
         @Override
         protected GitHubComponent buildConcreteComponent() {
             return new GitHubComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((GitHubComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((GitHubComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((GitHubComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

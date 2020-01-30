@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.micrometer.MicrometerComponent;
@@ -55,10 +56,9 @@ public interface MicrometerComponentBuilderFactory {
          * The option is a:
          * <code>io.micrometer.core.instrument.MeterRegistry</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default MicrometerComponentBuilder setMetricsRegistry(
+        default MicrometerComponentBuilder metricsRegistry(
                 io.micrometer.core.instrument.MeterRegistry metricsRegistry) {
             doSetProperty("metricsRegistry", metricsRegistry);
             return this;
@@ -72,7 +72,7 @@ public interface MicrometerComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default MicrometerComponentBuilder setBasicPropertyBinding(
+        default MicrometerComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -93,7 +93,7 @@ public interface MicrometerComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default MicrometerComponentBuilder setLazyStartProducer(
+        default MicrometerComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -108,6 +108,18 @@ public interface MicrometerComponentBuilderFactory {
         @Override
         protected MicrometerComponent buildConcreteComponent() {
             return new MicrometerComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "metricsRegistry": ((MicrometerComponent) component).setMetricsRegistry((io.micrometer.core.instrument.MeterRegistry) value); return true;
+            case "basicPropertyBinding": ((MicrometerComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((MicrometerComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

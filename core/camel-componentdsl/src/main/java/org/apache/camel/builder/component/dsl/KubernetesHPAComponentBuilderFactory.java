@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.kubernetes.hpa.KubernetesHPAComponent;
@@ -58,7 +59,7 @@ public interface KubernetesHPAComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default KubernetesHPAComponentBuilder setBasicPropertyBinding(
+        default KubernetesHPAComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +80,7 @@ public interface KubernetesHPAComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default KubernetesHPAComponentBuilder setLazyStartProducer(
+        default KubernetesHPAComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -98,7 +99,7 @@ public interface KubernetesHPAComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default KubernetesHPAComponentBuilder setBridgeErrorHandler(
+        default KubernetesHPAComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -113,6 +114,18 @@ public interface KubernetesHPAComponentBuilderFactory {
         @Override
         protected KubernetesHPAComponent buildConcreteComponent() {
             return new KubernetesHPAComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((KubernetesHPAComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((KubernetesHPAComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((KubernetesHPAComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

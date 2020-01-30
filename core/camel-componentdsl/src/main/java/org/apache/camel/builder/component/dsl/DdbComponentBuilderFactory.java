@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.aws.ddb.DdbComponent;
@@ -54,10 +55,9 @@ public interface DdbComponentBuilderFactory {
          * <code>org.apache.camel.component.aws.ddb.DdbConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default DdbComponentBuilder setConfiguration(
+        default DdbComponentBuilder configuration(
                 org.apache.camel.component.aws.ddb.DdbConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -67,10 +67,9 @@ public interface DdbComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default DdbComponentBuilder setAccessKey(java.lang.String accessKey) {
+        default DdbComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
             return this;
         }
@@ -79,10 +78,9 @@ public interface DdbComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default DdbComponentBuilder setSecretKey(java.lang.String secretKey) {
+        default DdbComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
             return this;
         }
@@ -91,10 +89,9 @@ public interface DdbComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default DdbComponentBuilder setRegion(java.lang.String region) {
+        default DdbComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
             return this;
         }
@@ -107,7 +104,7 @@ public interface DdbComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default DdbComponentBuilder setBasicPropertyBinding(
+        default DdbComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -128,8 +125,7 @@ public interface DdbComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default DdbComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default DdbComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -143,6 +139,21 @@ public interface DdbComponentBuilderFactory {
         @Override
         protected DdbComponent buildConcreteComponent() {
             return new DdbComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((DdbComponent) component).setConfiguration((org.apache.camel.component.aws.ddb.DdbConfiguration) value); return true;
+            case "accessKey": ((DdbComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": ((DdbComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "region": ((DdbComponent) component).setRegion((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((DdbComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((DdbComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

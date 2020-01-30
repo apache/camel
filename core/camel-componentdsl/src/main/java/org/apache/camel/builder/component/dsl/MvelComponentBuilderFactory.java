@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.mvel.MvelComponent;
@@ -54,7 +55,7 @@ public interface MvelComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default MvelComponentBuilder setBasicPropertyBinding(
+        default MvelComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -75,8 +76,7 @@ public interface MvelComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default MvelComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default MvelComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -90,6 +90,17 @@ public interface MvelComponentBuilderFactory {
         @Override
         protected MvelComponent buildConcreteComponent() {
             return new MvelComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((MvelComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((MvelComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.twitter.search.TwitterSearchComponent;
@@ -52,10 +53,9 @@ public interface TwitterSearchComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default TwitterSearchComponentBuilder setAccessToken(
+        default TwitterSearchComponentBuilder accessToken(
                 java.lang.String accessToken) {
             doSetProperty("accessToken", accessToken);
             return this;
@@ -65,10 +65,9 @@ public interface TwitterSearchComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default TwitterSearchComponentBuilder setAccessTokenSecret(
+        default TwitterSearchComponentBuilder accessTokenSecret(
                 java.lang.String accessTokenSecret) {
             doSetProperty("accessTokenSecret", accessTokenSecret);
             return this;
@@ -78,10 +77,9 @@ public interface TwitterSearchComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default TwitterSearchComponentBuilder setConsumerKey(
+        default TwitterSearchComponentBuilder consumerKey(
                 java.lang.String consumerKey) {
             doSetProperty("consumerKey", consumerKey);
             return this;
@@ -91,10 +89,9 @@ public interface TwitterSearchComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default TwitterSearchComponentBuilder setConsumerSecret(
+        default TwitterSearchComponentBuilder consumerSecret(
                 java.lang.String consumerSecret) {
             doSetProperty("consumerSecret", consumerSecret);
             return this;
@@ -104,10 +101,9 @@ public interface TwitterSearchComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
-        default TwitterSearchComponentBuilder setHttpProxyHost(
+        default TwitterSearchComponentBuilder httpProxyHost(
                 java.lang.String httpProxyHost) {
             doSetProperty("httpProxyHost", httpProxyHost);
             return this;
@@ -117,10 +113,9 @@ public interface TwitterSearchComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
-        default TwitterSearchComponentBuilder setHttpProxyUser(
+        default TwitterSearchComponentBuilder httpProxyUser(
                 java.lang.String httpProxyUser) {
             doSetProperty("httpProxyUser", httpProxyUser);
             return this;
@@ -130,10 +125,9 @@ public interface TwitterSearchComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
-        default TwitterSearchComponentBuilder setHttpProxyPassword(
+        default TwitterSearchComponentBuilder httpProxyPassword(
                 java.lang.String httpProxyPassword) {
             doSetProperty("httpProxyPassword", httpProxyPassword);
             return this;
@@ -143,10 +137,9 @@ public interface TwitterSearchComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: proxy
          */
-        default TwitterSearchComponentBuilder setHttpProxyPort(int httpProxyPort) {
+        default TwitterSearchComponentBuilder httpProxyPort(int httpProxyPort) {
             doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
@@ -159,7 +152,7 @@ public interface TwitterSearchComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default TwitterSearchComponentBuilder setBasicPropertyBinding(
+        default TwitterSearchComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -180,7 +173,7 @@ public interface TwitterSearchComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default TwitterSearchComponentBuilder setLazyStartProducer(
+        default TwitterSearchComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -199,7 +192,7 @@ public interface TwitterSearchComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default TwitterSearchComponentBuilder setBridgeErrorHandler(
+        default TwitterSearchComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -214,6 +207,26 @@ public interface TwitterSearchComponentBuilderFactory {
         @Override
         protected TwitterSearchComponent buildConcreteComponent() {
             return new TwitterSearchComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "accessToken": ((TwitterSearchComponent) component).setAccessToken((java.lang.String) value); return true;
+            case "accessTokenSecret": ((TwitterSearchComponent) component).setAccessTokenSecret((java.lang.String) value); return true;
+            case "consumerKey": ((TwitterSearchComponent) component).setConsumerKey((java.lang.String) value); return true;
+            case "consumerSecret": ((TwitterSearchComponent) component).setConsumerSecret((java.lang.String) value); return true;
+            case "httpProxyHost": ((TwitterSearchComponent) component).setHttpProxyHost((java.lang.String) value); return true;
+            case "httpProxyUser": ((TwitterSearchComponent) component).setHttpProxyUser((java.lang.String) value); return true;
+            case "httpProxyPassword": ((TwitterSearchComponent) component).setHttpProxyPassword((java.lang.String) value); return true;
+            case "httpProxyPort": ((TwitterSearchComponent) component).setHttpProxyPort((int) value); return true;
+            case "basicPropertyBinding": ((TwitterSearchComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((TwitterSearchComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((TwitterSearchComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

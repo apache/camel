@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.aws.iam.IAMComponent;
@@ -52,10 +53,9 @@ public interface IAMComponentBuilderFactory {
          * <code>org.apache.camel.component.aws.iam.IAMConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default IAMComponentBuilder setConfiguration(
+        default IAMComponentBuilder configuration(
                 org.apache.camel.component.aws.iam.IAMConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -65,10 +65,9 @@ public interface IAMComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default IAMComponentBuilder setAccessKey(java.lang.String accessKey) {
+        default IAMComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
             return this;
         }
@@ -77,10 +76,9 @@ public interface IAMComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default IAMComponentBuilder setSecretKey(java.lang.String secretKey) {
+        default IAMComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
             return this;
         }
@@ -89,10 +87,9 @@ public interface IAMComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default IAMComponentBuilder setRegion(java.lang.String region) {
+        default IAMComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
             return this;
         }
@@ -105,7 +102,7 @@ public interface IAMComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default IAMComponentBuilder setBasicPropertyBinding(
+        default IAMComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -126,8 +123,7 @@ public interface IAMComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default IAMComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default IAMComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -141,6 +137,21 @@ public interface IAMComponentBuilderFactory {
         @Override
         protected IAMComponent buildConcreteComponent() {
             return new IAMComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((IAMComponent) component).setConfiguration((org.apache.camel.component.aws.iam.IAMConfiguration) value); return true;
+            case "accessKey": ((IAMComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": ((IAMComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "region": ((IAMComponent) component).setRegion((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((IAMComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((IAMComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

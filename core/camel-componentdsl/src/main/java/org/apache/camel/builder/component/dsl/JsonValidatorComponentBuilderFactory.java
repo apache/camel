@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.jsonvalidator.JsonValidatorComponent;
@@ -56,7 +57,7 @@ public interface JsonValidatorComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JsonValidatorComponentBuilder setBasicPropertyBinding(
+        default JsonValidatorComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -77,7 +78,7 @@ public interface JsonValidatorComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default JsonValidatorComponentBuilder setLazyStartProducer(
+        default JsonValidatorComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -92,6 +93,17 @@ public interface JsonValidatorComponentBuilderFactory {
         @Override
         protected JsonValidatorComponent buildConcreteComponent() {
             return new JsonValidatorComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((JsonValidatorComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((JsonValidatorComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

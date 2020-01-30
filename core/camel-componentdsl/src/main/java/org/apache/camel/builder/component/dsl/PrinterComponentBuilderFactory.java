@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.printer.PrinterComponent;
@@ -57,7 +58,7 @@ public interface PrinterComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default PrinterComponentBuilder setBasicPropertyBinding(
+        default PrinterComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -78,7 +79,7 @@ public interface PrinterComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default PrinterComponentBuilder setLazyStartProducer(
+        default PrinterComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -93,6 +94,17 @@ public interface PrinterComponentBuilderFactory {
         @Override
         protected PrinterComponent buildConcreteComponent() {
             return new PrinterComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((PrinterComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((PrinterComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

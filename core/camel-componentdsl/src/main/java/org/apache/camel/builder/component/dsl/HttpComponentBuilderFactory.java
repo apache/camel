@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.http.HttpComponent;
@@ -53,10 +54,9 @@ public interface HttpComponentBuilderFactory {
          * <code>org.apache.camel.component.http.HttpClientConfigurer</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default HttpComponentBuilder setHttpClientConfigurer(
+        default HttpComponentBuilder httpClientConfigurer(
                 org.apache.camel.component.http.HttpClientConfigurer httpClientConfigurer) {
             doSetProperty("httpClientConfigurer", httpClientConfigurer);
             return this;
@@ -69,10 +69,9 @@ public interface HttpComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.http.conn.HttpClientConnectionManager</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default HttpComponentBuilder setClientConnectionManager(
+        default HttpComponentBuilder clientConnectionManager(
                 org.apache.http.conn.HttpClientConnectionManager clientConnectionManager) {
             doSetProperty("clientConnectionManager", clientConnectionManager);
             return this;
@@ -84,10 +83,9 @@ public interface HttpComponentBuilderFactory {
          * The option is a: <code>org.apache.http.protocol.HttpContext</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default HttpComponentBuilder setHttpContext(
+        default HttpComponentBuilder httpContext(
                 org.apache.http.protocol.HttpContext httpContext) {
             doSetProperty("httpContext", httpContext);
             return this;
@@ -102,10 +100,9 @@ public interface HttpComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default HttpComponentBuilder setSslContextParameters(
+        default HttpComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -118,7 +115,7 @@ public interface HttpComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default HttpComponentBuilder setUseGlobalSslContextParameters(
+        default HttpComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
@@ -129,10 +126,9 @@ public interface HttpComponentBuilderFactory {
          * 
          * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default HttpComponentBuilder setX509HostnameVerifier(
+        default HttpComponentBuilder x509HostnameVerifier(
                 javax.net.ssl.HostnameVerifier x509HostnameVerifier) {
             doSetProperty("x509HostnameVerifier", x509HostnameVerifier);
             return this;
@@ -145,8 +141,7 @@ public interface HttpComponentBuilderFactory {
          * Default: 200
          * Group: advanced
          */
-        default HttpComponentBuilder setMaxTotalConnections(
-                int maxTotalConnections) {
+        default HttpComponentBuilder maxTotalConnections(int maxTotalConnections) {
             doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
@@ -158,8 +153,7 @@ public interface HttpComponentBuilderFactory {
          * Default: 20
          * Group: advanced
          */
-        default HttpComponentBuilder setConnectionsPerRoute(
-                int connectionsPerRoute) {
+        default HttpComponentBuilder connectionsPerRoute(int connectionsPerRoute) {
             doSetProperty("connectionsPerRoute", connectionsPerRoute);
             return this;
         }
@@ -169,10 +163,9 @@ public interface HttpComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default HttpComponentBuilder setConnectionTimeToLive(
+        default HttpComponentBuilder connectionTimeToLive(
                 long connectionTimeToLive) {
             doSetProperty("connectionTimeToLive", connectionTimeToLive);
             return this;
@@ -187,10 +180,9 @@ public interface HttpComponentBuilderFactory {
          * The option is a: <code>org.apache.http.client.CookieStore</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
-        default HttpComponentBuilder setCookieStore(
+        default HttpComponentBuilder cookieStore(
                 org.apache.http.client.CookieStore cookieStore) {
             doSetProperty("cookieStore", cookieStore);
             return this;
@@ -207,7 +199,7 @@ public interface HttpComponentBuilderFactory {
          * Default: -1
          * Group: timeout
          */
-        default HttpComponentBuilder setConnectionRequestTimeout(
+        default HttpComponentBuilder connectionRequestTimeout(
                 int connectionRequestTimeout) {
             doSetProperty("connectionRequestTimeout", connectionRequestTimeout);
             return this;
@@ -224,7 +216,7 @@ public interface HttpComponentBuilderFactory {
          * Default: -1
          * Group: timeout
          */
-        default HttpComponentBuilder setConnectTimeout(int connectTimeout) {
+        default HttpComponentBuilder connectTimeout(int connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
@@ -240,7 +232,7 @@ public interface HttpComponentBuilderFactory {
          * Default: -1
          * Group: timeout
          */
-        default HttpComponentBuilder setSocketTimeout(int socketTimeout) {
+        default HttpComponentBuilder socketTimeout(int socketTimeout) {
             doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
@@ -251,10 +243,9 @@ public interface HttpComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default HttpComponentBuilder setHttpBinding(
+        default HttpComponentBuilder httpBinding(
                 org.apache.camel.http.common.HttpBinding httpBinding) {
             doSetProperty("httpBinding", httpBinding);
             return this;
@@ -265,10 +256,9 @@ public interface HttpComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.common.HttpConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default HttpComponentBuilder setHttpConfiguration(
+        default HttpComponentBuilder httpConfiguration(
                 org.apache.camel.http.common.HttpConfiguration httpConfiguration) {
             doSetProperty("httpConfiguration", httpConfiguration);
             return this;
@@ -285,7 +275,7 @@ public interface HttpComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default HttpComponentBuilder setAllowJavaSerializedObject(
+        default HttpComponentBuilder allowJavaSerializedObject(
                 boolean allowJavaSerializedObject) {
             doSetProperty("allowJavaSerializedObject", allowJavaSerializedObject);
             return this;
@@ -297,10 +287,9 @@ public interface HttpComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: filter
          */
-        default HttpComponentBuilder setHeaderFilterStrategy(
+        default HttpComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -314,7 +303,7 @@ public interface HttpComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default HttpComponentBuilder setBasicPropertyBinding(
+        default HttpComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -335,8 +324,7 @@ public interface HttpComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default HttpComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default HttpComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -350,6 +338,34 @@ public interface HttpComponentBuilderFactory {
         @Override
         protected HttpComponent buildConcreteComponent() {
             return new HttpComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "httpClientConfigurer": ((HttpComponent) component).setHttpClientConfigurer((org.apache.camel.component.http.HttpClientConfigurer) value); return true;
+            case "clientConnectionManager": ((HttpComponent) component).setClientConnectionManager((org.apache.http.conn.HttpClientConnectionManager) value); return true;
+            case "httpContext": ((HttpComponent) component).setHttpContext((org.apache.http.protocol.HttpContext) value); return true;
+            case "sslContextParameters": ((HttpComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "useGlobalSslContextParameters": ((HttpComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "x509HostnameVerifier": ((HttpComponent) component).setX509HostnameVerifier((javax.net.ssl.HostnameVerifier) value); return true;
+            case "maxTotalConnections": ((HttpComponent) component).setMaxTotalConnections((int) value); return true;
+            case "connectionsPerRoute": ((HttpComponent) component).setConnectionsPerRoute((int) value); return true;
+            case "connectionTimeToLive": ((HttpComponent) component).setConnectionTimeToLive((long) value); return true;
+            case "cookieStore": ((HttpComponent) component).setCookieStore((org.apache.http.client.CookieStore) value); return true;
+            case "connectionRequestTimeout": ((HttpComponent) component).setConnectionRequestTimeout((int) value); return true;
+            case "connectTimeout": ((HttpComponent) component).setConnectTimeout((int) value); return true;
+            case "socketTimeout": ((HttpComponent) component).setSocketTimeout((int) value); return true;
+            case "httpBinding": ((HttpComponent) component).setHttpBinding((org.apache.camel.http.common.HttpBinding) value); return true;
+            case "httpConfiguration": ((HttpComponent) component).setHttpConfiguration((org.apache.camel.http.common.HttpConfiguration) value); return true;
+            case "allowJavaSerializedObject": ((HttpComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
+            case "headerFilterStrategy": ((HttpComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "basicPropertyBinding": ((HttpComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((HttpComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

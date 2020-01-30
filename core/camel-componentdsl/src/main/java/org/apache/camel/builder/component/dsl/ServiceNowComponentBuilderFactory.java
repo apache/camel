@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.servicenow.ServiceNowComponent;
@@ -54,10 +55,9 @@ public interface ServiceNowComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ServiceNowComponentBuilder setInstanceName(
+        default ServiceNowComponentBuilder instanceName(
                 java.lang.String instanceName) {
             doSetProperty("instanceName", instanceName);
             return this;
@@ -68,10 +68,9 @@ public interface ServiceNowComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.servicenow.ServiceNowConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ServiceNowComponentBuilder setConfiguration(
+        default ServiceNowComponentBuilder configuration(
                 org.apache.camel.component.servicenow.ServiceNowConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -81,10 +80,9 @@ public interface ServiceNowComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default ServiceNowComponentBuilder setApiUrl(java.lang.String apiUrl) {
+        default ServiceNowComponentBuilder apiUrl(java.lang.String apiUrl) {
             doSetProperty("apiUrl", apiUrl);
             return this;
         }
@@ -93,10 +91,9 @@ public interface ServiceNowComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default ServiceNowComponentBuilder setUserName(java.lang.String userName) {
+        default ServiceNowComponentBuilder userName(java.lang.String userName) {
             doSetProperty("userName", userName);
             return this;
         }
@@ -105,10 +102,9 @@ public interface ServiceNowComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default ServiceNowComponentBuilder setPassword(java.lang.String password) {
+        default ServiceNowComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
             return this;
         }
@@ -117,10 +113,9 @@ public interface ServiceNowComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default ServiceNowComponentBuilder setOauthClientId(
+        default ServiceNowComponentBuilder oauthClientId(
                 java.lang.String oauthClientId) {
             doSetProperty("oauthClientId", oauthClientId);
             return this;
@@ -130,10 +125,9 @@ public interface ServiceNowComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default ServiceNowComponentBuilder setOauthClientSecret(
+        default ServiceNowComponentBuilder oauthClientSecret(
                 java.lang.String oauthClientSecret) {
             doSetProperty("oauthClientSecret", oauthClientSecret);
             return this;
@@ -143,10 +137,9 @@ public interface ServiceNowComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default ServiceNowComponentBuilder setOauthTokenUrl(
+        default ServiceNowComponentBuilder oauthTokenUrl(
                 java.lang.String oauthTokenUrl) {
             doSetProperty("oauthTokenUrl", oauthTokenUrl);
             return this;
@@ -156,11 +149,9 @@ public interface ServiceNowComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ServiceNowComponentBuilder setProxyHost(
-                java.lang.String proxyHost) {
+        default ServiceNowComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
             return this;
         }
@@ -169,11 +160,9 @@ public interface ServiceNowComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ServiceNowComponentBuilder setProxyPort(
-                java.lang.Integer proxyPort) {
+        default ServiceNowComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
             return this;
         }
@@ -182,10 +171,9 @@ public interface ServiceNowComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default ServiceNowComponentBuilder setProxyUserName(
+        default ServiceNowComponentBuilder proxyUserName(
                 java.lang.String proxyUserName) {
             doSetProperty("proxyUserName", proxyUserName);
             return this;
@@ -195,10 +183,9 @@ public interface ServiceNowComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default ServiceNowComponentBuilder setProxyPassword(
+        default ServiceNowComponentBuilder proxyPassword(
                 java.lang.String proxyPassword) {
             doSetProperty("proxyPassword", proxyPassword);
             return this;
@@ -211,7 +198,7 @@ public interface ServiceNowComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default ServiceNowComponentBuilder setUseGlobalSslContextParameters(
+        default ServiceNowComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
@@ -225,7 +212,7 @@ public interface ServiceNowComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ServiceNowComponentBuilder setBasicPropertyBinding(
+        default ServiceNowComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -246,7 +233,7 @@ public interface ServiceNowComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default ServiceNowComponentBuilder setLazyStartProducer(
+        default ServiceNowComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -261,6 +248,30 @@ public interface ServiceNowComponentBuilderFactory {
         @Override
         protected ServiceNowComponent buildConcreteComponent() {
             return new ServiceNowComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "instanceName": ((ServiceNowComponent) component).setInstanceName((java.lang.String) value); return true;
+            case "configuration": ((ServiceNowComponent) component).setConfiguration((org.apache.camel.component.servicenow.ServiceNowConfiguration) value); return true;
+            case "apiUrl": ((ServiceNowComponent) component).setApiUrl((java.lang.String) value); return true;
+            case "userName": ((ServiceNowComponent) component).setUserName((java.lang.String) value); return true;
+            case "password": ((ServiceNowComponent) component).setPassword((java.lang.String) value); return true;
+            case "oauthClientId": ((ServiceNowComponent) component).setOauthClientId((java.lang.String) value); return true;
+            case "oauthClientSecret": ((ServiceNowComponent) component).setOauthClientSecret((java.lang.String) value); return true;
+            case "oauthTokenUrl": ((ServiceNowComponent) component).setOauthTokenUrl((java.lang.String) value); return true;
+            case "proxyHost": ((ServiceNowComponent) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": ((ServiceNowComponent) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyUserName": ((ServiceNowComponent) component).setProxyUserName((java.lang.String) value); return true;
+            case "proxyPassword": ((ServiceNowComponent) component).setProxyPassword((java.lang.String) value); return true;
+            case "useGlobalSslContextParameters": ((ServiceNowComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "basicPropertyBinding": ((ServiceNowComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((ServiceNowComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

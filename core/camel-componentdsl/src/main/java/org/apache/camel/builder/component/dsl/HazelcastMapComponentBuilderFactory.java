@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.hazelcast.map.HazelcastMapComponent;
@@ -55,10 +56,9 @@ public interface HazelcastMapComponentBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default HazelcastMapComponentBuilder setHazelcastInstance(
+        default HazelcastMapComponentBuilder hazelcastInstance(
                 com.hazelcast.core.HazelcastInstance hazelcastInstance) {
             doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -73,7 +73,7 @@ public interface HazelcastMapComponentBuilderFactory {
          * Default: node
          * Group: advanced
          */
-        default HazelcastMapComponentBuilder setHazelcastMode(
+        default HazelcastMapComponentBuilder hazelcastMode(
                 java.lang.String hazelcastMode) {
             doSetProperty("hazelcastMode", hazelcastMode);
             return this;
@@ -87,7 +87,7 @@ public interface HazelcastMapComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default HazelcastMapComponentBuilder setBasicPropertyBinding(
+        default HazelcastMapComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -108,7 +108,7 @@ public interface HazelcastMapComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default HazelcastMapComponentBuilder setLazyStartProducer(
+        default HazelcastMapComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -127,7 +127,7 @@ public interface HazelcastMapComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default HazelcastMapComponentBuilder setBridgeErrorHandler(
+        default HazelcastMapComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -142,6 +142,20 @@ public interface HazelcastMapComponentBuilderFactory {
         @Override
         protected HazelcastMapComponent buildConcreteComponent() {
             return new HazelcastMapComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "hazelcastInstance": ((HazelcastMapComponent) component).setHazelcastInstance((com.hazelcast.core.HazelcastInstance) value); return true;
+            case "hazelcastMode": ((HazelcastMapComponent) component).setHazelcastMode((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((HazelcastMapComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((HazelcastMapComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((HazelcastMapComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.openstack.keystone.KeystoneComponent;
@@ -58,7 +59,7 @@ public interface KeystoneComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default KeystoneComponentBuilder setBasicPropertyBinding(
+        default KeystoneComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +80,7 @@ public interface KeystoneComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default KeystoneComponentBuilder setLazyStartProducer(
+        default KeystoneComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -94,6 +95,17 @@ public interface KeystoneComponentBuilderFactory {
         @Override
         protected KeystoneComponent buildConcreteComponent() {
             return new KeystoneComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((KeystoneComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((KeystoneComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsComponent;
@@ -53,10 +54,9 @@ public interface MicroProfileMetricsComponentBuilderFactory {
          * The option is a:
          * <code>org.eclipse.microprofile.metrics.MetricRegistry</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default MicroProfileMetricsComponentBuilder setMetricRegistry(
+        default MicroProfileMetricsComponentBuilder metricRegistry(
                 org.eclipse.microprofile.metrics.MetricRegistry metricRegistry) {
             doSetProperty("metricRegistry", metricRegistry);
             return this;
@@ -70,7 +70,7 @@ public interface MicroProfileMetricsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default MicroProfileMetricsComponentBuilder setBasicPropertyBinding(
+        default MicroProfileMetricsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -91,7 +91,7 @@ public interface MicroProfileMetricsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default MicroProfileMetricsComponentBuilder setLazyStartProducer(
+        default MicroProfileMetricsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -106,6 +106,18 @@ public interface MicroProfileMetricsComponentBuilderFactory {
         @Override
         protected MicroProfileMetricsComponent buildConcreteComponent() {
             return new MicroProfileMetricsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "metricRegistry": ((MicroProfileMetricsComponent) component).setMetricRegistry((org.eclipse.microprofile.metrics.MetricRegistry) value); return true;
+            case "basicPropertyBinding": ((MicroProfileMetricsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((MicroProfileMetricsComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

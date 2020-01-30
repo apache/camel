@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.openshift.build_configs.OpenshiftBuildConfigsComponent;
@@ -58,7 +59,7 @@ public interface OpenshiftBuildConfigsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default OpenshiftBuildConfigsComponentBuilder setBasicPropertyBinding(
+        default OpenshiftBuildConfigsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +80,7 @@ public interface OpenshiftBuildConfigsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default OpenshiftBuildConfigsComponentBuilder setLazyStartProducer(
+        default OpenshiftBuildConfigsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -94,6 +95,17 @@ public interface OpenshiftBuildConfigsComponentBuilderFactory {
         @Override
         protected OpenshiftBuildConfigsComponent buildConcreteComponent() {
             return new OpenshiftBuildConfigsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((OpenshiftBuildConfigsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((OpenshiftBuildConfigsComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

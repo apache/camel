@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.ignite.cache.IgniteCacheComponent;
@@ -54,10 +55,9 @@ public interface IgniteCacheComponentBuilderFactory {
          * 
          * The option is a: <code>org.apache.ignite.Ignite</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default IgniteCacheComponentBuilder setIgnite(
+        default IgniteCacheComponentBuilder ignite(
                 org.apache.ignite.Ignite ignite) {
             doSetProperty("ignite", ignite);
             return this;
@@ -68,10 +68,9 @@ public interface IgniteCacheComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default IgniteCacheComponentBuilder setConfigurationResource(
+        default IgniteCacheComponentBuilder configurationResource(
                 java.lang.Object configurationResource) {
             doSetProperty("configurationResource", configurationResource);
             return this;
@@ -83,10 +82,9 @@ public interface IgniteCacheComponentBuilderFactory {
          * <code>org.apache.ignite.configuration.IgniteConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
-        default IgniteCacheComponentBuilder setIgniteConfiguration(
+        default IgniteCacheComponentBuilder igniteConfiguration(
                 org.apache.ignite.configuration.IgniteConfiguration igniteConfiguration) {
             doSetProperty("igniteConfiguration", igniteConfiguration);
             return this;
@@ -100,7 +98,7 @@ public interface IgniteCacheComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default IgniteCacheComponentBuilder setBasicPropertyBinding(
+        default IgniteCacheComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -121,7 +119,7 @@ public interface IgniteCacheComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default IgniteCacheComponentBuilder setLazyStartProducer(
+        default IgniteCacheComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -140,7 +138,7 @@ public interface IgniteCacheComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default IgniteCacheComponentBuilder setBridgeErrorHandler(
+        default IgniteCacheComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -155,6 +153,21 @@ public interface IgniteCacheComponentBuilderFactory {
         @Override
         protected IgniteCacheComponent buildConcreteComponent() {
             return new IgniteCacheComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "ignite": ((IgniteCacheComponent) component).setIgnite((org.apache.ignite.Ignite) value); return true;
+            case "configurationResource": ((IgniteCacheComponent) component).setConfigurationResource((java.lang.Object) value); return true;
+            case "igniteConfiguration": ((IgniteCacheComponent) component).setIgniteConfiguration((org.apache.ignite.configuration.IgniteConfiguration) value); return true;
+            case "basicPropertyBinding": ((IgniteCacheComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((IgniteCacheComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((IgniteCacheComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

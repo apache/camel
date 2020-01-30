@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.facebook.FacebookComponent;
@@ -55,10 +56,9 @@ public interface FacebookComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.facebook.config.FacebookConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default FacebookComponentBuilder setConfiguration(
+        default FacebookComponentBuilder configuration(
                 org.apache.camel.component.facebook.config.FacebookConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -72,7 +72,7 @@ public interface FacebookComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default FacebookComponentBuilder setBasicPropertyBinding(
+        default FacebookComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -93,7 +93,7 @@ public interface FacebookComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default FacebookComponentBuilder setLazyStartProducer(
+        default FacebookComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -112,7 +112,7 @@ public interface FacebookComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default FacebookComponentBuilder setBridgeErrorHandler(
+        default FacebookComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -127,6 +127,19 @@ public interface FacebookComponentBuilderFactory {
         @Override
         protected FacebookComponent buildConcreteComponent() {
             return new FacebookComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((FacebookComponent) component).setConfiguration((org.apache.camel.component.facebook.config.FacebookConfiguration) value); return true;
+            case "basicPropertyBinding": ((FacebookComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((FacebookComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((FacebookComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

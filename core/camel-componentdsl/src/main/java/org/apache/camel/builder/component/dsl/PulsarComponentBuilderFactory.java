@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.pulsar.PulsarComponent;
@@ -53,10 +54,9 @@ public interface PulsarComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.pulsar.utils.AutoConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default PulsarComponentBuilder setAutoConfiguration(
+        default PulsarComponentBuilder autoConfiguration(
                 org.apache.camel.component.pulsar.utils.AutoConfiguration autoConfiguration) {
             doSetProperty("autoConfiguration", autoConfiguration);
             return this;
@@ -67,10 +67,9 @@ public interface PulsarComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.pulsar.client.api.PulsarClient</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default PulsarComponentBuilder setPulsarClient(
+        default PulsarComponentBuilder pulsarClient(
                 org.apache.pulsar.client.api.PulsarClient pulsarClient) {
             doSetProperty("pulsarClient", pulsarClient);
             return this;
@@ -88,7 +87,7 @@ public interface PulsarComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default PulsarComponentBuilder setAllowManualAcknowledgement(
+        default PulsarComponentBuilder allowManualAcknowledgement(
                 boolean allowManualAcknowledgement) {
             doSetProperty("allowManualAcknowledgement", allowManualAcknowledgement);
             return this;
@@ -100,10 +99,9 @@ public interface PulsarComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.pulsar.PulsarMessageReceiptFactory</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
-        default PulsarComponentBuilder setPulsarMessageReceiptFactory(
+        default PulsarComponentBuilder pulsarMessageReceiptFactory(
                 org.apache.camel.component.pulsar.PulsarMessageReceiptFactory pulsarMessageReceiptFactory) {
             doSetProperty("pulsarMessageReceiptFactory", pulsarMessageReceiptFactory);
             return this;
@@ -117,7 +115,7 @@ public interface PulsarComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default PulsarComponentBuilder setBasicPropertyBinding(
+        default PulsarComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -138,7 +136,7 @@ public interface PulsarComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default PulsarComponentBuilder setLazyStartProducer(
+        default PulsarComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -157,7 +155,7 @@ public interface PulsarComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default PulsarComponentBuilder setBridgeErrorHandler(
+        default PulsarComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -172,6 +170,22 @@ public interface PulsarComponentBuilderFactory {
         @Override
         protected PulsarComponent buildConcreteComponent() {
             return new PulsarComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "autoConfiguration": ((PulsarComponent) component).setAutoConfiguration((org.apache.camel.component.pulsar.utils.AutoConfiguration) value); return true;
+            case "pulsarClient": ((PulsarComponent) component).setPulsarClient((org.apache.pulsar.client.api.PulsarClient) value); return true;
+            case "allowManualAcknowledgement": ((PulsarComponent) component).setAllowManualAcknowledgement((boolean) value); return true;
+            case "pulsarMessageReceiptFactory": ((PulsarComponent) component).setPulsarMessageReceiptFactory((org.apache.camel.component.pulsar.PulsarMessageReceiptFactory) value); return true;
+            case "basicPropertyBinding": ((PulsarComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((PulsarComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((PulsarComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

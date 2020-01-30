@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.kafka.KafkaComponent;
@@ -55,10 +56,9 @@ public interface KafkaComponentBuilderFactory {
          * <code>org.apache.camel.component.kafka.KafkaConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
-        default KafkaComponentBuilder setConfiguration(
+        default KafkaComponentBuilder configuration(
                 org.apache.camel.component.kafka.KafkaConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -71,10 +71,9 @@ public interface KafkaComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default KafkaComponentBuilder setBrokers(java.lang.String brokers) {
+        default KafkaComponentBuilder brokers(java.lang.String brokers) {
             doSetProperty("brokers", brokers);
             return this;
         }
@@ -88,10 +87,9 @@ public interface KafkaComponentBuilderFactory {
          * The option is a: <code>java.util.concurrent.ExecutorService</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default KafkaComponentBuilder setWorkerPool(
+        default KafkaComponentBuilder workerPool(
                 java.util.concurrent.ExecutorService workerPool) {
             doSetProperty("workerPool", workerPool);
             return this;
@@ -104,7 +102,7 @@ public interface KafkaComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default KafkaComponentBuilder setUseGlobalSslContextParameters(
+        default KafkaComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
@@ -125,7 +123,7 @@ public interface KafkaComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default KafkaComponentBuilder setBreakOnFirstError(
+        default KafkaComponentBuilder breakOnFirstError(
                 boolean breakOnFirstError) {
             doSetProperty("breakOnFirstError", breakOnFirstError);
             return this;
@@ -141,7 +139,7 @@ public interface KafkaComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default KafkaComponentBuilder setAllowManualCommit(
+        default KafkaComponentBuilder allowManualCommit(
                 boolean allowManualCommit) {
             doSetProperty("allowManualCommit", allowManualCommit);
             return this;
@@ -156,10 +154,9 @@ public interface KafkaComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.kafka.KafkaManualCommitFactory</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
-        default KafkaComponentBuilder setKafkaManualCommitFactory(
+        default KafkaComponentBuilder kafkaManualCommitFactory(
                 org.apache.camel.component.kafka.KafkaManualCommitFactory kafkaManualCommitFactory) {
             doSetProperty("kafkaManualCommitFactory", kafkaManualCommitFactory);
             return this;
@@ -173,7 +170,7 @@ public interface KafkaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default KafkaComponentBuilder setBasicPropertyBinding(
+        default KafkaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -194,7 +191,7 @@ public interface KafkaComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default KafkaComponentBuilder setLazyStartProducer(
+        default KafkaComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -213,7 +210,7 @@ public interface KafkaComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default KafkaComponentBuilder setBridgeErrorHandler(
+        default KafkaComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -228,6 +225,25 @@ public interface KafkaComponentBuilderFactory {
         @Override
         protected KafkaComponent buildConcreteComponent() {
             return new KafkaComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((KafkaComponent) component).setConfiguration((org.apache.camel.component.kafka.KafkaConfiguration) value); return true;
+            case "brokers": ((KafkaComponent) component).setBrokers((java.lang.String) value); return true;
+            case "workerPool": ((KafkaComponent) component).setWorkerPool((java.util.concurrent.ExecutorService) value); return true;
+            case "useGlobalSslContextParameters": ((KafkaComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "breakOnFirstError": ((KafkaComponent) component).setBreakOnFirstError((boolean) value); return true;
+            case "allowManualCommit": ((KafkaComponent) component).setAllowManualCommit((boolean) value); return true;
+            case "kafkaManualCommitFactory": ((KafkaComponent) component).setKafkaManualCommitFactory((org.apache.camel.component.kafka.KafkaManualCommitFactory) value); return true;
+            case "basicPropertyBinding": ((KafkaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((KafkaComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((KafkaComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

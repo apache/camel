@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.file.watch.FileWatchComponent;
@@ -58,7 +59,7 @@ public interface FileWatchComponentBuilderFactory {
          * Default: 1
          * Group: consumer
          */
-        default FileWatchComponentBuilder setConcurrentConsumers(
+        default FileWatchComponentBuilder concurrentConsumers(
                 int concurrentConsumers) {
             doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -72,7 +73,7 @@ public interface FileWatchComponentBuilderFactory {
          * Default: 2147483647
          * Group: consumer
          */
-        default FileWatchComponentBuilder setQueueSize(int queueSize) {
+        default FileWatchComponentBuilder queueSize(int queueSize) {
             doSetProperty("queueSize", queueSize);
             return this;
         }
@@ -85,7 +86,7 @@ public interface FileWatchComponentBuilderFactory {
          * Default: 1
          * Group: consumer
          */
-        default FileWatchComponentBuilder setPollThreads(int pollThreads) {
+        default FileWatchComponentBuilder pollThreads(int pollThreads) {
             doSetProperty("pollThreads", pollThreads);
             return this;
         }
@@ -102,7 +103,7 @@ public interface FileWatchComponentBuilderFactory {
          * Default: #murmur3FFileHasher
          * Group: consumer
          */
-        default FileWatchComponentBuilder setFileHasher(
+        default FileWatchComponentBuilder fileHasher(
                 io.methvin.watcher.hashing.FileHasher fileHasher) {
             doSetProperty("fileHasher", fileHasher);
             return this;
@@ -118,8 +119,7 @@ public interface FileWatchComponentBuilderFactory {
          * Default: true
          * Group: consumer
          */
-        default FileWatchComponentBuilder setUseFileHashing(
-                boolean useFileHashing) {
+        default FileWatchComponentBuilder useFileHashing(boolean useFileHashing) {
             doSetProperty("useFileHashing", useFileHashing);
             return this;
         }
@@ -132,7 +132,7 @@ public interface FileWatchComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default FileWatchComponentBuilder setBasicPropertyBinding(
+        default FileWatchComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -151,7 +151,7 @@ public interface FileWatchComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default FileWatchComponentBuilder setBridgeErrorHandler(
+        default FileWatchComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -166,6 +166,22 @@ public interface FileWatchComponentBuilderFactory {
         @Override
         protected FileWatchComponent buildConcreteComponent() {
             return new FileWatchComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "concurrentConsumers": ((FileWatchComponent) component).setConcurrentConsumers((int) value); return true;
+            case "queueSize": ((FileWatchComponent) component).setQueueSize((int) value); return true;
+            case "pollThreads": ((FileWatchComponent) component).setPollThreads((int) value); return true;
+            case "fileHasher": ((FileWatchComponent) component).setFileHasher((io.methvin.watcher.hashing.FileHasher) value); return true;
+            case "useFileHashing": ((FileWatchComponent) component).setUseFileHashing((boolean) value); return true;
+            case "basicPropertyBinding": ((FileWatchComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((FileWatchComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

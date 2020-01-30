@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.google.pubsub.GooglePubsubComponent;
@@ -55,10 +56,9 @@ public interface GooglePubsubComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default GooglePubsubComponentBuilder setConnectionFactory(
+        default GooglePubsubComponentBuilder connectionFactory(
                 org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
@@ -72,7 +72,7 @@ public interface GooglePubsubComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default GooglePubsubComponentBuilder setBasicPropertyBinding(
+        default GooglePubsubComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -93,7 +93,7 @@ public interface GooglePubsubComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default GooglePubsubComponentBuilder setLazyStartProducer(
+        default GooglePubsubComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -112,7 +112,7 @@ public interface GooglePubsubComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default GooglePubsubComponentBuilder setBridgeErrorHandler(
+        default GooglePubsubComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -127,6 +127,19 @@ public interface GooglePubsubComponentBuilderFactory {
         @Override
         protected GooglePubsubComponent buildConcreteComponent() {
             return new GooglePubsubComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "connectionFactory": ((GooglePubsubComponent) component).setConnectionFactory((org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory) value); return true;
+            case "basicPropertyBinding": ((GooglePubsubComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((GooglePubsubComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((GooglePubsubComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

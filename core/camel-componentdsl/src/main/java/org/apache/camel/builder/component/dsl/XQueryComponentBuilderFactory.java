@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.xquery.XQueryComponent;
@@ -53,10 +54,9 @@ public interface XQueryComponentBuilderFactory {
          * The option is a: <code>net.sf.saxon.lib.ModuleURIResolver</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XQueryComponentBuilder setModuleURIResolver(
+        default XQueryComponentBuilder moduleURIResolver(
                 net.sf.saxon.lib.ModuleURIResolver moduleURIResolver) {
             doSetProperty("moduleURIResolver", moduleURIResolver);
             return this;
@@ -66,10 +66,9 @@ public interface XQueryComponentBuilderFactory {
          * 
          * The option is a: <code>net.sf.saxon.Configuration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XQueryComponentBuilder setConfiguration(
+        default XQueryComponentBuilder configuration(
                 net.sf.saxon.Configuration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -80,10 +79,9 @@ public interface XQueryComponentBuilderFactory {
          * The option is a:
          * <code>java.util.Map<java.lang.String,java.lang.Object></code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XQueryComponentBuilder setConfigurationProperties(
+        default XQueryComponentBuilder configurationProperties(
                 java.util.Map<java.lang.String,java.lang.Object> configurationProperties) {
             doSetProperty("configurationProperties", configurationProperties);
             return this;
@@ -97,7 +95,7 @@ public interface XQueryComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default XQueryComponentBuilder setBasicPropertyBinding(
+        default XQueryComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -118,7 +116,7 @@ public interface XQueryComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default XQueryComponentBuilder setLazyStartProducer(
+        default XQueryComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -137,7 +135,7 @@ public interface XQueryComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default XQueryComponentBuilder setBridgeErrorHandler(
+        default XQueryComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -152,6 +150,21 @@ public interface XQueryComponentBuilderFactory {
         @Override
         protected XQueryComponent buildConcreteComponent() {
             return new XQueryComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "moduleURIResolver": ((XQueryComponent) component).setModuleURIResolver((net.sf.saxon.lib.ModuleURIResolver) value); return true;
+            case "configuration": ((XQueryComponent) component).setConfiguration((net.sf.saxon.Configuration) value); return true;
+            case "configurationProperties": ((XQueryComponent) component).setConfigurationProperties((java.util.Map<java.lang.String,java.lang.Object>) value); return true;
+            case "basicPropertyBinding": ((XQueryComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((XQueryComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((XQueryComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

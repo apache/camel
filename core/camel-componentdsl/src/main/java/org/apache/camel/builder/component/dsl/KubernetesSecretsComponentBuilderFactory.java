@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.kubernetes.secrets.KubernetesSecretsComponent;
@@ -58,7 +59,7 @@ public interface KubernetesSecretsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default KubernetesSecretsComponentBuilder setBasicPropertyBinding(
+        default KubernetesSecretsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +80,7 @@ public interface KubernetesSecretsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default KubernetesSecretsComponentBuilder setLazyStartProducer(
+        default KubernetesSecretsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -94,6 +95,17 @@ public interface KubernetesSecretsComponentBuilderFactory {
         @Override
         protected KubernetesSecretsComponent buildConcreteComponent() {
             return new KubernetesSecretsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((KubernetesSecretsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((KubernetesSecretsComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

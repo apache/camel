@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.solr.SolrComponent;
@@ -55,7 +56,7 @@ public interface SolrComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default SolrComponentBuilder setBasicPropertyBinding(
+        default SolrComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -76,8 +77,7 @@ public interface SolrComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SolrComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default SolrComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -91,6 +91,17 @@ public interface SolrComponentBuilderFactory {
         @Override
         protected SolrComponent buildConcreteComponent() {
             return new SolrComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((SolrComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((SolrComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.cometd.CometdComponent;
@@ -54,10 +55,9 @@ public interface CometdComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default CometdComponentBuilder setSslKeyPassword(
+        default CometdComponentBuilder sslKeyPassword(
                 java.lang.String sslKeyPassword) {
             doSetProperty("sslKeyPassword", sslKeyPassword);
             return this;
@@ -67,11 +67,9 @@ public interface CometdComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default CometdComponentBuilder setSslPassword(
-                java.lang.String sslPassword) {
+        default CometdComponentBuilder sslPassword(java.lang.String sslPassword) {
             doSetProperty("sslPassword", sslPassword);
             return this;
         }
@@ -80,11 +78,9 @@ public interface CometdComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default CometdComponentBuilder setSslKeystore(
-                java.lang.String sslKeystore) {
+        default CometdComponentBuilder sslKeystore(java.lang.String sslKeystore) {
             doSetProperty("sslKeystore", sslKeystore);
             return this;
         }
@@ -94,10 +90,9 @@ public interface CometdComponentBuilderFactory {
          * The option is a: <code>org.cometd.bayeux.server.SecurityPolicy</code>
          * type.
          * 
-         * Default:
          * Group: security
          */
-        default CometdComponentBuilder setSecurityPolicy(
+        default CometdComponentBuilder securityPolicy(
                 org.cometd.bayeux.server.SecurityPolicy securityPolicy) {
             doSetProperty("securityPolicy", securityPolicy);
             return this;
@@ -109,10 +104,9 @@ public interface CometdComponentBuilderFactory {
          * The option is a:
          * <code>java.util.List<org.cometd.bayeux.server.BayeuxServer.Extension></code> type.
          * 
-         * Default:
          * Group: common
          */
-        default CometdComponentBuilder setExtensions(
+        default CometdComponentBuilder extensions(
                 java.util.List<org.cometd.bayeux.server.BayeuxServer.Extension> extensions) {
             doSetProperty("extensions", extensions);
             return this;
@@ -123,10 +117,9 @@ public interface CometdComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default CometdComponentBuilder setSslContextParameters(
+        default CometdComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -139,7 +132,7 @@ public interface CometdComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default CometdComponentBuilder setUseGlobalSslContextParameters(
+        default CometdComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
@@ -153,7 +146,7 @@ public interface CometdComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default CometdComponentBuilder setBasicPropertyBinding(
+        default CometdComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -174,7 +167,7 @@ public interface CometdComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default CometdComponentBuilder setLazyStartProducer(
+        default CometdComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -193,7 +186,7 @@ public interface CometdComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default CometdComponentBuilder setBridgeErrorHandler(
+        default CometdComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -208,6 +201,25 @@ public interface CometdComponentBuilderFactory {
         @Override
         protected CometdComponent buildConcreteComponent() {
             return new CometdComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "sslKeyPassword": ((CometdComponent) component).setSslKeyPassword((java.lang.String) value); return true;
+            case "sslPassword": ((CometdComponent) component).setSslPassword((java.lang.String) value); return true;
+            case "sslKeystore": ((CometdComponent) component).setSslKeystore((java.lang.String) value); return true;
+            case "securityPolicy": ((CometdComponent) component).setSecurityPolicy((org.cometd.bayeux.server.SecurityPolicy) value); return true;
+            case "extensions": ((CometdComponent) component).setExtensions((java.util.List<org.cometd.bayeux.server.BayeuxServer.Extension>) value); return true;
+            case "sslContextParameters": ((CometdComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "useGlobalSslContextParameters": ((CometdComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "basicPropertyBinding": ((CometdComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((CometdComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((CometdComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

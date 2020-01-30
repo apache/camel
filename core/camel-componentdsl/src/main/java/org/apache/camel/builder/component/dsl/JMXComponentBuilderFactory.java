@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.jmx.JMXComponent;
@@ -54,7 +55,7 @@ public interface JMXComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JMXComponentBuilder setBasicPropertyBinding(
+        default JMXComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -73,7 +74,7 @@ public interface JMXComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default JMXComponentBuilder setBridgeErrorHandler(
+        default JMXComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -88,6 +89,17 @@ public interface JMXComponentBuilderFactory {
         @Override
         protected JMXComponent buildConcreteComponent() {
             return new JMXComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((JMXComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((JMXComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

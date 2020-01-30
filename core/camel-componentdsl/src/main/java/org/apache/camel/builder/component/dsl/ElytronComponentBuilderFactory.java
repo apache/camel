@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.elytron.ElytronComponent;
@@ -57,10 +58,9 @@ public interface ElytronComponentBuilderFactory {
          * <code>org.wildfly.security.auth.server.SecurityDomain.Builder</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ElytronComponentBuilder setSecurityDomainBuilder(
+        default ElytronComponentBuilder securityDomainBuilder(
                 org.wildfly.security.auth.server.SecurityDomain.Builder securityDomainBuilder) {
             doSetProperty("securityDomainBuilder", securityDomainBuilder);
             return this;
@@ -74,7 +74,7 @@ public interface ElytronComponentBuilderFactory {
          * Default: BEARER_TOKEN
          * Group: advanced
          */
-        default ElytronComponentBuilder setMechanismName(
+        default ElytronComponentBuilder mechanismName(
                 java.lang.String mechanismName) {
             doSetProperty("mechanismName", mechanismName);
             return this;
@@ -89,7 +89,7 @@ public interface ElytronComponentBuilderFactory {
          * Default: instance of WildFlyElytronHttpBearerProvider
          * Group: advanced
          */
-        default ElytronComponentBuilder setElytronProvider(
+        default ElytronComponentBuilder elytronProvider(
                 org.wildfly.security.WildFlyElytronBaseProvider elytronProvider) {
             doSetProperty("elytronProvider", elytronProvider);
             return this;
@@ -102,10 +102,9 @@ public interface ElytronComponentBuilderFactory {
          * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ElytronComponentBuilder setUndertowHttpBinding(
+        default ElytronComponentBuilder undertowHttpBinding(
                 org.apache.camel.component.undertow.UndertowHttpBinding undertowHttpBinding) {
             doSetProperty("undertowHttpBinding", undertowHttpBinding);
             return this;
@@ -116,10 +115,9 @@ public interface ElytronComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default ElytronComponentBuilder setSslContextParameters(
+        default ElytronComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -132,7 +130,7 @@ public interface ElytronComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default ElytronComponentBuilder setUseGlobalSslContextParameters(
+        default ElytronComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
@@ -144,10 +142,9 @@ public interface ElytronComponentBuilderFactory {
          * <code>org.apache.camel.component.undertow.UndertowHostOptions</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ElytronComponentBuilder setHostOptions(
+        default ElytronComponentBuilder hostOptions(
                 org.apache.camel.component.undertow.UndertowHostOptions hostOptions) {
             doSetProperty("hostOptions", hostOptions);
             return this;
@@ -161,7 +158,7 @@ public interface ElytronComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default ElytronComponentBuilder setMuteException(boolean muteException) {
+        default ElytronComponentBuilder muteException(boolean muteException) {
             doSetProperty("muteException", muteException);
             return this;
         }
@@ -174,7 +171,7 @@ public interface ElytronComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ElytronComponentBuilder setBasicPropertyBinding(
+        default ElytronComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -195,7 +192,7 @@ public interface ElytronComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default ElytronComponentBuilder setLazyStartProducer(
+        default ElytronComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -214,7 +211,7 @@ public interface ElytronComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default ElytronComponentBuilder setBridgeErrorHandler(
+        default ElytronComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -229,6 +226,26 @@ public interface ElytronComponentBuilderFactory {
         @Override
         protected ElytronComponent buildConcreteComponent() {
             return new ElytronComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "securityDomainBuilder": ((ElytronComponent) component).setSecurityDomainBuilder((org.wildfly.security.auth.server.SecurityDomain.Builder) value); return true;
+            case "mechanismName": ((ElytronComponent) component).setMechanismName((java.lang.String) value); return true;
+            case "elytronProvider": ((ElytronComponent) component).setElytronProvider((org.wildfly.security.WildFlyElytronBaseProvider) value); return true;
+            case "undertowHttpBinding": ((ElytronComponent) component).setUndertowHttpBinding((org.apache.camel.component.undertow.UndertowHttpBinding) value); return true;
+            case "sslContextParameters": ((ElytronComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "useGlobalSslContextParameters": ((ElytronComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "hostOptions": ((ElytronComponent) component).setHostOptions((org.apache.camel.component.undertow.UndertowHostOptions) value); return true;
+            case "muteException": ((ElytronComponent) component).setMuteException((boolean) value); return true;
+            case "basicPropertyBinding": ((ElytronComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((ElytronComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((ElytronComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

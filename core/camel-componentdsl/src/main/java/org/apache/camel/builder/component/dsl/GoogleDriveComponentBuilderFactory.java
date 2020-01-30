@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.google.drive.GoogleDriveComponent;
@@ -55,10 +56,9 @@ public interface GoogleDriveComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.drive.GoogleDriveConfiguration</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default GoogleDriveComponentBuilder setConfiguration(
+        default GoogleDriveComponentBuilder configuration(
                 org.apache.camel.component.google.drive.GoogleDriveConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -70,10 +70,9 @@ public interface GoogleDriveComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default GoogleDriveComponentBuilder setClientFactory(
+        default GoogleDriveComponentBuilder clientFactory(
                 org.apache.camel.component.google.drive.GoogleDriveClientFactory clientFactory) {
             doSetProperty("clientFactory", clientFactory);
             return this;
@@ -87,7 +86,7 @@ public interface GoogleDriveComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default GoogleDriveComponentBuilder setBasicPropertyBinding(
+        default GoogleDriveComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -108,7 +107,7 @@ public interface GoogleDriveComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default GoogleDriveComponentBuilder setLazyStartProducer(
+        default GoogleDriveComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -127,7 +126,7 @@ public interface GoogleDriveComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default GoogleDriveComponentBuilder setBridgeErrorHandler(
+        default GoogleDriveComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -142,6 +141,20 @@ public interface GoogleDriveComponentBuilderFactory {
         @Override
         protected GoogleDriveComponent buildConcreteComponent() {
             return new GoogleDriveComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((GoogleDriveComponent) component).setConfiguration((org.apache.camel.component.google.drive.GoogleDriveConfiguration) value); return true;
+            case "clientFactory": ((GoogleDriveComponent) component).setClientFactory((org.apache.camel.component.google.drive.GoogleDriveClientFactory) value); return true;
+            case "basicPropertyBinding": ((GoogleDriveComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((GoogleDriveComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((GoogleDriveComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

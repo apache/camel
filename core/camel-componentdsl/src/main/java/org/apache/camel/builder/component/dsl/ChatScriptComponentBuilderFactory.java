@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.chatscript.ChatScriptComponent;
@@ -56,7 +57,7 @@ public interface ChatScriptComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ChatScriptComponentBuilder setBasicPropertyBinding(
+        default ChatScriptComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -77,7 +78,7 @@ public interface ChatScriptComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default ChatScriptComponentBuilder setLazyStartProducer(
+        default ChatScriptComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -92,6 +93,17 @@ public interface ChatScriptComponentBuilderFactory {
         @Override
         protected ChatScriptComponent buildConcreteComponent() {
             return new ChatScriptComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((ChatScriptComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((ChatScriptComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

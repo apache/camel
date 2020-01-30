@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.aws.kms.KMSComponent;
@@ -52,10 +53,9 @@ public interface KMSComponentBuilderFactory {
          * <code>org.apache.camel.component.aws.kms.KMSConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default KMSComponentBuilder setConfiguration(
+        default KMSComponentBuilder configuration(
                 org.apache.camel.component.aws.kms.KMSConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -65,10 +65,9 @@ public interface KMSComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default KMSComponentBuilder setAccessKey(java.lang.String accessKey) {
+        default KMSComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
             return this;
         }
@@ -77,10 +76,9 @@ public interface KMSComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default KMSComponentBuilder setSecretKey(java.lang.String secretKey) {
+        default KMSComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
             return this;
         }
@@ -89,10 +87,9 @@ public interface KMSComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default KMSComponentBuilder setRegion(java.lang.String region) {
+        default KMSComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
             return this;
         }
@@ -105,7 +102,7 @@ public interface KMSComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default KMSComponentBuilder setBasicPropertyBinding(
+        default KMSComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -126,8 +123,7 @@ public interface KMSComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default KMSComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default KMSComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -141,6 +137,21 @@ public interface KMSComponentBuilderFactory {
         @Override
         protected KMSComponent buildConcreteComponent() {
             return new KMSComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((KMSComponent) component).setConfiguration((org.apache.camel.component.aws.kms.KMSConfiguration) value); return true;
+            case "accessKey": ((KMSComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": ((KMSComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "region": ((KMSComponent) component).setRegion((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((KMSComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((KMSComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

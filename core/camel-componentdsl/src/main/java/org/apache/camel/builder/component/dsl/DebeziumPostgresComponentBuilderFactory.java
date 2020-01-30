@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.debezium.DebeziumPostgresComponent;
@@ -57,10 +58,9 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default DebeziumPostgresComponentBuilder setConfiguration(
+        default DebeziumPostgresComponentBuilder configuration(
                 org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -74,7 +74,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default DebeziumPostgresComponentBuilder setBasicPropertyBinding(
+        default DebeziumPostgresComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -93,7 +93,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default DebeziumPostgresComponentBuilder setBridgeErrorHandler(
+        default DebeziumPostgresComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -108,6 +108,18 @@ public interface DebeziumPostgresComponentBuilderFactory {
         @Override
         protected DebeziumPostgresComponent buildConcreteComponent() {
             return new DebeziumPostgresComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((DebeziumPostgresComponent) component).setConfiguration((org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration) value); return true;
+            case "basicPropertyBinding": ((DebeziumPostgresComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((DebeziumPostgresComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.lumberjack.LumberjackComponent;
@@ -56,10 +57,9 @@ public interface LumberjackComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default LumberjackComponentBuilder setSslContextParameters(
+        default LumberjackComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -72,7 +72,7 @@ public interface LumberjackComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default LumberjackComponentBuilder setUseGlobalSslContextParameters(
+        default LumberjackComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
@@ -86,7 +86,7 @@ public interface LumberjackComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default LumberjackComponentBuilder setBasicPropertyBinding(
+        default LumberjackComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -105,7 +105,7 @@ public interface LumberjackComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default LumberjackComponentBuilder setBridgeErrorHandler(
+        default LumberjackComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -120,6 +120,19 @@ public interface LumberjackComponentBuilderFactory {
         @Override
         protected LumberjackComponent buildConcreteComponent() {
             return new LumberjackComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "sslContextParameters": ((LumberjackComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "useGlobalSslContextParameters": ((LumberjackComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "basicPropertyBinding": ((LumberjackComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((LumberjackComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

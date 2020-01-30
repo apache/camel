@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.kubernetes.resources_quota.KubernetesResourcesQuotaComponent;
@@ -58,7 +59,7 @@ public interface KubernetesResourcesQuotaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default KubernetesResourcesQuotaComponentBuilder setBasicPropertyBinding(
+        default KubernetesResourcesQuotaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +80,7 @@ public interface KubernetesResourcesQuotaComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default KubernetesResourcesQuotaComponentBuilder setLazyStartProducer(
+        default KubernetesResourcesQuotaComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -94,6 +95,17 @@ public interface KubernetesResourcesQuotaComponentBuilderFactory {
         @Override
         protected KubernetesResourcesQuotaComponent buildConcreteComponent() {
             return new KubernetesResourcesQuotaComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((KubernetesResourcesQuotaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((KubernetesResourcesQuotaComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

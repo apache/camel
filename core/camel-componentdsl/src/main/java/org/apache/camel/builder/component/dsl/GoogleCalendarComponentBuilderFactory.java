@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.google.calendar.GoogleCalendarComponent;
@@ -53,10 +54,9 @@ public interface GoogleCalendarComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.calendar.GoogleCalendarConfiguration</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default GoogleCalendarComponentBuilder setConfiguration(
+        default GoogleCalendarComponentBuilder configuration(
                 org.apache.camel.component.google.calendar.GoogleCalendarConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -68,10 +68,9 @@ public interface GoogleCalendarComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.calendar.GoogleCalendarClientFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default GoogleCalendarComponentBuilder setClientFactory(
+        default GoogleCalendarComponentBuilder clientFactory(
                 org.apache.camel.component.google.calendar.GoogleCalendarClientFactory clientFactory) {
             doSetProperty("clientFactory", clientFactory);
             return this;
@@ -85,7 +84,7 @@ public interface GoogleCalendarComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default GoogleCalendarComponentBuilder setBasicPropertyBinding(
+        default GoogleCalendarComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -106,7 +105,7 @@ public interface GoogleCalendarComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default GoogleCalendarComponentBuilder setLazyStartProducer(
+        default GoogleCalendarComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -125,7 +124,7 @@ public interface GoogleCalendarComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default GoogleCalendarComponentBuilder setBridgeErrorHandler(
+        default GoogleCalendarComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -140,6 +139,20 @@ public interface GoogleCalendarComponentBuilderFactory {
         @Override
         protected GoogleCalendarComponent buildConcreteComponent() {
             return new GoogleCalendarComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((GoogleCalendarComponent) component).setConfiguration((org.apache.camel.component.google.calendar.GoogleCalendarConfiguration) value); return true;
+            case "clientFactory": ((GoogleCalendarComponent) component).setClientFactory((org.apache.camel.component.google.calendar.GoogleCalendarClientFactory) value); return true;
+            case "basicPropertyBinding": ((GoogleCalendarComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((GoogleCalendarComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((GoogleCalendarComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

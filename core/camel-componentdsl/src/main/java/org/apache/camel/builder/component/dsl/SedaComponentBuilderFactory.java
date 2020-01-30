@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.seda.SedaComponent;
@@ -56,7 +57,7 @@ public interface SedaComponentBuilderFactory {
          * Default: 1000
          * Group: advanced
          */
-        default SedaComponentBuilder setQueueSize(int queueSize) {
+        default SedaComponentBuilder queueSize(int queueSize) {
             doSetProperty("queueSize", queueSize);
             return this;
         }
@@ -68,8 +69,7 @@ public interface SedaComponentBuilderFactory {
          * Default: 1
          * Group: consumer
          */
-        default SedaComponentBuilder setConcurrentConsumers(
-                int concurrentConsumers) {
+        default SedaComponentBuilder concurrentConsumers(int concurrentConsumers) {
             doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
@@ -79,10 +79,9 @@ public interface SedaComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange></code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SedaComponentBuilder setDefaultQueueFactory(
+        default SedaComponentBuilder defaultQueueFactory(
                 org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange> defaultQueueFactory) {
             doSetProperty("defaultQueueFactory", defaultQueueFactory);
             return this;
@@ -99,7 +98,7 @@ public interface SedaComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SedaComponentBuilder setDefaultBlockWhenFull(
+        default SedaComponentBuilder defaultBlockWhenFull(
                 boolean defaultBlockWhenFull) {
             doSetProperty("defaultBlockWhenFull", defaultBlockWhenFull);
             return this;
@@ -116,7 +115,7 @@ public interface SedaComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SedaComponentBuilder setDefaultDiscardWhenFull(
+        default SedaComponentBuilder defaultDiscardWhenFull(
                 boolean defaultDiscardWhenFull) {
             doSetProperty("defaultDiscardWhenFull", defaultDiscardWhenFull);
             return this;
@@ -131,10 +130,9 @@ public interface SedaComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default SedaComponentBuilder setDefaultOfferTimeout(
+        default SedaComponentBuilder defaultOfferTimeout(
                 long defaultOfferTimeout) {
             doSetProperty("defaultOfferTimeout", defaultOfferTimeout);
             return this;
@@ -148,7 +146,7 @@ public interface SedaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default SedaComponentBuilder setBasicPropertyBinding(
+        default SedaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -169,8 +167,7 @@ public interface SedaComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SedaComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default SedaComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -188,7 +185,7 @@ public interface SedaComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default SedaComponentBuilder setBridgeErrorHandler(
+        default SedaComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -203,6 +200,24 @@ public interface SedaComponentBuilderFactory {
         @Override
         protected SedaComponent buildConcreteComponent() {
             return new SedaComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "queueSize": ((SedaComponent) component).setQueueSize((int) value); return true;
+            case "concurrentConsumers": ((SedaComponent) component).setConcurrentConsumers((int) value); return true;
+            case "defaultQueueFactory": ((SedaComponent) component).setDefaultQueueFactory((org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>) value); return true;
+            case "defaultBlockWhenFull": ((SedaComponent) component).setDefaultBlockWhenFull((boolean) value); return true;
+            case "defaultDiscardWhenFull": ((SedaComponent) component).setDefaultDiscardWhenFull((boolean) value); return true;
+            case "defaultOfferTimeout": ((SedaComponent) component).setDefaultOfferTimeout((long) value); return true;
+            case "basicPropertyBinding": ((SedaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((SedaComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((SedaComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

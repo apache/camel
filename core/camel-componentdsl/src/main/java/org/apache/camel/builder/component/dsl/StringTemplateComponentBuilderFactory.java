@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.stringtemplate.StringTemplateComponent;
@@ -56,7 +57,7 @@ public interface StringTemplateComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default StringTemplateComponentBuilder setBasicPropertyBinding(
+        default StringTemplateComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -77,7 +78,7 @@ public interface StringTemplateComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default StringTemplateComponentBuilder setLazyStartProducer(
+        default StringTemplateComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -92,6 +93,17 @@ public interface StringTemplateComponentBuilderFactory {
         @Override
         protected StringTemplateComponent buildConcreteComponent() {
             return new StringTemplateComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((StringTemplateComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((StringTemplateComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

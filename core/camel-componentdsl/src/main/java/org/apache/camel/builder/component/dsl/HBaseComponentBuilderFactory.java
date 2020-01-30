@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.hbase.HBaseComponent;
@@ -51,10 +52,9 @@ public interface HBaseComponentBuilderFactory {
          * The option is a: <code>org.apache.hadoop.conf.Configuration</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default HBaseComponentBuilder setConfiguration(
+        default HBaseComponentBuilder configuration(
                 org.apache.hadoop.conf.Configuration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -68,7 +68,7 @@ public interface HBaseComponentBuilderFactory {
          * Default: 10
          * Group: common
          */
-        default HBaseComponentBuilder setPoolMaxSize(int poolMaxSize) {
+        default HBaseComponentBuilder poolMaxSize(int poolMaxSize) {
             doSetProperty("poolMaxSize", poolMaxSize);
             return this;
         }
@@ -81,7 +81,7 @@ public interface HBaseComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default HBaseComponentBuilder setBasicPropertyBinding(
+        default HBaseComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -102,7 +102,7 @@ public interface HBaseComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default HBaseComponentBuilder setLazyStartProducer(
+        default HBaseComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -121,7 +121,7 @@ public interface HBaseComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default HBaseComponentBuilder setBridgeErrorHandler(
+        default HBaseComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -136,6 +136,20 @@ public interface HBaseComponentBuilderFactory {
         @Override
         protected HBaseComponent buildConcreteComponent() {
             return new HBaseComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((HBaseComponent) component).setConfiguration((org.apache.hadoop.conf.Configuration) value); return true;
+            case "poolMaxSize": ((HBaseComponent) component).setPoolMaxSize((int) value); return true;
+            case "basicPropertyBinding": ((HBaseComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((HBaseComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((HBaseComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

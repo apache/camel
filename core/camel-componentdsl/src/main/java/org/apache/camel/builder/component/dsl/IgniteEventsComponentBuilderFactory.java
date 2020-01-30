@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.ignite.events.IgniteEventsComponent;
@@ -55,10 +56,9 @@ public interface IgniteEventsComponentBuilderFactory {
          * 
          * The option is a: <code>org.apache.ignite.Ignite</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default IgniteEventsComponentBuilder setIgnite(
+        default IgniteEventsComponentBuilder ignite(
                 org.apache.ignite.Ignite ignite) {
             doSetProperty("ignite", ignite);
             return this;
@@ -69,10 +69,9 @@ public interface IgniteEventsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default IgniteEventsComponentBuilder setConfigurationResource(
+        default IgniteEventsComponentBuilder configurationResource(
                 java.lang.Object configurationResource) {
             doSetProperty("configurationResource", configurationResource);
             return this;
@@ -84,10 +83,9 @@ public interface IgniteEventsComponentBuilderFactory {
          * <code>org.apache.ignite.configuration.IgniteConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: consumer
          */
-        default IgniteEventsComponentBuilder setIgniteConfiguration(
+        default IgniteEventsComponentBuilder igniteConfiguration(
                 org.apache.ignite.configuration.IgniteConfiguration igniteConfiguration) {
             doSetProperty("igniteConfiguration", igniteConfiguration);
             return this;
@@ -101,7 +99,7 @@ public interface IgniteEventsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default IgniteEventsComponentBuilder setBasicPropertyBinding(
+        default IgniteEventsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -120,7 +118,7 @@ public interface IgniteEventsComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default IgniteEventsComponentBuilder setBridgeErrorHandler(
+        default IgniteEventsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -135,6 +133,20 @@ public interface IgniteEventsComponentBuilderFactory {
         @Override
         protected IgniteEventsComponent buildConcreteComponent() {
             return new IgniteEventsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "ignite": ((IgniteEventsComponent) component).setIgnite((org.apache.ignite.Ignite) value); return true;
+            case "configurationResource": ((IgniteEventsComponent) component).setConfigurationResource((java.lang.Object) value); return true;
+            case "igniteConfiguration": ((IgniteEventsComponent) component).setIgniteConfiguration((org.apache.ignite.configuration.IgniteConfiguration) value); return true;
+            case "basicPropertyBinding": ((IgniteEventsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((IgniteEventsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

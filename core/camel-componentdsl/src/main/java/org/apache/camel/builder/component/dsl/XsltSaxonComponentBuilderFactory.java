@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.xslt.saxon.XsltSaxonComponent;
@@ -55,10 +56,9 @@ public interface XsltSaxonComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XsltSaxonComponentBuilder setSaxonExtensionFunctions(
+        default XsltSaxonComponentBuilder saxonExtensionFunctions(
                 java.lang.String saxonExtensionFunctions) {
             doSetProperty("saxonExtensionFunctions", saxonExtensionFunctions);
             return this;
@@ -68,10 +68,9 @@ public interface XsltSaxonComponentBuilderFactory {
          * 
          * The option is a: <code>net.sf.saxon.Configuration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XsltSaxonComponentBuilder setSaxonConfiguration(
+        default XsltSaxonComponentBuilder saxonConfiguration(
                 net.sf.saxon.Configuration saxonConfiguration) {
             doSetProperty("saxonConfiguration", saxonConfiguration);
             return this;
@@ -82,10 +81,9 @@ public interface XsltSaxonComponentBuilderFactory {
          * The option is a:
          * <code>java.util.Map<java.lang.String,java.lang.Object></code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XsltSaxonComponentBuilder setSaxonConfigurationProperties(
+        default XsltSaxonComponentBuilder saxonConfigurationProperties(
                 java.util.Map<java.lang.String,java.lang.Object> saxonConfigurationProperties) {
             doSetProperty("saxonConfigurationProperties", saxonConfigurationProperties);
             return this;
@@ -99,10 +97,9 @@ public interface XsltSaxonComponentBuilderFactory {
          * <code>org.apache.camel.component.xslt.XsltUriResolverFactory</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XsltSaxonComponentBuilder setUriResolverFactory(
+        default XsltSaxonComponentBuilder uriResolverFactory(
                 org.apache.camel.component.xslt.XsltUriResolverFactory uriResolverFactory) {
             doSetProperty("uriResolverFactory", uriResolverFactory);
             return this;
@@ -113,10 +110,9 @@ public interface XsltSaxonComponentBuilderFactory {
          * 
          * The option is a: <code>javax.xml.transform.URIResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XsltSaxonComponentBuilder setUriResolver(
+        default XsltSaxonComponentBuilder uriResolver(
                 javax.xml.transform.URIResolver uriResolver) {
             doSetProperty("uriResolver", uriResolver);
             return this;
@@ -133,7 +129,7 @@ public interface XsltSaxonComponentBuilderFactory {
          * Default: true
          * Group: producer
          */
-        default XsltSaxonComponentBuilder setContentCache(boolean contentCache) {
+        default XsltSaxonComponentBuilder contentCache(boolean contentCache) {
             doSetProperty("contentCache", contentCache);
             return this;
         }
@@ -144,10 +140,9 @@ public interface XsltSaxonComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XsltSaxonComponentBuilder setTransformerFactoryConfigurationStrategy(
+        default XsltSaxonComponentBuilder transformerFactoryConfigurationStrategy(
                 org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy) {
             doSetProperty("transformerFactoryConfigurationStrategy", transformerFactoryConfigurationStrategy);
             return this;
@@ -158,10 +153,9 @@ public interface XsltSaxonComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XsltSaxonComponentBuilder setTransformerFactoryClass(
+        default XsltSaxonComponentBuilder transformerFactoryClass(
                 java.lang.String transformerFactoryClass) {
             doSetProperty("transformerFactoryClass", transformerFactoryClass);
             return this;
@@ -175,7 +169,7 @@ public interface XsltSaxonComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default XsltSaxonComponentBuilder setBasicPropertyBinding(
+        default XsltSaxonComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -196,7 +190,7 @@ public interface XsltSaxonComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default XsltSaxonComponentBuilder setLazyStartProducer(
+        default XsltSaxonComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -211,6 +205,25 @@ public interface XsltSaxonComponentBuilderFactory {
         @Override
         protected XsltSaxonComponent buildConcreteComponent() {
             return new XsltSaxonComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "saxonExtensionFunctions": ((XsltSaxonComponent) component).setSaxonExtensionFunctions((java.lang.String) value); return true;
+            case "saxonConfiguration": ((XsltSaxonComponent) component).setSaxonConfiguration((net.sf.saxon.Configuration) value); return true;
+            case "saxonConfigurationProperties": ((XsltSaxonComponent) component).setSaxonConfigurationProperties((java.util.Map<java.lang.String,java.lang.Object>) value); return true;
+            case "uriResolverFactory": ((XsltSaxonComponent) component).setUriResolverFactory((org.apache.camel.component.xslt.XsltUriResolverFactory) value); return true;
+            case "uriResolver": ((XsltSaxonComponent) component).setUriResolver((javax.xml.transform.URIResolver) value); return true;
+            case "contentCache": ((XsltSaxonComponent) component).setContentCache((boolean) value); return true;
+            case "transformerFactoryConfigurationStrategy": ((XsltSaxonComponent) component).setTransformerFactoryConfigurationStrategy((org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy) value); return true;
+            case "transformerFactoryClass": ((XsltSaxonComponent) component).setTransformerFactoryClass((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((XsltSaxonComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((XsltSaxonComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.hdfs.HdfsComponent;
@@ -51,10 +52,9 @@ public interface HdfsComponentBuilderFactory {
          * The option is a: <code>javax.security.auth.login.Configuration</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
-        default HdfsComponentBuilder setJAASConfiguration(
+        default HdfsComponentBuilder jAASConfiguration(
                 javax.security.auth.login.Configuration jAASConfiguration) {
             doSetProperty("jAASConfiguration", jAASConfiguration);
             return this;
@@ -67,10 +67,9 @@ public interface HdfsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default HdfsComponentBuilder setKerberosConfigFile(
+        default HdfsComponentBuilder kerberosConfigFile(
                 java.lang.String kerberosConfigFile) {
             doSetProperty("kerberosConfigFile", kerberosConfigFile);
             return this;
@@ -84,7 +83,7 @@ public interface HdfsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default HdfsComponentBuilder setBasicPropertyBinding(
+        default HdfsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -105,8 +104,7 @@ public interface HdfsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default HdfsComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default HdfsComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -124,7 +122,7 @@ public interface HdfsComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default HdfsComponentBuilder setBridgeErrorHandler(
+        default HdfsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -139,6 +137,20 @@ public interface HdfsComponentBuilderFactory {
         @Override
         protected HdfsComponent buildConcreteComponent() {
             return new HdfsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "jAASConfiguration": ((HdfsComponent) component).setJAASConfiguration((javax.security.auth.login.Configuration) value); return true;
+            case "kerberosConfigFile": ((HdfsComponent) component).setKerberosConfigFile((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((HdfsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((HdfsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((HdfsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

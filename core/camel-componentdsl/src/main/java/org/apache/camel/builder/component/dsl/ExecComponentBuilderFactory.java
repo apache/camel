@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.exec.ExecComponent;
@@ -54,7 +55,7 @@ public interface ExecComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ExecComponentBuilder setBasicPropertyBinding(
+        default ExecComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -75,8 +76,7 @@ public interface ExecComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default ExecComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default ExecComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -90,6 +90,17 @@ public interface ExecComponentBuilderFactory {
         @Override
         protected ExecComponent buildConcreteComponent() {
             return new ExecComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((ExecComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((ExecComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

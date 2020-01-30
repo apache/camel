@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.jgroups.JGroupsComponent;
@@ -54,10 +55,9 @@ public interface JGroupsComponentBuilderFactory {
          * 
          * The option is a: <code>org.jgroups.JChannel</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default JGroupsComponentBuilder setChannel(org.jgroups.JChannel channel) {
+        default JGroupsComponentBuilder channel(org.jgroups.JChannel channel) {
             doSetProperty("channel", channel);
             return this;
         }
@@ -67,10 +67,9 @@ public interface JGroupsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default JGroupsComponentBuilder setChannelProperties(
+        default JGroupsComponentBuilder channelProperties(
                 java.lang.String channelProperties) {
             doSetProperty("channelProperties", channelProperties);
             return this;
@@ -85,7 +84,7 @@ public interface JGroupsComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default JGroupsComponentBuilder setEnableViewMessages(
+        default JGroupsComponentBuilder enableViewMessages(
                 boolean enableViewMessages) {
             doSetProperty("enableViewMessages", enableViewMessages);
             return this;
@@ -99,7 +98,7 @@ public interface JGroupsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JGroupsComponentBuilder setBasicPropertyBinding(
+        default JGroupsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -120,7 +119,7 @@ public interface JGroupsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default JGroupsComponentBuilder setLazyStartProducer(
+        default JGroupsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -139,7 +138,7 @@ public interface JGroupsComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default JGroupsComponentBuilder setBridgeErrorHandler(
+        default JGroupsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -154,6 +153,21 @@ public interface JGroupsComponentBuilderFactory {
         @Override
         protected JGroupsComponent buildConcreteComponent() {
             return new JGroupsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "channel": ((JGroupsComponent) component).setChannel((org.jgroups.JChannel) value); return true;
+            case "channelProperties": ((JGroupsComponent) component).setChannelProperties((java.lang.String) value); return true;
+            case "enableViewMessages": ((JGroupsComponent) component).setEnableViewMessages((boolean) value); return true;
+            case "basicPropertyBinding": ((JGroupsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((JGroupsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((JGroupsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

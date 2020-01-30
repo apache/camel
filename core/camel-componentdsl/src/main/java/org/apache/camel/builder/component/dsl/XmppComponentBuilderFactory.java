@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.xmpp.XmppComponent;
@@ -54,7 +55,7 @@ public interface XmppComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default XmppComponentBuilder setBasicPropertyBinding(
+        default XmppComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -75,8 +76,7 @@ public interface XmppComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default XmppComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default XmppComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -94,7 +94,7 @@ public interface XmppComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default XmppComponentBuilder setBridgeErrorHandler(
+        default XmppComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -109,6 +109,18 @@ public interface XmppComponentBuilderFactory {
         @Override
         protected XmppComponent buildConcreteComponent() {
             return new XmppComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((XmppComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((XmppComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((XmppComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

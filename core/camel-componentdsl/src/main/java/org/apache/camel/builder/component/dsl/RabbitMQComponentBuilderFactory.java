@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.rabbitmq.RabbitMQComponent;
@@ -54,10 +55,9 @@ public interface RabbitMQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default RabbitMQComponentBuilder setHostname(java.lang.String hostname) {
+        default RabbitMQComponentBuilder hostname(java.lang.String hostname) {
             doSetProperty("hostname", hostname);
             return this;
         }
@@ -70,7 +70,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: 5672
          * Group: common
          */
-        default RabbitMQComponentBuilder setPortNumber(int portNumber) {
+        default RabbitMQComponentBuilder portNumber(int portNumber) {
             doSetProperty("portNumber", portNumber);
             return this;
         }
@@ -82,7 +82,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: guest
          * Group: security
          */
-        default RabbitMQComponentBuilder setUsername(java.lang.String username) {
+        default RabbitMQComponentBuilder username(java.lang.String username) {
             doSetProperty("username", username);
             return this;
         }
@@ -94,7 +94,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: guest
          * Group: security
          */
-        default RabbitMQComponentBuilder setPassword(java.lang.String password) {
+        default RabbitMQComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
             return this;
         }
@@ -106,7 +106,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: /
          * Group: common
          */
-        default RabbitMQComponentBuilder setVhost(java.lang.String vhost) {
+        default RabbitMQComponentBuilder vhost(java.lang.String vhost) {
             doSetProperty("vhost", vhost);
             return this;
         }
@@ -117,10 +117,9 @@ public interface RabbitMQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default RabbitMQComponentBuilder setAddresses(java.lang.String addresses) {
+        default RabbitMQComponentBuilder addresses(java.lang.String addresses) {
             doSetProperty("addresses", addresses);
             return this;
         }
@@ -132,10 +131,9 @@ public interface RabbitMQComponentBuilderFactory {
          * The option is a: <code>com.rabbitmq.client.ConnectionFactory</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
-        default RabbitMQComponentBuilder setConnectionFactory(
+        default RabbitMQComponentBuilder connectionFactory(
                 com.rabbitmq.client.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
@@ -149,7 +147,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: 10
          * Group: consumer (advanced)
          */
-        default RabbitMQComponentBuilder setThreadPoolSize(int threadPoolSize) {
+        default RabbitMQComponentBuilder threadPoolSize(int threadPoolSize) {
             doSetProperty("threadPoolSize", threadPoolSize);
             return this;
         }
@@ -165,7 +163,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: true
          * Group: advanced
          */
-        default RabbitMQComponentBuilder setAutoDetectConnectionFactory(
+        default RabbitMQComponentBuilder autoDetectConnectionFactory(
                 boolean autoDetectConnectionFactory) {
             doSetProperty("autoDetectConnectionFactory", autoDetectConnectionFactory);
             return this;
@@ -178,8 +176,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: 60000
          * Group: advanced
          */
-        default RabbitMQComponentBuilder setConnectionTimeout(
-                int connectionTimeout) {
+        default RabbitMQComponentBuilder connectionTimeout(int connectionTimeout) {
             doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
@@ -191,7 +188,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: 2047
          * Group: advanced
          */
-        default RabbitMQComponentBuilder setRequestedChannelMax(
+        default RabbitMQComponentBuilder requestedChannelMax(
                 int requestedChannelMax) {
             doSetProperty("requestedChannelMax", requestedChannelMax);
             return this;
@@ -204,8 +201,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: 0
          * Group: advanced
          */
-        default RabbitMQComponentBuilder setRequestedFrameMax(
-                int requestedFrameMax) {
+        default RabbitMQComponentBuilder requestedFrameMax(int requestedFrameMax) {
             doSetProperty("requestedFrameMax", requestedFrameMax);
             return this;
         }
@@ -217,7 +213,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: 60
          * Group: advanced
          */
-        default RabbitMQComponentBuilder setRequestedHeartbeat(
+        default RabbitMQComponentBuilder requestedHeartbeat(
                 int requestedHeartbeat) {
             doSetProperty("requestedHeartbeat", requestedHeartbeat);
             return this;
@@ -229,10 +225,9 @@ public interface RabbitMQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default RabbitMQComponentBuilder setAutomaticRecoveryEnabled(
+        default RabbitMQComponentBuilder automaticRecoveryEnabled(
                 java.lang.Boolean automaticRecoveryEnabled) {
             doSetProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
             return this;
@@ -246,7 +241,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: 5000
          * Group: advanced
          */
-        default RabbitMQComponentBuilder setNetworkRecoveryInterval(
+        default RabbitMQComponentBuilder networkRecoveryInterval(
                 java.lang.Integer networkRecoveryInterval) {
             doSetProperty("networkRecoveryInterval", networkRecoveryInterval);
             return this;
@@ -257,10 +252,9 @@ public interface RabbitMQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default RabbitMQComponentBuilder setTopologyRecoveryEnabled(
+        default RabbitMQComponentBuilder topologyRecoveryEnabled(
                 java.lang.Boolean topologyRecoveryEnabled) {
             doSetProperty("topologyRecoveryEnabled", topologyRecoveryEnabled);
             return this;
@@ -275,8 +269,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default RabbitMQComponentBuilder setPrefetchEnabled(
-                boolean prefetchEnabled) {
+        default RabbitMQComponentBuilder prefetchEnabled(boolean prefetchEnabled) {
             doSetProperty("prefetchEnabled", prefetchEnabled);
             return this;
         }
@@ -287,10 +280,9 @@ public interface RabbitMQComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default RabbitMQComponentBuilder setPrefetchSize(int prefetchSize) {
+        default RabbitMQComponentBuilder prefetchSize(int prefetchSize) {
             doSetProperty("prefetchSize", prefetchSize);
             return this;
         }
@@ -301,10 +293,9 @@ public interface RabbitMQComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default RabbitMQComponentBuilder setPrefetchCount(int prefetchCount) {
+        default RabbitMQComponentBuilder prefetchCount(int prefetchCount) {
             doSetProperty("prefetchCount", prefetchCount);
             return this;
         }
@@ -318,8 +309,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default RabbitMQComponentBuilder setPrefetchGlobal(
-                boolean prefetchGlobal) {
+        default RabbitMQComponentBuilder prefetchGlobal(boolean prefetchGlobal) {
             doSetProperty("prefetchGlobal", prefetchGlobal);
             return this;
         }
@@ -331,7 +321,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: 10
          * Group: producer
          */
-        default RabbitMQComponentBuilder setChannelPoolMaxSize(
+        default RabbitMQComponentBuilder channelPoolMaxSize(
                 int channelPoolMaxSize) {
             doSetProperty("channelPoolMaxSize", channelPoolMaxSize);
             return this;
@@ -345,7 +335,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: 1000
          * Group: producer
          */
-        default RabbitMQComponentBuilder setChannelPoolMaxWait(
+        default RabbitMQComponentBuilder channelPoolMaxWait(
                 long channelPoolMaxWait) {
             doSetProperty("channelPoolMaxWait", channelPoolMaxWait);
             return this;
@@ -359,7 +349,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: 20000
          * Group: advanced
          */
-        default RabbitMQComponentBuilder setRequestTimeout(long requestTimeout) {
+        default RabbitMQComponentBuilder requestTimeout(long requestTimeout) {
             doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
@@ -371,7 +361,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: 1000
          * Group: advanced
          */
-        default RabbitMQComponentBuilder setRequestTimeoutCheckerInterval(
+        default RabbitMQComponentBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
             doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
@@ -385,7 +375,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default RabbitMQComponentBuilder setTransferException(
+        default RabbitMQComponentBuilder transferException(
                 boolean transferException) {
             doSetProperty("transferException", transferException);
             return this;
@@ -399,7 +389,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default RabbitMQComponentBuilder setPublisherAcknowledgements(
+        default RabbitMQComponentBuilder publisherAcknowledgements(
                 boolean publisherAcknowledgements) {
             doSetProperty("publisherAcknowledgements", publisherAcknowledgements);
             return this;
@@ -410,10 +400,9 @@ public interface RabbitMQComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default RabbitMQComponentBuilder setPublisherAcknowledgementsTimeout(
+        default RabbitMQComponentBuilder publisherAcknowledgementsTimeout(
                 long publisherAcknowledgementsTimeout) {
             doSetProperty("publisherAcknowledgementsTimeout", publisherAcknowledgementsTimeout);
             return this;
@@ -429,7 +418,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default RabbitMQComponentBuilder setGuaranteedDeliveries(
+        default RabbitMQComponentBuilder guaranteedDeliveries(
                 boolean guaranteedDeliveries) {
             doSetProperty("guaranteedDeliveries", guaranteedDeliveries);
             return this;
@@ -446,7 +435,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default RabbitMQComponentBuilder setMandatory(boolean mandatory) {
+        default RabbitMQComponentBuilder mandatory(boolean mandatory) {
             doSetProperty("mandatory", mandatory);
             return this;
         }
@@ -463,7 +452,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default RabbitMQComponentBuilder setImmediate(boolean immediate) {
+        default RabbitMQComponentBuilder immediate(boolean immediate) {
             doSetProperty("immediate", immediate);
             return this;
         }
@@ -477,10 +466,9 @@ public interface RabbitMQComponentBuilderFactory {
          * The option is a:
          * <code>java.util.Map<java.lang.String,java.lang.Object></code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default RabbitMQComponentBuilder setArgs(
+        default RabbitMQComponentBuilder args(
                 java.util.Map<java.lang.String,java.lang.Object> args) {
             doSetProperty("args", args);
             return this;
@@ -492,10 +480,9 @@ public interface RabbitMQComponentBuilderFactory {
          * The option is a:
          * <code>java.util.Map<java.lang.String,java.lang.Object></code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default RabbitMQComponentBuilder setClientProperties(
+        default RabbitMQComponentBuilder clientProperties(
                 java.util.Map<java.lang.String,java.lang.Object> clientProperties) {
             doSetProperty("clientProperties", clientProperties);
             return this;
@@ -505,10 +492,9 @@ public interface RabbitMQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default RabbitMQComponentBuilder setSslProtocol(
+        default RabbitMQComponentBuilder sslProtocol(
                 java.lang.String sslProtocol) {
             doSetProperty("sslProtocol", sslProtocol);
             return this;
@@ -519,10 +505,9 @@ public interface RabbitMQComponentBuilderFactory {
          * 
          * The option is a: <code>javax.net.ssl.TrustManager</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default RabbitMQComponentBuilder setTrustManager(
+        default RabbitMQComponentBuilder trustManager(
                 javax.net.ssl.TrustManager trustManager) {
             doSetProperty("trustManager", trustManager);
             return this;
@@ -535,7 +520,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: true
          * Group: consumer
          */
-        default RabbitMQComponentBuilder setAutoAck(boolean autoAck) {
+        default RabbitMQComponentBuilder autoAck(boolean autoAck) {
             doSetProperty("autoAck", autoAck);
             return this;
         }
@@ -548,7 +533,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: true
          * Group: common
          */
-        default RabbitMQComponentBuilder setAutoDelete(boolean autoDelete) {
+        default RabbitMQComponentBuilder autoDelete(boolean autoDelete) {
             doSetProperty("autoDelete", autoDelete);
             return this;
         }
@@ -561,7 +546,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: true
          * Group: common
          */
-        default RabbitMQComponentBuilder setDurable(boolean durable) {
+        default RabbitMQComponentBuilder durable(boolean durable) {
             doSetProperty("durable", durable);
             return this;
         }
@@ -574,7 +559,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: false
          * Group: common
          */
-        default RabbitMQComponentBuilder setExclusive(boolean exclusive) {
+        default RabbitMQComponentBuilder exclusive(boolean exclusive) {
             doSetProperty("exclusive", exclusive);
             return this;
         }
@@ -588,7 +573,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default RabbitMQComponentBuilder setExclusiveConsumer(
+        default RabbitMQComponentBuilder exclusiveConsumer(
                 boolean exclusiveConsumer) {
             doSetProperty("exclusiveConsumer", exclusiveConsumer);
             return this;
@@ -602,7 +587,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: false
          * Group: common
          */
-        default RabbitMQComponentBuilder setPassive(boolean passive) {
+        default RabbitMQComponentBuilder passive(boolean passive) {
             doSetProperty("passive", passive);
             return this;
         }
@@ -615,7 +600,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: false
          * Group: common
          */
-        default RabbitMQComponentBuilder setSkipQueueDeclare(
+        default RabbitMQComponentBuilder skipQueueDeclare(
                 boolean skipQueueDeclare) {
             doSetProperty("skipQueueDeclare", skipQueueDeclare);
             return this;
@@ -629,7 +614,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: false
          * Group: common
          */
-        default RabbitMQComponentBuilder setSkipQueueBind(boolean skipQueueBind) {
+        default RabbitMQComponentBuilder skipQueueBind(boolean skipQueueBind) {
             doSetProperty("skipQueueBind", skipQueueBind);
             return this;
         }
@@ -642,7 +627,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: false
          * Group: common
          */
-        default RabbitMQComponentBuilder setSkipExchangeDeclare(
+        default RabbitMQComponentBuilder skipExchangeDeclare(
                 boolean skipExchangeDeclare) {
             doSetProperty("skipExchangeDeclare", skipExchangeDeclare);
             return this;
@@ -657,7 +642,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: true
          * Group: common
          */
-        default RabbitMQComponentBuilder setDeclare(boolean declare) {
+        default RabbitMQComponentBuilder declare(boolean declare) {
             doSetProperty("declare", declare);
             return this;
         }
@@ -666,10 +651,9 @@ public interface RabbitMQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default RabbitMQComponentBuilder setDeadLetterExchange(
+        default RabbitMQComponentBuilder deadLetterExchange(
                 java.lang.String deadLetterExchange) {
             doSetProperty("deadLetterExchange", deadLetterExchange);
             return this;
@@ -679,10 +663,9 @@ public interface RabbitMQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default RabbitMQComponentBuilder setDeadLetterQueue(
+        default RabbitMQComponentBuilder deadLetterQueue(
                 java.lang.String deadLetterQueue) {
             doSetProperty("deadLetterQueue", deadLetterQueue);
             return this;
@@ -692,10 +675,9 @@ public interface RabbitMQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default RabbitMQComponentBuilder setDeadLetterRoutingKey(
+        default RabbitMQComponentBuilder deadLetterRoutingKey(
                 java.lang.String deadLetterRoutingKey) {
             doSetProperty("deadLetterRoutingKey", deadLetterRoutingKey);
             return this;
@@ -708,7 +690,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: direct
          * Group: common
          */
-        default RabbitMQComponentBuilder setDeadLetterExchangeType(
+        default RabbitMQComponentBuilder deadLetterExchangeType(
                 java.lang.String deadLetterExchangeType) {
             doSetProperty("deadLetterExchangeType", deadLetterExchangeType);
             return this;
@@ -721,7 +703,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default RabbitMQComponentBuilder setAllowNullHeaders(
+        default RabbitMQComponentBuilder allowNullHeaders(
                 boolean allowNullHeaders) {
             doSetProperty("allowNullHeaders", allowNullHeaders);
             return this;
@@ -735,7 +717,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default RabbitMQComponentBuilder setBasicPropertyBinding(
+        default RabbitMQComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -756,7 +738,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default RabbitMQComponentBuilder setLazyStartProducer(
+        default RabbitMQComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -775,7 +757,7 @@ public interface RabbitMQComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default RabbitMQComponentBuilder setBridgeErrorHandler(
+        default RabbitMQComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -790,6 +772,67 @@ public interface RabbitMQComponentBuilderFactory {
         @Override
         protected RabbitMQComponent buildConcreteComponent() {
             return new RabbitMQComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "hostname": ((RabbitMQComponent) component).setHostname((java.lang.String) value); return true;
+            case "portNumber": ((RabbitMQComponent) component).setPortNumber((int) value); return true;
+            case "username": ((RabbitMQComponent) component).setUsername((java.lang.String) value); return true;
+            case "password": ((RabbitMQComponent) component).setPassword((java.lang.String) value); return true;
+            case "vhost": ((RabbitMQComponent) component).setVhost((java.lang.String) value); return true;
+            case "addresses": ((RabbitMQComponent) component).setAddresses((java.lang.String) value); return true;
+            case "connectionFactory": ((RabbitMQComponent) component).setConnectionFactory((com.rabbitmq.client.ConnectionFactory) value); return true;
+            case "threadPoolSize": ((RabbitMQComponent) component).setThreadPoolSize((int) value); return true;
+            case "autoDetectConnectionFactory": ((RabbitMQComponent) component).setAutoDetectConnectionFactory((boolean) value); return true;
+            case "connectionTimeout": ((RabbitMQComponent) component).setConnectionTimeout((int) value); return true;
+            case "requestedChannelMax": ((RabbitMQComponent) component).setRequestedChannelMax((int) value); return true;
+            case "requestedFrameMax": ((RabbitMQComponent) component).setRequestedFrameMax((int) value); return true;
+            case "requestedHeartbeat": ((RabbitMQComponent) component).setRequestedHeartbeat((int) value); return true;
+            case "automaticRecoveryEnabled": ((RabbitMQComponent) component).setAutomaticRecoveryEnabled((java.lang.Boolean) value); return true;
+            case "networkRecoveryInterval": ((RabbitMQComponent) component).setNetworkRecoveryInterval((java.lang.Integer) value); return true;
+            case "topologyRecoveryEnabled": ((RabbitMQComponent) component).setTopologyRecoveryEnabled((java.lang.Boolean) value); return true;
+            case "prefetchEnabled": ((RabbitMQComponent) component).setPrefetchEnabled((boolean) value); return true;
+            case "prefetchSize": ((RabbitMQComponent) component).setPrefetchSize((int) value); return true;
+            case "prefetchCount": ((RabbitMQComponent) component).setPrefetchCount((int) value); return true;
+            case "prefetchGlobal": ((RabbitMQComponent) component).setPrefetchGlobal((boolean) value); return true;
+            case "channelPoolMaxSize": ((RabbitMQComponent) component).setChannelPoolMaxSize((int) value); return true;
+            case "channelPoolMaxWait": ((RabbitMQComponent) component).setChannelPoolMaxWait((long) value); return true;
+            case "requestTimeout": ((RabbitMQComponent) component).setRequestTimeout((long) value); return true;
+            case "requestTimeoutCheckerInterval": ((RabbitMQComponent) component).setRequestTimeoutCheckerInterval((long) value); return true;
+            case "transferException": ((RabbitMQComponent) component).setTransferException((boolean) value); return true;
+            case "publisherAcknowledgements": ((RabbitMQComponent) component).setPublisherAcknowledgements((boolean) value); return true;
+            case "publisherAcknowledgementsTimeout": ((RabbitMQComponent) component).setPublisherAcknowledgementsTimeout((long) value); return true;
+            case "guaranteedDeliveries": ((RabbitMQComponent) component).setGuaranteedDeliveries((boolean) value); return true;
+            case "mandatory": ((RabbitMQComponent) component).setMandatory((boolean) value); return true;
+            case "immediate": ((RabbitMQComponent) component).setImmediate((boolean) value); return true;
+            case "args": ((RabbitMQComponent) component).setArgs((java.util.Map<java.lang.String,java.lang.Object>) value); return true;
+            case "clientProperties": ((RabbitMQComponent) component).setClientProperties((java.util.Map<java.lang.String,java.lang.Object>) value); return true;
+            case "sslProtocol": ((RabbitMQComponent) component).setSslProtocol((java.lang.String) value); return true;
+            case "trustManager": ((RabbitMQComponent) component).setTrustManager((javax.net.ssl.TrustManager) value); return true;
+            case "autoAck": ((RabbitMQComponent) component).setAutoAck((boolean) value); return true;
+            case "autoDelete": ((RabbitMQComponent) component).setAutoDelete((boolean) value); return true;
+            case "durable": ((RabbitMQComponent) component).setDurable((boolean) value); return true;
+            case "exclusive": ((RabbitMQComponent) component).setExclusive((boolean) value); return true;
+            case "exclusiveConsumer": ((RabbitMQComponent) component).setExclusiveConsumer((boolean) value); return true;
+            case "passive": ((RabbitMQComponent) component).setPassive((boolean) value); return true;
+            case "skipQueueDeclare": ((RabbitMQComponent) component).setSkipQueueDeclare((boolean) value); return true;
+            case "skipQueueBind": ((RabbitMQComponent) component).setSkipQueueBind((boolean) value); return true;
+            case "skipExchangeDeclare": ((RabbitMQComponent) component).setSkipExchangeDeclare((boolean) value); return true;
+            case "declare": ((RabbitMQComponent) component).setDeclare((boolean) value); return true;
+            case "deadLetterExchange": ((RabbitMQComponent) component).setDeadLetterExchange((java.lang.String) value); return true;
+            case "deadLetterQueue": ((RabbitMQComponent) component).setDeadLetterQueue((java.lang.String) value); return true;
+            case "deadLetterRoutingKey": ((RabbitMQComponent) component).setDeadLetterRoutingKey((java.lang.String) value); return true;
+            case "deadLetterExchangeType": ((RabbitMQComponent) component).setDeadLetterExchangeType((java.lang.String) value); return true;
+            case "allowNullHeaders": ((RabbitMQComponent) component).setAllowNullHeaders((boolean) value); return true;
+            case "basicPropertyBinding": ((RabbitMQComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((RabbitMQComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((RabbitMQComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

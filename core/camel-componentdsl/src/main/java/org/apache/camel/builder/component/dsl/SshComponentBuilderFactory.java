@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.ssh.SshComponent;
@@ -53,10 +54,9 @@ public interface SshComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.ssh.SshConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SshComponentBuilder setConfiguration(
+        default SshComponentBuilder configuration(
                 org.apache.camel.component.ssh.SshConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -66,10 +66,9 @@ public interface SshComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default SshComponentBuilder setHost(java.lang.String host) {
+        default SshComponentBuilder host(java.lang.String host) {
             doSetProperty("host", host);
             return this;
         }
@@ -78,10 +77,9 @@ public interface SshComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default SshComponentBuilder setPort(int port) {
+        default SshComponentBuilder port(int port) {
             doSetProperty("port", port);
             return this;
         }
@@ -90,10 +88,9 @@ public interface SshComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SshComponentBuilder setUsername(java.lang.String username) {
+        default SshComponentBuilder username(java.lang.String username) {
             doSetProperty("username", username);
             return this;
         }
@@ -103,10 +100,9 @@ public interface SshComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SshComponentBuilder setPassword(java.lang.String password) {
+        default SshComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
             return this;
         }
@@ -118,10 +114,9 @@ public interface SshComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default SshComponentBuilder setPollCommand(java.lang.String pollCommand) {
+        default SshComponentBuilder pollCommand(java.lang.String pollCommand) {
             doSetProperty("pollCommand", pollCommand);
             return this;
         }
@@ -132,10 +127,9 @@ public interface SshComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SshComponentBuilder setKeyPairProvider(
+        default SshComponentBuilder keyPairProvider(
                 org.apache.sshd.common.keyprovider.KeyPairProvider keyPairProvider) {
             doSetProperty("keyPairProvider", keyPairProvider);
             return this;
@@ -147,10 +141,9 @@ public interface SshComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SshComponentBuilder setKeyType(java.lang.String keyType) {
+        default SshComponentBuilder keyType(java.lang.String keyType) {
             doSetProperty("keyType", keyType);
             return this;
         }
@@ -160,10 +153,9 @@ public interface SshComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default SshComponentBuilder setTimeout(long timeout) {
+        default SshComponentBuilder timeout(long timeout) {
             doSetProperty("timeout", timeout);
             return this;
         }
@@ -174,11 +166,9 @@ public interface SshComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SshComponentBuilder setCertResource(
-                java.lang.String certResource) {
+        default SshComponentBuilder certResource(java.lang.String certResource) {
             doSetProperty("certResource", certResource);
             return this;
         }
@@ -188,10 +178,9 @@ public interface SshComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SshComponentBuilder setCertResourcePassword(
+        default SshComponentBuilder certResourcePassword(
                 java.lang.String certResourcePassword) {
             doSetProperty("certResourcePassword", certResourcePassword);
             return this;
@@ -202,10 +191,9 @@ public interface SshComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SshComponentBuilder setChannelType(java.lang.String channelType) {
+        default SshComponentBuilder channelType(java.lang.String channelType) {
             doSetProperty("channelType", channelType);
             return this;
         }
@@ -215,10 +203,9 @@ public interface SshComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SshComponentBuilder setShellPrompt(java.lang.String shellPrompt) {
+        default SshComponentBuilder shellPrompt(java.lang.String shellPrompt) {
             doSetProperty("shellPrompt", shellPrompt);
             return this;
         }
@@ -228,11 +215,9 @@ public interface SshComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SshComponentBuilder setSleepForShellPrompt(
-                long sleepForShellPrompt) {
+        default SshComponentBuilder sleepForShellPrompt(long sleepForShellPrompt) {
             doSetProperty("sleepForShellPrompt", sleepForShellPrompt);
             return this;
         }
@@ -245,7 +230,7 @@ public interface SshComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default SshComponentBuilder setBasicPropertyBinding(
+        default SshComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -266,8 +251,7 @@ public interface SshComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SshComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default SshComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -285,7 +269,7 @@ public interface SshComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default SshComponentBuilder setBridgeErrorHandler(
+        default SshComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -300,6 +284,32 @@ public interface SshComponentBuilderFactory {
         @Override
         protected SshComponent buildConcreteComponent() {
             return new SshComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((SshComponent) component).setConfiguration((org.apache.camel.component.ssh.SshConfiguration) value); return true;
+            case "host": ((SshComponent) component).setHost((java.lang.String) value); return true;
+            case "port": ((SshComponent) component).setPort((int) value); return true;
+            case "username": ((SshComponent) component).setUsername((java.lang.String) value); return true;
+            case "password": ((SshComponent) component).setPassword((java.lang.String) value); return true;
+            case "pollCommand": ((SshComponent) component).setPollCommand((java.lang.String) value); return true;
+            case "keyPairProvider": ((SshComponent) component).setKeyPairProvider((org.apache.sshd.common.keyprovider.KeyPairProvider) value); return true;
+            case "keyType": ((SshComponent) component).setKeyType((java.lang.String) value); return true;
+            case "timeout": ((SshComponent) component).setTimeout((long) value); return true;
+            case "certResource": ((SshComponent) component).setCertResource((java.lang.String) value); return true;
+            case "certResourcePassword": ((SshComponent) component).setCertResourcePassword((java.lang.String) value); return true;
+            case "channelType": ((SshComponent) component).setChannelType((java.lang.String) value); return true;
+            case "shellPrompt": ((SshComponent) component).setShellPrompt((java.lang.String) value); return true;
+            case "sleepForShellPrompt": ((SshComponent) component).setSleepForShellPrompt((long) value); return true;
+            case "basicPropertyBinding": ((SshComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((SshComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((SshComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

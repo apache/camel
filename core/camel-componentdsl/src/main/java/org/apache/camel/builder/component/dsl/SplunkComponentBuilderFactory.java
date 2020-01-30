@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.splunk.SplunkComponent;
@@ -53,10 +54,9 @@ public interface SplunkComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.splunk.SplunkConfigurationFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SplunkComponentBuilder setSplunkConfigurationFactory(
+        default SplunkComponentBuilder splunkConfigurationFactory(
                 org.apache.camel.component.splunk.SplunkConfigurationFactory splunkConfigurationFactory) {
             doSetProperty("splunkConfigurationFactory", splunkConfigurationFactory);
             return this;
@@ -70,7 +70,7 @@ public interface SplunkComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default SplunkComponentBuilder setBasicPropertyBinding(
+        default SplunkComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -91,7 +91,7 @@ public interface SplunkComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SplunkComponentBuilder setLazyStartProducer(
+        default SplunkComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -110,7 +110,7 @@ public interface SplunkComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default SplunkComponentBuilder setBridgeErrorHandler(
+        default SplunkComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -125,6 +125,19 @@ public interface SplunkComponentBuilderFactory {
         @Override
         protected SplunkComponent buildConcreteComponent() {
             return new SplunkComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "splunkConfigurationFactory": ((SplunkComponent) component).setSplunkConfigurationFactory((org.apache.camel.component.splunk.SplunkConfigurationFactory) value); return true;
+            case "basicPropertyBinding": ((SplunkComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((SplunkComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((SplunkComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

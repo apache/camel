@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.netty.NettyComponent;
@@ -47,21 +48,20 @@ public interface NettyComponentBuilderFactory {
     interface NettyComponentBuilder extends ComponentBuilder<NettyComponent> {
         /**
          * Sets a maximum thread pool size for the netty consumer ordered thread
-         * pool. The default size is 2 x cpu core 1. Setting this value to eg 10
-         * will then use 10 threads unless 2 x cpu core 1 is a higher value,
-         * which then will override and be used. For example if there are 8
-         * cores, then the consumer thread pool will be 17. This thread pool is
-         * used to route messages received from Netty by Camel. We use a
+         * pool. The default size is 2 x cpu_core plus 1. Setting this value to
+         * eg 10 will then use 10 threads unless 2 x cpu_core plus 1 is a higher
+         * value, which then will override and be used. For example if there are
+         * 8 cores, then the consumer thread pool will be 17. This thread pool
+         * is used to route messages received from Netty by Camel. We use a
          * separate thread pool to ensure ordering of messages and also in case
          * some messages will block, then nettys worker threads (event loop)
          * wont be affected.
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
-        default NettyComponentBuilder setMaximumPoolSize(int maximumPoolSize) {
+        default NettyComponentBuilder maximumPoolSize(int maximumPoolSize) {
             doSetProperty("maximumPoolSize", maximumPoolSize);
             return this;
         }
@@ -73,10 +73,9 @@ public interface NettyComponentBuilderFactory {
          * <code>org.apache.camel.component.netty.NettyConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default NettyComponentBuilder setConfiguration(
+        default NettyComponentBuilder configuration(
                 org.apache.camel.component.netty.NettyConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -87,10 +86,9 @@ public interface NettyComponentBuilderFactory {
          * The option is a:
          * <code>io.netty.util.concurrent.EventExecutorGroup</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
-        default NettyComponentBuilder setExecutorService(
+        default NettyComponentBuilder executorService(
                 io.netty.util.concurrent.EventExecutorGroup executorService) {
             doSetProperty("executorService", executorService);
             return this;
@@ -103,7 +101,7 @@ public interface NettyComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default NettyComponentBuilder setUseGlobalSslContextParameters(
+        default NettyComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
@@ -114,10 +112,9 @@ public interface NettyComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default NettyComponentBuilder setSslContextParameters(
+        default NettyComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -131,7 +128,7 @@ public interface NettyComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default NettyComponentBuilder setBasicPropertyBinding(
+        default NettyComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -152,7 +149,7 @@ public interface NettyComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default NettyComponentBuilder setLazyStartProducer(
+        default NettyComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -171,7 +168,7 @@ public interface NettyComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default NettyComponentBuilder setBridgeErrorHandler(
+        default NettyComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -186,6 +183,23 @@ public interface NettyComponentBuilderFactory {
         @Override
         protected NettyComponent buildConcreteComponent() {
             return new NettyComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "maximumPoolSize": ((NettyComponent) component).setMaximumPoolSize((int) value); return true;
+            case "configuration": ((NettyComponent) component).setConfiguration((org.apache.camel.component.netty.NettyConfiguration) value); return true;
+            case "executorService": ((NettyComponent) component).setExecutorService((io.netty.util.concurrent.EventExecutorGroup) value); return true;
+            case "useGlobalSslContextParameters": ((NettyComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "sslContextParameters": ((NettyComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "basicPropertyBinding": ((NettyComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((NettyComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((NettyComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

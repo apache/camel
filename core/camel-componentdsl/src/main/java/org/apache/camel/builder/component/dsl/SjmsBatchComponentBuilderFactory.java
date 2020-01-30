@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.sjms.batch.SjmsBatchComponent;
@@ -54,10 +55,9 @@ public interface SjmsBatchComponentBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ConnectionFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SjmsBatchComponentBuilder setConnectionFactory(
+        default SjmsBatchComponentBuilder connectionFactory(
                 javax.jms.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
@@ -79,7 +79,7 @@ public interface SjmsBatchComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default SjmsBatchComponentBuilder setAsyncStartListener(
+        default SjmsBatchComponentBuilder asyncStartListener(
                 boolean asyncStartListener) {
             doSetProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -94,8 +94,7 @@ public interface SjmsBatchComponentBuilderFactory {
          * Default: 5000
          * Group: advanced
          */
-        default SjmsBatchComponentBuilder setRecoveryInterval(
-                int recoveryInterval) {
+        default SjmsBatchComponentBuilder recoveryInterval(int recoveryInterval) {
             doSetProperty("recoveryInterval", recoveryInterval);
             return this;
         }
@@ -106,10 +105,9 @@ public interface SjmsBatchComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: filter
          */
-        default SjmsBatchComponentBuilder setHeaderFilterStrategy(
+        default SjmsBatchComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -123,7 +121,7 @@ public interface SjmsBatchComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default SjmsBatchComponentBuilder setBasicPropertyBinding(
+        default SjmsBatchComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -142,7 +140,7 @@ public interface SjmsBatchComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default SjmsBatchComponentBuilder setBridgeErrorHandler(
+        default SjmsBatchComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -157,6 +155,21 @@ public interface SjmsBatchComponentBuilderFactory {
         @Override
         protected SjmsBatchComponent buildConcreteComponent() {
             return new SjmsBatchComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "connectionFactory": ((SjmsBatchComponent) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
+            case "asyncStartListener": ((SjmsBatchComponent) component).setAsyncStartListener((boolean) value); return true;
+            case "recoveryInterval": ((SjmsBatchComponent) component).setRecoveryInterval((int) value); return true;
+            case "headerFilterStrategy": ((SjmsBatchComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "basicPropertyBinding": ((SjmsBatchComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((SjmsBatchComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.hazelcast.multimap.HazelcastMultimapComponent;
@@ -57,10 +58,9 @@ public interface HazelcastMultimapComponentBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default HazelcastMultimapComponentBuilder setHazelcastInstance(
+        default HazelcastMultimapComponentBuilder hazelcastInstance(
                 com.hazelcast.core.HazelcastInstance hazelcastInstance) {
             doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -75,7 +75,7 @@ public interface HazelcastMultimapComponentBuilderFactory {
          * Default: node
          * Group: advanced
          */
-        default HazelcastMultimapComponentBuilder setHazelcastMode(
+        default HazelcastMultimapComponentBuilder hazelcastMode(
                 java.lang.String hazelcastMode) {
             doSetProperty("hazelcastMode", hazelcastMode);
             return this;
@@ -89,7 +89,7 @@ public interface HazelcastMultimapComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default HazelcastMultimapComponentBuilder setBasicPropertyBinding(
+        default HazelcastMultimapComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -110,7 +110,7 @@ public interface HazelcastMultimapComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default HazelcastMultimapComponentBuilder setLazyStartProducer(
+        default HazelcastMultimapComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -129,7 +129,7 @@ public interface HazelcastMultimapComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default HazelcastMultimapComponentBuilder setBridgeErrorHandler(
+        default HazelcastMultimapComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -144,6 +144,20 @@ public interface HazelcastMultimapComponentBuilderFactory {
         @Override
         protected HazelcastMultimapComponent buildConcreteComponent() {
             return new HazelcastMultimapComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "hazelcastInstance": ((HazelcastMultimapComponent) component).setHazelcastInstance((com.hazelcast.core.HazelcastInstance) value); return true;
+            case "hazelcastMode": ((HazelcastMultimapComponent) component).setHazelcastMode((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((HazelcastMultimapComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((HazelcastMultimapComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((HazelcastMultimapComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

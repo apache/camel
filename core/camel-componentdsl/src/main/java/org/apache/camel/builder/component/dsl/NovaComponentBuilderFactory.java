@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.openstack.nova.NovaComponent;
@@ -56,7 +57,7 @@ public interface NovaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default NovaComponentBuilder setBasicPropertyBinding(
+        default NovaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -77,8 +78,7 @@ public interface NovaComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default NovaComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default NovaComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -92,6 +92,17 @@ public interface NovaComponentBuilderFactory {
         @Override
         protected NovaComponent buildConcreteComponent() {
             return new NovaComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((NovaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((NovaComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

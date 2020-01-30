@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.as2.AS2Component;
@@ -53,10 +54,9 @@ public interface AS2ComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.as2.AS2Configuration</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default AS2ComponentBuilder setConfiguration(
+        default AS2ComponentBuilder configuration(
                 org.apache.camel.component.as2.AS2Configuration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -70,7 +70,7 @@ public interface AS2ComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default AS2ComponentBuilder setBasicPropertyBinding(
+        default AS2ComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -91,8 +91,7 @@ public interface AS2ComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default AS2ComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default AS2ComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -110,7 +109,7 @@ public interface AS2ComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default AS2ComponentBuilder setBridgeErrorHandler(
+        default AS2ComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -125,6 +124,19 @@ public interface AS2ComponentBuilderFactory {
         @Override
         protected AS2Component buildConcreteComponent() {
             return new AS2Component();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((AS2Component) component).setConfiguration((org.apache.camel.component.as2.AS2Configuration) value); return true;
+            case "basicPropertyBinding": ((AS2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((AS2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((AS2Component) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

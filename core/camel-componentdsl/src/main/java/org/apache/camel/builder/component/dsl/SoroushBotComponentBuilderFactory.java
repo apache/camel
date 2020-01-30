@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.soroushbot.component.SoroushBotComponent;
@@ -53,10 +54,9 @@ public interface SoroushBotComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: global
          */
-        default SoroushBotComponentBuilder setAuthorizationToken(
+        default SoroushBotComponentBuilder authorizationToken(
                 java.lang.String authorizationToken) {
             doSetProperty("authorizationToken", authorizationToken);
             return this;
@@ -70,7 +70,7 @@ public interface SoroushBotComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default SoroushBotComponentBuilder setBasicPropertyBinding(
+        default SoroushBotComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -91,7 +91,7 @@ public interface SoroushBotComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SoroushBotComponentBuilder setLazyStartProducer(
+        default SoroushBotComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -110,7 +110,7 @@ public interface SoroushBotComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default SoroushBotComponentBuilder setBridgeErrorHandler(
+        default SoroushBotComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -125,6 +125,19 @@ public interface SoroushBotComponentBuilderFactory {
         @Override
         protected SoroushBotComponent buildConcreteComponent() {
             return new SoroushBotComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "authorizationToken": ((SoroushBotComponent) component).setAuthorizationToken((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((SoroushBotComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((SoroushBotComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((SoroushBotComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.stub.StubComponent;
@@ -56,7 +57,7 @@ public interface StubComponentBuilderFactory {
          * Default: 1000
          * Group: advanced
          */
-        default StubComponentBuilder setQueueSize(int queueSize) {
+        default StubComponentBuilder queueSize(int queueSize) {
             doSetProperty("queueSize", queueSize);
             return this;
         }
@@ -68,8 +69,7 @@ public interface StubComponentBuilderFactory {
          * Default: 1
          * Group: consumer
          */
-        default StubComponentBuilder setConcurrentConsumers(
-                int concurrentConsumers) {
+        default StubComponentBuilder concurrentConsumers(int concurrentConsumers) {
             doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
@@ -79,10 +79,9 @@ public interface StubComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange></code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default StubComponentBuilder setDefaultQueueFactory(
+        default StubComponentBuilder defaultQueueFactory(
                 org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange> defaultQueueFactory) {
             doSetProperty("defaultQueueFactory", defaultQueueFactory);
             return this;
@@ -99,7 +98,7 @@ public interface StubComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default StubComponentBuilder setDefaultBlockWhenFull(
+        default StubComponentBuilder defaultBlockWhenFull(
                 boolean defaultBlockWhenFull) {
             doSetProperty("defaultBlockWhenFull", defaultBlockWhenFull);
             return this;
@@ -116,7 +115,7 @@ public interface StubComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default StubComponentBuilder setDefaultDiscardWhenFull(
+        default StubComponentBuilder defaultDiscardWhenFull(
                 boolean defaultDiscardWhenFull) {
             doSetProperty("defaultDiscardWhenFull", defaultDiscardWhenFull);
             return this;
@@ -131,10 +130,9 @@ public interface StubComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default StubComponentBuilder setDefaultOfferTimeout(
+        default StubComponentBuilder defaultOfferTimeout(
                 long defaultOfferTimeout) {
             doSetProperty("defaultOfferTimeout", defaultOfferTimeout);
             return this;
@@ -148,7 +146,7 @@ public interface StubComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default StubComponentBuilder setBasicPropertyBinding(
+        default StubComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -169,8 +167,7 @@ public interface StubComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default StubComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default StubComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -188,7 +185,7 @@ public interface StubComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default StubComponentBuilder setBridgeErrorHandler(
+        default StubComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -203,6 +200,24 @@ public interface StubComponentBuilderFactory {
         @Override
         protected StubComponent buildConcreteComponent() {
             return new StubComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "queueSize": ((StubComponent) component).setQueueSize((int) value); return true;
+            case "concurrentConsumers": ((StubComponent) component).setConcurrentConsumers((int) value); return true;
+            case "defaultQueueFactory": ((StubComponent) component).setDefaultQueueFactory((org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>) value); return true;
+            case "defaultBlockWhenFull": ((StubComponent) component).setDefaultBlockWhenFull((boolean) value); return true;
+            case "defaultDiscardWhenFull": ((StubComponent) component).setDefaultDiscardWhenFull((boolean) value); return true;
+            case "defaultOfferTimeout": ((StubComponent) component).setDefaultOfferTimeout((long) value); return true;
+            case "basicPropertyBinding": ((StubComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((StubComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((StubComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

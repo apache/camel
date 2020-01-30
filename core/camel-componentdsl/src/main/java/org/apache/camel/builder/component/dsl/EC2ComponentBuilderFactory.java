@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.aws.ec2.EC2Component;
@@ -52,10 +53,9 @@ public interface EC2ComponentBuilderFactory {
          * <code>org.apache.camel.component.aws.ec2.EC2Configuration</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default EC2ComponentBuilder setConfiguration(
+        default EC2ComponentBuilder configuration(
                 org.apache.camel.component.aws.ec2.EC2Configuration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -65,10 +65,9 @@ public interface EC2ComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default EC2ComponentBuilder setRegion(java.lang.String region) {
+        default EC2ComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
             return this;
         }
@@ -77,10 +76,9 @@ public interface EC2ComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default EC2ComponentBuilder setAccessKey(java.lang.String accessKey) {
+        default EC2ComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
             return this;
         }
@@ -89,10 +87,9 @@ public interface EC2ComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default EC2ComponentBuilder setSecretKey(java.lang.String secretKey) {
+        default EC2ComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
             return this;
         }
@@ -105,7 +102,7 @@ public interface EC2ComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default EC2ComponentBuilder setBasicPropertyBinding(
+        default EC2ComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -126,8 +123,7 @@ public interface EC2ComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default EC2ComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default EC2ComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -141,6 +137,21 @@ public interface EC2ComponentBuilderFactory {
         @Override
         protected EC2Component buildConcreteComponent() {
             return new EC2Component();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((EC2Component) component).setConfiguration((org.apache.camel.component.aws.ec2.EC2Configuration) value); return true;
+            case "region": ((EC2Component) component).setRegion((java.lang.String) value); return true;
+            case "accessKey": ((EC2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": ((EC2Component) component).setSecretKey((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((EC2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((EC2Component) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

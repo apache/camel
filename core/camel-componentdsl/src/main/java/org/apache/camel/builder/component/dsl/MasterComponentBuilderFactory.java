@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.zookeepermaster.MasterComponent;
@@ -55,10 +56,9 @@ public interface MasterComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.zookeepermaster.ContainerIdFactory</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default MasterComponentBuilder setContainerIdFactory(
+        default MasterComponentBuilder containerIdFactory(
                 org.apache.camel.component.zookeepermaster.ContainerIdFactory containerIdFactory) {
             doSetProperty("containerIdFactory", containerIdFactory);
             return this;
@@ -73,7 +73,7 @@ public interface MasterComponentBuilderFactory {
          * Default: /camel/zookeepermaster/clusters/master
          * Group: consumer
          */
-        default MasterComponentBuilder setZkRoot(java.lang.String zkRoot) {
+        default MasterComponentBuilder zkRoot(java.lang.String zkRoot) {
             doSetProperty("zkRoot", zkRoot);
             return this;
         }
@@ -84,10 +84,9 @@ public interface MasterComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.curator.framework.CuratorFramework</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default MasterComponentBuilder setCurator(
+        default MasterComponentBuilder curator(
                 org.apache.curator.framework.CuratorFramework curator) {
             doSetProperty("curator", curator);
             return this;
@@ -100,7 +99,7 @@ public interface MasterComponentBuilderFactory {
          * Default: 10000
          * Group: consumer
          */
-        default MasterComponentBuilder setMaximumConnectionTimeout(
+        default MasterComponentBuilder maximumConnectionTimeout(
                 int maximumConnectionTimeout) {
             doSetProperty("maximumConnectionTimeout", maximumConnectionTimeout);
             return this;
@@ -113,7 +112,7 @@ public interface MasterComponentBuilderFactory {
          * Default: localhost:2181
          * Group: consumer
          */
-        default MasterComponentBuilder setZooKeeperUrl(
+        default MasterComponentBuilder zooKeeperUrl(
                 java.lang.String zooKeeperUrl) {
             doSetProperty("zooKeeperUrl", zooKeeperUrl);
             return this;
@@ -123,10 +122,9 @@ public interface MasterComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default MasterComponentBuilder setZooKeeperPassword(
+        default MasterComponentBuilder zooKeeperPassword(
                 java.lang.String zooKeeperPassword) {
             doSetProperty("zooKeeperPassword", zooKeeperPassword);
             return this;
@@ -140,7 +138,7 @@ public interface MasterComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default MasterComponentBuilder setBasicPropertyBinding(
+        default MasterComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -159,7 +157,7 @@ public interface MasterComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default MasterComponentBuilder setBridgeErrorHandler(
+        default MasterComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -174,6 +172,23 @@ public interface MasterComponentBuilderFactory {
         @Override
         protected MasterComponent buildConcreteComponent() {
             return new MasterComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "containerIdFactory": ((MasterComponent) component).setContainerIdFactory((org.apache.camel.component.zookeepermaster.ContainerIdFactory) value); return true;
+            case "zkRoot": ((MasterComponent) component).setZkRoot((java.lang.String) value); return true;
+            case "curator": ((MasterComponent) component).setCurator((org.apache.curator.framework.CuratorFramework) value); return true;
+            case "maximumConnectionTimeout": ((MasterComponent) component).setMaximumConnectionTimeout((int) value); return true;
+            case "zooKeeperUrl": ((MasterComponent) component).setZooKeeperUrl((java.lang.String) value); return true;
+            case "zooKeeperPassword": ((MasterComponent) component).setZooKeeperPassword((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((MasterComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((MasterComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

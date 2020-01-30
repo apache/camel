@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.openstack.swift.SwiftComponent;
@@ -56,7 +57,7 @@ public interface SwiftComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default SwiftComponentBuilder setBasicPropertyBinding(
+        default SwiftComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -77,7 +78,7 @@ public interface SwiftComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SwiftComponentBuilder setLazyStartProducer(
+        default SwiftComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -92,6 +93,17 @@ public interface SwiftComponentBuilderFactory {
         @Override
         protected SwiftComponent buildConcreteComponent() {
             return new SwiftComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((SwiftComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((SwiftComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

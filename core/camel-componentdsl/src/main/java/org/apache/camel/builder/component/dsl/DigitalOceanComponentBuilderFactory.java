@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.digitalocean.DigitalOceanComponent;
@@ -58,7 +59,7 @@ public interface DigitalOceanComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default DigitalOceanComponentBuilder setBasicPropertyBinding(
+        default DigitalOceanComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +80,7 @@ public interface DigitalOceanComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default DigitalOceanComponentBuilder setLazyStartProducer(
+        default DigitalOceanComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -94,6 +95,17 @@ public interface DigitalOceanComponentBuilderFactory {
         @Override
         protected DigitalOceanComponent buildConcreteComponent() {
             return new DigitalOceanComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((DigitalOceanComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((DigitalOceanComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.openstack.glance.GlanceComponent;
@@ -58,7 +59,7 @@ public interface GlanceComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default GlanceComponentBuilder setBasicPropertyBinding(
+        default GlanceComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +80,7 @@ public interface GlanceComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default GlanceComponentBuilder setLazyStartProducer(
+        default GlanceComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -94,6 +95,17 @@ public interface GlanceComponentBuilderFactory {
         @Override
         protected GlanceComponent buildConcreteComponent() {
             return new GlanceComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((GlanceComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((GlanceComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.asterisk.AsteriskComponent;
@@ -56,7 +57,7 @@ public interface AsteriskComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default AsteriskComponentBuilder setBasicPropertyBinding(
+        default AsteriskComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -77,7 +78,7 @@ public interface AsteriskComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default AsteriskComponentBuilder setLazyStartProducer(
+        default AsteriskComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -96,7 +97,7 @@ public interface AsteriskComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default AsteriskComponentBuilder setBridgeErrorHandler(
+        default AsteriskComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -111,6 +112,18 @@ public interface AsteriskComponentBuilderFactory {
         @Override
         protected AsteriskComponent buildConcreteComponent() {
             return new AsteriskComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((AsteriskComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((AsteriskComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((AsteriskComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

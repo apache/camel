@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.cmis.CMISComponent;
@@ -55,10 +56,9 @@ public interface CMISComponentBuilderFactory {
          * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
-        default CMISComponentBuilder setSessionFacadeFactory(
+        default CMISComponentBuilder sessionFacadeFactory(
                 org.apache.camel.component.cmis.CMISSessionFacadeFactory sessionFacadeFactory) {
             doSetProperty("sessionFacadeFactory", sessionFacadeFactory);
             return this;
@@ -72,7 +72,7 @@ public interface CMISComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default CMISComponentBuilder setBasicPropertyBinding(
+        default CMISComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -93,8 +93,7 @@ public interface CMISComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default CMISComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default CMISComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -112,7 +111,7 @@ public interface CMISComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default CMISComponentBuilder setBridgeErrorHandler(
+        default CMISComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -127,6 +126,19 @@ public interface CMISComponentBuilderFactory {
         @Override
         protected CMISComponent buildConcreteComponent() {
             return new CMISComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "sessionFacadeFactory": ((CMISComponent) component).setSessionFacadeFactory((org.apache.camel.component.cmis.CMISSessionFacadeFactory) value); return true;
+            case "basicPropertyBinding": ((CMISComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((CMISComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((CMISComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

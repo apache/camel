@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.sparkrest.SparkComponent;
@@ -55,7 +56,7 @@ public interface SparkComponentBuilderFactory {
          * Default: 4567
          * Group: consumer
          */
-        default SparkComponentBuilder setPort(int port) {
+        default SparkComponentBuilder port(int port) {
             doSetProperty("port", port);
             return this;
         }
@@ -68,7 +69,7 @@ public interface SparkComponentBuilderFactory {
          * Default: 0.0.0.0
          * Group: consumer
          */
-        default SparkComponentBuilder setIpAddress(java.lang.String ipAddress) {
+        default SparkComponentBuilder ipAddress(java.lang.String ipAddress) {
             doSetProperty("ipAddress", ipAddress);
             return this;
         }
@@ -77,10 +78,9 @@ public interface SparkComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SparkComponentBuilder setMinThreads(int minThreads) {
+        default SparkComponentBuilder minThreads(int minThreads) {
             doSetProperty("minThreads", minThreads);
             return this;
         }
@@ -89,10 +89,9 @@ public interface SparkComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SparkComponentBuilder setMaxThreads(int maxThreads) {
+        default SparkComponentBuilder maxThreads(int maxThreads) {
             doSetProperty("maxThreads", maxThreads);
             return this;
         }
@@ -102,10 +101,9 @@ public interface SparkComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SparkComponentBuilder setTimeOutMillis(int timeOutMillis) {
+        default SparkComponentBuilder timeOutMillis(int timeOutMillis) {
             doSetProperty("timeOutMillis", timeOutMillis);
             return this;
         }
@@ -114,11 +112,9 @@ public interface SparkComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SparkComponentBuilder setKeystoreFile(
-                java.lang.String keystoreFile) {
+        default SparkComponentBuilder keystoreFile(java.lang.String keystoreFile) {
             doSetProperty("keystoreFile", keystoreFile);
             return this;
         }
@@ -127,10 +123,9 @@ public interface SparkComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SparkComponentBuilder setKeystorePassword(
+        default SparkComponentBuilder keystorePassword(
                 java.lang.String keystorePassword) {
             doSetProperty("keystorePassword", keystorePassword);
             return this;
@@ -140,10 +135,9 @@ public interface SparkComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SparkComponentBuilder setTruststoreFile(
+        default SparkComponentBuilder truststoreFile(
                 java.lang.String truststoreFile) {
             doSetProperty("truststoreFile", truststoreFile);
             return this;
@@ -153,10 +147,9 @@ public interface SparkComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SparkComponentBuilder setTruststorePassword(
+        default SparkComponentBuilder truststorePassword(
                 java.lang.String truststorePassword) {
             doSetProperty("truststorePassword", truststorePassword);
             return this;
@@ -168,10 +161,9 @@ public interface SparkComponentBuilderFactory {
          * <code>org.apache.camel.component.sparkrest.SparkConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SparkComponentBuilder setSparkConfiguration(
+        default SparkComponentBuilder sparkConfiguration(
                 org.apache.camel.component.sparkrest.SparkConfiguration sparkConfiguration) {
             doSetProperty("sparkConfiguration", sparkConfiguration);
             return this;
@@ -182,10 +174,9 @@ public interface SparkComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sparkrest.SparkBinding</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SparkComponentBuilder setSparkBinding(
+        default SparkComponentBuilder sparkBinding(
                 org.apache.camel.component.sparkrest.SparkBinding sparkBinding) {
             doSetProperty("sparkBinding", sparkBinding);
             return this;
@@ -199,7 +190,7 @@ public interface SparkComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default SparkComponentBuilder setBasicPropertyBinding(
+        default SparkComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -218,7 +209,7 @@ public interface SparkComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default SparkComponentBuilder setBridgeErrorHandler(
+        default SparkComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -233,6 +224,28 @@ public interface SparkComponentBuilderFactory {
         @Override
         protected SparkComponent buildConcreteComponent() {
             return new SparkComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "port": ((SparkComponent) component).setPort((int) value); return true;
+            case "ipAddress": ((SparkComponent) component).setIpAddress((java.lang.String) value); return true;
+            case "minThreads": ((SparkComponent) component).setMinThreads((int) value); return true;
+            case "maxThreads": ((SparkComponent) component).setMaxThreads((int) value); return true;
+            case "timeOutMillis": ((SparkComponent) component).setTimeOutMillis((int) value); return true;
+            case "keystoreFile": ((SparkComponent) component).setKeystoreFile((java.lang.String) value); return true;
+            case "keystorePassword": ((SparkComponent) component).setKeystorePassword((java.lang.String) value); return true;
+            case "truststoreFile": ((SparkComponent) component).setTruststoreFile((java.lang.String) value); return true;
+            case "truststorePassword": ((SparkComponent) component).setTruststorePassword((java.lang.String) value); return true;
+            case "sparkConfiguration": ((SparkComponent) component).setSparkConfiguration((org.apache.camel.component.sparkrest.SparkConfiguration) value); return true;
+            case "sparkBinding": ((SparkComponent) component).setSparkBinding((org.apache.camel.component.sparkrest.SparkBinding) value); return true;
+            case "basicPropertyBinding": ((SparkComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((SparkComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

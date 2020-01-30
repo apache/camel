@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.kubernetes.service_accounts.KubernetesServiceAccountsComponent;
@@ -58,7 +59,7 @@ public interface KubernetesServiceAccountsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default KubernetesServiceAccountsComponentBuilder setBasicPropertyBinding(
+        default KubernetesServiceAccountsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +80,7 @@ public interface KubernetesServiceAccountsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default KubernetesServiceAccountsComponentBuilder setLazyStartProducer(
+        default KubernetesServiceAccountsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -94,6 +95,17 @@ public interface KubernetesServiceAccountsComponentBuilderFactory {
         @Override
         protected KubernetesServiceAccountsComponent buildConcreteComponent() {
             return new KubernetesServiceAccountsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((KubernetesServiceAccountsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((KubernetesServiceAccountsComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

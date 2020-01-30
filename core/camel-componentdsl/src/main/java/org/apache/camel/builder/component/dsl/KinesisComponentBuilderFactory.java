@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.aws.kinesis.KinesisComponent;
@@ -55,10 +56,9 @@ public interface KinesisComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.aws.kinesis.KinesisConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default KinesisComponentBuilder setConfiguration(
+        default KinesisComponentBuilder configuration(
                 org.apache.camel.component.aws.kinesis.KinesisConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -68,10 +68,9 @@ public interface KinesisComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default KinesisComponentBuilder setAccessKey(java.lang.String accessKey) {
+        default KinesisComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
             return this;
         }
@@ -80,10 +79,9 @@ public interface KinesisComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default KinesisComponentBuilder setSecretKey(java.lang.String secretKey) {
+        default KinesisComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
             return this;
         }
@@ -92,10 +90,9 @@ public interface KinesisComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default KinesisComponentBuilder setRegion(java.lang.String region) {
+        default KinesisComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
             return this;
         }
@@ -108,7 +105,7 @@ public interface KinesisComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default KinesisComponentBuilder setBasicPropertyBinding(
+        default KinesisComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -129,7 +126,7 @@ public interface KinesisComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default KinesisComponentBuilder setLazyStartProducer(
+        default KinesisComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -148,7 +145,7 @@ public interface KinesisComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default KinesisComponentBuilder setBridgeErrorHandler(
+        default KinesisComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -163,6 +160,22 @@ public interface KinesisComponentBuilderFactory {
         @Override
         protected KinesisComponent buildConcreteComponent() {
             return new KinesisComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((KinesisComponent) component).setConfiguration((org.apache.camel.component.aws.kinesis.KinesisConfiguration) value); return true;
+            case "accessKey": ((KinesisComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": ((KinesisComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "region": ((KinesisComponent) component).setRegion((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((KinesisComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((KinesisComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((KinesisComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

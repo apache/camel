@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.debezium.DebeziumMongodbComponent;
@@ -57,10 +58,9 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default DebeziumMongodbComponentBuilder setConfiguration(
+        default DebeziumMongodbComponentBuilder configuration(
                 org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -74,7 +74,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default DebeziumMongodbComponentBuilder setBasicPropertyBinding(
+        default DebeziumMongodbComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -93,7 +93,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default DebeziumMongodbComponentBuilder setBridgeErrorHandler(
+        default DebeziumMongodbComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -108,6 +108,18 @@ public interface DebeziumMongodbComponentBuilderFactory {
         @Override
         protected DebeziumMongodbComponent buildConcreteComponent() {
             return new DebeziumMongodbComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((DebeziumMongodbComponent) component).setConfiguration((org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration) value); return true;
+            case "basicPropertyBinding": ((DebeziumMongodbComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((DebeziumMongodbComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.infinispan.InfinispanComponent;
@@ -55,10 +56,9 @@ public interface InfinispanComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.infinispan.InfinispanConfiguration</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default InfinispanComponentBuilder setConfiguration(
+        default InfinispanComponentBuilder configuration(
                 org.apache.camel.component.infinispan.InfinispanConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -69,10 +69,9 @@ public interface InfinispanComponentBuilderFactory {
          * The option is a:
          * <code>org.infinispan.commons.api.BasicCacheContainer</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default InfinispanComponentBuilder setCacheContainer(
+        default InfinispanComponentBuilder cacheContainer(
                 org.infinispan.commons.api.BasicCacheContainer cacheContainer) {
             doSetProperty("cacheContainer", cacheContainer);
             return this;
@@ -86,7 +85,7 @@ public interface InfinispanComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default InfinispanComponentBuilder setBasicPropertyBinding(
+        default InfinispanComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -107,7 +106,7 @@ public interface InfinispanComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default InfinispanComponentBuilder setLazyStartProducer(
+        default InfinispanComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -126,7 +125,7 @@ public interface InfinispanComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default InfinispanComponentBuilder setBridgeErrorHandler(
+        default InfinispanComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -141,6 +140,20 @@ public interface InfinispanComponentBuilderFactory {
         @Override
         protected InfinispanComponent buildConcreteComponent() {
             return new InfinispanComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((InfinispanComponent) component).setConfiguration((org.apache.camel.component.infinispan.InfinispanConfiguration) value); return true;
+            case "cacheContainer": ((InfinispanComponent) component).setCacheContainer((org.infinispan.commons.api.BasicCacheContainer) value); return true;
+            case "basicPropertyBinding": ((InfinispanComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((InfinispanComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((InfinispanComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

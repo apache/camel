@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.apns.ApnsComponent;
@@ -52,10 +53,9 @@ public interface ApnsComponentBuilderFactory {
          * 
          * The option is a: <code>com.notnoop.apns.ApnsService</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default ApnsComponentBuilder setApnsService(
+        default ApnsComponentBuilder apnsService(
                 com.notnoop.apns.ApnsService apnsService) {
             doSetProperty("apnsService", apnsService);
             return this;
@@ -69,7 +69,7 @@ public interface ApnsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ApnsComponentBuilder setBasicPropertyBinding(
+        default ApnsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -90,8 +90,7 @@ public interface ApnsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default ApnsComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default ApnsComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -109,7 +108,7 @@ public interface ApnsComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default ApnsComponentBuilder setBridgeErrorHandler(
+        default ApnsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -124,6 +123,19 @@ public interface ApnsComponentBuilderFactory {
         @Override
         protected ApnsComponent buildConcreteComponent() {
             return new ApnsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "apnsService": ((ApnsComponent) component).setApnsService((com.notnoop.apns.ApnsService) value); return true;
+            case "basicPropertyBinding": ((ApnsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((ApnsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((ApnsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

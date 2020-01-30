@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.atomix.client.set.AtomixSetComponent;
@@ -53,10 +54,9 @@ public interface AtomixSetComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.set.AtomixSetConfiguration</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default AtomixSetComponentBuilder setConfiguration(
+        default AtomixSetComponentBuilder configuration(
                 org.apache.camel.component.atomix.client.set.AtomixSetConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -66,11 +66,9 @@ public interface AtomixSetComponentBuilderFactory {
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default AtomixSetComponentBuilder setAtomix(
-                io.atomix.AtomixClient atomix) {
+        default AtomixSetComponentBuilder atomix(io.atomix.AtomixClient atomix) {
             doSetProperty("atomix", atomix);
             return this;
         }
@@ -81,10 +79,9 @@ public interface AtomixSetComponentBuilderFactory {
          * <code>java.util.List<io.atomix.catalyst.transport.Address></code>
          * type.
          * 
-         * Default:
          * Group: common
          */
-        default AtomixSetComponentBuilder setNodes(
+        default AtomixSetComponentBuilder nodes(
                 java.util.List<io.atomix.catalyst.transport.Address> nodes) {
             doSetProperty("nodes", nodes);
             return this;
@@ -94,10 +91,9 @@ public interface AtomixSetComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default AtomixSetComponentBuilder setConfigurationUri(
+        default AtomixSetComponentBuilder configurationUri(
                 java.lang.String configurationUri) {
             doSetProperty("configurationUri", configurationUri);
             return this;
@@ -111,7 +107,7 @@ public interface AtomixSetComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default AtomixSetComponentBuilder setBasicPropertyBinding(
+        default AtomixSetComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -132,7 +128,7 @@ public interface AtomixSetComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default AtomixSetComponentBuilder setLazyStartProducer(
+        default AtomixSetComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -151,7 +147,7 @@ public interface AtomixSetComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default AtomixSetComponentBuilder setBridgeErrorHandler(
+        default AtomixSetComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -166,6 +162,22 @@ public interface AtomixSetComponentBuilderFactory {
         @Override
         protected AtomixSetComponent buildConcreteComponent() {
             return new AtomixSetComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((AtomixSetComponent) component).setConfiguration((org.apache.camel.component.atomix.client.set.AtomixSetConfiguration) value); return true;
+            case "atomix": ((AtomixSetComponent) component).setAtomix((io.atomix.AtomixClient) value); return true;
+            case "nodes": ((AtomixSetComponent) component).setNodes((java.util.List<io.atomix.catalyst.transport.Address>) value); return true;
+            case "configurationUri": ((AtomixSetComponent) component).setConfigurationUri((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((AtomixSetComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((AtomixSetComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((AtomixSetComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

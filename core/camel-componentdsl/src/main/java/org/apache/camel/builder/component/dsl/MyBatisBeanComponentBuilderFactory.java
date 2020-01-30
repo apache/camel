@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.mybatis.MyBatisBeanComponent;
@@ -55,10 +56,9 @@ public interface MyBatisBeanComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.ibatis.session.SqlSessionFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default MyBatisBeanComponentBuilder setSqlSessionFactory(
+        default MyBatisBeanComponentBuilder sqlSessionFactory(
                 org.apache.ibatis.session.SqlSessionFactory sqlSessionFactory) {
             doSetProperty("sqlSessionFactory", sqlSessionFactory);
             return this;
@@ -72,7 +72,7 @@ public interface MyBatisBeanComponentBuilderFactory {
          * Default: SqlMapConfig.xml
          * Group: producer
          */
-        default MyBatisBeanComponentBuilder setConfigurationUri(
+        default MyBatisBeanComponentBuilder configurationUri(
                 java.lang.String configurationUri) {
             doSetProperty("configurationUri", configurationUri);
             return this;
@@ -86,7 +86,7 @@ public interface MyBatisBeanComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default MyBatisBeanComponentBuilder setBasicPropertyBinding(
+        default MyBatisBeanComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -107,7 +107,7 @@ public interface MyBatisBeanComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default MyBatisBeanComponentBuilder setLazyStartProducer(
+        default MyBatisBeanComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -122,6 +122,19 @@ public interface MyBatisBeanComponentBuilderFactory {
         @Override
         protected MyBatisBeanComponent buildConcreteComponent() {
             return new MyBatisBeanComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "sqlSessionFactory": ((MyBatisBeanComponent) component).setSqlSessionFactory((org.apache.ibatis.session.SqlSessionFactory) value); return true;
+            case "configurationUri": ((MyBatisBeanComponent) component).setConfigurationUri((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((MyBatisBeanComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((MyBatisBeanComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

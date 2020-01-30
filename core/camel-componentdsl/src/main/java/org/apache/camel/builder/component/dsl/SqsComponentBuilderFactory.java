@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.aws.sqs.SqsComponent;
@@ -54,10 +55,9 @@ public interface SqsComponentBuilderFactory {
          * <code>org.apache.camel.component.aws.sqs.SqsConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SqsComponentBuilder setConfiguration(
+        default SqsComponentBuilder configuration(
                 org.apache.camel.component.aws.sqs.SqsConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -67,10 +67,9 @@ public interface SqsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default SqsComponentBuilder setAccessKey(java.lang.String accessKey) {
+        default SqsComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
             return this;
         }
@@ -79,10 +78,9 @@ public interface SqsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default SqsComponentBuilder setSecretKey(java.lang.String secretKey) {
+        default SqsComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
             return this;
         }
@@ -92,10 +90,9 @@ public interface SqsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default SqsComponentBuilder setRegion(java.lang.String region) {
+        default SqsComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
             return this;
         }
@@ -108,7 +105,7 @@ public interface SqsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default SqsComponentBuilder setBasicPropertyBinding(
+        default SqsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -129,8 +126,7 @@ public interface SqsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SqsComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default SqsComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -148,7 +144,7 @@ public interface SqsComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default SqsComponentBuilder setBridgeErrorHandler(
+        default SqsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -163,6 +159,22 @@ public interface SqsComponentBuilderFactory {
         @Override
         protected SqsComponent buildConcreteComponent() {
             return new SqsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((SqsComponent) component).setConfiguration((org.apache.camel.component.aws.sqs.SqsConfiguration) value); return true;
+            case "accessKey": ((SqsComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": ((SqsComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "region": ((SqsComponent) component).setRegion((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((SqsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((SqsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((SqsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

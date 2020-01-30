@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.ganglia.GangliaComponent;
@@ -56,10 +57,9 @@ public interface GangliaComponentBuilderFactory {
          * <code>org.apache.camel.component.ganglia.GangliaConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default GangliaComponentBuilder setConfiguration(
+        default GangliaComponentBuilder configuration(
                 org.apache.camel.component.ganglia.GangliaConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -73,7 +73,7 @@ public interface GangliaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default GangliaComponentBuilder setBasicPropertyBinding(
+        default GangliaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -94,7 +94,7 @@ public interface GangliaComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default GangliaComponentBuilder setLazyStartProducer(
+        default GangliaComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -109,6 +109,18 @@ public interface GangliaComponentBuilderFactory {
         @Override
         protected GangliaComponent buildConcreteComponent() {
             return new GangliaComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((GangliaComponent) component).setConfiguration((org.apache.camel.component.ganglia.GangliaConfiguration) value); return true;
+            case "basicPropertyBinding": ((GangliaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((GangliaComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.lucene.LuceneComponent;
@@ -54,10 +55,9 @@ public interface LuceneComponentBuilderFactory {
          * <code>org.apache.camel.component.lucene.LuceneConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default LuceneComponentBuilder setConfig(
+        default LuceneComponentBuilder config(
                 org.apache.camel.component.lucene.LuceneConfiguration config) {
             doSetProperty("config", config);
             return this;
@@ -71,7 +71,7 @@ public interface LuceneComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default LuceneComponentBuilder setBasicPropertyBinding(
+        default LuceneComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -92,7 +92,7 @@ public interface LuceneComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default LuceneComponentBuilder setLazyStartProducer(
+        default LuceneComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -107,6 +107,18 @@ public interface LuceneComponentBuilderFactory {
         @Override
         protected LuceneComponent buildConcreteComponent() {
             return new LuceneComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "config": ((LuceneComponent) component).setConfig((org.apache.camel.component.lucene.LuceneConfiguration) value); return true;
+            case "basicPropertyBinding": ((LuceneComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((LuceneComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

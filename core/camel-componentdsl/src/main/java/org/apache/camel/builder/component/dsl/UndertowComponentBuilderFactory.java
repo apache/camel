@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.undertow.UndertowComponent;
@@ -57,10 +58,9 @@ public interface UndertowComponentBuilderFactory {
          * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default UndertowComponentBuilder setUndertowHttpBinding(
+        default UndertowComponentBuilder undertowHttpBinding(
                 org.apache.camel.component.undertow.UndertowHttpBinding undertowHttpBinding) {
             doSetProperty("undertowHttpBinding", undertowHttpBinding);
             return this;
@@ -71,10 +71,9 @@ public interface UndertowComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default UndertowComponentBuilder setSslContextParameters(
+        default UndertowComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -87,7 +86,7 @@ public interface UndertowComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default UndertowComponentBuilder setUseGlobalSslContextParameters(
+        default UndertowComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
@@ -99,10 +98,9 @@ public interface UndertowComponentBuilderFactory {
          * <code>org.apache.camel.component.undertow.UndertowHostOptions</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default UndertowComponentBuilder setHostOptions(
+        default UndertowComponentBuilder hostOptions(
                 org.apache.camel.component.undertow.UndertowHostOptions hostOptions) {
             doSetProperty("hostOptions", hostOptions);
             return this;
@@ -116,7 +114,7 @@ public interface UndertowComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default UndertowComponentBuilder setMuteException(boolean muteException) {
+        default UndertowComponentBuilder muteException(boolean muteException) {
             doSetProperty("muteException", muteException);
             return this;
         }
@@ -129,7 +127,7 @@ public interface UndertowComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default UndertowComponentBuilder setBasicPropertyBinding(
+        default UndertowComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -150,7 +148,7 @@ public interface UndertowComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default UndertowComponentBuilder setLazyStartProducer(
+        default UndertowComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -169,7 +167,7 @@ public interface UndertowComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default UndertowComponentBuilder setBridgeErrorHandler(
+        default UndertowComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -184,6 +182,23 @@ public interface UndertowComponentBuilderFactory {
         @Override
         protected UndertowComponent buildConcreteComponent() {
             return new UndertowComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "undertowHttpBinding": ((UndertowComponent) component).setUndertowHttpBinding((org.apache.camel.component.undertow.UndertowHttpBinding) value); return true;
+            case "sslContextParameters": ((UndertowComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "useGlobalSslContextParameters": ((UndertowComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "hostOptions": ((UndertowComponent) component).setHostOptions((org.apache.camel.component.undertow.UndertowHostOptions) value); return true;
+            case "muteException": ((UndertowComponent) component).setMuteException((boolean) value); return true;
+            case "basicPropertyBinding": ((UndertowComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((UndertowComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((UndertowComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

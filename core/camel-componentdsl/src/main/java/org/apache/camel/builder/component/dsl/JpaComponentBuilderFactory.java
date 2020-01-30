@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.jpa.JpaComponent;
@@ -54,10 +55,9 @@ public interface JpaComponentBuilderFactory {
          * The option is a: <code>javax.persistence.EntityManagerFactory</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
-        default JpaComponentBuilder setEntityManagerFactory(
+        default JpaComponentBuilder entityManagerFactory(
                 javax.persistence.EntityManagerFactory entityManagerFactory) {
             doSetProperty("entityManagerFactory", entityManagerFactory);
             return this;
@@ -68,10 +68,9 @@ public interface JpaComponentBuilderFactory {
          * The option is a:
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default JpaComponentBuilder setTransactionManager(
+        default JpaComponentBuilder transactionManager(
                 org.springframework.transaction.PlatformTransactionManager transactionManager) {
             doSetProperty("transactionManager", transactionManager);
             return this;
@@ -88,7 +87,7 @@ public interface JpaComponentBuilderFactory {
          * Default: true
          * Group: common
          */
-        default JpaComponentBuilder setJoinTransaction(boolean joinTransaction) {
+        default JpaComponentBuilder joinTransaction(boolean joinTransaction) {
             doSetProperty("joinTransaction", joinTransaction);
             return this;
         }
@@ -102,7 +101,7 @@ public interface JpaComponentBuilderFactory {
          * Default: false
          * Group: common
          */
-        default JpaComponentBuilder setSharedEntityManager(
+        default JpaComponentBuilder sharedEntityManager(
                 boolean sharedEntityManager) {
             doSetProperty("sharedEntityManager", sharedEntityManager);
             return this;
@@ -116,7 +115,7 @@ public interface JpaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JpaComponentBuilder setBasicPropertyBinding(
+        default JpaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -137,8 +136,7 @@ public interface JpaComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default JpaComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default JpaComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -156,7 +154,7 @@ public interface JpaComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default JpaComponentBuilder setBridgeErrorHandler(
+        default JpaComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -171,6 +169,22 @@ public interface JpaComponentBuilderFactory {
         @Override
         protected JpaComponent buildConcreteComponent() {
             return new JpaComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "entityManagerFactory": ((JpaComponent) component).setEntityManagerFactory((javax.persistence.EntityManagerFactory) value); return true;
+            case "transactionManager": ((JpaComponent) component).setTransactionManager((org.springframework.transaction.PlatformTransactionManager) value); return true;
+            case "joinTransaction": ((JpaComponent) component).setJoinTransaction((boolean) value); return true;
+            case "sharedEntityManager": ((JpaComponent) component).setSharedEntityManager((boolean) value); return true;
+            case "basicPropertyBinding": ((JpaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((JpaComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((JpaComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

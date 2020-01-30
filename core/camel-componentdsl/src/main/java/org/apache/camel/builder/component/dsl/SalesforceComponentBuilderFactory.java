@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.salesforce.SalesforceComponent;
@@ -59,10 +60,9 @@ public interface SalesforceComponentBuilderFactory {
          * <code>org.apache.camel.component.salesforce.AuthenticationType</code>
          * type.
          * 
-         * Default:
          * Group: security
          */
-        default SalesforceComponentBuilder setAuthenticationType(
+        default SalesforceComponentBuilder authenticationType(
                 org.apache.camel.component.salesforce.AuthenticationType authenticationType) {
             doSetProperty("authenticationType", authenticationType);
             return this;
@@ -74,10 +74,9 @@ public interface SalesforceComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.salesforce.SalesforceLoginConfig</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SalesforceComponentBuilder setLoginConfig(
+        default SalesforceComponentBuilder loginConfig(
                 org.apache.camel.component.salesforce.SalesforceLoginConfig loginConfig) {
             doSetProperty("loginConfig", loginConfig);
             return this;
@@ -88,10 +87,9 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SalesforceComponentBuilder setInstanceUrl(
+        default SalesforceComponentBuilder instanceUrl(
                 java.lang.String instanceUrl) {
             doSetProperty("instanceUrl", instanceUrl);
             return this;
@@ -105,7 +103,7 @@ public interface SalesforceComponentBuilderFactory {
          * Default: https://login.salesforce.com
          * Group: security
          */
-        default SalesforceComponentBuilder setLoginUrl(java.lang.String loginUrl) {
+        default SalesforceComponentBuilder loginUrl(java.lang.String loginUrl) {
             doSetProperty("loginUrl", loginUrl);
             return this;
         }
@@ -116,10 +114,9 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SalesforceComponentBuilder setClientId(java.lang.String clientId) {
+        default SalesforceComponentBuilder clientId(java.lang.String clientId) {
             doSetProperty("clientId", clientId);
             return this;
         }
@@ -129,10 +126,9 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SalesforceComponentBuilder setClientSecret(
+        default SalesforceComponentBuilder clientSecret(
                 java.lang.String clientSecret) {
             doSetProperty("clientSecret", clientSecret);
             return this;
@@ -147,10 +143,9 @@ public interface SalesforceComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SalesforceComponentBuilder setKeystore(
+        default SalesforceComponentBuilder keystore(
                 org.apache.camel.support.jsse.KeyStoreParameters keystore) {
             doSetProperty("keystore", keystore);
             return this;
@@ -167,10 +162,9 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SalesforceComponentBuilder setRefreshToken(
+        default SalesforceComponentBuilder refreshToken(
                 java.lang.String refreshToken) {
             doSetProperty("refreshToken", refreshToken);
             return this;
@@ -182,10 +176,9 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SalesforceComponentBuilder setUserName(java.lang.String userName) {
+        default SalesforceComponentBuilder userName(java.lang.String userName) {
             doSetProperty("userName", userName);
             return this;
         }
@@ -197,10 +190,9 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SalesforceComponentBuilder setPassword(java.lang.String password) {
+        default SalesforceComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
             return this;
         }
@@ -215,7 +207,7 @@ public interface SalesforceComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default SalesforceComponentBuilder setLazyLogin(boolean lazyLogin) {
+        default SalesforceComponentBuilder lazyLogin(boolean lazyLogin) {
             doSetProperty("lazyLogin", lazyLogin);
             return this;
         }
@@ -226,10 +218,9 @@ public interface SalesforceComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.salesforce.SalesforceEndpointConfig</code> type.
          * 
-         * Default:
          * Group: common (advanced)
          */
-        default SalesforceComponentBuilder setConfig(
+        default SalesforceComponentBuilder config(
                 org.apache.camel.component.salesforce.SalesforceEndpointConfig config) {
             doSetProperty("config", config);
             return this;
@@ -242,10 +233,9 @@ public interface SalesforceComponentBuilderFactory {
          * The option is a:
          * <code>java.util.Map<java.lang.String,java.lang.Object></code> type.
          * 
-         * Default:
          * Group: common (advanced)
          */
-        default SalesforceComponentBuilder setHttpClientProperties(
+        default SalesforceComponentBuilder httpClientProperties(
                 java.util.Map<java.lang.String,java.lang.Object> httpClientProperties) {
             doSetProperty("httpClientProperties", httpClientProperties);
             return this;
@@ -258,10 +248,9 @@ public interface SalesforceComponentBuilderFactory {
          * The option is a:
          * <code>java.util.Map<java.lang.String,java.lang.Object></code> type.
          * 
-         * Default:
          * Group: common (advanced)
          */
-        default SalesforceComponentBuilder setLongPollingTransportProperties(
+        default SalesforceComponentBuilder longPollingTransportProperties(
                 java.util.Map<java.lang.String,java.lang.Object> longPollingTransportProperties) {
             doSetProperty("longPollingTransportProperties", longPollingTransportProperties);
             return this;
@@ -273,10 +262,9 @@ public interface SalesforceComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SalesforceComponentBuilder setSslContextParameters(
+        default SalesforceComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -289,7 +277,7 @@ public interface SalesforceComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default SalesforceComponentBuilder setUseGlobalSslContextParameters(
+        default SalesforceComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
@@ -303,7 +291,7 @@ public interface SalesforceComponentBuilderFactory {
          * Default: 10000
          * Group: common
          */
-        default SalesforceComponentBuilder setHttpClientIdleTimeout(
+        default SalesforceComponentBuilder httpClientIdleTimeout(
                 long httpClientIdleTimeout) {
             doSetProperty("httpClientIdleTimeout", httpClientIdleTimeout);
             return this;
@@ -317,7 +305,7 @@ public interface SalesforceComponentBuilderFactory {
          * Default: 60000
          * Group: common
          */
-        default SalesforceComponentBuilder setHttpClientConnectionTimeout(
+        default SalesforceComponentBuilder httpClientConnectionTimeout(
                 long httpClientConnectionTimeout) {
             doSetProperty("httpClientConnectionTimeout", httpClientConnectionTimeout);
             return this;
@@ -327,10 +315,9 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default SalesforceComponentBuilder setHttpMaxContentLength(
+        default SalesforceComponentBuilder httpMaxContentLength(
                 java.lang.Integer httpMaxContentLength) {
             doSetProperty("httpMaxContentLength", httpMaxContentLength);
             return this;
@@ -340,10 +327,9 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
-        default SalesforceComponentBuilder setHttpProxyHost(
+        default SalesforceComponentBuilder httpProxyHost(
                 java.lang.String httpProxyHost) {
             doSetProperty("httpProxyHost", httpProxyHost);
             return this;
@@ -353,10 +339,9 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: proxy
          */
-        default SalesforceComponentBuilder setHttpProxyPort(
+        default SalesforceComponentBuilder httpProxyPort(
                 java.lang.Integer httpProxyPort) {
             doSetProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -366,10 +351,9 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SalesforceComponentBuilder setHttpProxyUsername(
+        default SalesforceComponentBuilder httpProxyUsername(
                 java.lang.String httpProxyUsername) {
             doSetProperty("httpProxyUsername", httpProxyUsername);
             return this;
@@ -379,10 +363,9 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SalesforceComponentBuilder setHttpProxyPassword(
+        default SalesforceComponentBuilder httpProxyPassword(
                 java.lang.String httpProxyPassword) {
             doSetProperty("httpProxyPassword", httpProxyPassword);
             return this;
@@ -396,7 +379,7 @@ public interface SalesforceComponentBuilderFactory {
          * Default: false
          * Group: proxy
          */
-        default SalesforceComponentBuilder setIsHttpProxySocks4(
+        default SalesforceComponentBuilder isHttpProxySocks4(
                 boolean isHttpProxySocks4) {
             doSetProperty("isHttpProxySocks4", isHttpProxySocks4);
             return this;
@@ -410,7 +393,7 @@ public interface SalesforceComponentBuilderFactory {
          * Default: true
          * Group: security
          */
-        default SalesforceComponentBuilder setIsHttpProxySecure(
+        default SalesforceComponentBuilder isHttpProxySecure(
                 boolean isHttpProxySecure) {
             doSetProperty("isHttpProxySecure", isHttpProxySecure);
             return this;
@@ -420,10 +403,9 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>java.util.Set<java.lang.String></code> type.
          * 
-         * Default:
          * Group: proxy
          */
-        default SalesforceComponentBuilder setHttpProxyIncludedAddresses(
+        default SalesforceComponentBuilder httpProxyIncludedAddresses(
                 java.util.Set<java.lang.String> httpProxyIncludedAddresses) {
             doSetProperty("httpProxyIncludedAddresses", httpProxyIncludedAddresses);
             return this;
@@ -433,10 +415,9 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>java.util.Set<java.lang.String></code> type.
          * 
-         * Default:
          * Group: proxy
          */
-        default SalesforceComponentBuilder setHttpProxyExcludedAddresses(
+        default SalesforceComponentBuilder httpProxyExcludedAddresses(
                 java.util.Set<java.lang.String> httpProxyExcludedAddresses) {
             doSetProperty("httpProxyExcludedAddresses", httpProxyExcludedAddresses);
             return this;
@@ -448,10 +429,9 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SalesforceComponentBuilder setHttpProxyAuthUri(
+        default SalesforceComponentBuilder httpProxyAuthUri(
                 java.lang.String httpProxyAuthUri) {
             doSetProperty("httpProxyAuthUri", httpProxyAuthUri);
             return this;
@@ -462,10 +442,9 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default SalesforceComponentBuilder setHttpProxyRealm(
+        default SalesforceComponentBuilder httpProxyRealm(
                 java.lang.String httpProxyRealm) {
             doSetProperty("httpProxyRealm", httpProxyRealm);
             return this;
@@ -479,7 +458,7 @@ public interface SalesforceComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default SalesforceComponentBuilder setHttpProxyUseDigestAuth(
+        default SalesforceComponentBuilder httpProxyUseDigestAuth(
                 boolean httpProxyUseDigestAuth) {
             doSetProperty("httpProxyUseDigestAuth", httpProxyUseDigestAuth);
             return this;
@@ -492,11 +471,9 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String[]</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default SalesforceComponentBuilder setPackages(
-                java.lang.String[] packages) {
+        default SalesforceComponentBuilder packages(java.lang.String[] packages) {
             doSetProperty("packages", packages);
             return this;
         }
@@ -509,7 +486,7 @@ public interface SalesforceComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default SalesforceComponentBuilder setBasicPropertyBinding(
+        default SalesforceComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -530,7 +507,7 @@ public interface SalesforceComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SalesforceComponentBuilder setLazyStartProducer(
+        default SalesforceComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -549,7 +526,7 @@ public interface SalesforceComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default SalesforceComponentBuilder setBridgeErrorHandler(
+        default SalesforceComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -564,6 +541,49 @@ public interface SalesforceComponentBuilderFactory {
         @Override
         protected SalesforceComponent buildConcreteComponent() {
             return new SalesforceComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "authenticationType": ((SalesforceComponent) component).setAuthenticationType((org.apache.camel.component.salesforce.AuthenticationType) value); return true;
+            case "loginConfig": ((SalesforceComponent) component).setLoginConfig((org.apache.camel.component.salesforce.SalesforceLoginConfig) value); return true;
+            case "instanceUrl": ((SalesforceComponent) component).setInstanceUrl((java.lang.String) value); return true;
+            case "loginUrl": ((SalesforceComponent) component).setLoginUrl((java.lang.String) value); return true;
+            case "clientId": ((SalesforceComponent) component).setClientId((java.lang.String) value); return true;
+            case "clientSecret": ((SalesforceComponent) component).setClientSecret((java.lang.String) value); return true;
+            case "keystore": ((SalesforceComponent) component).setKeystore((org.apache.camel.support.jsse.KeyStoreParameters) value); return true;
+            case "refreshToken": ((SalesforceComponent) component).setRefreshToken((java.lang.String) value); return true;
+            case "userName": ((SalesforceComponent) component).setUserName((java.lang.String) value); return true;
+            case "password": ((SalesforceComponent) component).setPassword((java.lang.String) value); return true;
+            case "lazyLogin": ((SalesforceComponent) component).setLazyLogin((boolean) value); return true;
+            case "config": ((SalesforceComponent) component).setConfig((org.apache.camel.component.salesforce.SalesforceEndpointConfig) value); return true;
+            case "httpClientProperties": ((SalesforceComponent) component).setHttpClientProperties((java.util.Map<java.lang.String,java.lang.Object>) value); return true;
+            case "longPollingTransportProperties": ((SalesforceComponent) component).setLongPollingTransportProperties((java.util.Map<java.lang.String,java.lang.Object>) value); return true;
+            case "sslContextParameters": ((SalesforceComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "useGlobalSslContextParameters": ((SalesforceComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "httpClientIdleTimeout": ((SalesforceComponent) component).setHttpClientIdleTimeout((long) value); return true;
+            case "httpClientConnectionTimeout": ((SalesforceComponent) component).setHttpClientConnectionTimeout((long) value); return true;
+            case "httpMaxContentLength": ((SalesforceComponent) component).setHttpMaxContentLength((java.lang.Integer) value); return true;
+            case "httpProxyHost": ((SalesforceComponent) component).setHttpProxyHost((java.lang.String) value); return true;
+            case "httpProxyPort": ((SalesforceComponent) component).setHttpProxyPort((java.lang.Integer) value); return true;
+            case "httpProxyUsername": ((SalesforceComponent) component).setHttpProxyUsername((java.lang.String) value); return true;
+            case "httpProxyPassword": ((SalesforceComponent) component).setHttpProxyPassword((java.lang.String) value); return true;
+            case "isHttpProxySocks4": ((SalesforceComponent) component).setIsHttpProxySocks4((boolean) value); return true;
+            case "isHttpProxySecure": ((SalesforceComponent) component).setIsHttpProxySecure((boolean) value); return true;
+            case "httpProxyIncludedAddresses": ((SalesforceComponent) component).setHttpProxyIncludedAddresses((java.util.Set<java.lang.String>) value); return true;
+            case "httpProxyExcludedAddresses": ((SalesforceComponent) component).setHttpProxyExcludedAddresses((java.util.Set<java.lang.String>) value); return true;
+            case "httpProxyAuthUri": ((SalesforceComponent) component).setHttpProxyAuthUri((java.lang.String) value); return true;
+            case "httpProxyRealm": ((SalesforceComponent) component).setHttpProxyRealm((java.lang.String) value); return true;
+            case "httpProxyUseDigestAuth": ((SalesforceComponent) component).setHttpProxyUseDigestAuth((boolean) value); return true;
+            case "packages": ((SalesforceComponent) component).setPackages((java.lang.String[]) value); return true;
+            case "basicPropertyBinding": ((SalesforceComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((SalesforceComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((SalesforceComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.ignite.set.IgniteSetComponent;
@@ -54,11 +55,9 @@ public interface IgniteSetComponentBuilderFactory {
          * 
          * The option is a: <code>org.apache.ignite.Ignite</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default IgniteSetComponentBuilder setIgnite(
-                org.apache.ignite.Ignite ignite) {
+        default IgniteSetComponentBuilder ignite(org.apache.ignite.Ignite ignite) {
             doSetProperty("ignite", ignite);
             return this;
         }
@@ -68,10 +67,9 @@ public interface IgniteSetComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default IgniteSetComponentBuilder setConfigurationResource(
+        default IgniteSetComponentBuilder configurationResource(
                 java.lang.Object configurationResource) {
             doSetProperty("configurationResource", configurationResource);
             return this;
@@ -83,10 +81,9 @@ public interface IgniteSetComponentBuilderFactory {
          * <code>org.apache.ignite.configuration.IgniteConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
-        default IgniteSetComponentBuilder setIgniteConfiguration(
+        default IgniteSetComponentBuilder igniteConfiguration(
                 org.apache.ignite.configuration.IgniteConfiguration igniteConfiguration) {
             doSetProperty("igniteConfiguration", igniteConfiguration);
             return this;
@@ -100,7 +97,7 @@ public interface IgniteSetComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default IgniteSetComponentBuilder setBasicPropertyBinding(
+        default IgniteSetComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -121,7 +118,7 @@ public interface IgniteSetComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default IgniteSetComponentBuilder setLazyStartProducer(
+        default IgniteSetComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -136,6 +133,20 @@ public interface IgniteSetComponentBuilderFactory {
         @Override
         protected IgniteSetComponent buildConcreteComponent() {
             return new IgniteSetComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "ignite": ((IgniteSetComponent) component).setIgnite((org.apache.ignite.Ignite) value); return true;
+            case "configurationResource": ((IgniteSetComponent) component).setConfigurationResource((java.lang.Object) value); return true;
+            case "igniteConfiguration": ((IgniteSetComponent) component).setIgniteConfiguration((org.apache.ignite.configuration.IgniteConfiguration) value); return true;
+            case "basicPropertyBinding": ((IgniteSetComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((IgniteSetComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

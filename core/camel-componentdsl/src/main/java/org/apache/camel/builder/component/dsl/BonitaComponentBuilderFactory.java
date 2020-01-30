@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.bonita.BonitaComponent;
@@ -56,7 +57,7 @@ public interface BonitaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default BonitaComponentBuilder setBasicPropertyBinding(
+        default BonitaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -77,7 +78,7 @@ public interface BonitaComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default BonitaComponentBuilder setLazyStartProducer(
+        default BonitaComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -92,6 +93,17 @@ public interface BonitaComponentBuilderFactory {
         @Override
         protected BonitaComponent buildConcreteComponent() {
             return new BonitaComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((BonitaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((BonitaComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

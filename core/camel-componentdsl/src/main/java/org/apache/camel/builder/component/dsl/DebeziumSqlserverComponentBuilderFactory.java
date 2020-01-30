@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.debezium.DebeziumSqlserverComponent;
@@ -57,10 +58,9 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default DebeziumSqlserverComponentBuilder setConfiguration(
+        default DebeziumSqlserverComponentBuilder configuration(
                 org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -74,7 +74,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default DebeziumSqlserverComponentBuilder setBasicPropertyBinding(
+        default DebeziumSqlserverComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -93,7 +93,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default DebeziumSqlserverComponentBuilder setBridgeErrorHandler(
+        default DebeziumSqlserverComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -108,6 +108,18 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         @Override
         protected DebeziumSqlserverComponent buildConcreteComponent() {
             return new DebeziumSqlserverComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((DebeziumSqlserverComponent) component).setConfiguration((org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration) value); return true;
+            case "basicPropertyBinding": ((DebeziumSqlserverComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((DebeziumSqlserverComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.atmosphere.websocket.WebsocketComponent;
@@ -55,7 +56,7 @@ public interface WebsocketComponentBuilderFactory {
          * Default: CamelServlet
          * Group: consumer
          */
-        default WebsocketComponentBuilder setServletName(
+        default WebsocketComponentBuilder servletName(
                 java.lang.String servletName) {
             doSetProperty("servletName", servletName);
             return this;
@@ -66,10 +67,9 @@ public interface WebsocketComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.servlet.HttpRegistry</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
-        default WebsocketComponentBuilder setHttpRegistry(
+        default WebsocketComponentBuilder httpRegistry(
                 org.apache.camel.component.servlet.HttpRegistry httpRegistry) {
             doSetProperty("httpRegistry", httpRegistry);
             return this;
@@ -87,7 +87,7 @@ public interface WebsocketComponentBuilderFactory {
          * Default: false
          * Group: consumer (advanced)
          */
-        default WebsocketComponentBuilder setAttachmentMultipartBinding(
+        default WebsocketComponentBuilder attachmentMultipartBinding(
                 boolean attachmentMultipartBinding) {
             doSetProperty("attachmentMultipartBinding", attachmentMultipartBinding);
             return this;
@@ -99,10 +99,9 @@ public interface WebsocketComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
-        default WebsocketComponentBuilder setFileNameExtWhitelist(
+        default WebsocketComponentBuilder fileNameExtWhitelist(
                 java.lang.String fileNameExtWhitelist) {
             doSetProperty("fileNameExtWhitelist", fileNameExtWhitelist);
             return this;
@@ -114,10 +113,9 @@ public interface WebsocketComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default WebsocketComponentBuilder setHttpBinding(
+        default WebsocketComponentBuilder httpBinding(
                 org.apache.camel.http.common.HttpBinding httpBinding) {
             doSetProperty("httpBinding", httpBinding);
             return this;
@@ -128,10 +126,9 @@ public interface WebsocketComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.common.HttpConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default WebsocketComponentBuilder setHttpConfiguration(
+        default WebsocketComponentBuilder httpConfiguration(
                 org.apache.camel.http.common.HttpConfiguration httpConfiguration) {
             doSetProperty("httpConfiguration", httpConfiguration);
             return this;
@@ -148,7 +145,7 @@ public interface WebsocketComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default WebsocketComponentBuilder setAllowJavaSerializedObject(
+        default WebsocketComponentBuilder allowJavaSerializedObject(
                 boolean allowJavaSerializedObject) {
             doSetProperty("allowJavaSerializedObject", allowJavaSerializedObject);
             return this;
@@ -160,10 +157,9 @@ public interface WebsocketComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: filter
          */
-        default WebsocketComponentBuilder setHeaderFilterStrategy(
+        default WebsocketComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -177,7 +173,7 @@ public interface WebsocketComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default WebsocketComponentBuilder setBasicPropertyBinding(
+        default WebsocketComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -196,7 +192,7 @@ public interface WebsocketComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default WebsocketComponentBuilder setBridgeErrorHandler(
+        default WebsocketComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -211,6 +207,25 @@ public interface WebsocketComponentBuilderFactory {
         @Override
         protected WebsocketComponent buildConcreteComponent() {
             return new WebsocketComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "servletName": ((WebsocketComponent) component).setServletName((java.lang.String) value); return true;
+            case "httpRegistry": ((WebsocketComponent) component).setHttpRegistry((org.apache.camel.component.servlet.HttpRegistry) value); return true;
+            case "attachmentMultipartBinding": ((WebsocketComponent) component).setAttachmentMultipartBinding((boolean) value); return true;
+            case "fileNameExtWhitelist": ((WebsocketComponent) component).setFileNameExtWhitelist((java.lang.String) value); return true;
+            case "httpBinding": ((WebsocketComponent) component).setHttpBinding((org.apache.camel.http.common.HttpBinding) value); return true;
+            case "httpConfiguration": ((WebsocketComponent) component).setHttpConfiguration((org.apache.camel.http.common.HttpConfiguration) value); return true;
+            case "allowJavaSerializedObject": ((WebsocketComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
+            case "headerFilterStrategy": ((WebsocketComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "basicPropertyBinding": ((WebsocketComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((WebsocketComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

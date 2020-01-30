@@ -47,7 +47,7 @@ public class ComponentsBuilderFactoryTest extends ContextTestSupport {
         context.getPropertiesComponent().setLocation("classpath:application.properties");
 
         final KafkaComponent kafkaComponent = ComponentsBuilderFactory.kafka()
-                .setBrokers("{{kafka.host}}:{{kafka.port}}")
+                .brokers("{{kafka.host}}:{{kafka.port}}")
                 .build(context);
 
         final KafkaConfiguration kafkaConfiguration = kafkaComponent.getConfiguration();
@@ -64,9 +64,9 @@ public class ComponentsBuilderFactoryTest extends ContextTestSupport {
         kafkaConfiguration.setConsumerRequestTimeoutMs(5000);
 
         final KafkaComponent kafkaComponent = ComponentsBuilderFactory.kafka()
-                .setAllowManualCommit(true)
-                .setConfiguration(kafkaConfiguration)
-                .setBrokers("localhost:9092")
+                .allowManualCommit(true)
+                .configuration(kafkaConfiguration)
+                .brokers("localhost:9092")
                 .build();
 
         assertNotNull(kafkaComponent);

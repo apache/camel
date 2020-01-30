@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.zookeeper.ZooKeeperComponent;
@@ -53,10 +54,9 @@ public interface ZooKeeperComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.zookeeper.ZooKeeperConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ZooKeeperComponentBuilder setConfiguration(
+        default ZooKeeperComponentBuilder configuration(
                 org.apache.camel.component.zookeeper.ZooKeeperConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -70,7 +70,7 @@ public interface ZooKeeperComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ZooKeeperComponentBuilder setBasicPropertyBinding(
+        default ZooKeeperComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -91,7 +91,7 @@ public interface ZooKeeperComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default ZooKeeperComponentBuilder setLazyStartProducer(
+        default ZooKeeperComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -110,7 +110,7 @@ public interface ZooKeeperComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default ZooKeeperComponentBuilder setBridgeErrorHandler(
+        default ZooKeeperComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -125,6 +125,19 @@ public interface ZooKeeperComponentBuilderFactory {
         @Override
         protected ZooKeeperComponent buildConcreteComponent() {
             return new ZooKeeperComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((ZooKeeperComponent) component).setConfiguration((org.apache.camel.component.zookeeper.ZooKeeperConfiguration) value); return true;
+            case "basicPropertyBinding": ((ZooKeeperComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((ZooKeeperComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((ZooKeeperComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

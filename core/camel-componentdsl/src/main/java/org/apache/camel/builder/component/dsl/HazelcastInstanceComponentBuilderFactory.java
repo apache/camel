@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.hazelcast.instance.HazelcastInstanceComponent;
@@ -57,10 +58,9 @@ public interface HazelcastInstanceComponentBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default HazelcastInstanceComponentBuilder setHazelcastInstance(
+        default HazelcastInstanceComponentBuilder hazelcastInstance(
                 com.hazelcast.core.HazelcastInstance hazelcastInstance) {
             doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -75,7 +75,7 @@ public interface HazelcastInstanceComponentBuilderFactory {
          * Default: node
          * Group: advanced
          */
-        default HazelcastInstanceComponentBuilder setHazelcastMode(
+        default HazelcastInstanceComponentBuilder hazelcastMode(
                 java.lang.String hazelcastMode) {
             doSetProperty("hazelcastMode", hazelcastMode);
             return this;
@@ -89,7 +89,7 @@ public interface HazelcastInstanceComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default HazelcastInstanceComponentBuilder setBasicPropertyBinding(
+        default HazelcastInstanceComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -108,7 +108,7 @@ public interface HazelcastInstanceComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default HazelcastInstanceComponentBuilder setBridgeErrorHandler(
+        default HazelcastInstanceComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -123,6 +123,19 @@ public interface HazelcastInstanceComponentBuilderFactory {
         @Override
         protected HazelcastInstanceComponent buildConcreteComponent() {
             return new HazelcastInstanceComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "hazelcastInstance": ((HazelcastInstanceComponent) component).setHazelcastInstance((com.hazelcast.core.HazelcastInstance) value); return true;
+            case "hazelcastMode": ((HazelcastInstanceComponent) component).setHazelcastMode((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((HazelcastInstanceComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((HazelcastInstanceComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.hazelcast.queue.HazelcastQueueComponent;
@@ -56,10 +57,9 @@ public interface HazelcastQueueComponentBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default HazelcastQueueComponentBuilder setHazelcastInstance(
+        default HazelcastQueueComponentBuilder hazelcastInstance(
                 com.hazelcast.core.HazelcastInstance hazelcastInstance) {
             doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -74,7 +74,7 @@ public interface HazelcastQueueComponentBuilderFactory {
          * Default: node
          * Group: advanced
          */
-        default HazelcastQueueComponentBuilder setHazelcastMode(
+        default HazelcastQueueComponentBuilder hazelcastMode(
                 java.lang.String hazelcastMode) {
             doSetProperty("hazelcastMode", hazelcastMode);
             return this;
@@ -88,7 +88,7 @@ public interface HazelcastQueueComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default HazelcastQueueComponentBuilder setBasicPropertyBinding(
+        default HazelcastQueueComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -109,7 +109,7 @@ public interface HazelcastQueueComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default HazelcastQueueComponentBuilder setLazyStartProducer(
+        default HazelcastQueueComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -128,7 +128,7 @@ public interface HazelcastQueueComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default HazelcastQueueComponentBuilder setBridgeErrorHandler(
+        default HazelcastQueueComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -143,6 +143,20 @@ public interface HazelcastQueueComponentBuilderFactory {
         @Override
         protected HazelcastQueueComponent buildConcreteComponent() {
             return new HazelcastQueueComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "hazelcastInstance": ((HazelcastQueueComponent) component).setHazelcastInstance((com.hazelcast.core.HazelcastInstance) value); return true;
+            case "hazelcastMode": ((HazelcastQueueComponent) component).setHazelcastMode((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((HazelcastQueueComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((HazelcastQueueComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((HazelcastQueueComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

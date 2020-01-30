@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.google.mail.GoogleMailComponent;
@@ -53,10 +54,9 @@ public interface GoogleMailComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.mail.GoogleMailConfiguration</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default GoogleMailComponentBuilder setConfiguration(
+        default GoogleMailComponentBuilder configuration(
                 org.apache.camel.component.google.mail.GoogleMailConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -68,10 +68,9 @@ public interface GoogleMailComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.mail.GoogleMailClientFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default GoogleMailComponentBuilder setClientFactory(
+        default GoogleMailComponentBuilder clientFactory(
                 org.apache.camel.component.google.mail.GoogleMailClientFactory clientFactory) {
             doSetProperty("clientFactory", clientFactory);
             return this;
@@ -85,7 +84,7 @@ public interface GoogleMailComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default GoogleMailComponentBuilder setBasicPropertyBinding(
+        default GoogleMailComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -106,7 +105,7 @@ public interface GoogleMailComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default GoogleMailComponentBuilder setLazyStartProducer(
+        default GoogleMailComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -125,7 +124,7 @@ public interface GoogleMailComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default GoogleMailComponentBuilder setBridgeErrorHandler(
+        default GoogleMailComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -140,6 +139,20 @@ public interface GoogleMailComponentBuilderFactory {
         @Override
         protected GoogleMailComponent buildConcreteComponent() {
             return new GoogleMailComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((GoogleMailComponent) component).setConfiguration((org.apache.camel.component.google.mail.GoogleMailConfiguration) value); return true;
+            case "clientFactory": ((GoogleMailComponent) component).setClientFactory((org.apache.camel.component.google.mail.GoogleMailClientFactory) value); return true;
+            case "basicPropertyBinding": ((GoogleMailComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((GoogleMailComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((GoogleMailComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

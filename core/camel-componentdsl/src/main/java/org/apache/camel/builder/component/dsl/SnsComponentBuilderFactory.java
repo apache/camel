@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.aws.sns.SnsComponent;
@@ -54,10 +55,9 @@ public interface SnsComponentBuilderFactory {
          * <code>org.apache.camel.component.aws.sns.SnsConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SnsComponentBuilder setConfiguration(
+        default SnsComponentBuilder configuration(
                 org.apache.camel.component.aws.sns.SnsConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -67,10 +67,9 @@ public interface SnsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default SnsComponentBuilder setAccessKey(java.lang.String accessKey) {
+        default SnsComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
             return this;
         }
@@ -79,10 +78,9 @@ public interface SnsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default SnsComponentBuilder setSecretKey(java.lang.String secretKey) {
+        default SnsComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
             return this;
         }
@@ -91,10 +89,9 @@ public interface SnsComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default SnsComponentBuilder setRegion(java.lang.String region) {
+        default SnsComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
             return this;
         }
@@ -107,7 +104,7 @@ public interface SnsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default SnsComponentBuilder setBasicPropertyBinding(
+        default SnsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -128,8 +125,7 @@ public interface SnsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SnsComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default SnsComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -143,6 +139,21 @@ public interface SnsComponentBuilderFactory {
         @Override
         protected SnsComponent buildConcreteComponent() {
             return new SnsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((SnsComponent) component).setConfiguration((org.apache.camel.component.aws.sns.SnsConfiguration) value); return true;
+            case "accessKey": ((SnsComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": ((SnsComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "region": ((SnsComponent) component).setRegion((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((SnsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((SnsComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

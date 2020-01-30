@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.atmos.AtmosComponent;
@@ -50,11 +51,9 @@ public interface AtmosComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default AtmosComponentBuilder setFullTokenId(
-                java.lang.String fullTokenId) {
+        default AtmosComponentBuilder fullTokenId(java.lang.String fullTokenId) {
             doSetProperty("fullTokenId", fullTokenId);
             return this;
         }
@@ -64,10 +63,9 @@ public interface AtmosComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default AtmosComponentBuilder setSecretKey(java.lang.String secretKey) {
+        default AtmosComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
             return this;
         }
@@ -76,10 +74,9 @@ public interface AtmosComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default AtmosComponentBuilder setUri(java.lang.String uri) {
+        default AtmosComponentBuilder uri(java.lang.String uri) {
             doSetProperty("uri", uri);
             return this;
         }
@@ -91,7 +88,7 @@ public interface AtmosComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default AtmosComponentBuilder setSslValidation(boolean sslValidation) {
+        default AtmosComponentBuilder sslValidation(boolean sslValidation) {
             doSetProperty("sslValidation", sslValidation);
             return this;
         }
@@ -104,7 +101,7 @@ public interface AtmosComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default AtmosComponentBuilder setBasicPropertyBinding(
+        default AtmosComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -125,7 +122,7 @@ public interface AtmosComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default AtmosComponentBuilder setLazyStartProducer(
+        default AtmosComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -144,7 +141,7 @@ public interface AtmosComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default AtmosComponentBuilder setBridgeErrorHandler(
+        default AtmosComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -159,6 +156,22 @@ public interface AtmosComponentBuilderFactory {
         @Override
         protected AtmosComponent buildConcreteComponent() {
             return new AtmosComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "fullTokenId": ((AtmosComponent) component).setFullTokenId((java.lang.String) value); return true;
+            case "secretKey": ((AtmosComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "uri": ((AtmosComponent) component).setUri((java.lang.String) value); return true;
+            case "sslValidation": ((AtmosComponent) component).setSslValidation((boolean) value); return true;
+            case "basicPropertyBinding": ((AtmosComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((AtmosComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((AtmosComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

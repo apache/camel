@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.aws.lambda.LambdaComponent;
@@ -55,10 +56,9 @@ public interface LambdaComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.aws.lambda.LambdaConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default LambdaComponentBuilder setConfiguration(
+        default LambdaComponentBuilder configuration(
                 org.apache.camel.component.aws.lambda.LambdaConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -68,10 +68,9 @@ public interface LambdaComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default LambdaComponentBuilder setAccessKey(java.lang.String accessKey) {
+        default LambdaComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
             return this;
         }
@@ -80,10 +79,9 @@ public interface LambdaComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default LambdaComponentBuilder setSecretKey(java.lang.String secretKey) {
+        default LambdaComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
             return this;
         }
@@ -92,10 +90,9 @@ public interface LambdaComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default LambdaComponentBuilder setRegion(java.lang.String region) {
+        default LambdaComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
             return this;
         }
@@ -108,7 +105,7 @@ public interface LambdaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default LambdaComponentBuilder setBasicPropertyBinding(
+        default LambdaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -129,7 +126,7 @@ public interface LambdaComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default LambdaComponentBuilder setLazyStartProducer(
+        default LambdaComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -144,6 +141,21 @@ public interface LambdaComponentBuilderFactory {
         @Override
         protected LambdaComponent buildConcreteComponent() {
             return new LambdaComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((LambdaComponent) component).setConfiguration((org.apache.camel.component.aws.lambda.LambdaConfiguration) value); return true;
+            case "accessKey": ((LambdaComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": ((LambdaComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "region": ((LambdaComponent) component).setRegion((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((LambdaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((LambdaComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

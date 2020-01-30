@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.avro.AvroComponent;
@@ -51,10 +52,9 @@ public interface AvroComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.avro.AvroConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default AvroComponentBuilder setConfiguration(
+        default AvroComponentBuilder configuration(
                 org.apache.camel.component.avro.AvroConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -68,7 +68,7 @@ public interface AvroComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default AvroComponentBuilder setBasicPropertyBinding(
+        default AvroComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -89,8 +89,7 @@ public interface AvroComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default AvroComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default AvroComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -108,7 +107,7 @@ public interface AvroComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default AvroComponentBuilder setBridgeErrorHandler(
+        default AvroComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -123,6 +122,19 @@ public interface AvroComponentBuilderFactory {
         @Override
         protected AvroComponent buildConcreteComponent() {
             return new AvroComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((AvroComponent) component).setConfiguration((org.apache.camel.component.avro.AvroConfiguration) value); return true;
+            case "basicPropertyBinding": ((AvroComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((AvroComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((AvroComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

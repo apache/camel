@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.sql.SqlComponent;
@@ -51,11 +52,9 @@ public interface SqlComponentBuilderFactory {
          * 
          * The option is a: <code>javax.sql.DataSource</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default SqlComponentBuilder setDataSource(
-                javax.sql.DataSource dataSource) {
+        default SqlComponentBuilder dataSource(javax.sql.DataSource dataSource) {
             doSetProperty("dataSource", dataSource);
             return this;
         }
@@ -68,7 +67,7 @@ public interface SqlComponentBuilderFactory {
          * Default: true
          * Group: advanced
          */
-        default SqlComponentBuilder setUsePlaceholder(boolean usePlaceholder) {
+        default SqlComponentBuilder usePlaceholder(boolean usePlaceholder) {
             doSetProperty("usePlaceholder", usePlaceholder);
             return this;
         }
@@ -81,7 +80,7 @@ public interface SqlComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default SqlComponentBuilder setBasicPropertyBinding(
+        default SqlComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -102,8 +101,7 @@ public interface SqlComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SqlComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default SqlComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -121,7 +119,7 @@ public interface SqlComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default SqlComponentBuilder setBridgeErrorHandler(
+        default SqlComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -136,6 +134,20 @@ public interface SqlComponentBuilderFactory {
         @Override
         protected SqlComponent buildConcreteComponent() {
             return new SqlComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "dataSource": ((SqlComponent) component).setDataSource((javax.sql.DataSource) value); return true;
+            case "usePlaceholder": ((SqlComponent) component).setUsePlaceholder((boolean) value); return true;
+            case "basicPropertyBinding": ((SqlComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((SqlComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((SqlComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

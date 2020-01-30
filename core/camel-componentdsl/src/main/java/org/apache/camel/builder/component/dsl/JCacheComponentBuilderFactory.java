@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.jcache.JCacheComponent;
@@ -55,10 +56,9 @@ public interface JCacheComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default JCacheComponentBuilder setCachingProvider(
+        default JCacheComponentBuilder cachingProvider(
                 java.lang.String cachingProvider) {
             doSetProperty("cachingProvider", cachingProvider);
             return this;
@@ -69,10 +69,9 @@ public interface JCacheComponentBuilderFactory {
          * The option is a: <code>javax.cache.configuration.Configuration</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
-        default JCacheComponentBuilder setCacheConfiguration(
+        default JCacheComponentBuilder cacheConfiguration(
                 javax.cache.configuration.Configuration cacheConfiguration) {
             doSetProperty("cacheConfiguration", cacheConfiguration);
             return this;
@@ -82,10 +81,9 @@ public interface JCacheComponentBuilderFactory {
          * 
          * The option is a: <code>java.util.Map</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default JCacheComponentBuilder setCacheConfigurationProperties(
+        default JCacheComponentBuilder cacheConfigurationProperties(
                 java.util.Map cacheConfigurationProperties) {
             doSetProperty("cacheConfigurationProperties", cacheConfigurationProperties);
             return this;
@@ -96,10 +94,9 @@ public interface JCacheComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default JCacheComponentBuilder setCacheConfigurationPropertiesRef(
+        default JCacheComponentBuilder cacheConfigurationPropertiesRef(
                 java.lang.String cacheConfigurationPropertiesRef) {
             doSetProperty("cacheConfigurationPropertiesRef", cacheConfigurationPropertiesRef);
             return this;
@@ -109,10 +106,9 @@ public interface JCacheComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default JCacheComponentBuilder setConfigurationUri(
+        default JCacheComponentBuilder configurationUri(
                 java.lang.String configurationUri) {
             doSetProperty("configurationUri", configurationUri);
             return this;
@@ -126,7 +122,7 @@ public interface JCacheComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JCacheComponentBuilder setBasicPropertyBinding(
+        default JCacheComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -147,7 +143,7 @@ public interface JCacheComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default JCacheComponentBuilder setLazyStartProducer(
+        default JCacheComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -166,7 +162,7 @@ public interface JCacheComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default JCacheComponentBuilder setBridgeErrorHandler(
+        default JCacheComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -181,6 +177,23 @@ public interface JCacheComponentBuilderFactory {
         @Override
         protected JCacheComponent buildConcreteComponent() {
             return new JCacheComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "cachingProvider": ((JCacheComponent) component).setCachingProvider((java.lang.String) value); return true;
+            case "cacheConfiguration": ((JCacheComponent) component).setCacheConfiguration((javax.cache.configuration.Configuration) value); return true;
+            case "cacheConfigurationProperties": ((JCacheComponent) component).setCacheConfigurationProperties((java.util.Map) value); return true;
+            case "cacheConfigurationPropertiesRef": ((JCacheComponent) component).setCacheConfigurationPropertiesRef((java.lang.String) value); return true;
+            case "configurationUri": ((JCacheComponent) component).setConfigurationUri((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((JCacheComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((JCacheComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((JCacheComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.kubernetes.job.KubernetesJobComponent;
@@ -58,7 +59,7 @@ public interface KubernetesJobComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default KubernetesJobComponentBuilder setBasicPropertyBinding(
+        default KubernetesJobComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +80,7 @@ public interface KubernetesJobComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default KubernetesJobComponentBuilder setLazyStartProducer(
+        default KubernetesJobComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -98,7 +99,7 @@ public interface KubernetesJobComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default KubernetesJobComponentBuilder setBridgeErrorHandler(
+        default KubernetesJobComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -113,6 +114,18 @@ public interface KubernetesJobComponentBuilderFactory {
         @Override
         protected KubernetesJobComponent buildConcreteComponent() {
             return new KubernetesJobComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((KubernetesJobComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((KubernetesJobComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((KubernetesJobComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

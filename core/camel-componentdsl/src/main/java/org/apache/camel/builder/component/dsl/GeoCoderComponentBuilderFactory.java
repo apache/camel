@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.geocoder.GeoCoderComponent;
@@ -58,7 +59,7 @@ public interface GeoCoderComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default GeoCoderComponentBuilder setBasicPropertyBinding(
+        default GeoCoderComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +80,7 @@ public interface GeoCoderComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default GeoCoderComponentBuilder setLazyStartProducer(
+        default GeoCoderComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -94,6 +95,17 @@ public interface GeoCoderComponentBuilderFactory {
         @Override
         protected GeoCoderComponent buildConcreteComponent() {
             return new GeoCoderComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((GeoCoderComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((GeoCoderComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

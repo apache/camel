@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.yammer.YammerComponent;
@@ -54,11 +55,9 @@ public interface YammerComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default YammerComponentBuilder setConsumerKey(
-                java.lang.String consumerKey) {
+        default YammerComponentBuilder consumerKey(java.lang.String consumerKey) {
             doSetProperty("consumerKey", consumerKey);
             return this;
         }
@@ -67,10 +66,9 @@ public interface YammerComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default YammerComponentBuilder setConsumerSecret(
+        default YammerComponentBuilder consumerSecret(
                 java.lang.String consumerSecret) {
             doSetProperty("consumerSecret", consumerSecret);
             return this;
@@ -80,11 +78,9 @@ public interface YammerComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default YammerComponentBuilder setAccessToken(
-                java.lang.String accessToken) {
+        default YammerComponentBuilder accessToken(java.lang.String accessToken) {
             doSetProperty("accessToken", accessToken);
             return this;
         }
@@ -95,10 +91,9 @@ public interface YammerComponentBuilderFactory {
          * <code>org.apache.camel.component.yammer.YammerConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default YammerComponentBuilder setConfig(
+        default YammerComponentBuilder config(
                 org.apache.camel.component.yammer.YammerConfiguration config) {
             doSetProperty("config", config);
             return this;
@@ -112,7 +107,7 @@ public interface YammerComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default YammerComponentBuilder setBasicPropertyBinding(
+        default YammerComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -133,7 +128,7 @@ public interface YammerComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default YammerComponentBuilder setLazyStartProducer(
+        default YammerComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -152,7 +147,7 @@ public interface YammerComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default YammerComponentBuilder setBridgeErrorHandler(
+        default YammerComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -167,6 +162,22 @@ public interface YammerComponentBuilderFactory {
         @Override
         protected YammerComponent buildConcreteComponent() {
             return new YammerComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "consumerKey": ((YammerComponent) component).setConsumerKey((java.lang.String) value); return true;
+            case "consumerSecret": ((YammerComponent) component).setConsumerSecret((java.lang.String) value); return true;
+            case "accessToken": ((YammerComponent) component).setAccessToken((java.lang.String) value); return true;
+            case "config": ((YammerComponent) component).setConfig((org.apache.camel.component.yammer.YammerConfiguration) value); return true;
+            case "basicPropertyBinding": ((YammerComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((YammerComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((YammerComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

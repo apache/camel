@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.language.LanguageComponent;
@@ -58,7 +59,7 @@ public interface LanguageComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default LanguageComponentBuilder setBasicPropertyBinding(
+        default LanguageComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +80,7 @@ public interface LanguageComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default LanguageComponentBuilder setLazyStartProducer(
+        default LanguageComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -94,6 +95,17 @@ public interface LanguageComponentBuilderFactory {
         @Override
         protected LanguageComponent buildConcreteComponent() {
             return new LanguageComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((LanguageComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((LanguageComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

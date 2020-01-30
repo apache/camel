@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.elsql.ElsqlComponent;
@@ -54,10 +55,9 @@ public interface ElsqlComponentBuilderFactory {
          * <code>org.apache.camel.component.elsql.ElSqlDatabaseVendor</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
-        default ElsqlComponentBuilder setDatabaseVendor(
+        default ElsqlComponentBuilder databaseVendor(
                 org.apache.camel.component.elsql.ElSqlDatabaseVendor databaseVendor) {
             doSetProperty("databaseVendor", databaseVendor);
             return this;
@@ -67,11 +67,9 @@ public interface ElsqlComponentBuilderFactory {
          * 
          * The option is a: <code>javax.sql.DataSource</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default ElsqlComponentBuilder setDataSource(
-                javax.sql.DataSource dataSource) {
+        default ElsqlComponentBuilder dataSource(javax.sql.DataSource dataSource) {
             doSetProperty("dataSource", dataSource);
             return this;
         }
@@ -81,10 +79,9 @@ public interface ElsqlComponentBuilderFactory {
          * 
          * The option is a: <code>com.opengamma.elsql.ElSqlConfig</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ElsqlComponentBuilder setElSqlConfig(
+        default ElsqlComponentBuilder elSqlConfig(
                 com.opengamma.elsql.ElSqlConfig elSqlConfig) {
             doSetProperty("elSqlConfig", elSqlConfig);
             return this;
@@ -98,11 +95,9 @@ public interface ElsqlComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default ElsqlComponentBuilder setResourceUri(
-                java.lang.String resourceUri) {
+        default ElsqlComponentBuilder resourceUri(java.lang.String resourceUri) {
             doSetProperty("resourceUri", resourceUri);
             return this;
         }
@@ -115,7 +110,7 @@ public interface ElsqlComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ElsqlComponentBuilder setBasicPropertyBinding(
+        default ElsqlComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -136,7 +131,7 @@ public interface ElsqlComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default ElsqlComponentBuilder setLazyStartProducer(
+        default ElsqlComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -155,7 +150,7 @@ public interface ElsqlComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default ElsqlComponentBuilder setBridgeErrorHandler(
+        default ElsqlComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -170,6 +165,22 @@ public interface ElsqlComponentBuilderFactory {
         @Override
         protected ElsqlComponent buildConcreteComponent() {
             return new ElsqlComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "databaseVendor": ((ElsqlComponent) component).setDatabaseVendor((org.apache.camel.component.elsql.ElSqlDatabaseVendor) value); return true;
+            case "dataSource": ((ElsqlComponent) component).setDataSource((javax.sql.DataSource) value); return true;
+            case "elSqlConfig": ((ElsqlComponent) component).setElSqlConfig((com.opengamma.elsql.ElSqlConfig) value); return true;
+            case "resourceUri": ((ElsqlComponent) component).setResourceUri((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((ElsqlComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((ElsqlComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((ElsqlComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

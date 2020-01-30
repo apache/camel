@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.file.remote.FtpComponent;
@@ -56,7 +57,7 @@ public interface FtpComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default FtpComponentBuilder setBasicPropertyBinding(
+        default FtpComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -77,8 +78,7 @@ public interface FtpComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default FtpComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default FtpComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -96,7 +96,7 @@ public interface FtpComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default FtpComponentBuilder setBridgeErrorHandler(
+        default FtpComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -111,6 +111,18 @@ public interface FtpComponentBuilderFactory {
         @Override
         protected FtpComponent buildConcreteComponent() {
             return new FtpComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((FtpComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((FtpComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((FtpComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

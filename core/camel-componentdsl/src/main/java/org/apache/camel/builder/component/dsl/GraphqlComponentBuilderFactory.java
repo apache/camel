@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.graphql.GraphqlComponent;
@@ -56,7 +57,7 @@ public interface GraphqlComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default GraphqlComponentBuilder setBasicPropertyBinding(
+        default GraphqlComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -77,7 +78,7 @@ public interface GraphqlComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default GraphqlComponentBuilder setLazyStartProducer(
+        default GraphqlComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -92,6 +93,17 @@ public interface GraphqlComponentBuilderFactory {
         @Override
         protected GraphqlComponent buildConcreteComponent() {
             return new GraphqlComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((GraphqlComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((GraphqlComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.spring.batch.SpringBatchComponent;
@@ -55,10 +56,9 @@ public interface SpringBatchComponentBuilderFactory {
          * The option is a:
          * <code>org.springframework.batch.core.launch.JobLauncher</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default SpringBatchComponentBuilder setJobLauncher(
+        default SpringBatchComponentBuilder jobLauncher(
                 org.springframework.batch.core.launch.JobLauncher jobLauncher) {
             doSetProperty("jobLauncher", jobLauncher);
             return this;
@@ -70,10 +70,9 @@ public interface SpringBatchComponentBuilderFactory {
          * <code>org.springframework.batch.core.configuration.JobRegistry</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
-        default SpringBatchComponentBuilder setJobRegistry(
+        default SpringBatchComponentBuilder jobRegistry(
                 org.springframework.batch.core.configuration.JobRegistry jobRegistry) {
             doSetProperty("jobRegistry", jobRegistry);
             return this;
@@ -87,7 +86,7 @@ public interface SpringBatchComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default SpringBatchComponentBuilder setBasicPropertyBinding(
+        default SpringBatchComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -108,7 +107,7 @@ public interface SpringBatchComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SpringBatchComponentBuilder setLazyStartProducer(
+        default SpringBatchComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -123,6 +122,19 @@ public interface SpringBatchComponentBuilderFactory {
         @Override
         protected SpringBatchComponent buildConcreteComponent() {
             return new SpringBatchComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "jobLauncher": ((SpringBatchComponent) component).setJobLauncher((org.springframework.batch.core.launch.JobLauncher) value); return true;
+            case "jobRegistry": ((SpringBatchComponent) component).setJobRegistry((org.springframework.batch.core.configuration.JobRegistry) value); return true;
+            case "basicPropertyBinding": ((SpringBatchComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((SpringBatchComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

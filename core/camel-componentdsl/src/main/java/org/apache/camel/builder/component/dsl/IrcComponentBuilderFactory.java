@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.irc.IrcComponent;
@@ -53,7 +54,7 @@ public interface IrcComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default IrcComponentBuilder setUseGlobalSslContextParameters(
+        default IrcComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
@@ -67,7 +68,7 @@ public interface IrcComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default IrcComponentBuilder setBasicPropertyBinding(
+        default IrcComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -88,8 +89,7 @@ public interface IrcComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default IrcComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default IrcComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -107,7 +107,7 @@ public interface IrcComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default IrcComponentBuilder setBridgeErrorHandler(
+        default IrcComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -122,6 +122,19 @@ public interface IrcComponentBuilderFactory {
         @Override
         protected IrcComponent buildConcreteComponent() {
             return new IrcComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "useGlobalSslContextParameters": ((IrcComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "basicPropertyBinding": ((IrcComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((IrcComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((IrcComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

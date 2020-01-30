@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.atomix.client.map.AtomixMapComponent;
@@ -53,10 +54,9 @@ public interface AtomixMapComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.map.AtomixMapConfiguration</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default AtomixMapComponentBuilder setConfiguration(
+        default AtomixMapComponentBuilder configuration(
                 org.apache.camel.component.atomix.client.map.AtomixMapConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -66,11 +66,9 @@ public interface AtomixMapComponentBuilderFactory {
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default AtomixMapComponentBuilder setAtomix(
-                io.atomix.AtomixClient atomix) {
+        default AtomixMapComponentBuilder atomix(io.atomix.AtomixClient atomix) {
             doSetProperty("atomix", atomix);
             return this;
         }
@@ -81,10 +79,9 @@ public interface AtomixMapComponentBuilderFactory {
          * <code>java.util.List<io.atomix.catalyst.transport.Address></code>
          * type.
          * 
-         * Default:
          * Group: common
          */
-        default AtomixMapComponentBuilder setNodes(
+        default AtomixMapComponentBuilder nodes(
                 java.util.List<io.atomix.catalyst.transport.Address> nodes) {
             doSetProperty("nodes", nodes);
             return this;
@@ -94,10 +91,9 @@ public interface AtomixMapComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default AtomixMapComponentBuilder setConfigurationUri(
+        default AtomixMapComponentBuilder configurationUri(
                 java.lang.String configurationUri) {
             doSetProperty("configurationUri", configurationUri);
             return this;
@@ -111,7 +107,7 @@ public interface AtomixMapComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default AtomixMapComponentBuilder setBasicPropertyBinding(
+        default AtomixMapComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -132,7 +128,7 @@ public interface AtomixMapComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default AtomixMapComponentBuilder setLazyStartProducer(
+        default AtomixMapComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -151,7 +147,7 @@ public interface AtomixMapComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default AtomixMapComponentBuilder setBridgeErrorHandler(
+        default AtomixMapComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -166,6 +162,22 @@ public interface AtomixMapComponentBuilderFactory {
         @Override
         protected AtomixMapComponent buildConcreteComponent() {
             return new AtomixMapComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((AtomixMapComponent) component).setConfiguration((org.apache.camel.component.atomix.client.map.AtomixMapConfiguration) value); return true;
+            case "atomix": ((AtomixMapComponent) component).setAtomix((io.atomix.AtomixClient) value); return true;
+            case "nodes": ((AtomixMapComponent) component).setNodes((java.util.List<io.atomix.catalyst.transport.Address>) value); return true;
+            case "configurationUri": ((AtomixMapComponent) component).setConfigurationUri((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((AtomixMapComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((AtomixMapComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((AtomixMapComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

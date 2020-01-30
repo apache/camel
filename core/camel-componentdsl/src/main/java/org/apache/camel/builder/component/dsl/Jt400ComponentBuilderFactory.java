@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.jt400.Jt400Component;
@@ -53,10 +54,9 @@ public interface Jt400ComponentBuilderFactory {
          * The option is a:
          * <code>com.ibm.as400.access.AS400ConnectionPool</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default Jt400ComponentBuilder setConnectionPool(
+        default Jt400ComponentBuilder connectionPool(
                 com.ibm.as400.access.AS400ConnectionPool connectionPool) {
             doSetProperty("connectionPool", connectionPool);
             return this;
@@ -70,7 +70,7 @@ public interface Jt400ComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default Jt400ComponentBuilder setBasicPropertyBinding(
+        default Jt400ComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -91,7 +91,7 @@ public interface Jt400ComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default Jt400ComponentBuilder setLazyStartProducer(
+        default Jt400ComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -110,7 +110,7 @@ public interface Jt400ComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default Jt400ComponentBuilder setBridgeErrorHandler(
+        default Jt400ComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -125,6 +125,19 @@ public interface Jt400ComponentBuilderFactory {
         @Override
         protected Jt400Component buildConcreteComponent() {
             return new Jt400Component();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "connectionPool": ((Jt400Component) component).setConnectionPool((com.ibm.as400.access.AS400ConnectionPool) value); return true;
+            case "basicPropertyBinding": ((Jt400Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((Jt400Component) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((Jt400Component) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

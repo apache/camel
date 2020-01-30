@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.mustache.MustacheComponent;
@@ -53,10 +54,9 @@ public interface MustacheComponentBuilderFactory {
          * The option is a: <code>com.github.mustachejava.MustacheFactory</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default MustacheComponentBuilder setMustacheFactory(
+        default MustacheComponentBuilder mustacheFactory(
                 com.github.mustachejava.MustacheFactory mustacheFactory) {
             doSetProperty("mustacheFactory", mustacheFactory);
             return this;
@@ -70,7 +70,7 @@ public interface MustacheComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default MustacheComponentBuilder setBasicPropertyBinding(
+        default MustacheComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -91,7 +91,7 @@ public interface MustacheComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default MustacheComponentBuilder setLazyStartProducer(
+        default MustacheComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -106,6 +106,18 @@ public interface MustacheComponentBuilderFactory {
         @Override
         protected MustacheComponent buildConcreteComponent() {
             return new MustacheComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "mustacheFactory": ((MustacheComponent) component).setMustacheFactory((com.github.mustachejava.MustacheFactory) value); return true;
+            case "basicPropertyBinding": ((MustacheComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((MustacheComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

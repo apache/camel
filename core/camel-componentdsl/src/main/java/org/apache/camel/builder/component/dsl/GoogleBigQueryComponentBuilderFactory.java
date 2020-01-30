@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryComponent;
@@ -52,10 +53,9 @@ public interface GoogleBigQueryComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default GoogleBigQueryComponentBuilder setProjectId(
+        default GoogleBigQueryComponentBuilder projectId(
                 java.lang.String projectId) {
             doSetProperty("projectId", projectId);
             return this;
@@ -65,10 +65,9 @@ public interface GoogleBigQueryComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default GoogleBigQueryComponentBuilder setDatasetId(
+        default GoogleBigQueryComponentBuilder datasetId(
                 java.lang.String datasetId) {
             doSetProperty("datasetId", datasetId);
             return this;
@@ -80,10 +79,9 @@ public interface GoogleBigQueryComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default GoogleBigQueryComponentBuilder setConnectionFactory(
+        default GoogleBigQueryComponentBuilder connectionFactory(
                 org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
@@ -97,7 +95,7 @@ public interface GoogleBigQueryComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default GoogleBigQueryComponentBuilder setBasicPropertyBinding(
+        default GoogleBigQueryComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -118,7 +116,7 @@ public interface GoogleBigQueryComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default GoogleBigQueryComponentBuilder setLazyStartProducer(
+        default GoogleBigQueryComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -133,6 +131,20 @@ public interface GoogleBigQueryComponentBuilderFactory {
         @Override
         protected GoogleBigQueryComponent buildConcreteComponent() {
             return new GoogleBigQueryComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "projectId": ((GoogleBigQueryComponent) component).setProjectId((java.lang.String) value); return true;
+            case "datasetId": ((GoogleBigQueryComponent) component).setDatasetId((java.lang.String) value); return true;
+            case "connectionFactory": ((GoogleBigQueryComponent) component).setConnectionFactory((org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory) value); return true;
+            case "basicPropertyBinding": ((GoogleBigQueryComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((GoogleBigQueryComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

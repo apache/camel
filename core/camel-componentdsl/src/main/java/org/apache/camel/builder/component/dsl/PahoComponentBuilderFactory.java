@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.paho.PahoComponent;
@@ -53,10 +54,9 @@ public interface PahoComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.paho.PahoConfiguration</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default PahoComponentBuilder setConfiguration(
+        default PahoComponentBuilder configuration(
                 org.apache.camel.component.paho.PahoConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -67,10 +67,9 @@ public interface PahoComponentBuilderFactory {
          * The option is a:
          * <code>org.eclipse.paho.client.mqttv3.MqttClient</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default PahoComponentBuilder setClient(
+        default PahoComponentBuilder client(
                 org.eclipse.paho.client.mqttv3.MqttClient client) {
             doSetProperty("client", client);
             return this;
@@ -80,10 +79,9 @@ public interface PahoComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default PahoComponentBuilder setBrokerUrl(java.lang.String brokerUrl) {
+        default PahoComponentBuilder brokerUrl(java.lang.String brokerUrl) {
             doSetProperty("brokerUrl", brokerUrl);
             return this;
         }
@@ -96,7 +94,7 @@ public interface PahoComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default PahoComponentBuilder setBasicPropertyBinding(
+        default PahoComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -117,8 +115,7 @@ public interface PahoComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default PahoComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default PahoComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -136,7 +133,7 @@ public interface PahoComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default PahoComponentBuilder setBridgeErrorHandler(
+        default PahoComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -151,6 +148,21 @@ public interface PahoComponentBuilderFactory {
         @Override
         protected PahoComponent buildConcreteComponent() {
             return new PahoComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((PahoComponent) component).setConfiguration((org.apache.camel.component.paho.PahoConfiguration) value); return true;
+            case "client": ((PahoComponent) component).setClient((org.eclipse.paho.client.mqttv3.MqttClient) value); return true;
+            case "brokerUrl": ((PahoComponent) component).setBrokerUrl((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((PahoComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((PahoComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((PahoComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

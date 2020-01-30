@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.chunk.ChunkComponent;
@@ -54,7 +55,7 @@ public interface ChunkComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ChunkComponentBuilder setBasicPropertyBinding(
+        default ChunkComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -75,7 +76,7 @@ public interface ChunkComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default ChunkComponentBuilder setLazyStartProducer(
+        default ChunkComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -90,6 +91,17 @@ public interface ChunkComponentBuilderFactory {
         @Override
         protected ChunkComponent buildConcreteComponent() {
             return new ChunkComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((ChunkComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((ChunkComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

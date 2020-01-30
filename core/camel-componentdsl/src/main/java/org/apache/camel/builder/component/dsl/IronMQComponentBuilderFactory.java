@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.ironmq.IronMQComponent;
@@ -58,7 +59,7 @@ public interface IronMQComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default IronMQComponentBuilder setBasicPropertyBinding(
+        default IronMQComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +80,7 @@ public interface IronMQComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default IronMQComponentBuilder setLazyStartProducer(
+        default IronMQComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -98,7 +99,7 @@ public interface IronMQComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default IronMQComponentBuilder setBridgeErrorHandler(
+        default IronMQComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -113,6 +114,18 @@ public interface IronMQComponentBuilderFactory {
         @Override
         protected IronMQComponent buildConcreteComponent() {
             return new IronMQComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((IronMQComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((IronMQComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((IronMQComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

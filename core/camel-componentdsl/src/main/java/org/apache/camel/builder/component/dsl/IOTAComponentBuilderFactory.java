@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.iota.IOTAComponent;
@@ -54,7 +55,7 @@ public interface IOTAComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default IOTAComponentBuilder setBasicPropertyBinding(
+        default IOTAComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -75,8 +76,7 @@ public interface IOTAComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default IOTAComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default IOTAComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -90,6 +90,17 @@ public interface IOTAComponentBuilderFactory {
         @Override
         protected IOTAComponent buildConcreteComponent() {
             return new IOTAComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((IOTAComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((IOTAComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

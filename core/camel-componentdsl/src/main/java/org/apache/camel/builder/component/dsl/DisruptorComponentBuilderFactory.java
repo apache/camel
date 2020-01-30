@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.disruptor.DisruptorComponent;
@@ -57,7 +58,7 @@ public interface DisruptorComponentBuilderFactory {
          * Default: 1
          * Group: consumer
          */
-        default DisruptorComponentBuilder setDefaultConcurrentConsumers(
+        default DisruptorComponentBuilder defaultConcurrentConsumers(
                 int defaultConcurrentConsumers) {
             doSetProperty("defaultConcurrentConsumers", defaultConcurrentConsumers);
             return this;
@@ -70,7 +71,7 @@ public interface DisruptorComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default DisruptorComponentBuilder setDefaultMultipleConsumers(
+        default DisruptorComponentBuilder defaultMultipleConsumers(
                 boolean defaultMultipleConsumers) {
             doSetProperty("defaultMultipleConsumers", defaultMultipleConsumers);
             return this;
@@ -85,7 +86,7 @@ public interface DisruptorComponentBuilderFactory {
          * Default: Multi
          * Group: producer
          */
-        default DisruptorComponentBuilder setDefaultProducerType(
+        default DisruptorComponentBuilder defaultProducerType(
                 org.apache.camel.component.disruptor.DisruptorProducerType defaultProducerType) {
             doSetProperty("defaultProducerType", defaultProducerType);
             return this;
@@ -100,7 +101,7 @@ public interface DisruptorComponentBuilderFactory {
          * Default: Blocking
          * Group: consumer
          */
-        default DisruptorComponentBuilder setDefaultWaitStrategy(
+        default DisruptorComponentBuilder defaultWaitStrategy(
                 org.apache.camel.component.disruptor.DisruptorWaitStrategy defaultWaitStrategy) {
             doSetProperty("defaultWaitStrategy", defaultWaitStrategy);
             return this;
@@ -114,7 +115,7 @@ public interface DisruptorComponentBuilderFactory {
          * Default: true
          * Group: producer
          */
-        default DisruptorComponentBuilder setDefaultBlockWhenFull(
+        default DisruptorComponentBuilder defaultBlockWhenFull(
                 boolean defaultBlockWhenFull) {
             doSetProperty("defaultBlockWhenFull", defaultBlockWhenFull);
             return this;
@@ -124,11 +125,10 @@ public interface DisruptorComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         @Deprecated
-        default DisruptorComponentBuilder setQueueSize(int queueSize) {
+        default DisruptorComponentBuilder queueSize(int queueSize) {
             doSetProperty("queueSize", queueSize);
             return this;
         }
@@ -140,7 +140,7 @@ public interface DisruptorComponentBuilderFactory {
          * Default: 1024
          * Group: common
          */
-        default DisruptorComponentBuilder setBufferSize(int bufferSize) {
+        default DisruptorComponentBuilder bufferSize(int bufferSize) {
             doSetProperty("bufferSize", bufferSize);
             return this;
         }
@@ -153,7 +153,7 @@ public interface DisruptorComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default DisruptorComponentBuilder setBasicPropertyBinding(
+        default DisruptorComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -174,7 +174,7 @@ public interface DisruptorComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default DisruptorComponentBuilder setLazyStartProducer(
+        default DisruptorComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -193,7 +193,7 @@ public interface DisruptorComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default DisruptorComponentBuilder setBridgeErrorHandler(
+        default DisruptorComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -208,6 +208,25 @@ public interface DisruptorComponentBuilderFactory {
         @Override
         protected DisruptorComponent buildConcreteComponent() {
             return new DisruptorComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "defaultConcurrentConsumers": ((DisruptorComponent) component).setDefaultConcurrentConsumers((int) value); return true;
+            case "defaultMultipleConsumers": ((DisruptorComponent) component).setDefaultMultipleConsumers((boolean) value); return true;
+            case "defaultProducerType": ((DisruptorComponent) component).setDefaultProducerType((org.apache.camel.component.disruptor.DisruptorProducerType) value); return true;
+            case "defaultWaitStrategy": ((DisruptorComponent) component).setDefaultWaitStrategy((org.apache.camel.component.disruptor.DisruptorWaitStrategy) value); return true;
+            case "defaultBlockWhenFull": ((DisruptorComponent) component).setDefaultBlockWhenFull((boolean) value); return true;
+            case "queueSize": ((DisruptorComponent) component).setQueueSize((int) value); return true;
+            case "bufferSize": ((DisruptorComponent) component).setBufferSize((int) value); return true;
+            case "basicPropertyBinding": ((DisruptorComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((DisruptorComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((DisruptorComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

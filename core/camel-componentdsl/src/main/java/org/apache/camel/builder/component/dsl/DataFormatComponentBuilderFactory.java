@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.dataformat.DataFormatComponent;
@@ -58,7 +59,7 @@ public interface DataFormatComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default DataFormatComponentBuilder setBasicPropertyBinding(
+        default DataFormatComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +80,7 @@ public interface DataFormatComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default DataFormatComponentBuilder setLazyStartProducer(
+        default DataFormatComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -94,6 +95,17 @@ public interface DataFormatComponentBuilderFactory {
         @Override
         protected DataFormatComponent buildConcreteComponent() {
             return new DataFormatComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((DataFormatComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((DataFormatComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

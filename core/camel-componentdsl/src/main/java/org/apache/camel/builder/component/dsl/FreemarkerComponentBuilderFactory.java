@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.freemarker.FreemarkerComponent;
@@ -53,10 +54,9 @@ public interface FreemarkerComponentBuilderFactory {
          * 
          * The option is a: <code>freemarker.template.Configuration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default FreemarkerComponentBuilder setConfiguration(
+        default FreemarkerComponentBuilder configuration(
                 freemarker.template.Configuration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -70,7 +70,7 @@ public interface FreemarkerComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default FreemarkerComponentBuilder setBasicPropertyBinding(
+        default FreemarkerComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -91,7 +91,7 @@ public interface FreemarkerComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default FreemarkerComponentBuilder setLazyStartProducer(
+        default FreemarkerComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -106,6 +106,18 @@ public interface FreemarkerComponentBuilderFactory {
         @Override
         protected FreemarkerComponent buildConcreteComponent() {
             return new FreemarkerComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((FreemarkerComponent) component).setConfiguration((freemarker.template.Configuration) value); return true;
+            case "basicPropertyBinding": ((FreemarkerComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((FreemarkerComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

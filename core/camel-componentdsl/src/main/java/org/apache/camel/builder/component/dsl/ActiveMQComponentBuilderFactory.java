@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.activemq.ActiveMQComponent;
@@ -54,10 +55,9 @@ public interface ActiveMQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default ActiveMQComponentBuilder setBrokerURL(java.lang.String brokerURL) {
+        default ActiveMQComponentBuilder brokerURL(java.lang.String brokerURL) {
             doSetProperty("brokerURL", brokerURL);
             return this;
         }
@@ -72,7 +72,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: common
          */
-        default ActiveMQComponentBuilder setTrustAllPackages(
+        default ActiveMQComponentBuilder trustAllPackages(
                 boolean trustAllPackages) {
             doSetProperty("trustAllPackages", trustAllPackages);
             return this;
@@ -90,7 +90,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: common
          */
-        default ActiveMQComponentBuilder setUsePooledConnection(
+        default ActiveMQComponentBuilder usePooledConnection(
                 boolean usePooledConnection) {
             doSetProperty("usePooledConnection", usePooledConnection);
             return this;
@@ -109,7 +109,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: common
          */
-        default ActiveMQComponentBuilder setUseSingleConnection(
+        default ActiveMQComponentBuilder useSingleConnection(
                 boolean useSingleConnection) {
             doSetProperty("useSingleConnection", useSingleConnection);
             return this;
@@ -120,10 +120,9 @@ public interface ActiveMQComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.JmsConfiguration</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default ActiveMQComponentBuilder setConfiguration(
+        default ActiveMQComponentBuilder configuration(
                 org.apache.camel.component.jms.JmsConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -139,7 +138,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setAllowAutoWiredConnectionFactory(
+        default ActiveMQComponentBuilder allowAutoWiredConnectionFactory(
                 boolean allowAutoWiredConnectionFactory) {
             doSetProperty("allowAutoWiredConnectionFactory", allowAutoWiredConnectionFactory);
             return this;
@@ -155,7 +154,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setAllowAutoWiredDestinationResolver(
+        default ActiveMQComponentBuilder allowAutoWiredDestinationResolver(
                 boolean allowAutoWiredDestinationResolver) {
             doSetProperty("allowAutoWiredDestinationResolver", allowAutoWiredDestinationResolver);
             return this;
@@ -175,7 +174,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: consumer (advanced)
          */
-        default ActiveMQComponentBuilder setAcceptMessagesWhileStopping(
+        default ActiveMQComponentBuilder acceptMessagesWhileStopping(
                 boolean acceptMessagesWhileStopping) {
             doSetProperty("acceptMessagesWhileStopping", acceptMessagesWhileStopping);
             return this;
@@ -194,7 +193,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: consumer (advanced)
          */
-        default ActiveMQComponentBuilder setAllowReplyManagerQuickStop(
+        default ActiveMQComponentBuilder allowReplyManagerQuickStop(
                 boolean allowReplyManagerQuickStop) {
             doSetProperty("allowReplyManagerQuickStop", allowReplyManagerQuickStop);
             return this;
@@ -207,10 +206,9 @@ public interface ActiveMQComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default ActiveMQComponentBuilder setAcknowledgementMode(
+        default ActiveMQComponentBuilder acknowledgementMode(
                 int acknowledgementMode) {
             doSetProperty("acknowledgementMode", acknowledgementMode);
             return this;
@@ -228,7 +226,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: Poison JMS message due to ${exception.message}
          * Group: consumer (advanced)
          */
-        default ActiveMQComponentBuilder setEagerPoisonBody(
+        default ActiveMQComponentBuilder eagerPoisonBody(
                 java.lang.String eagerPoisonBody) {
             doSetProperty("eagerPoisonBody", eagerPoisonBody);
             return this;
@@ -245,7 +243,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: consumer (advanced)
          */
-        default ActiveMQComponentBuilder setEagerLoadingOfProperties(
+        default ActiveMQComponentBuilder eagerLoadingOfProperties(
                 boolean eagerLoadingOfProperties) {
             doSetProperty("eagerLoadingOfProperties", eagerLoadingOfProperties);
             return this;
@@ -259,7 +257,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: AUTO_ACKNOWLEDGE
          * Group: consumer
          */
-        default ActiveMQComponentBuilder setAcknowledgementModeName(
+        default ActiveMQComponentBuilder acknowledgementModeName(
                 java.lang.String acknowledgementModeName) {
             doSetProperty("acknowledgementModeName", acknowledgementModeName);
             return this;
@@ -272,7 +270,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: true
          * Group: consumer
          */
-        default ActiveMQComponentBuilder setAutoStartup(boolean autoStartup) {
+        default ActiveMQComponentBuilder autoStartup(boolean autoStartup) {
             doSetProperty("autoStartup", autoStartup);
             return this;
         }
@@ -282,10 +280,9 @@ public interface ActiveMQComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default ActiveMQComponentBuilder setCacheLevel(int cacheLevel) {
+        default ActiveMQComponentBuilder cacheLevel(int cacheLevel) {
             doSetProperty("cacheLevel", cacheLevel);
             return this;
         }
@@ -301,7 +298,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: CACHE_AUTO
          * Group: consumer
          */
-        default ActiveMQComponentBuilder setCacheLevelName(
+        default ActiveMQComponentBuilder cacheLevelName(
                 java.lang.String cacheLevelName) {
             doSetProperty("cacheLevelName", cacheLevelName);
             return this;
@@ -319,10 +316,9 @@ public interface ActiveMQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
-        default ActiveMQComponentBuilder setReplyToCacheLevelName(
+        default ActiveMQComponentBuilder replyToCacheLevelName(
                 java.lang.String replyToCacheLevelName) {
             doSetProperty("replyToCacheLevelName", replyToCacheLevelName);
             return this;
@@ -336,10 +332,9 @@ public interface ActiveMQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default ActiveMQComponentBuilder setClientId(java.lang.String clientId) {
+        default ActiveMQComponentBuilder clientId(java.lang.String clientId) {
             doSetProperty("clientId", clientId);
             return this;
         }
@@ -356,7 +351,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: 1
          * Group: consumer
          */
-        default ActiveMQComponentBuilder setConcurrentConsumers(
+        default ActiveMQComponentBuilder concurrentConsumers(
                 int concurrentConsumers) {
             doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -371,7 +366,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: 1
          * Group: producer
          */
-        default ActiveMQComponentBuilder setReplyToConcurrentConsumers(
+        default ActiveMQComponentBuilder replyToConcurrentConsumers(
                 int replyToConcurrentConsumers) {
             doSetProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
             return this;
@@ -382,10 +377,9 @@ public interface ActiveMQComponentBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ConnectionFactory</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default ActiveMQComponentBuilder setConnectionFactory(
+        default ActiveMQComponentBuilder connectionFactory(
                 javax.jms.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
@@ -396,10 +390,9 @@ public interface ActiveMQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default ActiveMQComponentBuilder setUsername(java.lang.String username) {
+        default ActiveMQComponentBuilder username(java.lang.String username) {
             doSetProperty("username", username);
             return this;
         }
@@ -409,10 +402,9 @@ public interface ActiveMQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default ActiveMQComponentBuilder setPassword(java.lang.String password) {
+        default ActiveMQComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
             return this;
         }
@@ -424,7 +416,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: true
          * Group: producer
          */
-        default ActiveMQComponentBuilder setDeliveryPersistent(
+        default ActiveMQComponentBuilder deliveryPersistent(
                 boolean deliveryPersistent) {
             doSetProperty("deliveryPersistent", deliveryPersistent);
             return this;
@@ -436,10 +428,9 @@ public interface ActiveMQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default ActiveMQComponentBuilder setDeliveryMode(
+        default ActiveMQComponentBuilder deliveryMode(
                 java.lang.Integer deliveryMode) {
             doSetProperty("deliveryMode", deliveryMode);
             return this;
@@ -450,10 +441,9 @@ public interface ActiveMQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default ActiveMQComponentBuilder setDurableSubscriptionName(
+        default ActiveMQComponentBuilder durableSubscriptionName(
                 java.lang.String durableSubscriptionName) {
             doSetProperty("durableSubscriptionName", durableSubscriptionName);
             return this;
@@ -464,10 +454,9 @@ public interface ActiveMQComponentBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ExceptionListener</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setExceptionListener(
+        default ActiveMQComponentBuilder exceptionListener(
                 javax.jms.ExceptionListener exceptionListener) {
             doSetProperty("exceptionListener", exceptionListener);
             return this;
@@ -484,10 +473,9 @@ public interface ActiveMQComponentBuilderFactory {
          * The option is a: <code>org.springframework.util.ErrorHandler</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setErrorHandler(
+        default ActiveMQComponentBuilder errorHandler(
                 org.springframework.util.ErrorHandler errorHandler) {
             doSetProperty("errorHandler", errorHandler);
             return this;
@@ -501,7 +489,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: WARN
          * Group: logging
          */
-        default ActiveMQComponentBuilder setErrorHandlerLoggingLevel(
+        default ActiveMQComponentBuilder errorHandlerLoggingLevel(
                 org.apache.camel.LoggingLevel errorHandlerLoggingLevel) {
             doSetProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
             return this;
@@ -515,7 +503,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: true
          * Group: logging
          */
-        default ActiveMQComponentBuilder setErrorHandlerLogStackTrace(
+        default ActiveMQComponentBuilder errorHandlerLogStackTrace(
                 boolean errorHandlerLogStackTrace) {
             doSetProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
             return this;
@@ -533,7 +521,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default ActiveMQComponentBuilder setExplicitQosEnabled(
+        default ActiveMQComponentBuilder explicitQosEnabled(
                 boolean explicitQosEnabled) {
             doSetProperty("explicitQosEnabled", explicitQosEnabled);
             return this;
@@ -547,7 +535,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: consumer (advanced)
          */
-        default ActiveMQComponentBuilder setExposeListenerSession(
+        default ActiveMQComponentBuilder exposeListenerSession(
                 boolean exposeListenerSession) {
             doSetProperty("exposeListenerSession", exposeListenerSession);
             return this;
@@ -564,7 +552,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: 1
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setIdleTaskExecutionLimit(
+        default ActiveMQComponentBuilder idleTaskExecutionLimit(
                 int idleTaskExecutionLimit) {
             doSetProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
@@ -578,8 +566,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: 1
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setIdleConsumerLimit(
-                int idleConsumerLimit) {
+        default ActiveMQComponentBuilder idleConsumerLimit(int idleConsumerLimit) {
             doSetProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
         }
@@ -593,10 +580,9 @@ public interface ActiveMQComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default ActiveMQComponentBuilder setMaxConcurrentConsumers(
+        default ActiveMQComponentBuilder maxConcurrentConsumers(
                 int maxConcurrentConsumers) {
             doSetProperty("maxConcurrentConsumers", maxConcurrentConsumers);
             return this;
@@ -608,10 +594,9 @@ public interface ActiveMQComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default ActiveMQComponentBuilder setReplyToMaxConcurrentConsumers(
+        default ActiveMQComponentBuilder replyToMaxConcurrentConsumers(
                 int replyToMaxConcurrentConsumers) {
             doSetProperty("replyToMaxConcurrentConsumers", replyToMaxConcurrentConsumers);
             return this;
@@ -625,7 +610,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: 1
          * Group: producer
          */
-        default ActiveMQComponentBuilder setReplyOnTimeoutToMaxConcurrentConsumers(
+        default ActiveMQComponentBuilder replyOnTimeoutToMaxConcurrentConsumers(
                 int replyOnTimeoutToMaxConcurrentConsumers) {
             doSetProperty("replyOnTimeoutToMaxConcurrentConsumers", replyOnTimeoutToMaxConcurrentConsumers);
             return this;
@@ -641,7 +626,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: -1
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setMaxMessagesPerTask(
+        default ActiveMQComponentBuilder maxMessagesPerTask(
                 int maxMessagesPerTask) {
             doSetProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
@@ -654,10 +639,9 @@ public interface ActiveMQComponentBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setMessageConverter(
+        default ActiveMQComponentBuilder messageConverter(
                 org.springframework.jms.support.converter.MessageConverter messageConverter) {
             doSetProperty("messageConverter", messageConverter);
             return this;
@@ -672,7 +656,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: true
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setMapJmsMessage(boolean mapJmsMessage) {
+        default ActiveMQComponentBuilder mapJmsMessage(boolean mapJmsMessage) {
             doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
@@ -688,7 +672,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: true
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setMessageIdEnabled(
+        default ActiveMQComponentBuilder messageIdEnabled(
                 boolean messageIdEnabled) {
             doSetProperty("messageIdEnabled", messageIdEnabled);
             return this;
@@ -705,7 +689,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: true
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setMessageTimestampEnabled(
+        default ActiveMQComponentBuilder messageTimestampEnabled(
                 boolean messageTimestampEnabled) {
             doSetProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
@@ -723,7 +707,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: producer (advanced)
          */
-        default ActiveMQComponentBuilder setAlwaysCopyMessage(
+        default ActiveMQComponentBuilder alwaysCopyMessage(
                 boolean alwaysCopyMessage) {
             doSetProperty("alwaysCopyMessage", alwaysCopyMessage);
             return this;
@@ -737,7 +721,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setUseMessageIDAsCorrelationID(
+        default ActiveMQComponentBuilder useMessageIDAsCorrelationID(
                 boolean useMessageIDAsCorrelationID) {
             doSetProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
@@ -753,7 +737,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: 4
          * Group: producer
          */
-        default ActiveMQComponentBuilder setPriority(int priority) {
+        default ActiveMQComponentBuilder priority(int priority) {
             doSetProperty("priority", priority);
             return this;
         }
@@ -766,7 +750,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setPubSubNoLocal(boolean pubSubNoLocal) {
+        default ActiveMQComponentBuilder pubSubNoLocal(boolean pubSubNoLocal) {
             doSetProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
         }
@@ -778,7 +762,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: 1000
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setReceiveTimeout(long receiveTimeout) {
+        default ActiveMQComponentBuilder receiveTimeout(long receiveTimeout) {
             doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
@@ -792,8 +776,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: 5000
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setRecoveryInterval(
-                long recoveryInterval) {
+        default ActiveMQComponentBuilder recoveryInterval(long recoveryInterval) {
             doSetProperty("recoveryInterval", recoveryInterval);
             return this;
         }
@@ -803,10 +786,9 @@ public interface ActiveMQComponentBuilderFactory {
          * The option is a:
          * <code>org.springframework.core.task.TaskExecutor</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
-        default ActiveMQComponentBuilder setTaskExecutor(
+        default ActiveMQComponentBuilder taskExecutor(
                 org.springframework.core.task.TaskExecutor taskExecutor) {
             doSetProperty("taskExecutor", taskExecutor);
             return this;
@@ -820,7 +802,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: -1
          * Group: producer
          */
-        default ActiveMQComponentBuilder setTimeToLive(long timeToLive) {
+        default ActiveMQComponentBuilder timeToLive(long timeToLive) {
             doSetProperty("timeToLive", timeToLive);
             return this;
         }
@@ -832,7 +814,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: transaction
          */
-        default ActiveMQComponentBuilder setTransacted(boolean transacted) {
+        default ActiveMQComponentBuilder transacted(boolean transacted) {
             doSetProperty("transacted", transacted);
             return this;
         }
@@ -845,7 +827,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: true
          * Group: transaction (advanced)
          */
-        default ActiveMQComponentBuilder setLazyCreateTransactionManager(
+        default ActiveMQComponentBuilder lazyCreateTransactionManager(
                 boolean lazyCreateTransactionManager) {
             doSetProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
@@ -856,10 +838,9 @@ public interface ActiveMQComponentBuilderFactory {
          * The option is a:
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
-         * Default:
          * Group: transaction (advanced)
          */
-        default ActiveMQComponentBuilder setTransactionManager(
+        default ActiveMQComponentBuilder transactionManager(
                 org.springframework.transaction.PlatformTransactionManager transactionManager) {
             doSetProperty("transactionManager", transactionManager);
             return this;
@@ -869,10 +850,9 @@ public interface ActiveMQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: transaction (advanced)
          */
-        default ActiveMQComponentBuilder setTransactionName(
+        default ActiveMQComponentBuilder transactionName(
                 java.lang.String transactionName) {
             doSetProperty("transactionName", transactionName);
             return this;
@@ -886,7 +866,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: -1
          * Group: transaction (advanced)
          */
-        default ActiveMQComponentBuilder setTransactionTimeout(
+        default ActiveMQComponentBuilder transactionTimeout(
                 int transactionTimeout) {
             doSetProperty("transactionTimeout", transactionTimeout);
             return this;
@@ -903,7 +883,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: common
          */
-        default ActiveMQComponentBuilder setTestConnectionOnStartup(
+        default ActiveMQComponentBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
             doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -925,7 +905,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setAsyncStartListener(
+        default ActiveMQComponentBuilder asyncStartListener(
                 boolean asyncStartListener) {
             doSetProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -939,7 +919,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setAsyncStopListener(
+        default ActiveMQComponentBuilder asyncStopListener(
                 boolean asyncStopListener) {
             doSetProperty("asyncStopListener", asyncStopListener);
             return this;
@@ -955,7 +935,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: producer (advanced)
          */
-        default ActiveMQComponentBuilder setForceSendOriginalMessage(
+        default ActiveMQComponentBuilder forceSendOriginalMessage(
                 boolean forceSendOriginalMessage) {
             doSetProperty("forceSendOriginalMessage", forceSendOriginalMessage);
             return this;
@@ -972,7 +952,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: 20000
          * Group: producer
          */
-        default ActiveMQComponentBuilder setRequestTimeout(long requestTimeout) {
+        default ActiveMQComponentBuilder requestTimeout(long requestTimeout) {
             doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
@@ -988,7 +968,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: 1000
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setRequestTimeoutCheckerInterval(
+        default ActiveMQComponentBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
             doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
@@ -1008,7 +988,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setTransferExchange(
+        default ActiveMQComponentBuilder transferExchange(
                 boolean transferExchange) {
             doSetProperty("transferExchange", transferExchange);
             return this;
@@ -1034,7 +1014,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setTransferException(
+        default ActiveMQComponentBuilder transferException(
                 boolean transferException) {
             doSetProperty("transferException", transferException);
             return this;
@@ -1048,10 +1028,9 @@ public interface ActiveMQComponentBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.core.JmsOperations</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setJmsOperations(
+        default ActiveMQComponentBuilder jmsOperations(
                 org.springframework.jms.core.JmsOperations jmsOperations) {
             doSetProperty("jmsOperations", jmsOperations);
             return this;
@@ -1065,10 +1044,9 @@ public interface ActiveMQComponentBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setDestinationResolver(
+        default ActiveMQComponentBuilder destinationResolver(
                 org.springframework.jms.support.destination.DestinationResolver destinationResolver) {
             doSetProperty("destinationResolver", destinationResolver);
             return this;
@@ -1087,10 +1065,9 @@ public interface ActiveMQComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.ReplyToType</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default ActiveMQComponentBuilder setReplyToType(
+        default ActiveMQComponentBuilder replyToType(
                 org.apache.camel.component.jms.ReplyToType replyToType) {
             doSetProperty("replyToType", replyToType);
             return this;
@@ -1111,7 +1088,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default ActiveMQComponentBuilder setPreserveMessageQos(
+        default ActiveMQComponentBuilder preserveMessageQos(
                 boolean preserveMessageQos) {
             doSetProperty("preserveMessageQos", preserveMessageQos);
             return this;
@@ -1133,7 +1110,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default ActiveMQComponentBuilder setAsyncConsumer(boolean asyncConsumer) {
+        default ActiveMQComponentBuilder asyncConsumer(boolean asyncConsumer) {
             doSetProperty("asyncConsumer", asyncConsumer);
             return this;
         }
@@ -1146,7 +1123,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: true
          * Group: producer (advanced)
          */
-        default ActiveMQComponentBuilder setAllowNullBody(boolean allowNullBody) {
+        default ActiveMQComponentBuilder allowNullBody(boolean allowNullBody) {
             doSetProperty("allowNullBody", allowNullBody);
             return this;
         }
@@ -1161,7 +1138,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: producer (advanced)
          */
-        default ActiveMQComponentBuilder setIncludeSentJMSMessageID(
+        default ActiveMQComponentBuilder includeSentJMSMessageID(
                 boolean includeSentJMSMessageID) {
             doSetProperty("includeSentJMSMessageID", includeSentJMSMessageID);
             return this;
@@ -1177,7 +1154,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setIncludeAllJMSXProperties(
+        default ActiveMQComponentBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
             doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -1198,10 +1175,9 @@ public interface ActiveMQComponentBuilderFactory {
          * <code>org.apache.camel.component.jms.DefaultTaskExecutorType</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
-        default ActiveMQComponentBuilder setDefaultTaskExecutorType(
+        default ActiveMQComponentBuilder defaultTaskExecutorType(
                 org.apache.camel.component.jms.DefaultTaskExecutorType defaultTaskExecutorType) {
             doSetProperty("defaultTaskExecutorType", defaultTaskExecutorType);
             return this;
@@ -1221,10 +1197,9 @@ public interface ActiveMQComponentBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setJmsKeyFormatStrategy(
+        default ActiveMQComponentBuilder jmsKeyFormatStrategy(
                 org.apache.camel.component.jms.JmsKeyFormatStrategy jmsKeyFormatStrategy) {
             doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -1239,10 +1214,9 @@ public interface ActiveMQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
-        default ActiveMQComponentBuilder setAllowAdditionalHeaders(
+        default ActiveMQComponentBuilder allowAdditionalHeaders(
                 java.lang.String allowAdditionalHeaders) {
             doSetProperty("allowAdditionalHeaders", allowAdditionalHeaders);
             return this;
@@ -1253,10 +1227,9 @@ public interface ActiveMQComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.QueueBrowseStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setQueueBrowseStrategy(
+        default ActiveMQComponentBuilder queueBrowseStrategy(
                 org.apache.camel.component.jms.QueueBrowseStrategy queueBrowseStrategy) {
             doSetProperty("queueBrowseStrategy", queueBrowseStrategy);
             return this;
@@ -1270,10 +1243,9 @@ public interface ActiveMQComponentBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setMessageCreatedStrategy(
+        default ActiveMQComponentBuilder messageCreatedStrategy(
                 org.apache.camel.component.jms.MessageCreatedStrategy messageCreatedStrategy) {
             doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -1288,7 +1260,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: 50
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setWaitForProvisionCorrelationToBeUpdatedCounter(
+        default ActiveMQComponentBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 int waitForProvisionCorrelationToBeUpdatedCounter) {
             doSetProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
@@ -1302,7 +1274,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: 100
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
+        default ActiveMQComponentBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
             doSetProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
@@ -1318,10 +1290,9 @@ public interface ActiveMQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
-        default ActiveMQComponentBuilder setCorrelationProperty(
+        default ActiveMQComponentBuilder correlationProperty(
                 java.lang.String correlationProperty) {
             doSetProperty("correlationProperty", correlationProperty);
             return this;
@@ -1341,7 +1312,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default ActiveMQComponentBuilder setSubscriptionDurable(
+        default ActiveMQComponentBuilder subscriptionDurable(
                 boolean subscriptionDurable) {
             doSetProperty("subscriptionDurable", subscriptionDurable);
             return this;
@@ -1364,7 +1335,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default ActiveMQComponentBuilder setSubscriptionShared(
+        default ActiveMQComponentBuilder subscriptionShared(
                 boolean subscriptionShared) {
             doSetProperty("subscriptionShared", subscriptionShared);
             return this;
@@ -1380,10 +1351,9 @@ public interface ActiveMQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default ActiveMQComponentBuilder setSubscriptionName(
+        default ActiveMQComponentBuilder subscriptionName(
                 java.lang.String subscriptionName) {
             doSetProperty("subscriptionName", subscriptionName);
             return this;
@@ -1402,7 +1372,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: producer (advanced)
          */
-        default ActiveMQComponentBuilder setStreamMessageTypeEnabled(
+        default ActiveMQComponentBuilder streamMessageTypeEnabled(
                 boolean streamMessageTypeEnabled) {
             doSetProperty("streamMessageTypeEnabled", streamMessageTypeEnabled);
             return this;
@@ -1416,7 +1386,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default ActiveMQComponentBuilder setFormatDateHeadersToIso8601(
+        default ActiveMQComponentBuilder formatDateHeadersToIso8601(
                 boolean formatDateHeadersToIso8601) {
             doSetProperty("formatDateHeadersToIso8601", formatDateHeadersToIso8601);
             return this;
@@ -1428,10 +1398,9 @@ public interface ActiveMQComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: filter
          */
-        default ActiveMQComponentBuilder setHeaderFilterStrategy(
+        default ActiveMQComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1445,7 +1414,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ActiveMQComponentBuilder setBasicPropertyBinding(
+        default ActiveMQComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1466,7 +1435,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default ActiveMQComponentBuilder setLazyStartProducer(
+        default ActiveMQComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1485,7 +1454,7 @@ public interface ActiveMQComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default ActiveMQComponentBuilder setBridgeErrorHandler(
+        default ActiveMQComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -1500,6 +1469,103 @@ public interface ActiveMQComponentBuilderFactory {
         @Override
         protected ActiveMQComponent buildConcreteComponent() {
             return new ActiveMQComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "brokerURL": ((ActiveMQComponent) component).setBrokerURL((java.lang.String) value); return true;
+            case "trustAllPackages": ((ActiveMQComponent) component).setTrustAllPackages((boolean) value); return true;
+            case "usePooledConnection": ((ActiveMQComponent) component).setUsePooledConnection((boolean) value); return true;
+            case "useSingleConnection": ((ActiveMQComponent) component).setUseSingleConnection((boolean) value); return true;
+            case "configuration": ((ActiveMQComponent) component).setConfiguration((org.apache.camel.component.jms.JmsConfiguration) value); return true;
+            case "allowAutoWiredConnectionFactory": ((ActiveMQComponent) component).setAllowAutoWiredConnectionFactory((boolean) value); return true;
+            case "allowAutoWiredDestinationResolver": ((ActiveMQComponent) component).setAllowAutoWiredDestinationResolver((boolean) value); return true;
+            case "acceptMessagesWhileStopping": ((ActiveMQComponent) component).setAcceptMessagesWhileStopping((boolean) value); return true;
+            case "allowReplyManagerQuickStop": ((ActiveMQComponent) component).setAllowReplyManagerQuickStop((boolean) value); return true;
+            case "acknowledgementMode": ((ActiveMQComponent) component).setAcknowledgementMode((int) value); return true;
+            case "eagerPoisonBody": ((ActiveMQComponent) component).setEagerPoisonBody((java.lang.String) value); return true;
+            case "eagerLoadingOfProperties": ((ActiveMQComponent) component).setEagerLoadingOfProperties((boolean) value); return true;
+            case "acknowledgementModeName": ((ActiveMQComponent) component).setAcknowledgementModeName((java.lang.String) value); return true;
+            case "autoStartup": ((ActiveMQComponent) component).setAutoStartup((boolean) value); return true;
+            case "cacheLevel": ((ActiveMQComponent) component).setCacheLevel((int) value); return true;
+            case "cacheLevelName": ((ActiveMQComponent) component).setCacheLevelName((java.lang.String) value); return true;
+            case "replyToCacheLevelName": ((ActiveMQComponent) component).setReplyToCacheLevelName((java.lang.String) value); return true;
+            case "clientId": ((ActiveMQComponent) component).setClientId((java.lang.String) value); return true;
+            case "concurrentConsumers": ((ActiveMQComponent) component).setConcurrentConsumers((int) value); return true;
+            case "replyToConcurrentConsumers": ((ActiveMQComponent) component).setReplyToConcurrentConsumers((int) value); return true;
+            case "connectionFactory": ((ActiveMQComponent) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
+            case "username": ((ActiveMQComponent) component).setUsername((java.lang.String) value); return true;
+            case "password": ((ActiveMQComponent) component).setPassword((java.lang.String) value); return true;
+            case "deliveryPersistent": ((ActiveMQComponent) component).setDeliveryPersistent((boolean) value); return true;
+            case "deliveryMode": ((ActiveMQComponent) component).setDeliveryMode((java.lang.Integer) value); return true;
+            case "durableSubscriptionName": ((ActiveMQComponent) component).setDurableSubscriptionName((java.lang.String) value); return true;
+            case "exceptionListener": ((ActiveMQComponent) component).setExceptionListener((javax.jms.ExceptionListener) value); return true;
+            case "errorHandler": ((ActiveMQComponent) component).setErrorHandler((org.springframework.util.ErrorHandler) value); return true;
+            case "errorHandlerLoggingLevel": ((ActiveMQComponent) component).setErrorHandlerLoggingLevel((org.apache.camel.LoggingLevel) value); return true;
+            case "errorHandlerLogStackTrace": ((ActiveMQComponent) component).setErrorHandlerLogStackTrace((boolean) value); return true;
+            case "explicitQosEnabled": ((ActiveMQComponent) component).setExplicitQosEnabled((boolean) value); return true;
+            case "exposeListenerSession": ((ActiveMQComponent) component).setExposeListenerSession((boolean) value); return true;
+            case "idleTaskExecutionLimit": ((ActiveMQComponent) component).setIdleTaskExecutionLimit((int) value); return true;
+            case "idleConsumerLimit": ((ActiveMQComponent) component).setIdleConsumerLimit((int) value); return true;
+            case "maxConcurrentConsumers": ((ActiveMQComponent) component).setMaxConcurrentConsumers((int) value); return true;
+            case "replyToMaxConcurrentConsumers": ((ActiveMQComponent) component).setReplyToMaxConcurrentConsumers((int) value); return true;
+            case "replyOnTimeoutToMaxConcurrentConsumers": ((ActiveMQComponent) component).setReplyOnTimeoutToMaxConcurrentConsumers((int) value); return true;
+            case "maxMessagesPerTask": ((ActiveMQComponent) component).setMaxMessagesPerTask((int) value); return true;
+            case "messageConverter": ((ActiveMQComponent) component).setMessageConverter((org.springframework.jms.support.converter.MessageConverter) value); return true;
+            case "mapJmsMessage": ((ActiveMQComponent) component).setMapJmsMessage((boolean) value); return true;
+            case "messageIdEnabled": ((ActiveMQComponent) component).setMessageIdEnabled((boolean) value); return true;
+            case "messageTimestampEnabled": ((ActiveMQComponent) component).setMessageTimestampEnabled((boolean) value); return true;
+            case "alwaysCopyMessage": ((ActiveMQComponent) component).setAlwaysCopyMessage((boolean) value); return true;
+            case "useMessageIDAsCorrelationID": ((ActiveMQComponent) component).setUseMessageIDAsCorrelationID((boolean) value); return true;
+            case "priority": ((ActiveMQComponent) component).setPriority((int) value); return true;
+            case "pubSubNoLocal": ((ActiveMQComponent) component).setPubSubNoLocal((boolean) value); return true;
+            case "receiveTimeout": ((ActiveMQComponent) component).setReceiveTimeout((long) value); return true;
+            case "recoveryInterval": ((ActiveMQComponent) component).setRecoveryInterval((long) value); return true;
+            case "taskExecutor": ((ActiveMQComponent) component).setTaskExecutor((org.springframework.core.task.TaskExecutor) value); return true;
+            case "timeToLive": ((ActiveMQComponent) component).setTimeToLive((long) value); return true;
+            case "transacted": ((ActiveMQComponent) component).setTransacted((boolean) value); return true;
+            case "lazyCreateTransactionManager": ((ActiveMQComponent) component).setLazyCreateTransactionManager((boolean) value); return true;
+            case "transactionManager": ((ActiveMQComponent) component).setTransactionManager((org.springframework.transaction.PlatformTransactionManager) value); return true;
+            case "transactionName": ((ActiveMQComponent) component).setTransactionName((java.lang.String) value); return true;
+            case "transactionTimeout": ((ActiveMQComponent) component).setTransactionTimeout((int) value); return true;
+            case "testConnectionOnStartup": ((ActiveMQComponent) component).setTestConnectionOnStartup((boolean) value); return true;
+            case "asyncStartListener": ((ActiveMQComponent) component).setAsyncStartListener((boolean) value); return true;
+            case "asyncStopListener": ((ActiveMQComponent) component).setAsyncStopListener((boolean) value); return true;
+            case "forceSendOriginalMessage": ((ActiveMQComponent) component).setForceSendOriginalMessage((boolean) value); return true;
+            case "requestTimeout": ((ActiveMQComponent) component).setRequestTimeout((long) value); return true;
+            case "requestTimeoutCheckerInterval": ((ActiveMQComponent) component).setRequestTimeoutCheckerInterval((long) value); return true;
+            case "transferExchange": ((ActiveMQComponent) component).setTransferExchange((boolean) value); return true;
+            case "transferException": ((ActiveMQComponent) component).setTransferException((boolean) value); return true;
+            case "jmsOperations": ((ActiveMQComponent) component).setJmsOperations((org.springframework.jms.core.JmsOperations) value); return true;
+            case "destinationResolver": ((ActiveMQComponent) component).setDestinationResolver((org.springframework.jms.support.destination.DestinationResolver) value); return true;
+            case "replyToType": ((ActiveMQComponent) component).setReplyToType((org.apache.camel.component.jms.ReplyToType) value); return true;
+            case "preserveMessageQos": ((ActiveMQComponent) component).setPreserveMessageQos((boolean) value); return true;
+            case "asyncConsumer": ((ActiveMQComponent) component).setAsyncConsumer((boolean) value); return true;
+            case "allowNullBody": ((ActiveMQComponent) component).setAllowNullBody((boolean) value); return true;
+            case "includeSentJMSMessageID": ((ActiveMQComponent) component).setIncludeSentJMSMessageID((boolean) value); return true;
+            case "includeAllJMSXProperties": ((ActiveMQComponent) component).setIncludeAllJMSXProperties((boolean) value); return true;
+            case "defaultTaskExecutorType": ((ActiveMQComponent) component).setDefaultTaskExecutorType((org.apache.camel.component.jms.DefaultTaskExecutorType) value); return true;
+            case "jmsKeyFormatStrategy": ((ActiveMQComponent) component).setJmsKeyFormatStrategy((org.apache.camel.component.jms.JmsKeyFormatStrategy) value); return true;
+            case "allowAdditionalHeaders": ((ActiveMQComponent) component).setAllowAdditionalHeaders((java.lang.String) value); return true;
+            case "queueBrowseStrategy": ((ActiveMQComponent) component).setQueueBrowseStrategy((org.apache.camel.component.jms.QueueBrowseStrategy) value); return true;
+            case "messageCreatedStrategy": ((ActiveMQComponent) component).setMessageCreatedStrategy((org.apache.camel.component.jms.MessageCreatedStrategy) value); return true;
+            case "waitForProvisionCorrelationToBeUpdatedCounter": ((ActiveMQComponent) component).setWaitForProvisionCorrelationToBeUpdatedCounter((int) value); return true;
+            case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": ((ActiveMQComponent) component).setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime((long) value); return true;
+            case "correlationProperty": ((ActiveMQComponent) component).setCorrelationProperty((java.lang.String) value); return true;
+            case "subscriptionDurable": ((ActiveMQComponent) component).setSubscriptionDurable((boolean) value); return true;
+            case "subscriptionShared": ((ActiveMQComponent) component).setSubscriptionShared((boolean) value); return true;
+            case "subscriptionName": ((ActiveMQComponent) component).setSubscriptionName((java.lang.String) value); return true;
+            case "streamMessageTypeEnabled": ((ActiveMQComponent) component).setStreamMessageTypeEnabled((boolean) value); return true;
+            case "formatDateHeadersToIso8601": ((ActiveMQComponent) component).setFormatDateHeadersToIso8601((boolean) value); return true;
+            case "headerFilterStrategy": ((ActiveMQComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "basicPropertyBinding": ((ActiveMQComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((ActiveMQComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((ActiveMQComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

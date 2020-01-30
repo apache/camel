@@ -72,7 +72,7 @@ public final class ComponentDslInnerBuilderGenerator {
             final Method method = javaClass.addMethod();
             method.setDefault()
                     .setReturnType(getGeneratedInterfaceName())
-                    .setName("set" + StringUtils.capitalize(componentOptionModel.getName()))
+                    .setName(StringUtils.uncapitalize(componentOptionModel.getName()))
                     .addParameter(componentOptionModel.getJavaType(), componentOptionModel.getName())
                     .setBody(String.format("doSetProperty(\"%s\", %s);", componentOptionModel.getName(), componentOptionModel.getName()), "return this;");
             if (componentOptionModel.isDeprecated()) {

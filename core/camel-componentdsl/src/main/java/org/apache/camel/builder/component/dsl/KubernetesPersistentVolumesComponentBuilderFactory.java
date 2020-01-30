@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.kubernetes.persistent_volumes.KubernetesPersistentVolumesComponent;
@@ -58,7 +59,7 @@ public interface KubernetesPersistentVolumesComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default KubernetesPersistentVolumesComponentBuilder setBasicPropertyBinding(
+        default KubernetesPersistentVolumesComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +80,7 @@ public interface KubernetesPersistentVolumesComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default KubernetesPersistentVolumesComponentBuilder setLazyStartProducer(
+        default KubernetesPersistentVolumesComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -94,6 +95,17 @@ public interface KubernetesPersistentVolumesComponentBuilderFactory {
         @Override
         protected KubernetesPersistentVolumesComponent buildConcreteComponent() {
             return new KubernetesPersistentVolumesComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((KubernetesPersistentVolumesComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((KubernetesPersistentVolumesComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

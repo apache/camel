@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.nagios.NagiosComponent;
@@ -54,10 +55,9 @@ public interface NagiosComponentBuilderFactory {
          * <code>org.apache.camel.component.nagios.NagiosConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default NagiosComponentBuilder setConfiguration(
+        default NagiosComponentBuilder configuration(
                 org.apache.camel.component.nagios.NagiosConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -71,7 +71,7 @@ public interface NagiosComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default NagiosComponentBuilder setBasicPropertyBinding(
+        default NagiosComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -92,7 +92,7 @@ public interface NagiosComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default NagiosComponentBuilder setLazyStartProducer(
+        default NagiosComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -107,6 +107,18 @@ public interface NagiosComponentBuilderFactory {
         @Override
         protected NagiosComponent buildConcreteComponent() {
             return new NagiosComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((NagiosComponent) component).setConfiguration((org.apache.camel.component.nagios.NagiosConfiguration) value); return true;
+            case "basicPropertyBinding": ((NagiosComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((NagiosComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

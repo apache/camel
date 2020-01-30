@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.openshift.builds.OpenshiftBuildsComponent;
@@ -58,7 +59,7 @@ public interface OpenshiftBuildsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default OpenshiftBuildsComponentBuilder setBasicPropertyBinding(
+        default OpenshiftBuildsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +80,7 @@ public interface OpenshiftBuildsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default OpenshiftBuildsComponentBuilder setLazyStartProducer(
+        default OpenshiftBuildsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -94,6 +95,17 @@ public interface OpenshiftBuildsComponentBuilderFactory {
         @Override
         protected OpenshiftBuildsComponent buildConcreteComponent() {
             return new OpenshiftBuildsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((OpenshiftBuildsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((OpenshiftBuildsComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

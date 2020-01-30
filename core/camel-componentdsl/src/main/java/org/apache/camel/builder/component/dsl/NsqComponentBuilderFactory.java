@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.nsq.NsqComponent;
@@ -51,10 +52,9 @@ public interface NsqComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default NsqComponentBuilder setServers(java.lang.String servers) {
+        default NsqComponentBuilder servers(java.lang.String servers) {
             doSetProperty("servers", servers);
             return this;
         }
@@ -66,7 +66,7 @@ public interface NsqComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default NsqComponentBuilder setUseGlobalSslContextParameters(
+        default NsqComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
@@ -80,7 +80,7 @@ public interface NsqComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default NsqComponentBuilder setBasicPropertyBinding(
+        default NsqComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -101,8 +101,7 @@ public interface NsqComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default NsqComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default NsqComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -120,7 +119,7 @@ public interface NsqComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default NsqComponentBuilder setBridgeErrorHandler(
+        default NsqComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -135,6 +134,20 @@ public interface NsqComponentBuilderFactory {
         @Override
         protected NsqComponent buildConcreteComponent() {
             return new NsqComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "servers": ((NsqComponent) component).setServers((java.lang.String) value); return true;
+            case "useGlobalSslContextParameters": ((NsqComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "basicPropertyBinding": ((NsqComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((NsqComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((NsqComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

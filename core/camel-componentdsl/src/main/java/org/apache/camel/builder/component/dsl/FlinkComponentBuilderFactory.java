@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.flink.FlinkComponent;
@@ -51,10 +52,9 @@ public interface FlinkComponentBuilderFactory {
          * 
          * The option is a: <code>org.apache.flink.api.java.DataSet</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default FlinkComponentBuilder setDataSet(
+        default FlinkComponentBuilder dataSet(
                 org.apache.flink.api.java.DataSet dataSet) {
             doSetProperty("dataSet", dataSet);
             return this;
@@ -66,10 +66,9 @@ public interface FlinkComponentBuilderFactory {
          * <code>org.apache.flink.streaming.api.datastream.DataStream</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
-        default FlinkComponentBuilder setDataStream(
+        default FlinkComponentBuilder dataStream(
                 org.apache.flink.streaming.api.datastream.DataStream dataStream) {
             doSetProperty("dataStream", dataStream);
             return this;
@@ -80,10 +79,9 @@ public interface FlinkComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.flink.DataSetCallback</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default FlinkComponentBuilder setDataSetCallback(
+        default FlinkComponentBuilder dataSetCallback(
                 org.apache.camel.component.flink.DataSetCallback dataSetCallback) {
             doSetProperty("dataSetCallback", dataSetCallback);
             return this;
@@ -95,10 +93,9 @@ public interface FlinkComponentBuilderFactory {
          * <code>org.apache.camel.component.flink.DataStreamCallback</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
-        default FlinkComponentBuilder setDataStreamCallback(
+        default FlinkComponentBuilder dataStreamCallback(
                 org.apache.camel.component.flink.DataStreamCallback dataStreamCallback) {
             doSetProperty("dataStreamCallback", dataStreamCallback);
             return this;
@@ -112,7 +109,7 @@ public interface FlinkComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default FlinkComponentBuilder setBasicPropertyBinding(
+        default FlinkComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -133,7 +130,7 @@ public interface FlinkComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default FlinkComponentBuilder setLazyStartProducer(
+        default FlinkComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -148,6 +145,21 @@ public interface FlinkComponentBuilderFactory {
         @Override
         protected FlinkComponent buildConcreteComponent() {
             return new FlinkComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "dataSet": ((FlinkComponent) component).setDataSet((org.apache.flink.api.java.DataSet) value); return true;
+            case "dataStream": ((FlinkComponent) component).setDataStream((org.apache.flink.streaming.api.datastream.DataStream) value); return true;
+            case "dataSetCallback": ((FlinkComponent) component).setDataSetCallback((org.apache.camel.component.flink.DataSetCallback) value); return true;
+            case "dataStreamCallback": ((FlinkComponent) component).setDataStreamCallback((org.apache.camel.component.flink.DataStreamCallback) value); return true;
+            case "basicPropertyBinding": ((FlinkComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((FlinkComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

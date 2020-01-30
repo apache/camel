@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.aws.swf.SWFComponent;
@@ -54,10 +55,9 @@ public interface SWFComponentBuilderFactory {
          * <code>org.apache.camel.component.aws.swf.SWFConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SWFComponentBuilder setConfiguration(
+        default SWFComponentBuilder configuration(
                 org.apache.camel.component.aws.swf.SWFConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -67,10 +67,9 @@ public interface SWFComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default SWFComponentBuilder setAccessKey(java.lang.String accessKey) {
+        default SWFComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
             return this;
         }
@@ -79,10 +78,9 @@ public interface SWFComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default SWFComponentBuilder setSecretKey(java.lang.String secretKey) {
+        default SWFComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
             return this;
         }
@@ -91,10 +89,9 @@ public interface SWFComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default SWFComponentBuilder setRegion(java.lang.String region) {
+        default SWFComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
             return this;
         }
@@ -107,7 +104,7 @@ public interface SWFComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default SWFComponentBuilder setBasicPropertyBinding(
+        default SWFComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -128,8 +125,7 @@ public interface SWFComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SWFComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default SWFComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -147,7 +143,7 @@ public interface SWFComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default SWFComponentBuilder setBridgeErrorHandler(
+        default SWFComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -162,6 +158,22 @@ public interface SWFComponentBuilderFactory {
         @Override
         protected SWFComponent buildConcreteComponent() {
             return new SWFComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((SWFComponent) component).setConfiguration((org.apache.camel.component.aws.swf.SWFConfiguration) value); return true;
+            case "accessKey": ((SWFComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": ((SWFComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "region": ((SWFComponent) component).setRegion((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((SWFComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((SWFComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((SWFComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

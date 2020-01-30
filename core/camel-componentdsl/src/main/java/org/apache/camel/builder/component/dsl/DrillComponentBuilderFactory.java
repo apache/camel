@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.drill.DrillComponent;
@@ -56,7 +57,7 @@ public interface DrillComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default DrillComponentBuilder setBasicPropertyBinding(
+        default DrillComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -77,7 +78,7 @@ public interface DrillComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default DrillComponentBuilder setLazyStartProducer(
+        default DrillComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -92,6 +93,17 @@ public interface DrillComponentBuilderFactory {
         @Override
         protected DrillComponent buildConcreteComponent() {
             return new DrillComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((DrillComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((DrillComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.twitter.timeline.TwitterTimelineComponent;
@@ -54,10 +55,9 @@ public interface TwitterTimelineComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default TwitterTimelineComponentBuilder setAccessToken(
+        default TwitterTimelineComponentBuilder accessToken(
                 java.lang.String accessToken) {
             doSetProperty("accessToken", accessToken);
             return this;
@@ -67,10 +67,9 @@ public interface TwitterTimelineComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default TwitterTimelineComponentBuilder setAccessTokenSecret(
+        default TwitterTimelineComponentBuilder accessTokenSecret(
                 java.lang.String accessTokenSecret) {
             doSetProperty("accessTokenSecret", accessTokenSecret);
             return this;
@@ -80,10 +79,9 @@ public interface TwitterTimelineComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default TwitterTimelineComponentBuilder setConsumerKey(
+        default TwitterTimelineComponentBuilder consumerKey(
                 java.lang.String consumerKey) {
             doSetProperty("consumerKey", consumerKey);
             return this;
@@ -93,10 +91,9 @@ public interface TwitterTimelineComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default TwitterTimelineComponentBuilder setConsumerSecret(
+        default TwitterTimelineComponentBuilder consumerSecret(
                 java.lang.String consumerSecret) {
             doSetProperty("consumerSecret", consumerSecret);
             return this;
@@ -106,10 +103,9 @@ public interface TwitterTimelineComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
-        default TwitterTimelineComponentBuilder setHttpProxyHost(
+        default TwitterTimelineComponentBuilder httpProxyHost(
                 java.lang.String httpProxyHost) {
             doSetProperty("httpProxyHost", httpProxyHost);
             return this;
@@ -119,10 +115,9 @@ public interface TwitterTimelineComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
-        default TwitterTimelineComponentBuilder setHttpProxyUser(
+        default TwitterTimelineComponentBuilder httpProxyUser(
                 java.lang.String httpProxyUser) {
             doSetProperty("httpProxyUser", httpProxyUser);
             return this;
@@ -132,10 +127,9 @@ public interface TwitterTimelineComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
-        default TwitterTimelineComponentBuilder setHttpProxyPassword(
+        default TwitterTimelineComponentBuilder httpProxyPassword(
                 java.lang.String httpProxyPassword) {
             doSetProperty("httpProxyPassword", httpProxyPassword);
             return this;
@@ -145,11 +139,9 @@ public interface TwitterTimelineComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: proxy
          */
-        default TwitterTimelineComponentBuilder setHttpProxyPort(
-                int httpProxyPort) {
+        default TwitterTimelineComponentBuilder httpProxyPort(int httpProxyPort) {
             doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
@@ -162,7 +154,7 @@ public interface TwitterTimelineComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default TwitterTimelineComponentBuilder setBasicPropertyBinding(
+        default TwitterTimelineComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -183,7 +175,7 @@ public interface TwitterTimelineComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default TwitterTimelineComponentBuilder setLazyStartProducer(
+        default TwitterTimelineComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -202,7 +194,7 @@ public interface TwitterTimelineComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default TwitterTimelineComponentBuilder setBridgeErrorHandler(
+        default TwitterTimelineComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -217,6 +209,26 @@ public interface TwitterTimelineComponentBuilderFactory {
         @Override
         protected TwitterTimelineComponent buildConcreteComponent() {
             return new TwitterTimelineComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "accessToken": ((TwitterTimelineComponent) component).setAccessToken((java.lang.String) value); return true;
+            case "accessTokenSecret": ((TwitterTimelineComponent) component).setAccessTokenSecret((java.lang.String) value); return true;
+            case "consumerKey": ((TwitterTimelineComponent) component).setConsumerKey((java.lang.String) value); return true;
+            case "consumerSecret": ((TwitterTimelineComponent) component).setConsumerSecret((java.lang.String) value); return true;
+            case "httpProxyHost": ((TwitterTimelineComponent) component).setHttpProxyHost((java.lang.String) value); return true;
+            case "httpProxyUser": ((TwitterTimelineComponent) component).setHttpProxyUser((java.lang.String) value); return true;
+            case "httpProxyPassword": ((TwitterTimelineComponent) component).setHttpProxyPassword((java.lang.String) value); return true;
+            case "httpProxyPort": ((TwitterTimelineComponent) component).setHttpProxyPort((int) value); return true;
+            case "basicPropertyBinding": ((TwitterTimelineComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((TwitterTimelineComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((TwitterTimelineComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

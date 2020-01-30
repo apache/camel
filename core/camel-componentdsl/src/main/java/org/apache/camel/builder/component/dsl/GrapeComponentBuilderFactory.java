@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.grape.GrapeComponent;
@@ -54,10 +55,9 @@ public interface GrapeComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.grape.PatchesRepository</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default GrapeComponentBuilder setPatchesRepository(
+        default GrapeComponentBuilder patchesRepository(
                 org.apache.camel.component.grape.PatchesRepository patchesRepository) {
             doSetProperty("patchesRepository", patchesRepository);
             return this;
@@ -71,7 +71,7 @@ public interface GrapeComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default GrapeComponentBuilder setBasicPropertyBinding(
+        default GrapeComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -92,7 +92,7 @@ public interface GrapeComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default GrapeComponentBuilder setLazyStartProducer(
+        default GrapeComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -107,6 +107,18 @@ public interface GrapeComponentBuilderFactory {
         @Override
         protected GrapeComponent buildConcreteComponent() {
             return new GrapeComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "patchesRepository": ((GrapeComponent) component).setPatchesRepository((org.apache.camel.component.grape.PatchesRepository) value); return true;
+            case "basicPropertyBinding": ((GrapeComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((GrapeComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

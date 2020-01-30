@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.ahc.ws.WsComponent;
@@ -51,10 +52,9 @@ public interface WsComponentBuilderFactory {
          * The option is a: <code>org.asynchttpclient.AsyncHttpClient</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default WsComponentBuilder setClient(
+        default WsComponentBuilder client(
                 org.asynchttpclient.AsyncHttpClient client) {
             doSetProperty("client", client);
             return this;
@@ -66,10 +66,9 @@ public interface WsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default WsComponentBuilder setBinding(
+        default WsComponentBuilder binding(
                 org.apache.camel.component.ahc.AhcBinding binding) {
             doSetProperty("binding", binding);
             return this;
@@ -81,10 +80,9 @@ public interface WsComponentBuilderFactory {
          * The option is a:
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default WsComponentBuilder setClientConfig(
+        default WsComponentBuilder clientConfig(
                 org.asynchttpclient.AsyncHttpClientConfig clientConfig) {
             doSetProperty("clientConfig", clientConfig);
             return this;
@@ -98,10 +96,9 @@ public interface WsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default WsComponentBuilder setSslContextParameters(
+        default WsComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -118,7 +115,7 @@ public interface WsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default WsComponentBuilder setAllowJavaSerializedObject(
+        default WsComponentBuilder allowJavaSerializedObject(
                 boolean allowJavaSerializedObject) {
             doSetProperty("allowJavaSerializedObject", allowJavaSerializedObject);
             return this;
@@ -131,7 +128,7 @@ public interface WsComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default WsComponentBuilder setUseGlobalSslContextParameters(
+        default WsComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
@@ -143,10 +140,9 @@ public interface WsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: filter
          */
-        default WsComponentBuilder setHeaderFilterStrategy(
+        default WsComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -160,7 +156,7 @@ public interface WsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default WsComponentBuilder setBasicPropertyBinding(
+        default WsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -181,8 +177,7 @@ public interface WsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default WsComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default WsComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -196,6 +191,24 @@ public interface WsComponentBuilderFactory {
         @Override
         protected WsComponent buildConcreteComponent() {
             return new WsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "client": ((WsComponent) component).setClient((org.asynchttpclient.AsyncHttpClient) value); return true;
+            case "binding": ((WsComponent) component).setBinding((org.apache.camel.component.ahc.AhcBinding) value); return true;
+            case "clientConfig": ((WsComponent) component).setClientConfig((org.asynchttpclient.AsyncHttpClientConfig) value); return true;
+            case "sslContextParameters": ((WsComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "allowJavaSerializedObject": ((WsComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
+            case "useGlobalSslContextParameters": ((WsComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "headerFilterStrategy": ((WsComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "basicPropertyBinding": ((WsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((WsComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

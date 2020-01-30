@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.google.sheets.GoogleSheetsComponent;
@@ -53,10 +54,9 @@ public interface GoogleSheetsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.sheets.GoogleSheetsConfiguration</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default GoogleSheetsComponentBuilder setConfiguration(
+        default GoogleSheetsComponentBuilder configuration(
                 org.apache.camel.component.google.sheets.GoogleSheetsConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -68,10 +68,9 @@ public interface GoogleSheetsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.sheets.GoogleSheetsClientFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default GoogleSheetsComponentBuilder setClientFactory(
+        default GoogleSheetsComponentBuilder clientFactory(
                 org.apache.camel.component.google.sheets.GoogleSheetsClientFactory clientFactory) {
             doSetProperty("clientFactory", clientFactory);
             return this;
@@ -85,7 +84,7 @@ public interface GoogleSheetsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default GoogleSheetsComponentBuilder setBasicPropertyBinding(
+        default GoogleSheetsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -106,7 +105,7 @@ public interface GoogleSheetsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default GoogleSheetsComponentBuilder setLazyStartProducer(
+        default GoogleSheetsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -125,7 +124,7 @@ public interface GoogleSheetsComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default GoogleSheetsComponentBuilder setBridgeErrorHandler(
+        default GoogleSheetsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -140,6 +139,20 @@ public interface GoogleSheetsComponentBuilderFactory {
         @Override
         protected GoogleSheetsComponent buildConcreteComponent() {
             return new GoogleSheetsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((GoogleSheetsComponent) component).setConfiguration((org.apache.camel.component.google.sheets.GoogleSheetsConfiguration) value); return true;
+            case "clientFactory": ((GoogleSheetsComponent) component).setClientFactory((org.apache.camel.component.google.sheets.GoogleSheetsClientFactory) value); return true;
+            case "basicPropertyBinding": ((GoogleSheetsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((GoogleSheetsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((GoogleSheetsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.aws.sdb.SdbComponent;
@@ -56,7 +57,7 @@ public interface SdbComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default SdbComponentBuilder setBasicPropertyBinding(
+        default SdbComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -77,8 +78,7 @@ public interface SdbComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SdbComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default SdbComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -92,6 +92,17 @@ public interface SdbComponentBuilderFactory {
         @Override
         protected SdbComponent buildConcreteComponent() {
             return new SdbComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((SdbComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((SdbComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

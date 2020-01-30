@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.pg.replication.slot.PgReplicationSlotComponent;
@@ -56,7 +57,7 @@ public interface PgReplicationSlotComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default PgReplicationSlotComponentBuilder setBasicPropertyBinding(
+        default PgReplicationSlotComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -75,7 +76,7 @@ public interface PgReplicationSlotComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default PgReplicationSlotComponentBuilder setBridgeErrorHandler(
+        default PgReplicationSlotComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -90,6 +91,17 @@ public interface PgReplicationSlotComponentBuilderFactory {
         @Override
         protected PgReplicationSlotComponent buildConcreteComponent() {
             return new PgReplicationSlotComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((PgReplicationSlotComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((PgReplicationSlotComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

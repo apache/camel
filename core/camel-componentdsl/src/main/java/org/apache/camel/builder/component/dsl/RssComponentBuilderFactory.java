@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.rss.RssComponent;
@@ -54,7 +55,7 @@ public interface RssComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default RssComponentBuilder setBasicPropertyBinding(
+        default RssComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -73,7 +74,7 @@ public interface RssComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default RssComponentBuilder setBridgeErrorHandler(
+        default RssComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -88,6 +89,17 @@ public interface RssComponentBuilderFactory {
         @Override
         protected RssComponent buildConcreteComponent() {
             return new RssComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((RssComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((RssComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

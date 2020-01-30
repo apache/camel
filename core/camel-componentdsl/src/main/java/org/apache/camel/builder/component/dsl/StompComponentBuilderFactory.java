@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.stomp.StompComponent;
@@ -54,10 +55,9 @@ public interface StompComponentBuilderFactory {
          * <code>org.apache.camel.component.stomp.StompConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default StompComponentBuilder setConfiguration(
+        default StompComponentBuilder configuration(
                 org.apache.camel.component.stomp.StompConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -67,10 +67,9 @@ public interface StompComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default StompComponentBuilder setBrokerURL(java.lang.String brokerURL) {
+        default StompComponentBuilder brokerURL(java.lang.String brokerURL) {
             doSetProperty("brokerURL", brokerURL);
             return this;
         }
@@ -79,10 +78,9 @@ public interface StompComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default StompComponentBuilder setLogin(java.lang.String login) {
+        default StompComponentBuilder login(java.lang.String login) {
             doSetProperty("login", login);
             return this;
         }
@@ -91,10 +89,9 @@ public interface StompComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default StompComponentBuilder setPasscode(java.lang.String passcode) {
+        default StompComponentBuilder passcode(java.lang.String passcode) {
             doSetProperty("passcode", passcode);
             return this;
         }
@@ -103,10 +100,9 @@ public interface StompComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default StompComponentBuilder setHost(java.lang.String host) {
+        default StompComponentBuilder host(java.lang.String host) {
             doSetProperty("host", host);
             return this;
         }
@@ -118,7 +114,7 @@ public interface StompComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default StompComponentBuilder setUseGlobalSslContextParameters(
+        default StompComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
@@ -130,10 +126,9 @@ public interface StompComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: filter
          */
-        default StompComponentBuilder setHeaderFilterStrategy(
+        default StompComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -147,7 +142,7 @@ public interface StompComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default StompComponentBuilder setBasicPropertyBinding(
+        default StompComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -168,7 +163,7 @@ public interface StompComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default StompComponentBuilder setLazyStartProducer(
+        default StompComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -187,7 +182,7 @@ public interface StompComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default StompComponentBuilder setBridgeErrorHandler(
+        default StompComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -202,6 +197,25 @@ public interface StompComponentBuilderFactory {
         @Override
         protected StompComponent buildConcreteComponent() {
             return new StompComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((StompComponent) component).setConfiguration((org.apache.camel.component.stomp.StompConfiguration) value); return true;
+            case "brokerURL": ((StompComponent) component).setBrokerURL((java.lang.String) value); return true;
+            case "login": ((StompComponent) component).setLogin((java.lang.String) value); return true;
+            case "passcode": ((StompComponent) component).setPasscode((java.lang.String) value); return true;
+            case "host": ((StompComponent) component).setHost((java.lang.String) value); return true;
+            case "useGlobalSslContextParameters": ((StompComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "headerFilterStrategy": ((StompComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "basicPropertyBinding": ((StompComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((StompComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((StompComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

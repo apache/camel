@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
@@ -56,7 +57,7 @@ public interface PlatformHttpComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default PlatformHttpComponentBuilder setBasicPropertyBinding(
+        default PlatformHttpComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -75,7 +76,7 @@ public interface PlatformHttpComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default PlatformHttpComponentBuilder setBridgeErrorHandler(
+        default PlatformHttpComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -90,6 +91,17 @@ public interface PlatformHttpComponentBuilderFactory {
         @Override
         protected PlatformHttpComponent buildConcreteComponent() {
             return new PlatformHttpComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((PlatformHttpComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((PlatformHttpComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.elasticsearch.ElasticsearchComponent;
@@ -57,10 +58,9 @@ public interface ElasticsearchComponentBuilderFactory {
          * The option is a: <code>org.elasticsearch.client.RestClient</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ElasticsearchComponentBuilder setClient(
+        default ElasticsearchComponentBuilder client(
                 org.elasticsearch.client.RestClient client) {
             doSetProperty("client", client);
             return this;
@@ -72,10 +72,9 @@ public interface ElasticsearchComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ElasticsearchComponentBuilder setHostAddresses(
+        default ElasticsearchComponentBuilder hostAddresses(
                 java.lang.String hostAddresses) {
             doSetProperty("hostAddresses", hostAddresses);
             return this;
@@ -88,7 +87,7 @@ public interface ElasticsearchComponentBuilderFactory {
          * Default: 30000
          * Group: advanced
          */
-        default ElasticsearchComponentBuilder setSocketTimeout(int socketTimeout) {
+        default ElasticsearchComponentBuilder socketTimeout(int socketTimeout) {
             doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
@@ -100,7 +99,7 @@ public interface ElasticsearchComponentBuilderFactory {
          * Default: 30000
          * Group: advanced
          */
-        default ElasticsearchComponentBuilder setConnectionTimeout(
+        default ElasticsearchComponentBuilder connectionTimeout(
                 int connectionTimeout) {
             doSetProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -110,10 +109,9 @@ public interface ElasticsearchComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default ElasticsearchComponentBuilder setUser(java.lang.String user) {
+        default ElasticsearchComponentBuilder user(java.lang.String user) {
             doSetProperty("user", user);
             return this;
         }
@@ -122,11 +120,9 @@ public interface ElasticsearchComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default ElasticsearchComponentBuilder setPassword(
-                java.lang.String password) {
+        default ElasticsearchComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
             return this;
         }
@@ -138,7 +134,7 @@ public interface ElasticsearchComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default ElasticsearchComponentBuilder setEnableSSL(
+        default ElasticsearchComponentBuilder enableSSL(
                 java.lang.Boolean enableSSL) {
             doSetProperty("enableSSL", enableSSL);
             return this;
@@ -151,7 +147,7 @@ public interface ElasticsearchComponentBuilderFactory {
          * Default: 30000
          * Group: advanced
          */
-        default ElasticsearchComponentBuilder setMaxRetryTimeout(
+        default ElasticsearchComponentBuilder maxRetryTimeout(
                 int maxRetryTimeout) {
             doSetProperty("maxRetryTimeout", maxRetryTimeout);
             return this;
@@ -165,7 +161,7 @@ public interface ElasticsearchComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ElasticsearchComponentBuilder setEnableSniffer(
+        default ElasticsearchComponentBuilder enableSniffer(
                 java.lang.Boolean enableSniffer) {
             doSetProperty("enableSniffer", enableSniffer);
             return this;
@@ -180,7 +176,7 @@ public interface ElasticsearchComponentBuilderFactory {
          * Default: 300000
          * Group: advanced
          */
-        default ElasticsearchComponentBuilder setSnifferInterval(
+        default ElasticsearchComponentBuilder snifferInterval(
                 int snifferInterval) {
             doSetProperty("snifferInterval", snifferInterval);
             return this;
@@ -194,7 +190,7 @@ public interface ElasticsearchComponentBuilderFactory {
          * Default: 60000
          * Group: advanced
          */
-        default ElasticsearchComponentBuilder setSniffAfterFailureDelay(
+        default ElasticsearchComponentBuilder sniffAfterFailureDelay(
                 int sniffAfterFailureDelay) {
             doSetProperty("sniffAfterFailureDelay", sniffAfterFailureDelay);
             return this;
@@ -208,7 +204,7 @@ public interface ElasticsearchComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ElasticsearchComponentBuilder setBasicPropertyBinding(
+        default ElasticsearchComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -229,7 +225,7 @@ public interface ElasticsearchComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default ElasticsearchComponentBuilder setLazyStartProducer(
+        default ElasticsearchComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -244,6 +240,28 @@ public interface ElasticsearchComponentBuilderFactory {
         @Override
         protected ElasticsearchComponent buildConcreteComponent() {
             return new ElasticsearchComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "client": ((ElasticsearchComponent) component).setClient((org.elasticsearch.client.RestClient) value); return true;
+            case "hostAddresses": ((ElasticsearchComponent) component).setHostAddresses((java.lang.String) value); return true;
+            case "socketTimeout": ((ElasticsearchComponent) component).setSocketTimeout((int) value); return true;
+            case "connectionTimeout": ((ElasticsearchComponent) component).setConnectionTimeout((int) value); return true;
+            case "user": ((ElasticsearchComponent) component).setUser((java.lang.String) value); return true;
+            case "password": ((ElasticsearchComponent) component).setPassword((java.lang.String) value); return true;
+            case "enableSSL": ((ElasticsearchComponent) component).setEnableSSL((java.lang.Boolean) value); return true;
+            case "maxRetryTimeout": ((ElasticsearchComponent) component).setMaxRetryTimeout((int) value); return true;
+            case "enableSniffer": ((ElasticsearchComponent) component).setEnableSniffer((java.lang.Boolean) value); return true;
+            case "snifferInterval": ((ElasticsearchComponent) component).setSnifferInterval((int) value); return true;
+            case "sniffAfterFailureDelay": ((ElasticsearchComponent) component).setSniffAfterFailureDelay((int) value); return true;
+            case "basicPropertyBinding": ((ElasticsearchComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((ElasticsearchComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

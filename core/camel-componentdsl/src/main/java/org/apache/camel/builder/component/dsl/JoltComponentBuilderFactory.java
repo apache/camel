@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.jolt.JoltComponent;
@@ -53,10 +54,9 @@ public interface JoltComponentBuilderFactory {
          * 
          * The option is a: <code>com.bazaarvoice.jolt.Transform</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default JoltComponentBuilder setTransform(
+        default JoltComponentBuilder transform(
                 com.bazaarvoice.jolt.Transform transform) {
             doSetProperty("transform", transform);
             return this;
@@ -70,7 +70,7 @@ public interface JoltComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JoltComponentBuilder setBasicPropertyBinding(
+        default JoltComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -91,8 +91,7 @@ public interface JoltComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default JoltComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default JoltComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -106,6 +105,18 @@ public interface JoltComponentBuilderFactory {
         @Override
         protected JoltComponent buildConcreteComponent() {
             return new JoltComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "transform": ((JoltComponent) component).setTransform((com.bazaarvoice.jolt.Transform) value); return true;
+            case "basicPropertyBinding": ((JoltComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((JoltComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

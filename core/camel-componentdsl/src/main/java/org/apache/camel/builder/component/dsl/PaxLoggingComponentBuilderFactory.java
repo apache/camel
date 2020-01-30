@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.paxlogging.PaxLoggingComponent;
@@ -54,10 +55,9 @@ public interface PaxLoggingComponentBuilderFactory {
          * 
          * The option is a: <code>org.osgi.framework.BundleContext</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default PaxLoggingComponentBuilder setBundleContext(
+        default PaxLoggingComponentBuilder bundleContext(
                 org.osgi.framework.BundleContext bundleContext) {
             doSetProperty("bundleContext", bundleContext);
             return this;
@@ -71,7 +71,7 @@ public interface PaxLoggingComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default PaxLoggingComponentBuilder setBasicPropertyBinding(
+        default PaxLoggingComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -90,7 +90,7 @@ public interface PaxLoggingComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default PaxLoggingComponentBuilder setBridgeErrorHandler(
+        default PaxLoggingComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -105,6 +105,18 @@ public interface PaxLoggingComponentBuilderFactory {
         @Override
         protected PaxLoggingComponent buildConcreteComponent() {
             return new PaxLoggingComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "bundleContext": ((PaxLoggingComponent) component).setBundleContext((org.osgi.framework.BundleContext) value); return true;
+            case "basicPropertyBinding": ((PaxLoggingComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((PaxLoggingComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

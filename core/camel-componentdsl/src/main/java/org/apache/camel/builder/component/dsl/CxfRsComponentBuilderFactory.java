@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.cxf.jaxrs.CxfRsComponent;
@@ -53,7 +54,7 @@ public interface CxfRsComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default CxfRsComponentBuilder setUseGlobalSslContextParameters(
+        default CxfRsComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
@@ -65,10 +66,9 @@ public interface CxfRsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: filter
          */
-        default CxfRsComponentBuilder setHeaderFilterStrategy(
+        default CxfRsComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -82,7 +82,7 @@ public interface CxfRsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default CxfRsComponentBuilder setBasicPropertyBinding(
+        default CxfRsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -103,7 +103,7 @@ public interface CxfRsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default CxfRsComponentBuilder setLazyStartProducer(
+        default CxfRsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -122,7 +122,7 @@ public interface CxfRsComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default CxfRsComponentBuilder setBridgeErrorHandler(
+        default CxfRsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -137,6 +137,20 @@ public interface CxfRsComponentBuilderFactory {
         @Override
         protected CxfRsComponent buildConcreteComponent() {
             return new CxfRsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "useGlobalSslContextParameters": ((CxfRsComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "headerFilterStrategy": ((CxfRsComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "basicPropertyBinding": ((CxfRsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((CxfRsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((CxfRsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

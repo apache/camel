@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.ehcache.EhcacheComponent;
@@ -56,10 +57,9 @@ public interface EhcacheComponentBuilderFactory {
          * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default EhcacheComponentBuilder setConfiguration(
+        default EhcacheComponentBuilder configuration(
                 org.apache.camel.component.ehcache.EhcacheConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -69,10 +69,9 @@ public interface EhcacheComponentBuilderFactory {
          * 
          * The option is a: <code>org.ehcache.CacheManager</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default EhcacheComponentBuilder setCacheManager(
+        default EhcacheComponentBuilder cacheManager(
                 org.ehcache.CacheManager cacheManager) {
             doSetProperty("cacheManager", cacheManager);
             return this;
@@ -82,10 +81,9 @@ public interface EhcacheComponentBuilderFactory {
          * 
          * The option is a: <code>org.ehcache.config.Configuration</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default EhcacheComponentBuilder setCacheManagerConfiguration(
+        default EhcacheComponentBuilder cacheManagerConfiguration(
                 org.ehcache.config.Configuration cacheManagerConfiguration) {
             doSetProperty("cacheManagerConfiguration", cacheManagerConfiguration);
             return this;
@@ -96,10 +94,9 @@ public interface EhcacheComponentBuilderFactory {
          * The option is a: <code>org.ehcache.config.CacheConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
-        default EhcacheComponentBuilder setCacheConfiguration(
+        default EhcacheComponentBuilder cacheConfiguration(
                 org.ehcache.config.CacheConfiguration cacheConfiguration) {
             doSetProperty("cacheConfiguration", cacheConfiguration);
             return this;
@@ -110,10 +107,9 @@ public interface EhcacheComponentBuilderFactory {
          * The option is a:
          * <code>java.util.Map<java.lang.String,org.ehcache.config.CacheConfiguration></code> type.
          * 
-         * Default:
          * Group: common
          */
-        default EhcacheComponentBuilder setCachesConfigurations(
+        default EhcacheComponentBuilder cachesConfigurations(
                 java.util.Map<java.lang.String,org.ehcache.config.CacheConfiguration> cachesConfigurations) {
             doSetProperty("cachesConfigurations", cachesConfigurations);
             return this;
@@ -123,10 +119,9 @@ public interface EhcacheComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default EhcacheComponentBuilder setCacheConfigurationUri(
+        default EhcacheComponentBuilder cacheConfigurationUri(
                 java.lang.String cacheConfigurationUri) {
             doSetProperty("cacheConfigurationUri", cacheConfigurationUri);
             return this;
@@ -140,7 +135,7 @@ public interface EhcacheComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default EhcacheComponentBuilder setBasicPropertyBinding(
+        default EhcacheComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -161,7 +156,7 @@ public interface EhcacheComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default EhcacheComponentBuilder setLazyStartProducer(
+        default EhcacheComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -180,7 +175,7 @@ public interface EhcacheComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default EhcacheComponentBuilder setBridgeErrorHandler(
+        default EhcacheComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -195,6 +190,24 @@ public interface EhcacheComponentBuilderFactory {
         @Override
         protected EhcacheComponent buildConcreteComponent() {
             return new EhcacheComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((EhcacheComponent) component).setConfiguration((org.apache.camel.component.ehcache.EhcacheConfiguration) value); return true;
+            case "cacheManager": ((EhcacheComponent) component).setCacheManager((org.ehcache.CacheManager) value); return true;
+            case "cacheManagerConfiguration": ((EhcacheComponent) component).setCacheManagerConfiguration((org.ehcache.config.Configuration) value); return true;
+            case "cacheConfiguration": ((EhcacheComponent) component).setCacheConfiguration((org.ehcache.config.CacheConfiguration) value); return true;
+            case "cachesConfigurations": ((EhcacheComponent) component).setCachesConfigurations((java.util.Map<java.lang.String,org.ehcache.config.CacheConfiguration>) value); return true;
+            case "cacheConfigurationUri": ((EhcacheComponent) component).setCacheConfigurationUri((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((EhcacheComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((EhcacheComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((EhcacheComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

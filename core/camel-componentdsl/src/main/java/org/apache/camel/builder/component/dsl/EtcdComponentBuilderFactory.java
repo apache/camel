@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.etcd.EtcdComponent;
@@ -52,10 +53,9 @@ public interface EtcdComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default EtcdComponentBuilder setUris(java.lang.String uris) {
+        default EtcdComponentBuilder uris(java.lang.String uris) {
             doSetProperty("uris", uris);
             return this;
         }
@@ -65,10 +65,9 @@ public interface EtcdComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default EtcdComponentBuilder setSslContextParameters(
+        default EtcdComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -78,10 +77,9 @@ public interface EtcdComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default EtcdComponentBuilder setUserName(java.lang.String userName) {
+        default EtcdComponentBuilder userName(java.lang.String userName) {
             doSetProperty("userName", userName);
             return this;
         }
@@ -90,10 +88,9 @@ public interface EtcdComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default EtcdComponentBuilder setPassword(java.lang.String password) {
+        default EtcdComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
             return this;
         }
@@ -103,10 +100,9 @@ public interface EtcdComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.etcd.EtcdConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default EtcdComponentBuilder setConfiguration(
+        default EtcdComponentBuilder configuration(
                 org.apache.camel.component.etcd.EtcdConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -119,7 +115,7 @@ public interface EtcdComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default EtcdComponentBuilder setUseGlobalSslContextParameters(
+        default EtcdComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
@@ -133,7 +129,7 @@ public interface EtcdComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default EtcdComponentBuilder setBasicPropertyBinding(
+        default EtcdComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -154,8 +150,7 @@ public interface EtcdComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default EtcdComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default EtcdComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -173,7 +168,7 @@ public interface EtcdComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default EtcdComponentBuilder setBridgeErrorHandler(
+        default EtcdComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -188,6 +183,24 @@ public interface EtcdComponentBuilderFactory {
         @Override
         protected EtcdComponent buildConcreteComponent() {
             return new EtcdComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "uris": ((EtcdComponent) component).setUris((java.lang.String) value); return true;
+            case "sslContextParameters": ((EtcdComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "userName": ((EtcdComponent) component).setUserName((java.lang.String) value); return true;
+            case "password": ((EtcdComponent) component).setPassword((java.lang.String) value); return true;
+            case "configuration": ((EtcdComponent) component).setConfiguration((org.apache.camel.component.etcd.EtcdConfiguration) value); return true;
+            case "useGlobalSslContextParameters": ((EtcdComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "basicPropertyBinding": ((EtcdComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((EtcdComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((EtcdComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

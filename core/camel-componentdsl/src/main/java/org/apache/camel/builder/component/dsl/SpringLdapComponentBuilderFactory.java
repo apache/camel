@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.springldap.SpringLdapComponent;
@@ -58,7 +59,7 @@ public interface SpringLdapComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default SpringLdapComponentBuilder setBasicPropertyBinding(
+        default SpringLdapComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +80,7 @@ public interface SpringLdapComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SpringLdapComponentBuilder setLazyStartProducer(
+        default SpringLdapComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -94,6 +95,17 @@ public interface SpringLdapComponentBuilderFactory {
         @Override
         protected SpringLdapComponent buildConcreteComponent() {
             return new SpringLdapComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((SpringLdapComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((SpringLdapComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.caffeine.cache.CaffeineCacheComponent;
@@ -53,10 +54,9 @@ public interface CaffeineCacheComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.caffeine.CaffeineConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default CaffeineCacheComponentBuilder setConfiguration(
+        default CaffeineCacheComponentBuilder configuration(
                 org.apache.camel.component.caffeine.CaffeineConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -70,7 +70,7 @@ public interface CaffeineCacheComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default CaffeineCacheComponentBuilder setBasicPropertyBinding(
+        default CaffeineCacheComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -91,7 +91,7 @@ public interface CaffeineCacheComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default CaffeineCacheComponentBuilder setLazyStartProducer(
+        default CaffeineCacheComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -106,6 +106,18 @@ public interface CaffeineCacheComponentBuilderFactory {
         @Override
         protected CaffeineCacheComponent buildConcreteComponent() {
             return new CaffeineCacheComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((CaffeineCacheComponent) component).setConfiguration((org.apache.camel.component.caffeine.CaffeineConfiguration) value); return true;
+            case "basicPropertyBinding": ((CaffeineCacheComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((CaffeineCacheComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

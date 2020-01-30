@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.file.remote.FtpsComponent;
@@ -55,7 +56,7 @@ public interface FtpsComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default FtpsComponentBuilder setUseGlobalSslContextParameters(
+        default FtpsComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
@@ -69,7 +70,7 @@ public interface FtpsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default FtpsComponentBuilder setBasicPropertyBinding(
+        default FtpsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -90,8 +91,7 @@ public interface FtpsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default FtpsComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default FtpsComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -109,7 +109,7 @@ public interface FtpsComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default FtpsComponentBuilder setBridgeErrorHandler(
+        default FtpsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -124,6 +124,19 @@ public interface FtpsComponentBuilderFactory {
         @Override
         protected FtpsComponent buildConcreteComponent() {
             return new FtpsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "useGlobalSslContextParameters": ((FtpsComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "basicPropertyBinding": ((FtpsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((FtpsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((FtpsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

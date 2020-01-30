@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.direct.DirectComponent;
@@ -59,7 +60,7 @@ public interface DirectComponentBuilderFactory {
          * Default: true
          * Group: producer
          */
-        default DirectComponentBuilder setBlock(boolean block) {
+        default DirectComponentBuilder block(boolean block) {
             doSetProperty("block", block);
             return this;
         }
@@ -71,7 +72,7 @@ public interface DirectComponentBuilderFactory {
          * Default: 30000
          * Group: producer
          */
-        default DirectComponentBuilder setTimeout(long timeout) {
+        default DirectComponentBuilder timeout(long timeout) {
             doSetProperty("timeout", timeout);
             return this;
         }
@@ -84,7 +85,7 @@ public interface DirectComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default DirectComponentBuilder setBasicPropertyBinding(
+        default DirectComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -105,7 +106,7 @@ public interface DirectComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default DirectComponentBuilder setLazyStartProducer(
+        default DirectComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -124,7 +125,7 @@ public interface DirectComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default DirectComponentBuilder setBridgeErrorHandler(
+        default DirectComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -139,6 +140,20 @@ public interface DirectComponentBuilderFactory {
         @Override
         protected DirectComponent buildConcreteComponent() {
             return new DirectComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "block": ((DirectComponent) component).setBlock((boolean) value); return true;
+            case "timeout": ((DirectComponent) component).setTimeout((long) value); return true;
+            case "basicPropertyBinding": ((DirectComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((DirectComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((DirectComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.dns.DnsComponent;
@@ -54,7 +55,7 @@ public interface DnsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default DnsComponentBuilder setBasicPropertyBinding(
+        default DnsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -75,8 +76,7 @@ public interface DnsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default DnsComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default DnsComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -90,6 +90,17 @@ public interface DnsComponentBuilderFactory {
         @Override
         protected DnsComponent buildConcreteComponent() {
             return new DnsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((DnsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((DnsComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

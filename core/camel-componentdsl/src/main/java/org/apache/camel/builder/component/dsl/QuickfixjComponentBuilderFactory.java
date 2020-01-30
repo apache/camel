@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.quickfixj.QuickfixjComponent;
@@ -54,10 +55,9 @@ public interface QuickfixjComponentBuilderFactory {
          * 
          * The option is a: <code>quickfix.MessageFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default QuickfixjComponentBuilder setMessageFactory(
+        default QuickfixjComponentBuilder messageFactory(
                 quickfix.MessageFactory messageFactory) {
             doSetProperty("messageFactory", messageFactory);
             return this;
@@ -67,10 +67,9 @@ public interface QuickfixjComponentBuilderFactory {
          * 
          * The option is a: <code>quickfix.LogFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default QuickfixjComponentBuilder setLogFactory(
+        default QuickfixjComponentBuilder logFactory(
                 quickfix.LogFactory logFactory) {
             doSetProperty("logFactory", logFactory);
             return this;
@@ -80,10 +79,9 @@ public interface QuickfixjComponentBuilderFactory {
          * 
          * The option is a: <code>quickfix.MessageStoreFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default QuickfixjComponentBuilder setMessageStoreFactory(
+        default QuickfixjComponentBuilder messageStoreFactory(
                 quickfix.MessageStoreFactory messageStoreFactory) {
             doSetProperty("messageStoreFactory", messageStoreFactory);
             return this;
@@ -95,10 +93,9 @@ public interface QuickfixjComponentBuilderFactory {
          * The option is a:
          * <code>java.util.Map<java.lang.String,org.apache.camel.component.quickfixj.QuickfixjConfiguration></code> type.
          * 
-         * Default:
          * Group: common
          */
-        default QuickfixjComponentBuilder setConfigurations(
+        default QuickfixjComponentBuilder configurations(
                 java.util.Map<java.lang.String,org.apache.camel.component.quickfixj.QuickfixjConfiguration> configurations) {
             doSetProperty("configurations", configurations);
             return this;
@@ -112,7 +109,7 @@ public interface QuickfixjComponentBuilderFactory {
          * Default: false
          * Group: common
          */
-        default QuickfixjComponentBuilder setLazyCreateEngines(
+        default QuickfixjComponentBuilder lazyCreateEngines(
                 boolean lazyCreateEngines) {
             doSetProperty("lazyCreateEngines", lazyCreateEngines);
             return this;
@@ -126,7 +123,7 @@ public interface QuickfixjComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default QuickfixjComponentBuilder setBasicPropertyBinding(
+        default QuickfixjComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -147,7 +144,7 @@ public interface QuickfixjComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default QuickfixjComponentBuilder setLazyStartProducer(
+        default QuickfixjComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -166,7 +163,7 @@ public interface QuickfixjComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default QuickfixjComponentBuilder setBridgeErrorHandler(
+        default QuickfixjComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -181,6 +178,23 @@ public interface QuickfixjComponentBuilderFactory {
         @Override
         protected QuickfixjComponent buildConcreteComponent() {
             return new QuickfixjComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "messageFactory": ((QuickfixjComponent) component).setMessageFactory((quickfix.MessageFactory) value); return true;
+            case "logFactory": ((QuickfixjComponent) component).setLogFactory((quickfix.LogFactory) value); return true;
+            case "messageStoreFactory": ((QuickfixjComponent) component).setMessageStoreFactory((quickfix.MessageStoreFactory) value); return true;
+            case "configurations": ((QuickfixjComponent) component).setConfigurations((java.util.Map<java.lang.String,org.apache.camel.component.quickfixj.QuickfixjConfiguration>) value); return true;
+            case "lazyCreateEngines": ((QuickfixjComponent) component).setLazyCreateEngines((boolean) value); return true;
+            case "basicPropertyBinding": ((QuickfixjComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((QuickfixjComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((QuickfixjComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

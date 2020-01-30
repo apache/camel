@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.aws.mq.MQComponent;
@@ -51,10 +52,9 @@ public interface MQComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.aws.mq.MQConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default MQComponentBuilder setConfiguration(
+        default MQComponentBuilder configuration(
                 org.apache.camel.component.aws.mq.MQConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -64,10 +64,9 @@ public interface MQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default MQComponentBuilder setAccessKey(java.lang.String accessKey) {
+        default MQComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
             return this;
         }
@@ -76,10 +75,9 @@ public interface MQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default MQComponentBuilder setSecretKey(java.lang.String secretKey) {
+        default MQComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
             return this;
         }
@@ -88,10 +86,9 @@ public interface MQComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default MQComponentBuilder setRegion(java.lang.String region) {
+        default MQComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
             return this;
         }
@@ -104,7 +101,7 @@ public interface MQComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default MQComponentBuilder setBasicPropertyBinding(
+        default MQComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -125,8 +122,7 @@ public interface MQComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default MQComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default MQComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -140,6 +136,21 @@ public interface MQComponentBuilderFactory {
         @Override
         protected MQComponent buildConcreteComponent() {
             return new MQComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((MQComponent) component).setConfiguration((org.apache.camel.component.aws.mq.MQConfiguration) value); return true;
+            case "accessKey": ((MQComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": ((MQComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "region": ((MQComponent) component).setRegion((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((MQComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((MQComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

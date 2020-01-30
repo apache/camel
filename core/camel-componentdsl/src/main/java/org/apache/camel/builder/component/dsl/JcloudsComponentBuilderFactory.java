@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.jclouds.JcloudsComponent;
@@ -54,10 +55,9 @@ public interface JcloudsComponentBuilderFactory {
          * The option is a:
          * <code>java.util.List<org.jclouds.blobstore.BlobStore></code> type.
          * 
-         * Default:
          * Group: common
          */
-        default JcloudsComponentBuilder setBlobStores(
+        default JcloudsComponentBuilder blobStores(
                 java.util.List<org.jclouds.blobstore.BlobStore> blobStores) {
             doSetProperty("blobStores", blobStores);
             return this;
@@ -69,10 +69,9 @@ public interface JcloudsComponentBuilderFactory {
          * The option is a:
          * <code>java.util.List<org.jclouds.compute.ComputeService></code> type.
          * 
-         * Default:
          * Group: common
          */
-        default JcloudsComponentBuilder setComputeServices(
+        default JcloudsComponentBuilder computeServices(
                 java.util.List<org.jclouds.compute.ComputeService> computeServices) {
             doSetProperty("computeServices", computeServices);
             return this;
@@ -86,7 +85,7 @@ public interface JcloudsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JcloudsComponentBuilder setBasicPropertyBinding(
+        default JcloudsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -107,7 +106,7 @@ public interface JcloudsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default JcloudsComponentBuilder setLazyStartProducer(
+        default JcloudsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -126,7 +125,7 @@ public interface JcloudsComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default JcloudsComponentBuilder setBridgeErrorHandler(
+        default JcloudsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -141,6 +140,20 @@ public interface JcloudsComponentBuilderFactory {
         @Override
         protected JcloudsComponent buildConcreteComponent() {
             return new JcloudsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "blobStores": ((JcloudsComponent) component).setBlobStores((java.util.List<org.jclouds.blobstore.BlobStore>) value); return true;
+            case "computeServices": ((JcloudsComponent) component).setComputeServices((java.util.List<org.jclouds.compute.ComputeService>) value); return true;
+            case "basicPropertyBinding": ((JcloudsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((JcloudsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((JcloudsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

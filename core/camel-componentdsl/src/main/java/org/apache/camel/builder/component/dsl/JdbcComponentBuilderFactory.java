@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.jdbc.JdbcComponent;
@@ -53,11 +54,9 @@ public interface JdbcComponentBuilderFactory {
          * 
          * The option is a: <code>javax.sql.DataSource</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default JdbcComponentBuilder setDataSource(
-                javax.sql.DataSource dataSource) {
+        default JdbcComponentBuilder dataSource(javax.sql.DataSource dataSource) {
             doSetProperty("dataSource", dataSource);
             return this;
         }
@@ -70,7 +69,7 @@ public interface JdbcComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JdbcComponentBuilder setBasicPropertyBinding(
+        default JdbcComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -91,8 +90,7 @@ public interface JdbcComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default JdbcComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default JdbcComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -106,6 +104,18 @@ public interface JdbcComponentBuilderFactory {
         @Override
         protected JdbcComponent buildConcreteComponent() {
             return new JdbcComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "dataSource": ((JdbcComponent) component).setDataSource((javax.sql.DataSource) value); return true;
+            case "basicPropertyBinding": ((JdbcComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((JdbcComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

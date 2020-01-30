@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.twitter.directmessage.TwitterDirectMessageComponent;
@@ -54,10 +55,9 @@ public interface TwitterDirectMessageComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default TwitterDirectMessageComponentBuilder setAccessToken(
+        default TwitterDirectMessageComponentBuilder accessToken(
                 java.lang.String accessToken) {
             doSetProperty("accessToken", accessToken);
             return this;
@@ -67,10 +67,9 @@ public interface TwitterDirectMessageComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default TwitterDirectMessageComponentBuilder setAccessTokenSecret(
+        default TwitterDirectMessageComponentBuilder accessTokenSecret(
                 java.lang.String accessTokenSecret) {
             doSetProperty("accessTokenSecret", accessTokenSecret);
             return this;
@@ -80,10 +79,9 @@ public interface TwitterDirectMessageComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default TwitterDirectMessageComponentBuilder setConsumerKey(
+        default TwitterDirectMessageComponentBuilder consumerKey(
                 java.lang.String consumerKey) {
             doSetProperty("consumerKey", consumerKey);
             return this;
@@ -93,10 +91,9 @@ public interface TwitterDirectMessageComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default TwitterDirectMessageComponentBuilder setConsumerSecret(
+        default TwitterDirectMessageComponentBuilder consumerSecret(
                 java.lang.String consumerSecret) {
             doSetProperty("consumerSecret", consumerSecret);
             return this;
@@ -106,10 +103,9 @@ public interface TwitterDirectMessageComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
-        default TwitterDirectMessageComponentBuilder setHttpProxyHost(
+        default TwitterDirectMessageComponentBuilder httpProxyHost(
                 java.lang.String httpProxyHost) {
             doSetProperty("httpProxyHost", httpProxyHost);
             return this;
@@ -119,10 +115,9 @@ public interface TwitterDirectMessageComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
-        default TwitterDirectMessageComponentBuilder setHttpProxyUser(
+        default TwitterDirectMessageComponentBuilder httpProxyUser(
                 java.lang.String httpProxyUser) {
             doSetProperty("httpProxyUser", httpProxyUser);
             return this;
@@ -132,10 +127,9 @@ public interface TwitterDirectMessageComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
-        default TwitterDirectMessageComponentBuilder setHttpProxyPassword(
+        default TwitterDirectMessageComponentBuilder httpProxyPassword(
                 java.lang.String httpProxyPassword) {
             doSetProperty("httpProxyPassword", httpProxyPassword);
             return this;
@@ -145,10 +139,9 @@ public interface TwitterDirectMessageComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: proxy
          */
-        default TwitterDirectMessageComponentBuilder setHttpProxyPort(
+        default TwitterDirectMessageComponentBuilder httpProxyPort(
                 int httpProxyPort) {
             doSetProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -162,7 +155,7 @@ public interface TwitterDirectMessageComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default TwitterDirectMessageComponentBuilder setBasicPropertyBinding(
+        default TwitterDirectMessageComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -183,7 +176,7 @@ public interface TwitterDirectMessageComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default TwitterDirectMessageComponentBuilder setLazyStartProducer(
+        default TwitterDirectMessageComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -202,7 +195,7 @@ public interface TwitterDirectMessageComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default TwitterDirectMessageComponentBuilder setBridgeErrorHandler(
+        default TwitterDirectMessageComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -217,6 +210,26 @@ public interface TwitterDirectMessageComponentBuilderFactory {
         @Override
         protected TwitterDirectMessageComponent buildConcreteComponent() {
             return new TwitterDirectMessageComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "accessToken": ((TwitterDirectMessageComponent) component).setAccessToken((java.lang.String) value); return true;
+            case "accessTokenSecret": ((TwitterDirectMessageComponent) component).setAccessTokenSecret((java.lang.String) value); return true;
+            case "consumerKey": ((TwitterDirectMessageComponent) component).setConsumerKey((java.lang.String) value); return true;
+            case "consumerSecret": ((TwitterDirectMessageComponent) component).setConsumerSecret((java.lang.String) value); return true;
+            case "httpProxyHost": ((TwitterDirectMessageComponent) component).setHttpProxyHost((java.lang.String) value); return true;
+            case "httpProxyUser": ((TwitterDirectMessageComponent) component).setHttpProxyUser((java.lang.String) value); return true;
+            case "httpProxyPassword": ((TwitterDirectMessageComponent) component).setHttpProxyPassword((java.lang.String) value); return true;
+            case "httpProxyPort": ((TwitterDirectMessageComponent) component).setHttpProxyPort((int) value); return true;
+            case "basicPropertyBinding": ((TwitterDirectMessageComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((TwitterDirectMessageComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((TwitterDirectMessageComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

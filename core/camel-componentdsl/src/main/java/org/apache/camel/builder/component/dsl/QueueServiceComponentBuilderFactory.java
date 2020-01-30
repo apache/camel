@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.azure.queue.QueueServiceComponent;
@@ -55,10 +56,9 @@ public interface QueueServiceComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.azure.queue.QueueServiceConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default QueueServiceComponentBuilder setConfiguration(
+        default QueueServiceComponentBuilder configuration(
                 org.apache.camel.component.azure.queue.QueueServiceConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -72,7 +72,7 @@ public interface QueueServiceComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default QueueServiceComponentBuilder setBasicPropertyBinding(
+        default QueueServiceComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -93,7 +93,7 @@ public interface QueueServiceComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default QueueServiceComponentBuilder setLazyStartProducer(
+        default QueueServiceComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -112,7 +112,7 @@ public interface QueueServiceComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default QueueServiceComponentBuilder setBridgeErrorHandler(
+        default QueueServiceComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -127,6 +127,19 @@ public interface QueueServiceComponentBuilderFactory {
         @Override
         protected QueueServiceComponent buildConcreteComponent() {
             return new QueueServiceComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((QueueServiceComponent) component).setConfiguration((org.apache.camel.component.azure.queue.QueueServiceConfiguration) value); return true;
+            case "basicPropertyBinding": ((QueueServiceComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((QueueServiceComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((QueueServiceComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

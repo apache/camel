@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.service.ServiceComponent;
@@ -55,10 +56,9 @@ public interface ServiceComponentBuilderFactory {
          * The option is a: <code>org.apache.camel.cloud.ServiceRegistry</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ServiceComponentBuilder setService(
+        default ServiceComponentBuilder service(
                 org.apache.camel.cloud.ServiceRegistry service) {
             doSetProperty("service", service);
             return this;
@@ -70,10 +70,9 @@ public interface ServiceComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.cloud.ServiceRegistry.Selector</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ServiceComponentBuilder setServiceSelector(
+        default ServiceComponentBuilder serviceSelector(
                 org.apache.camel.cloud.ServiceRegistry.Selector serviceSelector) {
             doSetProperty("serviceSelector", serviceSelector);
             return this;
@@ -87,7 +86,7 @@ public interface ServiceComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ServiceComponentBuilder setBasicPropertyBinding(
+        default ServiceComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -106,7 +105,7 @@ public interface ServiceComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default ServiceComponentBuilder setBridgeErrorHandler(
+        default ServiceComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -121,6 +120,19 @@ public interface ServiceComponentBuilderFactory {
         @Override
         protected ServiceComponent buildConcreteComponent() {
             return new ServiceComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "service": ((ServiceComponent) component).setService((org.apache.camel.cloud.ServiceRegistry) value); return true;
+            case "serviceSelector": ((ServiceComponent) component).setServiceSelector((org.apache.camel.cloud.ServiceRegistry.Selector) value); return true;
+            case "basicPropertyBinding": ((ServiceComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((ServiceComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

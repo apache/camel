@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.mllp.MllpComponent;
@@ -55,7 +56,7 @@ public interface MllpComponentBuilderFactory {
          * Default: true
          * Group: advanced
          */
-        default MllpComponentBuilder setLogPhi(java.lang.Boolean logPhi) {
+        default MllpComponentBuilder logPhi(java.lang.Boolean logPhi) {
             doSetProperty("logPhi", logPhi);
             return this;
         }
@@ -68,7 +69,7 @@ public interface MllpComponentBuilderFactory {
          * Default: 5120
          * Group: advanced
          */
-        default MllpComponentBuilder setLogPhiMaxBytes(
+        default MllpComponentBuilder logPhiMaxBytes(
                 java.lang.Integer logPhiMaxBytes) {
             doSetProperty("logPhiMaxBytes", logPhiMaxBytes);
             return this;
@@ -82,7 +83,7 @@ public interface MllpComponentBuilderFactory {
          * Default: ISO-8859-1
          * Group: advanced
          */
-        default MllpComponentBuilder setDefaultCharset(
+        default MllpComponentBuilder defaultCharset(
                 java.lang.String defaultCharset) {
             doSetProperty("defaultCharset", defaultCharset);
             return this;
@@ -93,10 +94,9 @@ public interface MllpComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.mllp.MllpConfiguration</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MllpComponentBuilder setConfiguration(
+        default MllpComponentBuilder configuration(
                 org.apache.camel.component.mllp.MllpConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -110,7 +110,7 @@ public interface MllpComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default MllpComponentBuilder setBasicPropertyBinding(
+        default MllpComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -131,8 +131,7 @@ public interface MllpComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default MllpComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default MllpComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -150,7 +149,7 @@ public interface MllpComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default MllpComponentBuilder setBridgeErrorHandler(
+        default MllpComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -165,6 +164,22 @@ public interface MllpComponentBuilderFactory {
         @Override
         protected MllpComponent buildConcreteComponent() {
             return new MllpComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "logPhi": ((MllpComponent) component).setLogPhi((java.lang.Boolean) value); return true;
+            case "logPhiMaxBytes": ((MllpComponent) component).setLogPhiMaxBytes((java.lang.Integer) value); return true;
+            case "defaultCharset": ((MllpComponent) component).setDefaultCharset((java.lang.String) value); return true;
+            case "configuration": ((MllpComponent) component).setConfiguration((org.apache.camel.component.mllp.MllpConfiguration) value); return true;
+            case "basicPropertyBinding": ((MllpComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((MllpComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((MllpComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

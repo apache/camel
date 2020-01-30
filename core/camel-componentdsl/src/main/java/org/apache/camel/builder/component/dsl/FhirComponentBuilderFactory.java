@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.fhir.FhirComponent;
@@ -52,10 +53,9 @@ public interface FhirComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.fhir.FhirConfiguration</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default FhirComponentBuilder setConfiguration(
+        default FhirComponentBuilder configuration(
                 org.apache.camel.component.fhir.FhirConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -69,7 +69,7 @@ public interface FhirComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default FhirComponentBuilder setBasicPropertyBinding(
+        default FhirComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -90,8 +90,7 @@ public interface FhirComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default FhirComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default FhirComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -109,7 +108,7 @@ public interface FhirComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default FhirComponentBuilder setBridgeErrorHandler(
+        default FhirComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -124,6 +123,19 @@ public interface FhirComponentBuilderFactory {
         @Override
         protected FhirComponent buildConcreteComponent() {
             return new FhirComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((FhirComponent) component).setConfiguration((org.apache.camel.component.fhir.FhirConfiguration) value); return true;
+            case "basicPropertyBinding": ((FhirComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((FhirComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((FhirComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

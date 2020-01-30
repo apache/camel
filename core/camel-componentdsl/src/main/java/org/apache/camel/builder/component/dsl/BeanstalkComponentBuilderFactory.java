@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.beanstalk.BeanstalkComponent;
@@ -58,10 +59,9 @@ public interface BeanstalkComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.beanstalk.ConnectionSettingsFactory</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default BeanstalkComponentBuilder setConnectionSettingsFactory(
+        default BeanstalkComponentBuilder connectionSettingsFactory(
                 org.apache.camel.component.beanstalk.ConnectionSettingsFactory connectionSettingsFactory) {
             doSetProperty("connectionSettingsFactory", connectionSettingsFactory);
             return this;
@@ -75,7 +75,7 @@ public interface BeanstalkComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default BeanstalkComponentBuilder setBasicPropertyBinding(
+        default BeanstalkComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -96,7 +96,7 @@ public interface BeanstalkComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default BeanstalkComponentBuilder setLazyStartProducer(
+        default BeanstalkComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -115,7 +115,7 @@ public interface BeanstalkComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default BeanstalkComponentBuilder setBridgeErrorHandler(
+        default BeanstalkComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -130,6 +130,19 @@ public interface BeanstalkComponentBuilderFactory {
         @Override
         protected BeanstalkComponent buildConcreteComponent() {
             return new BeanstalkComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "connectionSettingsFactory": ((BeanstalkComponent) component).setConnectionSettingsFactory((org.apache.camel.component.beanstalk.ConnectionSettingsFactory) value); return true;
+            case "basicPropertyBinding": ((BeanstalkComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((BeanstalkComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((BeanstalkComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

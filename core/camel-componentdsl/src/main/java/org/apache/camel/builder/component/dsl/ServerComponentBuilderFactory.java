@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.iec60870.server.ServerComponent;
@@ -58,10 +59,9 @@ public interface ServerComponentBuilderFactory {
          * <code>org.apache.camel.component.iec60870.server.ServerOptions</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
-        default ServerComponentBuilder setDefaultConnectionOptions(
+        default ServerComponentBuilder defaultConnectionOptions(
                 org.apache.camel.component.iec60870.server.ServerOptions defaultConnectionOptions) {
             doSetProperty("defaultConnectionOptions", defaultConnectionOptions);
             return this;
@@ -75,7 +75,7 @@ public interface ServerComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ServerComponentBuilder setBasicPropertyBinding(
+        default ServerComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -96,7 +96,7 @@ public interface ServerComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default ServerComponentBuilder setLazyStartProducer(
+        default ServerComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -115,7 +115,7 @@ public interface ServerComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default ServerComponentBuilder setBridgeErrorHandler(
+        default ServerComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -130,6 +130,19 @@ public interface ServerComponentBuilderFactory {
         @Override
         protected ServerComponent buildConcreteComponent() {
             return new ServerComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "defaultConnectionOptions": ((ServerComponent) component).setDefaultConnectionOptions((org.apache.camel.component.iec60870.server.ServerOptions) value); return true;
+            case "basicPropertyBinding": ((ServerComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((ServerComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((ServerComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

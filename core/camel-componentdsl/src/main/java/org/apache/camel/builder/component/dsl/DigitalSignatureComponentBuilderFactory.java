@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.crypto.DigitalSignatureComponent;
@@ -55,10 +56,9 @@ public interface DigitalSignatureComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.crypto.DigitalSignatureConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default DigitalSignatureComponentBuilder setConfiguration(
+        default DigitalSignatureComponentBuilder configuration(
                 org.apache.camel.component.crypto.DigitalSignatureConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -72,7 +72,7 @@ public interface DigitalSignatureComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default DigitalSignatureComponentBuilder setBasicPropertyBinding(
+        default DigitalSignatureComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -93,7 +93,7 @@ public interface DigitalSignatureComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default DigitalSignatureComponentBuilder setLazyStartProducer(
+        default DigitalSignatureComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -108,6 +108,18 @@ public interface DigitalSignatureComponentBuilderFactory {
         @Override
         protected DigitalSignatureComponent buildConcreteComponent() {
             return new DigitalSignatureComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((DigitalSignatureComponent) component).setConfiguration((org.apache.camel.component.crypto.DigitalSignatureConfiguration) value); return true;
+            case "basicPropertyBinding": ((DigitalSignatureComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((DigitalSignatureComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

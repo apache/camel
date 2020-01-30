@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.crypto.cms.CryptoCmsComponent;
@@ -59,10 +60,9 @@ public interface CryptoCmsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default CryptoCmsComponentBuilder setSignedDataVerifierConfiguration(
+        default CryptoCmsComponentBuilder signedDataVerifierConfiguration(
                 org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration signedDataVerifierConfiguration) {
             doSetProperty("signedDataVerifierConfiguration", signedDataVerifierConfiguration);
             return this;
@@ -74,10 +74,9 @@ public interface CryptoCmsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default CryptoCmsComponentBuilder setEnvelopedDataDecryptorConfiguration(
+        default CryptoCmsComponentBuilder envelopedDataDecryptorConfiguration(
                 org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration envelopedDataDecryptorConfiguration) {
             doSetProperty("envelopedDataDecryptorConfiguration", envelopedDataDecryptorConfiguration);
             return this;
@@ -91,7 +90,7 @@ public interface CryptoCmsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default CryptoCmsComponentBuilder setBasicPropertyBinding(
+        default CryptoCmsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -112,7 +111,7 @@ public interface CryptoCmsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default CryptoCmsComponentBuilder setLazyStartProducer(
+        default CryptoCmsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -127,6 +126,19 @@ public interface CryptoCmsComponentBuilderFactory {
         @Override
         protected CryptoCmsComponent buildConcreteComponent() {
             return new CryptoCmsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "signedDataVerifierConfiguration": ((CryptoCmsComponent) component).setSignedDataVerifierConfiguration((org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration) value); return true;
+            case "envelopedDataDecryptorConfiguration": ((CryptoCmsComponent) component).setEnvelopedDataDecryptorConfiguration((org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration) value); return true;
+            case "basicPropertyBinding": ((CryptoCmsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((CryptoCmsComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.ignite.messaging.IgniteMessagingComponent;
@@ -54,10 +55,9 @@ public interface IgniteMessagingComponentBuilderFactory {
          * 
          * The option is a: <code>org.apache.ignite.Ignite</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default IgniteMessagingComponentBuilder setIgnite(
+        default IgniteMessagingComponentBuilder ignite(
                 org.apache.ignite.Ignite ignite) {
             doSetProperty("ignite", ignite);
             return this;
@@ -68,10 +68,9 @@ public interface IgniteMessagingComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default IgniteMessagingComponentBuilder setConfigurationResource(
+        default IgniteMessagingComponentBuilder configurationResource(
                 java.lang.Object configurationResource) {
             doSetProperty("configurationResource", configurationResource);
             return this;
@@ -83,10 +82,9 @@ public interface IgniteMessagingComponentBuilderFactory {
          * <code>org.apache.ignite.configuration.IgniteConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
-        default IgniteMessagingComponentBuilder setIgniteConfiguration(
+        default IgniteMessagingComponentBuilder igniteConfiguration(
                 org.apache.ignite.configuration.IgniteConfiguration igniteConfiguration) {
             doSetProperty("igniteConfiguration", igniteConfiguration);
             return this;
@@ -100,7 +98,7 @@ public interface IgniteMessagingComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default IgniteMessagingComponentBuilder setBasicPropertyBinding(
+        default IgniteMessagingComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -121,7 +119,7 @@ public interface IgniteMessagingComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default IgniteMessagingComponentBuilder setLazyStartProducer(
+        default IgniteMessagingComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -140,7 +138,7 @@ public interface IgniteMessagingComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default IgniteMessagingComponentBuilder setBridgeErrorHandler(
+        default IgniteMessagingComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -155,6 +153,21 @@ public interface IgniteMessagingComponentBuilderFactory {
         @Override
         protected IgniteMessagingComponent buildConcreteComponent() {
             return new IgniteMessagingComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "ignite": ((IgniteMessagingComponent) component).setIgnite((org.apache.ignite.Ignite) value); return true;
+            case "configurationResource": ((IgniteMessagingComponent) component).setConfigurationResource((java.lang.Object) value); return true;
+            case "igniteConfiguration": ((IgniteMessagingComponent) component).setIgniteConfiguration((org.apache.ignite.configuration.IgniteConfiguration) value); return true;
+            case "basicPropertyBinding": ((IgniteMessagingComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((IgniteMessagingComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((IgniteMessagingComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

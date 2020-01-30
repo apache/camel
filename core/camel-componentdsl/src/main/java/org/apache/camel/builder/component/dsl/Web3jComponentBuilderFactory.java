@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.web3j.Web3jComponent;
@@ -54,10 +55,9 @@ public interface Web3jComponentBuilderFactory {
          * <code>org.apache.camel.component.web3j.Web3jConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
-        default Web3jComponentBuilder setConfiguration(
+        default Web3jComponentBuilder configuration(
                 org.apache.camel.component.web3j.Web3jConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -71,7 +71,7 @@ public interface Web3jComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default Web3jComponentBuilder setBasicPropertyBinding(
+        default Web3jComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -92,7 +92,7 @@ public interface Web3jComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default Web3jComponentBuilder setLazyStartProducer(
+        default Web3jComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -111,7 +111,7 @@ public interface Web3jComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default Web3jComponentBuilder setBridgeErrorHandler(
+        default Web3jComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -126,6 +126,19 @@ public interface Web3jComponentBuilderFactory {
         @Override
         protected Web3jComponent buildConcreteComponent() {
             return new Web3jComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((Web3jComponent) component).setConfiguration((org.apache.camel.component.web3j.Web3jConfiguration) value); return true;
+            case "basicPropertyBinding": ((Web3jComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((Web3jComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((Web3jComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

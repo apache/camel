@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.vertx.VertxComponent;
@@ -52,10 +53,9 @@ public interface VertxComponentBuilderFactory {
          * 
          * The option is a: <code>io.vertx.core.spi.VertxFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default VertxComponentBuilder setVertxFactory(
+        default VertxComponentBuilder vertxFactory(
                 io.vertx.core.spi.VertxFactory vertxFactory) {
             doSetProperty("vertxFactory", vertxFactory);
             return this;
@@ -65,10 +65,9 @@ public interface VertxComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default VertxComponentBuilder setHost(java.lang.String host) {
+        default VertxComponentBuilder host(java.lang.String host) {
             doSetProperty("host", host);
             return this;
         }
@@ -77,10 +76,9 @@ public interface VertxComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default VertxComponentBuilder setPort(int port) {
+        default VertxComponentBuilder port(int port) {
             doSetProperty("port", port);
             return this;
         }
@@ -89,10 +87,9 @@ public interface VertxComponentBuilderFactory {
          * 
          * The option is a: <code>io.vertx.core.VertxOptions</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default VertxComponentBuilder setVertxOptions(
+        default VertxComponentBuilder vertxOptions(
                 io.vertx.core.VertxOptions vertxOptions) {
             doSetProperty("vertxOptions", vertxOptions);
             return this;
@@ -103,10 +100,9 @@ public interface VertxComponentBuilderFactory {
          * 
          * The option is a: <code>io.vertx.core.Vertx</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default VertxComponentBuilder setVertx(io.vertx.core.Vertx vertx) {
+        default VertxComponentBuilder vertx(io.vertx.core.Vertx vertx) {
             doSetProperty("vertx", vertx);
             return this;
         }
@@ -119,7 +115,7 @@ public interface VertxComponentBuilderFactory {
          * Default: 60
          * Group: common
          */
-        default VertxComponentBuilder setTimeout(int timeout) {
+        default VertxComponentBuilder timeout(int timeout) {
             doSetProperty("timeout", timeout);
             return this;
         }
@@ -132,7 +128,7 @@ public interface VertxComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default VertxComponentBuilder setBasicPropertyBinding(
+        default VertxComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -153,7 +149,7 @@ public interface VertxComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default VertxComponentBuilder setLazyStartProducer(
+        default VertxComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -172,7 +168,7 @@ public interface VertxComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default VertxComponentBuilder setBridgeErrorHandler(
+        default VertxComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -187,6 +183,24 @@ public interface VertxComponentBuilderFactory {
         @Override
         protected VertxComponent buildConcreteComponent() {
             return new VertxComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "vertxFactory": ((VertxComponent) component).setVertxFactory((io.vertx.core.spi.VertxFactory) value); return true;
+            case "host": ((VertxComponent) component).setHost((java.lang.String) value); return true;
+            case "port": ((VertxComponent) component).setPort((int) value); return true;
+            case "vertxOptions": ((VertxComponent) component).setVertxOptions((io.vertx.core.VertxOptions) value); return true;
+            case "vertx": ((VertxComponent) component).setVertx((io.vertx.core.Vertx) value); return true;
+            case "timeout": ((VertxComponent) component).setTimeout((int) value); return true;
+            case "basicPropertyBinding": ((VertxComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((VertxComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((VertxComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

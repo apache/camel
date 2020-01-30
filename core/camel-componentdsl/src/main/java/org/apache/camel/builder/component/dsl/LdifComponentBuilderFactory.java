@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.ldif.LdifComponent;
@@ -56,7 +57,7 @@ public interface LdifComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default LdifComponentBuilder setBasicPropertyBinding(
+        default LdifComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -77,8 +78,7 @@ public interface LdifComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default LdifComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default LdifComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -92,6 +92,17 @@ public interface LdifComponentBuilderFactory {
         @Override
         protected LdifComponent buildConcreteComponent() {
             return new LdifComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((LdifComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((LdifComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

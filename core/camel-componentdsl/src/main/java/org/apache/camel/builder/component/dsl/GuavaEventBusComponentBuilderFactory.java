@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.guava.eventbus.GuavaEventBusComponent;
@@ -55,10 +56,9 @@ public interface GuavaEventBusComponentBuilderFactory {
          * The option is a: <code>com.google.common.eventbus.EventBus</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
-        default GuavaEventBusComponentBuilder setEventBus(
+        default GuavaEventBusComponentBuilder eventBus(
                 com.google.common.eventbus.EventBus eventBus) {
             doSetProperty("eventBus", eventBus);
             return this;
@@ -72,10 +72,9 @@ public interface GuavaEventBusComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.Class<?></code> type.
          * 
-         * Default:
          * Group: common
          */
-        default GuavaEventBusComponentBuilder setListenerInterface(
+        default GuavaEventBusComponentBuilder listenerInterface(
                 java.lang.Class<?> listenerInterface) {
             doSetProperty("listenerInterface", listenerInterface);
             return this;
@@ -89,7 +88,7 @@ public interface GuavaEventBusComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default GuavaEventBusComponentBuilder setBasicPropertyBinding(
+        default GuavaEventBusComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -110,7 +109,7 @@ public interface GuavaEventBusComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default GuavaEventBusComponentBuilder setLazyStartProducer(
+        default GuavaEventBusComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -129,7 +128,7 @@ public interface GuavaEventBusComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default GuavaEventBusComponentBuilder setBridgeErrorHandler(
+        default GuavaEventBusComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -144,6 +143,20 @@ public interface GuavaEventBusComponentBuilderFactory {
         @Override
         protected GuavaEventBusComponent buildConcreteComponent() {
             return new GuavaEventBusComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "eventBus": ((GuavaEventBusComponent) component).setEventBus((com.google.common.eventbus.EventBus) value); return true;
+            case "listenerInterface": ((GuavaEventBusComponent) component).setListenerInterface((java.lang.Class<?>) value); return true;
+            case "basicPropertyBinding": ((GuavaEventBusComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((GuavaEventBusComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((GuavaEventBusComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

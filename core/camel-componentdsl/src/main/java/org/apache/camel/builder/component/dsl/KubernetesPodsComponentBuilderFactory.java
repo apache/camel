@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.kubernetes.pods.KubernetesPodsComponent;
@@ -58,7 +59,7 @@ public interface KubernetesPodsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default KubernetesPodsComponentBuilder setBasicPropertyBinding(
+        default KubernetesPodsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +80,7 @@ public interface KubernetesPodsComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default KubernetesPodsComponentBuilder setLazyStartProducer(
+        default KubernetesPodsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -98,7 +99,7 @@ public interface KubernetesPodsComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default KubernetesPodsComponentBuilder setBridgeErrorHandler(
+        default KubernetesPodsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -113,6 +114,18 @@ public interface KubernetesPodsComponentBuilderFactory {
         @Override
         protected KubernetesPodsComponent buildConcreteComponent() {
             return new KubernetesPodsComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((KubernetesPodsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((KubernetesPodsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((KubernetesPodsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

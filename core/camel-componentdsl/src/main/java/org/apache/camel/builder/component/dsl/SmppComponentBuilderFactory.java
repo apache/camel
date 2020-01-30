@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.smpp.SmppComponent;
@@ -51,10 +52,9 @@ public interface SmppComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.smpp.SmppConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default SmppComponentBuilder setConfiguration(
+        default SmppComponentBuilder configuration(
                 org.apache.camel.component.smpp.SmppConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -68,7 +68,7 @@ public interface SmppComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default SmppComponentBuilder setBasicPropertyBinding(
+        default SmppComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -89,8 +89,7 @@ public interface SmppComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SmppComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default SmppComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -108,7 +107,7 @@ public interface SmppComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default SmppComponentBuilder setBridgeErrorHandler(
+        default SmppComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -123,6 +122,19 @@ public interface SmppComponentBuilderFactory {
         @Override
         protected SmppComponent buildConcreteComponent() {
             return new SmppComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((SmppComponent) component).setConfiguration((org.apache.camel.component.smpp.SmppConfiguration) value); return true;
+            case "basicPropertyBinding": ((SmppComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((SmppComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((SmppComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

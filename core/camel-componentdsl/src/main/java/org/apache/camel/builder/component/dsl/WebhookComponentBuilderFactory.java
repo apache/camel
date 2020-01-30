@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.webhook.WebhookComponent;
@@ -58,10 +59,9 @@ public interface WebhookComponentBuilderFactory {
          * <code>org.apache.camel.component.webhook.WebhookConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default WebhookComponentBuilder setConfiguration(
+        default WebhookComponentBuilder configuration(
                 org.apache.camel.component.webhook.WebhookConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -75,7 +75,7 @@ public interface WebhookComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default WebhookComponentBuilder setBasicPropertyBinding(
+        default WebhookComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -94,7 +94,7 @@ public interface WebhookComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default WebhookComponentBuilder setBridgeErrorHandler(
+        default WebhookComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -109,6 +109,18 @@ public interface WebhookComponentBuilderFactory {
         @Override
         protected WebhookComponent buildConcreteComponent() {
             return new WebhookComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((WebhookComponent) component).setConfiguration((org.apache.camel.component.webhook.WebhookConfiguration) value); return true;
+            case "basicPropertyBinding": ((WebhookComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((WebhookComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

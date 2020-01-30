@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.olingo2.Olingo2Component;
@@ -54,10 +55,9 @@ public interface Olingo2ComponentBuilderFactory {
          * <code>org.apache.camel.component.olingo2.Olingo2Configuration</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
-        default Olingo2ComponentBuilder setConfiguration(
+        default Olingo2ComponentBuilder configuration(
                 org.apache.camel.component.olingo2.Olingo2Configuration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -70,7 +70,7 @@ public interface Olingo2ComponentBuilderFactory {
          * Default: false
          * Group: security
          */
-        default Olingo2ComponentBuilder setUseGlobalSslContextParameters(
+        default Olingo2ComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
@@ -84,7 +84,7 @@ public interface Olingo2ComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default Olingo2ComponentBuilder setBasicPropertyBinding(
+        default Olingo2ComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -105,7 +105,7 @@ public interface Olingo2ComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default Olingo2ComponentBuilder setLazyStartProducer(
+        default Olingo2ComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -124,7 +124,7 @@ public interface Olingo2ComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default Olingo2ComponentBuilder setBridgeErrorHandler(
+        default Olingo2ComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -139,6 +139,20 @@ public interface Olingo2ComponentBuilderFactory {
         @Override
         protected Olingo2Component buildConcreteComponent() {
             return new Olingo2Component();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((Olingo2Component) component).setConfiguration((org.apache.camel.component.olingo2.Olingo2Configuration) value); return true;
+            case "useGlobalSslContextParameters": ((Olingo2Component) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "basicPropertyBinding": ((Olingo2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((Olingo2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((Olingo2Component) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

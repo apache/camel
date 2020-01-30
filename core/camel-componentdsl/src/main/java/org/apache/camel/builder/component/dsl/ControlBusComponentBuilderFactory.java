@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.controlbus.ControlBusComponent;
@@ -58,7 +59,7 @@ public interface ControlBusComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ControlBusComponentBuilder setBasicPropertyBinding(
+        default ControlBusComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +80,7 @@ public interface ControlBusComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default ControlBusComponentBuilder setLazyStartProducer(
+        default ControlBusComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -94,6 +95,17 @@ public interface ControlBusComponentBuilderFactory {
         @Override
         protected ControlBusComponent buildConcreteComponent() {
             return new ControlBusComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((ControlBusComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((ControlBusComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

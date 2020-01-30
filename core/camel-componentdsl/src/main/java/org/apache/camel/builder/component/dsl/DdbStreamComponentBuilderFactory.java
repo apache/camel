@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.aws.ddbstream.DdbStreamComponent;
@@ -54,10 +55,9 @@ public interface DdbStreamComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default DdbStreamComponentBuilder setConfiguration(
+        default DdbStreamComponentBuilder configuration(
                 org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -67,11 +67,9 @@ public interface DdbStreamComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default DdbStreamComponentBuilder setAccessKey(
-                java.lang.String accessKey) {
+        default DdbStreamComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
             return this;
         }
@@ -80,11 +78,9 @@ public interface DdbStreamComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default DdbStreamComponentBuilder setSecretKey(
-                java.lang.String secretKey) {
+        default DdbStreamComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
             return this;
         }
@@ -93,10 +89,9 @@ public interface DdbStreamComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default DdbStreamComponentBuilder setRegion(java.lang.String region) {
+        default DdbStreamComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
             return this;
         }
@@ -109,7 +104,7 @@ public interface DdbStreamComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default DdbStreamComponentBuilder setBasicPropertyBinding(
+        default DdbStreamComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -128,7 +123,7 @@ public interface DdbStreamComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default DdbStreamComponentBuilder setBridgeErrorHandler(
+        default DdbStreamComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -143,6 +138,21 @@ public interface DdbStreamComponentBuilderFactory {
         @Override
         protected DdbStreamComponent buildConcreteComponent() {
             return new DdbStreamComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((DdbStreamComponent) component).setConfiguration((org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration) value); return true;
+            case "accessKey": ((DdbStreamComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": ((DdbStreamComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "region": ((DdbStreamComponent) component).setRegion((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((DdbStreamComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((DdbStreamComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

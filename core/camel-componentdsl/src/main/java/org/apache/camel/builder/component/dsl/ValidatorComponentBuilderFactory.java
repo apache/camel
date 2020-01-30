@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.validator.ValidatorComponent;
@@ -54,10 +55,9 @@ public interface ValidatorComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ValidatorComponentBuilder setResourceResolverFactory(
+        default ValidatorComponentBuilder resourceResolverFactory(
                 org.apache.camel.component.validator.ValidatorResourceResolverFactory resourceResolverFactory) {
             doSetProperty("resourceResolverFactory", resourceResolverFactory);
             return this;
@@ -71,7 +71,7 @@ public interface ValidatorComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ValidatorComponentBuilder setBasicPropertyBinding(
+        default ValidatorComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -92,7 +92,7 @@ public interface ValidatorComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default ValidatorComponentBuilder setLazyStartProducer(
+        default ValidatorComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -107,6 +107,18 @@ public interface ValidatorComponentBuilderFactory {
         @Override
         protected ValidatorComponent buildConcreteComponent() {
             return new ValidatorComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "resourceResolverFactory": ((ValidatorComponent) component).setResourceResolverFactory((org.apache.camel.component.validator.ValidatorResourceResolverFactory) value); return true;
+            case "basicPropertyBinding": ((ValidatorComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((ValidatorComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

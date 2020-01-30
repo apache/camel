@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.xslt.XsltComponent;
@@ -54,10 +55,9 @@ public interface XsltComponentBuilderFactory {
          * <code>org.apache.camel.component.xslt.XsltUriResolverFactory</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XsltComponentBuilder setUriResolverFactory(
+        default XsltComponentBuilder uriResolverFactory(
                 org.apache.camel.component.xslt.XsltUriResolverFactory uriResolverFactory) {
             doSetProperty("uriResolverFactory", uriResolverFactory);
             return this;
@@ -68,10 +68,9 @@ public interface XsltComponentBuilderFactory {
          * 
          * The option is a: <code>javax.xml.transform.URIResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XsltComponentBuilder setUriResolver(
+        default XsltComponentBuilder uriResolver(
                 javax.xml.transform.URIResolver uriResolver) {
             doSetProperty("uriResolver", uriResolver);
             return this;
@@ -88,7 +87,7 @@ public interface XsltComponentBuilderFactory {
          * Default: true
          * Group: producer
          */
-        default XsltComponentBuilder setContentCache(boolean contentCache) {
+        default XsltComponentBuilder contentCache(boolean contentCache) {
             doSetProperty("contentCache", contentCache);
             return this;
         }
@@ -99,10 +98,9 @@ public interface XsltComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XsltComponentBuilder setTransformerFactoryConfigurationStrategy(
+        default XsltComponentBuilder transformerFactoryConfigurationStrategy(
                 org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy) {
             doSetProperty("transformerFactoryConfigurationStrategy", transformerFactoryConfigurationStrategy);
             return this;
@@ -113,10 +111,9 @@ public interface XsltComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XsltComponentBuilder setTransformerFactoryClass(
+        default XsltComponentBuilder transformerFactoryClass(
                 java.lang.String transformerFactoryClass) {
             doSetProperty("transformerFactoryClass", transformerFactoryClass);
             return this;
@@ -130,7 +127,7 @@ public interface XsltComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default XsltComponentBuilder setBasicPropertyBinding(
+        default XsltComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -151,8 +148,7 @@ public interface XsltComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default XsltComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default XsltComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -166,6 +162,22 @@ public interface XsltComponentBuilderFactory {
         @Override
         protected XsltComponent buildConcreteComponent() {
             return new XsltComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "uriResolverFactory": ((XsltComponent) component).setUriResolverFactory((org.apache.camel.component.xslt.XsltUriResolverFactory) value); return true;
+            case "uriResolver": ((XsltComponent) component).setUriResolver((javax.xml.transform.URIResolver) value); return true;
+            case "contentCache": ((XsltComponent) component).setContentCache((boolean) value); return true;
+            case "transformerFactoryConfigurationStrategy": ((XsltComponent) component).setTransformerFactoryConfigurationStrategy((org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy) value); return true;
+            case "transformerFactoryClass": ((XsltComponent) component).setTransformerFactoryClass((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((XsltComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((XsltComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

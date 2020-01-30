@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.couchbase.CouchbaseComponent;
@@ -58,7 +59,7 @@ public interface CouchbaseComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default CouchbaseComponentBuilder setBasicPropertyBinding(
+        default CouchbaseComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +80,7 @@ public interface CouchbaseComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default CouchbaseComponentBuilder setLazyStartProducer(
+        default CouchbaseComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -98,7 +99,7 @@ public interface CouchbaseComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default CouchbaseComponentBuilder setBridgeErrorHandler(
+        default CouchbaseComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -113,6 +114,18 @@ public interface CouchbaseComponentBuilderFactory {
         @Override
         protected CouchbaseComponent buildConcreteComponent() {
             return new CouchbaseComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((CouchbaseComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((CouchbaseComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((CouchbaseComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

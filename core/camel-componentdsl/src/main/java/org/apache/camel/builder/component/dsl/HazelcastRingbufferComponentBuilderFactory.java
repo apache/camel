@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.hazelcast.ringbuffer.HazelcastRingbufferComponent;
@@ -57,10 +58,9 @@ public interface HazelcastRingbufferComponentBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default HazelcastRingbufferComponentBuilder setHazelcastInstance(
+        default HazelcastRingbufferComponentBuilder hazelcastInstance(
                 com.hazelcast.core.HazelcastInstance hazelcastInstance) {
             doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -75,7 +75,7 @@ public interface HazelcastRingbufferComponentBuilderFactory {
          * Default: node
          * Group: advanced
          */
-        default HazelcastRingbufferComponentBuilder setHazelcastMode(
+        default HazelcastRingbufferComponentBuilder hazelcastMode(
                 java.lang.String hazelcastMode) {
             doSetProperty("hazelcastMode", hazelcastMode);
             return this;
@@ -89,7 +89,7 @@ public interface HazelcastRingbufferComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default HazelcastRingbufferComponentBuilder setBasicPropertyBinding(
+        default HazelcastRingbufferComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -110,7 +110,7 @@ public interface HazelcastRingbufferComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default HazelcastRingbufferComponentBuilder setLazyStartProducer(
+        default HazelcastRingbufferComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -125,6 +125,19 @@ public interface HazelcastRingbufferComponentBuilderFactory {
         @Override
         protected HazelcastRingbufferComponent buildConcreteComponent() {
             return new HazelcastRingbufferComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "hazelcastInstance": ((HazelcastRingbufferComponent) component).setHazelcastInstance((com.hazelcast.core.HazelcastInstance) value); return true;
+            case "hazelcastMode": ((HazelcastRingbufferComponent) component).setHazelcastMode((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((HazelcastRingbufferComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((HazelcastRingbufferComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

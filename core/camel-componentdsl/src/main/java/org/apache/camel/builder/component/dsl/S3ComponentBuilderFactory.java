@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.aws.s3.S3Component;
@@ -53,10 +54,9 @@ public interface S3ComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.aws.s3.S3Configuration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default S3ComponentBuilder setConfiguration(
+        default S3ComponentBuilder configuration(
                 org.apache.camel.component.aws.s3.S3Configuration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -66,10 +66,9 @@ public interface S3ComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default S3ComponentBuilder setAccessKey(java.lang.String accessKey) {
+        default S3ComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
             return this;
         }
@@ -78,10 +77,9 @@ public interface S3ComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default S3ComponentBuilder setSecretKey(java.lang.String secretKey) {
+        default S3ComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
             return this;
         }
@@ -91,10 +89,9 @@ public interface S3ComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default S3ComponentBuilder setRegion(java.lang.String region) {
+        default S3ComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
             return this;
         }
@@ -107,7 +104,7 @@ public interface S3ComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default S3ComponentBuilder setBasicPropertyBinding(
+        default S3ComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -128,8 +125,7 @@ public interface S3ComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default S3ComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default S3ComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -147,8 +143,7 @@ public interface S3ComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default S3ComponentBuilder setBridgeErrorHandler(
-                boolean bridgeErrorHandler) {
+        default S3ComponentBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
@@ -162,6 +157,22 @@ public interface S3ComponentBuilderFactory {
         @Override
         protected S3Component buildConcreteComponent() {
             return new S3Component();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((S3Component) component).setConfiguration((org.apache.camel.component.aws.s3.S3Configuration) value); return true;
+            case "accessKey": ((S3Component) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": ((S3Component) component).setSecretKey((java.lang.String) value); return true;
+            case "region": ((S3Component) component).setRegion((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((S3Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((S3Component) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((S3Component) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.amqp.AMQPComponent;
@@ -56,7 +57,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: common
          */
-        default AMQPComponentBuilder setIncludeAmqpAnnotations(
+        default AMQPComponentBuilder includeAmqpAnnotations(
                 boolean includeAmqpAnnotations) {
             doSetProperty("includeAmqpAnnotations", includeAmqpAnnotations);
             return this;
@@ -72,7 +73,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default AMQPComponentBuilder setAllowAutoWiredConnectionFactory(
+        default AMQPComponentBuilder allowAutoWiredConnectionFactory(
                 boolean allowAutoWiredConnectionFactory) {
             doSetProperty("allowAutoWiredConnectionFactory", allowAutoWiredConnectionFactory);
             return this;
@@ -88,7 +89,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default AMQPComponentBuilder setAllowAutoWiredDestinationResolver(
+        default AMQPComponentBuilder allowAutoWiredDestinationResolver(
                 boolean allowAutoWiredDestinationResolver) {
             doSetProperty("allowAutoWiredDestinationResolver", allowAutoWiredDestinationResolver);
             return this;
@@ -99,10 +100,9 @@ public interface AMQPComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.JmsConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default AMQPComponentBuilder setConfiguration(
+        default AMQPComponentBuilder configuration(
                 org.apache.camel.component.jms.JmsConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -122,7 +122,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: consumer (advanced)
          */
-        default AMQPComponentBuilder setAcceptMessagesWhileStopping(
+        default AMQPComponentBuilder acceptMessagesWhileStopping(
                 boolean acceptMessagesWhileStopping) {
             doSetProperty("acceptMessagesWhileStopping", acceptMessagesWhileStopping);
             return this;
@@ -141,7 +141,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: consumer (advanced)
          */
-        default AMQPComponentBuilder setAllowReplyManagerQuickStop(
+        default AMQPComponentBuilder allowReplyManagerQuickStop(
                 boolean allowReplyManagerQuickStop) {
             doSetProperty("allowReplyManagerQuickStop", allowReplyManagerQuickStop);
             return this;
@@ -154,11 +154,9 @@ public interface AMQPComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default AMQPComponentBuilder setAcknowledgementMode(
-                int acknowledgementMode) {
+        default AMQPComponentBuilder acknowledgementMode(int acknowledgementMode) {
             doSetProperty("acknowledgementMode", acknowledgementMode);
             return this;
         }
@@ -175,7 +173,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: Poison JMS message due to ${exception.message}
          * Group: consumer (advanced)
          */
-        default AMQPComponentBuilder setEagerPoisonBody(
+        default AMQPComponentBuilder eagerPoisonBody(
                 java.lang.String eagerPoisonBody) {
             doSetProperty("eagerPoisonBody", eagerPoisonBody);
             return this;
@@ -192,7 +190,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: consumer (advanced)
          */
-        default AMQPComponentBuilder setEagerLoadingOfProperties(
+        default AMQPComponentBuilder eagerLoadingOfProperties(
                 boolean eagerLoadingOfProperties) {
             doSetProperty("eagerLoadingOfProperties", eagerLoadingOfProperties);
             return this;
@@ -206,7 +204,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: AUTO_ACKNOWLEDGE
          * Group: consumer
          */
-        default AMQPComponentBuilder setAcknowledgementModeName(
+        default AMQPComponentBuilder acknowledgementModeName(
                 java.lang.String acknowledgementModeName) {
             doSetProperty("acknowledgementModeName", acknowledgementModeName);
             return this;
@@ -219,7 +217,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: true
          * Group: consumer
          */
-        default AMQPComponentBuilder setAutoStartup(boolean autoStartup) {
+        default AMQPComponentBuilder autoStartup(boolean autoStartup) {
             doSetProperty("autoStartup", autoStartup);
             return this;
         }
@@ -229,10 +227,9 @@ public interface AMQPComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default AMQPComponentBuilder setCacheLevel(int cacheLevel) {
+        default AMQPComponentBuilder cacheLevel(int cacheLevel) {
             doSetProperty("cacheLevel", cacheLevel);
             return this;
         }
@@ -248,7 +245,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: CACHE_AUTO
          * Group: consumer
          */
-        default AMQPComponentBuilder setCacheLevelName(
+        default AMQPComponentBuilder cacheLevelName(
                 java.lang.String cacheLevelName) {
             doSetProperty("cacheLevelName", cacheLevelName);
             return this;
@@ -266,10 +263,9 @@ public interface AMQPComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
-        default AMQPComponentBuilder setReplyToCacheLevelName(
+        default AMQPComponentBuilder replyToCacheLevelName(
                 java.lang.String replyToCacheLevelName) {
             doSetProperty("replyToCacheLevelName", replyToCacheLevelName);
             return this;
@@ -283,10 +279,9 @@ public interface AMQPComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default AMQPComponentBuilder setClientId(java.lang.String clientId) {
+        default AMQPComponentBuilder clientId(java.lang.String clientId) {
             doSetProperty("clientId", clientId);
             return this;
         }
@@ -303,8 +298,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: 1
          * Group: consumer
          */
-        default AMQPComponentBuilder setConcurrentConsumers(
-                int concurrentConsumers) {
+        default AMQPComponentBuilder concurrentConsumers(int concurrentConsumers) {
             doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
@@ -318,7 +312,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: 1
          * Group: producer
          */
-        default AMQPComponentBuilder setReplyToConcurrentConsumers(
+        default AMQPComponentBuilder replyToConcurrentConsumers(
                 int replyToConcurrentConsumers) {
             doSetProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
             return this;
@@ -329,10 +323,9 @@ public interface AMQPComponentBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ConnectionFactory</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default AMQPComponentBuilder setConnectionFactory(
+        default AMQPComponentBuilder connectionFactory(
                 javax.jms.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
@@ -343,10 +336,9 @@ public interface AMQPComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default AMQPComponentBuilder setUsername(java.lang.String username) {
+        default AMQPComponentBuilder username(java.lang.String username) {
             doSetProperty("username", username);
             return this;
         }
@@ -356,10 +348,9 @@ public interface AMQPComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default AMQPComponentBuilder setPassword(java.lang.String password) {
+        default AMQPComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
             return this;
         }
@@ -371,7 +362,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: true
          * Group: producer
          */
-        default AMQPComponentBuilder setDeliveryPersistent(
+        default AMQPComponentBuilder deliveryPersistent(
                 boolean deliveryPersistent) {
             doSetProperty("deliveryPersistent", deliveryPersistent);
             return this;
@@ -383,11 +374,9 @@ public interface AMQPComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default AMQPComponentBuilder setDeliveryMode(
-                java.lang.Integer deliveryMode) {
+        default AMQPComponentBuilder deliveryMode(java.lang.Integer deliveryMode) {
             doSetProperty("deliveryMode", deliveryMode);
             return this;
         }
@@ -397,10 +386,9 @@ public interface AMQPComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default AMQPComponentBuilder setDurableSubscriptionName(
+        default AMQPComponentBuilder durableSubscriptionName(
                 java.lang.String durableSubscriptionName) {
             doSetProperty("durableSubscriptionName", durableSubscriptionName);
             return this;
@@ -411,10 +399,9 @@ public interface AMQPComponentBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ExceptionListener</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default AMQPComponentBuilder setExceptionListener(
+        default AMQPComponentBuilder exceptionListener(
                 javax.jms.ExceptionListener exceptionListener) {
             doSetProperty("exceptionListener", exceptionListener);
             return this;
@@ -431,10 +418,9 @@ public interface AMQPComponentBuilderFactory {
          * The option is a: <code>org.springframework.util.ErrorHandler</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default AMQPComponentBuilder setErrorHandler(
+        default AMQPComponentBuilder errorHandler(
                 org.springframework.util.ErrorHandler errorHandler) {
             doSetProperty("errorHandler", errorHandler);
             return this;
@@ -448,7 +434,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: WARN
          * Group: logging
          */
-        default AMQPComponentBuilder setErrorHandlerLoggingLevel(
+        default AMQPComponentBuilder errorHandlerLoggingLevel(
                 org.apache.camel.LoggingLevel errorHandlerLoggingLevel) {
             doSetProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
             return this;
@@ -462,7 +448,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: true
          * Group: logging
          */
-        default AMQPComponentBuilder setErrorHandlerLogStackTrace(
+        default AMQPComponentBuilder errorHandlerLogStackTrace(
                 boolean errorHandlerLogStackTrace) {
             doSetProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
             return this;
@@ -480,7 +466,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default AMQPComponentBuilder setExplicitQosEnabled(
+        default AMQPComponentBuilder explicitQosEnabled(
                 boolean explicitQosEnabled) {
             doSetProperty("explicitQosEnabled", explicitQosEnabled);
             return this;
@@ -494,7 +480,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: consumer (advanced)
          */
-        default AMQPComponentBuilder setExposeListenerSession(
+        default AMQPComponentBuilder exposeListenerSession(
                 boolean exposeListenerSession) {
             doSetProperty("exposeListenerSession", exposeListenerSession);
             return this;
@@ -511,7 +497,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: 1
          * Group: advanced
          */
-        default AMQPComponentBuilder setIdleTaskExecutionLimit(
+        default AMQPComponentBuilder idleTaskExecutionLimit(
                 int idleTaskExecutionLimit) {
             doSetProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
@@ -525,7 +511,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: 1
          * Group: advanced
          */
-        default AMQPComponentBuilder setIdleConsumerLimit(int idleConsumerLimit) {
+        default AMQPComponentBuilder idleConsumerLimit(int idleConsumerLimit) {
             doSetProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
         }
@@ -539,10 +525,9 @@ public interface AMQPComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default AMQPComponentBuilder setMaxConcurrentConsumers(
+        default AMQPComponentBuilder maxConcurrentConsumers(
                 int maxConcurrentConsumers) {
             doSetProperty("maxConcurrentConsumers", maxConcurrentConsumers);
             return this;
@@ -554,10 +539,9 @@ public interface AMQPComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default AMQPComponentBuilder setReplyToMaxConcurrentConsumers(
+        default AMQPComponentBuilder replyToMaxConcurrentConsumers(
                 int replyToMaxConcurrentConsumers) {
             doSetProperty("replyToMaxConcurrentConsumers", replyToMaxConcurrentConsumers);
             return this;
@@ -571,7 +555,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: 1
          * Group: producer
          */
-        default AMQPComponentBuilder setReplyOnTimeoutToMaxConcurrentConsumers(
+        default AMQPComponentBuilder replyOnTimeoutToMaxConcurrentConsumers(
                 int replyOnTimeoutToMaxConcurrentConsumers) {
             doSetProperty("replyOnTimeoutToMaxConcurrentConsumers", replyOnTimeoutToMaxConcurrentConsumers);
             return this;
@@ -587,8 +571,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: -1
          * Group: advanced
          */
-        default AMQPComponentBuilder setMaxMessagesPerTask(
-                int maxMessagesPerTask) {
+        default AMQPComponentBuilder maxMessagesPerTask(int maxMessagesPerTask) {
             doSetProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
         }
@@ -600,10 +583,9 @@ public interface AMQPComponentBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default AMQPComponentBuilder setMessageConverter(
+        default AMQPComponentBuilder messageConverter(
                 org.springframework.jms.support.converter.MessageConverter messageConverter) {
             doSetProperty("messageConverter", messageConverter);
             return this;
@@ -618,7 +600,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: true
          * Group: advanced
          */
-        default AMQPComponentBuilder setMapJmsMessage(boolean mapJmsMessage) {
+        default AMQPComponentBuilder mapJmsMessage(boolean mapJmsMessage) {
             doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
@@ -634,8 +616,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: true
          * Group: advanced
          */
-        default AMQPComponentBuilder setMessageIdEnabled(
-                boolean messageIdEnabled) {
+        default AMQPComponentBuilder messageIdEnabled(boolean messageIdEnabled) {
             doSetProperty("messageIdEnabled", messageIdEnabled);
             return this;
         }
@@ -651,7 +632,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: true
          * Group: advanced
          */
-        default AMQPComponentBuilder setMessageTimestampEnabled(
+        default AMQPComponentBuilder messageTimestampEnabled(
                 boolean messageTimestampEnabled) {
             doSetProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
@@ -669,8 +650,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: producer (advanced)
          */
-        default AMQPComponentBuilder setAlwaysCopyMessage(
-                boolean alwaysCopyMessage) {
+        default AMQPComponentBuilder alwaysCopyMessage(boolean alwaysCopyMessage) {
             doSetProperty("alwaysCopyMessage", alwaysCopyMessage);
             return this;
         }
@@ -683,7 +663,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default AMQPComponentBuilder setUseMessageIDAsCorrelationID(
+        default AMQPComponentBuilder useMessageIDAsCorrelationID(
                 boolean useMessageIDAsCorrelationID) {
             doSetProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
@@ -699,7 +679,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: 4
          * Group: producer
          */
-        default AMQPComponentBuilder setPriority(int priority) {
+        default AMQPComponentBuilder priority(int priority) {
             doSetProperty("priority", priority);
             return this;
         }
@@ -712,7 +692,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default AMQPComponentBuilder setPubSubNoLocal(boolean pubSubNoLocal) {
+        default AMQPComponentBuilder pubSubNoLocal(boolean pubSubNoLocal) {
             doSetProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
         }
@@ -724,7 +704,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: 1000
          * Group: advanced
          */
-        default AMQPComponentBuilder setReceiveTimeout(long receiveTimeout) {
+        default AMQPComponentBuilder receiveTimeout(long receiveTimeout) {
             doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
@@ -738,7 +718,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: 5000
          * Group: advanced
          */
-        default AMQPComponentBuilder setRecoveryInterval(long recoveryInterval) {
+        default AMQPComponentBuilder recoveryInterval(long recoveryInterval) {
             doSetProperty("recoveryInterval", recoveryInterval);
             return this;
         }
@@ -748,10 +728,9 @@ public interface AMQPComponentBuilderFactory {
          * The option is a:
          * <code>org.springframework.core.task.TaskExecutor</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
-        default AMQPComponentBuilder setTaskExecutor(
+        default AMQPComponentBuilder taskExecutor(
                 org.springframework.core.task.TaskExecutor taskExecutor) {
             doSetProperty("taskExecutor", taskExecutor);
             return this;
@@ -765,7 +744,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: -1
          * Group: producer
          */
-        default AMQPComponentBuilder setTimeToLive(long timeToLive) {
+        default AMQPComponentBuilder timeToLive(long timeToLive) {
             doSetProperty("timeToLive", timeToLive);
             return this;
         }
@@ -777,7 +756,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: transaction
          */
-        default AMQPComponentBuilder setTransacted(boolean transacted) {
+        default AMQPComponentBuilder transacted(boolean transacted) {
             doSetProperty("transacted", transacted);
             return this;
         }
@@ -790,7 +769,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: true
          * Group: transaction (advanced)
          */
-        default AMQPComponentBuilder setLazyCreateTransactionManager(
+        default AMQPComponentBuilder lazyCreateTransactionManager(
                 boolean lazyCreateTransactionManager) {
             doSetProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
@@ -801,10 +780,9 @@ public interface AMQPComponentBuilderFactory {
          * The option is a:
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
-         * Default:
          * Group: transaction (advanced)
          */
-        default AMQPComponentBuilder setTransactionManager(
+        default AMQPComponentBuilder transactionManager(
                 org.springframework.transaction.PlatformTransactionManager transactionManager) {
             doSetProperty("transactionManager", transactionManager);
             return this;
@@ -814,10 +792,9 @@ public interface AMQPComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: transaction (advanced)
          */
-        default AMQPComponentBuilder setTransactionName(
+        default AMQPComponentBuilder transactionName(
                 java.lang.String transactionName) {
             doSetProperty("transactionName", transactionName);
             return this;
@@ -831,8 +808,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: -1
          * Group: transaction (advanced)
          */
-        default AMQPComponentBuilder setTransactionTimeout(
-                int transactionTimeout) {
+        default AMQPComponentBuilder transactionTimeout(int transactionTimeout) {
             doSetProperty("transactionTimeout", transactionTimeout);
             return this;
         }
@@ -848,7 +824,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: common
          */
-        default AMQPComponentBuilder setTestConnectionOnStartup(
+        default AMQPComponentBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
             doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -870,7 +846,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default AMQPComponentBuilder setAsyncStartListener(
+        default AMQPComponentBuilder asyncStartListener(
                 boolean asyncStartListener) {
             doSetProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -884,8 +860,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default AMQPComponentBuilder setAsyncStopListener(
-                boolean asyncStopListener) {
+        default AMQPComponentBuilder asyncStopListener(boolean asyncStopListener) {
             doSetProperty("asyncStopListener", asyncStopListener);
             return this;
         }
@@ -900,7 +875,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: producer (advanced)
          */
-        default AMQPComponentBuilder setForceSendOriginalMessage(
+        default AMQPComponentBuilder forceSendOriginalMessage(
                 boolean forceSendOriginalMessage) {
             doSetProperty("forceSendOriginalMessage", forceSendOriginalMessage);
             return this;
@@ -917,7 +892,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: 20000
          * Group: producer
          */
-        default AMQPComponentBuilder setRequestTimeout(long requestTimeout) {
+        default AMQPComponentBuilder requestTimeout(long requestTimeout) {
             doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
@@ -933,7 +908,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: 1000
          * Group: advanced
          */
-        default AMQPComponentBuilder setRequestTimeoutCheckerInterval(
+        default AMQPComponentBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
             doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
@@ -953,8 +928,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default AMQPComponentBuilder setTransferExchange(
-                boolean transferExchange) {
+        default AMQPComponentBuilder transferExchange(boolean transferExchange) {
             doSetProperty("transferExchange", transferExchange);
             return this;
         }
@@ -979,8 +953,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default AMQPComponentBuilder setTransferException(
-                boolean transferException) {
+        default AMQPComponentBuilder transferException(boolean transferException) {
             doSetProperty("transferException", transferException);
             return this;
         }
@@ -993,10 +966,9 @@ public interface AMQPComponentBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.core.JmsOperations</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default AMQPComponentBuilder setJmsOperations(
+        default AMQPComponentBuilder jmsOperations(
                 org.springframework.jms.core.JmsOperations jmsOperations) {
             doSetProperty("jmsOperations", jmsOperations);
             return this;
@@ -1010,10 +982,9 @@ public interface AMQPComponentBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default AMQPComponentBuilder setDestinationResolver(
+        default AMQPComponentBuilder destinationResolver(
                 org.springframework.jms.support.destination.DestinationResolver destinationResolver) {
             doSetProperty("destinationResolver", destinationResolver);
             return this;
@@ -1032,10 +1003,9 @@ public interface AMQPComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.ReplyToType</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default AMQPComponentBuilder setReplyToType(
+        default AMQPComponentBuilder replyToType(
                 org.apache.camel.component.jms.ReplyToType replyToType) {
             doSetProperty("replyToType", replyToType);
             return this;
@@ -1056,7 +1026,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default AMQPComponentBuilder setPreserveMessageQos(
+        default AMQPComponentBuilder preserveMessageQos(
                 boolean preserveMessageQos) {
             doSetProperty("preserveMessageQos", preserveMessageQos);
             return this;
@@ -1078,7 +1048,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default AMQPComponentBuilder setAsyncConsumer(boolean asyncConsumer) {
+        default AMQPComponentBuilder asyncConsumer(boolean asyncConsumer) {
             doSetProperty("asyncConsumer", asyncConsumer);
             return this;
         }
@@ -1091,7 +1061,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: true
          * Group: producer (advanced)
          */
-        default AMQPComponentBuilder setAllowNullBody(boolean allowNullBody) {
+        default AMQPComponentBuilder allowNullBody(boolean allowNullBody) {
             doSetProperty("allowNullBody", allowNullBody);
             return this;
         }
@@ -1106,7 +1076,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: producer (advanced)
          */
-        default AMQPComponentBuilder setIncludeSentJMSMessageID(
+        default AMQPComponentBuilder includeSentJMSMessageID(
                 boolean includeSentJMSMessageID) {
             doSetProperty("includeSentJMSMessageID", includeSentJMSMessageID);
             return this;
@@ -1122,7 +1092,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default AMQPComponentBuilder setIncludeAllJMSXProperties(
+        default AMQPComponentBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
             doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -1143,10 +1113,9 @@ public interface AMQPComponentBuilderFactory {
          * <code>org.apache.camel.component.jms.DefaultTaskExecutorType</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
-        default AMQPComponentBuilder setDefaultTaskExecutorType(
+        default AMQPComponentBuilder defaultTaskExecutorType(
                 org.apache.camel.component.jms.DefaultTaskExecutorType defaultTaskExecutorType) {
             doSetProperty("defaultTaskExecutorType", defaultTaskExecutorType);
             return this;
@@ -1166,10 +1135,9 @@ public interface AMQPComponentBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default AMQPComponentBuilder setJmsKeyFormatStrategy(
+        default AMQPComponentBuilder jmsKeyFormatStrategy(
                 org.apache.camel.component.jms.JmsKeyFormatStrategy jmsKeyFormatStrategy) {
             doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -1184,10 +1152,9 @@ public interface AMQPComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
-        default AMQPComponentBuilder setAllowAdditionalHeaders(
+        default AMQPComponentBuilder allowAdditionalHeaders(
                 java.lang.String allowAdditionalHeaders) {
             doSetProperty("allowAdditionalHeaders", allowAdditionalHeaders);
             return this;
@@ -1198,10 +1165,9 @@ public interface AMQPComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.QueueBrowseStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default AMQPComponentBuilder setQueueBrowseStrategy(
+        default AMQPComponentBuilder queueBrowseStrategy(
                 org.apache.camel.component.jms.QueueBrowseStrategy queueBrowseStrategy) {
             doSetProperty("queueBrowseStrategy", queueBrowseStrategy);
             return this;
@@ -1215,10 +1181,9 @@ public interface AMQPComponentBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default AMQPComponentBuilder setMessageCreatedStrategy(
+        default AMQPComponentBuilder messageCreatedStrategy(
                 org.apache.camel.component.jms.MessageCreatedStrategy messageCreatedStrategy) {
             doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -1233,7 +1198,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: 50
          * Group: advanced
          */
-        default AMQPComponentBuilder setWaitForProvisionCorrelationToBeUpdatedCounter(
+        default AMQPComponentBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 int waitForProvisionCorrelationToBeUpdatedCounter) {
             doSetProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
@@ -1247,7 +1212,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: 100
          * Group: advanced
          */
-        default AMQPComponentBuilder setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
+        default AMQPComponentBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
             doSetProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
@@ -1263,10 +1228,9 @@ public interface AMQPComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
-        default AMQPComponentBuilder setCorrelationProperty(
+        default AMQPComponentBuilder correlationProperty(
                 java.lang.String correlationProperty) {
             doSetProperty("correlationProperty", correlationProperty);
             return this;
@@ -1286,7 +1250,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default AMQPComponentBuilder setSubscriptionDurable(
+        default AMQPComponentBuilder subscriptionDurable(
                 boolean subscriptionDurable) {
             doSetProperty("subscriptionDurable", subscriptionDurable);
             return this;
@@ -1309,7 +1273,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default AMQPComponentBuilder setSubscriptionShared(
+        default AMQPComponentBuilder subscriptionShared(
                 boolean subscriptionShared) {
             doSetProperty("subscriptionShared", subscriptionShared);
             return this;
@@ -1325,10 +1289,9 @@ public interface AMQPComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default AMQPComponentBuilder setSubscriptionName(
+        default AMQPComponentBuilder subscriptionName(
                 java.lang.String subscriptionName) {
             doSetProperty("subscriptionName", subscriptionName);
             return this;
@@ -1347,7 +1310,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: producer (advanced)
          */
-        default AMQPComponentBuilder setStreamMessageTypeEnabled(
+        default AMQPComponentBuilder streamMessageTypeEnabled(
                 boolean streamMessageTypeEnabled) {
             doSetProperty("streamMessageTypeEnabled", streamMessageTypeEnabled);
             return this;
@@ -1361,7 +1324,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default AMQPComponentBuilder setFormatDateHeadersToIso8601(
+        default AMQPComponentBuilder formatDateHeadersToIso8601(
                 boolean formatDateHeadersToIso8601) {
             doSetProperty("formatDateHeadersToIso8601", formatDateHeadersToIso8601);
             return this;
@@ -1373,10 +1336,9 @@ public interface AMQPComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: filter
          */
-        default AMQPComponentBuilder setHeaderFilterStrategy(
+        default AMQPComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1390,7 +1352,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default AMQPComponentBuilder setBasicPropertyBinding(
+        default AMQPComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1411,8 +1373,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default AMQPComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default AMQPComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -1430,7 +1391,7 @@ public interface AMQPComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default AMQPComponentBuilder setBridgeErrorHandler(
+        default AMQPComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -1445,6 +1406,100 @@ public interface AMQPComponentBuilderFactory {
         @Override
         protected AMQPComponent buildConcreteComponent() {
             return new AMQPComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "includeAmqpAnnotations": ((AMQPComponent) component).setIncludeAmqpAnnotations((boolean) value); return true;
+            case "allowAutoWiredConnectionFactory": ((AMQPComponent) component).setAllowAutoWiredConnectionFactory((boolean) value); return true;
+            case "allowAutoWiredDestinationResolver": ((AMQPComponent) component).setAllowAutoWiredDestinationResolver((boolean) value); return true;
+            case "configuration": ((AMQPComponent) component).setConfiguration((org.apache.camel.component.jms.JmsConfiguration) value); return true;
+            case "acceptMessagesWhileStopping": ((AMQPComponent) component).setAcceptMessagesWhileStopping((boolean) value); return true;
+            case "allowReplyManagerQuickStop": ((AMQPComponent) component).setAllowReplyManagerQuickStop((boolean) value); return true;
+            case "acknowledgementMode": ((AMQPComponent) component).setAcknowledgementMode((int) value); return true;
+            case "eagerPoisonBody": ((AMQPComponent) component).setEagerPoisonBody((java.lang.String) value); return true;
+            case "eagerLoadingOfProperties": ((AMQPComponent) component).setEagerLoadingOfProperties((boolean) value); return true;
+            case "acknowledgementModeName": ((AMQPComponent) component).setAcknowledgementModeName((java.lang.String) value); return true;
+            case "autoStartup": ((AMQPComponent) component).setAutoStartup((boolean) value); return true;
+            case "cacheLevel": ((AMQPComponent) component).setCacheLevel((int) value); return true;
+            case "cacheLevelName": ((AMQPComponent) component).setCacheLevelName((java.lang.String) value); return true;
+            case "replyToCacheLevelName": ((AMQPComponent) component).setReplyToCacheLevelName((java.lang.String) value); return true;
+            case "clientId": ((AMQPComponent) component).setClientId((java.lang.String) value); return true;
+            case "concurrentConsumers": ((AMQPComponent) component).setConcurrentConsumers((int) value); return true;
+            case "replyToConcurrentConsumers": ((AMQPComponent) component).setReplyToConcurrentConsumers((int) value); return true;
+            case "connectionFactory": ((AMQPComponent) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
+            case "username": ((AMQPComponent) component).setUsername((java.lang.String) value); return true;
+            case "password": ((AMQPComponent) component).setPassword((java.lang.String) value); return true;
+            case "deliveryPersistent": ((AMQPComponent) component).setDeliveryPersistent((boolean) value); return true;
+            case "deliveryMode": ((AMQPComponent) component).setDeliveryMode((java.lang.Integer) value); return true;
+            case "durableSubscriptionName": ((AMQPComponent) component).setDurableSubscriptionName((java.lang.String) value); return true;
+            case "exceptionListener": ((AMQPComponent) component).setExceptionListener((javax.jms.ExceptionListener) value); return true;
+            case "errorHandler": ((AMQPComponent) component).setErrorHandler((org.springframework.util.ErrorHandler) value); return true;
+            case "errorHandlerLoggingLevel": ((AMQPComponent) component).setErrorHandlerLoggingLevel((org.apache.camel.LoggingLevel) value); return true;
+            case "errorHandlerLogStackTrace": ((AMQPComponent) component).setErrorHandlerLogStackTrace((boolean) value); return true;
+            case "explicitQosEnabled": ((AMQPComponent) component).setExplicitQosEnabled((boolean) value); return true;
+            case "exposeListenerSession": ((AMQPComponent) component).setExposeListenerSession((boolean) value); return true;
+            case "idleTaskExecutionLimit": ((AMQPComponent) component).setIdleTaskExecutionLimit((int) value); return true;
+            case "idleConsumerLimit": ((AMQPComponent) component).setIdleConsumerLimit((int) value); return true;
+            case "maxConcurrentConsumers": ((AMQPComponent) component).setMaxConcurrentConsumers((int) value); return true;
+            case "replyToMaxConcurrentConsumers": ((AMQPComponent) component).setReplyToMaxConcurrentConsumers((int) value); return true;
+            case "replyOnTimeoutToMaxConcurrentConsumers": ((AMQPComponent) component).setReplyOnTimeoutToMaxConcurrentConsumers((int) value); return true;
+            case "maxMessagesPerTask": ((AMQPComponent) component).setMaxMessagesPerTask((int) value); return true;
+            case "messageConverter": ((AMQPComponent) component).setMessageConverter((org.springframework.jms.support.converter.MessageConverter) value); return true;
+            case "mapJmsMessage": ((AMQPComponent) component).setMapJmsMessage((boolean) value); return true;
+            case "messageIdEnabled": ((AMQPComponent) component).setMessageIdEnabled((boolean) value); return true;
+            case "messageTimestampEnabled": ((AMQPComponent) component).setMessageTimestampEnabled((boolean) value); return true;
+            case "alwaysCopyMessage": ((AMQPComponent) component).setAlwaysCopyMessage((boolean) value); return true;
+            case "useMessageIDAsCorrelationID": ((AMQPComponent) component).setUseMessageIDAsCorrelationID((boolean) value); return true;
+            case "priority": ((AMQPComponent) component).setPriority((int) value); return true;
+            case "pubSubNoLocal": ((AMQPComponent) component).setPubSubNoLocal((boolean) value); return true;
+            case "receiveTimeout": ((AMQPComponent) component).setReceiveTimeout((long) value); return true;
+            case "recoveryInterval": ((AMQPComponent) component).setRecoveryInterval((long) value); return true;
+            case "taskExecutor": ((AMQPComponent) component).setTaskExecutor((org.springframework.core.task.TaskExecutor) value); return true;
+            case "timeToLive": ((AMQPComponent) component).setTimeToLive((long) value); return true;
+            case "transacted": ((AMQPComponent) component).setTransacted((boolean) value); return true;
+            case "lazyCreateTransactionManager": ((AMQPComponent) component).setLazyCreateTransactionManager((boolean) value); return true;
+            case "transactionManager": ((AMQPComponent) component).setTransactionManager((org.springframework.transaction.PlatformTransactionManager) value); return true;
+            case "transactionName": ((AMQPComponent) component).setTransactionName((java.lang.String) value); return true;
+            case "transactionTimeout": ((AMQPComponent) component).setTransactionTimeout((int) value); return true;
+            case "testConnectionOnStartup": ((AMQPComponent) component).setTestConnectionOnStartup((boolean) value); return true;
+            case "asyncStartListener": ((AMQPComponent) component).setAsyncStartListener((boolean) value); return true;
+            case "asyncStopListener": ((AMQPComponent) component).setAsyncStopListener((boolean) value); return true;
+            case "forceSendOriginalMessage": ((AMQPComponent) component).setForceSendOriginalMessage((boolean) value); return true;
+            case "requestTimeout": ((AMQPComponent) component).setRequestTimeout((long) value); return true;
+            case "requestTimeoutCheckerInterval": ((AMQPComponent) component).setRequestTimeoutCheckerInterval((long) value); return true;
+            case "transferExchange": ((AMQPComponent) component).setTransferExchange((boolean) value); return true;
+            case "transferException": ((AMQPComponent) component).setTransferException((boolean) value); return true;
+            case "jmsOperations": ((AMQPComponent) component).setJmsOperations((org.springframework.jms.core.JmsOperations) value); return true;
+            case "destinationResolver": ((AMQPComponent) component).setDestinationResolver((org.springframework.jms.support.destination.DestinationResolver) value); return true;
+            case "replyToType": ((AMQPComponent) component).setReplyToType((org.apache.camel.component.jms.ReplyToType) value); return true;
+            case "preserveMessageQos": ((AMQPComponent) component).setPreserveMessageQos((boolean) value); return true;
+            case "asyncConsumer": ((AMQPComponent) component).setAsyncConsumer((boolean) value); return true;
+            case "allowNullBody": ((AMQPComponent) component).setAllowNullBody((boolean) value); return true;
+            case "includeSentJMSMessageID": ((AMQPComponent) component).setIncludeSentJMSMessageID((boolean) value); return true;
+            case "includeAllJMSXProperties": ((AMQPComponent) component).setIncludeAllJMSXProperties((boolean) value); return true;
+            case "defaultTaskExecutorType": ((AMQPComponent) component).setDefaultTaskExecutorType((org.apache.camel.component.jms.DefaultTaskExecutorType) value); return true;
+            case "jmsKeyFormatStrategy": ((AMQPComponent) component).setJmsKeyFormatStrategy((org.apache.camel.component.jms.JmsKeyFormatStrategy) value); return true;
+            case "allowAdditionalHeaders": ((AMQPComponent) component).setAllowAdditionalHeaders((java.lang.String) value); return true;
+            case "queueBrowseStrategy": ((AMQPComponent) component).setQueueBrowseStrategy((org.apache.camel.component.jms.QueueBrowseStrategy) value); return true;
+            case "messageCreatedStrategy": ((AMQPComponent) component).setMessageCreatedStrategy((org.apache.camel.component.jms.MessageCreatedStrategy) value); return true;
+            case "waitForProvisionCorrelationToBeUpdatedCounter": ((AMQPComponent) component).setWaitForProvisionCorrelationToBeUpdatedCounter((int) value); return true;
+            case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": ((AMQPComponent) component).setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime((long) value); return true;
+            case "correlationProperty": ((AMQPComponent) component).setCorrelationProperty((java.lang.String) value); return true;
+            case "subscriptionDurable": ((AMQPComponent) component).setSubscriptionDurable((boolean) value); return true;
+            case "subscriptionShared": ((AMQPComponent) component).setSubscriptionShared((boolean) value); return true;
+            case "subscriptionName": ((AMQPComponent) component).setSubscriptionName((java.lang.String) value); return true;
+            case "streamMessageTypeEnabled": ((AMQPComponent) component).setStreamMessageTypeEnabled((boolean) value); return true;
+            case "formatDateHeadersToIso8601": ((AMQPComponent) component).setFormatDateHeadersToIso8601((boolean) value); return true;
+            case "headerFilterStrategy": ((AMQPComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "basicPropertyBinding": ((AMQPComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((AMQPComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((AMQPComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

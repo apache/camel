@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.sql.stored.SqlStoredComponent;
@@ -54,10 +55,9 @@ public interface SqlStoredComponentBuilderFactory {
          * 
          * The option is a: <code>javax.sql.DataSource</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default SqlStoredComponentBuilder setDataSource(
+        default SqlStoredComponentBuilder dataSource(
                 javax.sql.DataSource dataSource) {
             doSetProperty("dataSource", dataSource);
             return this;
@@ -71,7 +71,7 @@ public interface SqlStoredComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default SqlStoredComponentBuilder setBasicPropertyBinding(
+        default SqlStoredComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -92,7 +92,7 @@ public interface SqlStoredComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default SqlStoredComponentBuilder setLazyStartProducer(
+        default SqlStoredComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -107,6 +107,18 @@ public interface SqlStoredComponentBuilderFactory {
         @Override
         protected SqlStoredComponent buildConcreteComponent() {
             return new SqlStoredComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "dataSource": ((SqlStoredComponent) component).setDataSource((javax.sql.DataSource) value); return true;
+            case "basicPropertyBinding": ((SqlStoredComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((SqlStoredComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

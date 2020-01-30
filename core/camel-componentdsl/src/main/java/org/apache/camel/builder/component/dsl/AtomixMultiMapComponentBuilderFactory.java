@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.atomix.client.multimap.AtomixMultiMapComponent;
@@ -55,10 +56,9 @@ public interface AtomixMultiMapComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.multimap.AtomixMultiMapConfiguration</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default AtomixMultiMapComponentBuilder setConfiguration(
+        default AtomixMultiMapComponentBuilder configuration(
                 org.apache.camel.component.atomix.client.multimap.AtomixMultiMapConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -68,10 +68,9 @@ public interface AtomixMultiMapComponentBuilderFactory {
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default AtomixMultiMapComponentBuilder setAtomix(
+        default AtomixMultiMapComponentBuilder atomix(
                 io.atomix.AtomixClient atomix) {
             doSetProperty("atomix", atomix);
             return this;
@@ -83,10 +82,9 @@ public interface AtomixMultiMapComponentBuilderFactory {
          * <code>java.util.List<io.atomix.catalyst.transport.Address></code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
-        default AtomixMultiMapComponentBuilder setNodes(
+        default AtomixMultiMapComponentBuilder nodes(
                 java.util.List<io.atomix.catalyst.transport.Address> nodes) {
             doSetProperty("nodes", nodes);
             return this;
@@ -96,10 +94,9 @@ public interface AtomixMultiMapComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
-        default AtomixMultiMapComponentBuilder setConfigurationUri(
+        default AtomixMultiMapComponentBuilder configurationUri(
                 java.lang.String configurationUri) {
             doSetProperty("configurationUri", configurationUri);
             return this;
@@ -113,7 +110,7 @@ public interface AtomixMultiMapComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default AtomixMultiMapComponentBuilder setBasicPropertyBinding(
+        default AtomixMultiMapComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -134,7 +131,7 @@ public interface AtomixMultiMapComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default AtomixMultiMapComponentBuilder setLazyStartProducer(
+        default AtomixMultiMapComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -149,6 +146,21 @@ public interface AtomixMultiMapComponentBuilderFactory {
         @Override
         protected AtomixMultiMapComponent buildConcreteComponent() {
             return new AtomixMultiMapComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((AtomixMultiMapComponent) component).setConfiguration((org.apache.camel.component.atomix.client.multimap.AtomixMultiMapConfiguration) value); return true;
+            case "atomix": ((AtomixMultiMapComponent) component).setAtomix((io.atomix.AtomixClient) value); return true;
+            case "nodes": ((AtomixMultiMapComponent) component).setNodes((java.util.List<io.atomix.catalyst.transport.Address>) value); return true;
+            case "configurationUri": ((AtomixMultiMapComponent) component).setConfigurationUri((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((AtomixMultiMapComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((AtomixMultiMapComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

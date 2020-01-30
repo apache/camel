@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.braintree.BraintreeComponent;
@@ -55,10 +56,9 @@ public interface BraintreeComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.braintree.BraintreeConfiguration</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default BraintreeComponentBuilder setConfiguration(
+        default BraintreeComponentBuilder configuration(
                 org.apache.camel.component.braintree.BraintreeConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -73,7 +73,7 @@ public interface BraintreeComponentBuilderFactory {
          * Default: true
          * Group: logging
          */
-        default BraintreeComponentBuilder setLogHandlerEnabled(
+        default BraintreeComponentBuilder logHandlerEnabled(
                 boolean logHandlerEnabled) {
             doSetProperty("logHandlerEnabled", logHandlerEnabled);
             return this;
@@ -87,7 +87,7 @@ public interface BraintreeComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default BraintreeComponentBuilder setBasicPropertyBinding(
+        default BraintreeComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -108,7 +108,7 @@ public interface BraintreeComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default BraintreeComponentBuilder setLazyStartProducer(
+        default BraintreeComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -127,7 +127,7 @@ public interface BraintreeComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default BraintreeComponentBuilder setBridgeErrorHandler(
+        default BraintreeComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -142,6 +142,20 @@ public interface BraintreeComponentBuilderFactory {
         @Override
         protected BraintreeComponent buildConcreteComponent() {
             return new BraintreeComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((BraintreeComponent) component).setConfiguration((org.apache.camel.component.braintree.BraintreeConfiguration) value); return true;
+            case "logHandlerEnabled": ((BraintreeComponent) component).setLogHandlerEnabled((boolean) value); return true;
+            case "basicPropertyBinding": ((BraintreeComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((BraintreeComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((BraintreeComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

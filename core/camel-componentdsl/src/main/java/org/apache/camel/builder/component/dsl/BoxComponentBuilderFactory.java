@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.box.BoxComponent;
@@ -53,10 +54,9 @@ public interface BoxComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.box.BoxConfiguration</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default BoxComponentBuilder setConfiguration(
+        default BoxComponentBuilder configuration(
                 org.apache.camel.component.box.BoxConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -70,7 +70,7 @@ public interface BoxComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default BoxComponentBuilder setBasicPropertyBinding(
+        default BoxComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -91,8 +91,7 @@ public interface BoxComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default BoxComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default BoxComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -110,7 +109,7 @@ public interface BoxComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default BoxComponentBuilder setBridgeErrorHandler(
+        default BoxComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -125,6 +124,19 @@ public interface BoxComponentBuilderFactory {
         @Override
         protected BoxComponent buildConcreteComponent() {
             return new BoxComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((BoxComponent) component).setConfiguration((org.apache.camel.component.box.BoxConfiguration) value); return true;
+            case "basicPropertyBinding": ((BoxComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((BoxComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((BoxComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

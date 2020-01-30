@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.milo.client.MiloClientComponent;
@@ -55,10 +56,9 @@ public interface MiloClientComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.milo.client.MiloClientConfiguration</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloClientComponentBuilder setDefaultConfiguration(
+        default MiloClientComponentBuilder defaultConfiguration(
                 org.apache.camel.component.milo.client.MiloClientConfiguration defaultConfiguration) {
             doSetProperty("defaultConfiguration", defaultConfiguration);
             return this;
@@ -68,10 +68,9 @@ public interface MiloClientComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloClientComponentBuilder setApplicationName(
+        default MiloClientComponentBuilder applicationName(
                 java.lang.String applicationName) {
             doSetProperty("applicationName", applicationName);
             return this;
@@ -81,10 +80,9 @@ public interface MiloClientComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloClientComponentBuilder setApplicationUri(
+        default MiloClientComponentBuilder applicationUri(
                 java.lang.String applicationUri) {
             doSetProperty("applicationUri", applicationUri);
             return this;
@@ -94,10 +92,9 @@ public interface MiloClientComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloClientComponentBuilder setProductUri(
+        default MiloClientComponentBuilder productUri(
                 java.lang.String productUri) {
             doSetProperty("productUri", productUri);
             return this;
@@ -107,10 +104,9 @@ public interface MiloClientComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloClientComponentBuilder setReconnectTimeout(
+        default MiloClientComponentBuilder reconnectTimeout(
                 java.lang.Long reconnectTimeout) {
             doSetProperty("reconnectTimeout", reconnectTimeout);
             return this;
@@ -124,7 +120,7 @@ public interface MiloClientComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default MiloClientComponentBuilder setBasicPropertyBinding(
+        default MiloClientComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -145,7 +141,7 @@ public interface MiloClientComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default MiloClientComponentBuilder setLazyStartProducer(
+        default MiloClientComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -164,7 +160,7 @@ public interface MiloClientComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default MiloClientComponentBuilder setBridgeErrorHandler(
+        default MiloClientComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -179,6 +175,23 @@ public interface MiloClientComponentBuilderFactory {
         @Override
         protected MiloClientComponent buildConcreteComponent() {
             return new MiloClientComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "defaultConfiguration": ((MiloClientComponent) component).setDefaultConfiguration((org.apache.camel.component.milo.client.MiloClientConfiguration) value); return true;
+            case "applicationName": ((MiloClientComponent) component).setApplicationName((java.lang.String) value); return true;
+            case "applicationUri": ((MiloClientComponent) component).setApplicationUri((java.lang.String) value); return true;
+            case "productUri": ((MiloClientComponent) component).setProductUri((java.lang.String) value); return true;
+            case "reconnectTimeout": ((MiloClientComponent) component).setReconnectTimeout((java.lang.Long) value); return true;
+            case "basicPropertyBinding": ((MiloClientComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((MiloClientComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((MiloClientComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

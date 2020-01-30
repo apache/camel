@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.websocket.jsr356.JSR356WebSocketComponent;
@@ -56,7 +57,7 @@ public interface JSR356WebSocketComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JSR356WebSocketComponentBuilder setBasicPropertyBinding(
+        default JSR356WebSocketComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -77,7 +78,7 @@ public interface JSR356WebSocketComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default JSR356WebSocketComponentBuilder setLazyStartProducer(
+        default JSR356WebSocketComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -96,7 +97,7 @@ public interface JSR356WebSocketComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default JSR356WebSocketComponentBuilder setBridgeErrorHandler(
+        default JSR356WebSocketComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -111,6 +112,18 @@ public interface JSR356WebSocketComponentBuilderFactory {
         @Override
         protected JSR356WebSocketComponent buildConcreteComponent() {
             return new JSR356WebSocketComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((JSR356WebSocketComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((JSR356WebSocketComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((JSR356WebSocketComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

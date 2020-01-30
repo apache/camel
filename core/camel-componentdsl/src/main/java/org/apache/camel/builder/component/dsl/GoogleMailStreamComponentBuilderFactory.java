@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.google.mail.stream.GoogleMailStreamComponent;
@@ -53,10 +54,9 @@ public interface GoogleMailStreamComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default GoogleMailStreamComponentBuilder setConfiguration(
+        default GoogleMailStreamComponentBuilder configuration(
                 org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -67,10 +67,9 @@ public interface GoogleMailStreamComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.mail.GoogleMailClientFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default GoogleMailStreamComponentBuilder setClientFactory(
+        default GoogleMailStreamComponentBuilder clientFactory(
                 org.apache.camel.component.google.mail.GoogleMailClientFactory clientFactory) {
             doSetProperty("clientFactory", clientFactory);
             return this;
@@ -84,7 +83,7 @@ public interface GoogleMailStreamComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default GoogleMailStreamComponentBuilder setBasicPropertyBinding(
+        default GoogleMailStreamComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -103,7 +102,7 @@ public interface GoogleMailStreamComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default GoogleMailStreamComponentBuilder setBridgeErrorHandler(
+        default GoogleMailStreamComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -118,6 +117,19 @@ public interface GoogleMailStreamComponentBuilderFactory {
         @Override
         protected GoogleMailStreamComponent buildConcreteComponent() {
             return new GoogleMailStreamComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((GoogleMailStreamComponent) component).setConfiguration((org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration) value); return true;
+            case "clientFactory": ((GoogleMailStreamComponent) component).setClientFactory((org.apache.camel.component.google.mail.GoogleMailClientFactory) value); return true;
+            case "basicPropertyBinding": ((GoogleMailStreamComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((GoogleMailStreamComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

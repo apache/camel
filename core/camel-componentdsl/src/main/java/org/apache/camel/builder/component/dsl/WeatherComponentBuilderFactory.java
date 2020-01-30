@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.weather.WeatherComponent;
@@ -52,10 +53,9 @@ public interface WeatherComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default WeatherComponentBuilder setGeolocationAccessKey(
+        default WeatherComponentBuilder geolocationAccessKey(
                 java.lang.String geolocationAccessKey) {
             doSetProperty("geolocationAccessKey", geolocationAccessKey);
             return this;
@@ -66,10 +66,9 @@ public interface WeatherComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default WeatherComponentBuilder setGeolocationRequestHostIP(
+        default WeatherComponentBuilder geolocationRequestHostIP(
                 java.lang.String geolocationRequestHostIP) {
             doSetProperty("geolocationRequestHostIP", geolocationRequestHostIP);
             return this;
@@ -83,7 +82,7 @@ public interface WeatherComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default WeatherComponentBuilder setBasicPropertyBinding(
+        default WeatherComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -104,7 +103,7 @@ public interface WeatherComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default WeatherComponentBuilder setLazyStartProducer(
+        default WeatherComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -123,7 +122,7 @@ public interface WeatherComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default WeatherComponentBuilder setBridgeErrorHandler(
+        default WeatherComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -138,6 +137,20 @@ public interface WeatherComponentBuilderFactory {
         @Override
         protected WeatherComponent buildConcreteComponent() {
             return new WeatherComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "geolocationAccessKey": ((WeatherComponent) component).setGeolocationAccessKey((java.lang.String) value); return true;
+            case "geolocationRequestHostIP": ((WeatherComponent) component).setGeolocationRequestHostIP((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((WeatherComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((WeatherComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((WeatherComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

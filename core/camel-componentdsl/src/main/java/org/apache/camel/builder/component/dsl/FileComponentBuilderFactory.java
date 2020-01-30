@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.file.FileComponent;
@@ -54,7 +55,7 @@ public interface FileComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default FileComponentBuilder setBasicPropertyBinding(
+        default FileComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -75,8 +76,7 @@ public interface FileComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default FileComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default FileComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -94,7 +94,7 @@ public interface FileComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default FileComponentBuilder setBridgeErrorHandler(
+        default FileComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -109,6 +109,18 @@ public interface FileComponentBuilderFactory {
         @Override
         protected FileComponent buildConcreteComponent() {
             return new FileComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((FileComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((FileComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((FileComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

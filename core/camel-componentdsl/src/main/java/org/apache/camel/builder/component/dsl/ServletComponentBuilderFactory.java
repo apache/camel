@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.servlet.ServletComponent;
@@ -57,8 +58,7 @@ public interface ServletComponentBuilderFactory {
          * Default: CamelServlet
          * Group: consumer
          */
-        default ServletComponentBuilder setServletName(
-                java.lang.String servletName) {
+        default ServletComponentBuilder servletName(java.lang.String servletName) {
             doSetProperty("servletName", servletName);
             return this;
         }
@@ -68,10 +68,9 @@ public interface ServletComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.servlet.HttpRegistry</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
-        default ServletComponentBuilder setHttpRegistry(
+        default ServletComponentBuilder httpRegistry(
                 org.apache.camel.component.servlet.HttpRegistry httpRegistry) {
             doSetProperty("httpRegistry", httpRegistry);
             return this;
@@ -89,7 +88,7 @@ public interface ServletComponentBuilderFactory {
          * Default: false
          * Group: consumer (advanced)
          */
-        default ServletComponentBuilder setAttachmentMultipartBinding(
+        default ServletComponentBuilder attachmentMultipartBinding(
                 boolean attachmentMultipartBinding) {
             doSetProperty("attachmentMultipartBinding", attachmentMultipartBinding);
             return this;
@@ -101,10 +100,9 @@ public interface ServletComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
-        default ServletComponentBuilder setFileNameExtWhitelist(
+        default ServletComponentBuilder fileNameExtWhitelist(
                 java.lang.String fileNameExtWhitelist) {
             doSetProperty("fileNameExtWhitelist", fileNameExtWhitelist);
             return this;
@@ -116,10 +114,9 @@ public interface ServletComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ServletComponentBuilder setHttpBinding(
+        default ServletComponentBuilder httpBinding(
                 org.apache.camel.http.common.HttpBinding httpBinding) {
             doSetProperty("httpBinding", httpBinding);
             return this;
@@ -130,10 +127,9 @@ public interface ServletComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.common.HttpConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ServletComponentBuilder setHttpConfiguration(
+        default ServletComponentBuilder httpConfiguration(
                 org.apache.camel.http.common.HttpConfiguration httpConfiguration) {
             doSetProperty("httpConfiguration", httpConfiguration);
             return this;
@@ -150,7 +146,7 @@ public interface ServletComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ServletComponentBuilder setAllowJavaSerializedObject(
+        default ServletComponentBuilder allowJavaSerializedObject(
                 boolean allowJavaSerializedObject) {
             doSetProperty("allowJavaSerializedObject", allowJavaSerializedObject);
             return this;
@@ -162,10 +158,9 @@ public interface ServletComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: filter
          */
-        default ServletComponentBuilder setHeaderFilterStrategy(
+        default ServletComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -179,7 +174,7 @@ public interface ServletComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ServletComponentBuilder setBasicPropertyBinding(
+        default ServletComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -198,7 +193,7 @@ public interface ServletComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default ServletComponentBuilder setBridgeErrorHandler(
+        default ServletComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -213,6 +208,25 @@ public interface ServletComponentBuilderFactory {
         @Override
         protected ServletComponent buildConcreteComponent() {
             return new ServletComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "servletName": ((ServletComponent) component).setServletName((java.lang.String) value); return true;
+            case "httpRegistry": ((ServletComponent) component).setHttpRegistry((org.apache.camel.component.servlet.HttpRegistry) value); return true;
+            case "attachmentMultipartBinding": ((ServletComponent) component).setAttachmentMultipartBinding((boolean) value); return true;
+            case "fileNameExtWhitelist": ((ServletComponent) component).setFileNameExtWhitelist((java.lang.String) value); return true;
+            case "httpBinding": ((ServletComponent) component).setHttpBinding((org.apache.camel.http.common.HttpBinding) value); return true;
+            case "httpConfiguration": ((ServletComponent) component).setHttpConfiguration((org.apache.camel.http.common.HttpConfiguration) value); return true;
+            case "allowJavaSerializedObject": ((ServletComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
+            case "headerFilterStrategy": ((ServletComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "basicPropertyBinding": ((ServletComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((ServletComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

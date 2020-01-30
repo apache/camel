@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.scp.ScpComponent;
@@ -55,7 +56,7 @@ public interface ScpComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default ScpComponentBuilder setVerboseLogging(boolean verboseLogging) {
+        default ScpComponentBuilder verboseLogging(boolean verboseLogging) {
             doSetProperty("verboseLogging", verboseLogging);
             return this;
         }
@@ -68,7 +69,7 @@ public interface ScpComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ScpComponentBuilder setBasicPropertyBinding(
+        default ScpComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -89,8 +90,7 @@ public interface ScpComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default ScpComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default ScpComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -108,7 +108,7 @@ public interface ScpComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default ScpComponentBuilder setBridgeErrorHandler(
+        default ScpComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -123,6 +123,19 @@ public interface ScpComponentBuilderFactory {
         @Override
         protected ScpComponent buildConcreteComponent() {
             return new ScpComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "verboseLogging": ((ScpComponent) component).setVerboseLogging((boolean) value); return true;
+            case "basicPropertyBinding": ((ScpComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((ScpComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((ScpComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.milo.server.MiloServerComponent;
@@ -52,10 +53,9 @@ public interface MiloServerComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloServerComponentBuilder setNamespaceUri(
+        default MiloServerComponentBuilder namespaceUri(
                 java.lang.String namespaceUri) {
             doSetProperty("namespaceUri", namespaceUri);
             return this;
@@ -65,10 +65,9 @@ public interface MiloServerComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloServerComponentBuilder setApplicationName(
+        default MiloServerComponentBuilder applicationName(
                 java.lang.String applicationName) {
             doSetProperty("applicationName", applicationName);
             return this;
@@ -78,10 +77,9 @@ public interface MiloServerComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloServerComponentBuilder setApplicationUri(
+        default MiloServerComponentBuilder applicationUri(
                 java.lang.String applicationUri) {
             doSetProperty("applicationUri", applicationUri);
             return this;
@@ -91,10 +89,9 @@ public interface MiloServerComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloServerComponentBuilder setProductUri(
+        default MiloServerComponentBuilder productUri(
                 java.lang.String productUri) {
             doSetProperty("productUri", productUri);
             return this;
@@ -104,10 +101,9 @@ public interface MiloServerComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloServerComponentBuilder setBindPort(int bindPort) {
+        default MiloServerComponentBuilder bindPort(int bindPort) {
             doSetProperty("bindPort", bindPort);
             return this;
         }
@@ -119,7 +115,7 @@ public interface MiloServerComponentBuilderFactory {
          * Default: false
          * Group: common
          */
-        default MiloServerComponentBuilder setStrictEndpointUrlsEnabled(
+        default MiloServerComponentBuilder strictEndpointUrlsEnabled(
                 boolean strictEndpointUrlsEnabled) {
             doSetProperty("strictEndpointUrlsEnabled", strictEndpointUrlsEnabled);
             return this;
@@ -129,10 +125,9 @@ public interface MiloServerComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloServerComponentBuilder setServerName(
+        default MiloServerComponentBuilder serverName(
                 java.lang.String serverName) {
             doSetProperty("serverName", serverName);
             return this;
@@ -142,10 +137,9 @@ public interface MiloServerComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloServerComponentBuilder setHostname(java.lang.String hostname) {
+        default MiloServerComponentBuilder hostname(java.lang.String hostname) {
             doSetProperty("hostname", hostname);
             return this;
         }
@@ -155,10 +149,9 @@ public interface MiloServerComponentBuilderFactory {
          * The option is a:
          * <code>java.util.Set<org.eclipse.milo.opcua.stack.core.security.SecurityPolicy></code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloServerComponentBuilder setSecurityPolicies(
+        default MiloServerComponentBuilder securityPolicies(
                 java.util.Set<org.eclipse.milo.opcua.stack.core.security.SecurityPolicy> securityPolicies) {
             doSetProperty("securityPolicies", securityPolicies);
             return this;
@@ -169,10 +162,9 @@ public interface MiloServerComponentBuilderFactory {
          * The option is a: <code>java.util.Collection<java.lang.String></code>
          * type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloServerComponentBuilder setSecurityPoliciesById(
+        default MiloServerComponentBuilder securityPoliciesById(
                 java.util.Collection<java.lang.String> securityPoliciesById) {
             doSetProperty("securityPoliciesById", securityPoliciesById);
             return this;
@@ -183,10 +175,9 @@ public interface MiloServerComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloServerComponentBuilder setUserAuthenticationCredentials(
+        default MiloServerComponentBuilder userAuthenticationCredentials(
                 java.lang.String userAuthenticationCredentials) {
             doSetProperty("userAuthenticationCredentials", userAuthenticationCredentials);
             return this;
@@ -199,7 +190,7 @@ public interface MiloServerComponentBuilderFactory {
          * Default: false
          * Group: common
          */
-        default MiloServerComponentBuilder setEnableAnonymousAuthentication(
+        default MiloServerComponentBuilder enableAnonymousAuthentication(
                 boolean enableAnonymousAuthentication) {
             doSetProperty("enableAnonymousAuthentication", enableAnonymousAuthentication);
             return this;
@@ -210,10 +201,9 @@ public interface MiloServerComponentBuilderFactory {
          * The option is a:
          * <code>org.eclipse.milo.opcua.stack.core.security.SecurityPolicy</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloServerComponentBuilder setUsernameSecurityPolicyUri(
+        default MiloServerComponentBuilder usernameSecurityPolicyUri(
                 org.eclipse.milo.opcua.stack.core.security.SecurityPolicy usernameSecurityPolicyUri) {
             doSetProperty("usernameSecurityPolicyUri", usernameSecurityPolicyUri);
             return this;
@@ -223,10 +213,9 @@ public interface MiloServerComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloServerComponentBuilder setBindAddresses(
+        default MiloServerComponentBuilder bindAddresses(
                 java.lang.String bindAddresses) {
             doSetProperty("bindAddresses", bindAddresses);
             return this;
@@ -237,10 +226,9 @@ public interface MiloServerComponentBuilderFactory {
          * The option is a:
          * <code>org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloServerComponentBuilder setBuildInfo(
+        default MiloServerComponentBuilder buildInfo(
                 org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo buildInfo) {
             doSetProperty("buildInfo", buildInfo);
             return this;
@@ -252,10 +240,9 @@ public interface MiloServerComponentBuilderFactory {
          * <code>org.apache.camel.component.milo.KeyStoreLoader.Result</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloServerComponentBuilder setServerCertificate(
+        default MiloServerComponentBuilder serverCertificate(
                 org.apache.camel.component.milo.KeyStoreLoader.Result serverCertificate) {
             doSetProperty("serverCertificate", serverCertificate);
             return this;
@@ -266,10 +253,9 @@ public interface MiloServerComponentBuilderFactory {
          * The option is a:
          * <code>org.eclipse.milo.opcua.stack.core.application.CertificateManager</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloServerComponentBuilder setCertificateManager(
+        default MiloServerComponentBuilder certificateManager(
                 org.eclipse.milo.opcua.stack.core.application.CertificateManager certificateManager) {
             doSetProperty("certificateManager", certificateManager);
             return this;
@@ -280,10 +266,9 @@ public interface MiloServerComponentBuilderFactory {
          * The option is a:
          * <code>java.util.function.Supplier<org.eclipse.milo.opcua.stack.core.application.CertificateValidator></code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloServerComponentBuilder setCertificateValidator(
+        default MiloServerComponentBuilder certificateValidator(
                 java.util.function.Supplier<org.eclipse.milo.opcua.stack.core.application.CertificateValidator> certificateValidator) {
             doSetProperty("certificateValidator", certificateValidator);
             return this;
@@ -293,10 +278,9 @@ public interface MiloServerComponentBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: common
          */
-        default MiloServerComponentBuilder setDefaultCertificateValidator(
+        default MiloServerComponentBuilder defaultCertificateValidator(
                 java.io.File defaultCertificateValidator) {
             doSetProperty("defaultCertificateValidator", defaultCertificateValidator);
             return this;
@@ -310,7 +294,7 @@ public interface MiloServerComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default MiloServerComponentBuilder setBasicPropertyBinding(
+        default MiloServerComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -331,7 +315,7 @@ public interface MiloServerComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default MiloServerComponentBuilder setLazyStartProducer(
+        default MiloServerComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -350,7 +334,7 @@ public interface MiloServerComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default MiloServerComponentBuilder setBridgeErrorHandler(
+        default MiloServerComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -365,6 +349,37 @@ public interface MiloServerComponentBuilderFactory {
         @Override
         protected MiloServerComponent buildConcreteComponent() {
             return new MiloServerComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "namespaceUri": ((MiloServerComponent) component).setNamespaceUri((java.lang.String) value); return true;
+            case "applicationName": ((MiloServerComponent) component).setApplicationName((java.lang.String) value); return true;
+            case "applicationUri": ((MiloServerComponent) component).setApplicationUri((java.lang.String) value); return true;
+            case "productUri": ((MiloServerComponent) component).setProductUri((java.lang.String) value); return true;
+            case "bindPort": ((MiloServerComponent) component).setBindPort((int) value); return true;
+            case "strictEndpointUrlsEnabled": ((MiloServerComponent) component).setStrictEndpointUrlsEnabled((boolean) value); return true;
+            case "serverName": ((MiloServerComponent) component).setServerName((java.lang.String) value); return true;
+            case "hostname": ((MiloServerComponent) component).setHostname((java.lang.String) value); return true;
+            case "securityPolicies": ((MiloServerComponent) component).setSecurityPolicies((java.util.Set<org.eclipse.milo.opcua.stack.core.security.SecurityPolicy>) value); return true;
+            case "securityPoliciesById": ((MiloServerComponent) component).setSecurityPoliciesById((java.util.Collection<java.lang.String>) value); return true;
+            case "userAuthenticationCredentials": ((MiloServerComponent) component).setUserAuthenticationCredentials((java.lang.String) value); return true;
+            case "enableAnonymousAuthentication": ((MiloServerComponent) component).setEnableAnonymousAuthentication((boolean) value); return true;
+            case "usernameSecurityPolicyUri": ((MiloServerComponent) component).setUsernameSecurityPolicyUri((org.eclipse.milo.opcua.stack.core.security.SecurityPolicy) value); return true;
+            case "bindAddresses": ((MiloServerComponent) component).setBindAddresses((java.lang.String) value); return true;
+            case "buildInfo": ((MiloServerComponent) component).setBuildInfo((org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo) value); return true;
+            case "serverCertificate": ((MiloServerComponent) component).setServerCertificate((org.apache.camel.component.milo.KeyStoreLoader.Result) value); return true;
+            case "certificateManager": ((MiloServerComponent) component).setCertificateManager((org.eclipse.milo.opcua.stack.core.application.CertificateManager) value); return true;
+            case "certificateValidator": ((MiloServerComponent) component).setCertificateValidator((java.util.function.Supplier<org.eclipse.milo.opcua.stack.core.application.CertificateValidator>) value); return true;
+            case "defaultCertificateValidator": ((MiloServerComponent) component).setDefaultCertificateValidator((java.io.File) value); return true;
+            case "basicPropertyBinding": ((MiloServerComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((MiloServerComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((MiloServerComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

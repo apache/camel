@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.quartz.QuartzComponent;
@@ -56,7 +57,7 @@ public interface QuartzComponentBuilderFactory {
          * Default: true
          * Group: scheduler
          */
-        default QuartzComponentBuilder setAutoStartScheduler(
+        default QuartzComponentBuilder autoStartScheduler(
                 boolean autoStartScheduler) {
             doSetProperty("autoStartScheduler", autoStartScheduler);
             return this;
@@ -66,10 +67,9 @@ public interface QuartzComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
-        default QuartzComponentBuilder setStartDelayedSeconds(
+        default QuartzComponentBuilder startDelayedSeconds(
                 int startDelayedSeconds) {
             doSetProperty("startDelayedSeconds", startDelayedSeconds);
             return this;
@@ -83,7 +83,7 @@ public interface QuartzComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default QuartzComponentBuilder setPrefixJobNameWithEndpointId(
+        default QuartzComponentBuilder prefixJobNameWithEndpointId(
                 boolean prefixJobNameWithEndpointId) {
             doSetProperty("prefixJobNameWithEndpointId", prefixJobNameWithEndpointId);
             return this;
@@ -97,7 +97,7 @@ public interface QuartzComponentBuilderFactory {
          * Default: true
          * Group: consumer
          */
-        default QuartzComponentBuilder setEnableJmx(boolean enableJmx) {
+        default QuartzComponentBuilder enableJmx(boolean enableJmx) {
             doSetProperty("enableJmx", enableJmx);
             return this;
         }
@@ -107,10 +107,9 @@ public interface QuartzComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default QuartzComponentBuilder setPropertiesRef(
+        default QuartzComponentBuilder propertiesRef(
                 java.lang.String propertiesRef) {
             doSetProperty("propertiesRef", propertiesRef);
             return this;
@@ -120,10 +119,9 @@ public interface QuartzComponentBuilderFactory {
          * 
          * The option is a: <code>java.util.Map</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default QuartzComponentBuilder setProperties(java.util.Map properties) {
+        default QuartzComponentBuilder properties(java.util.Map properties) {
             doSetProperty("properties", properties);
             return this;
         }
@@ -132,10 +130,9 @@ public interface QuartzComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
-        default QuartzComponentBuilder setPropertiesFile(
+        default QuartzComponentBuilder propertiesFile(
                 java.lang.String propertiesFile) {
             doSetProperty("propertiesFile", propertiesFile);
             return this;
@@ -152,7 +149,7 @@ public interface QuartzComponentBuilderFactory {
          * Default: true
          * Group: consumer
          */
-        default QuartzComponentBuilder setPrefixInstanceName(
+        default QuartzComponentBuilder prefixInstanceName(
                 boolean prefixInstanceName) {
             doSetProperty("prefixInstanceName", prefixInstanceName);
             return this;
@@ -167,7 +164,7 @@ public interface QuartzComponentBuilderFactory {
          * Default: false
          * Group: scheduler
          */
-        default QuartzComponentBuilder setInterruptJobsOnShutdown(
+        default QuartzComponentBuilder interruptJobsOnShutdown(
                 boolean interruptJobsOnShutdown) {
             doSetProperty("interruptJobsOnShutdown", interruptJobsOnShutdown);
             return this;
@@ -178,10 +175,9 @@ public interface QuartzComponentBuilderFactory {
          * 
          * The option is a: <code>org.quartz.SchedulerFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default QuartzComponentBuilder setSchedulerFactory(
+        default QuartzComponentBuilder schedulerFactory(
                 org.quartz.SchedulerFactory schedulerFactory) {
             doSetProperty("schedulerFactory", schedulerFactory);
             return this;
@@ -192,11 +188,9 @@ public interface QuartzComponentBuilderFactory {
          * 
          * The option is a: <code>org.quartz.Scheduler</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default QuartzComponentBuilder setScheduler(
-                org.quartz.Scheduler scheduler) {
+        default QuartzComponentBuilder scheduler(org.quartz.Scheduler scheduler) {
             doSetProperty("scheduler", scheduler);
             return this;
         }
@@ -209,7 +203,7 @@ public interface QuartzComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default QuartzComponentBuilder setBasicPropertyBinding(
+        default QuartzComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -228,7 +222,7 @@ public interface QuartzComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default QuartzComponentBuilder setBridgeErrorHandler(
+        default QuartzComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -243,6 +237,28 @@ public interface QuartzComponentBuilderFactory {
         @Override
         protected QuartzComponent buildConcreteComponent() {
             return new QuartzComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "autoStartScheduler": ((QuartzComponent) component).setAutoStartScheduler((boolean) value); return true;
+            case "startDelayedSeconds": ((QuartzComponent) component).setStartDelayedSeconds((int) value); return true;
+            case "prefixJobNameWithEndpointId": ((QuartzComponent) component).setPrefixJobNameWithEndpointId((boolean) value); return true;
+            case "enableJmx": ((QuartzComponent) component).setEnableJmx((boolean) value); return true;
+            case "propertiesRef": ((QuartzComponent) component).setPropertiesRef((java.lang.String) value); return true;
+            case "properties": ((QuartzComponent) component).setProperties((java.util.Map) value); return true;
+            case "propertiesFile": ((QuartzComponent) component).setPropertiesFile((java.lang.String) value); return true;
+            case "prefixInstanceName": ((QuartzComponent) component).setPrefixInstanceName((boolean) value); return true;
+            case "interruptJobsOnShutdown": ((QuartzComponent) component).setInterruptJobsOnShutdown((boolean) value); return true;
+            case "schedulerFactory": ((QuartzComponent) component).setSchedulerFactory((org.quartz.SchedulerFactory) value); return true;
+            case "scheduler": ((QuartzComponent) component).setScheduler((org.quartz.Scheduler) value); return true;
+            case "basicPropertyBinding": ((QuartzComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "bridgeErrorHandler": ((QuartzComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

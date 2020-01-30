@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.xj.XJComponent;
@@ -53,10 +54,9 @@ public interface XJComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XJComponentBuilder setSaxonExtensionFunctions(
+        default XJComponentBuilder saxonExtensionFunctions(
                 java.lang.String saxonExtensionFunctions) {
             doSetProperty("saxonExtensionFunctions", saxonExtensionFunctions);
             return this;
@@ -66,10 +66,9 @@ public interface XJComponentBuilderFactory {
          * 
          * The option is a: <code>net.sf.saxon.Configuration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XJComponentBuilder setSaxonConfiguration(
+        default XJComponentBuilder saxonConfiguration(
                 net.sf.saxon.Configuration saxonConfiguration) {
             doSetProperty("saxonConfiguration", saxonConfiguration);
             return this;
@@ -80,10 +79,9 @@ public interface XJComponentBuilderFactory {
          * The option is a:
          * <code>java.util.Map<java.lang.String,java.lang.Object></code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XJComponentBuilder setSaxonConfigurationProperties(
+        default XJComponentBuilder saxonConfigurationProperties(
                 java.util.Map<java.lang.String,java.lang.Object> saxonConfigurationProperties) {
             doSetProperty("saxonConfigurationProperties", saxonConfigurationProperties);
             return this;
@@ -97,10 +95,9 @@ public interface XJComponentBuilderFactory {
          * <code>org.apache.camel.component.xslt.XsltUriResolverFactory</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XJComponentBuilder setUriResolverFactory(
+        default XJComponentBuilder uriResolverFactory(
                 org.apache.camel.component.xslt.XsltUriResolverFactory uriResolverFactory) {
             doSetProperty("uriResolverFactory", uriResolverFactory);
             return this;
@@ -111,10 +108,9 @@ public interface XJComponentBuilderFactory {
          * 
          * The option is a: <code>javax.xml.transform.URIResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XJComponentBuilder setUriResolver(
+        default XJComponentBuilder uriResolver(
                 javax.xml.transform.URIResolver uriResolver) {
             doSetProperty("uriResolver", uriResolver);
             return this;
@@ -131,7 +127,7 @@ public interface XJComponentBuilderFactory {
          * Default: true
          * Group: producer
          */
-        default XJComponentBuilder setContentCache(boolean contentCache) {
+        default XJComponentBuilder contentCache(boolean contentCache) {
             doSetProperty("contentCache", contentCache);
             return this;
         }
@@ -142,10 +138,9 @@ public interface XJComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XJComponentBuilder setTransformerFactoryConfigurationStrategy(
+        default XJComponentBuilder transformerFactoryConfigurationStrategy(
                 org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy) {
             doSetProperty("transformerFactoryConfigurationStrategy", transformerFactoryConfigurationStrategy);
             return this;
@@ -156,10 +151,9 @@ public interface XJComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default XJComponentBuilder setTransformerFactoryClass(
+        default XJComponentBuilder transformerFactoryClass(
                 java.lang.String transformerFactoryClass) {
             doSetProperty("transformerFactoryClass", transformerFactoryClass);
             return this;
@@ -173,7 +167,7 @@ public interface XJComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default XJComponentBuilder setBasicPropertyBinding(
+        default XJComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -194,8 +188,7 @@ public interface XJComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default XJComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default XJComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -209,6 +202,25 @@ public interface XJComponentBuilderFactory {
         @Override
         protected XJComponent buildConcreteComponent() {
             return new XJComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "saxonExtensionFunctions": ((XJComponent) component).setSaxonExtensionFunctions((java.lang.String) value); return true;
+            case "saxonConfiguration": ((XJComponent) component).setSaxonConfiguration((net.sf.saxon.Configuration) value); return true;
+            case "saxonConfigurationProperties": ((XJComponent) component).setSaxonConfigurationProperties((java.util.Map<java.lang.String,java.lang.Object>) value); return true;
+            case "uriResolverFactory": ((XJComponent) component).setUriResolverFactory((org.apache.camel.component.xslt.XsltUriResolverFactory) value); return true;
+            case "uriResolver": ((XJComponent) component).setUriResolver((javax.xml.transform.URIResolver) value); return true;
+            case "contentCache": ((XJComponent) component).setContentCache((boolean) value); return true;
+            case "transformerFactoryConfigurationStrategy": ((XJComponent) component).setTransformerFactoryConfigurationStrategy((org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy) value); return true;
+            case "transformerFactoryClass": ((XJComponent) component).setTransformerFactoryClass((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((XJComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((XJComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

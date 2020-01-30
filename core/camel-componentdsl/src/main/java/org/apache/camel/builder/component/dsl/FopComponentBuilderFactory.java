@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.fop.FopComponent;
@@ -56,7 +57,7 @@ public interface FopComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default FopComponentBuilder setBasicPropertyBinding(
+        default FopComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -77,8 +78,7 @@ public interface FopComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default FopComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default FopComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -92,6 +92,17 @@ public interface FopComponentBuilderFactory {
         @Override
         protected FopComponent buildConcreteComponent() {
             return new FopComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((FopComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((FopComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

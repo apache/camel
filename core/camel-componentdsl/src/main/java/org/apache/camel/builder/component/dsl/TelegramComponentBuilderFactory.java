@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.telegram.TelegramComponent;
@@ -53,10 +54,9 @@ public interface TelegramComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default TelegramComponentBuilder setAuthorizationToken(
+        default TelegramComponentBuilder authorizationToken(
                 java.lang.String authorizationToken) {
             doSetProperty("authorizationToken", authorizationToken);
             return this;
@@ -67,10 +67,9 @@ public interface TelegramComponentBuilderFactory {
          * The option is a: <code>org.asynchttpclient.AsyncHttpClient</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default TelegramComponentBuilder setClient(
+        default TelegramComponentBuilder client(
                 org.asynchttpclient.AsyncHttpClient client) {
             doSetProperty("client", client);
             return this;
@@ -82,10 +81,9 @@ public interface TelegramComponentBuilderFactory {
          * The option is a:
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default TelegramComponentBuilder setClientConfig(
+        default TelegramComponentBuilder clientConfig(
                 org.asynchttpclient.AsyncHttpClientConfig clientConfig) {
             doSetProperty("clientConfig", clientConfig);
             return this;
@@ -99,7 +97,7 @@ public interface TelegramComponentBuilderFactory {
          * Default: https://api.telegram.org
          * Group: advanced
          */
-        default TelegramComponentBuilder setBaseUri(java.lang.String baseUri) {
+        default TelegramComponentBuilder baseUri(java.lang.String baseUri) {
             doSetProperty("baseUri", baseUri);
             return this;
         }
@@ -112,7 +110,7 @@ public interface TelegramComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default TelegramComponentBuilder setBasicPropertyBinding(
+        default TelegramComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -133,7 +131,7 @@ public interface TelegramComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default TelegramComponentBuilder setLazyStartProducer(
+        default TelegramComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -152,7 +150,7 @@ public interface TelegramComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default TelegramComponentBuilder setBridgeErrorHandler(
+        default TelegramComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -167,6 +165,22 @@ public interface TelegramComponentBuilderFactory {
         @Override
         protected TelegramComponent buildConcreteComponent() {
             return new TelegramComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "authorizationToken": ((TelegramComponent) component).setAuthorizationToken((java.lang.String) value); return true;
+            case "client": ((TelegramComponent) component).setClient((org.asynchttpclient.AsyncHttpClient) value); return true;
+            case "clientConfig": ((TelegramComponent) component).setClientConfig((org.asynchttpclient.AsyncHttpClientConfig) value); return true;
+            case "baseUri": ((TelegramComponent) component).setBaseUri((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((TelegramComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((TelegramComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((TelegramComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

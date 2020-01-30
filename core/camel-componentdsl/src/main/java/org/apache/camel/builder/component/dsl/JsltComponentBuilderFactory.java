@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.jslt.JsltComponent;
@@ -53,10 +54,9 @@ public interface JsltComponentBuilderFactory {
          * The option is a:
          * <code>java.util.Collection<com.schibsted.spt.data.jslt.Function></code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default JsltComponentBuilder setFunctions(
+        default JsltComponentBuilder functions(
                 java.util.Collection<com.schibsted.spt.data.jslt.Function> functions) {
             doSetProperty("functions", functions);
             return this;
@@ -70,7 +70,7 @@ public interface JsltComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default JsltComponentBuilder setBasicPropertyBinding(
+        default JsltComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -91,8 +91,7 @@ public interface JsltComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default JsltComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default JsltComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -106,6 +105,18 @@ public interface JsltComponentBuilderFactory {
         @Override
         protected JsltComponent buildConcreteComponent() {
             return new JsltComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "functions": ((JsltComponent) component).setFunctions((java.util.Collection<com.schibsted.spt.data.jslt.Function>) value); return true;
+            case "basicPropertyBinding": ((JsltComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((JsltComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

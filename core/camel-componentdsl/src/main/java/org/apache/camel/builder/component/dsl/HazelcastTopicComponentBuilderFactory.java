@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.hazelcast.topic.HazelcastTopicComponent;
@@ -56,10 +57,9 @@ public interface HazelcastTopicComponentBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default HazelcastTopicComponentBuilder setHazelcastInstance(
+        default HazelcastTopicComponentBuilder hazelcastInstance(
                 com.hazelcast.core.HazelcastInstance hazelcastInstance) {
             doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -74,7 +74,7 @@ public interface HazelcastTopicComponentBuilderFactory {
          * Default: node
          * Group: advanced
          */
-        default HazelcastTopicComponentBuilder setHazelcastMode(
+        default HazelcastTopicComponentBuilder hazelcastMode(
                 java.lang.String hazelcastMode) {
             doSetProperty("hazelcastMode", hazelcastMode);
             return this;
@@ -88,7 +88,7 @@ public interface HazelcastTopicComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default HazelcastTopicComponentBuilder setBasicPropertyBinding(
+        default HazelcastTopicComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -109,7 +109,7 @@ public interface HazelcastTopicComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default HazelcastTopicComponentBuilder setLazyStartProducer(
+        default HazelcastTopicComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -128,7 +128,7 @@ public interface HazelcastTopicComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default HazelcastTopicComponentBuilder setBridgeErrorHandler(
+        default HazelcastTopicComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -143,6 +143,20 @@ public interface HazelcastTopicComponentBuilderFactory {
         @Override
         protected HazelcastTopicComponent buildConcreteComponent() {
             return new HazelcastTopicComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "hazelcastInstance": ((HazelcastTopicComponent) component).setHazelcastInstance((com.hazelcast.core.HazelcastInstance) value); return true;
+            case "hazelcastMode": ((HazelcastTopicComponent) component).setHazelcastMode((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((HazelcastTopicComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((HazelcastTopicComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((HazelcastTopicComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

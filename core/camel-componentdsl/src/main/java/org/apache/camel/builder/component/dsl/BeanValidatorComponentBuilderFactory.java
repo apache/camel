@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.bean.validator.BeanValidatorComponent;
@@ -57,7 +58,7 @@ public interface BeanValidatorComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default BeanValidatorComponentBuilder setIgnoreXmlConfiguration(
+        default BeanValidatorComponentBuilder ignoreXmlConfiguration(
                 boolean ignoreXmlConfiguration) {
             doSetProperty("ignoreXmlConfiguration", ignoreXmlConfiguration);
             return this;
@@ -68,10 +69,9 @@ public interface BeanValidatorComponentBuilderFactory {
          * The option is a:
          * <code>javax.validation.ValidationProviderResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default BeanValidatorComponentBuilder setValidationProviderResolver(
+        default BeanValidatorComponentBuilder validationProviderResolver(
                 javax.validation.ValidationProviderResolver validationProviderResolver) {
             doSetProperty("validationProviderResolver", validationProviderResolver);
             return this;
@@ -82,10 +82,9 @@ public interface BeanValidatorComponentBuilderFactory {
          * The option is a: <code>javax.validation.MessageInterpolator</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default BeanValidatorComponentBuilder setMessageInterpolator(
+        default BeanValidatorComponentBuilder messageInterpolator(
                 javax.validation.MessageInterpolator messageInterpolator) {
             doSetProperty("messageInterpolator", messageInterpolator);
             return this;
@@ -96,10 +95,9 @@ public interface BeanValidatorComponentBuilderFactory {
          * The option is a: <code>javax.validation.TraversableResolver</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default BeanValidatorComponentBuilder setTraversableResolver(
+        default BeanValidatorComponentBuilder traversableResolver(
                 javax.validation.TraversableResolver traversableResolver) {
             doSetProperty("traversableResolver", traversableResolver);
             return this;
@@ -110,10 +108,9 @@ public interface BeanValidatorComponentBuilderFactory {
          * The option is a:
          * <code>javax.validation.ConstraintValidatorFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default BeanValidatorComponentBuilder setConstraintValidatorFactory(
+        default BeanValidatorComponentBuilder constraintValidatorFactory(
                 javax.validation.ConstraintValidatorFactory constraintValidatorFactory) {
             doSetProperty("constraintValidatorFactory", constraintValidatorFactory);
             return this;
@@ -127,7 +124,7 @@ public interface BeanValidatorComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default BeanValidatorComponentBuilder setBasicPropertyBinding(
+        default BeanValidatorComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -148,7 +145,7 @@ public interface BeanValidatorComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default BeanValidatorComponentBuilder setLazyStartProducer(
+        default BeanValidatorComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -163,6 +160,22 @@ public interface BeanValidatorComponentBuilderFactory {
         @Override
         protected BeanValidatorComponent buildConcreteComponent() {
             return new BeanValidatorComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "ignoreXmlConfiguration": ((BeanValidatorComponent) component).setIgnoreXmlConfiguration((boolean) value); return true;
+            case "validationProviderResolver": ((BeanValidatorComponent) component).setValidationProviderResolver((javax.validation.ValidationProviderResolver) value); return true;
+            case "messageInterpolator": ((BeanValidatorComponent) component).setMessageInterpolator((javax.validation.MessageInterpolator) value); return true;
+            case "traversableResolver": ((BeanValidatorComponent) component).setTraversableResolver((javax.validation.TraversableResolver) value); return true;
+            case "constraintValidatorFactory": ((BeanValidatorComponent) component).setConstraintValidatorFactory((javax.validation.ConstraintValidatorFactory) value); return true;
+            case "basicPropertyBinding": ((BeanValidatorComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((BeanValidatorComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

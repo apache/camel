@@ -54,7 +54,7 @@ public class HdfsComponent extends DefaultComponent {
         }
     }
 
-    static Configuration getJAASConfiguration() {
+    public static Configuration getJAASConfiguration() {
         Configuration auth = null;
         try {
             auth = Configuration.getConfiguration();
@@ -68,7 +68,7 @@ public class HdfsComponent extends DefaultComponent {
     /**
      * To use the given configuration for security with JAAS.
      */
-    static void setJAASConfiguration(Configuration auth) {
+    public static void setJAASConfiguration(Configuration auth) {
         if (auth != null) {
             LOG.trace("Restoring existing JAAS Configuration {}", auth);
             try {

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.zendesk.ZendeskComponent;
@@ -55,10 +56,9 @@ public interface ZendeskComponentBuilderFactory {
          * <code>org.apache.camel.component.zendesk.ZendeskConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
-        default ZendeskComponentBuilder setConfiguration(
+        default ZendeskComponentBuilder configuration(
                 org.apache.camel.component.zendesk.ZendeskConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -68,10 +68,9 @@ public interface ZendeskComponentBuilderFactory {
          * 
          * The option is a: <code>org.zendesk.client.v2.Zendesk</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default ZendeskComponentBuilder setZendesk(
+        default ZendeskComponentBuilder zendesk(
                 org.zendesk.client.v2.Zendesk zendesk) {
             doSetProperty("zendesk", zendesk);
             return this;
@@ -85,7 +84,7 @@ public interface ZendeskComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default ZendeskComponentBuilder setBasicPropertyBinding(
+        default ZendeskComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -106,7 +105,7 @@ public interface ZendeskComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default ZendeskComponentBuilder setLazyStartProducer(
+        default ZendeskComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -125,7 +124,7 @@ public interface ZendeskComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default ZendeskComponentBuilder setBridgeErrorHandler(
+        default ZendeskComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -140,6 +139,20 @@ public interface ZendeskComponentBuilderFactory {
         @Override
         protected ZendeskComponent buildConcreteComponent() {
             return new ZendeskComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((ZendeskComponent) component).setConfiguration((org.apache.camel.component.zendesk.ZendeskConfiguration) value); return true;
+            case "zendesk": ((ZendeskComponent) component).setZendesk((org.zendesk.client.v2.Zendesk) value); return true;
+            case "basicPropertyBinding": ((ZendeskComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((ZendeskComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((ZendeskComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

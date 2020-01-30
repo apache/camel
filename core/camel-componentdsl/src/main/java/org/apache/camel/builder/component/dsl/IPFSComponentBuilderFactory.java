@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.ipfs.IPFSComponent;
@@ -55,7 +56,7 @@ public interface IPFSComponentBuilderFactory {
          * Default: 127.0.0.1
          * Group: producer
          */
-        default IPFSComponentBuilder setIpfsHost(java.lang.String ipfsHost) {
+        default IPFSComponentBuilder ipfsHost(java.lang.String ipfsHost) {
             doSetProperty("ipfsHost", ipfsHost);
             return this;
         }
@@ -67,7 +68,7 @@ public interface IPFSComponentBuilderFactory {
          * Default: 5001
          * Group: producer
          */
-        default IPFSComponentBuilder setIpfsPort(int ipfsPort) {
+        default IPFSComponentBuilder ipfsPort(int ipfsPort) {
             doSetProperty("ipfsPort", ipfsPort);
             return this;
         }
@@ -80,7 +81,7 @@ public interface IPFSComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default IPFSComponentBuilder setBasicPropertyBinding(
+        default IPFSComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -101,8 +102,7 @@ public interface IPFSComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default IPFSComponentBuilder setLazyStartProducer(
-                boolean lazyStartProducer) {
+        default IPFSComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -116,6 +116,19 @@ public interface IPFSComponentBuilderFactory {
         @Override
         protected IPFSComponent buildConcreteComponent() {
             return new IPFSComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "ipfsHost": ((IPFSComponent) component).setIpfsHost((java.lang.String) value); return true;
+            case "ipfsPort": ((IPFSComponent) component).setIpfsPort((int) value); return true;
+            case "basicPropertyBinding": ((IPFSComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((IPFSComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.twilio.TwilioComponent;
@@ -56,10 +57,9 @@ public interface TwilioComponentBuilderFactory {
          * <code>org.apache.camel.component.twilio.TwilioConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default TwilioComponentBuilder setConfiguration(
+        default TwilioComponentBuilder configuration(
                 org.apache.camel.component.twilio.TwilioConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -69,10 +69,9 @@ public interface TwilioComponentBuilderFactory {
          * 
          * The option is a: <code>com.twilio.http.TwilioRestClient</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default TwilioComponentBuilder setRestClient(
+        default TwilioComponentBuilder restClient(
                 com.twilio.http.TwilioRestClient restClient) {
             doSetProperty("restClient", restClient);
             return this;
@@ -82,10 +81,9 @@ public interface TwilioComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default TwilioComponentBuilder setUsername(java.lang.String username) {
+        default TwilioComponentBuilder username(java.lang.String username) {
             doSetProperty("username", username);
             return this;
         }
@@ -94,10 +92,9 @@ public interface TwilioComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default TwilioComponentBuilder setPassword(java.lang.String password) {
+        default TwilioComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
             return this;
         }
@@ -106,10 +103,9 @@ public interface TwilioComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
-        default TwilioComponentBuilder setAccountSid(java.lang.String accountSid) {
+        default TwilioComponentBuilder accountSid(java.lang.String accountSid) {
             doSetProperty("accountSid", accountSid);
             return this;
         }
@@ -122,7 +118,7 @@ public interface TwilioComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default TwilioComponentBuilder setBasicPropertyBinding(
+        default TwilioComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -143,7 +139,7 @@ public interface TwilioComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default TwilioComponentBuilder setLazyStartProducer(
+        default TwilioComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -162,7 +158,7 @@ public interface TwilioComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default TwilioComponentBuilder setBridgeErrorHandler(
+        default TwilioComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -177,6 +173,23 @@ public interface TwilioComponentBuilderFactory {
         @Override
         protected TwilioComponent buildConcreteComponent() {
             return new TwilioComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((TwilioComponent) component).setConfiguration((org.apache.camel.component.twilio.TwilioConfiguration) value); return true;
+            case "restClient": ((TwilioComponent) component).setRestClient((com.twilio.http.TwilioRestClient) value); return true;
+            case "username": ((TwilioComponent) component).setUsername((java.lang.String) value); return true;
+            case "password": ((TwilioComponent) component).setPassword((java.lang.String) value); return true;
+            case "accountSid": ((TwilioComponent) component).setAccountSid((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((TwilioComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((TwilioComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((TwilioComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

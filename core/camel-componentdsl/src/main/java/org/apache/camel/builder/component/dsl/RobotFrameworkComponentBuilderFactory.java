@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.robotframework.RobotFrameworkComponent;
@@ -53,10 +54,9 @@ public interface RobotFrameworkComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.robotframework.RobotFrameworkCamelConfiguration</code> type.
          * 
-         * Default:
          * Group: advanced
          */
-        default RobotFrameworkComponentBuilder setConfiguration(
+        default RobotFrameworkComponentBuilder configuration(
                 org.apache.camel.component.robotframework.RobotFrameworkCamelConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -70,7 +70,7 @@ public interface RobotFrameworkComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default RobotFrameworkComponentBuilder setBasicPropertyBinding(
+        default RobotFrameworkComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -91,7 +91,7 @@ public interface RobotFrameworkComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default RobotFrameworkComponentBuilder setLazyStartProducer(
+        default RobotFrameworkComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -110,7 +110,7 @@ public interface RobotFrameworkComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default RobotFrameworkComponentBuilder setBridgeErrorHandler(
+        default RobotFrameworkComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -125,6 +125,19 @@ public interface RobotFrameworkComponentBuilderFactory {
         @Override
         protected RobotFrameworkComponent buildConcreteComponent() {
             return new RobotFrameworkComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((RobotFrameworkComponent) component).setConfiguration((org.apache.camel.component.robotframework.RobotFrameworkCamelConfiguration) value); return true;
+            case "basicPropertyBinding": ((RobotFrameworkComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((RobotFrameworkComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((RobotFrameworkComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

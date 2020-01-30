@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.hazelcast.atomicnumber.HazelcastAtomicnumberComponent;
@@ -58,10 +59,9 @@ public interface HazelcastAtomicnumberComponentBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
-        default HazelcastAtomicnumberComponentBuilder setHazelcastInstance(
+        default HazelcastAtomicnumberComponentBuilder hazelcastInstance(
                 com.hazelcast.core.HazelcastInstance hazelcastInstance) {
             doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -76,7 +76,7 @@ public interface HazelcastAtomicnumberComponentBuilderFactory {
          * Default: node
          * Group: advanced
          */
-        default HazelcastAtomicnumberComponentBuilder setHazelcastMode(
+        default HazelcastAtomicnumberComponentBuilder hazelcastMode(
                 java.lang.String hazelcastMode) {
             doSetProperty("hazelcastMode", hazelcastMode);
             return this;
@@ -90,7 +90,7 @@ public interface HazelcastAtomicnumberComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default HazelcastAtomicnumberComponentBuilder setBasicPropertyBinding(
+        default HazelcastAtomicnumberComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -111,7 +111,7 @@ public interface HazelcastAtomicnumberComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default HazelcastAtomicnumberComponentBuilder setLazyStartProducer(
+        default HazelcastAtomicnumberComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -126,6 +126,19 @@ public interface HazelcastAtomicnumberComponentBuilderFactory {
         @Override
         protected HazelcastAtomicnumberComponent buildConcreteComponent() {
             return new HazelcastAtomicnumberComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "hazelcastInstance": ((HazelcastAtomicnumberComponent) component).setHazelcastInstance((com.hazelcast.core.HazelcastInstance) value); return true;
+            case "hazelcastMode": ((HazelcastAtomicnumberComponent) component).setHazelcastMode((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((HazelcastAtomicnumberComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((HazelcastAtomicnumberComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

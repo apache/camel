@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.xchange.XChangeComponent;
@@ -58,7 +59,7 @@ public interface XChangeComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default XChangeComponentBuilder setBasicPropertyBinding(
+        default XChangeComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +80,7 @@ public interface XChangeComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default XChangeComponentBuilder setLazyStartProducer(
+        default XChangeComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -94,6 +95,17 @@ public interface XChangeComponentBuilderFactory {
         @Override
         protected XChangeComponent buildConcreteComponent() {
             return new XChangeComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "basicPropertyBinding": ((XChangeComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((XChangeComponent) component).setLazyStartProducer((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

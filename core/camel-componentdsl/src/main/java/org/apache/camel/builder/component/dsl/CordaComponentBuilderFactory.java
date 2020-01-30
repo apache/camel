@@ -17,6 +17,7 @@
 package org.apache.camel.builder.component.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
 import org.apache.camel.component.corda.CordaComponent;
@@ -52,10 +53,9 @@ public interface CordaComponentBuilderFactory {
          * <code>org.apache.camel.component.corda.CordaConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
-        default CordaComponentBuilder setConfiguration(
+        default CordaComponentBuilder configuration(
                 org.apache.camel.component.corda.CordaConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
@@ -69,7 +69,7 @@ public interface CordaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
-        default CordaComponentBuilder setBasicPropertyBinding(
+        default CordaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -90,7 +90,7 @@ public interface CordaComponentBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default CordaComponentBuilder setLazyStartProducer(
+        default CordaComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -109,7 +109,7 @@ public interface CordaComponentBuilderFactory {
          * Default: false
          * Group: consumer
          */
-        default CordaComponentBuilder setBridgeErrorHandler(
+        default CordaComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -124,6 +124,19 @@ public interface CordaComponentBuilderFactory {
         @Override
         protected CordaComponent buildConcreteComponent() {
             return new CordaComponent();
+        }
+        @Override
+        protected boolean setPropertyOnComponent(
+                Component component,
+                String name,
+                Object value) {
+            switch (name) {
+            case "configuration": ((CordaComponent) component).setConfiguration((org.apache.camel.component.corda.CordaConfiguration) value); return true;
+            case "basicPropertyBinding": ((CordaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((CordaComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "bridgeErrorHandler": ((CordaComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            default: return false;
+            }
         }
     }
 }

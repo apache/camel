@@ -48,6 +48,9 @@ class ComponentDslInnerBuilderGeneratorTest {
         assertTrue(classCode.contains("interface KafkaComponentBuilder extends ComponentBuilder<KafkaComponent>"));
 
         // test for properties
-        componentModel.getComponentOptions().forEach(componentOptionModel -> assertTrue(classCode.contains("set" + StringUtils.capitalize(componentOptionModel.getName()))));
+        componentModel.getComponentOptions().forEach(componentOptionModel -> {
+            final String propertiesSettersMethods = "default KafkaComponentBuilder " + StringUtils.uncapitalize(componentOptionModel.getName());
+            assertTrue(classCode.contains(propertiesSettersMethods));
+        });
     }
 }

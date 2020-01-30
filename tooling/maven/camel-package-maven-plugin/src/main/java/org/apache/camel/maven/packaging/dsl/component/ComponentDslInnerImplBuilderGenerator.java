@@ -18,6 +18,7 @@ package org.apache.camel.maven.packaging.dsl.component;
 
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * DSL Generator class that generates component implementation of the component builder interface.
@@ -67,5 +68,31 @@ public final class ComponentDslInnerImplBuilderGenerator {
                 .setName("buildConcreteComponent")
                 .setBody(String.format("return new %s();", componentModel.getShortJavaType()))
                 .addAnnotation(Override.class);
+
+        javaClass.addMethod()
+                .setProtected()
+                .setReturnType("boolean")
+                .setName("setPropertyOnComponent")
+                .addParameter("Component", "component")
+                .addParameter(String.class, "name")
+                .addParameter(Object.class, "value")
+                .setBody(generatePropertiesSetters(componentModel))
+                .addAnnotation(Override.class);
+
+    }
+
+    private String generatePropertiesSetters(final ComponentModel componentModel) {
+        final StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("switch (name) {\n");
+
+        componentModel.getComponentOptions().forEach(componentOptionModel -> {
+            final String setterAsString = String.format("case \"%s\": ((%s) component).set%s((%s) value); return true;\n", componentOptionModel.getName(), componentModel.getShortJavaType(),
+                    StringUtils.capitalize(componentOptionModel.getName()), componentOptionModel.getJavaType());
+            stringBuilder.append(setterAsString);
+        });
+
+        stringBuilder.append("default: return false;\n}");
+
+        return stringBuilder.toString();
     }
 }
