@@ -215,7 +215,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         option.setDescription(doc);
 
         if (isNullOrEmpty(doc)) {
-            throw new IllegalStateException("Empty doc for option: " + option.getName() + ", parent options:\n"
+            throw new IllegalStateException("Empty doc for option: " + option.getName() + ", parent options: "
                                             + (parentOptions != null ? Jsoner.serialize(JsonMapper.asJsonObject(parentOptions)) : "<null>"));
         }
     }
