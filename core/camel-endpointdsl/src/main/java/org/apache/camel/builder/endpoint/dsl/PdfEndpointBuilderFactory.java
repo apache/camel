@@ -41,21 +41,7 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Font.
          * 
-         * The option is a: <code>org.apache.pdfbox.pdmodel.font.PDFont</code>
-         * type.
-         * 
-         * Default: Helvetica
-         * Group: producer
-         */
-        default PdfEndpointBuilder font(Object font) {
-            doSetProperty("font", font);
-            return this;
-        }
-        /**
-         * Font.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.pdfbox.pdmodel.font.PDFont</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: Helvetica
          * Group: producer
@@ -227,21 +213,7 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Page size.
          * 
-         * The option is a:
-         * <code>org.apache.pdfbox.pdmodel.common.PDRectangle</code> type.
-         * 
-         * Default: A4
-         * Group: producer
-         */
-        default PdfEndpointBuilder pageSize(Object pageSize) {
-            doSetProperty("pageSize", pageSize);
-            return this;
-        }
-        /**
-         * Page size.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.pdfbox.pdmodel.common.PDRectangle</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: A4
          * Group: producer
