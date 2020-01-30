@@ -146,7 +146,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointConsumerBuilder clientId(String clientId) {
@@ -195,7 +194,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointConsumerBuilder filePersistenceDirectory(
@@ -305,7 +303,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointConsumerBuilder mqttVersion(int mqttVersion) {
@@ -320,7 +317,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointConsumerBuilder mqttVersion(String mqttVersion) {
@@ -431,7 +427,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointConsumerBuilder serverURIs(String serverURIs) {
@@ -448,7 +443,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointConsumerBuilder willPayload(String willPayload) {
@@ -465,7 +459,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointConsumerBuilder willQos(int willQos) {
@@ -482,7 +475,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointConsumerBuilder willQos(String willQos) {
@@ -533,7 +525,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointConsumerBuilder willTopic(String willTopic) {
@@ -611,7 +602,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointConsumerBuilder password(String password) {
@@ -626,7 +616,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.net.SocketFactory</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointConsumerBuilder socketFactory(Object socketFactory) {
@@ -642,7 +631,6 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.net.SocketFactory</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointConsumerBuilder socketFactory(String socketFactory) {
@@ -692,7 +680,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointConsumerBuilder sslClientProps(
@@ -744,7 +731,6 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointConsumerBuilder sslClientProps(String sslClientProps) {
@@ -759,7 +745,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointConsumerBuilder sslHostnameVerifier(
@@ -776,7 +761,6 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointConsumerBuilder sslHostnameVerifier(
@@ -789,7 +773,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointConsumerBuilder userName(String userName) {
@@ -816,7 +799,6 @@ public interface PahoEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPahoEndpointConsumerBuilder exceptionHandler(
@@ -833,7 +815,6 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPahoEndpointConsumerBuilder exceptionHandler(
@@ -846,7 +827,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPahoEndpointConsumerBuilder exchangePattern(
@@ -860,7 +840,6 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPahoEndpointConsumerBuilder exchangePattern(
@@ -902,7 +881,6 @@ public interface PahoEndpointBuilderFactory {
          * The option is a:
          * <code>org.eclipse.paho.client.mqttv3.MqttClient</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedPahoEndpointConsumerBuilder client(Object client) {
@@ -915,7 +893,6 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.eclipse.paho.client.mqttv3.MqttClient</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedPahoEndpointConsumerBuilder client(String client) {
@@ -927,7 +904,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedPahoEndpointConsumerBuilder customWebSocketHeaders(
@@ -941,7 +917,6 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedPahoEndpointConsumerBuilder customWebSocketHeaders(
@@ -1121,7 +1096,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointProducerBuilder clientId(String clientId) {
@@ -1170,7 +1144,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointProducerBuilder filePersistenceDirectory(
@@ -1280,7 +1253,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointProducerBuilder mqttVersion(int mqttVersion) {
@@ -1295,7 +1267,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointProducerBuilder mqttVersion(String mqttVersion) {
@@ -1406,7 +1377,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointProducerBuilder serverURIs(String serverURIs) {
@@ -1423,7 +1393,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointProducerBuilder willPayload(String willPayload) {
@@ -1440,7 +1409,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointProducerBuilder willQos(int willQos) {
@@ -1457,7 +1425,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointProducerBuilder willQos(String willQos) {
@@ -1508,7 +1475,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointProducerBuilder willTopic(String willTopic) {
@@ -1590,7 +1556,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointProducerBuilder password(String password) {
@@ -1605,7 +1570,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.net.SocketFactory</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointProducerBuilder socketFactory(Object socketFactory) {
@@ -1621,7 +1585,6 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.net.SocketFactory</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointProducerBuilder socketFactory(String socketFactory) {
@@ -1671,7 +1634,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointProducerBuilder sslClientProps(
@@ -1723,7 +1685,6 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointProducerBuilder sslClientProps(String sslClientProps) {
@@ -1738,7 +1699,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointProducerBuilder sslHostnameVerifier(
@@ -1755,7 +1715,6 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointProducerBuilder sslHostnameVerifier(
@@ -1768,7 +1727,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointProducerBuilder userName(String userName) {
@@ -1820,7 +1778,6 @@ public interface PahoEndpointBuilderFactory {
          * The option is a:
          * <code>org.eclipse.paho.client.mqttv3.MqttClient</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedPahoEndpointProducerBuilder client(Object client) {
@@ -1833,7 +1790,6 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.eclipse.paho.client.mqttv3.MqttClient</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedPahoEndpointProducerBuilder client(String client) {
@@ -1845,7 +1801,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedPahoEndpointProducerBuilder customWebSocketHeaders(
@@ -1859,7 +1814,6 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedPahoEndpointProducerBuilder customWebSocketHeaders(
@@ -2039,7 +1993,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointBuilder clientId(String clientId) {
@@ -2086,7 +2039,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointBuilder filePersistenceDirectory(
@@ -2192,7 +2144,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointBuilder mqttVersion(int mqttVersion) {
@@ -2207,7 +2158,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointBuilder mqttVersion(String mqttVersion) {
@@ -2317,7 +2267,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointBuilder serverURIs(String serverURIs) {
@@ -2334,7 +2283,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointBuilder willPayload(String willPayload) {
@@ -2351,7 +2299,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointBuilder willQos(int willQos) {
@@ -2368,7 +2315,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointBuilder willQos(String willQos) {
@@ -2419,7 +2365,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PahoEndpointBuilder willTopic(String willTopic) {
@@ -2459,7 +2404,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointBuilder password(String password) {
@@ -2474,7 +2418,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.net.SocketFactory</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointBuilder socketFactory(Object socketFactory) {
@@ -2490,7 +2433,6 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.net.SocketFactory</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointBuilder socketFactory(String socketFactory) {
@@ -2540,7 +2482,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointBuilder sslClientProps(Properties sslClientProps) {
@@ -2591,7 +2532,6 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointBuilder sslClientProps(String sslClientProps) {
@@ -2606,7 +2546,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointBuilder sslHostnameVerifier(
@@ -2623,7 +2562,6 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointBuilder sslHostnameVerifier(
@@ -2636,7 +2574,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PahoEndpointBuilder userName(String userName) {
@@ -2689,7 +2626,6 @@ public interface PahoEndpointBuilderFactory {
          * The option is a:
          * <code>org.eclipse.paho.client.mqttv3.MqttClient</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedPahoEndpointBuilder client(Object client) {
@@ -2702,7 +2638,6 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.eclipse.paho.client.mqttv3.MqttClient</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedPahoEndpointBuilder client(String client) {
@@ -2714,7 +2649,6 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedPahoEndpointBuilder customWebSocketHeaders(
@@ -2728,7 +2662,6 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedPahoEndpointBuilder customWebSocketHeaders(

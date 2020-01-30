@@ -72,7 +72,6 @@ public interface SpringBatchEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.batch.core.launch.JobLauncher</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringBatchEndpointBuilder jobLauncher(Object jobLauncher) {
@@ -85,7 +84,6 @@ public interface SpringBatchEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.batch.core.launch.JobLauncher</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringBatchEndpointBuilder jobLauncher(String jobLauncher) {
@@ -99,7 +97,6 @@ public interface SpringBatchEndpointBuilderFactory {
          * <code>org.springframework.batch.core.configuration.JobRegistry</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringBatchEndpointBuilder jobRegistry(Object jobRegistry) {
@@ -113,7 +110,6 @@ public interface SpringBatchEndpointBuilderFactory {
          * <code>org.springframework.batch.core.configuration.JobRegistry</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SpringBatchEndpointBuilder jobRegistry(String jobRegistry) {

@@ -151,7 +151,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointConsumerBuilder ciphers(String ciphers) {
@@ -164,7 +163,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.KeyPair</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointConsumerBuilder keyPair(KeyPair keyPair) {
@@ -178,7 +176,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>java.security.KeyPair</code>
          * type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointConsumerBuilder keyPair(String keyPair) {
@@ -191,7 +188,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>byte[]</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointConsumerBuilder knownHosts(Byte[] knownHosts) {
@@ -204,7 +200,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointConsumerBuilder knownHosts(String knownHosts) {
@@ -217,7 +212,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointConsumerBuilder knownHostsFile(String knownHostsFile) {
@@ -230,7 +224,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointConsumerBuilder knownHostsUri(String knownHostsUri) {
@@ -242,7 +235,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointConsumerBuilder password(String password) {
@@ -256,7 +248,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointConsumerBuilder preferredAuthentications(
@@ -270,7 +261,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>byte[]</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointConsumerBuilder privateKey(Byte[] privateKey) {
@@ -283,7 +273,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointConsumerBuilder privateKey(String privateKey) {
@@ -296,7 +285,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointConsumerBuilder privateKeyFile(String privateKeyFile) {
@@ -309,7 +297,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointConsumerBuilder privateKeyPassphrase(
@@ -323,7 +310,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointConsumerBuilder privateKeyUri(String privateKeyUri) {
@@ -348,7 +334,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointConsumerBuilder username(String username) {
@@ -396,7 +381,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SftpEndpointConsumerBuilder charset(String charset) {
@@ -418,7 +402,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SftpEndpointConsumerBuilder doneFileName(String doneFileName) {
@@ -445,7 +428,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SftpEndpointConsumerBuilder fileName(Expression fileName) {
@@ -473,7 +455,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SftpEndpointConsumerBuilder fileName(String fileName) {
@@ -550,7 +531,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder moveFailed(Expression moveFailed) {
@@ -566,7 +546,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder moveFailed(String moveFailed) {
@@ -610,7 +589,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder preMove(Expression preMove) {
@@ -625,7 +603,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder preMove(String preMove) {
@@ -727,7 +704,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder antExclude(String antExclude) {
@@ -766,7 +742,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder antInclude(String antInclude) {
@@ -818,7 +793,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder exclude(String exclude) {
@@ -833,7 +807,6 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileFilter&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder filter(Object filter) {
@@ -848,7 +821,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileFilter&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder filter(String filter) {
@@ -862,7 +834,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Predicate</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder filterDirectory(
@@ -878,7 +849,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Predicate</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder filterDirectory(
@@ -892,7 +862,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Predicate</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder filterFile(Predicate filterFile) {
@@ -906,7 +875,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Predicate</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder filterFile(String filterFile) {
@@ -952,7 +920,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder idempotentKey(
@@ -969,7 +936,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder idempotentKey(String idempotentKey) {
@@ -984,7 +950,6 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder idempotentRepository(
@@ -1000,7 +965,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder idempotentRepository(
@@ -1017,7 +981,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder include(String include) {
@@ -1063,7 +1026,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder maxMessagesPerPoll(
@@ -1084,7 +1046,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder maxMessagesPerPoll(
@@ -1099,7 +1060,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder minDepth(int minDepth) {
@@ -1113,7 +1073,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder minDepth(String minDepth) {
@@ -1127,7 +1086,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder move(Expression move) {
@@ -1142,7 +1100,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default SftpEndpointConsumerBuilder move(String move) {
@@ -1157,7 +1114,6 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * 
-         * Default:
          * Group: lock
          */
         default SftpEndpointConsumerBuilder exclusiveReadLockStrategy(
@@ -1173,7 +1129,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * 
-         * Default:
          * Group: lock
          */
         default SftpEndpointConsumerBuilder exclusiveReadLockStrategy(
@@ -1356,7 +1311,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
@@ -1376,7 +1330,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
@@ -1396,7 +1349,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseDelay(
@@ -1416,7 +1368,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseDelay(
@@ -1431,7 +1382,6 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
@@ -1446,7 +1396,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
@@ -1720,7 +1669,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder backoffErrorThreshold(
@@ -1734,7 +1682,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder backoffErrorThreshold(
@@ -1748,7 +1695,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder backoffIdleThreshold(
@@ -1762,7 +1708,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder backoffIdleThreshold(
@@ -1780,7 +1725,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder backoffMultiplier(
@@ -1798,7 +1742,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder backoffMultiplier(
@@ -1953,7 +1896,6 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder scheduledExecutorService(
@@ -1969,7 +1911,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder scheduledExecutorService(
@@ -1997,7 +1938,6 @@ public interface SftpEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder schedulerProperties(
@@ -2013,7 +1953,6 @@ public interface SftpEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder schedulerProperties(
@@ -2130,7 +2069,6 @@ public interface SftpEndpointBuilderFactory {
          * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
          * type.
          * 
-         * Default:
          * Group: sort
          */
         default SftpEndpointConsumerBuilder sortBy(Comparator<Exchange> sortBy) {
@@ -2146,7 +2084,6 @@ public interface SftpEndpointBuilderFactory {
          * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
          * type.
          * 
-         * Default:
          * Group: sort
          */
         default SftpEndpointConsumerBuilder sortBy(String sortBy) {
@@ -2159,7 +2096,6 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;&gt;</code> type.
          * 
-         * Default:
          * Group: sort
          */
         default SftpEndpointConsumerBuilder sorter(Comparator<Object> sorter) {
@@ -2172,7 +2108,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;&gt;</code> type.
          * 
-         * Default:
          * Group: sort
          */
         default SftpEndpointConsumerBuilder sorter(String sorter) {
@@ -2266,7 +2201,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder bindAddress(
@@ -2281,7 +2215,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder bulkRequests(
@@ -2297,7 +2230,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder bulkRequests(
@@ -2312,7 +2244,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder compression(int compression) {
@@ -2326,7 +2257,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder compression(
@@ -2368,7 +2298,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>com.jcraft.jsch.Proxy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder proxy(Object proxy) {
@@ -2382,7 +2311,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>com.jcraft.jsch.Proxy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder proxy(String proxy) {
@@ -2428,7 +2356,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder serverAliveInterval(
@@ -2443,7 +2370,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder serverAliveInterval(
@@ -2582,7 +2508,6 @@ public interface SftpEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder exceptionHandler(
@@ -2599,7 +2524,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder exceptionHandler(
@@ -2612,7 +2536,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder exchangePattern(
@@ -2626,7 +2549,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder exchangePattern(
@@ -2643,7 +2565,6 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder inProgressRepository(
@@ -2660,7 +2581,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder inProgressRepository(
@@ -2676,7 +2596,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder localWorkDirectory(
@@ -2693,7 +2612,6 @@ public interface SftpEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder onCompletionExceptionHandler(
@@ -2710,7 +2628,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder onCompletionExceptionHandler(
@@ -2727,7 +2644,6 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder pollStrategy(
@@ -2744,7 +2660,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder pollStrategy(
@@ -2763,7 +2678,6 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder processStrategy(
@@ -2782,7 +2696,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder processStrategy(
@@ -2955,7 +2868,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointProducerBuilder ciphers(String ciphers) {
@@ -2968,7 +2880,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.KeyPair</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointProducerBuilder keyPair(KeyPair keyPair) {
@@ -2982,7 +2893,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>java.security.KeyPair</code>
          * type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointProducerBuilder keyPair(String keyPair) {
@@ -2995,7 +2905,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>byte[]</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointProducerBuilder knownHosts(Byte[] knownHosts) {
@@ -3008,7 +2917,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointProducerBuilder knownHosts(String knownHosts) {
@@ -3021,7 +2929,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointProducerBuilder knownHostsFile(String knownHostsFile) {
@@ -3034,7 +2941,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointProducerBuilder knownHostsUri(String knownHostsUri) {
@@ -3046,7 +2952,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointProducerBuilder password(String password) {
@@ -3060,7 +2965,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointProducerBuilder preferredAuthentications(
@@ -3074,7 +2978,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>byte[]</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointProducerBuilder privateKey(Byte[] privateKey) {
@@ -3087,7 +2990,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointProducerBuilder privateKey(String privateKey) {
@@ -3100,7 +3002,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointProducerBuilder privateKeyFile(String privateKeyFile) {
@@ -3113,7 +3014,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointProducerBuilder privateKeyPassphrase(
@@ -3127,7 +3027,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointProducerBuilder privateKeyUri(String privateKeyUri) {
@@ -3152,7 +3051,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointProducerBuilder username(String username) {
@@ -3200,7 +3098,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SftpEndpointProducerBuilder charset(String charset) {
@@ -3222,7 +3119,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SftpEndpointProducerBuilder doneFileName(String doneFileName) {
@@ -3249,7 +3145,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SftpEndpointProducerBuilder fileName(Expression fileName) {
@@ -3277,7 +3172,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SftpEndpointProducerBuilder fileName(String fileName) {
@@ -3462,7 +3356,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SftpEndpointProducerBuilder moveExisting(Expression moveExisting) {
@@ -3482,7 +3375,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SftpEndpointProducerBuilder moveExisting(String moveExisting) {
@@ -3500,7 +3392,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SftpEndpointProducerBuilder tempFileName(Expression tempFileName) {
@@ -3519,7 +3410,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SftpEndpointProducerBuilder tempFileName(String tempFileName) {
@@ -3535,7 +3425,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SftpEndpointProducerBuilder tempPrefix(String tempPrefix) {
@@ -3558,7 +3447,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder chmod(String chmod) {
@@ -3603,7 +3491,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder bindAddress(
@@ -3618,7 +3505,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder bulkRequests(
@@ -3634,7 +3520,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder bulkRequests(
@@ -3649,7 +3534,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder compression(int compression) {
@@ -3663,7 +3547,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder compression(
@@ -3705,7 +3588,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>com.jcraft.jsch.Proxy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder proxy(Object proxy) {
@@ -3719,7 +3601,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>com.jcraft.jsch.Proxy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder proxy(String proxy) {
@@ -3765,7 +3646,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder serverAliveInterval(
@@ -3780,7 +3660,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder serverAliveInterval(
@@ -4044,7 +3923,6 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder moveExistingFileStrategy(
@@ -4060,7 +3938,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder moveExistingFileStrategy(
@@ -4233,7 +4110,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointBuilder ciphers(String ciphers) {
@@ -4246,7 +4122,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.security.KeyPair</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointBuilder keyPair(KeyPair keyPair) {
@@ -4260,7 +4135,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>java.security.KeyPair</code>
          * type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointBuilder keyPair(String keyPair) {
@@ -4273,7 +4147,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>byte[]</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointBuilder knownHosts(Byte[] knownHosts) {
@@ -4286,7 +4159,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointBuilder knownHosts(String knownHosts) {
@@ -4299,7 +4171,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointBuilder knownHostsFile(String knownHostsFile) {
@@ -4312,7 +4183,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointBuilder knownHostsUri(String knownHostsUri) {
@@ -4324,7 +4194,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointBuilder password(String password) {
@@ -4338,7 +4207,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointBuilder preferredAuthentications(
@@ -4352,7 +4220,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>byte[]</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointBuilder privateKey(Byte[] privateKey) {
@@ -4365,7 +4232,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointBuilder privateKey(String privateKey) {
@@ -4378,7 +4244,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointBuilder privateKeyFile(String privateKeyFile) {
@@ -4391,7 +4256,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointBuilder privateKeyPassphrase(
@@ -4405,7 +4269,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointBuilder privateKeyUri(String privateKeyUri) {
@@ -4430,7 +4293,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SftpEndpointBuilder username(String username) {
@@ -4478,7 +4340,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SftpEndpointBuilder charset(String charset) {
@@ -4500,7 +4361,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SftpEndpointBuilder doneFileName(String doneFileName) {
@@ -4527,7 +4387,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SftpEndpointBuilder fileName(Expression fileName) {
@@ -4555,7 +4414,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SftpEndpointBuilder fileName(String fileName) {
@@ -4580,7 +4438,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder bindAddress(String bindAddress) {
@@ -4594,7 +4451,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder bulkRequests(Integer bulkRequests) {
@@ -4609,7 +4465,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder bulkRequests(String bulkRequests) {
@@ -4623,7 +4478,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder compression(int compression) {
@@ -4637,7 +4491,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder compression(String compression) {
@@ -4676,7 +4529,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>com.jcraft.jsch.Proxy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder proxy(Object proxy) {
@@ -4690,7 +4542,6 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>com.jcraft.jsch.Proxy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder proxy(String proxy) {
@@ -4736,7 +4587,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder serverAliveInterval(
@@ -4751,7 +4601,6 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder serverAliveInterval(

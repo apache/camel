@@ -89,7 +89,6 @@ public interface DozerEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.converter.dozer.DozerBeanMapperConfiguration</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DozerEndpointBuilder mappingConfiguration(
@@ -108,7 +107,6 @@ public interface DozerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.converter.dozer.DozerBeanMapperConfiguration</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DozerEndpointBuilder mappingConfiguration(
@@ -136,7 +134,6 @@ public interface DozerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DozerEndpointBuilder marshalId(String marshalId) {
@@ -150,7 +147,6 @@ public interface DozerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DozerEndpointBuilder sourceModel(String sourceModel) {
@@ -163,7 +159,6 @@ public interface DozerEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default DozerEndpointBuilder targetModel(String targetModel) {
@@ -176,7 +171,6 @@ public interface DozerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DozerEndpointBuilder unmarshalId(String unmarshalId) {

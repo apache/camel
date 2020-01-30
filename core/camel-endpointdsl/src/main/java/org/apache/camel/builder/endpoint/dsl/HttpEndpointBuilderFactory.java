@@ -101,7 +101,6 @@ public interface HttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: common
          */
         default HttpEndpointBuilder headerFilterStrategy(
@@ -116,7 +115,6 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: common
          */
         default HttpEndpointBuilder headerFilterStrategy(
@@ -273,7 +271,6 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default HttpEndpointBuilder customHostHeader(String customHostHeader) {
@@ -287,7 +284,6 @@ public interface HttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.common.HttpMethods</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default HttpEndpointBuilder httpMethod(HttpMethods httpMethod) {
@@ -301,7 +297,6 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.http.common.HttpMethods</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default HttpEndpointBuilder httpMethod(String httpMethod) {
@@ -485,7 +480,6 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default HttpEndpointBuilder proxyAuthDomain(String proxyAuthDomain) {
@@ -497,7 +491,6 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default HttpEndpointBuilder proxyAuthHost(String proxyAuthHost) {
@@ -509,7 +502,6 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default HttpEndpointBuilder proxyAuthMethod(String proxyAuthMethod) {
@@ -521,7 +513,6 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default HttpEndpointBuilder proxyAuthPassword(String proxyAuthPassword) {
@@ -533,7 +524,6 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default HttpEndpointBuilder proxyAuthPort(int proxyAuthPort) {
@@ -545,7 +535,6 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default HttpEndpointBuilder proxyAuthPort(String proxyAuthPort) {
@@ -557,7 +546,6 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default HttpEndpointBuilder proxyAuthScheme(String proxyAuthScheme) {
@@ -569,7 +557,6 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default HttpEndpointBuilder proxyAuthUsername(String proxyAuthUsername) {
@@ -581,7 +568,6 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default HttpEndpointBuilder proxyHost(String proxyHost) {
@@ -593,7 +579,6 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default HttpEndpointBuilder proxyPort(int proxyPort) {
@@ -605,7 +590,6 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: proxy
          */
         default HttpEndpointBuilder proxyPort(String proxyPort) {
@@ -617,7 +601,6 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default HttpEndpointBuilder authDomain(String authDomain) {
@@ -657,7 +640,6 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default HttpEndpointBuilder authHost(String authHost) {
@@ -670,7 +652,6 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default HttpEndpointBuilder authMethod(String authMethod) {
@@ -683,7 +664,6 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default HttpEndpointBuilder authMethodPriority(String authMethodPriority) {
@@ -695,7 +675,6 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default HttpEndpointBuilder authPassword(String authPassword) {
@@ -707,7 +686,6 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default HttpEndpointBuilder authUsername(String authUsername) {
@@ -724,7 +702,6 @@ public interface HttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default HttpEndpointBuilder sslContextParameters(
@@ -742,7 +719,6 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default HttpEndpointBuilder sslContextParameters(
@@ -756,7 +732,6 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
-         * Default:
          * Group: security
          */
         default HttpEndpointBuilder x509HostnameVerifier(
@@ -771,7 +746,6 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
-         * Default:
          * Group: security
          */
         default HttpEndpointBuilder x509HostnameVerifier(
@@ -797,7 +771,6 @@ public interface HttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
-         * Default:
          * Group: common (advanced)
          */
         default AdvancedHttpEndpointBuilder httpBinding(Object httpBinding) {
@@ -811,7 +784,6 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
-         * Default:
          * Group: common (advanced)
          */
         default AdvancedHttpEndpointBuilder httpBinding(String httpBinding) {
@@ -824,7 +796,6 @@ public interface HttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedHttpEndpointBuilder cookieHandler(Object cookieHandler) {
@@ -837,7 +808,6 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedHttpEndpointBuilder cookieHandler(String cookieHandler) {
@@ -856,7 +826,6 @@ public interface HttpEndpointBuilderFactory {
          * The option is a: <code>org.apache.http.client.CookieStore</code>
          * type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedHttpEndpointBuilder cookieStore(Object cookieStore) {
@@ -875,7 +844,6 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.http.client.CookieStore</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedHttpEndpointBuilder cookieStore(String cookieStore) {
@@ -991,7 +959,6 @@ public interface HttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder clientBuilder(Object clientBuilder) {
@@ -1006,7 +973,6 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder clientBuilder(String clientBuilder) {
@@ -1019,7 +985,6 @@ public interface HttpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.http.conn.HttpClientConnectionManager</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder clientConnectionManager(
@@ -1033,7 +998,6 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.http.conn.HttpClientConnectionManager</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder clientConnectionManager(
@@ -1072,7 +1036,6 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.http.client.HttpClient</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpClient(Object httpClient) {
@@ -1085,7 +1048,6 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.http.client.HttpClient</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpClient(String httpClient) {
@@ -1101,7 +1063,6 @@ public interface HttpEndpointBuilderFactory {
          * <code>org.apache.camel.component.http.HttpClientConfigurer</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpClientConfigurer(
@@ -1118,7 +1079,6 @@ public interface HttpEndpointBuilderFactory {
          * <code>org.apache.camel.component.http.HttpClientConfigurer</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpClientConfigurer(
@@ -1132,7 +1092,6 @@ public interface HttpEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpClientOptions(
@@ -1147,7 +1106,6 @@ public interface HttpEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpClientOptions(
@@ -1161,7 +1119,6 @@ public interface HttpEndpointBuilderFactory {
          * The option is a: <code>org.apache.http.protocol.HttpContext</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpContext(Object httpContext) {
@@ -1174,7 +1131,6 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.http.protocol.HttpContext</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpContext(String httpContext) {

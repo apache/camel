@@ -44,7 +44,6 @@ public interface DrillEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DrillEndpointBuilder clusterId(String clusterId) {
@@ -56,7 +55,6 @@ public interface DrillEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DrillEndpointBuilder directory(String directory) {

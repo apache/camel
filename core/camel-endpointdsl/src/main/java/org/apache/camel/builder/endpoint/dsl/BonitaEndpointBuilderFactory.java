@@ -107,7 +107,6 @@ public interface BonitaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default BonitaEndpointBuilder processName(String processName) {
@@ -119,7 +118,6 @@ public interface BonitaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default BonitaEndpointBuilder password(String password) {
@@ -131,7 +129,6 @@ public interface BonitaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default BonitaEndpointBuilder username(String username) {

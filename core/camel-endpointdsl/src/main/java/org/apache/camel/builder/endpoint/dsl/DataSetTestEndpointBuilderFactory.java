@@ -73,7 +73,6 @@ public interface DataSetTestEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DataSetTestEndpointBuilder delimiter(String delimiter) {
@@ -298,7 +297,6 @@ public interface DataSetTestEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DataSetTestEndpointBuilder reportGroup(int reportGroup) {
@@ -311,7 +309,6 @@ public interface DataSetTestEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default DataSetTestEndpointBuilder reportGroup(String reportGroup) {

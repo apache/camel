@@ -48,7 +48,6 @@ public interface LuceneEndpointBuilderFactory {
          * The option is a: <code>org.apache.lucene.analysis.Analyzer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default LuceneEndpointBuilder analyzer(Object analyzer) {
@@ -65,7 +64,6 @@ public interface LuceneEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.lucene.analysis.Analyzer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default LuceneEndpointBuilder analyzer(String analyzer) {
@@ -78,7 +76,6 @@ public interface LuceneEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default LuceneEndpointBuilder indexDir(File indexDir) {
@@ -91,7 +88,6 @@ public interface LuceneEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default LuceneEndpointBuilder indexDir(String indexDir) {
@@ -144,7 +140,6 @@ public interface LuceneEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default LuceneEndpointBuilder maxHits(int maxHits) {
@@ -156,7 +151,6 @@ public interface LuceneEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default LuceneEndpointBuilder maxHits(String maxHits) {
@@ -169,7 +163,6 @@ public interface LuceneEndpointBuilderFactory {
          * 
          * The option is a: <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default LuceneEndpointBuilder srcDir(File srcDir) {
@@ -182,7 +175,6 @@ public interface LuceneEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.io.File</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default LuceneEndpointBuilder srcDir(String srcDir) {

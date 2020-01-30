@@ -359,7 +359,6 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default NatsEndpointConsumerBuilder servers(String servers) {
@@ -434,7 +433,6 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default NatsEndpointConsumerBuilder maxMessages(String maxMessages) {
@@ -470,7 +468,6 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default NatsEndpointConsumerBuilder queueName(String queueName) {
@@ -533,7 +530,6 @@ public interface NatsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default NatsEndpointConsumerBuilder sslContextParameters(
@@ -547,7 +543,6 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default NatsEndpointConsumerBuilder sslContextParameters(
@@ -575,7 +570,6 @@ public interface NatsEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNatsEndpointConsumerBuilder exceptionHandler(
@@ -592,7 +586,6 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNatsEndpointConsumerBuilder exceptionHandler(
@@ -605,7 +598,6 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNatsEndpointConsumerBuilder exchangePattern(
@@ -619,7 +611,6 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNatsEndpointConsumerBuilder exchangePattern(
@@ -660,7 +651,6 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>io.nats.client.Connection</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedNatsEndpointConsumerBuilder connection(Object connection) {
@@ -673,7 +663,6 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.nats.client.Connection</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedNatsEndpointConsumerBuilder connection(String connection) {
@@ -1037,7 +1026,6 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default NatsEndpointProducerBuilder servers(String servers) {
@@ -1115,7 +1103,6 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default NatsEndpointProducerBuilder replySubject(String replySubject) {
@@ -1152,7 +1139,6 @@ public interface NatsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default NatsEndpointProducerBuilder sslContextParameters(
@@ -1166,7 +1152,6 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default NatsEndpointProducerBuilder sslContextParameters(
@@ -1218,7 +1203,6 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>io.nats.client.Connection</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedNatsEndpointProducerBuilder connection(Object connection) {
@@ -1231,7 +1215,6 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.nats.client.Connection</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedNatsEndpointProducerBuilder connection(String connection) {
@@ -1589,7 +1572,6 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default NatsEndpointBuilder servers(String servers) {
@@ -1650,7 +1632,6 @@ public interface NatsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default NatsEndpointBuilder sslContextParameters(
@@ -1664,7 +1645,6 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default NatsEndpointBuilder sslContextParameters(
@@ -1717,7 +1697,6 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>io.nats.client.Connection</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedNatsEndpointBuilder connection(Object connection) {
@@ -1730,7 +1709,6 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.nats.client.Connection</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedNatsEndpointBuilder connection(String connection) {

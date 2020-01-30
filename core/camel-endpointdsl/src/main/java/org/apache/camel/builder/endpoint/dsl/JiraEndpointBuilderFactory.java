@@ -72,7 +72,6 @@ public interface JiraEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default JiraEndpointConsumerBuilder jiraUrl(String jiraUrl) {
@@ -126,7 +125,6 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default JiraEndpointConsumerBuilder jql(String jql) {
@@ -163,7 +161,6 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JiraEndpointConsumerBuilder accessToken(String accessToken) {
@@ -175,7 +172,6 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JiraEndpointConsumerBuilder consumerKey(String consumerKey) {
@@ -188,7 +184,6 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JiraEndpointConsumerBuilder password(String password) {
@@ -201,7 +196,6 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JiraEndpointConsumerBuilder privateKey(String privateKey) {
@@ -216,7 +210,6 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JiraEndpointConsumerBuilder username(String username) {
@@ -229,7 +222,6 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JiraEndpointConsumerBuilder verificationCode(
@@ -257,7 +249,6 @@ public interface JiraEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJiraEndpointConsumerBuilder exceptionHandler(
@@ -274,7 +265,6 @@ public interface JiraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJiraEndpointConsumerBuilder exceptionHandler(
@@ -287,7 +277,6 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJiraEndpointConsumerBuilder exchangePattern(
@@ -301,7 +290,6 @@ public interface JiraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJiraEndpointConsumerBuilder exchangePattern(
@@ -407,7 +395,6 @@ public interface JiraEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default JiraEndpointProducerBuilder jiraUrl(String jiraUrl) {
@@ -461,7 +448,6 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JiraEndpointProducerBuilder accessToken(String accessToken) {
@@ -473,7 +459,6 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JiraEndpointProducerBuilder consumerKey(String consumerKey) {
@@ -486,7 +471,6 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JiraEndpointProducerBuilder password(String password) {
@@ -499,7 +483,6 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JiraEndpointProducerBuilder privateKey(String privateKey) {
@@ -514,7 +497,6 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JiraEndpointProducerBuilder username(String username) {
@@ -527,7 +509,6 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JiraEndpointProducerBuilder verificationCode(
@@ -645,7 +626,6 @@ public interface JiraEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default JiraEndpointBuilder jiraUrl(String jiraUrl) {
@@ -657,7 +637,6 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JiraEndpointBuilder accessToken(String accessToken) {
@@ -669,7 +648,6 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JiraEndpointBuilder consumerKey(String consumerKey) {
@@ -682,7 +660,6 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JiraEndpointBuilder password(String password) {
@@ -695,7 +672,6 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JiraEndpointBuilder privateKey(String privateKey) {
@@ -710,7 +686,6 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JiraEndpointBuilder username(String username) {
@@ -723,7 +698,6 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default JiraEndpointBuilder verificationCode(String verificationCode) {

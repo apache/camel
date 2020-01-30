@@ -62,7 +62,6 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
-         * Default:
          * Group: common
          */
         default StompEndpointConsumerBuilder customHeaders(
@@ -76,7 +75,6 @@ public interface StompEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default StompEndpointConsumerBuilder customHeaders(String customHeaders) {
@@ -88,7 +86,6 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default StompEndpointConsumerBuilder host(String host) {
@@ -100,7 +97,6 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default StompEndpointConsumerBuilder version(String version) {
@@ -150,7 +146,6 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default StompEndpointConsumerBuilder login(String login) {
@@ -162,7 +157,6 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default StompEndpointConsumerBuilder passcode(String passcode) {
@@ -175,7 +169,6 @@ public interface StompEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default StompEndpointConsumerBuilder sslContextParameters(
@@ -189,7 +182,6 @@ public interface StompEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default StompEndpointConsumerBuilder sslContextParameters(
@@ -217,7 +209,6 @@ public interface StompEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedStompEndpointConsumerBuilder exceptionHandler(
@@ -234,7 +225,6 @@ public interface StompEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedStompEndpointConsumerBuilder exceptionHandler(
@@ -247,7 +237,6 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedStompEndpointConsumerBuilder exchangePattern(
@@ -261,7 +250,6 @@ public interface StompEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedStompEndpointConsumerBuilder exchangePattern(
@@ -304,7 +292,6 @@ public interface StompEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedStompEndpointConsumerBuilder headerFilterStrategy(
@@ -319,7 +306,6 @@ public interface StompEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedStompEndpointConsumerBuilder headerFilterStrategy(
@@ -384,7 +370,6 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
-         * Default:
          * Group: common
          */
         default StompEndpointProducerBuilder customHeaders(
@@ -398,7 +383,6 @@ public interface StompEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default StompEndpointProducerBuilder customHeaders(String customHeaders) {
@@ -410,7 +394,6 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default StompEndpointProducerBuilder host(String host) {
@@ -422,7 +405,6 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default StompEndpointProducerBuilder version(String version) {
@@ -476,7 +458,6 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default StompEndpointProducerBuilder login(String login) {
@@ -488,7 +469,6 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default StompEndpointProducerBuilder passcode(String passcode) {
@@ -501,7 +481,6 @@ public interface StompEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default StompEndpointProducerBuilder sslContextParameters(
@@ -515,7 +494,6 @@ public interface StompEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default StompEndpointProducerBuilder sslContextParameters(
@@ -569,7 +547,6 @@ public interface StompEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedStompEndpointProducerBuilder headerFilterStrategy(
@@ -584,7 +561,6 @@ public interface StompEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedStompEndpointProducerBuilder headerFilterStrategy(
@@ -650,7 +626,6 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * 
-         * Default:
          * Group: common
          */
         default StompEndpointBuilder customHeaders(Properties customHeaders) {
@@ -663,7 +638,6 @@ public interface StompEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default StompEndpointBuilder customHeaders(String customHeaders) {
@@ -675,7 +649,6 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default StompEndpointBuilder host(String host) {
@@ -687,7 +660,6 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default StompEndpointBuilder version(String version) {
@@ -699,7 +671,6 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default StompEndpointBuilder login(String login) {
@@ -711,7 +682,6 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default StompEndpointBuilder passcode(String passcode) {
@@ -724,7 +694,6 @@ public interface StompEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default StompEndpointBuilder sslContextParameters(
@@ -738,7 +707,6 @@ public interface StompEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default StompEndpointBuilder sslContextParameters(
@@ -793,7 +761,6 @@ public interface StompEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedStompEndpointBuilder headerFilterStrategy(
@@ -808,7 +775,6 @@ public interface StompEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedStompEndpointBuilder headerFilterStrategy(

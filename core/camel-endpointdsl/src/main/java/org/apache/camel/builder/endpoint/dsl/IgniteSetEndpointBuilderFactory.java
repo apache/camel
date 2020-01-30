@@ -47,7 +47,6 @@ public interface IgniteSetEndpointBuilderFactory {
          * <code>org.apache.ignite.configuration.CollectionConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteSetEndpointBuilder configuration(Object configuration) {
@@ -63,7 +62,6 @@ public interface IgniteSetEndpointBuilderFactory {
          * <code>org.apache.ignite.configuration.CollectionConfiguration</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteSetEndpointBuilder configuration(String configuration) {
@@ -122,7 +120,6 @@ public interface IgniteSetEndpointBuilderFactory {
          * <code>org.apache.camel.component.ignite.set.IgniteSetOperation</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteSetEndpointBuilder operation(IgniteSetOperation operation) {
@@ -139,7 +136,6 @@ public interface IgniteSetEndpointBuilderFactory {
          * <code>org.apache.camel.component.ignite.set.IgniteSetOperation</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteSetEndpointBuilder operation(String operation) {

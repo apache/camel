@@ -47,7 +47,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default KubernetesNamespacesEndpointConsumerBuilder apiVersion(
@@ -60,7 +59,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default KubernetesNamespacesEndpointConsumerBuilder dnsDomain(
@@ -74,7 +72,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
-         * Default:
          * Group: common
          */
         default KubernetesNamespacesEndpointConsumerBuilder kubernetesClient(
@@ -88,7 +85,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
-         * Default:
          * Group: common
          */
         default KubernetesNamespacesEndpointConsumerBuilder kubernetesClient(
@@ -101,7 +97,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default KubernetesNamespacesEndpointConsumerBuilder portName(
@@ -165,7 +160,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default KubernetesNamespacesEndpointConsumerBuilder labelKey(
@@ -178,7 +172,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default KubernetesNamespacesEndpointConsumerBuilder labelValue(
@@ -191,7 +184,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default KubernetesNamespacesEndpointConsumerBuilder namespace(
@@ -230,7 +222,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default KubernetesNamespacesEndpointConsumerBuilder resourceName(
@@ -243,7 +234,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointConsumerBuilder caCertData(
@@ -256,7 +246,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointConsumerBuilder caCertFile(
@@ -269,7 +258,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointConsumerBuilder clientCertData(
@@ -282,7 +270,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointConsumerBuilder clientCertFile(
@@ -295,7 +282,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointConsumerBuilder clientKeyAlgo(
@@ -308,7 +294,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointConsumerBuilder clientKeyData(
@@ -321,7 +306,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointConsumerBuilder clientKeyFile(
@@ -334,7 +318,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointConsumerBuilder clientKeyPassphrase(
@@ -347,7 +330,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointConsumerBuilder oauthToken(
@@ -360,7 +342,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointConsumerBuilder password(
@@ -373,7 +354,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointConsumerBuilder trustCerts(
@@ -387,7 +367,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointConsumerBuilder trustCerts(
@@ -400,7 +379,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointConsumerBuilder username(
@@ -429,7 +407,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedKubernetesNamespacesEndpointConsumerBuilder exceptionHandler(
@@ -446,7 +423,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedKubernetesNamespacesEndpointConsumerBuilder exceptionHandler(
@@ -459,7 +435,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedKubernetesNamespacesEndpointConsumerBuilder exchangePattern(
@@ -473,7 +448,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedKubernetesNamespacesEndpointConsumerBuilder exchangePattern(
@@ -515,7 +489,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedKubernetesNamespacesEndpointConsumerBuilder connectionTimeout(
@@ -530,7 +503,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedKubernetesNamespacesEndpointConsumerBuilder connectionTimeout(
@@ -582,7 +554,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default KubernetesNamespacesEndpointProducerBuilder apiVersion(
@@ -595,7 +566,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default KubernetesNamespacesEndpointProducerBuilder dnsDomain(
@@ -609,7 +579,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
-         * Default:
          * Group: common
          */
         default KubernetesNamespacesEndpointProducerBuilder kubernetesClient(
@@ -623,7 +592,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
-         * Default:
          * Group: common
          */
         default KubernetesNamespacesEndpointProducerBuilder kubernetesClient(
@@ -636,7 +604,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default KubernetesNamespacesEndpointProducerBuilder portName(
@@ -704,7 +671,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KubernetesNamespacesEndpointProducerBuilder operation(
@@ -717,7 +683,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointProducerBuilder caCertData(
@@ -730,7 +695,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointProducerBuilder caCertFile(
@@ -743,7 +707,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointProducerBuilder clientCertData(
@@ -756,7 +719,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointProducerBuilder clientCertFile(
@@ -769,7 +731,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointProducerBuilder clientKeyAlgo(
@@ -782,7 +743,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointProducerBuilder clientKeyData(
@@ -795,7 +755,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointProducerBuilder clientKeyFile(
@@ -808,7 +767,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointProducerBuilder clientKeyPassphrase(
@@ -821,7 +779,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointProducerBuilder oauthToken(
@@ -834,7 +791,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointProducerBuilder password(
@@ -847,7 +803,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointProducerBuilder trustCerts(
@@ -861,7 +816,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointProducerBuilder trustCerts(
@@ -874,7 +828,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointProducerBuilder username(
@@ -928,7 +881,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedKubernetesNamespacesEndpointProducerBuilder connectionTimeout(
@@ -943,7 +895,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedKubernetesNamespacesEndpointProducerBuilder connectionTimeout(
@@ -996,7 +947,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default KubernetesNamespacesEndpointBuilder apiVersion(String apiVersion) {
@@ -1008,7 +958,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default KubernetesNamespacesEndpointBuilder dnsDomain(String dnsDomain) {
@@ -1021,7 +970,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
-         * Default:
          * Group: common
          */
         default KubernetesNamespacesEndpointBuilder kubernetesClient(
@@ -1035,7 +983,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
-         * Default:
          * Group: common
          */
         default KubernetesNamespacesEndpointBuilder kubernetesClient(
@@ -1048,7 +995,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default KubernetesNamespacesEndpointBuilder portName(String portName) {
@@ -1073,7 +1019,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointBuilder caCertData(String caCertData) {
@@ -1085,7 +1030,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointBuilder caCertFile(String caCertFile) {
@@ -1097,7 +1041,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointBuilder clientCertData(
@@ -1110,7 +1053,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointBuilder clientCertFile(
@@ -1123,7 +1065,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointBuilder clientKeyAlgo(
@@ -1136,7 +1077,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointBuilder clientKeyData(
@@ -1149,7 +1089,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointBuilder clientKeyFile(
@@ -1162,7 +1101,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointBuilder clientKeyPassphrase(
@@ -1175,7 +1113,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointBuilder oauthToken(String oauthToken) {
@@ -1187,7 +1124,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointBuilder password(String password) {
@@ -1199,7 +1135,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointBuilder trustCerts(
@@ -1213,7 +1148,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointBuilder trustCerts(String trustCerts) {
@@ -1225,7 +1159,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesNamespacesEndpointBuilder username(String username) {
@@ -1278,7 +1211,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedKubernetesNamespacesEndpointBuilder connectionTimeout(
@@ -1293,7 +1225,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedKubernetesNamespacesEndpointBuilder connectionTimeout(

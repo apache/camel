@@ -50,7 +50,6 @@ public interface IgniteComputeEndpointBuilderFactory {
          * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteComputeEndpointBuilder clusterGroupExpression(
@@ -66,7 +65,6 @@ public interface IgniteComputeEndpointBuilderFactory {
          * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteComputeEndpointBuilder clusterGroupExpression(
@@ -80,7 +78,6 @@ public interface IgniteComputeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteComputeEndpointBuilder computeName(String computeName) {
@@ -96,7 +93,6 @@ public interface IgniteComputeEndpointBuilderFactory {
          * <code>org.apache.camel.component.ignite.compute.IgniteComputeExecutionType</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default IgniteComputeEndpointBuilder executionType(
@@ -113,7 +109,6 @@ public interface IgniteComputeEndpointBuilderFactory {
          * <code>org.apache.camel.component.ignite.compute.IgniteComputeExecutionType</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default IgniteComputeEndpointBuilder executionType(String executionType) {
@@ -196,7 +191,6 @@ public interface IgniteComputeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteComputeEndpointBuilder taskName(String taskName) {
@@ -209,7 +203,6 @@ public interface IgniteComputeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteComputeEndpointBuilder timeoutMillis(Long timeoutMillis) {
@@ -222,7 +215,6 @@ public interface IgniteComputeEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IgniteComputeEndpointBuilder timeoutMillis(String timeoutMillis) {

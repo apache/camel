@@ -342,7 +342,6 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPulsarEndpointConsumerBuilder exceptionHandler(
@@ -359,7 +358,6 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPulsarEndpointConsumerBuilder exceptionHandler(
@@ -372,7 +370,6 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPulsarEndpointConsumerBuilder exchangePattern(
@@ -386,7 +383,6 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPulsarEndpointConsumerBuilder exchangePattern(
@@ -745,7 +741,6 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.pulsar.client.api.MessageRouter</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default PulsarEndpointProducerBuilder messageRouter(Object messageRouter) {
@@ -758,7 +753,6 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.pulsar.client.api.MessageRouter</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default PulsarEndpointProducerBuilder messageRouter(String messageRouter) {
@@ -799,7 +793,6 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default PulsarEndpointProducerBuilder producerName(String producerName) {

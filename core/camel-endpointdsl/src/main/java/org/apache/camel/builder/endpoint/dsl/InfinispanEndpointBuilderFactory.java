@@ -50,7 +50,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default InfinispanEndpointConsumerBuilder hosts(String hosts) {
@@ -63,7 +62,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * 
-         * Default:
          * Group: common
          */
         default InfinispanEndpointConsumerBuilder queryBuilder(
@@ -77,7 +75,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * 
-         * Default:
          * Group: common
          */
         default InfinispanEndpointConsumerBuilder queryBuilder(
@@ -168,7 +165,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.infinispan.InfinispanCustomListener</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default InfinispanEndpointConsumerBuilder customListener(
@@ -182,7 +178,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.infinispan.InfinispanCustomListener</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default InfinispanEndpointConsumerBuilder customListener(
@@ -203,7 +198,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a: <code>java.util.Set&lt;java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: consumer
          */
         default InfinispanEndpointConsumerBuilder eventTypes(
@@ -224,7 +218,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.Set&lt;java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default InfinispanEndpointConsumerBuilder eventTypes(String eventTypes) {
@@ -275,7 +268,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedInfinispanEndpointConsumerBuilder exceptionHandler(
@@ -292,7 +284,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedInfinispanEndpointConsumerBuilder exceptionHandler(
@@ -305,7 +296,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedInfinispanEndpointConsumerBuilder exchangePattern(
@@ -319,7 +309,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedInfinispanEndpointConsumerBuilder exchangePattern(
@@ -361,7 +350,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a:
          * <code>org.infinispan.commons.api.BasicCacheContainer</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointConsumerBuilder cacheContainer(
@@ -375,7 +363,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.infinispan.commons.api.BasicCacheContainer</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointConsumerBuilder cacheContainer(
@@ -393,7 +380,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointConsumerBuilder cacheContainerConfiguration(
@@ -411,7 +397,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointConsumerBuilder cacheContainerConfiguration(
@@ -425,7 +410,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointConsumerBuilder configurationProperties(
@@ -440,7 +424,6 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointConsumerBuilder configurationProperties(
@@ -453,7 +436,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointConsumerBuilder configurationUri(
@@ -467,7 +449,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>org.infinispan.context.Flag[]</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointConsumerBuilder flags(Flag[] flags) {
@@ -481,7 +462,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.infinispan.context.Flag[]</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointConsumerBuilder flags(String flags) {
@@ -493,7 +473,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.function.BiFunction</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointConsumerBuilder remappingFunction(
@@ -507,7 +486,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.function.BiFunction</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointConsumerBuilder remappingFunction(
@@ -526,7 +504,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointConsumerBuilder resultHeader(
@@ -545,7 +522,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointConsumerBuilder resultHeader(
@@ -597,7 +573,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default InfinispanEndpointProducerBuilder hosts(String hosts) {
@@ -610,7 +585,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * 
-         * Default:
          * Group: common
          */
         default InfinispanEndpointProducerBuilder queryBuilder(
@@ -624,7 +598,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * 
-         * Default:
          * Group: common
          */
         default InfinispanEndpointProducerBuilder queryBuilder(
@@ -746,7 +719,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a:
          * <code>org.infinispan.commons.api.BasicCacheContainer</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointProducerBuilder cacheContainer(
@@ -760,7 +732,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.infinispan.commons.api.BasicCacheContainer</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointProducerBuilder cacheContainer(
@@ -778,7 +749,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointProducerBuilder cacheContainerConfiguration(
@@ -796,7 +766,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointProducerBuilder cacheContainerConfiguration(
@@ -810,7 +779,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointProducerBuilder configurationProperties(
@@ -825,7 +793,6 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointProducerBuilder configurationProperties(
@@ -838,7 +805,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointProducerBuilder configurationUri(
@@ -852,7 +818,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>org.infinispan.context.Flag[]</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointProducerBuilder flags(Flag[] flags) {
@@ -866,7 +831,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.infinispan.context.Flag[]</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointProducerBuilder flags(String flags) {
@@ -878,7 +842,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.function.BiFunction</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointProducerBuilder remappingFunction(
@@ -892,7 +855,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.function.BiFunction</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointProducerBuilder remappingFunction(
@@ -911,7 +873,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointProducerBuilder resultHeader(
@@ -930,7 +891,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointProducerBuilder resultHeader(
@@ -983,7 +943,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default InfinispanEndpointBuilder hosts(String hosts) {
@@ -996,7 +955,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * 
-         * Default:
          * Group: common
          */
         default InfinispanEndpointBuilder queryBuilder(Object queryBuilder) {
@@ -1009,7 +967,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * 
-         * Default:
          * Group: common
          */
         default InfinispanEndpointBuilder queryBuilder(String queryBuilder) {
@@ -1062,7 +1019,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a:
          * <code>org.infinispan.commons.api.BasicCacheContainer</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointBuilder cacheContainer(
@@ -1076,7 +1032,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.infinispan.commons.api.BasicCacheContainer</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointBuilder cacheContainer(
@@ -1094,7 +1049,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointBuilder cacheContainerConfiguration(
@@ -1112,7 +1066,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointBuilder cacheContainerConfiguration(
@@ -1126,7 +1079,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointBuilder configurationProperties(
@@ -1141,7 +1093,6 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointBuilder configurationProperties(
@@ -1154,7 +1105,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointBuilder configurationUri(
@@ -1168,7 +1118,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>org.infinispan.context.Flag[]</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointBuilder flags(Flag[] flags) {
@@ -1182,7 +1131,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.infinispan.context.Flag[]</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointBuilder flags(String flags) {
@@ -1194,7 +1142,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.function.BiFunction</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointBuilder remappingFunction(
@@ -1208,7 +1155,6 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.function.BiFunction</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointBuilder remappingFunction(
@@ -1227,7 +1173,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointBuilder resultHeader(
@@ -1246,7 +1191,6 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Object</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedInfinispanEndpointBuilder resultHeader(

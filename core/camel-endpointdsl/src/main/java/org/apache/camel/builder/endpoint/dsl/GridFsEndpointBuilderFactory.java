@@ -60,7 +60,6 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default GridFsEndpointConsumerBuilder database(String database) {
@@ -77,7 +76,6 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>com.mongodb.ReadPreference</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GridFsEndpointConsumerBuilder readPreference(
@@ -96,7 +94,6 @@ public interface GridFsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.mongodb.ReadPreference</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GridFsEndpointConsumerBuilder readPreference(
@@ -111,7 +108,6 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>com.mongodb.WriteConcern</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GridFsEndpointConsumerBuilder writeConcern(Object writeConcern) {
@@ -126,7 +122,6 @@ public interface GridFsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.mongodb.WriteConcern</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GridFsEndpointConsumerBuilder writeConcern(String writeConcern) {
@@ -269,7 +264,6 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default GridFsEndpointConsumerBuilder query(String query) {
@@ -327,7 +321,6 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGridFsEndpointConsumerBuilder exceptionHandler(
@@ -344,7 +337,6 @@ public interface GridFsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGridFsEndpointConsumerBuilder exceptionHandler(
@@ -357,7 +349,6 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGridFsEndpointConsumerBuilder exchangePattern(
@@ -371,7 +362,6 @@ public interface GridFsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGridFsEndpointConsumerBuilder exchangePattern(
@@ -465,7 +455,6 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default GridFsEndpointProducerBuilder database(String database) {
@@ -482,7 +471,6 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>com.mongodb.ReadPreference</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GridFsEndpointProducerBuilder readPreference(
@@ -501,7 +489,6 @@ public interface GridFsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.mongodb.ReadPreference</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GridFsEndpointProducerBuilder readPreference(
@@ -516,7 +503,6 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>com.mongodb.WriteConcern</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GridFsEndpointProducerBuilder writeConcern(Object writeConcern) {
@@ -531,7 +517,6 @@ public interface GridFsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.mongodb.WriteConcern</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GridFsEndpointProducerBuilder writeConcern(String writeConcern) {
@@ -585,7 +570,6 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default GridFsEndpointProducerBuilder operation(String operation) {
@@ -690,7 +674,6 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default GridFsEndpointBuilder database(String database) {
@@ -707,7 +690,6 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>com.mongodb.ReadPreference</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GridFsEndpointBuilder readPreference(Object readPreference) {
@@ -725,7 +707,6 @@ public interface GridFsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.mongodb.ReadPreference</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GridFsEndpointBuilder readPreference(String readPreference) {
@@ -739,7 +720,6 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>com.mongodb.WriteConcern</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GridFsEndpointBuilder writeConcern(Object writeConcern) {
@@ -754,7 +734,6 @@ public interface GridFsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.mongodb.WriteConcern</code> type.
          * 
-         * Default:
          * Group: common
          */
         default GridFsEndpointBuilder writeConcern(String writeConcern) {

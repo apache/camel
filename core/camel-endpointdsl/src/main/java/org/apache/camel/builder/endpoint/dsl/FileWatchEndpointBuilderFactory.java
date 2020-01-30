@@ -333,7 +333,6 @@ public interface FileWatchEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFileWatchEndpointBuilder exceptionHandler(
@@ -350,7 +349,6 @@ public interface FileWatchEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFileWatchEndpointBuilder exceptionHandler(
@@ -363,7 +361,6 @@ public interface FileWatchEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFileWatchEndpointBuilder exchangePattern(
@@ -377,7 +374,6 @@ public interface FileWatchEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFileWatchEndpointBuilder exchangePattern(

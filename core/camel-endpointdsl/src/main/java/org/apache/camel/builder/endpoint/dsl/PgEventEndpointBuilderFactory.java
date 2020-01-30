@@ -48,7 +48,6 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sql.DataSource</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PgEventEndpointConsumerBuilder datasource(Object datasource) {
@@ -62,7 +61,6 @@ public interface PgEventEndpointBuilderFactory {
          * The option will be converted to a <code>javax.sql.DataSource</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default PgEventEndpointConsumerBuilder datasource(String datasource) {
@@ -112,7 +110,6 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PgEventEndpointConsumerBuilder pass(String pass) {
@@ -152,7 +149,6 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPgEventEndpointConsumerBuilder exceptionHandler(
@@ -169,7 +165,6 @@ public interface PgEventEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPgEventEndpointConsumerBuilder exceptionHandler(
@@ -182,7 +177,6 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPgEventEndpointConsumerBuilder exchangePattern(
@@ -196,7 +190,6 @@ public interface PgEventEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedPgEventEndpointConsumerBuilder exchangePattern(
@@ -277,7 +270,6 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sql.DataSource</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PgEventEndpointProducerBuilder datasource(Object datasource) {
@@ -291,7 +283,6 @@ public interface PgEventEndpointBuilderFactory {
          * The option will be converted to a <code>javax.sql.DataSource</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default PgEventEndpointProducerBuilder datasource(String datasource) {
@@ -345,7 +336,6 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PgEventEndpointProducerBuilder pass(String pass) {
@@ -450,7 +440,6 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.sql.DataSource</code> type.
          * 
-         * Default:
          * Group: common
          */
         default PgEventEndpointBuilder datasource(Object datasource) {
@@ -464,7 +453,6 @@ public interface PgEventEndpointBuilderFactory {
          * The option will be converted to a <code>javax.sql.DataSource</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default PgEventEndpointBuilder datasource(String datasource) {
@@ -476,7 +464,6 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default PgEventEndpointBuilder pass(String pass) {

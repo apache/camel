@@ -42,7 +42,6 @@ public interface EKS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default EKS2EndpointBuilder accessKey(String accessKey) {
@@ -55,7 +54,6 @@ public interface EKS2EndpointBuilderFactory {
          * The option is a:
          * <code>software.amazon.awssdk.services.eks.EksClient</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default EKS2EndpointBuilder eksClient(Object eksClient) {
@@ -68,7 +66,6 @@ public interface EKS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>software.amazon.awssdk.services.eks.EksClient</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default EKS2EndpointBuilder eksClient(String eksClient) {
@@ -122,7 +119,6 @@ public interface EKS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.aws2.eks.EKS2Operations</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default EKS2EndpointBuilder operation(EKS2Operations operation) {
@@ -136,7 +132,6 @@ public interface EKS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.aws2.eks.EKS2Operations</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default EKS2EndpointBuilder operation(String operation) {
@@ -148,7 +143,6 @@ public interface EKS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default EKS2EndpointBuilder proxyHost(String proxyHost) {
@@ -160,7 +154,6 @@ public interface EKS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default EKS2EndpointBuilder proxyPort(Integer proxyPort) {
@@ -173,7 +166,6 @@ public interface EKS2EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default EKS2EndpointBuilder proxyPort(String proxyPort) {
@@ -214,7 +206,6 @@ public interface EKS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default EKS2EndpointBuilder region(String region) {
@@ -226,7 +217,6 @@ public interface EKS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default EKS2EndpointBuilder secretKey(String secretKey) {

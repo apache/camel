@@ -52,7 +52,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default AMQPEndpointConsumerBuilder clientId(String clientId) {
@@ -67,7 +66,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ConnectionFactory</code> type.
          * 
-         * Default:
          * Group: common
          */
         default AMQPEndpointConsumerBuilder connectionFactory(
@@ -84,7 +82,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.jms.ConnectionFactory</code> type.
          * 
-         * Default:
          * Group: common
          */
         default AMQPEndpointConsumerBuilder connectionFactory(
@@ -137,7 +134,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default AMQPEndpointConsumerBuilder durableSubscriptionName(
@@ -155,7 +151,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * 
-         * Default:
          * Group: common
          */
         default AMQPEndpointConsumerBuilder jmsMessageType(
@@ -173,7 +168,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * 
-         * Default:
          * Group: common
          */
         default AMQPEndpointConsumerBuilder jmsMessageType(String jmsMessageType) {
@@ -300,7 +294,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder cacheLevel(int cacheLevel) {
@@ -313,7 +306,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder cacheLevel(String cacheLevel) {
@@ -382,7 +374,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder maxConcurrentConsumers(
@@ -400,7 +391,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder maxConcurrentConsumers(
@@ -414,7 +404,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder replyTo(String replyTo) {
@@ -452,7 +441,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder selector(String selector) {
@@ -510,7 +498,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder subscriptionName(
@@ -627,7 +614,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default AMQPEndpointConsumerBuilder password(String password) {
@@ -640,7 +626,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default AMQPEndpointConsumerBuilder username(String username) {
@@ -822,7 +807,6 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.DefaultTaskExecutorType</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder defaultTaskExecutorType(
@@ -846,7 +830,6 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.DefaultTaskExecutorType</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder defaultTaskExecutorType(
@@ -915,7 +898,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder exceptionHandler(
@@ -932,7 +914,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder exceptionHandler(
@@ -945,7 +926,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder exchangePattern(
@@ -959,7 +939,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder exchangePattern(
@@ -1033,7 +1012,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.core.task.TaskExecutor</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder taskExecutor(
@@ -1047,7 +1025,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.core.task.TaskExecutor</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder taskExecutor(
@@ -1196,7 +1173,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder destinationResolver(
@@ -1213,7 +1189,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder destinationResolver(
@@ -1233,7 +1208,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a: <code>org.springframework.util.ErrorHandler</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder errorHandler(
@@ -1253,7 +1227,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.util.ErrorHandler</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder errorHandler(
@@ -1267,7 +1240,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ExceptionListener</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder exceptionListener(
@@ -1282,7 +1254,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.jms.ExceptionListener</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder exceptionListener(
@@ -1297,7 +1268,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder headerFilterStrategy(
@@ -1312,7 +1282,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder headerFilterStrategy(
@@ -1429,7 +1398,6 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder jmsKeyFormatStrategy(
@@ -1452,7 +1420,6 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder jmsKeyFormatStrategy(
@@ -1528,7 +1495,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder messageConverter(
@@ -1544,7 +1510,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder messageConverter(
@@ -1561,7 +1526,6 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder messageCreatedStrategy(
@@ -1578,7 +1542,6 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder messageCreatedStrategy(
@@ -1630,7 +1593,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder messageListenerContainerFactory(
@@ -1648,7 +1610,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder messageListenerContainerFactory(
@@ -2056,7 +2017,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
-         * Default:
          * Group: transaction (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder transactionManager(
@@ -2070,7 +2030,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
-         * Default:
          * Group: transaction (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder transactionManager(
@@ -2083,7 +2042,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: transaction (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder transactionName(
@@ -2139,7 +2097,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default AMQPEndpointProducerBuilder clientId(String clientId) {
@@ -2154,7 +2111,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ConnectionFactory</code> type.
          * 
-         * Default:
          * Group: common
          */
         default AMQPEndpointProducerBuilder connectionFactory(
@@ -2171,7 +2127,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.jms.ConnectionFactory</code> type.
          * 
-         * Default:
          * Group: common
          */
         default AMQPEndpointProducerBuilder connectionFactory(
@@ -2224,7 +2179,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default AMQPEndpointProducerBuilder durableSubscriptionName(
@@ -2242,7 +2196,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * 
-         * Default:
          * Group: common
          */
         default AMQPEndpointProducerBuilder jmsMessageType(
@@ -2260,7 +2213,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * 
-         * Default:
          * Group: common
          */
         default AMQPEndpointProducerBuilder jmsMessageType(String jmsMessageType) {
@@ -2334,7 +2286,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default AMQPEndpointProducerBuilder deliveryMode(Integer deliveryMode) {
@@ -2349,7 +2300,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default AMQPEndpointProducerBuilder deliveryMode(String deliveryMode) {
@@ -2598,7 +2548,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default AMQPEndpointProducerBuilder replyToMaxConcurrentConsumers(
@@ -2613,7 +2562,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default AMQPEndpointProducerBuilder replyToMaxConcurrentConsumers(
@@ -2657,7 +2605,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default AMQPEndpointProducerBuilder replyToOverride(
@@ -2679,7 +2626,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.ReplyToType</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default AMQPEndpointProducerBuilder replyToType(ReplyToType replyToType) {
@@ -2700,7 +2646,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.ReplyToType</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default AMQPEndpointProducerBuilder replyToType(String replyToType) {
@@ -2771,7 +2716,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default AMQPEndpointProducerBuilder password(String password) {
@@ -2784,7 +2728,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default AMQPEndpointProducerBuilder username(String username) {
@@ -2836,7 +2779,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedAMQPEndpointProducerBuilder allowAdditionalHeaders(
@@ -2919,7 +2861,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedAMQPEndpointProducerBuilder correlationProperty(
@@ -3046,7 +2987,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedAMQPEndpointProducerBuilder replyToCacheLevelName(
@@ -3061,7 +3001,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedAMQPEndpointProducerBuilder replyToDestinationSelectorName(
@@ -3248,7 +3187,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder destinationResolver(
@@ -3265,7 +3203,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder destinationResolver(
@@ -3285,7 +3222,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a: <code>org.springframework.util.ErrorHandler</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder errorHandler(
@@ -3305,7 +3241,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.util.ErrorHandler</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder errorHandler(
@@ -3319,7 +3254,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ExceptionListener</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder exceptionListener(
@@ -3334,7 +3268,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.jms.ExceptionListener</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder exceptionListener(
@@ -3349,7 +3282,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder headerFilterStrategy(
@@ -3364,7 +3296,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder headerFilterStrategy(
@@ -3481,7 +3412,6 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder jmsKeyFormatStrategy(
@@ -3504,7 +3434,6 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder jmsKeyFormatStrategy(
@@ -3580,7 +3509,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder messageConverter(
@@ -3596,7 +3524,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder messageConverter(
@@ -3613,7 +3540,6 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder messageCreatedStrategy(
@@ -3630,7 +3556,6 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder messageCreatedStrategy(
@@ -3682,7 +3607,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder messageListenerContainerFactory(
@@ -3700,7 +3624,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder messageListenerContainerFactory(
@@ -4108,7 +4031,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
-         * Default:
          * Group: transaction (advanced)
          */
         default AdvancedAMQPEndpointProducerBuilder transactionManager(
@@ -4122,7 +4044,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
-         * Default:
          * Group: transaction (advanced)
          */
         default AdvancedAMQPEndpointProducerBuilder transactionManager(
@@ -4135,7 +4056,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: transaction (advanced)
          */
         default AdvancedAMQPEndpointProducerBuilder transactionName(
@@ -4192,7 +4112,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default AMQPEndpointBuilder clientId(String clientId) {
@@ -4207,7 +4126,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ConnectionFactory</code> type.
          * 
-         * Default:
          * Group: common
          */
         default AMQPEndpointBuilder connectionFactory(Object connectionFactory) {
@@ -4223,7 +4141,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.jms.ConnectionFactory</code> type.
          * 
-         * Default:
          * Group: common
          */
         default AMQPEndpointBuilder connectionFactory(String connectionFactory) {
@@ -4274,7 +4191,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default AMQPEndpointBuilder durableSubscriptionName(
@@ -4292,7 +4208,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * 
-         * Default:
          * Group: common
          */
         default AMQPEndpointBuilder jmsMessageType(JmsMessageType jmsMessageType) {
@@ -4309,7 +4224,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * 
-         * Default:
          * Group: common
          */
         default AMQPEndpointBuilder jmsMessageType(String jmsMessageType) {
@@ -4356,7 +4270,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default AMQPEndpointBuilder password(String password) {
@@ -4369,7 +4282,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default AMQPEndpointBuilder username(String username) {
@@ -4553,7 +4465,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder destinationResolver(
@@ -4570,7 +4481,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder destinationResolver(
@@ -4590,7 +4500,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a: <code>org.springframework.util.ErrorHandler</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder errorHandler(Object errorHandler) {
@@ -4609,7 +4518,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.util.ErrorHandler</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder errorHandler(String errorHandler) {
@@ -4622,7 +4530,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.jms.ExceptionListener</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder exceptionListener(
@@ -4637,7 +4544,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.jms.ExceptionListener</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder exceptionListener(
@@ -4652,7 +4558,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder headerFilterStrategy(
@@ -4667,7 +4572,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder headerFilterStrategy(
@@ -4784,7 +4688,6 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder jmsKeyFormatStrategy(
@@ -4807,7 +4710,6 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder jmsKeyFormatStrategy(
@@ -4881,7 +4783,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder messageConverter(
@@ -4897,7 +4798,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder messageConverter(
@@ -4914,7 +4814,6 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder messageCreatedStrategy(
@@ -4931,7 +4830,6 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder messageCreatedStrategy(
@@ -4983,7 +4881,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder messageListenerContainerFactory(
@@ -5001,7 +4898,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder messageListenerContainerFactory(
@@ -5403,7 +5299,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
-         * Default:
          * Group: transaction (advanced)
          */
         default AdvancedAMQPEndpointBuilder transactionManager(
@@ -5417,7 +5312,6 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * 
-         * Default:
          * Group: transaction (advanced)
          */
         default AdvancedAMQPEndpointBuilder transactionManager(
@@ -5430,7 +5324,6 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: transaction (advanced)
          */
         default AdvancedAMQPEndpointBuilder transactionName(

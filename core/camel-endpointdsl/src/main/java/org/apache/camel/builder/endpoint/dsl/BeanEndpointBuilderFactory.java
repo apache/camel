@@ -44,7 +44,6 @@ public interface BeanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: common
          */
         @Deprecated
@@ -58,7 +57,6 @@ public interface BeanEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         @Deprecated
@@ -71,7 +69,6 @@ public interface BeanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BeanEndpointBuilder method(String method) {
@@ -214,7 +211,6 @@ public interface BeanEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedBeanEndpointBuilder parameters(
@@ -229,7 +225,6 @@ public interface BeanEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedBeanEndpointBuilder parameters(String parameters) {

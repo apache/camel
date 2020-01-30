@@ -156,7 +156,6 @@ public interface VmEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedVmEndpointConsumerBuilder exceptionHandler(
@@ -173,7 +172,6 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedVmEndpointConsumerBuilder exceptionHandler(
@@ -186,7 +184,6 @@ public interface VmEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedVmEndpointConsumerBuilder exchangePattern(
@@ -200,7 +197,6 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedVmEndpointConsumerBuilder exchangePattern(
@@ -368,7 +364,6 @@ public interface VmEndpointBuilderFactory {
          * The option is a: <code>java.util.concurrent.BlockingQueue</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedVmEndpointConsumerBuilder queue(BlockingQueue queue) {
@@ -383,7 +378,6 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.BlockingQueue</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedVmEndpointConsumerBuilder queue(String queue) {
@@ -634,7 +628,6 @@ public interface VmEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default VmEndpointProducerBuilder offerTimeout(long offerTimeout) {
@@ -648,7 +641,6 @@ public interface VmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default VmEndpointProducerBuilder offerTimeout(String offerTimeout) {
@@ -768,7 +760,6 @@ public interface VmEndpointBuilderFactory {
          * The option is a: <code>java.util.concurrent.BlockingQueue</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedVmEndpointProducerBuilder queue(BlockingQueue queue) {
@@ -783,7 +774,6 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.BlockingQueue</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedVmEndpointProducerBuilder queue(String queue) {
@@ -905,7 +895,6 @@ public interface VmEndpointBuilderFactory {
          * The option is a: <code>java.util.concurrent.BlockingQueue</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedVmEndpointBuilder queue(BlockingQueue queue) {
@@ -920,7 +909,6 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.BlockingQueue</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedVmEndpointBuilder queue(String queue) {

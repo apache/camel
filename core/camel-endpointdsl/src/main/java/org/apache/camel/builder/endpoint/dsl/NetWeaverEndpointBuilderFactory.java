@@ -162,7 +162,6 @@ public interface NetWeaverEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default NetWeaverEndpointBuilder password(String password) {
@@ -175,7 +174,6 @@ public interface NetWeaverEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default NetWeaverEndpointBuilder username(String username) {

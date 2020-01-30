@@ -48,7 +48,6 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default DropboxEndpointConsumerBuilder accessToken(String accessToken) {
@@ -60,7 +59,6 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option is a: <code>com.dropbox.core.v2.DbxClientV2</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointConsumerBuilder client(Object client) {
@@ -73,7 +71,6 @@ public interface DropboxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.dropbox.core.v2.DbxClientV2</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointConsumerBuilder client(String client) {
@@ -85,7 +82,6 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointConsumerBuilder clientIdentifier(
@@ -100,7 +96,6 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointConsumerBuilder localPath(String localPath) {
@@ -112,7 +107,6 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointConsumerBuilder newRemotePath(
@@ -127,7 +121,6 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointConsumerBuilder query(String query) {
@@ -139,7 +132,6 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointConsumerBuilder remotePath(String remotePath) {
@@ -155,7 +147,6 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.dropbox.util.DropboxUploadMode</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointConsumerBuilder uploadMode(
@@ -172,7 +163,6 @@ public interface DropboxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.dropbox.util.DropboxUploadMode</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointConsumerBuilder uploadMode(String uploadMode) {
@@ -237,7 +227,6 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDropboxEndpointConsumerBuilder exceptionHandler(
@@ -254,7 +243,6 @@ public interface DropboxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDropboxEndpointConsumerBuilder exceptionHandler(
@@ -267,7 +255,6 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDropboxEndpointConsumerBuilder exchangePattern(
@@ -281,7 +268,6 @@ public interface DropboxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedDropboxEndpointConsumerBuilder exchangePattern(
@@ -362,7 +348,6 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default DropboxEndpointProducerBuilder accessToken(String accessToken) {
@@ -374,7 +359,6 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option is a: <code>com.dropbox.core.v2.DbxClientV2</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointProducerBuilder client(Object client) {
@@ -387,7 +371,6 @@ public interface DropboxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.dropbox.core.v2.DbxClientV2</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointProducerBuilder client(String client) {
@@ -399,7 +382,6 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointProducerBuilder clientIdentifier(
@@ -414,7 +396,6 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointProducerBuilder localPath(String localPath) {
@@ -426,7 +407,6 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointProducerBuilder newRemotePath(
@@ -441,7 +421,6 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointProducerBuilder query(String query) {
@@ -453,7 +432,6 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointProducerBuilder remotePath(String remotePath) {
@@ -469,7 +447,6 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.dropbox.util.DropboxUploadMode</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointProducerBuilder uploadMode(
@@ -486,7 +463,6 @@ public interface DropboxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.dropbox.util.DropboxUploadMode</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointProducerBuilder uploadMode(String uploadMode) {
@@ -620,7 +596,6 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: common
          */
         default DropboxEndpointBuilder accessToken(String accessToken) {
@@ -632,7 +607,6 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option is a: <code>com.dropbox.core.v2.DbxClientV2</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointBuilder client(Object client) {
@@ -645,7 +619,6 @@ public interface DropboxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.dropbox.core.v2.DbxClientV2</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointBuilder client(String client) {
@@ -657,7 +630,6 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointBuilder clientIdentifier(String clientIdentifier) {
@@ -671,7 +643,6 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointBuilder localPath(String localPath) {
@@ -683,7 +654,6 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointBuilder newRemotePath(String newRemotePath) {
@@ -697,7 +667,6 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointBuilder query(String query) {
@@ -709,7 +678,6 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointBuilder remotePath(String remotePath) {
@@ -725,7 +693,6 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.dropbox.util.DropboxUploadMode</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointBuilder uploadMode(DropboxUploadMode uploadMode) {
@@ -741,7 +708,6 @@ public interface DropboxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.dropbox.util.DropboxUploadMode</code> type.
          * 
-         * Default:
          * Group: common
          */
         default DropboxEndpointBuilder uploadMode(String uploadMode) {

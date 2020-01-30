@@ -46,7 +46,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder apiVersion(
@@ -59,7 +58,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder dnsDomain(
@@ -73,7 +71,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesClient(
@@ -87,7 +84,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesClient(
@@ -142,7 +138,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder operation(
@@ -155,7 +150,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder portName(
@@ -181,7 +175,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder caCertData(
@@ -194,7 +187,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder caCertFile(
@@ -207,7 +199,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder clientCertData(
@@ -220,7 +211,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder clientCertFile(
@@ -233,7 +223,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder clientKeyAlgo(
@@ -246,7 +235,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder clientKeyData(
@@ -259,7 +247,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder clientKeyFile(
@@ -272,7 +259,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder clientKeyPassphrase(
@@ -285,7 +271,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder oauthToken(
@@ -298,7 +283,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder password(
@@ -311,7 +295,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder trustCerts(
@@ -325,7 +308,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder trustCerts(
@@ -338,7 +320,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder username(
@@ -392,7 +373,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedKubernetesPersistentVolumesClaimsEndpointBuilder connectionTimeout(
@@ -407,7 +387,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedKubernetesPersistentVolumesClaimsEndpointBuilder connectionTimeout(

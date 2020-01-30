@@ -44,7 +44,6 @@ public interface XChangeEndpointBuilderFactory {
          * The option is a: <code>org.knowm.xchange.currency.Currency</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default XChangeEndpointBuilder currency(Object currency) {
@@ -57,7 +56,6 @@ public interface XChangeEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.knowm.xchange.currency.Currency</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default XChangeEndpointBuilder currency(String currency) {
@@ -69,7 +67,6 @@ public interface XChangeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default XChangeEndpointBuilder currencyPair(String currencyPair) {
@@ -125,7 +122,6 @@ public interface XChangeEndpointBuilderFactory {
          * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeMethod</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default XChangeEndpointBuilder method(XChangeMethod method) {
@@ -139,7 +135,6 @@ public interface XChangeEndpointBuilderFactory {
          * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeMethod</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default XChangeEndpointBuilder method(String method) {
@@ -153,7 +148,6 @@ public interface XChangeEndpointBuilderFactory {
          * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeService</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default XChangeEndpointBuilder service(XChangeService service) {
@@ -167,7 +161,6 @@ public interface XChangeEndpointBuilderFactory {
          * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeService</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default XChangeEndpointBuilder service(String service) {

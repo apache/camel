@@ -186,7 +186,6 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>char</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FlatpackEndpointConsumerBuilder textQualifier(char textQualifier) {
@@ -198,7 +197,6 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>char</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FlatpackEndpointConsumerBuilder textQualifier(
@@ -278,7 +276,6 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder backoffErrorThreshold(
@@ -292,7 +289,6 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder backoffErrorThreshold(
@@ -306,7 +302,6 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder backoffIdleThreshold(
@@ -320,7 +315,6 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder backoffIdleThreshold(
@@ -338,7 +332,6 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder backoffMultiplier(
@@ -356,7 +349,6 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder backoffMultiplier(
@@ -511,7 +503,6 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder scheduledExecutorService(
@@ -527,7 +518,6 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder scheduledExecutorService(
@@ -555,7 +545,6 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder schedulerProperties(
@@ -571,7 +560,6 @@ public interface FlatpackEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder schedulerProperties(
@@ -678,7 +666,6 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFlatpackEndpointConsumerBuilder exceptionHandler(
@@ -695,7 +682,6 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFlatpackEndpointConsumerBuilder exceptionHandler(
@@ -708,7 +694,6 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFlatpackEndpointConsumerBuilder exchangePattern(
@@ -722,7 +707,6 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFlatpackEndpointConsumerBuilder exchangePattern(
@@ -739,7 +723,6 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFlatpackEndpointConsumerBuilder pollStrategy(
@@ -756,7 +739,6 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFlatpackEndpointConsumerBuilder pollStrategy(
@@ -970,7 +952,6 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>char</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FlatpackEndpointProducerBuilder textQualifier(char textQualifier) {
@@ -982,7 +963,6 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>char</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FlatpackEndpointProducerBuilder textQualifier(
@@ -1248,7 +1228,6 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>char</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FlatpackEndpointBuilder textQualifier(char textQualifier) {
@@ -1260,7 +1239,6 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>char</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FlatpackEndpointBuilder textQualifier(String textQualifier) {

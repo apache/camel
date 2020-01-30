@@ -82,7 +82,6 @@ public interface CronEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: consumer
          */
         default CronEndpointBuilder schedule(String schedule) {
@@ -109,7 +108,6 @@ public interface CronEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCronEndpointBuilder exceptionHandler(
@@ -126,7 +124,6 @@ public interface CronEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCronEndpointBuilder exceptionHandler(
@@ -139,7 +136,6 @@ public interface CronEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCronEndpointBuilder exchangePattern(
@@ -153,7 +149,6 @@ public interface CronEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedCronEndpointBuilder exchangePattern(

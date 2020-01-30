@@ -45,7 +45,6 @@ public interface SnsEndpointBuilderFactory {
          * The option is a: <code>com.amazonaws.services.sns.AmazonSNS</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SnsEndpointBuilder amazonSNSClient(Object amazonSNSClient) {
@@ -58,7 +57,6 @@ public interface SnsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.sns.AmazonSNS</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SnsEndpointBuilder amazonSNSClient(String amazonSNSClient) {
@@ -71,7 +69,6 @@ public interface SnsEndpointBuilderFactory {
          * The option is a: <code>com.amazonaws.services.sqs.AmazonSQS</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SnsEndpointBuilder amazonSQSClient(Object amazonSQSClient) {
@@ -84,7 +81,6 @@ public interface SnsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.sqs.AmazonSQS</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SnsEndpointBuilder amazonSQSClient(String amazonSQSClient) {
@@ -121,7 +117,6 @@ public interface SnsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SnsEndpointBuilder headerFilterStrategy(
@@ -135,7 +130,6 @@ public interface SnsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SnsEndpointBuilder headerFilterStrategy(
@@ -149,7 +143,6 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SnsEndpointBuilder kmsMasterKeyId(String kmsMasterKeyId) {
@@ -201,7 +194,6 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SnsEndpointBuilder messageStructure(String messageStructure) {
@@ -213,7 +205,6 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SnsEndpointBuilder policy(String policy) {
@@ -225,7 +216,6 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SnsEndpointBuilder proxyHost(String proxyHost) {
@@ -237,7 +227,6 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SnsEndpointBuilder proxyPort(Integer proxyPort) {
@@ -250,7 +239,6 @@ public interface SnsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SnsEndpointBuilder proxyPort(String proxyPort) {
@@ -287,7 +275,6 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SnsEndpointBuilder queueUrl(String queueUrl) {
@@ -302,7 +289,6 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SnsEndpointBuilder region(String region) {
@@ -341,7 +327,6 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SnsEndpointBuilder subject(String subject) {
@@ -379,7 +364,6 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SnsEndpointBuilder accessKey(String accessKey) {
@@ -391,7 +375,6 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SnsEndpointBuilder secretKey(String secretKey) {

@@ -48,7 +48,6 @@ public interface JGroupsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JGroupsEndpointConsumerBuilder channelProperties(
@@ -144,7 +143,6 @@ public interface JGroupsEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJGroupsEndpointConsumerBuilder exceptionHandler(
@@ -161,7 +159,6 @@ public interface JGroupsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJGroupsEndpointConsumerBuilder exceptionHandler(
@@ -174,7 +171,6 @@ public interface JGroupsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJGroupsEndpointConsumerBuilder exchangePattern(
@@ -188,7 +184,6 @@ public interface JGroupsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedJGroupsEndpointConsumerBuilder exchangePattern(
@@ -269,7 +264,6 @@ public interface JGroupsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JGroupsEndpointProducerBuilder channelProperties(
@@ -404,7 +398,6 @@ public interface JGroupsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default JGroupsEndpointBuilder channelProperties(

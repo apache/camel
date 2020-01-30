@@ -200,7 +200,6 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default MockEndpointBuilder reportGroup(int reportGroup) {
@@ -213,7 +212,6 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default MockEndpointBuilder reportGroup(String reportGroup) {

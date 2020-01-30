@@ -46,7 +46,6 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default GoogleBigQueryEndpointBuilder connectionFactory(
@@ -61,7 +60,6 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default GoogleBigQueryEndpointBuilder connectionFactory(
@@ -116,7 +114,6 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default GoogleBigQueryEndpointBuilder useAsInsertId(String useAsInsertId) {

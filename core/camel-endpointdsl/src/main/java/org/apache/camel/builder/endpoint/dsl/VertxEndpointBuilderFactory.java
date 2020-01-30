@@ -48,7 +48,6 @@ public interface VertxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: common
          */
         default VertxEndpointConsumerBuilder pubSub(Boolean pubSub) {
@@ -62,7 +61,6 @@ public interface VertxEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default VertxEndpointConsumerBuilder pubSub(String pubSub) {
@@ -127,7 +125,6 @@ public interface VertxEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedVertxEndpointConsumerBuilder exceptionHandler(
@@ -144,7 +141,6 @@ public interface VertxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedVertxEndpointConsumerBuilder exceptionHandler(
@@ -157,7 +153,6 @@ public interface VertxEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedVertxEndpointConsumerBuilder exchangePattern(
@@ -171,7 +166,6 @@ public interface VertxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedVertxEndpointConsumerBuilder exchangePattern(
@@ -252,7 +246,6 @@ public interface VertxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: common
          */
         default VertxEndpointProducerBuilder pubSub(Boolean pubSub) {
@@ -266,7 +259,6 @@ public interface VertxEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default VertxEndpointProducerBuilder pubSub(String pubSub) {
@@ -400,7 +392,6 @@ public interface VertxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: common
          */
         default VertxEndpointBuilder pubSub(Boolean pubSub) {
@@ -414,7 +405,6 @@ public interface VertxEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default VertxEndpointBuilder pubSub(String pubSub) {

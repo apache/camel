@@ -66,7 +66,6 @@ public interface MvelEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default MvelEndpointBuilder encoding(String encoding) {

@@ -315,7 +315,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointConsumerBuilder jwtIssuer(String jwtIssuer) {
@@ -327,7 +326,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointConsumerBuilder jwtSecret(String jwtSecret) {
@@ -339,7 +337,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointConsumerBuilder jwtSubject(String jwtSubject) {
@@ -351,7 +348,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointConsumerBuilder keyCertChainResource(
@@ -364,7 +360,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointConsumerBuilder keyPassword(String keyPassword) {
@@ -376,7 +371,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointConsumerBuilder keyResource(String keyResource) {
@@ -418,7 +412,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointConsumerBuilder serviceAccountResource(
@@ -432,7 +425,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointConsumerBuilder trustCertCollectionResource(
@@ -460,7 +452,6 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGrpcEndpointConsumerBuilder exceptionHandler(
@@ -477,7 +468,6 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGrpcEndpointConsumerBuilder exceptionHandler(
@@ -490,7 +480,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGrpcEndpointConsumerBuilder exchangePattern(
@@ -504,7 +493,6 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedGrpcEndpointConsumerBuilder exchangePattern(
@@ -676,7 +664,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default GrpcEndpointProducerBuilder method(String method) {
@@ -727,7 +714,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default GrpcEndpointProducerBuilder streamRepliesTo(
@@ -740,7 +726,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default GrpcEndpointProducerBuilder userAgent(String userAgent) {
@@ -809,7 +794,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointProducerBuilder jwtIssuer(String jwtIssuer) {
@@ -821,7 +805,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointProducerBuilder jwtSecret(String jwtSecret) {
@@ -833,7 +816,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointProducerBuilder jwtSubject(String jwtSubject) {
@@ -845,7 +827,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointProducerBuilder keyCertChainResource(
@@ -858,7 +839,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointProducerBuilder keyPassword(String keyPassword) {
@@ -870,7 +850,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointProducerBuilder keyResource(String keyResource) {
@@ -912,7 +891,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointProducerBuilder serviceAccountResource(
@@ -926,7 +904,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointProducerBuilder trustCertCollectionResource(
@@ -1121,7 +1098,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointBuilder jwtIssuer(String jwtIssuer) {
@@ -1133,7 +1109,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointBuilder jwtSecret(String jwtSecret) {
@@ -1145,7 +1120,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointBuilder jwtSubject(String jwtSubject) {
@@ -1157,7 +1131,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointBuilder keyCertChainResource(
@@ -1170,7 +1143,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointBuilder keyPassword(String keyPassword) {
@@ -1182,7 +1154,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointBuilder keyResource(String keyResource) {
@@ -1223,7 +1194,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointBuilder serviceAccountResource(
@@ -1237,7 +1207,6 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default GrpcEndpointBuilder trustCertCollectionResource(

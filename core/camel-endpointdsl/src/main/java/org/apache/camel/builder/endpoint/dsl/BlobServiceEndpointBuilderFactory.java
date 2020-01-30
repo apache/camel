@@ -50,7 +50,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a:
          * <code>com.microsoft.azure.storage.blob.CloudBlob</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointConsumerBuilder azureBlobClient(
@@ -64,7 +63,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.microsoft.azure.storage.blob.CloudBlob</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointConsumerBuilder azureBlobClient(
@@ -156,7 +154,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a:
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointConsumerBuilder credentials(
@@ -170,7 +167,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointConsumerBuilder credentials(
@@ -183,7 +179,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointConsumerBuilder dataLength(Long dataLength) {
@@ -195,7 +190,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointConsumerBuilder dataLength(String dataLength) {
@@ -207,7 +201,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointConsumerBuilder fileDir(String fileDir) {
@@ -247,7 +240,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointConsumerBuilder streamReadSize(
@@ -260,7 +252,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointConsumerBuilder streamReadSize(
@@ -327,7 +318,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBlobServiceEndpointConsumerBuilder exceptionHandler(
@@ -344,7 +334,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBlobServiceEndpointConsumerBuilder exceptionHandler(
@@ -357,7 +346,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBlobServiceEndpointConsumerBuilder exchangePattern(
@@ -371,7 +359,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedBlobServiceEndpointConsumerBuilder exchangePattern(
@@ -453,7 +440,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a:
          * <code>com.microsoft.azure.storage.blob.CloudBlob</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointProducerBuilder azureBlobClient(
@@ -467,7 +453,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.microsoft.azure.storage.blob.CloudBlob</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointProducerBuilder azureBlobClient(
@@ -559,7 +544,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a:
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointProducerBuilder credentials(
@@ -573,7 +557,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointProducerBuilder credentials(
@@ -586,7 +569,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointProducerBuilder dataLength(Long dataLength) {
@@ -598,7 +580,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointProducerBuilder dataLength(String dataLength) {
@@ -610,7 +591,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointProducerBuilder fileDir(String fileDir) {
@@ -650,7 +630,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointProducerBuilder streamReadSize(
@@ -663,7 +642,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointProducerBuilder streamReadSize(
@@ -677,7 +655,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default BlobServiceEndpointProducerBuilder blobMetadata(
@@ -692,7 +669,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default BlobServiceEndpointProducerBuilder blobMetadata(
@@ -705,7 +681,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default BlobServiceEndpointProducerBuilder blobPrefix(String blobPrefix) {
@@ -812,7 +787,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default BlobServiceEndpointProducerBuilder streamWriteSize(
@@ -825,7 +799,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default BlobServiceEndpointProducerBuilder streamWriteSize(
@@ -945,7 +918,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a:
          * <code>com.microsoft.azure.storage.blob.CloudBlob</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointBuilder azureBlobClient(
@@ -959,7 +931,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.microsoft.azure.storage.blob.CloudBlob</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointBuilder azureBlobClient(
@@ -1051,7 +1022,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a:
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointBuilder credentials(Object credentials) {
@@ -1064,7 +1034,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointBuilder credentials(String credentials) {
@@ -1076,7 +1045,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointBuilder dataLength(Long dataLength) {
@@ -1088,7 +1056,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointBuilder dataLength(String dataLength) {
@@ -1100,7 +1067,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointBuilder fileDir(String fileDir) {
@@ -1138,7 +1104,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointBuilder streamReadSize(int streamReadSize) {
@@ -1150,7 +1115,6 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default BlobServiceEndpointBuilder streamReadSize(String streamReadSize) {

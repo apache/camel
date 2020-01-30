@@ -92,7 +92,6 @@ public interface ValidatorEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ValidatorEndpointBuilder headerName(String headerName) {
@@ -188,7 +187,6 @@ public interface ValidatorEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.processor.validation.ValidatorErrorHandler</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedValidatorEndpointBuilder errorHandler(
@@ -204,7 +202,6 @@ public interface ValidatorEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.processor.validation.ValidatorErrorHandler</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedValidatorEndpointBuilder errorHandler(
@@ -218,7 +215,6 @@ public interface ValidatorEndpointBuilderFactory {
          * 
          * The option is a: <code>org.w3c.dom.ls.LSResourceResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedValidatorEndpointBuilder resourceResolver(
@@ -233,7 +229,6 @@ public interface ValidatorEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.w3c.dom.ls.LSResourceResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedValidatorEndpointBuilder resourceResolver(
@@ -250,7 +245,6 @@ public interface ValidatorEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedValidatorEndpointBuilder resourceResolverFactory(
@@ -267,7 +261,6 @@ public interface ValidatorEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedValidatorEndpointBuilder resourceResolverFactory(
@@ -281,7 +274,6 @@ public interface ValidatorEndpointBuilderFactory {
          * The option is a: <code>javax.xml.validation.SchemaFactory</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedValidatorEndpointBuilder schemaFactory(
@@ -295,7 +287,6 @@ public interface ValidatorEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.xml.validation.SchemaFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedValidatorEndpointBuilder schemaFactory(

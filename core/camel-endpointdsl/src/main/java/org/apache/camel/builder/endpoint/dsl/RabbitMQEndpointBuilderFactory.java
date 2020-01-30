@@ -50,7 +50,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder addresses(String addresses) {
@@ -122,7 +121,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option is a: <code>com.rabbitmq.client.ConnectionFactory</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder connectionFactory(
@@ -138,7 +136,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.rabbitmq.client.ConnectionFactory</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder connectionFactory(
@@ -151,7 +148,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder deadLetterExchange(
@@ -177,7 +173,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder deadLetterQueue(
@@ -190,7 +185,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder deadLetterRoutingKey(
@@ -295,7 +289,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder hostname(String hostname) {
@@ -334,7 +327,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder portNumber(int portNumber) {
@@ -347,7 +339,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder portNumber(String portNumber) {
@@ -359,7 +350,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder queue(String queue) {
@@ -372,7 +362,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder routingKey(String routingKey) {
@@ -602,7 +591,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default RabbitMQEndpointConsumerBuilder prefetchCount(int prefetchCount) {
@@ -616,7 +604,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default RabbitMQEndpointConsumerBuilder prefetchCount(
@@ -691,7 +678,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default RabbitMQEndpointConsumerBuilder prefetchSize(int prefetchSize) {
@@ -705,7 +691,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default RabbitMQEndpointConsumerBuilder prefetchSize(String prefetchSize) {
@@ -729,7 +714,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default RabbitMQEndpointConsumerBuilder sslProtocol(String sslProtocol) {
@@ -742,7 +726,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.net.ssl.TrustManager</code> type.
          * 
-         * Default:
          * Group: security
          */
         default RabbitMQEndpointConsumerBuilder trustManager(Object trustManager) {
@@ -756,7 +739,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.net.ssl.TrustManager</code> type.
          * 
-         * Default:
          * Group: security
          */
         default RabbitMQEndpointConsumerBuilder trustManager(String trustManager) {
@@ -795,7 +777,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRabbitMQEndpointConsumerBuilder exceptionHandler(
@@ -812,7 +793,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRabbitMQEndpointConsumerBuilder exceptionHandler(
@@ -825,7 +805,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRabbitMQEndpointConsumerBuilder exchangePattern(
@@ -839,7 +818,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedRabbitMQEndpointConsumerBuilder exchangePattern(
@@ -885,7 +863,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointConsumerBuilder args(
@@ -904,7 +881,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointConsumerBuilder args(String args) {
@@ -946,7 +922,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointConsumerBuilder clientProperties(
@@ -962,7 +937,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointConsumerBuilder clientProperties(
@@ -1191,7 +1165,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointConsumerBuilder topologyRecoveryEnabled(
@@ -1206,7 +1179,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointConsumerBuilder topologyRecoveryEnabled(
@@ -1260,7 +1232,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder addresses(String addresses) {
@@ -1332,7 +1303,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option is a: <code>com.rabbitmq.client.ConnectionFactory</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder connectionFactory(
@@ -1348,7 +1318,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.rabbitmq.client.ConnectionFactory</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder connectionFactory(
@@ -1361,7 +1330,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder deadLetterExchange(
@@ -1387,7 +1355,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder deadLetterQueue(
@@ -1400,7 +1367,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder deadLetterRoutingKey(
@@ -1505,7 +1471,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder hostname(String hostname) {
@@ -1544,7 +1509,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder portNumber(int portNumber) {
@@ -1557,7 +1521,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder portNumber(String portNumber) {
@@ -1569,7 +1532,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder queue(String queue) {
@@ -1582,7 +1544,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder routingKey(String routingKey) {
@@ -1967,7 +1928,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default RabbitMQEndpointProducerBuilder publisherAcknowledgementsTimeout(
@@ -1981,7 +1941,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default RabbitMQEndpointProducerBuilder publisherAcknowledgementsTimeout(
@@ -2006,7 +1965,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default RabbitMQEndpointProducerBuilder sslProtocol(String sslProtocol) {
@@ -2019,7 +1977,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.net.ssl.TrustManager</code> type.
          * 
-         * Default:
          * Group: security
          */
         default RabbitMQEndpointProducerBuilder trustManager(Object trustManager) {
@@ -2033,7 +1990,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.net.ssl.TrustManager</code> type.
          * 
-         * Default:
          * Group: security
          */
         default RabbitMQEndpointProducerBuilder trustManager(String trustManager) {
@@ -2073,7 +2029,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointProducerBuilder args(
@@ -2092,7 +2047,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointProducerBuilder args(String args) {
@@ -2134,7 +2088,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointProducerBuilder clientProperties(
@@ -2150,7 +2103,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointProducerBuilder clientProperties(
@@ -2379,7 +2331,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointProducerBuilder topologyRecoveryEnabled(
@@ -2394,7 +2345,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointProducerBuilder topologyRecoveryEnabled(
@@ -2449,7 +2399,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointBuilder addresses(String addresses) {
@@ -2521,7 +2470,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option is a: <code>com.rabbitmq.client.ConnectionFactory</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointBuilder connectionFactory(
@@ -2537,7 +2485,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.rabbitmq.client.ConnectionFactory</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointBuilder connectionFactory(
@@ -2550,7 +2497,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointBuilder deadLetterExchange(
@@ -2576,7 +2522,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointBuilder deadLetterQueue(String deadLetterQueue) {
@@ -2588,7 +2533,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointBuilder deadLetterRoutingKey(
@@ -2693,7 +2637,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointBuilder hostname(String hostname) {
@@ -2732,7 +2675,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointBuilder portNumber(int portNumber) {
@@ -2745,7 +2687,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointBuilder portNumber(String portNumber) {
@@ -2757,7 +2698,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointBuilder queue(String queue) {
@@ -2770,7 +2710,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default RabbitMQEndpointBuilder routingKey(String routingKey) {
@@ -2887,7 +2826,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default RabbitMQEndpointBuilder sslProtocol(String sslProtocol) {
@@ -2900,7 +2838,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.net.ssl.TrustManager</code> type.
          * 
-         * Default:
          * Group: security
          */
         default RabbitMQEndpointBuilder trustManager(Object trustManager) {
@@ -2914,7 +2851,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.net.ssl.TrustManager</code> type.
          * 
-         * Default:
          * Group: security
          */
         default RabbitMQEndpointBuilder trustManager(String trustManager) {
@@ -2955,7 +2891,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointBuilder args(Map<String, Object> args) {
@@ -2973,7 +2908,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointBuilder args(String args) {
@@ -3015,7 +2949,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointBuilder clientProperties(
@@ -3031,7 +2964,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointBuilder clientProperties(
@@ -3258,7 +3190,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointBuilder topologyRecoveryEnabled(
@@ -3273,7 +3204,6 @@ public interface RabbitMQEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointBuilder topologyRecoveryEnabled(

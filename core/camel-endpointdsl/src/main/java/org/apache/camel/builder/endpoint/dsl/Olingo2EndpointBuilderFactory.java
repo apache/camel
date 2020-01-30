@@ -124,7 +124,6 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointConsumerBuilder httpAsyncClientBuilder(
@@ -142,7 +141,6 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointConsumerBuilder httpAsyncClientBuilder(
@@ -159,7 +157,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointConsumerBuilder httpClientBuilder(
@@ -176,7 +173,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointConsumerBuilder httpClientBuilder(
@@ -191,7 +187,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointConsumerBuilder httpHeaders(
@@ -207,7 +202,6 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointConsumerBuilder httpHeaders(String httpHeaders) {
@@ -219,7 +213,6 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointConsumerBuilder inBody(String inBody) {
@@ -231,7 +224,6 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.http.HttpHost</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointConsumerBuilder proxy(Object proxy) {
@@ -244,7 +236,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.http.HttpHost</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointConsumerBuilder proxy(String proxy) {
@@ -257,7 +248,6 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointConsumerBuilder serviceUri(String serviceUri) {
@@ -297,7 +287,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointConsumerBuilder sslContextParameters(
@@ -311,7 +300,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointConsumerBuilder sslContextParameters(
@@ -419,7 +407,6 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder backoffErrorThreshold(
@@ -433,7 +420,6 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder backoffErrorThreshold(
@@ -447,7 +433,6 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder backoffIdleThreshold(
@@ -461,7 +446,6 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder backoffIdleThreshold(
@@ -479,7 +463,6 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder backoffMultiplier(
@@ -497,7 +480,6 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder backoffMultiplier(
@@ -652,7 +634,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder scheduledExecutorService(
@@ -668,7 +649,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder scheduledExecutorService(
@@ -696,7 +676,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder schedulerProperties(
@@ -712,7 +691,6 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder schedulerProperties(
@@ -819,7 +797,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedOlingo2EndpointConsumerBuilder exceptionHandler(
@@ -836,7 +813,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedOlingo2EndpointConsumerBuilder exceptionHandler(
@@ -849,7 +825,6 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedOlingo2EndpointConsumerBuilder exchangePattern(
@@ -863,7 +838,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedOlingo2EndpointConsumerBuilder exchangePattern(
@@ -880,7 +854,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedOlingo2EndpointConsumerBuilder pollStrategy(
@@ -897,7 +870,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedOlingo2EndpointConsumerBuilder pollStrategy(
@@ -1050,7 +1022,6 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointProducerBuilder httpAsyncClientBuilder(
@@ -1068,7 +1039,6 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointProducerBuilder httpAsyncClientBuilder(
@@ -1085,7 +1055,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointProducerBuilder httpClientBuilder(
@@ -1102,7 +1071,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointProducerBuilder httpClientBuilder(
@@ -1117,7 +1085,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointProducerBuilder httpHeaders(
@@ -1133,7 +1100,6 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointProducerBuilder httpHeaders(String httpHeaders) {
@@ -1145,7 +1111,6 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointProducerBuilder inBody(String inBody) {
@@ -1157,7 +1122,6 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.http.HttpHost</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointProducerBuilder proxy(Object proxy) {
@@ -1170,7 +1134,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.http.HttpHost</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointProducerBuilder proxy(String proxy) {
@@ -1183,7 +1146,6 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointProducerBuilder serviceUri(String serviceUri) {
@@ -1223,7 +1185,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointProducerBuilder sslContextParameters(
@@ -1237,7 +1198,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointProducerBuilder sslContextParameters(
@@ -1443,7 +1403,6 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointBuilder httpAsyncClientBuilder(
@@ -1461,7 +1420,6 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointBuilder httpAsyncClientBuilder(
@@ -1478,7 +1436,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointBuilder httpClientBuilder(
@@ -1495,7 +1452,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointBuilder httpClientBuilder(
@@ -1510,7 +1466,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointBuilder httpHeaders(
@@ -1526,7 +1481,6 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointBuilder httpHeaders(String httpHeaders) {
@@ -1538,7 +1492,6 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointBuilder inBody(String inBody) {
@@ -1550,7 +1503,6 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.http.HttpHost</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointBuilder proxy(Object proxy) {
@@ -1563,7 +1515,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.http.HttpHost</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointBuilder proxy(String proxy) {
@@ -1576,7 +1527,6 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointBuilder serviceUri(String serviceUri) {
@@ -1615,7 +1565,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointBuilder sslContextParameters(
@@ -1629,7 +1578,6 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: common
          */
         default Olingo2EndpointBuilder sslContextParameters(

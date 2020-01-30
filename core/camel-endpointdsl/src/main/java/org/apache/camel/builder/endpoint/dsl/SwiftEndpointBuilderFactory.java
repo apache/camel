@@ -56,7 +56,6 @@ public interface SwiftEndpointBuilderFactory {
          * The option is a: <code>org.openstack4j.core.transport.Config</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default SwiftEndpointBuilder config(Object config) {
@@ -69,7 +68,6 @@ public interface SwiftEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.openstack4j.core.transport.Config</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SwiftEndpointBuilder config(String config) {
@@ -133,7 +131,6 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SwiftEndpointBuilder operation(String operation) {
@@ -146,7 +143,6 @@ public interface SwiftEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default SwiftEndpointBuilder password(String password) {
@@ -159,7 +155,6 @@ public interface SwiftEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default SwiftEndpointBuilder project(String project) {
@@ -172,7 +167,6 @@ public interface SwiftEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default SwiftEndpointBuilder subsystem(String subsystem) {
@@ -185,7 +179,6 @@ public interface SwiftEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default SwiftEndpointBuilder username(String username) {

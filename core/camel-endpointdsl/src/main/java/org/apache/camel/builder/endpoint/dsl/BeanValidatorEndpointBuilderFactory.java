@@ -165,7 +165,6 @@ public interface BeanValidatorEndpointBuilderFactory {
          * The option is a:
          * <code>javax.validation.ConstraintValidatorFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedBeanValidatorEndpointBuilder constraintValidatorFactory(
@@ -179,7 +178,6 @@ public interface BeanValidatorEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.validation.ConstraintValidatorFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedBeanValidatorEndpointBuilder constraintValidatorFactory(
@@ -193,7 +191,6 @@ public interface BeanValidatorEndpointBuilderFactory {
          * The option is a: <code>javax.validation.MessageInterpolator</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedBeanValidatorEndpointBuilder messageInterpolator(
@@ -207,7 +204,6 @@ public interface BeanValidatorEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.validation.MessageInterpolator</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedBeanValidatorEndpointBuilder messageInterpolator(
@@ -249,7 +245,6 @@ public interface BeanValidatorEndpointBuilderFactory {
          * The option is a: <code>javax.validation.TraversableResolver</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedBeanValidatorEndpointBuilder traversableResolver(
@@ -263,7 +258,6 @@ public interface BeanValidatorEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.validation.TraversableResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedBeanValidatorEndpointBuilder traversableResolver(
@@ -277,7 +271,6 @@ public interface BeanValidatorEndpointBuilderFactory {
          * The option is a:
          * <code>javax.validation.ValidationProviderResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedBeanValidatorEndpointBuilder validationProviderResolver(
@@ -291,7 +284,6 @@ public interface BeanValidatorEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.validation.ValidationProviderResolver</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedBeanValidatorEndpointBuilder validationProviderResolver(
@@ -304,7 +296,6 @@ public interface BeanValidatorEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.validation.ValidatorFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedBeanValidatorEndpointBuilder validatorFactory(
@@ -318,7 +309,6 @@ public interface BeanValidatorEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.validation.ValidatorFactory</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedBeanValidatorEndpointBuilder validatorFactory(

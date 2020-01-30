@@ -104,7 +104,6 @@ public interface ServletEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: common
          */
         default ServletEndpointBuilder headerFilterStrategy(
@@ -119,7 +118,6 @@ public interface ServletEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: common
          */
         default ServletEndpointBuilder headerFilterStrategy(
@@ -222,7 +220,6 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default ServletEndpointBuilder httpMethodRestrict(
@@ -287,7 +284,6 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default ServletEndpointBuilder responseBufferSize(
@@ -301,7 +297,6 @@ public interface ServletEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: consumer
          */
         default ServletEndpointBuilder responseBufferSize(
@@ -381,7 +376,6 @@ public interface ServletEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
-         * Default:
          * Group: common (advanced)
          */
         default AdvancedServletEndpointBuilder httpBinding(Object httpBinding) {
@@ -395,7 +389,6 @@ public interface ServletEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * 
-         * Default:
          * Group: common (advanced)
          */
         default AdvancedServletEndpointBuilder httpBinding(String httpBinding) {
@@ -477,7 +470,6 @@ public interface ServletEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedServletEndpointBuilder exceptionHandler(
@@ -494,7 +486,6 @@ public interface ServletEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedServletEndpointBuilder exceptionHandler(
@@ -507,7 +498,6 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedServletEndpointBuilder exchangePattern(
@@ -521,7 +511,6 @@ public interface ServletEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedServletEndpointBuilder exchangePattern(
@@ -536,7 +525,6 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedServletEndpointBuilder fileNameExtWhitelist(

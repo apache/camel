@@ -42,7 +42,6 @@ public interface ECS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ECS2EndpointBuilder accessKey(String accessKey) {
@@ -55,7 +54,6 @@ public interface ECS2EndpointBuilderFactory {
          * The option is a:
          * <code>software.amazon.awssdk.services.ecs.EcsClient</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ECS2EndpointBuilder ecsClient(Object ecsClient) {
@@ -68,7 +66,6 @@ public interface ECS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>software.amazon.awssdk.services.ecs.EcsClient</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ECS2EndpointBuilder ecsClient(String ecsClient) {
@@ -122,7 +119,6 @@ public interface ECS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.aws2.ecs.ECS2Operations</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default ECS2EndpointBuilder operation(ECS2Operations operation) {
@@ -136,7 +132,6 @@ public interface ECS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.aws2.ecs.ECS2Operations</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default ECS2EndpointBuilder operation(String operation) {
@@ -148,7 +143,6 @@ public interface ECS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ECS2EndpointBuilder proxyHost(String proxyHost) {
@@ -160,7 +154,6 @@ public interface ECS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ECS2EndpointBuilder proxyPort(Integer proxyPort) {
@@ -173,7 +166,6 @@ public interface ECS2EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default ECS2EndpointBuilder proxyPort(String proxyPort) {
@@ -214,7 +206,6 @@ public interface ECS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ECS2EndpointBuilder region(String region) {
@@ -226,7 +217,6 @@ public interface ECS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ECS2EndpointBuilder secretKey(String secretKey) {

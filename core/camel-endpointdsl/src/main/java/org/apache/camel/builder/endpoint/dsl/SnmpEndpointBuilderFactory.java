@@ -56,7 +56,6 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.component.snmp.OIDList</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default SnmpEndpointConsumerBuilder oids(Object oids) {
@@ -72,7 +71,6 @@ public interface SnmpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.snmp.OIDList</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SnmpEndpointConsumerBuilder oids(String oids) {
@@ -133,7 +131,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SnmpEndpointConsumerBuilder snmpContextEngineId(
@@ -146,7 +143,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SnmpEndpointConsumerBuilder snmpContextName(
@@ -210,7 +206,6 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SnmpEndpointConsumerBuilder type(SnmpActionType type) {
@@ -223,7 +218,6 @@ public interface SnmpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SnmpEndpointConsumerBuilder type(String type) {
@@ -352,7 +346,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SnmpEndpointConsumerBuilder backoffErrorThreshold(
@@ -366,7 +359,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SnmpEndpointConsumerBuilder backoffErrorThreshold(
@@ -380,7 +372,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SnmpEndpointConsumerBuilder backoffIdleThreshold(
@@ -394,7 +385,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SnmpEndpointConsumerBuilder backoffIdleThreshold(
@@ -412,7 +402,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SnmpEndpointConsumerBuilder backoffMultiplier(
@@ -430,7 +419,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SnmpEndpointConsumerBuilder backoffMultiplier(
@@ -557,7 +545,6 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SnmpEndpointConsumerBuilder scheduledExecutorService(
@@ -573,7 +560,6 @@ public interface SnmpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SnmpEndpointConsumerBuilder scheduledExecutorService(
@@ -601,7 +587,6 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SnmpEndpointConsumerBuilder schedulerProperties(
@@ -617,7 +602,6 @@ public interface SnmpEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SnmpEndpointConsumerBuilder schedulerProperties(
@@ -709,7 +693,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SnmpEndpointConsumerBuilder authenticationPassphrase(
@@ -723,7 +706,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SnmpEndpointConsumerBuilder authenticationProtocol(
@@ -739,7 +721,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SnmpEndpointConsumerBuilder privacyPassphrase(
@@ -753,7 +734,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SnmpEndpointConsumerBuilder privacyProtocol(
@@ -812,7 +792,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SnmpEndpointConsumerBuilder securityName(String securityName) {
@@ -839,7 +818,6 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSnmpEndpointConsumerBuilder exceptionHandler(
@@ -856,7 +834,6 @@ public interface SnmpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSnmpEndpointConsumerBuilder exceptionHandler(
@@ -869,7 +846,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSnmpEndpointConsumerBuilder exchangePattern(
@@ -883,7 +859,6 @@ public interface SnmpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSnmpEndpointConsumerBuilder exchangePattern(
@@ -900,7 +875,6 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSnmpEndpointConsumerBuilder pollStrategy(
@@ -917,7 +891,6 @@ public interface SnmpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSnmpEndpointConsumerBuilder pollStrategy(
@@ -1001,7 +974,6 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.component.snmp.OIDList</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default SnmpEndpointProducerBuilder oids(Object oids) {
@@ -1017,7 +989,6 @@ public interface SnmpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.snmp.OIDList</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SnmpEndpointProducerBuilder oids(String oids) {
@@ -1078,7 +1049,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SnmpEndpointProducerBuilder snmpContextEngineId(
@@ -1091,7 +1061,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SnmpEndpointProducerBuilder snmpContextName(
@@ -1155,7 +1124,6 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SnmpEndpointProducerBuilder type(SnmpActionType type) {
@@ -1168,7 +1136,6 @@ public interface SnmpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SnmpEndpointProducerBuilder type(String type) {
@@ -1225,7 +1192,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SnmpEndpointProducerBuilder authenticationPassphrase(
@@ -1239,7 +1205,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SnmpEndpointProducerBuilder authenticationProtocol(
@@ -1255,7 +1220,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SnmpEndpointProducerBuilder privacyPassphrase(
@@ -1269,7 +1233,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SnmpEndpointProducerBuilder privacyProtocol(
@@ -1328,7 +1291,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SnmpEndpointProducerBuilder securityName(String securityName) {
@@ -1423,7 +1385,6 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.component.snmp.OIDList</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default SnmpEndpointBuilder oids(Object oids) {
@@ -1439,7 +1400,6 @@ public interface SnmpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.snmp.OIDList</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SnmpEndpointBuilder oids(String oids) {
@@ -1500,7 +1460,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SnmpEndpointBuilder snmpContextEngineId(
@@ -1513,7 +1472,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SnmpEndpointBuilder snmpContextName(String snmpContextName) {
@@ -1576,7 +1534,6 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SnmpEndpointBuilder type(SnmpActionType type) {
@@ -1589,7 +1546,6 @@ public interface SnmpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
          * 
-         * Default:
          * Group: common
          */
         default SnmpEndpointBuilder type(String type) {
@@ -1604,7 +1560,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SnmpEndpointBuilder authenticationPassphrase(
@@ -1618,7 +1573,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SnmpEndpointBuilder authenticationProtocol(
@@ -1634,7 +1588,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SnmpEndpointBuilder privacyPassphrase(String privacyPassphrase) {
@@ -1647,7 +1600,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SnmpEndpointBuilder privacyProtocol(String privacyProtocol) {
@@ -1705,7 +1657,6 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default SnmpEndpointBuilder securityName(String securityName) {

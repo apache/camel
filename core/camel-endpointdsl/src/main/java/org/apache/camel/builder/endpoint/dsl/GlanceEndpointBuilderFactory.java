@@ -56,7 +56,6 @@ public interface GlanceEndpointBuilderFactory {
          * The option is a: <code>org.openstack4j.core.transport.Config</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default GlanceEndpointBuilder config(Object config) {
@@ -69,7 +68,6 @@ public interface GlanceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.openstack4j.core.transport.Config</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default GlanceEndpointBuilder config(String config) {
@@ -134,7 +132,6 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default GlanceEndpointBuilder operation(String operation) {
@@ -147,7 +144,6 @@ public interface GlanceEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default GlanceEndpointBuilder password(String password) {
@@ -160,7 +156,6 @@ public interface GlanceEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default GlanceEndpointBuilder project(String project) {
@@ -173,7 +168,6 @@ public interface GlanceEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Default:
          * Group: producer
          */
         default GlanceEndpointBuilder username(String username) {

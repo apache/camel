@@ -168,7 +168,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointConsumerBuilder account(String account) {
@@ -211,7 +210,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointConsumerBuilder execPbsz(Long execPbsz) {
@@ -224,7 +222,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointConsumerBuilder execPbsz(String execPbsz) {
@@ -237,7 +234,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointConsumerBuilder execProt(String execProt) {
@@ -250,7 +246,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointConsumerBuilder ftpClientKeyStoreParameters(
@@ -265,7 +260,6 @@ public interface FtpsEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointConsumerBuilder ftpClientKeyStoreParameters(
@@ -279,7 +273,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointConsumerBuilder ftpClientTrustStoreParameters(
@@ -294,7 +287,6 @@ public interface FtpsEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointConsumerBuilder ftpClientTrustStoreParameters(
@@ -333,7 +325,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointConsumerBuilder password(String password) {
@@ -362,7 +353,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointConsumerBuilder sslContextParameters(
@@ -379,7 +369,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointConsumerBuilder sslContextParameters(
@@ -392,7 +381,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointConsumerBuilder username(String username) {
@@ -412,7 +400,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FtpsEndpointConsumerBuilder charset(String charset) {
@@ -434,7 +421,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FtpsEndpointConsumerBuilder doneFileName(String doneFileName) {
@@ -461,7 +447,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FtpsEndpointConsumerBuilder fileName(Expression fileName) {
@@ -489,7 +474,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FtpsEndpointConsumerBuilder fileName(String fileName) {
@@ -566,7 +550,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder moveFailed(Expression moveFailed) {
@@ -582,7 +565,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder moveFailed(String moveFailed) {
@@ -626,7 +608,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder preMove(Expression preMove) {
@@ -641,7 +622,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder preMove(String preMove) {
@@ -743,7 +723,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder antExclude(String antExclude) {
@@ -782,7 +761,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder antInclude(String antInclude) {
@@ -834,7 +812,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder exclude(String exclude) {
@@ -849,7 +826,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileFilter&lt;org.apache.commons.net.ftp.FTPFile&gt;</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder filter(Object filter) {
@@ -864,7 +840,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileFilter&lt;org.apache.commons.net.ftp.FTPFile&gt;</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder filter(String filter) {
@@ -878,7 +853,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Predicate</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder filterDirectory(
@@ -894,7 +868,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Predicate</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder filterDirectory(
@@ -908,7 +881,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Predicate</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder filterFile(Predicate filterFile) {
@@ -922,7 +894,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Predicate</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder filterFile(String filterFile) {
@@ -968,7 +939,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder idempotentKey(
@@ -985,7 +955,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder idempotentKey(String idempotentKey) {
@@ -1000,7 +969,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder idempotentRepository(
@@ -1016,7 +984,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder idempotentRepository(
@@ -1033,7 +1000,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder include(String include) {
@@ -1079,7 +1045,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder maxMessagesPerPoll(
@@ -1100,7 +1065,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder maxMessagesPerPoll(
@@ -1115,7 +1079,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder minDepth(int minDepth) {
@@ -1129,7 +1092,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder minDepth(String minDepth) {
@@ -1143,7 +1105,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder move(Expression move) {
@@ -1158,7 +1119,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder move(String move) {
@@ -1173,7 +1133,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;org.apache.commons.net.ftp.FTPFile&gt;</code> type.
          * 
-         * Default:
          * Group: lock
          */
         default FtpsEndpointConsumerBuilder exclusiveReadLockStrategy(
@@ -1189,7 +1148,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;org.apache.commons.net.ftp.FTPFile&gt;</code> type.
          * 
-         * Default:
          * Group: lock
          */
         default FtpsEndpointConsumerBuilder exclusiveReadLockStrategy(
@@ -1596,7 +1554,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder backoffErrorThreshold(
@@ -1610,7 +1567,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder backoffErrorThreshold(
@@ -1624,7 +1580,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder backoffIdleThreshold(
@@ -1638,7 +1593,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder backoffIdleThreshold(
@@ -1656,7 +1610,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder backoffMultiplier(
@@ -1674,7 +1627,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder backoffMultiplier(
@@ -1829,7 +1781,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder scheduledExecutorService(
@@ -1845,7 +1796,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder scheduledExecutorService(
@@ -1873,7 +1823,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder schedulerProperties(
@@ -1889,7 +1838,6 @@ public interface FtpsEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder schedulerProperties(
@@ -2006,7 +1954,6 @@ public interface FtpsEndpointBuilderFactory {
          * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
          * type.
          * 
-         * Default:
          * Group: sort
          */
         default FtpsEndpointConsumerBuilder sortBy(Comparator<Exchange> sortBy) {
@@ -2022,7 +1969,6 @@ public interface FtpsEndpointBuilderFactory {
          * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
          * type.
          * 
-         * Default:
          * Group: sort
          */
         default FtpsEndpointConsumerBuilder sortBy(String sortBy) {
@@ -2035,7 +1981,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.commons.net.ftp.FTPFile&gt;&gt;</code> type.
          * 
-         * Default:
          * Group: sort
          */
         default FtpsEndpointConsumerBuilder sorter(Comparator<Object> sorter) {
@@ -2048,7 +1993,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.commons.net.ftp.FTPFile&gt;&gt;</code> type.
          * 
-         * Default:
          * Group: sort
          */
         default FtpsEndpointConsumerBuilder sorter(String sorter) {
@@ -2177,7 +2121,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder activePortRange(
@@ -2219,7 +2162,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder siteCommand(
@@ -2358,7 +2300,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder exceptionHandler(
@@ -2375,7 +2316,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder exceptionHandler(
@@ -2388,7 +2328,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder exchangePattern(
@@ -2402,7 +2341,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder exchangePattern(
@@ -2419,7 +2357,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder inProgressRepository(
@@ -2436,7 +2373,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder inProgressRepository(
@@ -2452,7 +2388,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder localWorkDirectory(
@@ -2469,7 +2404,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder onCompletionExceptionHandler(
@@ -2486,7 +2420,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder onCompletionExceptionHandler(
@@ -2503,7 +2436,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder pollStrategy(
@@ -2520,7 +2452,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder pollStrategy(
@@ -2539,7 +2470,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.commons.net.ftp.FTPFile&gt;</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder processStrategy(
@@ -2558,7 +2488,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.commons.net.ftp.FTPFile&gt;</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder processStrategy(
@@ -2775,7 +2704,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointProducerBuilder account(String account) {
@@ -2818,7 +2746,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointProducerBuilder execPbsz(Long execPbsz) {
@@ -2831,7 +2758,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointProducerBuilder execPbsz(String execPbsz) {
@@ -2844,7 +2770,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointProducerBuilder execProt(String execProt) {
@@ -2857,7 +2782,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointProducerBuilder ftpClientKeyStoreParameters(
@@ -2872,7 +2796,6 @@ public interface FtpsEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointProducerBuilder ftpClientKeyStoreParameters(
@@ -2886,7 +2809,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointProducerBuilder ftpClientTrustStoreParameters(
@@ -2901,7 +2823,6 @@ public interface FtpsEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointProducerBuilder ftpClientTrustStoreParameters(
@@ -2940,7 +2861,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointProducerBuilder password(String password) {
@@ -2969,7 +2889,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointProducerBuilder sslContextParameters(
@@ -2986,7 +2905,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointProducerBuilder sslContextParameters(
@@ -2999,7 +2917,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointProducerBuilder username(String username) {
@@ -3019,7 +2936,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FtpsEndpointProducerBuilder charset(String charset) {
@@ -3041,7 +2957,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FtpsEndpointProducerBuilder doneFileName(String doneFileName) {
@@ -3068,7 +2983,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FtpsEndpointProducerBuilder fileName(Expression fileName) {
@@ -3096,7 +3010,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FtpsEndpointProducerBuilder fileName(String fileName) {
@@ -3281,7 +3194,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default FtpsEndpointProducerBuilder moveExisting(Expression moveExisting) {
@@ -3301,7 +3213,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default FtpsEndpointProducerBuilder moveExisting(String moveExisting) {
@@ -3319,7 +3230,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default FtpsEndpointProducerBuilder tempFileName(Expression tempFileName) {
@@ -3338,7 +3248,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default FtpsEndpointProducerBuilder tempFileName(String tempFileName) {
@@ -3354,7 +3263,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default FtpsEndpointProducerBuilder tempPrefix(String tempPrefix) {
@@ -3377,7 +3285,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedFtpsEndpointProducerBuilder chmod(String chmod) {
@@ -3423,7 +3330,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder activePortRange(
@@ -3465,7 +3371,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder siteCommand(
@@ -3729,7 +3634,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedFtpsEndpointProducerBuilder moveExistingFileStrategy(
@@ -3745,7 +3649,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
          * 
-         * Default:
          * Group: producer (advanced)
          */
         default AdvancedFtpsEndpointProducerBuilder moveExistingFileStrategy(
@@ -3963,7 +3866,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointBuilder account(String account) {
@@ -4006,7 +3908,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointBuilder execPbsz(Long execPbsz) {
@@ -4019,7 +3920,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointBuilder execPbsz(String execPbsz) {
@@ -4032,7 +3932,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointBuilder execProt(String execProt) {
@@ -4045,7 +3944,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointBuilder ftpClientKeyStoreParameters(
@@ -4060,7 +3958,6 @@ public interface FtpsEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointBuilder ftpClientKeyStoreParameters(
@@ -4074,7 +3971,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointBuilder ftpClientTrustStoreParameters(
@@ -4089,7 +3985,6 @@ public interface FtpsEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointBuilder ftpClientTrustStoreParameters(
@@ -4128,7 +4023,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointBuilder password(String password) {
@@ -4156,7 +4050,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointBuilder sslContextParameters(
@@ -4173,7 +4066,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointBuilder sslContextParameters(
@@ -4186,7 +4078,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default FtpsEndpointBuilder username(String username) {
@@ -4206,7 +4097,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FtpsEndpointBuilder charset(String charset) {
@@ -4228,7 +4118,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FtpsEndpointBuilder doneFileName(String doneFileName) {
@@ -4255,7 +4144,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FtpsEndpointBuilder fileName(Expression fileName) {
@@ -4283,7 +4171,6 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
          * 
-         * Default:
          * Group: common
          */
         default FtpsEndpointBuilder fileName(String fileName) {
@@ -4309,7 +4196,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder activePortRange(
@@ -4349,7 +4235,6 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder siteCommand(String siteCommand) {

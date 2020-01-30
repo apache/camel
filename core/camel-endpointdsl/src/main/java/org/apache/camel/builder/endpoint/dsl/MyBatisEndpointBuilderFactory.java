@@ -126,7 +126,6 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default MyBatisEndpointConsumerBuilder onConsume(String onConsume) {
@@ -245,7 +244,6 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder backoffErrorThreshold(
@@ -259,7 +257,6 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder backoffErrorThreshold(
@@ -273,7 +270,6 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder backoffIdleThreshold(
@@ -287,7 +283,6 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder backoffIdleThreshold(
@@ -305,7 +300,6 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder backoffMultiplier(
@@ -323,7 +317,6 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder backoffMultiplier(
@@ -478,7 +471,6 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder scheduledExecutorService(
@@ -494,7 +486,6 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder scheduledExecutorService(
@@ -522,7 +513,6 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder schedulerProperties(
@@ -538,7 +528,6 @@ public interface MyBatisEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder schedulerProperties(
@@ -645,7 +634,6 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMyBatisEndpointConsumerBuilder exceptionHandler(
@@ -662,7 +650,6 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMyBatisEndpointConsumerBuilder exceptionHandler(
@@ -675,7 +662,6 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMyBatisEndpointConsumerBuilder exchangePattern(
@@ -689,7 +675,6 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMyBatisEndpointConsumerBuilder exchangePattern(
@@ -706,7 +691,6 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMyBatisEndpointConsumerBuilder pollStrategy(
@@ -723,7 +707,6 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMyBatisEndpointConsumerBuilder pollStrategy(
@@ -737,7 +720,6 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.mybatis.MyBatisProcessingStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMyBatisEndpointConsumerBuilder processingStrategy(
@@ -751,7 +733,6 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.mybatis.MyBatisProcessingStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedMyBatisEndpointConsumerBuilder processingStrategy(
@@ -866,7 +847,6 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default MyBatisEndpointProducerBuilder inputHeader(String inputHeader) {
@@ -927,7 +907,6 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default MyBatisEndpointProducerBuilder outputHeader(String outputHeader) {
@@ -941,7 +920,6 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.mybatis.StatementType</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default MyBatisEndpointProducerBuilder statementType(
@@ -956,7 +934,6 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.mybatis.StatementType</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default MyBatisEndpointProducerBuilder statementType(

@@ -88,7 +88,6 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
-         * Default:
          * Group: consumer
          */
         default HazelcastInstanceEndpointBuilder defaultOperation(
@@ -104,7 +103,6 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
          * 
-         * Default:
          * Group: consumer
          */
         default HazelcastInstanceEndpointBuilder defaultOperation(
@@ -119,7 +117,6 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
          * 
-         * Default:
          * Group: consumer
          */
         default HazelcastInstanceEndpointBuilder hazelcastInstance(
@@ -134,7 +131,6 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default HazelcastInstanceEndpointBuilder hazelcastInstance(
@@ -149,7 +145,6 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default HazelcastInstanceEndpointBuilder hazelcastInstanceName(
@@ -177,7 +172,6 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHazelcastInstanceEndpointBuilder exceptionHandler(
@@ -194,7 +188,6 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHazelcastInstanceEndpointBuilder exceptionHandler(
@@ -207,7 +200,6 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHazelcastInstanceEndpointBuilder exchangePattern(
@@ -221,7 +213,6 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedHazelcastInstanceEndpointBuilder exchangePattern(

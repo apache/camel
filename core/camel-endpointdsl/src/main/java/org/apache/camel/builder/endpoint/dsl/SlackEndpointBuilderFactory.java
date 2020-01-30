@@ -141,7 +141,6 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default SlackEndpointConsumerBuilder token(String token) {
@@ -154,7 +153,6 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder backoffErrorThreshold(
@@ -168,7 +166,6 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder backoffErrorThreshold(
@@ -182,7 +179,6 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder backoffIdleThreshold(
@@ -196,7 +192,6 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder backoffIdleThreshold(
@@ -214,7 +209,6 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder backoffMultiplier(
@@ -232,7 +226,6 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder backoffMultiplier(
@@ -387,7 +380,6 @@ public interface SlackEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder scheduledExecutorService(
@@ -403,7 +395,6 @@ public interface SlackEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder scheduledExecutorService(
@@ -431,7 +422,6 @@ public interface SlackEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder schedulerProperties(
@@ -447,7 +437,6 @@ public interface SlackEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder schedulerProperties(
@@ -552,7 +541,6 @@ public interface SlackEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSlackEndpointConsumerBuilder exceptionHandler(
@@ -569,7 +557,6 @@ public interface SlackEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSlackEndpointConsumerBuilder exceptionHandler(
@@ -582,7 +569,6 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSlackEndpointConsumerBuilder exchangePattern(
@@ -596,7 +582,6 @@ public interface SlackEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSlackEndpointConsumerBuilder exchangePattern(
@@ -613,7 +598,6 @@ public interface SlackEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSlackEndpointConsumerBuilder pollStrategy(
@@ -630,7 +614,6 @@ public interface SlackEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedSlackEndpointConsumerBuilder pollStrategy(
@@ -710,7 +693,6 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SlackEndpointProducerBuilder iconEmoji(String iconEmoji) {
@@ -723,7 +705,6 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SlackEndpointProducerBuilder iconUrl(String iconUrl) {
@@ -778,7 +759,6 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SlackEndpointProducerBuilder username(String username) {
@@ -790,7 +770,6 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default SlackEndpointProducerBuilder webhookUrl(String webhookUrl) {

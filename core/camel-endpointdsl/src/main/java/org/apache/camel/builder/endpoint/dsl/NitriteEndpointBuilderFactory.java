@@ -47,7 +47,6 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default NitriteEndpointConsumerBuilder collection(String collection) {
@@ -61,7 +60,6 @@ public interface NitriteEndpointBuilderFactory {
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default NitriteEndpointConsumerBuilder repositoryClass(
@@ -76,7 +74,6 @@ public interface NitriteEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: common
          */
         default NitriteEndpointConsumerBuilder repositoryClass(
@@ -90,7 +87,6 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default NitriteEndpointConsumerBuilder repositoryName(
@@ -142,7 +138,6 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default NitriteEndpointConsumerBuilder password(String password) {
@@ -155,7 +150,6 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default NitriteEndpointConsumerBuilder username(String username) {
@@ -182,7 +176,6 @@ public interface NitriteEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNitriteEndpointConsumerBuilder exceptionHandler(
@@ -199,7 +192,6 @@ public interface NitriteEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNitriteEndpointConsumerBuilder exceptionHandler(
@@ -212,7 +204,6 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNitriteEndpointConsumerBuilder exchangePattern(
@@ -226,7 +217,6 @@ public interface NitriteEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedNitriteEndpointConsumerBuilder exchangePattern(
@@ -307,7 +297,6 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default NitriteEndpointProducerBuilder collection(String collection) {
@@ -321,7 +310,6 @@ public interface NitriteEndpointBuilderFactory {
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default NitriteEndpointProducerBuilder repositoryClass(
@@ -336,7 +324,6 @@ public interface NitriteEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: common
          */
         default NitriteEndpointProducerBuilder repositoryClass(
@@ -350,7 +337,6 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default NitriteEndpointProducerBuilder repositoryName(
@@ -406,7 +392,6 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default NitriteEndpointProducerBuilder password(String password) {
@@ -419,7 +404,6 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default NitriteEndpointProducerBuilder username(String username) {
@@ -511,7 +495,6 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default NitriteEndpointBuilder collection(String collection) {
@@ -525,7 +508,6 @@ public interface NitriteEndpointBuilderFactory {
          * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: common
          */
         default NitriteEndpointBuilder repositoryClass(
@@ -540,7 +522,6 @@ public interface NitriteEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: common
          */
         default NitriteEndpointBuilder repositoryClass(String repositoryClass) {
@@ -553,7 +534,6 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default NitriteEndpointBuilder repositoryName(String repositoryName) {
@@ -566,7 +546,6 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default NitriteEndpointBuilder password(String password) {
@@ -579,7 +558,6 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default NitriteEndpointBuilder username(String username) {

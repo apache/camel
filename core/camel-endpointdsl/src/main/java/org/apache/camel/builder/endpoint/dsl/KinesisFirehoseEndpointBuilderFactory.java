@@ -47,7 +47,6 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * The option is a:
          * <code>com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KinesisFirehoseEndpointBuilder amazonKinesisFirehoseClient(
@@ -62,7 +61,6 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KinesisFirehoseEndpointBuilder amazonKinesisFirehoseClient(
@@ -118,7 +116,6 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KinesisFirehoseEndpointBuilder proxyHost(String proxyHost) {
@@ -131,7 +128,6 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KinesisFirehoseEndpointBuilder proxyPort(Integer proxyPort) {
@@ -145,7 +141,6 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default KinesisFirehoseEndpointBuilder proxyPort(String proxyPort) {
@@ -189,7 +184,6 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default KinesisFirehoseEndpointBuilder region(String region) {
@@ -201,7 +195,6 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KinesisFirehoseEndpointBuilder accessKey(String accessKey) {
@@ -213,7 +206,6 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: security
          */
         default KinesisFirehoseEndpointBuilder secretKey(String secretKey) {

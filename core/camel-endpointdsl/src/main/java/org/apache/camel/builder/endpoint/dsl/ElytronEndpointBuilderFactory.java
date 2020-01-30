@@ -50,7 +50,6 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default ElytronEndpointConsumerBuilder allowedRoles(String allowedRoles) {
@@ -163,7 +162,6 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: consumer
          */
         default ElytronEndpointConsumerBuilder httpMethodRestrict(
@@ -292,7 +290,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ElytronEndpointConsumerBuilder sslContextParameters(
@@ -306,7 +303,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ElytronEndpointConsumerBuilder sslContextParameters(
@@ -334,7 +330,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedElytronEndpointConsumerBuilder exceptionHandler(
@@ -351,7 +346,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedElytronEndpointConsumerBuilder exceptionHandler(
@@ -364,7 +358,6 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedElytronEndpointConsumerBuilder exchangePattern(
@@ -378,7 +371,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedElytronEndpointConsumerBuilder exchangePattern(
@@ -398,7 +390,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.Set&lt;org.apache.camel.component.undertow.HttpHandlerRegistrationInfo&gt;</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedElytronEndpointConsumerBuilder handlers(
@@ -418,7 +409,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.Set&lt;org.apache.camel.component.undertow.HttpHandlerRegistrationInfo&gt;</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedElytronEndpointConsumerBuilder handlers(String handlers) {
@@ -433,7 +423,6 @@ public interface ElytronEndpointBuilderFactory {
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElytronEndpointConsumerBuilder accessLogReceiver(
@@ -449,7 +438,6 @@ public interface ElytronEndpointBuilderFactory {
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElytronEndpointConsumerBuilder accessLogReceiver(
@@ -492,7 +480,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElytronEndpointConsumerBuilder headerFilterStrategy(
@@ -507,7 +494,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElytronEndpointConsumerBuilder headerFilterStrategy(
@@ -551,7 +537,6 @@ public interface ElytronEndpointBuilderFactory {
          * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElytronEndpointConsumerBuilder undertowHttpBinding(
@@ -567,7 +552,6 @@ public interface ElytronEndpointBuilderFactory {
          * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElytronEndpointConsumerBuilder undertowHttpBinding(
@@ -591,7 +575,6 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default ElytronEndpointProducerBuilder allowedRoles(String allowedRoles) {
@@ -640,7 +623,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ElytronEndpointProducerBuilder cookieHandler(
@@ -654,7 +636,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ElytronEndpointProducerBuilder cookieHandler(
@@ -738,7 +719,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default ElytronEndpointProducerBuilder options(
@@ -756,7 +736,6 @@ public interface ElytronEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Default:
          * Group: producer
          */
         default ElytronEndpointProducerBuilder options(String options) {
@@ -957,7 +936,6 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default:
          * Group: websocket
          */
         default ElytronEndpointProducerBuilder sendToAll(Boolean sendToAll) {
@@ -972,7 +950,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default:
          * Group: websocket
          */
         default ElytronEndpointProducerBuilder sendToAll(String sendToAll) {
@@ -985,7 +962,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ElytronEndpointProducerBuilder sslContextParameters(
@@ -999,7 +975,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ElytronEndpointProducerBuilder sslContextParameters(
@@ -1026,7 +1001,6 @@ public interface ElytronEndpointBuilderFactory {
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElytronEndpointProducerBuilder accessLogReceiver(
@@ -1042,7 +1016,6 @@ public interface ElytronEndpointBuilderFactory {
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElytronEndpointProducerBuilder accessLogReceiver(
@@ -1085,7 +1058,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElytronEndpointProducerBuilder headerFilterStrategy(
@@ -1100,7 +1072,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElytronEndpointProducerBuilder headerFilterStrategy(
@@ -1144,7 +1115,6 @@ public interface ElytronEndpointBuilderFactory {
          * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElytronEndpointProducerBuilder undertowHttpBinding(
@@ -1160,7 +1130,6 @@ public interface ElytronEndpointBuilderFactory {
          * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElytronEndpointProducerBuilder undertowHttpBinding(
@@ -1185,7 +1154,6 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: common
          */
         default ElytronEndpointBuilder allowedRoles(String allowedRoles) {
@@ -1234,7 +1202,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ElytronEndpointBuilder sslContextParameters(
@@ -1248,7 +1215,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Default:
          * Group: security
          */
         default ElytronEndpointBuilder sslContextParameters(
@@ -1276,7 +1242,6 @@ public interface ElytronEndpointBuilderFactory {
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElytronEndpointBuilder accessLogReceiver(
@@ -1292,7 +1257,6 @@ public interface ElytronEndpointBuilderFactory {
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElytronEndpointBuilder accessLogReceiver(
@@ -1335,7 +1299,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElytronEndpointBuilder headerFilterStrategy(
@@ -1350,7 +1313,6 @@ public interface ElytronEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElytronEndpointBuilder headerFilterStrategy(
@@ -1392,7 +1354,6 @@ public interface ElytronEndpointBuilderFactory {
          * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElytronEndpointBuilder undertowHttpBinding(
@@ -1408,7 +1369,6 @@ public interface ElytronEndpointBuilderFactory {
          * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
          * type.
          * 
-         * Default:
          * Group: advanced
          */
         default AdvancedElytronEndpointBuilder undertowHttpBinding(

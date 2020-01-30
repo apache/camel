@@ -83,7 +83,6 @@ public interface IPFSEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default IPFSEndpointBuilder outdir(String outdir) {

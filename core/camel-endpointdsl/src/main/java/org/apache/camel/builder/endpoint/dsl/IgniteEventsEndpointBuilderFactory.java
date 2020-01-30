@@ -87,7 +87,6 @@ public interface IgniteEventsEndpointBuilderFactory {
          * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
          * type.
          * 
-         * Default:
          * Group: consumer
          */
         default IgniteEventsEndpointBuilder clusterGroupExpression(
@@ -102,7 +101,6 @@ public interface IgniteEventsEndpointBuilderFactory {
          * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
          * type.
          * 
-         * Default:
          * Group: consumer
          */
         default IgniteEventsEndpointBuilder clusterGroupExpression(
@@ -200,7 +198,6 @@ public interface IgniteEventsEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIgniteEventsEndpointBuilder exceptionHandler(
@@ -217,7 +214,6 @@ public interface IgniteEventsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIgniteEventsEndpointBuilder exceptionHandler(
@@ -230,7 +226,6 @@ public interface IgniteEventsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIgniteEventsEndpointBuilder exchangePattern(
@@ -244,7 +239,6 @@ public interface IgniteEventsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default:
          * Group: consumer (advanced)
          */
         default AdvancedIgniteEventsEndpointBuilder exchangePattern(

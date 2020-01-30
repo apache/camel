@@ -163,7 +163,6 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default:
          * Group: producer
          */
         default LanguageEndpointBuilder script(String script) {
