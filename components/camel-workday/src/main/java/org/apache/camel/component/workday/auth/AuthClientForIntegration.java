@@ -20,15 +20,23 @@ package org.apache.camel.component.workday.auth;
 import org.apache.camel.component.workday.WorkdayConfiguration;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 public class AuthClientForIntegration implements AutheticationClient {
 
@@ -79,17 +87,17 @@ public class AuthClientForIntegration implements AutheticationClient {
         return parseResponse(baos.toString());
     }
 
-    private HttpPost createPostMethod(String tokenUrl) {
+    private HttpPost createPostMethod(String tokenUrl) throws UnsupportedEncodingException {
 
-        HttpEntity httpEntity = MultipartEntityBuilder.create()
-                .addTextBody(GRANT_TYPE, REFRESH_TOKEN)
-                .addTextBody(REFRESH_TOKEN, workdayConfiguration.getTokenRefresh())
-                .build();
+        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+        nvps.add(new BasicNameValuePair(GRANT_TYPE, REFRESH_TOKEN));
+        nvps.add(new BasicNameValuePair(REFRESH_TOKEN, workdayConfiguration.getTokenRefresh()));
 
         HttpPost postMethod = new HttpPost(tokenUrl);
         postMethod.addHeader(CONTENT_TYPE_HEADER, CONTENT_TYPE);
         postMethod.addHeader(AUTHORIZATION_HEADER, "Basic " +
                 new String(Base64.getEncoder().encode((workdayConfiguration.getClientId() + ":" + workdayConfiguration.getClientSecret()).getBytes())));
+        postMethod.setEntity(new UrlEncodedFormEntity(nvps, "UTF-8"));
 
         return postMethod;
     }
