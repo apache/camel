@@ -18,9 +18,12 @@ package org.apache.camel.tooling.util;
 
 import static org.apache.camel.tooling.util.Strings.isNullOrEmpty;
 
-public class JavadocHelper {
+public final class JavadocHelper {
 
     private static final String VALID_CHARS = ".,-='/\\!&%():;#${}";
+
+    private JavadocHelper() {
+    }
 
     /**
      * Sanitizes the javadoc to removed invalid characters so it can be used as json description
