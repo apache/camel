@@ -228,7 +228,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     public Exchange createExchange() {
-        return createExchange(getExchangePattern());
+        return new DefaultExchange(this, getExchangePattern());
     }
 
     @Override
