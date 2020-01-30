@@ -107,7 +107,8 @@ public final class PropertyConfigurerGenerator {
             getOrSet = "set" + getOrSet;
         }
 
-        // ((LogComponent) target).setGroupSize(property(camelContext, java.lang.Integer.class, value))
+        // ((LogComponent) target).setGroupSize(property(camelContext,
+        // java.lang.Integer.class, value))
         return String.format("((%s) target).%s(property(camelContext, %s.class, value))", en, getOrSet, type);
     }
 

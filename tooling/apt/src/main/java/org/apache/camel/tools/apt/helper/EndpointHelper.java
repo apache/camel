@@ -30,12 +30,14 @@ public final class EndpointHelper {
     /**
      * Returns the group name from the given label.
      * <p/>
-     * The group name is a single name deducted from the label. The label can contain multiple names separated by comma.
-     * The group is the best guess as a group of those labels, so similar labels can be combined into the same group.
+     * The group name is a single name deducted from the label. The label can
+     * contain multiple names separated by comma. The group is the best guess as
+     * a group of those labels, so similar labels can be combined into the same
+     * group.
      *
-     * @param label          the label
-     * @param consumerOnly   whether the component is consumer only
-     * @param producerOnly   whether the component is producer only
+     * @param label the label
+     * @param consumerOnly whether the component is consumer only
+     * @param producerOnly whether the component is producer only
      * @return the group name
      */
     public static String labelAsGroupName(String label, boolean consumerOnly, boolean producerOnly) {
@@ -50,14 +52,16 @@ public final class EndpointHelper {
         String value = label;
         if (!Strings.isNullOrEmpty(value)) {
 
-            // we want to put advanced into own group, so look for a label that has advanced as prefix x,advanced => x (advanced)
+            // we want to put advanced into own group, so look for a label that
+            // has advanced as prefix x,advanced => x (advanced)
             if (value.contains("advanced")) {
                 value = value.replaceFirst("(\\w),(advanced)", "$1 (advanced)");
             }
 
             if (value.contains(",")) {
                 String[] array = value.split(",");
-                // grab last label which is the most specific label we want to use for the tab
+                // grab last label which is the most specific label we want to
+                // use for the tab
                 answer = array[array.length - 1];
             } else {
                 answer = value;
@@ -68,7 +72,8 @@ public final class EndpointHelper {
     }
 
     /**
-     * A comparator to sort the endpoint/component options according to group and label.
+     * A comparator to sort the endpoint/component options according to group
+     * and label.
      */
     public static Comparator<BaseOptionModel> createGroupAndLabelComparator() {
         return new EndpointOptionGroupAndLabelComparator();
@@ -84,8 +89,8 @@ public final class EndpointHelper {
     }
 
     /**
-     * A comparator to sort endpoints options: first paths according to the path comparator,
-     * then parameters according to their group and label.
+     * A comparator to sort endpoints options: first paths according to the path
+     * comparator, then parameters according to their group and label.
      *
      * @param syntax the endpoint uri syntax
      */
@@ -114,12 +119,12 @@ public final class EndpointHelper {
      * <p/>
      * The order is to include options grouped by
      * <ul>
-     *     <li>common</li>
-     *     <li>consumer</li>
-     *     <li>consumer (advanced)</li>
-     *     <li>producer</li>
-     *     <li>consumer (advanced)</li>
-     *     <li>... and the rest sorted by a..z</li>
+     * <li>common</li>
+     * <li>consumer</li>
+     * <li>consumer (advanced)</li>
+     * <li>producer</li>
+     * <li>consumer (advanced)</li>
+     * <li>... and the rest sorted by a..z</li>
      * </ul>
      */
     private static final class EndpointOptionGroupAndLabelComparator implements Comparator<BaseOptionModel> {
@@ -158,13 +163,20 @@ public final class EndpointHelper {
 
     private static int groupScore(String group) {
         switch (group) {
-            case "common":              return 1;
-            case "common (advanced)":   return 2;
-            case "consumer":            return 3;
-            case "consumer (advanced)": return 4;
-            case "producer":            return 5;
-            case "producer (advanced)": return 6;
-            default:                    return 9;
+        case "common":
+            return 1;
+        case "common (advanced)":
+            return 2;
+        case "consumer":
+            return 3;
+        case "consumer (advanced)":
+            return 4;
+        case "producer":
+            return 5;
+        case "producer (advanced)":
+            return 6;
+        default:
+            return 9;
         }
     }
 

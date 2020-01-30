@@ -88,7 +88,8 @@ public final class AnnotationProcessorHelper {
             // lets try builder pattern
             if (answer == null && builderPattern) {
                 List<ExecutableElement> methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
-                // lets try the builder pattern using annotation name (optional) as the method name
+                // lets try the builder pattern using annotation name (optional)
+                // as the method name
                 if (name != null) {
                     for (ExecutableElement method : methods) {
                         String methodName = method.getSimpleName().toString();
@@ -100,7 +101,8 @@ public final class AnnotationProcessorHelper {
                             }
                         }
                     }
-                    // there may be builder pattern with no-parameter methods, such as more common for boolean types
+                    // there may be builder pattern with no-parameter methods,
+                    // such as more common for boolean types
                     // so lets try those as well
                     for (ExecutableElement method : methods) {
                         String methodName = method.getSimpleName().toString();
@@ -124,7 +126,8 @@ public final class AnnotationProcessorHelper {
                         }
                     }
                 }
-                // there may be builder pattern with no-parameter methods, such as more common for boolean types
+                // there may be builder pattern with no-parameter methods, such
+                // as more common for boolean types
                 // so lets try those as well
                 for (ExecutableElement method : methods) {
                     String methodName = method.getSimpleName().toString();
@@ -146,7 +149,7 @@ public final class AnnotationProcessorHelper {
         if (fieldName.length() > 1) {
             setter += fieldName.substring(1);
         }
-        //  lets find the setter
+        // lets find the setter
         List<ExecutableElement> methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
         for (ExecutableElement method : methods) {
             String methodName = method.getSimpleName().toString();
@@ -167,7 +170,7 @@ public final class AnnotationProcessorHelper {
         if (fieldName.length() > 1) {
             getter2 += fieldName.substring(1);
         }
-        //  lets find the getter
+        // lets find the getter
         List<ExecutableElement> methods = ElementFilter.methodsIn(classElement.getEnclosedElements());
         for (ExecutableElement method : methods) {
             String methodName = method.getSimpleName().toString();
@@ -202,7 +205,7 @@ public final class AnnotationProcessorHelper {
         Set<? extends Element> rootElements = roundEnv.getRootElements();
         for (Element rootElement : rootElements) {
             if (rootElement instanceof TypeElement) {
-                TypeElement typeElement = (TypeElement) rootElement;
+                TypeElement typeElement = (TypeElement)rootElement;
                 String aRootName = canonicalClassName(typeElement.getQualifiedName().toString());
                 if (className.equals(aRootName)) {
                     return typeElement;
@@ -221,7 +224,7 @@ public final class AnnotationProcessorHelper {
                 List<? extends Element> enclosedElements = getEnclosedElements(pe);
                 for (Element rootElement : enclosedElements) {
                     if (rootElement instanceof TypeElement) {
-                        TypeElement typeElement = (TypeElement) rootElement;
+                        TypeElement typeElement = (TypeElement)rootElement;
                         String aRootName = canonicalClassName(typeElement.getQualifiedName().toString());
                         if (className.equals(aRootName)) {
                             return typeElement;
@@ -236,7 +239,8 @@ public final class AnnotationProcessorHelper {
 
     @SuppressWarnings("unchecked")
     public static List<? extends Element> getEnclosedElements(PackageElement pe) {
-        // some components like hadoop/spark has bad classes that causes javac scanning issues
+        // some components like hadoop/spark has bad classes that causes javac
+        // scanning issues
         try {
             return pe.getEnclosedElements();
         } catch (Throwable e) {
@@ -256,7 +260,7 @@ public final class AnnotationProcessorHelper {
                 List<? extends Element> enclosedElements = pe.getEnclosedElements();
                 for (Element rootElement : enclosedElements) {
                     if (rootElement instanceof TypeElement) {
-                        TypeElement typeElement = (TypeElement) rootElement;
+                        TypeElement typeElement = (TypeElement)rootElement;
                         String aSuperClassName = canonicalClassName(typeElement.getSuperclass().toString());
                         if (superClassName.equals(aSuperClassName)) {
                             found.add(typeElement);
@@ -368,8 +372,9 @@ public final class AnnotationProcessorHelper {
     /**
      * Gets the JSon schema type.
      *
-     * @param   type the java type
-     * @return  the json schema type, is never null, but returns <tt>object</tt> as the generic type
+     * @param type the java type
+     * @return the json schema type, is never null, but returns <tt>object</tt>
+     *         as the generic type
      */
     public static String getType(String type, boolean enumType) {
         if (enumType) {
@@ -400,8 +405,9 @@ public final class AnnotationProcessorHelper {
     /**
      * Gets the JSon schema primitive type.
      *
-     * @param   name the java type
-     * @return  the json schema primitive type, or <tt>null</tt> if not a primitive
+     * @param name the java type
+     * @return the json schema primitive type, or <tt>null</tt> if not a
+     *         primitive
      */
     public static String getPrimitiveType(String name) {
         // special for byte[] or Object[] as its common to use

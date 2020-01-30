@@ -55,7 +55,8 @@ public final class PropertyPlaceholderGenerator {
         w.write("        " + def + " definition = (" + def + ") obj;\n");
         w.write("\n");
 
-        // only include string types as they are the only ones we can use for property placeholders
+        // only include string types as they are the only ones we can use for
+        // property placeholders
         boolean found = false;
         for (BaseOptionModel option : options) {
             if ("java.lang.String".equals(option.getJavaType())) {
@@ -129,8 +130,8 @@ public final class PropertyPlaceholderGenerator {
     }
 
     /**
-     * Some models have different setter/getter names vs the xml name (eg as defined in @XmlAttribute).
-     * So we need to correct this using this method.
+     * Some models have different setter/getter names vs the xml name (eg as
+     * defined in @XmlAttribute). So we need to correct this using this method.
      */
     private static String sanitizePropertyPlaceholderOptionName(String def, BaseOptionModel option) {
         if ("SimpleExpression".equals(def) || "JsonPathExpression".equals(def)) {

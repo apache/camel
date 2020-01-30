@@ -46,17 +46,17 @@ import javax.xml.bind.annotation.XmlValue;
 
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.tooling.model.JsonMapper;
-import org.apache.camel.tooling.util.PackageHelper;
-import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.JavadocHelper;
+import org.apache.camel.tooling.util.PackageHelper;
+import org.apache.camel.tooling.util.Strings;
 
 /**
  * Process all camel-core's model classes (EIPs and DSL) and generate json
- * schema documentation and for some models java source code is generated
- * which allows for faster property placeholder resolution at runtime; without the
+ * schema documentation and for some models java source code is generated which
+ * allows for faster property placeholder resolution at runtime; without the
  * overhead of using reflections.
  */
 public class CoreEipAnnotationProcessorHelper {
@@ -81,9 +81,7 @@ public class CoreEipAnnotationProcessorHelper {
 
     private boolean skipUnwanted = true;
 
-    protected void generatePropertyPlaceholderProviderSource(ProcessingEnvironment processingEnv,
-                                                             TypeElement parent, String fqnDef,
-                                                             Set<EipOptionModel> options) {
+    protected void generatePropertyPlaceholderProviderSource(ProcessingEnvironment processingEnv, TypeElement parent, String fqnDef, Set<EipOptionModel> options) {
 
         String def = fqnDef.substring(fqnDef.lastIndexOf('.') + 1);
         String cn = def + "PropertyPlaceholderProvider";
@@ -96,8 +94,8 @@ public class CoreEipAnnotationProcessorHelper {
         }
     }
 
-    protected void processModelClass(final ProcessingEnvironment processingEnv, final RoundEnvironment roundEnv,
-                                     final TypeElement classElement, Set<String> propertyPlaceholderDefinitions) {
+    protected void processModelClass(final ProcessingEnvironment processingEnv, final RoundEnvironment roundEnv, final TypeElement classElement,
+                                     Set<String> propertyPlaceholderDefinitions) {
         final String javaTypeName = Strings.canonicalClassName(classElement.getQualifiedName().toString());
         String packageName = javaTypeName.substring(0, javaTypeName.lastIndexOf("."));
 
@@ -134,8 +132,9 @@ public class CoreEipAnnotationProcessorHelper {
         }
 
         // write json schema and property placeholder provider
-        AnnotationProcessorHelper.processFile(processingEnv, packageName, fileName, writer -> writeJSonSchemeAndPropertyPlaceholderProvider(processingEnv, writer,
-                roundEnv, classElement, rootElement, javaTypeName, name, propertyPlaceholderDefinitions));
+        AnnotationProcessorHelper.processFile(processingEnv, packageName, fileName,
+            writer -> writeJSonSchemeAndPropertyPlaceholderProvider(processingEnv, writer, roundEnv, classElement, rootElement, javaTypeName,
+                                                                                                      name, propertyPlaceholderDefinitions));
     }
 
     protected void writeJSonSchemeAndPropertyPlaceholderProvider(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement,
@@ -174,7 +173,8 @@ public class CoreEipAnnotationProcessorHelper {
     protected void generatePropertyPlaceholderProviderSource(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement,
                                                              EipModel eipModel, Set<EipOptionModel> options, Set<String> propertyPlaceholderDefinitions) {
 
-        // not ever model classes support property placeholders as this has been limited to mainly Camel routes
+        // not ever model classes support property placeholders as this has been
+        // limited to mainly Camel routes
         // so filter out unwanted models
         boolean rest = classElement.getQualifiedName().toString().startsWith("org.apache.camel.model.rest");
         boolean processor = AnnotationProcessorHelper.hasSuperClass(processingEnv, roundEnv, classElement, "org.apache.camel.model.ProcessorDefinition");
@@ -191,7 +191,8 @@ public class CoreEipAnnotationProcessorHelper {
         generatePropertyPlaceholderProviderSource(processingEnv, parent, fqnDef, options);
         propertyPlaceholderDefinitions.add(fqnDef);
 
-        // we also need to generate from when we generate route as from can also configure property placeholders
+        // we also need to generate from when we generate route as from can also
+        // configure property placeholders
         if (fqnDef.equals("org.apache.camel.model.RouteDefinition")) {
             fqnDef = "org.apache.camel.model.FromDefinition";
 
@@ -247,8 +248,8 @@ public class CoreEipAnnotationProcessorHelper {
         return model;
     }
 
-    protected void findClassProperties(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, Set<EipOptionModel> eipOptions, TypeElement originalClassType,
-                                       TypeElement classElement, String prefix, String modelName) {
+    protected void findClassProperties(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, Set<EipOptionModel> eipOptions,
+                                       TypeElement originalClassType, TypeElement classElement, String prefix, String modelName) {
         while (true) {
             List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
             for (VariableElement fieldElement : fieldElements) {
@@ -399,7 +400,7 @@ public class CoreEipAnnotationProcessorHelper {
         }
 
         EipOptionModel ep = createOption(name, displayName, "attribute", fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, isEnum, enums, false, null,
-                                     false);
+                                         false);
         eipOptions.add(ep);
 
         return false;
@@ -441,7 +442,8 @@ public class CoreEipAnnotationProcessorHelper {
             deprecationNote = metadata.deprecationNote();
         }
 
-        EipOptionModel ep = createOption(name, displayName, "value", fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, false, null, false, null, false);
+        EipOptionModel ep = createOption(name, displayName, "value", fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, false, null, false, null,
+                                         false);
         eipOptions.add(ep);
     }
 
@@ -547,7 +549,7 @@ public class CoreEipAnnotationProcessorHelper {
             }
 
             EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, isEnum, enums, isOneOf,
-                                         oneOfTypes, asPredicate);
+                                             oneOfTypes, asPredicate);
             eipOptions.add(ep);
         }
     }
@@ -591,13 +593,13 @@ public class CoreEipAnnotationProcessorHelper {
             }
 
             EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, false, null, true, oneOfTypes,
-                                         false);
+                                             false);
             eipOptions.add(ep);
         }
     }
 
-    private void processRoute(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv, TypeElement originalClassType, TypeElement classElement, Set<EipOptionModel> eipOptions,
-                              String prefix) {
+    private void processRoute(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv, TypeElement originalClassType, TypeElement classElement,
+                              Set<EipOptionModel> eipOptions, String prefix) {
 
         Elements elementUtils = processingEnv.getElementUtils();
 
@@ -665,15 +667,14 @@ public class CoreEipAnnotationProcessorHelper {
         enums.add("CompleteAllTasks");
         docComment = AnnotationProcessorHelper.findJavaDoc(elementUtils, null, "shutdownRunningTask", "CompleteCurrentTaskOnly", classElement, true);
         ep = createOption("shutdownRunningTask", "Shutdown Running Task", "attribute", "org.apache.camel.ShutdownRunningTask", false, "", docComment, false, null, true, enums,
-                           false, null, false);
+                          false, null, false);
         eipOptions.add(ep);
 
         // input
         Set<String> oneOfTypes = new TreeSet<>();
         oneOfTypes.add("from");
         docComment = AnnotationProcessorHelper.findJavaDoc(elementUtils, null, "input", null, classElement, true);
-        ep = createOption("input", "Input", "element", "org.apache.camel.model.FromDefinition", true, "", docComment, false, null, false, null, true, oneOfTypes,
-                           false);
+        ep = createOption("input", "Input", "element", "org.apache.camel.model.FromDefinition", true, "", docComment, false, null, false, null, true, oneOfTypes, false);
         eipOptions.add(ep);
 
         // outputs
@@ -697,7 +698,7 @@ public class CoreEipAnnotationProcessorHelper {
 
         docComment = AnnotationProcessorHelper.findJavaDoc(elementUtils, null, "outputs", null, classElement, true);
         ep = createOption("outputs", "Outputs", "element", "java.util.List<org.apache.camel.model.ProcessorDefinition<?>>", true, "", docComment, false, null, false, null, true,
-                           oneOfTypes, false);
+                          oneOfTypes, false);
         eipOptions.add(ep);
     }
 
@@ -717,7 +718,7 @@ public class CoreEipAnnotationProcessorHelper {
         // description
         docComment = AnnotationProcessorHelper.findJavaDoc(elementUtils, null, "description", null, classElement, true);
         ep = createOption("description", "Description", "element", "org.apache.camel.model.DescriptionDefinition", false, "", docComment, false, null, false, null, false, null,
-                           false);
+                          false);
         eipOptions.add(ep);
 
         // lets skip custom id as it has no value for end users to configure
@@ -742,7 +743,8 @@ public class CoreEipAnnotationProcessorHelper {
             Set<String> oneOfTypes = new TreeSet<>();
             oneOfTypes.add("route");
 
-            EipOptionModel ep = createOption("routes", "Routes", "element", fieldTypeName, false, "", "Contains the Camel routes", false, null, false, null, true, oneOfTypes, false);
+            EipOptionModel ep = createOption("routes", "Routes", "element", fieldTypeName, false, "", "Contains the Camel routes", false, null, false, null, true, oneOfTypes,
+                                             false);
             eipOptions.add(ep);
         }
     }
@@ -760,8 +762,8 @@ public class CoreEipAnnotationProcessorHelper {
             Set<String> oneOfTypes = new TreeSet<>();
             oneOfTypes.add("rest");
 
-            EipOptionModel ep = createOption("rests", "Rests", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, null, false, null,
-                                         true, oneOfTypes, false);
+            EipOptionModel ep = createOption("rests", "Rests", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, null, false,
+                                             null, true, oneOfTypes, false);
             eipOptions.add(ep);
         }
     }
@@ -971,7 +973,8 @@ public class CoreEipAnnotationProcessorHelper {
                 deprecationNote = metadata.deprecationNote();
             }
 
-            EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, false, "", docComment, deprecated, deprecationNote, false, null, true, oneOfTypes, asPredicate);
+            EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, false, "", docComment, deprecated, deprecationNote, false, null, true, oneOfTypes,
+                                             asPredicate);
             eipOptions.add(ep);
         }
     }
@@ -1023,17 +1026,16 @@ public class CoreEipAnnotationProcessorHelper {
 
     private boolean hasOutput(EipModel model) {
         switch (model.getName()) {
-            // if we are route/rest then we accept output
-            case "route":
-            case "rest":
-                return true;
-            // special for transacted/policy which should not have output
-            case "policy":
-            case "transacted":
-                return false;
-            default:
-                return model.getOptions().stream()
-                        .anyMatch(option -> "outputs".equals(option.getName()));
+        // if we are route/rest then we accept output
+        case "route":
+        case "rest":
+            return true;
+        // special for transacted/policy which should not have output
+        case "policy":
+        case "transacted":
+            return false;
+        default:
+            return model.getOptions().stream().anyMatch(option -> "outputs".equals(option.getName()));
         }
     }
 
@@ -1044,8 +1046,7 @@ public class CoreEipAnnotationProcessorHelper {
         option.setDisplayName(Strings.isNullOrEmpty(displayName) ? Strings.asTitle(name) : displayName);
         option.setKind(kind);
         option.setRequired(required);
-        option.setDefaultValue("java.lang.Boolean".equals(type) && !Strings.isNullOrEmpty(defaultValue )
-                ? Boolean.parseBoolean(defaultValue) : defaultValue);
+        option.setDefaultValue("java.lang.Boolean".equals(type) && !Strings.isNullOrEmpty(defaultValue) ? Boolean.parseBoolean(defaultValue) : defaultValue);
         option.setDescription(JavadocHelper.sanitizeDescription(description, false));
         option.setDeprecated(deprecated);
         option.setDeprecationNote(Strings.isNullOrEmpty(deprecationNote) ? null : deprecationNote);

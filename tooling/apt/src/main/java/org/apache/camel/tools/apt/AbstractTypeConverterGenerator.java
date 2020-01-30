@@ -110,7 +110,7 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
         for (Element element : roundEnv.getElementsAnnotatedWith(converterAnnotationType)) {
             // we need a top level class first
             if (element.getKind() == ElementKind.CLASS) {
-                TypeElement te = (TypeElement) element;
+                TypeElement te = (TypeElement)element;
                 if (!te.getNestingKind().isNested() && acceptClass(te)) {
                     // we only accept top-level classes and if loader is enabled
                     currentClass = te.getQualifiedName().toString();
@@ -119,7 +119,7 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
             } else if (currentClass != null && element.getKind() == ElementKind.METHOD) {
                 String key = convertersKey(currentClass);
                 // is the method annotated with @Converter
-                ExecutableElement ee = (ExecutableElement) element;
+                ExecutableElement ee = (ExecutableElement)element;
                 if (isFallbackConverter(ee)) {
                     converters.computeIfAbsent(key, c -> new ClassConverters(comparator)).addFallbackTypeConverter(ee);
                     if (converters.containsKey(key)) {
@@ -159,7 +159,7 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
         for (AnnotationMirror ann : element.getAnnotationMirrors()) {
             for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : ann.getElementValues().entrySet()) {
                 if ("ignoreOnLoadError".equals(entry.getKey().getSimpleName().toString())) {
-                    return (Boolean) entry.getValue().getValue();
+                    return (Boolean)entry.getValue().getValue();
                 }
             }
         }
@@ -170,7 +170,7 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
         for (AnnotationMirror ann : element.getAnnotationMirrors()) {
             for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : ann.getElementValues().entrySet()) {
                 if ("fallbackCanPromote".equals(entry.getKey().getSimpleName().toString())) {
-                    return (Boolean) entry.getValue().getValue();
+                    return (Boolean)entry.getValue().getValue();
                 }
             }
         }
@@ -181,7 +181,7 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
         for (AnnotationMirror ann : element.getAnnotationMirrors()) {
             for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : ann.getElementValues().entrySet()) {
                 if ("allowNull".equals(entry.getKey().getSimpleName().toString())) {
-                    return (Boolean) entry.getValue().getValue();
+                    return (Boolean)entry.getValue().getValue();
                 }
             }
         }
@@ -192,7 +192,7 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
         for (AnnotationMirror ann : element.getAnnotationMirrors()) {
             for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : ann.getElementValues().entrySet()) {
                 if ("fallback".equals(entry.getKey().getSimpleName().toString())) {
-                    return (Boolean) entry.getValue().getValue();
+                    return (Boolean)entry.getValue().getValue();
                 }
             }
         }
@@ -254,17 +254,17 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
                 for (Map.Entry<String, Map<TypeMirror, ExecutableElement>> to : converters.getConverters().entrySet()) {
                     for (Map.Entry<TypeMirror, ExecutableElement> from : to.getValue().entrySet()) {
                         boolean allowNull = isAllowNull(from.getValue());
-                        writer.append("        addTypeConverter(registry, ").append(to.getKey()).append(".class").append(", ").append(toString(from.getKey()))
-                                .append(".class, ").append(Boolean.toString(allowNull)).append(",\n");
+                        writer.append("        addTypeConverter(registry, ").append(to.getKey()).append(".class").append(", ").append(toString(from.getKey())).append(".class, ")
+                            .append(Boolean.toString(allowNull)).append(",\n");
                         writer.append("            (type, exchange, value) -> ").append(toJava(from.getValue(), converterClasses)).append(");\n");
                     }
                 }
                 writer.append("    }\n");
                 writer.append("\n");
 
-                writer.append(
-                              "    private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method)"
-                              + " { \n");
+                writer
+                    .append("    private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method)"
+                            + " { \n");
                 writer.append("        registry.addTypeConverter(toType, fromType, new SimpleTypeConverter(allowNull, method));\n");
                 writer.append("    }\n");
                 writer.append("\n");
@@ -275,17 +275,14 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
                 for (ExecutableElement ee : converters.getFallbackConverters()) {
                     boolean allowNull = isAllowNull(ee);
                     boolean canPromote = isFallbackCanPromote(ee);
-                    writer.append("        addFallbackTypeConverter(registry, ")
-                            .append(Boolean.toString(allowNull)).append(", ")
-                            .append(Boolean.toString(canPromote)).append(", ")
-                            .append("(type, exchange, value) -> ")
-                            .append(toJavaFallback(ee, converterClasses))
-                            .append(");\n");
+                    writer.append("        addFallbackTypeConverter(registry, ").append(Boolean.toString(allowNull)).append(", ").append(Boolean.toString(canPromote)).append(", ")
+                        .append("(type, exchange, value) -> ").append(toJavaFallback(ee, converterClasses)).append(");\n");
                 }
                 writer.append("    }\n");
                 writer.append("\n");
 
-                writer.append("    private static void addFallbackTypeConverter(TypeConverterRegistry registry, boolean allowNull, boolean canPromote, SimpleTypeConverter.ConversionMethod method) { \n");
+                writer
+                    .append("    private static void addFallbackTypeConverter(TypeConverterRegistry registry, boolean allowNull, boolean canPromote, SimpleTypeConverter.ConversionMethod method) { \n");
                 writer.append("        registry.addFallbackTypeConverter(new SimpleTypeConverter(allowNull, method), canPromote);\n");
                 writer.append("    }\n");
                 writer.append("\n");
