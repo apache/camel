@@ -36,7 +36,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import static org.apache.camel.tooling.util.Strings.canonicalClassName;
 
 /**
- * APT compiler plugin to generate JSon Schema for all EIP models and camel-spring's <camelContext> types.
+ * APT compiler plugin to generate JSon Schema for all EIP models and
+ * camel-spring's <camelContext> types.
  */
 @SupportedAnnotationTypes({"javax.xml.bind.annotation.*", "org.apache.camel.spi.Label"})
 public class ModelAnnotationProcessor extends AbstractCamelAnnotationProcessor {
@@ -52,35 +53,33 @@ public class ModelAnnotationProcessor extends AbstractCamelAnnotationProcessor {
 
         messager.printMessage(Kind.WARNING, String.format("Found %d elements annotated with XmlRootElement", elements.size()));
 
-        Set<? extends Element> coreElements = elements.stream()
-                .filter(new Predicate<Element>() {
-                    @Override
-                    public boolean test(Element element) {
-                        if (element instanceof TypeElement) {
-                            TypeElement classElement = (TypeElement) element;
+        Set<? extends Element> coreElements = elements.stream().filter(new Predicate<Element>() {
+            @Override
+            public boolean test(Element element) {
+                if (element instanceof TypeElement) {
+                    TypeElement classElement = (TypeElement)element;
 
-                            final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());
-                            return javaTypeName.startsWith("org.apache.camel.model");
-                        }
-                        return false;
-                    }
-                }).collect(Collectors.toSet());
+                    final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());
+                    return javaTypeName.startsWith("org.apache.camel.model");
+                }
+                return false;
+            }
+        }).collect(Collectors.toSet());
 
         messager.printMessage(Kind.WARNING, String.format("Found %d core elements", coreElements.size()));
 
-        Set<? extends Element> springElements = elements.stream()
-                .filter(new Predicate<Element>() {
-                    @Override
-                    public boolean test(Element element) {
-                        if (element instanceof TypeElement) {
-                            TypeElement classElement = (TypeElement) element;
+        Set<? extends Element> springElements = elements.stream().filter(new Predicate<Element>() {
+            @Override
+            public boolean test(Element element) {
+                if (element instanceof TypeElement) {
+                    TypeElement classElement = (TypeElement)element;
 
-                            final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());
-                            return javaTypeName.startsWith("org.apache.camel.spring") || javaTypeName.startsWith("org.apache.camel.core.xml");
-                        }
-                        return false;
-                    }
-                }).collect(Collectors.toSet());
+                    final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());
+                    return javaTypeName.startsWith("org.apache.camel.spring") || javaTypeName.startsWith("org.apache.camel.core.xml");
+                }
+                return false;
+            }
+        }).collect(Collectors.toSet());
 
         messager.printMessage(Kind.WARNING, String.format("Found %d spring elements", springElements.size()));
 
@@ -89,13 +88,13 @@ public class ModelAnnotationProcessor extends AbstractCamelAnnotationProcessor {
 
         Iterator<? extends Element> it = coreElements.iterator();
         while (it.hasNext()) {
-            TypeElement classElement = (TypeElement) it.next();
+            TypeElement classElement = (TypeElement)it.next();
             coreProcessor.processModelClass(processingEnv, roundEnv, classElement, propertyPlaceholderDefinitions);
         }
 
         it = springElements.iterator();
         while (it.hasNext()) {
-            TypeElement classElement = (TypeElement) it.next();
+            TypeElement classElement = (TypeElement)it.next();
             springProcessor.processModelClass(processingEnv, roundEnv, classElement);
         }
 
@@ -105,8 +104,7 @@ public class ModelAnnotationProcessor extends AbstractCamelAnnotationProcessor {
         }
     }
 
-    private void generatePropertyPlaceholderDefinitionsHelper(ProcessingEnvironment processingEnv,
-                                                              Set<String> propertyPlaceholderDefinitions) {
+    private void generatePropertyPlaceholderDefinitionsHelper(ProcessingEnvironment processingEnv, Set<String> propertyPlaceholderDefinitions) {
 
         String fqn = "org.apache.camel.model.placeholder.DefinitionPropertiesPlaceholderProviderHelper";
 

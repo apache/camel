@@ -51,7 +51,7 @@ public class ConstantProviderProcessor extends AbstractCamelAnnotationProcessor 
         Map<String, Element> constantClasses = new TreeMap<>();
         for (Element element : elements) {
             if (element instanceof TypeElement) {
-                TypeElement te = (TypeElement) element;
+                TypeElement te = (TypeElement)element;
 
                 // we only support top-level classes (not inner classes)
                 if (!te.getNestingKind().isNested() && acceptClass(te)) {
@@ -61,7 +61,8 @@ public class ConstantProviderProcessor extends AbstractCamelAnnotationProcessor 
             }
         }
 
-        // skip all converter classes from core as we just want to use the optimized TypeConverterLoader files
+        // skip all converter classes from core as we just want to use the
+        // optimized TypeConverterLoader files
         constantClasses.forEach((k, v) -> {
             String fqn = v.getAnnotation(ConstantProvider.class).value();
             Map<String, String> fields = new TreeMap<>(String::compareToIgnoreCase);
@@ -72,7 +73,7 @@ public class ConstantProviderProcessor extends AbstractCamelAnnotationProcessor 
                 String fullTypeClassName = fieldType.toString();
                 if (String.class.getName().equals(fullTypeClassName)) {
                     String name = field.getSimpleName().toString();
-                    String text = (String) field.getConstantValue();
+                    String text = (String)field.getConstantValue();
                     fields.put(name, text);
                 }
             }
