@@ -53,7 +53,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
 
         // wrap the aggregate route in a unit of work processor
         CamelInternalProcessor internal = new CamelInternalProcessor(routeContext.getCamelContext(), childProcessor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, routeContext.getCamelContext()));
 
         Expression correlation = definition.getExpression().createExpression(routeContext);
         AggregationStrategy strategy = createAggregationStrategy(routeContext);

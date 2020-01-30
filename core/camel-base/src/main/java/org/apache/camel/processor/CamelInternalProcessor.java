@@ -589,14 +589,14 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         private String routeId;
         private UnitOfWorkFactory uowFactory;
 
-        public UnitOfWorkProcessorAdvice(RouteContext routeContext) {
+        public UnitOfWorkProcessorAdvice(RouteContext routeContext, CamelContext camelContext) {
             this.routeContext = routeContext;
             if (routeContext != null) {
                 this.routeId = routeContext.getRouteId();
-                this.uowFactory = routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory();
-                // optimize uow factory to initialize it early and once per advice
-                this.uowFactory.afterPropertiesConfigured(routeContext.getCamelContext());
             }
+            this.uowFactory = camelContext.adapt(ExtendedCamelContext.class).getUnitOfWorkFactory();
+            // optimize uow factory to initialize it early and once per advice
+            this.uowFactory.afterPropertiesConfigured(camelContext);
         }
 
         @Override
@@ -666,8 +666,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         private final UnitOfWork parent;
 
-        public ChildUnitOfWorkProcessorAdvice(RouteContext routeContext, UnitOfWork parent) {
-            super(routeContext);
+        public ChildUnitOfWorkProcessorAdvice(RouteContext routeContext, CamelContext camelContext, UnitOfWork parent) {
+            super(routeContext, camelContext);
             this.parent = parent;
         }
 

@@ -58,7 +58,7 @@ public final class SubscribeMethodProcessor extends AsyncProcessorSupport implem
                 .getBeanProcessorFactory().createBeanProcessor(endpoint.getCamelContext(), pojo, method);
         // must ensure the consumer is being executed in an unit of work so synchronization callbacks etc is invoked
         CamelInternalProcessor internal = new CamelInternalProcessor(endpoint.getCamelContext(), answer);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null, endpoint.getCamelContext()));
 
         Predicate p;
         if (ObjectHelper.isEmpty(predicate)) {
