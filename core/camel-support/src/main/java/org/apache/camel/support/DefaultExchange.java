@@ -68,7 +68,9 @@ public final class DefaultExchange implements ExtendedExchange {
     private Boolean errorHandlerHandled;
 
     public DefaultExchange(CamelContext context) {
-        this(context, ExchangePattern.InOnly);
+        this.context = context;
+        this.pattern = ExchangePattern.InOnly;
+        this.created = System.currentTimeMillis();
     }
 
     public DefaultExchange(CamelContext context, ExchangePattern pattern) {
@@ -87,11 +89,16 @@ public final class DefaultExchange implements ExtendedExchange {
     }
 
     public DefaultExchange(Endpoint fromEndpoint) {
-        this(fromEndpoint, ExchangePattern.InOnly);
+        this.context = fromEndpoint.getCamelContext();
+        this.pattern = ExchangePattern.InOnly;
+        this.created = System.currentTimeMillis();
+        this.fromEndpoint = fromEndpoint;
     }
 
     public DefaultExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
-        this(fromEndpoint.getCamelContext(), pattern);
+        this.context = fromEndpoint.getCamelContext();
+        this.pattern = pattern;
+        this.created = System.currentTimeMillis();
         this.fromEndpoint = fromEndpoint;
     }
 
