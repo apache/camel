@@ -16,6 +16,8 @@
  */
 package org.apache.camel.support;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -221,11 +223,17 @@ public class DefaultMessage extends MessageSupport {
 
     @Override
     public void setHeaders(Map<String, Object> headers) {
-        if (camelContext.getHeadersMapFactory().isInstanceOf(headers)) {
-            this.headers = headers;
+        HeadersMapFactory factory = camelContext.getHeadersMapFactory();
+        if (factory != null) {
+           if (factory.isInstanceOf(headers)) {
+               this.headers = headers;
+           } else {
+               // create a new map
+               this.headers = camelContext.getHeadersMapFactory().newMap(headers);
+           }
         } else {
-            // create a new map
-            this.headers = camelContext.getHeadersMapFactory().newMap(headers);
+            // should not really happen but some tests rely on using camel context that is not started
+            this.headers = new HashMap<>(headers);
         }
     }
 
@@ -252,7 +260,15 @@ public class DefaultMessage extends MessageSupport {
      *         the underlying inbound transport
      */
     protected Map<String, Object> createHeaders() {
-        Map<String, Object> map = camelContext.getHeadersMapFactory().newMap();
+        Map<String, Object> map;
+
+        HeadersMapFactory factory = camelContext.getHeadersMapFactory();
+        if (factory != null) {
+            map = factory.newMap();
+        } else {
+            // should not really happen but some tests rely on using camel context that is not started
+            map = new HashMap<>();
+        }
         populateInitialHeaders(map);
         return map;
     }

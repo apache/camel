@@ -214,6 +214,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private Boolean useDataType = Boolean.FALSE;
     private Boolean useBreadcrumb = Boolean.FALSE;
     private Boolean allowUseOriginalMessage = Boolean.FALSE;
+    private Boolean caseInsensitiveHeaders = Boolean.TRUE;
     private Long delay;
     private ErrorHandlerFactory errorHandlerFactory;
     private Map<String, String> globalOptions = new HashMap<>();
@@ -2604,9 +2605,12 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         }
 
         LOG.debug("Using HeadersMapFactory: {}", getHeadersMapFactory());
-        if (!getHeadersMapFactory().isCaseInsensitive()) {
+        if (isCaseInsensitiveHeaders() && !getHeadersMapFactory().isCaseInsensitive()) {
             LOG.info("HeadersMapFactory: {} is case-sensitive which can cause problems for protocols such as HTTP based, which rely on case-insensitive headers.",
                      getHeadersMapFactory());
+        } else if (!isCaseInsensitiveHeaders()) {
+            // notify user that the headers are sensitive which can be a problem
+            LOG.info("Case-insensitive headers is not in use. This can cause problems for protocols such as HTTP based, which rely on case-insensitive headers.");
         }
 
         // lets log at INFO level if we are not using the default reactive executor
@@ -3297,6 +3301,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
      * components and create routes
      */
     protected void forceLazyInitialization() {
+        initEagerMandatoryServices();
+
         if (initialization != Initialization.Lazy) {
             doStartStandardServices();
 
@@ -3305,6 +3311,28 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             }
         }
     }
+
+    /**
+     * Initializes eager some mandatory services which needs to warmup and
+     * be ready as this helps optimize Camel at runtime.
+     */
+    protected void initEagerMandatoryServices() {
+        if (headersMapFactory == null) {
+            // we want headers map to be created as then JVM can optimize using it as we use it per exchange/message
+            synchronized (lock) {
+                if (headersMapFactory == null) {
+                    if (isCaseInsensitiveHeaders()) {
+                        // use factory to find the map factory to use
+                        setHeadersMapFactory(createHeadersMapFactory());
+                    } else {
+                        // case sensitive so we can use hash map
+                        setHeadersMapFactory(new HashMapHeadersMapFactory());
+                    }
+                }
+            }
+        }
+    }
+
 
     protected void doStartStandardServices() {
         getVersion();
@@ -3846,6 +3874,14 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         return allowUseOriginalMessage != null && allowUseOriginalMessage;
     }
 
+    public Boolean isCaseInsensitiveHeaders() {
+        return caseInsensitiveHeaders != null && caseInsensitiveHeaders;
+    }
+
+    public void setCaseInsensitiveHeaders(Boolean caseInsensitiveHeaders) {
+        this.caseInsensitiveHeaders = caseInsensitiveHeaders;
+    }
+
     @Override
     public ExecutorServiceManager getExecutorServiceManager() {
         if (executorServiceManager == null) {
@@ -4081,13 +4117,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public HeadersMapFactory getHeadersMapFactory() {
-        if (headersMapFactory == null) {
-            synchronized (lock) {
-                if (headersMapFactory == null) {
-                    setHeadersMapFactory(createHeadersMapFactory());
-                }
-            }
-        }
         return headersMapFactory;
     }
 

@@ -234,4 +234,24 @@ public interface RuntimeConfiguration {
      */
     Boolean isAllowUseOriginalMessage();
 
+    /**
+     * Whether to use case sensitive or insensitive headers.
+     *
+     * Important: When using case sensitive (this is set to false).
+     * Then the map is case sensitive which means headers such as <tt>content-type</tt> and <tt>Content-Type</tt> are
+     * two different keys which can be a problem for some protocols such as HTTP based, which rely on case insensitive headers.
+     * However case sensitive implementations can yield faster performance. Therefore use case sensitive implementation with care.
+     */
+    Boolean isCaseInsensitiveHeaders();
+
+    /**
+     * Whether to use case sensitive or insensitive headers.
+     *
+     * Important: When using case sensitive (this is set to false).
+     * Then the map is case sensitive which means headers such as <tt>content-type</tt> and <tt>Content-Type</tt> are
+     * two different keys which can be a problem for some protocols such as HTTP based, which rely on case insensitive headers.
+     * However case sensitive implementations can yield faster performance. Therefore use case sensitive implementation with care.
+     */
+    void setCaseInsensitiveHeaders(Boolean caseInsensitiveHeaders);
+
 }

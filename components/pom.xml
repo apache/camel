@@ -350,6 +350,7 @@
         <module>camel-webhook</module>
         <module>camel-websocket-jsr356</module>
         <module>camel-websocket</module>
+        <module>camel-weka</module>
         <module>camel-wordpress</module>
         <module>camel-xchange</module>
         <module>camel-xj</module>

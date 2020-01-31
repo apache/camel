@@ -38,6 +38,8 @@
         <include>org.apache.camel:camel-support</include>
         <include>org.apache.camel:camel-util</include>
         <include>org.apache.camel:camel-util-json</include>
+        <include>org.apache.camel:camel-tooling-model</include>
+        <include>org.apache.camel:camel-tooling-util</include>
         <include>org.apache.camel:spi-annotations</include>
         <include>org.apache.camel:camel-timer</include>
         <include>org.apache.camel:camel-log</include>

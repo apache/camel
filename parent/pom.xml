@@ -407,7 +407,7 @@
         <kie-version>7.32.0.Final</kie-version>
         <kubernetes-client-version>4.7.1</kubernetes-client-version>
         <kubernetes-model-version>4.7.1</kubernetes-model-version>
-	<kudu-version>1.10.0</kudu-version>
+        <kudu-version>1.10.0</kudu-version>
         <kxml2-bundle-version>2.3.0_3</kxml2-bundle-version>
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.10</leveldb-api-version>
@@ -475,7 +475,8 @@
         <mvel-version>2.4.5.Final</mvel-version>
         <mybatis-version>3.5.3</mybatis-version>
         <narayana-version>5.10.3.Final</narayana-version>
-        <nessus-version>1.0.0.Beta4</nessus-version>
+        <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
+        <nessus-weka-version>1.0.0</nessus-weka-version>
         <nsq-client-version>1.0.0.RC4</nsq-client-version>
         <neoscada-version>0.4.0</neoscada-version>
         <netty3-version>3.10.6.Final</netty3-version>
@@ -2446,6 +2447,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-weka</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-wordpress</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3782,7 +3788,7 @@
             <dependency>
                 <groupId>io.nessus</groupId>
                 <artifactId>nessus-ipfs-client</artifactId>
-                <version>${nessus-version}</version>
+                <version>${nessus-ipfs-version}</version>
             </dependency>
 
             <!-- apache pulsar -->

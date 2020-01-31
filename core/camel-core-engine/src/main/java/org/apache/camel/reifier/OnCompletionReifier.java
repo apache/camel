@@ -67,7 +67,7 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
 
         // wrap the on completion route in a unit of work processor
         CamelInternalProcessor internal = new CamelInternalProcessor(routeContext.getCamelContext(), childProcessor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, routeContext.getCamelContext()));
 
         routeContext.setOnCompletion(getId(definition, routeContext), internal);
 

@@ -46,6 +46,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NotifyBuilderMatcher;
@@ -549,7 +550,13 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             expectedMinimumMessageCount(1);
         }
         if (expectedHeaderValues == null) {
-            expectedHeaderValues = getCamelContext().adapt(ExtendedCamelContext.class).getHeadersMapFactory().newMap();
+            HeadersMapFactory factory = getCamelContext().adapt(ExtendedCamelContext.class).getHeadersMapFactory();
+            if (factory != null) {
+                expectedHeaderValues = factory.newMap();
+            } else {
+                // should not really happen but some tests dont start camel context
+                expectedHeaderValues = new HashMap<>();
+            }
             // we just wants to expects to be called once
             expects(new AssertionTask() {
                 @Override
@@ -1566,7 +1573,13 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
         if (expectedHeaderValues != null) {
             if (actualHeaderValues == null) {
-                actualHeaderValues = getCamelContext().adapt(ExtendedCamelContext.class).getHeadersMapFactory().newMap();
+                HeadersMapFactory factory = getCamelContext().adapt(ExtendedCamelContext.class).getHeadersMapFactory();
+                if (factory != null) {
+                    actualHeaderValues = factory.newMap();
+                } else {
+                    // should not really happen but some tests dont start camel context
+                    actualHeaderValues = new HashMap<>();
+                }
             }
             if (in.hasHeaders()) {
                 actualHeaderValues.putAll(in.getHeaders());
@@ -1575,7 +1588,13 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
         if (expectedPropertyValues != null) {
             if (actualPropertyValues == null) {
-                actualPropertyValues = getCamelContext().adapt(ExtendedCamelContext.class).getHeadersMapFactory().newMap();
+                HeadersMapFactory factory = getCamelContext().adapt(ExtendedCamelContext.class).getHeadersMapFactory();
+                if (factory != null) {
+                    actualPropertyValues = factory.newMap();
+                } else {
+                    // should not really happen but some tests dont start camel context
+                    actualPropertyValues = new HashMap<>();
+                }
             }
             actualPropertyValues.putAll(copy.getProperties());
         }

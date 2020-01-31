@@ -33,23 +33,27 @@ import org.apache.camel.util.ObjectHelper;
  */
 public abstract class FeedEndpoint extends DefaultPollingEndpoint {
 
-    @UriPath @Metadata(required = true)
+    @UriPath(description = "The URI to the feed to poll.") @Metadata(required = true)
     protected String feedUri;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", description = "Sets whether or not entries should be sent " +
+            "individually or whether the entire feed should be sent as a single message")
     protected boolean splitEntries = true;
-    @UriParam
+    @UriParam(description = "Sets the timestamp to be used for filtering entries from the " +
+            "atom feeds. This options is only in conjunction with the splitEntries.")
     protected Date lastUpdate;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", description = "Sets whether to use filtering or not of the entries.")
     protected boolean filter = true;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", description = "Sets whether to add the feed object as a header.")
     private boolean feedHeader = true;
-    @UriParam
+    @UriParam(description = "Sets whether to sort entries by published date. Only works when splitEntries = true.")
     private boolean sortEntries;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", description = "Sets whether all entries identified in a " +
+            "single feed poll should be delivered immediately. If true, only one entry is processed " +
+            "per consumer.delay. Only applicable when splitEntries = true.")
     private boolean throttleEntries = true;
-    @UriParam
+    @UriParam(description = "Sets the username to be used for basic authentication when polling from a HTTP feed.")
     private String username;
-    @UriParam
+    @UriParam(description = "Sets the password to be used for basic authentication when polling from a HTTP feed.")
     private String password;
 
     public FeedEndpoint() {

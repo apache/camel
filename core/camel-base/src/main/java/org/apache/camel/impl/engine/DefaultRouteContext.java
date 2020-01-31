@@ -177,7 +177,7 @@ public class DefaultRouteContext implements RouteContext {
 
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
             CamelInternalProcessor internal = new CamelInternalProcessor(getCamelContext(), target);
-            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(this));
+            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(this, getCamelContext()));
 
             // and then optionally add route policy processor if a custom policy is set
             List<RoutePolicy> routePolicyList = getRoutePolicyList();
@@ -458,6 +458,18 @@ public class DefaultRouteContext implements RouteContext {
     public Boolean isAllowUseOriginalMessage() {
         // can only be configured on CamelContext
         return getCamelContext().isAllowUseOriginalMessage();
+    }
+
+    @Override
+    public Boolean isCaseInsensitiveHeaders() {
+        // can only be configured on CamelContext
+        return getCamelContext().isCaseInsensitiveHeaders();
+    }
+
+    @Override
+    public void setCaseInsensitiveHeaders(Boolean caseInsensitiveHeaders) {
+        // can only be configured on CamelContext
+        getCamelContext().setCaseInsensitiveHeaders(caseInsensitiveHeaders);
     }
 
     @Override

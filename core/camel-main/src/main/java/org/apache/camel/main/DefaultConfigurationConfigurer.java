@@ -145,6 +145,7 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setLogExhaustedMessageBody(config.isLogExhaustedMessageBody());
         camelContext.setAutoStartup(config.isAutoStartup());
         camelContext.setAllowUseOriginalMessage(config.isAllowUseOriginalMessage());
+        camelContext.setCaseInsensitiveHeaders(config.isCaseInsensitiveHeaders());
         camelContext.setUseBreadcrumb(config.isUseBreadcrumb());
         camelContext.setUseDataType(config.isUseDataType());
         camelContext.setUseMDCLogging(config.isUseMdcLogging());

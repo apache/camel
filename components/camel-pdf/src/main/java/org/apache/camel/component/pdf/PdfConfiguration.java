@@ -25,7 +25,6 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import static org.apache.camel.component.pdf.PdfPageSizeConstant.PAGE_SIZE_A0;
 import static org.apache.camel.component.pdf.PdfPageSizeConstant.PAGE_SIZE_A1;
@@ -68,9 +67,12 @@ public class PdfConfiguration {
     @UriParam(defaultValue = "14")
     private float fontSize = 14;
     @UriParam(defaultValue = "A4", enums = "LETTER,LEGAL,A0,A1,A2,A3,A4,A5,A6")
-    private PDRectangle pageSize = PDRectangle.A4;
-    @UriParam(defaultValue = "Helvetica")
-    private PDFont font = PDType1Font.HELVETICA;
+    private String pageSize = PAGE_SIZE_A4;
+    @UriParam(defaultValue = "Helvetica", enums = "Courier,Courier-Bold,Courier-Oblique,Courier-BoldOblique,"
+            + "Helvetica,Helvetica-Bold,Helvetica-Oblique,Helvetica-BoldOblique,"
+            + "Times-Roman,Times-Bold,Times-Italic,Times-BoldItalic,"
+            + "Symbol,ZapfDingbats")
+    private String font = "Helvetica";
     @UriParam(defaultValue = "lineTermination")
     private TextProcessingFactory textProcessingFactory = TextProcessingFactory.lineTermination;
 
@@ -142,33 +144,25 @@ public class PdfConfiguration {
     }
 
     public PDRectangle getPageSize() {
-        return pageSize;
+        return PAGE_MAP.get(pageSize);
     }
 
     /**
      * Page size
      */
-    public void setPageSize(PDRectangle pageSize) {
+    public void setPageSize(String pageSize) {
         this.pageSize = pageSize;
     }
 
-    public void setPageSize(String pageSize) {
-        setPageSize(PAGE_MAP.get(pageSize));
-    }
-
     public PDFont getFont() {
-        return font;
+        return Standard14Fonts.getByName(font);
     }
 
     /**
      * Font
      */
-    public void setFont(PDFont font) {
-        this.font = font;
-    }
-
     public void setFont(String font) {
-        setFont(Standard14Fonts.getByName(font));
+        this.font = font;
     }
 
     public TextProcessingFactory getTextProcessingFactory() {

@@ -136,10 +136,8 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
 
     protected void writeJSonSchemeAndPropertyConfigurer(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint, String title,
                                                         String scheme, String extendsScheme, String label, String[] schemes) {
-        String parentScheme = isNullOrEmpty(extendsScheme) ? null : extendsScheme;
-
         // gather component information
-        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, classElement, title, scheme, parentScheme, label, schemes);
+        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, classElement, title, scheme, extendsScheme, label, schemes);
 
         // get endpoint information which is divided into paths and options
         // (though there should really only be one path)
@@ -151,25 +149,17 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             if (baseTypeElement != null && !roundEnv.getRootElements().contains(baseTypeElement)) {
                 UriEndpoint parentUriEndpoint = baseTypeElement.getAnnotation(UriEndpoint.class);
                 if (parentUriEndpoint != null) {
-                    parentScheme = parentUriEndpoint.scheme().split(",")[0];
-                }
-            }
-        }
-        if (parentScheme != null) {
-            try {
-                FileObject res = processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH, "", "META-INF/services/org/apache/camel/component/" + parentScheme);
-                String propsStr = res.getCharContent(false).toString();
-                Properties props = new Properties();
-                props.load(new StringReader(propsStr));
-                String clazzName = props.getProperty("class");
-                String packageName = clazzName.substring(0, clazzName.lastIndexOf("."));
-                res = processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH, packageName, parentScheme + PackageHelper.JSON_SUFIX);
-                String json = res.getCharContent(false).toString();
-                parentData = JsonMapper.generateComponentModel(json);
-            } catch (Exception e) {
-                // ignore
-                if (!Objects.equals(parentScheme, extendsScheme)) {
-                    throw new RuntimeException("Error: " + e.toString(), e);
+                    String parentScheme = parentUriEndpoint.scheme().split(",")[0];
+                    String packageName = superClassName.substring(0, superClassName.lastIndexOf("."));
+                    String fileName = parentScheme + ".json";
+                    try {
+                        FileObject res = processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH, packageName, fileName);
+                        String json = res.getCharContent(false).toString();
+                        parentData = JsonMapper.generateComponentModel(json);
+                    } catch (Exception e) {
+                        // ignore
+                        throw new RuntimeException("Error: " + e.toString(), e);
+                    }
                 }
             }
         }
@@ -225,7 +215,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         option.setDescription(doc);
 
         if (isNullOrEmpty(doc)) {
-            throw new IllegalStateException("Empty doc for option: " + option.getName() + ", parent options:\n"
+            throw new IllegalStateException("Empty doc for option: " + option.getName() + ", parent options: "
                                             + (parentOptions != null ? Jsoner.serialize(JsonMapper.asJsonObject(parentOptions)) : "<null>"));
         }
     }

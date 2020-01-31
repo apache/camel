@@ -108,6 +108,14 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-main</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-tooling-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-tooling-util</artifactId>
+        </dependency>
 
         <!-- NOTE: auto-generated list of components when building camel catalog -->
         <!-- camel components: START -->
@@ -1669,6 +1677,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-websocket-jsr356</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-weka</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

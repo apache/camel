@@ -40,6 +40,8 @@
         <include>org.apache.camel:camel-cloud</include>
         <include>org.apache.camel:camel-jaxp</include>
         <include>org.apache.camel:camel-main</include>
+        <include>org.apache.camel:camel-tooling-model</include>
+        <include>org.apache.camel:camel-tooling-util</include>
 
         <!-- NOTE: auto-generated list of components when building camel catalog -->
         <!-- camel components: START -->
@@ -355,6 +357,7 @@
         <include>org.apache.camel:camel-webhook</include>
         <include>org.apache.camel:camel-websocket</include>
         <include>org.apache.camel:camel-websocket-jsr356</include>
+        <include>org.apache.camel:camel-weka</include>
         <include>org.apache.camel:camel-wordpress</include>
         <include>org.apache.camel:camel-xchange</include>
         <include>org.apache.camel:camel-xj</include>

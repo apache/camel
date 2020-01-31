@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import junit.framework.TestCase;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -30,12 +31,19 @@ import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.Message;
-import org.junit.Assert;
 import org.junit.Test;
 
-public class CxfHeaderHelperTest extends Assert {
-    private DefaultCamelContext context = new DefaultCamelContext();
-    
+public class CxfHeaderHelperTest extends TestCase {
+
+    private DefaultCamelContext context;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        context = new DefaultCamelContext();
+        context.start();
+    }
+
     @Test
     public void testPropagateCamelToCxf() {
         Exchange exchange = new DefaultExchange(context);
