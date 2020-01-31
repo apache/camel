@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
-public class OnExceptionOccurredProcessorTest extends ContextTestSupport {
+public class DefaultErrorHandlerOnExceptionOccurredProcessorTest extends ContextTestSupport {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -34,15 +34,16 @@ public class OnExceptionOccurredProcessorTest extends ContextTestSupport {
 
     @Test
     public void testOnExceptionOccurred() throws Exception {
-        getMockEndpoint("mock:dead").expectedMessageCount(1);
-
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
+        try {
+            template.sendBody("direct:start", "Hello World");
+            fail("Should throw exception");
+        } catch (Exception e) {
+            // expected
+        }
 
         MyProcessor myProcessor = context.getRegistry().lookupByNameAndType("myProcessor", MyProcessor.class);
-        // 1 = first time + 3 redelivery attempts
-        assertEquals(1 + 3, myProcessor.getInvoked());
+        // 1 = first time + 0 redelivery attempts
+        assertEquals(1, myProcessor.getInvoked());
     }
 
     @Override
@@ -52,7 +53,7 @@ public class OnExceptionOccurredProcessorTest extends ContextTestSupport {
             public void configure() throws Exception {
                 MyProcessor myProcessor = context.getRegistry().lookupByNameAndType("myProcessor", MyProcessor.class);
 
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(3).redeliveryDelay(0).onExceptionOccurred(myProcessor));
+                errorHandler(defaultErrorHandler().onExceptionOccurred(myProcessor));
 
                 from("direct:start").to("log:a").to("direct:foo").to("log:b");
 
