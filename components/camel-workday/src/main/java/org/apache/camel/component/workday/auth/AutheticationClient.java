@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.workday.auth;
+
+import java.io.IOException;
 
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.CloseableHttpClient;
-
-import java.io.IOException;
 
 public interface AutheticationClient {
 

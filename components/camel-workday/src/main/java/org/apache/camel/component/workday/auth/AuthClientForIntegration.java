@@ -14,22 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.workday.auth;
-
-import org.apache.camel.component.workday.WorkdayConfiguration;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -38,7 +23,19 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import org.apache.camel.component.workday.WorkdayConfiguration;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+
 public class AuthClientForIntegration implements AutheticationClient {
+
+    public static final String BASE_TOKEN_ENDPOINT = "https://%s/ccx/oauth2/%s/token";
 
     private static final String GRANT_TYPE = "grant_type";
 
@@ -51,8 +48,6 @@ public class AuthClientForIntegration implements AutheticationClient {
     private static final String ACCESS_TOKEN = "access_token";
 
     private static final String CONTENT_TYPE = "application/x-www-form-urlencoded";
-
-    public static final String BASE_TOKEN_ENDPOINT = "https://%s/ccx/oauth2/%s/token";
 
     private WorkdayConfiguration workdayConfiguration;
 
@@ -70,9 +65,7 @@ public class AuthClientForIntegration implements AutheticationClient {
 
     protected String getBearerToken(CloseableHttpClient httpClient) throws IOException {
 
-        String tokenUrl = String.format(BASE_TOKEN_ENDPOINT,
-                workdayConfiguration.getHost(),
-                workdayConfiguration.getTenant());
+        String tokenUrl = String.format(BASE_TOKEN_ENDPOINT, workdayConfiguration.getHost(), workdayConfiguration.getTenant());
 
         HttpPost httpPost = createPostMethod(tokenUrl);
 
@@ -95,8 +88,8 @@ public class AuthClientForIntegration implements AutheticationClient {
 
         HttpPost postMethod = new HttpPost(tokenUrl);
         postMethod.addHeader(CONTENT_TYPE_HEADER, CONTENT_TYPE);
-        postMethod.addHeader(AUTHORIZATION_HEADER, "Basic " +
-                new String(Base64.getEncoder().encode((workdayConfiguration.getClientId() + ":" + workdayConfiguration.getClientSecret()).getBytes())));
+        postMethod.addHeader(AUTHORIZATION_HEADER,
+                             "Basic " + new String(Base64.getEncoder().encode((workdayConfiguration.getClientId() + ":" + workdayConfiguration.getClientSecret()).getBytes())));
         postMethod.setEntity(new UrlEncodedFormEntity(nvps, "UTF-8"));
 
         return postMethod;
@@ -106,10 +99,11 @@ public class AuthClientForIntegration implements AutheticationClient {
 
         int tokenIdx = response.indexOf(ACCESS_TOKEN);
 
-        if(tokenIdx < 1)
+        if (tokenIdx < 1) {
             throw new IllegalStateException("No valid access token response.");
+        }
 
-        response = response.substring(response.indexOf(ACCESS_TOKEN) + 16,  response.length() - 3);
+        response = response.substring(response.indexOf(ACCESS_TOKEN) + 16, response.length() - 3);
 
         return response;
     }
