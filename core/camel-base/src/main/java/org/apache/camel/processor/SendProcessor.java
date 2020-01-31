@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.engine.DefaultProducerCache;
@@ -51,7 +52,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
     private static final Logger LOG = LoggerFactory.getLogger(SendProcessor.class);
 
     protected transient String traceLabelToString;
-    protected final CamelContext camelContext;
+    protected final ExtendedCamelContext camelContext;
     protected final ExchangePattern pattern;
     protected ProducerCache producerCache;
     protected AsyncProducer producer;
@@ -68,7 +69,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
     public SendProcessor(Endpoint destination, ExchangePattern pattern) {
         ObjectHelper.notNull(destination, "destination");
         this.destination = destination;
-        this.camelContext = destination.getCamelContext();
+        this.camelContext = (ExtendedCamelContext) destination.getCamelContext();
         this.pattern = pattern;
         try {
             this.destinationExchangePattern = null;

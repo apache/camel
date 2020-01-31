@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -50,7 +51,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     private static final Logger LOG = LoggerFactory.getLogger(DefaultProducerCache.class);
     private static final long ACQUIRE_WAIT_TIME = 30000;
 
-    private final CamelContext camelContext;
+    private final ExtendedCamelContext camelContext;
     private final ProducerServicePool producers;
     private final Object source;
     private final SharedCamelInternalProcessor internalProcessor;
@@ -62,7 +63,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
 
     public DefaultProducerCache(Object source, CamelContext camelContext, int cacheSize) {
         this.source = source;
-        this.camelContext = camelContext;
+        this.camelContext = (ExtendedCamelContext) camelContext;
         this.maxCacheSize = cacheSize <= 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
         this.producers = createServicePool(camelContext, maxCacheSize);
 
