@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * Represents the component that manages {@link WorkdayEndpoint}.
@@ -51,12 +51,9 @@ public class WorkdayComponent extends DefaultComponent {
         StringBuilder stringBuilder = new StringBuilder(remaining);
         stringBuilder.append("?");
 
-        if(parameters.size() > 0) {
+        if (parameters.size() > 0) {
 
-            String params = parameters.keySet()
-                    .stream()
-                    .map(k -> k + "="+ parameters.get(k))
-                    .collect(Collectors.joining("&"));
+            String params = parameters.keySet().stream().map(k -> k + "=" + parameters.get(k)).collect(Collectors.joining("&"));
             stringBuilder.append(params);
             stringBuilder.append("&");
         }
@@ -64,10 +61,7 @@ public class WorkdayComponent extends DefaultComponent {
         stringBuilder.append("format=");
         stringBuilder.append(workdayConfiguration.getFormat());
 
-        String uriString = String.format(RAAS_ENDPOINT_URL,
-                workdayConfiguration.getHost(),
-                workdayConfiguration.getTenant(),
-                stringBuilder.toString());
+        String uriString = String.format(RAAS_ENDPOINT_URL, workdayConfiguration.getHost(), workdayConfiguration.getTenant(), stringBuilder.toString());
 
         workdayEndpoint.setUri(uriString);
 
@@ -75,11 +69,8 @@ public class WorkdayComponent extends DefaultComponent {
 
     protected void validateRequiredParameters(WorkdayConfiguration workdayConfiguration) {
 
-        if(workdayConfiguration.getHost() == null ||
-                workdayConfiguration.getTenant() == null ||
-                workdayConfiguration.getClientId() == null ||
-                workdayConfiguration.getClientSecret() == null ||
-                workdayConfiguration.getTokenRefresh() == null) {
+        if (workdayConfiguration.getHost() == null || workdayConfiguration.getTenant() == null || workdayConfiguration.getClientId() == null
+            || workdayConfiguration.getClientSecret() == null || workdayConfiguration.getTokenRefresh() == null) {
 
             throw new ResolveEndpointFailedException("The parameters host, tenant, clientId, clientSecret and tokenRefresh are required.");
         }

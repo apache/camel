@@ -51,22 +51,18 @@ public class WorkdayProducer extends DefaultProducer {
         this.endpoint = endpoint;
         this.workdayUri = workdayUri;
         this.component = (WorkdayComponent)this.endpoint.getComponent();
-        this.autheticationClient = new AuthClientForIntegration(
-                this.endpoint.getWorkdayConfiguration()
-            );
+        this.autheticationClient = new AuthClientForIntegration(this.endpoint.getWorkdayConfiguration());
     }
 
     @Override
     public WorkdayEndpoint getEndpoint() {
-        return (WorkdayEndpoint) super.getEndpoint();
+        return (WorkdayEndpoint)super.getEndpoint();
     }
 
     public void process(Exchange exchange) throws Exception {
 
-        PoolingHttpClientConnectionManager httpClientConnectionManager = endpoint
-                .getWorkdayConfiguration().getHttpConnectionManager();
-        CloseableHttpClient httpClient = HttpClientBuilder.create()
-                .setConnectionManager(httpClientConnectionManager).build();
+        PoolingHttpClientConnectionManager httpClientConnectionManager = endpoint.getWorkdayConfiguration().getHttpConnectionManager();
+        CloseableHttpClient httpClient = HttpClientBuilder.create().setConnectionManager(httpClientConnectionManager).build();
 
         HttpGet httpGet = new HttpGet(this.workdayUri);
         this.autheticationClient.configure(httpClient, httpGet);
@@ -84,7 +80,7 @@ public class WorkdayProducer extends DefaultProducer {
         }
 
         exchange.getIn().setBody(report);
-        exchange.getIn().setHeader(WORKDAY_RAAS_HEADER , workdayUri);
+        exchange.getIn().setHeader(WORKDAY_RAAS_HEADER, workdayUri);
     }
 
 }
