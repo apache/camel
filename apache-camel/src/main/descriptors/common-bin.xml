@@ -40,6 +40,8 @@
         <include>org.apache.camel:camel-cloud</include>
         <include>org.apache.camel:camel-jaxp</include>
         <include>org.apache.camel:camel-main</include>
+        <include>org.apache.camel:camel-tooling-model</include>
+        <include>org.apache.camel:camel-tooling-util</include>
 
         <!-- NOTE: auto-generated list of components when building camel catalog -->
         <!-- camel components: START -->

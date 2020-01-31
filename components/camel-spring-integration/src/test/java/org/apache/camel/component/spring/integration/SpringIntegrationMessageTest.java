@@ -28,6 +28,7 @@ public class SpringIntegrationMessageTest {
     @Test
     public void testCopyFrom() {
         CamelContext camelContext = new DefaultCamelContext();
+        camelContext.start();
 
         org.springframework.messaging.Message testSpringMessage =
             MessageBuilder.withPayload("Test")
@@ -37,7 +38,7 @@ public class SpringIntegrationMessageTest {
 
         SpringIntegrationMessage original = new SpringIntegrationMessage(camelContext, testSpringMessage);
 
-        SpringIntegrationMessage copy = new SpringIntegrationMessage((CamelContext) null, testSpringMessage);
+        SpringIntegrationMessage copy = new SpringIntegrationMessage(camelContext, testSpringMessage);
 
         copy.copyFrom(original);
 

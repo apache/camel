@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -232,7 +233,7 @@ public class DefaultMessage extends MessageSupport {
            }
         } else {
             // should not really happen but some tests rely on using camel context that is not started
-            this.headers = headers;
+            this.headers = new HashMap<>(headers);
         }
     }
 
