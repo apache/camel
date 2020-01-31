@@ -38,17 +38,6 @@ public interface WekaEndpointBuilderFactory {
             return (AdvancedWekaEndpointBuilder) this;
         }
         /**
-         * The Weka filter/classifier spec (i.e. Name Options).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default WekaEndpointBuilder apply(String apply) {
-            doSetProperty("apply", apply);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -89,7 +78,7 @@ public interface WekaEndpointBuilderFactory {
             return this;
         }
         /**
-         * An optional in/out path for the read/write commands.
+         * An in/out path for the read/write commands.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -97,6 +86,133 @@ public interface WekaEndpointBuilderFactory {
          */
         default WekaEndpointBuilder path(String path) {
             doSetProperty("path", path);
+            return this;
+        }
+        /**
+         * The filter spec (i.e. Name Options).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
+         */
+        default WekaEndpointBuilder apply(String apply) {
+            doSetProperty("apply", apply);
+            return this;
+        }
+        /**
+         * The classifier spec (i.e. Name Options).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: model
+         */
+        default WekaEndpointBuilder build(String build) {
+            doSetProperty("build", build);
+            return this;
+        }
+        /**
+         * The named dataset to train the classifier with.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: model
+         */
+        default WekaEndpointBuilder dsname(String dsname) {
+            doSetProperty("dsname", dsname);
+            return this;
+        }
+        /**
+         * Numer of folds to use for cross-validation.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: model
+         */
+        default WekaEndpointBuilder folds(int folds) {
+            doSetProperty("folds", folds);
+            return this;
+        }
+        /**
+         * Numer of folds to use for cross-validation.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: model
+         */
+        default WekaEndpointBuilder folds(String folds) {
+            doSetProperty("folds", folds);
+            return this;
+        }
+        /**
+         * Path to load the model from.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: model
+         */
+        default WekaEndpointBuilder loadFrom(String loadFrom) {
+            doSetProperty("loadFrom", loadFrom);
+            return this;
+        }
+        /**
+         * Path to save the model to.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: model
+         */
+        default WekaEndpointBuilder saveTo(String saveTo) {
+            doSetProperty("saveTo", saveTo);
+            return this;
+        }
+        /**
+         * An optional seed for the randomizer.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: model
+         */
+        default WekaEndpointBuilder seed(int seed) {
+            doSetProperty("seed", seed);
+            return this;
+        }
+        /**
+         * An optional seed for the randomizer.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: model
+         */
+        default WekaEndpointBuilder seed(String seed) {
+            doSetProperty("seed", seed);
+            return this;
+        }
+        /**
+         * Flag on whether to use cross-validation with the current dataset.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: model
+         */
+        default WekaEndpointBuilder xval(boolean xval) {
+            doSetProperty("xval", xval);
+            return this;
+        }
+        /**
+         * Flag on whether to use cross-validation with the current dataset.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: model
+         */
+        default WekaEndpointBuilder xval(String xval) {
+            doSetProperty("xval", xval);
             return this;
         }
     }
@@ -176,10 +292,25 @@ public interface WekaEndpointBuilderFactory {
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-weka
          * 
-         * Syntax: <code>weka:cmd</code>
+         * Syntax: <code>weka:cmd?options</code>
+         * 
+         * Path parameter: read
+         * The read command
+         * 
+         * Path parameter: write
+         * The write command
          * 
          * Path parameter: filter
          * The filter command
+         * 
+         * Path parameter: model
+         * The model command
+         * 
+         * Path parameter: push
+         * The push command
+         * 
+         * Path parameter: pop
+         * The pop command
          * 
          * Path parameter: version
          * The version command
@@ -196,10 +327,25 @@ public interface WekaEndpointBuilderFactory {
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-weka
      * 
-     * Syntax: <code>weka:cmd</code>
+     * Syntax: <code>weka:cmd?options</code>
+     * 
+     * Path parameter: read
+     * The read command
+     * 
+     * Path parameter: write
+     * The write command
      * 
      * Path parameter: filter
      * The filter command
+     * 
+     * Path parameter: model
+     * The model command
+     * 
+     * Path parameter: push
+     * The push command
+     * 
+     * Path parameter: pop
+     * The pop command
      * 
      * Path parameter: version
      * The version command

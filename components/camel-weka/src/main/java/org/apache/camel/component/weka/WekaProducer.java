@@ -16,34 +16,34 @@
  */
 package org.apache.camel.component.weka;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URL;
 import java.nio.file.Paths;
 
 import io.nessus.weka.AssertState;
 import io.nessus.weka.Dataset;
-import io.nessus.weka.UncheckedException;
+import io.nessus.weka.ModelLoader;
+import io.nessus.weka.ModelPersister;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.weka.WekaConfiguration.Command;
 import org.apache.camel.support.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
 import weka.core.Instances;
-import weka.core.converters.ArffLoader;
-import weka.core.converters.CSVLoader;
-import weka.core.converters.Loader;
 
+@SuppressWarnings("checkstyle:rightcurly")
 public class WekaProducer extends DefaultProducer {
+
+    static final Logger LOG = LoggerFactory.getLogger(WekaProducer.class);
 
     public WekaProducer(WekaEndpoint endpoint) {
         super(endpoint);
+
+        // All commands are supported on the producer
+        Command cmd = getConfiguration().getCommand();
+        AssertState.notNull(cmd, "Null command");
     }
 
     @Override
@@ -68,163 +68,189 @@ public class WekaProducer extends DefaultProducer {
 
         } else if (Command.read == cmd) {
 
-            Message msg = exchange.getMessage();
-            msg.setBody(handleReadCmd(exchange));
+            Dataset dataset = handleReadCmd(exchange);
+            exchange.getMessage().setBody(dataset);
 
         } else if (Command.write == cmd) {
 
-            Message msg = exchange.getMessage();
-            msg.setBody(handleWriteCmd(exchange));
+            Object result = handleWriteCmd(exchange);
+            exchange.getMessage().setBody(result);
 
         } else if (Command.filter == cmd) {
 
-            Message msg = exchange.getMessage();
-            msg.setBody(handleFilterCmd(exchange));
+            Dataset dataset = handleFilterCmd(exchange);
+            exchange.getMessage().setBody(dataset);
+            
+        } else if (Command.model == cmd) {
 
+            Dataset dataset = handleModelCmd(exchange);
+            exchange.getMessage().setBody(dataset);
+            
+        } else if (Command.push == cmd) {
+
+            Dataset dataset = handlePushCmd(exchange);
+            exchange.getMessage().setBody(dataset);
+            
+        } else if (Command.pop == cmd) {
+
+            Dataset dataset = handlePopCmd(exchange);
+            exchange.getMessage().setBody(dataset);
+            
+        } else {
+            
+            // Not really needed here, because all commands are supported 
+            throw new UnsupportedOperationException("Unsupported on Producer: " + cmd);
         }
     }
 
-    private Dataset handleReadCmd(Exchange exchange) throws Exception {
+    Dataset handlePushCmd(Exchange exchange) throws Exception {
+        
+        String dsname = getConfiguration().getDsname();
 
+        Dataset dataset = assertDatasetBody(exchange);
+        if (dsname != null) {
+            dataset.push(dsname);
+        } else {
+            dataset.push();
+        }
+        
+        return dataset;
+    }
+
+    Dataset handlePopCmd(Exchange exchange) throws Exception {
+        
+        String dsname = getConfiguration().getDsname();
+
+        Dataset dataset = assertDatasetBody(exchange);
+        if (dsname != null) {
+            dataset.pop(dsname);
+        } else {
+            dataset.pop();
+        }
+        
+        return dataset;
+    }
+
+    Dataset handleReadCmd(Exchange exchange) throws Exception {
+        
         String fpath = getConfiguration().getPath();
-
+        
         if (fpath != null) {
             Dataset dataset = Dataset.create(fpath);
             return dataset;
         }
-
+        
         Dataset dataset = assertDatasetBody(exchange);
         return dataset;
     }
 
-    private Object handleWriteCmd(Exchange exchange) throws Exception {
-
+    Object handleWriteCmd(Exchange exchange) throws Exception {
+        
         Dataset dataset = assertDatasetBody(exchange);
         String fpath = getConfiguration().getPath();
-
+        
         if (fpath != null) {
-
+            
             dataset.write(Paths.get(fpath));
             return dataset;
-
+            
         } else {
-
-            // The internal implementation of DataSink does this..
+            
+            // The internal implementation of DataSink does this.. 
             // Instances.toString().getBytes()
             //
             // Therefore, we avoid creating yet another copy of the
             // instance data and call Instances.toString() as well
-
+            
             Instances instances = dataset.getInstances();
             byte[] bytes = instances.toString().getBytes();
             return new ByteArrayInputStream(bytes);
         }
     }
 
-    private Dataset handleFilterCmd(Exchange exchange) throws Exception {
-
+    Dataset handleFilterCmd(Exchange exchange) throws Exception {
+        
         String applyValue = getConfiguration().getApply();
 
         Dataset dataset = assertDatasetBody(exchange);
         dataset = dataset.apply(applyValue);
+        
+        return dataset;
+    }
 
+    Dataset handleModelCmd(Exchange exchange) throws Exception {
+        
+        Dataset dataset = assertDatasetBody(exchange);
+        
+        String dsname = getConfiguration().getDsname();
+        boolean crossValidate = getConfiguration().isXval();
+        String buildSpec = getConfiguration().getBuild();
+        String loadFrom = getConfiguration().getLoadFrom();
+        String saveTo = getConfiguration().getSaveTo();
+        
+        // Load the Model
+        
+        if (loadFrom != null) {
+            
+            Classifier cl = dataset
+                    .loadClassifier(new ModelLoader(loadFrom))
+                    .getClassifier();
+            
+            AssertState.notNull(cl, "Cannot load the classifier from: " + loadFrom);
+            LOG.debug("{}", cl);
+        }
+        
+        // Build a classifier
+        
+        else if (buildSpec != null) {
+            
+            dataset.buildClassifier(buildSpec);
+            
+            // Cross Validate the Model
+            
+            if (crossValidate) {
+                int seed = getConfiguration().getSeed();
+                int folds = getConfiguration().getFolds();
+                dataset.crossValidateModel(folds, seed);
+            }
+            
+            // Validate the Model using explicit/current instances
+            
+            else {
+                
+                // Use the named data set training
+                if (dsname != null) {
+                    dataset.pop(dsname);
+                }
+                
+                // Train with current instances
+                dataset.evaluateModel();
+            }
+            
+            Classifier cl = dataset.getClassifier();
+            AssertState.notNull(cl, "Model command requires 'load' or 'apply'");
+            LOG.debug("{}", cl);
+            
+            Evaluation ev = dataset.getEvaluation();
+            LOG.debug("{}", ev.toSummaryString());
+        }
+        
+        // Save the Model
+        
+        if (saveTo != null) {
+            dataset.consumeClassifier(new ModelPersister(saveTo));
+        }
+        
         return dataset;
     }
 
     private Dataset assertDatasetBody(Exchange exchange) throws Exception {
-
+        
         Message msg = exchange.getMessage();
-        Object body = msg.getBody();
-
         Dataset dataset = msg.getBody(Dataset.class);
-
-        if (dataset == null) {
-
-            if (body instanceof Instances) {
-
-                dataset = Dataset.create((Instances)body);
-
-            } else if (body instanceof GenericFile) {
-
-                GenericFile<?> file = (GenericFile<?>)body;
-                AssertState.isFalse(file.isDirectory(), "Directory not supported: " + file);
-                String absolutePath = file.getAbsoluteFilePath();
-                dataset = Dataset.create(absolutePath);
-
-            } else if (body instanceof URL) {
-
-                URL url = (URL)body;
-                Instances instances = readInternal(url.openStream());
-                dataset = Dataset.create(instances);
-
-            } else if (body instanceof InputStream) {
-
-                InputStream input = (InputStream)body;
-                Instances instances = readInternal(input);
-                dataset = Dataset.create(instances);
-            }
-        }
-
-        AssertState.notNull(dataset, "Cannot obtain dataset from body: " + body);
+        
+        AssertState.notNull(dataset, "Cannot obtain dataset from body: " + msg.getBody());
+        
         return dataset;
-    }
-
-    // https://github.com/tdiesler/nessus-weka/issues/11
-    private static Instances readInternal(InputStream input) {
-
-        Instances instances = null;
-
-        try {
-
-            if (input.markSupported()) {
-                input.mark(10240);
-            }
-            // First try .arff
-            try {
-                Loader loader = new ArffLoader();
-                loader.setSource(input);
-                loader.getStructure();
-                instances = loader.getDataSet();
-            } catch (IOException ex) {
-                String exmsg = ex.getMessage();
-                if (!exmsg.contains("Unable to determine structure as arff")) {
-                    throw ex;
-                }
-                if (input.markSupported()) {
-                    input.reset();
-                }
-            }
-
-            // Next try .csv
-            if (instances == null) {
-
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(baos));
-
-                try (BufferedReader br = new BufferedReader(new InputStreamReader(input))) {
-                    String line = br.readLine();
-                    while (line != null) {
-                        if (!line.startsWith("#")) {
-                            bw.write(line);
-                            bw.newLine();
-                        }
-                        line = br.readLine();
-                    }
-                    bw.flush();
-                }
-
-                input = new ByteArrayInputStream(baos.toByteArray());
-
-                Loader loader = new CSVLoader();
-                loader.setSource(input);
-                loader.getStructure();
-                instances = loader.getDataSet();
-            }
-
-        } catch (Exception ex) {
-            throw UncheckedException.create(ex);
-        }
-
-        return instances;
     }
 }
