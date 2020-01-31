@@ -56,12 +56,11 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     //   introduce a simpler UnitOfWork concept. This would also allow us to refactor the
     //   SubUnitOfWork into a general parent/child unit of work concept. However this
     //   requires API changes and thus is best kept for future Camel work
-
-    private final Exchange exchange;
-    private final ExtendedCamelContext context;
     final InflightRepository inflightRepository;
     final boolean allowUseOriginalMessage;
     final boolean useBreadcrumb;
+    private final Exchange exchange;
+    private final ExtendedCamelContext context;
     private Logger log;
     private RouteContext prevRouteContext;
     private RouteContext routeContext;
