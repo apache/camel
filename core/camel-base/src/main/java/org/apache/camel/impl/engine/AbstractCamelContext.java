@@ -2605,9 +2605,12 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         }
 
         LOG.debug("Using HeadersMapFactory: {}", getHeadersMapFactory());
-        if (!getHeadersMapFactory().isCaseInsensitive()) {
+        if (isCaseInsensitiveHeaders() && !getHeadersMapFactory().isCaseInsensitive()) {
             LOG.info("HeadersMapFactory: {} is case-sensitive which can cause problems for protocols such as HTTP based, which rely on case-insensitive headers.",
                      getHeadersMapFactory());
+        } else if (!isCaseInsensitiveHeaders()) {
+            // notify user that the headers are sensitive which can be a problem
+            LOG.info("Case-insensitive headers is not in use. This can cause problems for protocols such as HTTP based, which rely on case-insensitive headers.");
         }
 
         // lets log at INFO level if we are not using the default reactive executor
