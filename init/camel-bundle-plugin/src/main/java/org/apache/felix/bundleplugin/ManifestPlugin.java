@@ -100,10 +100,6 @@ public class ManifestPlugin extends BundlePlugin {
         Analyzer analyzer;
         try {
             analyzer = getAnalyzer(project, instructions, classpath);
-
-            if (supportIncrementalBuild) {
-                writeIncrementalInfo(project);
-            }
         } catch (FileNotFoundException e) {
             throw new MojoExecutionException("Cannot find " + e.getMessage() + " (manifest goal must be run after compile phase)", e);
         } catch (IOException e) {
@@ -120,6 +116,10 @@ public class ManifestPlugin extends BundlePlugin {
 
         try {
             writeManifest(analyzer, outputFile, niceManifest, exportScr, scrLocation, buildContext, getLog());
+
+            if (supportIncrementalBuild) {
+                writeIncrementalInfo(project);
+            }
         } catch (Exception e) {
             throw new MojoExecutionException("Error trying to write Manifest to file " + outputFile, e);
         } finally {
