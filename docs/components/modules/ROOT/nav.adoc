@@ -390,6 +390,7 @@
 * xref:websocket-component.adoc[Jetty Websocket Component]
 * xref:weka-component.adoc[Weka Component]
 * xref:wordpress-component.adoc[Wordpress Component]
+* xref:workday-raas-component.adoc[Workday Component]
 * xref:xchange-component.adoc[XChange Component]
 * xref:xj-component.adoc[XJ Component]
 * xref:secureXML-dataformat.adoc[XML Security DataFormat]
