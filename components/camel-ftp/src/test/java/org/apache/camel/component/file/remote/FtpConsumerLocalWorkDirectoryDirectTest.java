@@ -35,8 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpConsumerLocalWorkDirectoryDirectTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort()
-               + "/lwd/?password=admin&delay=5000&localWorkDirectory=target/lwd&noop=true";
+        return "ftp://admin@localhost:" + getPort() + "/lwd/?password=admin&delay=5000&localWorkDirectory=target/lwd&noop=true";
     }
 
     @Override

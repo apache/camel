@@ -25,21 +25,21 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- *  The sftp (FTP over SSH) component is used for uploading or downloading files from SFTP servers.
+ * The sftp (FTP over SSH) component is used for uploading or downloading files
+ * from SFTP servers.
  */
-@UriEndpoint(firstVersion = "1.1.0", scheme = "sftp", extendsScheme = "file", title = "SFTP",
-        syntax = "sftp:host:port/directoryName", label = "file",
-        excludeProperties = "appendChars,binary,passiveMode,bufferSize,siteCommand," 
-                + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist," 
-                + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail," 
-                + "renameUsingCopy")
+@UriEndpoint(firstVersion = "1.1.0", scheme = "sftp", extendsScheme = "file", title = "SFTP", syntax = "sftp:host:port/directoryName", label = "file", 
+             excludeProperties = "appendChars,binary,passiveMode,bufferSize,siteCommand,"
+                                 + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
+                                 + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
+                                 + "renameUsingCopy")
 public class SftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
 
     @UriParam
     protected SftpConfiguration configuration;
     @UriParam(label = "advanced")
     protected Proxy proxy;
-    
+
     public SftpEndpoint() {
     }
 
@@ -59,7 +59,7 @@ public class SftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
             throw new IllegalArgumentException("SftpConfiguration expected");
         }
         // need to set on both
-        this.configuration = (SftpConfiguration) configuration;
+        this.configuration = (SftpConfiguration)configuration;
         super.setConfiguration(configuration);
     }
 
@@ -78,6 +78,7 @@ public class SftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
 
     /**
      * Default Existing File Move Strategy
+     * 
      * @return the default implementation for sftp component
      */
     private FileMoveExistingStrategy createDefaultSftpMoveExistingFileStrategy() {
@@ -96,8 +97,8 @@ public class SftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
     }
 
     /**
-     * To use a custom configured com.jcraft.jsch.Proxy.
-     * This proxy is used to consume/send messages from the target SFTP host.
+     * To use a custom configured com.jcraft.jsch.Proxy. This proxy is used to
+     * consume/send messages from the target SFTP host.
      */
     public void setProxy(Proxy proxy) {
         this.proxy = proxy;

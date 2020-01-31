@@ -79,5 +79,4 @@ public class FromFtpNotDownloadTest extends FtpServerTestSupport {
         };
     }
 
-
 }

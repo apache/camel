@@ -35,14 +35,14 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
      */
     public void populateHeaders(GenericFileMessage<T> message) {
         if (message != null) {
-            // because there is not probeContentType option 
+            // because there is not probeContentType option
             // in other file based components, false may be passed
             // as the second argument.
             super.populateHeaders(message, false);
             message.setHeader("CamelFileHost", getHostname());
         }
     }
-    
+
     @Override
     public void populateHeaders(GenericFileMessage<T> message, boolean isProbeContentTypeFromEndpoint) {
         populateHeaders(message);
@@ -61,7 +61,7 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
         // always use / as separator for FTP
         return '/';
     }
-    
+
     @Override
     protected boolean isAbsolute(String name) {
         if (name.length() > 0) {
@@ -69,16 +69,16 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
         }
         return false;
     }
-    
+
     @Override
-    protected String normalizePath(String name) {        
+    protected String normalizePath(String name) {
         return name;
     }
 
     @Override
     public void copyFromPopulateAdditional(GenericFile<T> source, GenericFile<T> result) {
-        RemoteFile<?> remoteSource = (RemoteFile<?>) source;
-        RemoteFile<?> remoteResult = (RemoteFile<?>) result;
+        RemoteFile<?> remoteSource = (RemoteFile<?>)source;
+        RemoteFile<?> remoteResult = (RemoteFile<?>)result;
 
         remoteResult.setHostname(remoteSource.getHostname());
     }

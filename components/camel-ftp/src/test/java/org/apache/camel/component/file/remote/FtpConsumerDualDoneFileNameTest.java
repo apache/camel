@@ -54,9 +54,7 @@ public class FtpConsumerDualDoneFileNameTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(getFtpUrl() + "&doneFileName=${file:name}.ready")
-                    .convertBodyTo(String.class)
-                    .to("mock:result");
+                from(getFtpUrl() + "&doneFileName=${file:name}.ready").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

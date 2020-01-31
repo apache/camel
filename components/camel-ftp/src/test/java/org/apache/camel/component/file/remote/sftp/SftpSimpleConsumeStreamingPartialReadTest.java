@@ -30,7 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests that a file move can occur on the server even if the remote stream was only partially read.
+ * Tests that a file move can occur on the server even if the remote stream was
+ * only partially read.
  */
 public class SftpSimpleConsumeStreamingPartialReadTest extends SftpServerTestSupport {
 
@@ -48,16 +49,16 @@ public class SftpSimpleConsumeStreamingPartialReadTest extends SftpServerTestSup
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
-        
+
         context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
-        GenericFile<?> remoteFile1 = (GenericFile<?>) mock.getExchanges().get(0).getIn().getBody();
+        GenericFile<?> remoteFile1 = (GenericFile<?>)mock.getExchanges().get(0).getIn().getBody();
         assertTrue(remoteFile1.getBody() instanceof InputStream);
-        
+
         // Wait a little bit for the move to finish.
         Thread.sleep(2000);
-        
+
         File resultFile = new File(FTP_ROOT_DIR + File.separator + "failed", "hello.txt");
         assertTrue(resultFile.exists());
         assertFalse(resultFile.isDirectory());
@@ -68,25 +69,20 @@ public class SftpSimpleConsumeStreamingPartialReadTest extends SftpServerTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
-                         + "?username=admin&password=admin&delay=10s&disconnect=true&streamDownload=true"
-                         + "&move=done&moveFailed=failed")
-                    .routeId("foo").noAutoStartup()
-                    .process(new Processor() {
-                        
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getIn().getBody(InputStream.class).read();
-                        }
-                    })
-                    .to("mock:result")
-                    .process(new Processor() {
-                        
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            throw new Exception("INTENTIONAL ERROR");
-                        }
-                    });
+                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10s&disconnect=true&streamDownload=true"
+                     + "&move=done&moveFailed=failed").routeId("foo").noAutoStartup().process(new Processor() {
+
+                         @Override
+                         public void process(Exchange exchange) throws Exception {
+                             exchange.getIn().getBody(InputStream.class).read();
+                         }
+                     }).to("mock:result").process(new Processor() {
+
+                         @Override
+                         public void process(Exchange exchange) throws Exception {
+                             throw new Exception("INTENTIONAL ERROR");
+                         }
+                     });
             }
         };
     }

@@ -41,8 +41,10 @@ public class SftpComponent extends RemoteFileComponent<SftpRemoteFile> {
 
     @Override
     protected GenericFileEndpoint<SftpRemoteFile> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        // get the base uri part before the options as they can be non URI valid such as the expression using $ chars
-        // and the URI constructor will regard $ as an illegal character and we dont want to enforce end users to
+        // get the base uri part before the options as they can be non URI valid
+        // such as the expression using $ chars
+        // and the URI constructor will regard $ as an illegal character and we
+        // dont want to enforce end users to
         // to escape the $ for the expression (file language)
         String baseUri = uri;
         if (uri.contains("?")) {
@@ -64,4 +66,3 @@ public class SftpComponent extends RemoteFileComponent<SftpRemoteFile> {
     }
 
 }
-

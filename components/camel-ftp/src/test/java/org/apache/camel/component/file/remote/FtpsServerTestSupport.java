@@ -52,7 +52,7 @@ public abstract class FtpsServerTestSupport extends FtpServerTestSupport {
                 String name = System.getProperty("os.name");
                 String message = nsae.getMessage();
                 LOG.warn("SunX509 is not avail on this platform [{}] Testing is skipped! Real cause: {}", name, message);
-                
+
                 return null;
             } else {
                 // some other error then throw it so the test can fail
@@ -63,38 +63,38 @@ public abstract class FtpsServerTestSupport extends FtpServerTestSupport {
 
     protected FtpServerFactory doCreateFtpServerFactory() throws Exception {
         assertTrue(FTPSERVER_KEYSTORE.exists());
-        
+
         FtpServerFactory serverFactory = super.createFtpServerFactory();
-        
+
         ListenerFactory listenerFactory = new ListenerFactory(serverFactory.getListener(DEFAULT_LISTENER));
         listenerFactory.setImplicitSsl(useImplicit());
         listenerFactory.setSslConfiguration(createSslConfiguration().createSslConfiguration());
-        
+
         serverFactory.addListener(DEFAULT_LISTENER, listenerFactory.createListener());
 
         return serverFactory;
     }
-    
+
     protected SslConfigurationFactory createSslConfiguration() {
         // comment in, if you have trouble with SSL
         // System.setProperty("javax.net.debug", "all");
-        
+
         SslConfigurationFactory sslConfigFactory = new SslConfigurationFactory();
         sslConfigFactory.setSslProtocol(getAuthValue());
-        
+
         sslConfigFactory.setKeystoreFile(FTPSERVER_KEYSTORE);
         sslConfigFactory.setKeystoreType("JKS");
         sslConfigFactory.setKeystoreAlgorithm("SunX509");
         sslConfigFactory.setKeystorePassword(FTPSERVER_KEYSTORE_PASSWORD);
         sslConfigFactory.setKeyPassword(FTPSERVER_KEYSTORE_PASSWORD);
-        
+
         sslConfigFactory.setClientAuthentication(getClientAuth());
-        
+
         if (Boolean.valueOf(getClientAuth())) {
             sslConfigFactory.setTruststoreFile(FTPSERVER_KEYSTORE);
             sslConfigFactory.setTruststoreType("JKS");
             sslConfigFactory.setTruststoreAlgorithm("SunX509");
-            sslConfigFactory.setTruststorePassword(FTPSERVER_KEYSTORE_PASSWORD);            
+            sslConfigFactory.setTruststorePassword(FTPSERVER_KEYSTORE_PASSWORD);
         }
 
         return sslConfigFactory;
@@ -108,13 +108,13 @@ public abstract class FtpsServerTestSupport extends FtpServerTestSupport {
      * @return clientAuthReqd
      */
     protected abstract String getClientAuth();
-    
+
     /**
-     * Should listeners created by this factory automatically be in SSL mode 
+     * Should listeners created by this factory automatically be in SSL mode
      * automatically or must the client explicitly request to use SSL
      */
     protected abstract boolean useImplicit();
-    
+
     /**
      * Set the SSL protocol used for this channel. Supported values are "SSL"
      * and "TLS".

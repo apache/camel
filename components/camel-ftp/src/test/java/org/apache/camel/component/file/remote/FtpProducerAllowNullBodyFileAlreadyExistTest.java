@@ -61,15 +61,11 @@ public class FtpProducerAllowNullBodyFileAlreadyExistTest extends FtpServerTestS
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:appendTypeAppend")
-                        .setHeader(Exchange.FILE_NAME, constant("hello.txt"))
-                        .to(getFtpUrl() + "&allowNullBody=true&fileExist=Append")
-                        .to("mock:appendTypeAppendResult");
+                from("direct:appendTypeAppend").setHeader(Exchange.FILE_NAME, constant("hello.txt")).to(getFtpUrl() + "&allowNullBody=true&fileExist=Append")
+                    .to("mock:appendTypeAppendResult");
 
-                from("direct:appendTypeOverride")
-                        .setHeader(Exchange.FILE_NAME, constant("hello.txt"))
-                        .to(getFtpUrl() + "&allowNullBody=true&fileExist=Override")
-                        .to("mock:appendTypeOverrideResult");
+                from("direct:appendTypeOverride").setHeader(Exchange.FILE_NAME, constant("hello.txt")).to(getFtpUrl() + "&allowNullBody=true&fileExist=Override")
+                    .to("mock:appendTypeOverrideResult");
             }
         };
     }

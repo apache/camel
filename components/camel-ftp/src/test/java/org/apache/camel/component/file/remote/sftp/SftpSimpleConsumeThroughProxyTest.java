@@ -30,8 +30,7 @@ import org.littleshoot.proxy.ProxyAuthorizationHandler;
 public class SftpSimpleConsumeThroughProxyTest extends SftpServerTestSupport {
 
     private final int proxyPort = AvailablePortFinder.getNextAvailable();
-    
-    
+
     @Test
     public void testSftpSimpleConsumeThroughProxy() throws Exception {
         if (!canTest()) {
@@ -57,11 +56,11 @@ public class SftpSimpleConsumeThroughProxyTest extends SftpServerTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
         mock.expectedBodiesReceived(expected);
-        
+
         context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
-        
+
         proxyServer.stop();
     }
 
@@ -70,8 +69,7 @@ public class SftpSimpleConsumeThroughProxyTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10s&disconnect=true&proxy=#proxy")
-                    .routeId("foo").noAutoStartup()
+                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10s&disconnect=true&proxy=#proxy").routeId("foo").noAutoStartup()
                     .to("mock:result");
             }
         };

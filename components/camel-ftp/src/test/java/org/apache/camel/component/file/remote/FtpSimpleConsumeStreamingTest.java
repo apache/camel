@@ -49,7 +49,7 @@ public class FtpSimpleConsumeStreamingTest extends FtpServerTestSupport {
         context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
-        GenericFile<?> remoteFile = (GenericFile<?>) mock.getExchanges().get(0).getIn().getBody();
+        GenericFile<?> remoteFile = (GenericFile<?>)mock.getExchanges().get(0).getIn().getBody();
         assertTrue(remoteFile.getBody() instanceof InputStream);
     }
 
@@ -58,8 +58,7 @@ public class FtpSimpleConsumeStreamingTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ftp://localhost:" + getPort() + "/tmp/mytemp?username=admin&password=admin&delay=10s&disconnect=true&streamDownload=true")
-                    .routeId("foo").noAutoStartup()
+                from("ftp://localhost:" + getPort() + "/tmp/mytemp?username=admin&password=admin&delay=10s&disconnect=true&streamDownload=true").routeId("foo").noAutoStartup()
                     .to("mock:result");
             }
         };

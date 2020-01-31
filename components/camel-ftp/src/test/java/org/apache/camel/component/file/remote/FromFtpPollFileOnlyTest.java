@@ -25,7 +25,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit test to poll a file from the FTP server and not a folder as most test is.
+ * Unit test to poll a file from the FTP server and not a folder as most test
+ * is.
  */
 public class FromFtpPollFileOnlyTest extends FtpServerTestSupport {
 
@@ -47,9 +48,10 @@ public class FromFtpPollFileOnlyTest extends FtpServerTestSupport {
 
         mock.assertIsSatisfied();
     }
-    
+
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
+        // prepares the FTP Server by creating a file on the server that we want
+        // to unit
         // test that we can pool and store as a local file
         Endpoint endpoint = context.getEndpoint("ftp://admin@localhost:" + getPort() + "/fileonly/?password=admin&binary=false");
         Exchange exchange = endpoint.createExchange();

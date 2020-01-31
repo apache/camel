@@ -146,7 +146,13 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
         resumeOffset = 0;
         watch.restart();
         interval.restart();
-        String msg = "Downloading from host: " + host + " file: " + file + " starting "; // add extra space to align with completed
+        String msg = "Downloading from host: " + host + " file: " + file + " starting "; // add
+                                                                                         // extra
+                                                                                         // space
+                                                                                         // to
+                                                                                         // align
+                                                                                         // with
+                                                                                         // completed
         if (fileSize > 0) {
             msg += " (size: " + fileSizeText + ")";
         }
@@ -162,7 +168,7 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
         interval.restart();
         String msg = "Resume downloading from host: " + host + " file: " + file + " at position: " + position + " bytes/" + StringHelper.humanReadableBytes(position);
         if (fileSize > 0) {
-            float percent = ((float) resumeOffset / (float) fileSize) * 100L;
+            float percent = ((float)resumeOffset / (float)fileSize) * 100L;
             String num = String.format("%.1f", percent);
             msg += "/" + num + "% (size: " + fileSizeText + ")";
         }
@@ -174,10 +180,10 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
         totalChunkSize = totalChunkSize + resumeOffset;
         transferredBytes = totalChunkSize;
 
-        String prefix  = resume ? "Resume downloading" : "Downloading";
+        String prefix = resume ? "Resume downloading" : "Downloading";
         String msg = prefix + " from host: " + host + " file: " + file + " chunk (" + chunkSize + "/" + totalChunkSize + " bytes)";
         if (fileSize > 0) {
-            float percent = ((float) totalChunkSize / (float) fileSize) * 100L;
+            float percent = ((float)totalChunkSize / (float)fileSize) * 100L;
             String num = String.format("%.1f", percent);
             // avoid 100.0 as its only done when we get the onDownloadComplete
             if (totalChunkSize < fileSize && "100.0".equals(num)) {
@@ -186,7 +192,8 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
             String size = StringHelper.humanReadableBytes(totalChunkSize);
             msg += " (progress: " + size + "/" + num + "%)";
         } else {
-            // okay we do not know the total size, but then make what we have download so-far human readable
+            // okay we do not know the total size, but then make what we have
+            // download so-far human readable
             String size = StringHelper.humanReadableBytes(totalChunkSize);
             msg += " (downloaded: " + size + ")";
         }
@@ -200,7 +207,7 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
 
     @Override
     public void onDownloadComplete(String host, String file) {
-        String prefix  = resume ? "Resume downloading" : "Downloading";
+        String prefix = resume ? "Resume downloading" : "Downloading";
         String msg = prefix + " from host: " + host + " file: " + file + " completed";
         if (transferredBytes > 0) {
             msg += " (size: " + StringHelper.humanReadableBytes(transferredBytes) + ")";
@@ -229,7 +236,7 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
 
         String msg = "Uploading to host: " + host + " file: " + file + " chunk (" + chunkSize + "/" + totalChunkSize + " bytes)";
         if (fileSize > 0) {
-            float percent = ((float) totalChunkSize / (float) fileSize) * 100L;
+            float percent = ((float)totalChunkSize / (float)fileSize) * 100L;
             String num = String.format("%.1f", percent);
             // avoid 100.0 as its only done when we get the onUploadComplete
             if (totalChunkSize < fileSize && "100.0".equals(num)) {
@@ -238,7 +245,8 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
             String size = StringHelper.humanReadableBytes(totalChunkSize);
             msg += " (progress: " + size + "/" + num + "%)";
         } else {
-            // okay we do not know the total size, but then make what we have uploaded so-far human readable
+            // okay we do not know the total size, but then make what we have
+            // uploaded so-far human readable
             String size = StringHelper.humanReadableBytes(totalChunkSize);
             msg += " (uploaded: " + size + ")";
         }

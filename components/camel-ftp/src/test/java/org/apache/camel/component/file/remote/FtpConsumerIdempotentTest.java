@@ -26,8 +26,7 @@ import org.junit.jupiter.api.Test;
 public class FtpConsumerIdempotentTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort()
-                + "/idempotent?password=admin&binary=false&idempotent=true&delete=true&delay=1000";
+        return "ftp://admin@localhost:" + getPort() + "/idempotent?password=admin&binary=false&idempotent=true&delete=true&delay=1000";
     }
 
     @Test
@@ -50,7 +49,8 @@ public class FtpConsumerIdempotentTest extends FtpServerTestSupport {
         // move file back
         sendFile(getFtpUrl(), "Hello World", "report.txt");
 
-        // should NOT consume the file again, let 2 secs pass to let the consumer try to consume it but it should not
+        // should NOT consume the file again, let 2 secs pass to let the
+        // consumer try to consume it but it should not
         Thread.sleep(2000);
         assertMockEndpointsSatisfied();
     }

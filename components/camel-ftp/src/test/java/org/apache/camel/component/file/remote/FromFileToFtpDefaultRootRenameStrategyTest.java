@@ -39,7 +39,8 @@ public class FromFileToFtpDefaultRootRenameStrategyTest extends FtpServerTestSup
     }
 
     /*
-     * This is our poll we want to test (no folder specified). Uses the rename strategy
+     * This is our poll we want to test (no folder specified). Uses the rename
+     * strategy
      */
     private String getFtpPollingUrl() {
         return "ftp://admin@localhost:" + getPort() + "?password=admin&delete=true&binary=true&delay=1000&initialDelay=1500&readLock=rename";
@@ -55,7 +56,8 @@ public class FromFileToFtpDefaultRootRenameStrategyTest extends FtpServerTestSup
     @Test
     public void testFromFileToFtp() throws Exception {
         File expectedOnFtpServer = new File(FTP_ROOT_DIR + "/logo.jpeg");
-        // the poller won't start for 1.5 seconds, so we check to make sure the file
+        // the poller won't start for 1.5 seconds, so we check to make sure the
+        // file
         // is there first check 1 - is the file there (default root location)
         assertTrue(expectedOnFtpServer.exists());
 

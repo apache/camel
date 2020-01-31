@@ -34,8 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FromFtpPreMoveFilePostfixTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false"
-                + "&preMove=${file:name}.old";
+        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false" + "&preMove=${file:name}.old";
     }
 
     @Override
@@ -49,7 +48,7 @@ public class FromFtpPreMoveFilePostfixTest extends FtpServerTestSupport {
     public void testPollFileAndShouldBeMoved() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        //mock.expectedBodiesReceived("Hello World this file will be moved");
+        // mock.expectedBodiesReceived("Hello World this file will be moved");
 
         mock.assertIsSatisfied();
 
@@ -57,9 +56,10 @@ public class FromFtpPreMoveFilePostfixTest extends FtpServerTestSupport {
         File file = new File(FTP_ROOT_DIR + "/movefile/hello.txt.old");
         assertTrue(file.exists(), "The file should have been moved");
     }
-    
+
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
+        // prepares the FTP Server by creating a file on the server that we want
+        // to unit
         // test that we can pool and store as a local file
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();

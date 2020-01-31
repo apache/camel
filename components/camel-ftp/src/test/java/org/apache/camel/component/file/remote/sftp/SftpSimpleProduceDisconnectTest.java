@@ -37,7 +37,7 @@ public class SftpSimpleProduceDisconnectTest extends SftpServerTestSupport {
         File file = new File(FTP_ROOT_DIR + "/hello.txt");
         assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
-        
+
         // restart the SFTP server now
         tearDownServer();
         setUpServer();
