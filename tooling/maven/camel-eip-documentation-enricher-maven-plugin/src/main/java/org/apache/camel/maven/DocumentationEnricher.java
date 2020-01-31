@@ -78,7 +78,7 @@ public class DocumentationEnricher {
 
         BaseModel<?> model = JsonMapper.generateModel(jsonFile.toPath());
         BaseOptionModel option = Stream.concat(model.getOptions().stream(),
-                    (model instanceof ComponentModel ? ((ComponentModel) model).getEndpointOptions().stream() : Stream.empty()))
+                    model instanceof ComponentModel ? ((ComponentModel) model).getEndpointOptions().stream() : Stream.empty())
                 .filter(o -> name.equals(o.getName()))
                 .findAny().orElse(null);
 
