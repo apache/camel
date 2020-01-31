@@ -36,9 +36,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A file read lock that uses an {@link IdempotentRepository} and {@link FileChangedExclusiveReadLockStrategy changed} as the lock strategy.
- * This allows to plugin and use existing idempotent repositories that for example supports clustering.
- * The other read lock strategies that are using marker files or file locks, are not guaranteed to work in clustered setup with various platform and file systems.
+ * A file read lock that uses an {@link IdempotentRepository} and
+ * {@link FileChangedExclusiveReadLockStrategy changed} as the lock strategy.
+ * This allows to plugin and use existing idempotent repositories that for
+ * example supports clustering. The other read lock strategies that are using
+ * marker files or file locks, are not guaranteed to work in clustered setup
+ * with various platform and file systems.
  */
 public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupport implements GenericFileExclusiveReadLockStrategy<File>, CamelContextAware {
 
@@ -74,7 +77,8 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
 
     @Override
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
-        // in clustered mode then another node may have processed the file so we must check here again if the file exists
+        // in clustered mode then another node may have processed the file so we
+        // must check here again if the file exists
         File path = file.getFile();
         if (!path.exists()) {
             return false;
@@ -223,7 +227,8 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
     }
 
     /**
-     * Whether to remove the file from the idempotent repository when doing a rollback.
+     * Whether to remove the file from the idempotent repository when doing a
+     * rollback.
      * <p/>
      * By default this is true.
      */
@@ -232,7 +237,8 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
     }
 
     /**
-     * Whether to remove the file from the idempotent repository when doing a rollback.
+     * Whether to remove the file from the idempotent repository when doing a
+     * rollback.
      * <p/>
      * By default this is true.
      */
@@ -241,7 +247,8 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
     }
 
     /**
-     * Whether to remove the file from the idempotent repository when doing a commit.
+     * Whether to remove the file from the idempotent repository when doing a
+     * commit.
      * <p/>
      * By default this is false.
      */
@@ -250,7 +257,8 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
     }
 
     /**
-     * Whether to remove the file from the idempotent repository when doing a commit.
+     * Whether to remove the file from the idempotent repository when doing a
+     * commit.
      * <p/>
      * By default this is false.
      */
@@ -281,7 +289,8 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
     }
 
     /**
-     * The number of threads in the scheduled thread pool when using asynchronous release tasks.
+     * The number of threads in the scheduled thread pool when using
+     * asynchronous release tasks.
      */
     public void setReadLockIdempotentReleaseAsyncPoolSize(int readLockIdempotentReleaseAsyncPoolSize) {
         this.readLockIdempotentReleaseAsyncPoolSize = readLockIdempotentReleaseAsyncPoolSize;
@@ -299,7 +308,8 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
     }
 
     protected String asKey(GenericFile<File> file) {
-        // use absolute file path as default key, but evaluate if an expression key was configured
+        // use absolute file path as default key, but evaluate if an expression
+        // key was configured
         String key = file.getAbsoluteFilePath();
         if (endpoint.getIdempotentKey() != null) {
             Exchange dummy = endpoint.createExchange(file);
@@ -314,8 +324,8 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
         ObjectHelper.notNull(idempotentRepository, "idempotentRepository", this);
 
         if (readLockIdempotentReleaseAsync && readLockIdempotentReleaseExecutorService == null) {
-            readLockIdempotentReleaseExecutorService = camelContext.getExecutorServiceManager().newScheduledThreadPool(
-                this, "ReadLockChangedIdempotentReleaseTask", readLockIdempotentReleaseAsyncPoolSize);
+            readLockIdempotentReleaseExecutorService = camelContext.getExecutorServiceManager().newScheduledThreadPool(this, "ReadLockChangedIdempotentReleaseTask",
+                                                                                                                       readLockIdempotentReleaseAsyncPoolSize);
             shutdownExecutorService = true;
         }
     }

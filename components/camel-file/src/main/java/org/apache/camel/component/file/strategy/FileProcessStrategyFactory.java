@@ -36,10 +36,11 @@ public final class FileProcessStrategyFactory {
 
     public static GenericFileProcessStrategy<File> createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
 
-        // We assume a value is present only if its value not null for String and 'true' for boolean
-        Expression moveExpression = (Expression) params.get("move");
-        Expression moveFailedExpression = (Expression) params.get("moveFailed");
-        Expression preMoveExpression = (Expression) params.get("preMove");
+        // We assume a value is present only if its value not null for String
+        // and 'true' for boolean
+        Expression moveExpression = (Expression)params.get("move");
+        Expression moveFailedExpression = (Expression)params.get("moveFailed");
+        Expression preMoveExpression = (Expression)params.get("preMove");
         boolean isNoop = params.get("noop") != null;
         boolean isDelete = params.get("delete") != null;
         boolean isMove = moveExpression != null || preMoveExpression != null || moveFailedExpression != null;
@@ -85,7 +86,8 @@ public final class FileProcessStrategyFactory {
             }
             return strategy;
         } else {
-            // default strategy will move files in a .camel/ subfolder where the file was consumed
+            // default strategy will move files in a .camel/ subfolder where the
+            // file was consumed
             GenericFileRenameProcessStrategy<File> strategy = new GenericFileRenameProcessStrategy<>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             strategy.setCommitRenamer(getDefaultCommitRenamer(context));
@@ -102,13 +104,13 @@ public final class FileProcessStrategyFactory {
 
     @SuppressWarnings("unchecked")
     private static GenericFileExclusiveReadLockStrategy<File> getExclusiveReadLockStrategy(Map<String, Object> params) {
-        GenericFileExclusiveReadLockStrategy<File> strategy = (GenericFileExclusiveReadLockStrategy<File>) params.get("exclusiveReadLockStrategy");
+        GenericFileExclusiveReadLockStrategy<File> strategy = (GenericFileExclusiveReadLockStrategy<File>)params.get("exclusiveReadLockStrategy");
         if (strategy != null) {
             return strategy;
         }
 
         // no explicit strategy set then fallback to readLock option
-        String readLock = (String) params.get("readLock");
+        String readLock = (String)params.get("readLock");
         if (ObjectHelper.isNotEmpty(readLock)) {
             if ("none".equals(readLock) || "false".equals(readLock)) {
                 return null;
@@ -120,96 +122,96 @@ public final class FileProcessStrategyFactory {
                 strategy = new FileRenameExclusiveReadLockStrategy();
             } else if ("changed".equals(readLock)) {
                 FileChangedExclusiveReadLockStrategy readLockStrategy = new FileChangedExclusiveReadLockStrategy();
-                Long minLength = (Long) params.get("readLockMinLength");
+                Long minLength = (Long)params.get("readLockMinLength");
                 if (minLength != null) {
                     readLockStrategy.setMinLength(minLength);
                 }
-                Long minAge = (Long) params.get("readLockMinAge");
+                Long minAge = (Long)params.get("readLockMinAge");
                 if (null != minAge) {
                     readLockStrategy.setMinAge(minAge);
                 }
                 strategy = readLockStrategy;
             } else if ("idempotent".equals(readLock)) {
                 FileIdempotentRepositoryReadLockStrategy readLockStrategy = new FileIdempotentRepositoryReadLockStrategy();
-                Boolean readLockRemoveOnRollback = (Boolean) params.get("readLockRemoveOnRollback");
+                Boolean readLockRemoveOnRollback = (Boolean)params.get("readLockRemoveOnRollback");
                 if (readLockRemoveOnRollback != null) {
                     readLockStrategy.setRemoveOnRollback(readLockRemoveOnRollback);
                 }
-                Boolean readLockRemoveOnCommit = (Boolean) params.get("readLockRemoveOnCommit");
+                Boolean readLockRemoveOnCommit = (Boolean)params.get("readLockRemoveOnCommit");
                 if (readLockRemoveOnCommit != null) {
                     readLockStrategy.setRemoveOnCommit(readLockRemoveOnCommit);
                 }
-                IdempotentRepository repo = (IdempotentRepository) params.get("readLockIdempotentRepository");
+                IdempotentRepository repo = (IdempotentRepository)params.get("readLockIdempotentRepository");
                 if (repo != null) {
                     readLockStrategy.setIdempotentRepository(repo);
                 }
-                Integer readLockIdempotentReleaseDelay = (Integer) params.get("readLockIdempotentReleaseDelay");
+                Integer readLockIdempotentReleaseDelay = (Integer)params.get("readLockIdempotentReleaseDelay");
                 if (readLockIdempotentReleaseDelay != null) {
                     readLockStrategy.setReadLockIdempotentReleaseDelay(readLockIdempotentReleaseDelay);
                 }
-                Boolean readLockIdempotentReleaseAsync = (Boolean) params.get("readLockIdempotentReleaseAsync");
+                Boolean readLockIdempotentReleaseAsync = (Boolean)params.get("readLockIdempotentReleaseAsync");
                 if (readLockIdempotentReleaseAsync != null) {
                     readLockStrategy.setReadLockIdempotentReleaseAsync(readLockIdempotentReleaseAsync);
                 }
-                Integer readLockIdempotentReleaseAsyncPoolSize = (Integer) params.get("readLockIdempotentReleaseAsyncPoolSize");
+                Integer readLockIdempotentReleaseAsyncPoolSize = (Integer)params.get("readLockIdempotentReleaseAsyncPoolSize");
                 if (readLockIdempotentReleaseAsyncPoolSize != null) {
                     readLockStrategy.setReadLockIdempotentReleaseAsyncPoolSize(readLockIdempotentReleaseAsyncPoolSize);
                 }
-                ScheduledExecutorService readLockIdempotentReleaseExecutorService = (ScheduledExecutorService) params.get("readLockIdempotentReleaseExecutorService");
+                ScheduledExecutorService readLockIdempotentReleaseExecutorService = (ScheduledExecutorService)params.get("readLockIdempotentReleaseExecutorService");
                 if (readLockIdempotentReleaseExecutorService != null) {
                     readLockStrategy.setReadLockIdempotentReleaseExecutorService(readLockIdempotentReleaseExecutorService);
                 }
                 strategy = readLockStrategy;
             } else if ("idempotent-changed".equals(readLock)) {
                 FileIdempotentChangedRepositoryReadLockStrategy readLockStrategy = new FileIdempotentChangedRepositoryReadLockStrategy();
-                Boolean readLockRemoveOnRollback = (Boolean) params.get("readLockRemoveOnRollback");
+                Boolean readLockRemoveOnRollback = (Boolean)params.get("readLockRemoveOnRollback");
                 if (readLockRemoveOnRollback != null) {
                     readLockStrategy.setRemoveOnRollback(readLockRemoveOnRollback);
                 }
-                Boolean readLockRemoveOnCommit = (Boolean) params.get("readLockRemoveOnCommit");
+                Boolean readLockRemoveOnCommit = (Boolean)params.get("readLockRemoveOnCommit");
                 if (readLockRemoveOnCommit != null) {
                     readLockStrategy.setRemoveOnCommit(readLockRemoveOnCommit);
                 }
-                IdempotentRepository repo = (IdempotentRepository) params.get("readLockIdempotentRepository");
+                IdempotentRepository repo = (IdempotentRepository)params.get("readLockIdempotentRepository");
                 if (repo != null) {
                     readLockStrategy.setIdempotentRepository(repo);
                 }
-                Long minLength = (Long) params.get("readLockMinLength");
+                Long minLength = (Long)params.get("readLockMinLength");
                 if (minLength != null) {
                     readLockStrategy.setMinLength(minLength);
                 }
-                Long minAge = (Long) params.get("readLockMinAge");
+                Long minAge = (Long)params.get("readLockMinAge");
                 if (null != minAge) {
                     readLockStrategy.setMinAge(minAge);
                 }
-                Integer readLockIdempotentReleaseDelay = (Integer) params.get("readLockIdempotentReleaseDelay");
+                Integer readLockIdempotentReleaseDelay = (Integer)params.get("readLockIdempotentReleaseDelay");
                 if (readLockIdempotentReleaseDelay != null) {
                     readLockStrategy.setReadLockIdempotentReleaseDelay(readLockIdempotentReleaseDelay);
                 }
-                Boolean readLockIdempotentReleaseAsync = (Boolean) params.get("readLockIdempotentReleaseAsync");
+                Boolean readLockIdempotentReleaseAsync = (Boolean)params.get("readLockIdempotentReleaseAsync");
                 if (readLockIdempotentReleaseAsync != null) {
                     readLockStrategy.setReadLockIdempotentReleaseAsync(readLockIdempotentReleaseAsync);
                 }
-                Integer readLockIdempotentReleaseAsyncPoolSize = (Integer) params.get("readLockIdempotentReleaseAsyncPoolSize");
+                Integer readLockIdempotentReleaseAsyncPoolSize = (Integer)params.get("readLockIdempotentReleaseAsyncPoolSize");
                 if (readLockIdempotentReleaseAsyncPoolSize != null) {
                     readLockStrategy.setReadLockIdempotentReleaseAsyncPoolSize(readLockIdempotentReleaseAsyncPoolSize);
                 }
-                ScheduledExecutorService readLockIdempotentReleaseExecutorService = (ScheduledExecutorService) params.get("readLockIdempotentReleaseExecutorService");
+                ScheduledExecutorService readLockIdempotentReleaseExecutorService = (ScheduledExecutorService)params.get("readLockIdempotentReleaseExecutorService");
                 if (readLockIdempotentReleaseExecutorService != null) {
                     readLockStrategy.setReadLockIdempotentReleaseExecutorService(readLockIdempotentReleaseExecutorService);
                 }
                 strategy = readLockStrategy;
             } else if ("idempotent-rename".equals(readLock)) {
                 FileIdempotentRenameRepositoryReadLockStrategy readLockStrategy = new FileIdempotentRenameRepositoryReadLockStrategy();
-                Boolean readLockRemoveOnRollback = (Boolean) params.get("readLockRemoveOnRollback");
+                Boolean readLockRemoveOnRollback = (Boolean)params.get("readLockRemoveOnRollback");
                 if (readLockRemoveOnRollback != null) {
                     readLockStrategy.setRemoveOnRollback(readLockRemoveOnRollback);
                 }
-                Boolean readLockRemoveOnCommit = (Boolean) params.get("readLockRemoveOnCommit");
+                Boolean readLockRemoveOnCommit = (Boolean)params.get("readLockRemoveOnCommit");
                 if (readLockRemoveOnCommit != null) {
                     readLockStrategy.setRemoveOnCommit(readLockRemoveOnCommit);
                 }
-                IdempotentRepository repo = (IdempotentRepository) params.get("readLockIdempotentRepository");
+                IdempotentRepository repo = (IdempotentRepository)params.get("readLockIdempotentRepository");
                 if (repo != null) {
                     readLockStrategy.setIdempotentRepository(repo);
                 }
@@ -217,23 +219,23 @@ public final class FileProcessStrategyFactory {
             }
 
             if (strategy != null) {
-                Long timeout = (Long) params.get("readLockTimeout");
+                Long timeout = (Long)params.get("readLockTimeout");
                 if (timeout != null) {
                     strategy.setTimeout(timeout);
                 }
-                Long checkInterval = (Long) params.get("readLockCheckInterval");
+                Long checkInterval = (Long)params.get("readLockCheckInterval");
                 if (checkInterval != null) {
                     strategy.setCheckInterval(checkInterval);
                 }
-                LoggingLevel readLockLoggingLevel = (LoggingLevel) params.get("readLockLoggingLevel");
+                LoggingLevel readLockLoggingLevel = (LoggingLevel)params.get("readLockLoggingLevel");
                 if (readLockLoggingLevel != null) {
                     strategy.setReadLockLoggingLevel(readLockLoggingLevel);
                 }
-                Boolean readLockMarkerFile = (Boolean) params.get("readLockMarkerFile");
+                Boolean readLockMarkerFile = (Boolean)params.get("readLockMarkerFile");
                 if (readLockMarkerFile != null) {
                     strategy.setMarkerFiler(readLockMarkerFile);
                 }
-                Boolean readLockDeleteOrphanLockFiles = (Boolean) params.get("readLockDeleteOrphanLockFiles");
+                Boolean readLockDeleteOrphanLockFiles = (Boolean)params.get("readLockDeleteOrphanLockFiles");
                 if (readLockDeleteOrphanLockFiles != null) {
                     strategy.setDeleteOrphanLockFiles(readLockDeleteOrphanLockFiles);
                 }

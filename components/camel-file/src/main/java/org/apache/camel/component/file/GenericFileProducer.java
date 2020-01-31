@@ -42,7 +42,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
     protected final GenericFileEndpoint<T> endpoint;
     protected GenericFileOperations<T> operations;
-    // assume writing to 100 different files concurrently at most for the same file producer
+    // assume writing to 100 different files concurrently at most for the same
+    // file producer
     private final Map<String, Lock> locks = Collections.synchronizedMap(LRUCacheFactory.newLRUCache(100));
 
     protected GenericFileProducer(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations) {
@@ -67,7 +68,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
         // create the target file name
         String target = createFileName(exchange);
 
-        // use lock for same file name to avoid concurrent writes to the same file
+        // use lock for same file name to avoid concurrent writes to the same
+        // file
         // for example when you concurrently append to the same file
         Lock lock = locks.computeIfAbsent(target, f -> new ReentrantLock());
 
@@ -78,7 +80,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
             // do not remove as the locks cache has an upper bound
             // this ensure the locks is appropriate reused
             lock.unlock();
-            // and remove the write file name header as we only want to use it once (by design)
+            // and remove the write file name header as we only want to use it
+            // once (by design)
             exchange.getIn().removeHeader(Exchange.OVERRULE_FILE_NAME);
             // and restore existing file name
             exchange.getIn().setHeader(Exchange.FILE_NAME, existing);
@@ -100,7 +103,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
      * Perform the work to process the fileExchange
      *
      * @param exchange fileExchange
-     * @param target   the target filename
+     * @param target the target filename
      * @throws Exception is thrown if some error
      */
     protected void processExchange(Exchange exchange, String target) throws Exception {
@@ -109,7 +112,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
         try {
             preWriteCheck(exchange);
 
-            // should we write to a temporary name and then afterwards rename to real target
+            // should we write to a temporary name and then afterwards rename to
+            // real target
             boolean writeAsTempAndRename = ObjectHelper.isNotEmpty(endpoint.getTempFileName());
             String tempTarget = null;
             // remember if target exists to avoid checking twice
@@ -119,19 +123,20 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 tempTarget = createTempFileName(exchange, target);
 
                 LOG.trace("Writing using tempNameFile: {}", tempTarget);
-               
-                //if we should eager delete target file before deploying temporary file
+
+                // if we should eager delete target file before deploying
+                // temporary file
                 if (endpoint.getFileExist() != GenericFileExist.TryRename && endpoint.isEagerDeleteTargetFile()) {
-                    
+
                     // cater for file exists option on the real target as
                     // the file operations code will work on the temp file
 
                     // if an existing file already exists what should we do?
                     targetExists = operations.existsFile(target);
                     if (targetExists) {
-                        
+
                         LOG.trace("EagerDeleteTargetFile, target exists");
-                        
+
                         if (endpoint.getFileExist() == GenericFileExist.Ignore) {
                             // ignore but indicate that the file was written
                             LOG.trace("An existing file already exists: {}. Ignore and do not override it.", target);
@@ -142,8 +147,10 @@ public class GenericFileProducer<T> extends DefaultProducer {
                             // move any existing file first
                             doMoveExistingFile(target);
                         } else if (endpoint.isEagerDeleteTargetFile() && endpoint.getFileExist() == GenericFileExist.Override) {
-                            // we override the target so we do this by deleting it so the temp file can be renamed later
-                            // with success as the existing target file have been deleted
+                            // we override the target so we do this by deleting
+                            // it so the temp file can be renamed later
+                            // with success as the existing target file have
+                            // been deleted
                             LOG.trace("Eagerly deleting existing file: {}", target);
                             if (!operations.deleteFile(target)) {
                                 throw new GenericFileOperationFailedException("Cannot delete file: " + target);
@@ -183,8 +190,10 @@ public class GenericFileProducer<T> extends DefaultProducer {
                         } else if (endpoint.getFileExist() == GenericFileExist.Fail) {
                             throw new GenericFileOperationFailedException("File already exist: " + target + ". Cannot write new file.");
                         } else if (endpoint.getFileExist() == GenericFileExist.Override) {
-                            // we override the target so we do this by deleting it so the temp file can be renamed later
-                            // with success as the existing target file have been deleted
+                            // we override the target so we do this by deleting
+                            // it so the temp file can be renamed later
+                            // with success as the existing target file have
+                            // been deleted
                             LOG.trace("Deleting existing file: {}", target);
                             if (!operations.deleteFile(target)) {
                                 throw new GenericFileOperationFailedException("Cannot delete file: " + target);
@@ -206,7 +215,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 String doneFileName = endpoint.createDoneFileName(target);
                 StringHelper.notEmpty(doneFileName, "doneFileName", endpoint);
 
-                // create empty exchange with empty body to write as the done file
+                // create empty exchange with empty body to write as the done
+                // file
                 Exchange empty = new DefaultExchange(exchange);
                 empty.getIn().setBody("");
 
@@ -231,8 +241,10 @@ public class GenericFileProducer<T> extends DefaultProducer {
     }
 
     private void doMoveExistingFile(String fileName) throws GenericFileOperationFailedException {
-        // need to evaluate using a dummy and simulate the file first, to have access to all the file attributes
-        // create a dummy exchange as Exchange is needed for expression evaluation
+        // need to evaluate using a dummy and simulate the file first, to have
+        // access to all the file attributes
+        // create a dummy exchange as Exchange is needed for expression
+        // evaluation
         // we support only the following 3 tokens.
         Exchange dummy = endpoint.createExchange();
         String parent = FileUtil.onlyPath(fileName);
@@ -242,7 +254,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
         dummy.getIn().setHeader(Exchange.FILE_PARENT, parent);
 
         String to = endpoint.getMoveExisting().evaluate(dummy, String.class);
-        // we must normalize it (to avoid having both \ and / in the name which confuses java.io.File)
+        // we must normalize it (to avoid having both \ and / in the name which
+        // confuses java.io.File)
         to = FileUtil.normalizePath(to);
         if (ObjectHelper.isEmpty(to)) {
             throw new GenericFileOperationFailedException("moveExisting evaluated as empty String, cannot move existing file: " + fileName);
@@ -256,21 +269,24 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
     /**
      * If we fail writing out a file, we will call this method. This hook is
-     * provided to disconnect from servers or clean up files we created (if needed).
+     * provided to disconnect from servers or clean up files we created (if
+     * needed).
      */
     public void handleFailedWrite(Exchange exchange, Exception exception) throws Exception {
         throw exception;
     }
 
     /**
-     * Perform any actions that need to occur before we write such as connecting to an FTP server etc.
+     * Perform any actions that need to occur before we write such as connecting
+     * to an FTP server etc.
      */
     public void preWriteCheck(Exchange exchange) throws Exception {
         // nothing needed to check
     }
 
     /**
-     * Perform any actions that need to occur after we are done such as disconnecting.
+     * Perform any actions that need to occur after we are done such as
+     * disconnecting.
      */
     public void postWriteCheck(Exchange exchange) {
         // nothing needed to check
@@ -279,7 +295,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
     public void writeFile(Exchange exchange, String fileName) throws GenericFileOperationFailedException {
         // build directory if auto create is enabled
         if (endpoint.isAutoCreate()) {
-            // we must normalize it (to avoid having both \ and / in the name which confuses java.io.File)
+            // we must normalize it (to avoid having both \ and / in the name
+            // which confuses java.io.File)
             String name = FileUtil.normalizePath(fileName);
 
             // use java.io.File to compute the file path
@@ -322,19 +339,20 @@ public class GenericFileProducer<T> extends DefaultProducer {
             value = exchange.getIn().getHeader(Exchange.FILE_NAME);
         }
 
-        // if we have an overrule then override the existing header to use the overrule computed name from this point forward
+        // if we have an overrule then override the existing header to use the
+        // overrule computed name from this point forward
         if (overrule != null) {
             exchange.getIn().setHeader(Exchange.FILE_NAME, value);
         }
 
-        if (value instanceof String && StringHelper.hasStartToken((String) value, "simple")) {
+        if (value instanceof String && StringHelper.hasStartToken((String)value, "simple")) {
             LOG.warn("Simple expression: {} detected in header: {} of type String. This feature has been removed (see CAMEL-6748).", value, Exchange.FILE_NAME);
         }
 
         // expression support
         Expression expression = endpoint.getFileName();
         if (value instanceof Expression) {
-            expression = (Expression) value;
+            expression = (Expression)value;
         }
 
         // evaluate the name as a String from the value
@@ -359,8 +377,10 @@ public class GenericFileProducer<T> extends DefaultProducer {
         String endpointPath = endpoint.getConfiguration().getDirectory();
         String baseDir = "";
         if (endpointPath.length() > 0) {
-            // Its a directory so we should use it as a base path for the filename
-            // If the path isn't empty, we need to add a trailing / if it isn't already there
+            // Its a directory so we should use it as a base path for the
+            // filename
+            // If the path isn't empty, we need to add a trailing / if it isn't
+            // already there
             baseDir = endpointPath;
             boolean trailingSlash = endpointPath.endsWith("/") || endpointPath.endsWith("\\");
             if (!trailingSlash) {
@@ -375,7 +395,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
         }
 
         if (endpoint.isJailStartingDirectory()) {
-            // check for file must be within starting directory (need to compact first as the name can be using relative paths via ../ etc)
+            // check for file must be within starting directory (need to compact
+            // first as the name can be using relative paths via ../ etc)
             String compatchAnswer = FileUtil.compactPath(answer);
             String compatchBaseDir = FileUtil.compactPath(baseDir);
             if (!compatchAnswer.startsWith(compatchBaseDir)) {
@@ -396,7 +417,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
         String tempName;
         if (exchange.getIn().getHeader(Exchange.FILE_NAME) == null) {
-            // its a generated filename then add it to header so we can evaluate the expression
+            // its a generated filename then add it to header so we can evaluate
+            // the expression
             exchange.getIn().setHeader(Exchange.FILE_NAME, FileUtil.stripPath(fileName));
             tempName = endpoint.getTempFileName().evaluate(exchange, String.class);
             // and remove it again after evaluation

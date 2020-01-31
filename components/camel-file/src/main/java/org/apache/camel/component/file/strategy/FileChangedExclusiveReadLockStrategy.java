@@ -29,10 +29,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Acquires exclusive read lock to the given file by checking whether the file is being
- * changed by scanning the file at different intervals (to detect changes).
+ * Acquires exclusive read lock to the given file by checking whether the file
+ * is being changed by scanning the file at different intervals (to detect
+ * changes).
  * <p/>
- * Setting the option {@link #setMarkerFiler(boolean)} to <tt>false</tt> allows to turn off using marker files.
+ * Setting the option {@link #setMarkerFiler(boolean)} to <tt>false</tt> allows
+ * to turn off using marker files.
  */
 public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveReadLockStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(FileChangedExclusiveReadLockStrategy.class);
@@ -64,9 +66,9 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
             if (timeout > 0) {
                 long delta = watch.taken();
                 if (delta > timeout) {
-                    CamelLogger.log(LOG, readLockLoggingLevel,
-                            "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
-                    // we could not get the lock within the timeout period, so return false
+                    CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
+                    // we could not get the lock within the timeout period, so
+                    // return false
                     return false;
                 }
             }
@@ -94,7 +96,8 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
 
                 boolean interrupted = sleep();
                 if (interrupted) {
-                    // we were interrupted while sleeping, we are likely being shutdown so return false
+                    // we were interrupted while sleeping, we are likely being
+                    // shutdown so return false
                     return false;
                 }
             }

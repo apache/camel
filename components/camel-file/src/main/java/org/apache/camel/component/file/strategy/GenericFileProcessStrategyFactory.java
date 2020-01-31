@@ -32,17 +32,18 @@ public final class GenericFileProcessStrategyFactory {
     @SuppressWarnings("unchecked")
     public static <T> GenericFileProcessStrategy<T> createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
 
-        // We assume a value is present only if its value not null for String and 'true' for boolean
-        Expression moveExpression = (Expression) params.get("move");
-        Expression moveFailedExpression = (Expression) params.get("moveFailed");
-        Expression preMoveExpression = (Expression) params.get("preMove");
+        // We assume a value is present only if its value not null for String
+        // and 'true' for boolean
+        Expression moveExpression = (Expression)params.get("move");
+        Expression moveFailedExpression = (Expression)params.get("moveFailed");
+        Expression preMoveExpression = (Expression)params.get("preMove");
         boolean isNoop = params.get("noop") != null;
         boolean isDelete = params.get("delete") != null;
         boolean isMove = moveExpression != null || preMoveExpression != null || moveFailedExpression != null;
 
         if (isDelete) {
             GenericFileDeleteProcessStrategy<T> strategy = new GenericFileDeleteProcessStrategy<>();
-            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<T>) getExclusiveReadLockStrategy(params));
+            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<T>)getExclusiveReadLockStrategy(params));
             if (preMoveExpression != null) {
                 GenericFileExpressionRenamer<T> renamer = new GenericFileExpressionRenamer<>();
                 renamer.setExpression(preMoveExpression);
@@ -56,7 +57,7 @@ public final class GenericFileProcessStrategyFactory {
             return strategy;
         } else if (isMove || isNoop) {
             GenericFileRenameProcessStrategy<T> strategy = new GenericFileRenameProcessStrategy<>();
-            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<T>) getExclusiveReadLockStrategy(params));
+            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<T>)getExclusiveReadLockStrategy(params));
             if (!isNoop && moveExpression != null) {
                 // move on commit is only possible if not noop
                 GenericFileExpressionRenamer<T> renamer = new GenericFileExpressionRenamer<>();
@@ -79,30 +80,30 @@ public final class GenericFileProcessStrategyFactory {
         } else {
             // default strategy will do nothing
             GenericFileNoOpProcessStrategy<T> strategy = new GenericFileNoOpProcessStrategy<>();
-            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<T>) getExclusiveReadLockStrategy(params));
+            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<T>)getExclusiveReadLockStrategy(params));
             return strategy;
         }
     }
 
     @SuppressWarnings("unchecked")
     private static <T> GenericFileExclusiveReadLockStrategy<T> getExclusiveReadLockStrategy(Map<String, Object> params) {
-        GenericFileExclusiveReadLockStrategy<T> strategy = (GenericFileExclusiveReadLockStrategy<T>) params.get("exclusiveReadLockStrategy");
+        GenericFileExclusiveReadLockStrategy<T> strategy = (GenericFileExclusiveReadLockStrategy<T>)params.get("exclusiveReadLockStrategy");
         if (strategy != null) {
             return strategy;
         }
 
         // no explicit strategy set then fallback to readLock option
-        String readLock = (String) params.get("readLock");
+        String readLock = (String)params.get("readLock");
         if (ObjectHelper.isNotEmpty(readLock)) {
             if ("none".equals(readLock) || "false".equals(readLock)) {
                 return null;
             } else if ("rename".equals(readLock)) {
                 GenericFileRenameExclusiveReadLockStrategy<T> readLockStrategy = new GenericFileRenameExclusiveReadLockStrategy<>();
-                Long timeout = (Long) params.get("readLockTimeout");
+                Long timeout = (Long)params.get("readLockTimeout");
                 if (timeout != null) {
                     readLockStrategy.setTimeout(timeout);
                 }
-                Boolean readLockMarkerFile = (Boolean) params.get("readLockMarkerFile");
+                Boolean readLockMarkerFile = (Boolean)params.get("readLockMarkerFile");
                 if (readLockMarkerFile != null) {
                     readLockStrategy.setMarkerFiler(readLockMarkerFile);
                 }

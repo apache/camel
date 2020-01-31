@@ -52,7 +52,8 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
         // create the correct endpoint based on the protocol
         final GenericFileEndpoint<T> endpoint;
 
-        // call to subclasses to build their custom version of a GenericFileEndpoint
+        // call to subclasses to build their custom version of a
+        // GenericFileEndpoint
         endpoint = buildFileEndpoint(uri, remaining, parameters);
 
         // sort by using file language
@@ -77,7 +78,7 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
      *
      * @param uri the full URI of the endpoint
      * @param remaining the remaining part of the URI without the query
-     *                parameters or component prefix
+     *            parameters or component prefix
      * @param parameters the optional parameters passed in
      * @return a newly created endpoint or null if the endpoint cannot be
      *         created based on the inputs
@@ -86,7 +87,8 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
     protected abstract GenericFileEndpoint<T> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception;
 
     /**
-     * A factory method for derived file components to perform validation of properties
+     * A factory method for derived file components to perform validation of
+     * properties
      *
      * @param endpoint the endpoint
      * @throws Exception can be thrown in case of validation errors
@@ -115,7 +117,6 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
         StringHelper.notEmpty(reminder, "sortBy expression", this);
 
         // recursive add nested sorters
-        return GenericFileDefaultSorter.sortByFileLanguage(getCamelContext(), 
-            reminder, reverse, ignoreCase, createSortByComparator(it));
+        return GenericFileDefaultSorter.sortByFileLanguage(getCamelContext(), reminder, reverse, ignoreCase, createSortByComparator(it));
     }
 }

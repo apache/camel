@@ -55,7 +55,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
     private final FileOperations operations = new FileOperations(this);
 
-    @UriPath(name = "directoryName") @Metadata(required = true)
+    @UriPath(name = "directoryName")
+    @Metadata(required = true)
     private File file;
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean copyAndDeleteOnRenameFail = true;
@@ -152,11 +153,12 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         ObjectHelper.notNull(file, "file");
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
-                getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(), getPollingConsumerBlockTimeout());
+            LOG.debug("Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}", getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(),
+                      getPollingConsumerBlockTimeout());
         }
         GenericFilePollingConsumer result = new GenericFilePollingConsumer(this);
-        // should not call configurePollingConsumer when its GenericFilePollingConsumer
+        // should not call configurePollingConsumer when its
+        // GenericFilePollingConsumer
         result.setBlockWhenFull(isPollingConsumerBlockWhenFull());
         result.setBlockTimeout(getPollingConsumerBlockTimeout());
 
@@ -196,7 +198,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     /**
      * Strategy to create a new {@link FileConsumer}
      *
-     * @param processor  the given processor
+     * @param processor the given processor
      * @param operations file operations
      * @return the created consumer
      */
@@ -206,6 +208,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
     /**
      * Default Existing File Move Strategy
+     * 
      * @return the default implementation for file component
      */
     private FileMoveExistingStrategy createDefaultMoveExistingFileStrategy() {
@@ -236,7 +239,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     @Override
-    public char getFileSeparator() {       
+    public char getFileSeparator() {
         return File.separatorChar;
     }
 
@@ -251,7 +254,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     /**
-     * Whether to fallback and do a copy and delete file, in case the file could not be renamed directly. This option is not available for the FTP component.
+     * Whether to fallback and do a copy and delete file, in case the file could
+     * not be renamed directly. This option is not available for the FTP
+     * component.
      */
     public void setCopyAndDeleteOnRenameFail(boolean copyAndDeleteOnRenameFail) {
         this.copyAndDeleteOnRenameFail = copyAndDeleteOnRenameFail;
@@ -262,10 +267,12 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     /**
-     * Perform rename operations using a copy and delete strategy.
-     * This is primarily used in environments where the regular rename operation is unreliable (e.g. across different file systems or networks).
-     * This option takes precedence over the copyAndDeleteOnRenameFail parameter that will automatically fall back to the copy and delete strategy,
-     * but only after additional delays.
+     * Perform rename operations using a copy and delete strategy. This is
+     * primarily used in environments where the regular rename operation is
+     * unreliable (e.g. across different file systems or networks). This option
+     * takes precedence over the copyAndDeleteOnRenameFail parameter that will
+     * automatically fall back to the copy and delete strategy, but only after
+     * additional delays.
      */
     public void setRenameUsingCopy(boolean renameUsingCopy) {
         this.renameUsingCopy = renameUsingCopy;
@@ -276,9 +283,11 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     /**
-     * Whether the starting directory must exist. Mind that the autoCreate option is default enabled,
-     * which means the starting directory is normally auto created if it doesn't exist.
-     * You can disable autoCreate and enable this to ensure the starting directory must exist. Will thrown an exception if the directory doesn't exist.
+     * Whether the starting directory must exist. Mind that the autoCreate
+     * option is default enabled, which means the starting directory is normally
+     * auto created if it doesn't exist. You can disable autoCreate and enable
+     * this to ensure the starting directory must exist. Will thrown an
+     * exception if the directory doesn't exist.
      */
     public void setStartingDirectoryMustExist(boolean startingDirectoryMustExist) {
         this.startingDirectoryMustExist = startingDirectoryMustExist;
@@ -290,9 +299,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
     /**
      * Whether the starting directory has access permissions. Mind that the
-     * startingDirectoryMustExist parameter must be set to true in order to verify that the
-     * directory exists. Will thrown an exception if the directory doesn't have
-     * read and write permissions.
+     * startingDirectoryMustExist parameter must be set to true in order to
+     * verify that the directory exists. Will thrown an exception if the
+     * directory doesn't have read and write permissions.
      */
     public void setStartingDirectoryMustHaveAccess(boolean startingDirectoryMustHaveAccess) {
         this.startingDirectoryMustHaveAccess = startingDirectoryMustHaveAccess;
@@ -303,7 +312,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     /**
-     * Similar to the startingDirectoryMustExist option but this applies during polling (after starting the consumer).
+     * Similar to the startingDirectoryMustExist option but this applies during
+     * polling (after starting the consumer).
      */
     public void setDirectoryMustExist(boolean directoryMustExist) {
         this.directoryMustExist = directoryMustExist;
@@ -314,8 +324,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     /**
-     * Whether to force syncing writes to the file system.
-     * You can turn this off if you do not want this level of guarantee, for example if writing to logs / audit logs etc; this would yield better performance.
+     * Whether to force syncing writes to the file system. You can turn this off
+     * if you do not want this level of guarantee, for example if writing to
+     * logs / audit logs etc; this would yield better performance.
      */
     public void setForceWrites(boolean forceWrites) {
         this.forceWrites = forceWrites;
@@ -326,8 +337,10 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     /**
-     * Whether to enable probing of the content type. If enable then the consumer uses {@link Files#probeContentType(java.nio.file.Path)} to
-     * determine the content-type of the file, and store that as a header with key {@link Exchange#FILE_CONTENT_TYPE} on the {@link Message}.
+     * Whether to enable probing of the content type. If enable then the
+     * consumer uses {@link Files#probeContentType(java.nio.file.Path)} to
+     * determine the content-type of the file, and store that as a header with
+     * key {@link Exchange#FILE_CONTENT_TYPE} on the {@link Message}.
      */
     public void setProbeContentType(boolean probeContentType) {
         this.probeContentType = probeContentType;
@@ -338,21 +351,29 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     /**
-     * To define which file attributes of interest. Like posix:permissions,posix:owner,basic:lastAccessTime,
-     * it supports basic wildcard like posix:*, basic:lastAccessTime
+     * To define which file attributes of interest. Like
+     * posix:permissions,posix:owner,basic:lastAccessTime, it supports basic
+     * wildcard like posix:*, basic:lastAccessTime
      */
     public void setExtendedAttributes(String extendedAttributes) {
         this.extendedAttributes = extendedAttributes;
     }
 
     /**
-     * Chmod value must be between 000 and 777; If there is a leading digit like in 0755 we will ignore it.
+     * Chmod value must be between 000 and 777; If there is a leading digit like
+     * in 0755 we will ignore it.
      */
     public boolean chmodPermissionsAreValid(String chmod) {
         if (chmod == null || chmod.length() < 3 || chmod.length() > 4) {
             return false;
         }
-        String permissionsString = chmod.trim().substring(chmod.length() - 3);  // if 4 digits chop off leading one
+        String permissionsString = chmod.trim().substring(chmod.length() - 3); // if
+                                                                               // 4
+                                                                               // digits
+                                                                               // chop
+                                                                               // off
+                                                                               // leading
+                                                                               // one
         for (int i = 0; i < permissionsString.length(); i++) {
             char c = permissionsString.charAt(i);
             if (!Character.isDigit(c) || Integer.parseInt(Character.toString(c)) > 7) {
@@ -368,7 +389,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
             return permissions;
         }
 
-        String chmodString = chmod.substring(chmod.length() - 3);  // if 4 digits chop off leading one
+        String chmodString = chmod.substring(chmod.length() - 3); // if 4 digits
+                                                                  // chop off
+                                                                  // leading one
 
         int ownerValue = Integer.parseInt(chmodString.substring(0, 1));
         int groupValue = Integer.parseInt(chmodString.substring(1, 2));
@@ -412,8 +435,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     /**
-     * Specify the file permissions which is sent by the producer, the chmod value must be between 000 and 777;
-     * If there is a leading digit like in 0755 we will ignore it.
+     * Specify the file permissions which is sent by the producer, the chmod
+     * value must be between 000 and 777; If there is a leading digit like in
+     * 0755 we will ignore it.
      */
     public void setChmod(String chmod) {
         if (ObjectHelper.isNotEmpty(chmod) && chmodPermissionsAreValid(chmod)) {
@@ -429,7 +453,13 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
             return permissions;
         }
 
-        String chmodString = chmodDirectory.substring(chmodDirectory.length() - 3);  // if 4 digits chop off leading one
+        String chmodString = chmodDirectory.substring(chmodDirectory.length() - 3); // if
+                                                                                    // 4
+                                                                                    // digits
+                                                                                    // chop
+                                                                                    // off
+                                                                                    // leading
+                                                                                    // one
 
         int ownerValue = Integer.parseInt(chmodString.substring(0, 1));
         int groupValue = Integer.parseInt(chmodString.substring(1, 2));
@@ -473,8 +503,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     /**
-     * Specify the directory permissions used when the producer creates missing directories, the chmod value must be between 000 and 777;
-     * If there is a leading digit like in 0755 we will ignore it.
+     * Specify the directory permissions used when the producer creates missing
+     * directories, the chmod value must be between 000 and 777; If there is a
+     * leading digit like in 0755 we will ignore it.
      */
     public void setChmodDirectory(String chmodDirectory) {
         if (ObjectHelper.isNotEmpty(chmodDirectory) && chmodPermissionsAreValid(chmodDirectory)) {
