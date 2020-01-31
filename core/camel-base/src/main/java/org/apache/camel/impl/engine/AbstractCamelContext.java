@@ -214,6 +214,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private Boolean useDataType = Boolean.FALSE;
     private Boolean useBreadcrumb = Boolean.FALSE;
     private Boolean allowUseOriginalMessage = Boolean.FALSE;
+    private Boolean caseInsensitiveHeaders = Boolean.TRUE;
     private Long delay;
     private ErrorHandlerFactory errorHandlerFactory;
     private Map<String, String> globalOptions = new HashMap<>();
@@ -3317,7 +3318,13 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             // we want headers map to be created as then JVM can optimize using it as we use it per exchange/message
             synchronized (lock) {
                 if (headersMapFactory == null) {
-                    setHeadersMapFactory(createHeadersMapFactory());
+                    if (isCaseInsensitiveHeaders()) {
+                        // use factory to find the map factory to use
+                        setHeadersMapFactory(createHeadersMapFactory());
+                    } else {
+                        // case sensitive so we can use hash map
+                        setHeadersMapFactory(new HashMapHeadersMapFactory());
+                    }
                 }
             }
         }
@@ -3862,6 +3869,14 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     @Override
     public Boolean isAllowUseOriginalMessage() {
         return allowUseOriginalMessage != null && allowUseOriginalMessage;
+    }
+
+    public Boolean isCaseInsensitiveHeaders() {
+        return caseInsensitiveHeaders != null && caseInsensitiveHeaders;
+    }
+
+    public void setCaseInsensitiveHeaders(Boolean caseInsensitiveHeaders) {
+        this.caseInsensitiveHeaders = caseInsensitiveHeaders;
     }
 
     @Override

@@ -461,6 +461,18 @@ public class DefaultRouteContext implements RouteContext {
     }
 
     @Override
+    public Boolean isCaseInsensitiveHeaders() {
+        // can only be configured on CamelContext
+        return getCamelContext().isCaseInsensitiveHeaders();
+    }
+
+    @Override
+    public void setCaseInsensitiveHeaders(Boolean caseInsensitiveHeaders) {
+        // can only be configured on CamelContext
+        getCamelContext().setCaseInsensitiveHeaders(caseInsensitiveHeaders);
+    }
+
+    @Override
     public ShutdownRoute getShutdownRoute() {
         if (shutdownRoute != null) {
             return shutdownRoute;
