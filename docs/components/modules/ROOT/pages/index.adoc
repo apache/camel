@@ -616,7 +616,7 @@ Number of Components: 314 in 252 JAR artifacts (1 deprecated)
 
 | xref:wordpress-component.adoc[Wordpress] (camel-wordpress) | 2.21 | Integrates Camel with Wordpress.
 
-| xref:workday-raas-component.adoc[Workday] (@@@ARTIFACTID@@@) | 3.1.0-SNAPSHOT | Represents a camel-workday endpoint.
+| xref:workday-component.adoc[Workday] (camel-workday) | 3.1.0-SNAPSHOT | Represents a camel-workday endpoint.
 
 | xref:xchange-component.adoc[XChange] (camel-xchange) | 2.21 | The camel-xchange component provide access to many bitcoin and altcoin exchanges for trading and accessing market data.
 
