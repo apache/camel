@@ -83,6 +83,9 @@ public class ManifestPlugin extends BundlePlugin {
     @Component
     private BuildContext buildContext;
 
+    @Parameter(defaultValue = "${showStaleFiles}")
+    private boolean showStaleFiles;
+
     @Override
     protected void execute(Map<String, String> instructions, ClassPathItem[] classpath) throws MojoExecutionException {
 
@@ -322,7 +325,9 @@ public class ManifestPlugin extends BundlePlugin {
                     .flatMap(f -> newer(lastmod, f)).collect(Collectors.toSet());
                 if (!stale.isEmpty()) {
                     getLog().info("Stale files detected, re-generating manifest.");
-                    if (getLog().isDebugEnabled()) {
+                    if (showStaleFiles) {
+                        getLog().info("Stale files: " + stale.stream().collect(Collectors.joining(", ")));
+                    } else if (getLog().isDebugEnabled()) {
                         getLog().debug("Stale files: " + stale.stream().collect(Collectors.joining(", ")));
                     }
                 } else {

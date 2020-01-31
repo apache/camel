@@ -48,13 +48,13 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
     /**
      * The output directory for generated languages file
      */
-    @Parameter(defaultValue = "${project.build.directory}/generated/camel/languages")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File languageOutDir;
 
     /**
      * The output directory for generated languages file
      */
-    @Parameter(defaultValue = "${project.build.directory}/classes")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File schemaOutDir;
 
     /**
@@ -62,6 +62,21 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
      */
     @Parameter(defaultValue = "${project.build.directory}")
     protected File buildDir;
+
+    public PackageLanguageMojo() {
+    }
+
+    public PackageLanguageMojo(Log log, MavenProject project, MavenProjectHelper projectHelper,
+                               File buildDir, File languageOutDir, File schemaOutDir,
+                               BuildContext buildContext) {
+        setLog(log);
+        this.project = project;
+        this.projectHelper = projectHelper;
+        this.buildDir = buildDir;
+        this.languageOutDir = languageOutDir;
+        this.schemaOutDir = schemaOutDir;
+        this.buildContext = buildContext;
+    }
 
     /**
      * Execute goal.
@@ -73,12 +88,11 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        prepareLanguage(getLog(), project, projectHelper, buildDir, languageOutDir, schemaOutDir, buildContext);
+        prepareLanguage();
     }
 
-    public static int prepareLanguage(Log log, MavenProject project, MavenProjectHelper projectHelper, File buildDir, File languageOutDir, File schemaOutDir,
-                                      BuildContext buildContext)
-        throws MojoExecutionException {
+    public int prepareLanguage() throws MojoExecutionException {
+        Log log = getLog();
 
         File camelMetaDir = new File(languageOutDir, "META-INF/services/org/apache/camel/");
 
@@ -98,6 +112,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         StringBuilder buffer = new StringBuilder();
         int count = 0;
 
+        // TODO
         File f = new File(project.getBasedir(), "target/classes");
         f = new File(f, "META-INF/services/org/apache/camel/language");
         if (f.exists() && f.isDirectory()) {
@@ -131,7 +146,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         String javaType = entry.getValue();
                         String modelName = asModelName(name);
 
-                        String json = PackageHelper.loadText(new File(core, "src/main/schema/" + modelName + PackageHelper.JSON_SUFIX));
+                        String json = PackageHelper.loadText(new File(core, "src/generated/resources/org/apache/camel/model/language/" + modelName + PackageHelper.JSON_SUFIX));
 
                         LanguageModel languageModel = extractLanguageModel(project, json, name, javaType);
                         if (log.isDebugEnabled()) {
@@ -146,7 +161,9 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
 
                         // write this to the directory
                         Path out = schemaOutDir.toPath().resolve(schemaSubDirectory(languageModel.getJavaType())).resolve(name + PackageHelper.JSON_SUFIX);
-                        updateResource(buildContext, out, schema);
+                        updateResource(schemaOutDir.toPath(),
+                                schemaSubDirectory(languageModel.getJavaType()) + "/" + name + PackageHelper.JSON_SUFIX,
+                                schema);
 
                         if (log.isDebugEnabled()) {
                             log.debug("Generated " + out + " containing JSon schema for " + name + " language");
@@ -163,10 +180,9 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
 
         if (count > 0) {
             String names = buffer.toString();
-            Path outFile = camelMetaDir.toPath().resolve("language.properties");
             String properties = createProperties(project, "languages", names);
-            updateResource(buildContext, outFile, properties);
-            log.info("Generated " + outFile + " containing " + count + " Camel " + (count > 1 ? "languages: " : "language: ") + names);
+            updateResource(camelMetaDir.toPath(), "language.properties", properties);
+            log.info("Generated language.properties containing " + count + " Camel " + (count > 1 ? "languages: " : "language: ") + names);
         } else {
             log.debug("No META-INF/services/org/apache/camel/language directory found. Are you sure you have created a Camel language?");
         }

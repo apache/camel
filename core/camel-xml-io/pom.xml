@@ -31,6 +31,10 @@
     <name>Camel :: XML IO</name>
     <description>Camel XML IO</description>
 
+    <properties>
+        <camel-generate-xml-parser>true</camel-generate-xml-parser>
+    </properties>
+
     <dependencies>
 
         <dependency>
@@ -50,25 +54,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-package-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <executions>
-                    <execution>
-                        <id>generate</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>jandex</goal>
-                            <goal>generate-xml-parser</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.maven.packaging;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -65,6 +66,7 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationTarget;
@@ -84,6 +86,12 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
     public static final String PARSER_PACKAGE = "org.apache.camel.xml.in";
     public static final String MODEL_PACKAGE = "org.apache.camel.model";
 
+    @Parameter(defaultValue = "${project.basedir}/src/generated/java")
+    protected File sourcesOutputDir;
+
+    @Parameter(defaultValue = "${camel-generate-xml-parser}")
+    protected boolean generateXmlParser;
+
     private Class<?> outputDefinitionClass;
     private Class<?> expressionDefinitionClass;
     private Class<?> routesDefinitionClass;
@@ -93,10 +101,12 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
-        Path javaDir = project.getBasedir().toPath().resolve("src/main/java");
+        if (!generateXmlParser) {
+            return;
+        }
+        Path javaDir = sourcesOutputDir.toPath();
         String parser = generateParser();
-        Path output = javaDir.resolve((PARSER_PACKAGE + ".ModelParser").replace('.', '/') + ".java");
-        updateResource(output, parser);
+        updateResource(javaDir, (PARSER_PACKAGE + ".ModelParser").replace('.', '/') + ".java", parser);
     }
 
     public String generateParser() throws MojoExecutionException {

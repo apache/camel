@@ -56,12 +56,6 @@
       <version>${jython-standalone-version}</version>
     </dependency>
     
-    <!-- support camel documentation -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>apt</artifactId>
-    </dependency>
-    
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>

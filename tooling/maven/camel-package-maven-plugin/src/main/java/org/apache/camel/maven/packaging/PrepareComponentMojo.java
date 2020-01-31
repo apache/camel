@@ -63,31 +63,31 @@ public class PrepareComponentMojo extends AbstractMojo {
     /**
      * The output directory for generated components file
      */
-    @Parameter(defaultValue = "${project.build.directory}/generated/camel/components")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File componentOutDir;
 
     /**
      * The output directory for generated dataformats file
      */
-    @Parameter(defaultValue = "${project.build.directory}/generated/camel/dataformats")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File dataFormatOutDir;
 
     /**
      * The output directory for generated languages file
      */
-    @Parameter(defaultValue = "${project.build.directory}/generated/camel/languages")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File languageOutDir;
 
     /**
      * The output directory for generated others file
      */
-    @Parameter(defaultValue = "${project.build.directory}/generated/camel/others")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File otherOutDir;
 
     /**
      * The output directory for generated schema file
      */
-    @Parameter(defaultValue = "${project.build.directory}/classes")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File schemaOutDir;
 
     /**
@@ -120,13 +120,16 @@ public class PrepareComponentMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         int count = 0;
-        count += PackageComponentMojo.prepareComponent(getLog(), project, projectHelper, buildDir, componentOutDir, buildContext);
-        count += PackageDataFormatMojo.prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, configurerSourceOutDir, configurerResourceOutDir, schemaOutDir,
-                                                         buildContext);
-        count += PackageLanguageMojo.prepareLanguage(getLog(), project, projectHelper, buildDir, languageOutDir, schemaOutDir, buildContext);
-        if (count == 0) {
+        count += new PackageComponentMojo(getLog(), project, projectHelper, buildDir,
+                        componentOutDir, buildContext).prepareComponent();
+        count += new PackageDataFormatMojo(getLog(), project, projectHelper, dataFormatOutDir, configurerSourceOutDir,
+                        configurerResourceOutDir, schemaOutDir, buildContext).prepareDataFormat();
+        count += new PackageLanguageMojo(getLog(), project, projectHelper, buildDir, languageOutDir,
+                        schemaOutDir, buildContext).prepareLanguage();
+        if (count == 0 && new File(project.getBasedir(), "src/main/java").isDirectory()) {
             // okay its not any of the above then its other
-            PackageOtherMojo.prepareOthers(getLog(), project, projectHelper, otherOutDir, schemaOutDir, buildContext);
+            new PackageOtherMojo(getLog(), project, projectHelper, otherOutDir,
+                    schemaOutDir, buildContext).prepareOthers();
         }
     }
 

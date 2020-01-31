@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.NamedNode;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NodeIdFactory;
 
 /**
@@ -46,6 +47,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
      * Sets the id of this node
      */
     @XmlAttribute
+    @Metadata(description = "The id of this node")
     public void setId(String value) {
         this.id = value;
         customId = true;
@@ -61,6 +63,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
      * @param description sets the text description, use null to not set a text
      */
     @XmlElement
+    @Metadata(description = "The description for this node")
     public void setDescription(DescriptionDefinition description) {
         this.description = description;
     }

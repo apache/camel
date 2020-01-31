@@ -33,6 +33,10 @@
     <name>Camel :: Endpoint DSL</name>
     <description>The Camel Endpoint DSL</description>
 
+    <properties>
+        <camel-generate-endpoint-dsl>true</camel-generate-endpoint-dsl>
+    </properties>
+
     <dependencies>
 
         <!-- camel annotations -->

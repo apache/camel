@@ -317,8 +317,13 @@
                 <version>${project.version}</version>
                 <executions>
                     <execution>
-                        <id>jaxb-list</id>
+                        <id>generate</id>
                         <goals>
+                            <goal>jandex</goal>
+                            <goal>generate-schema</goal>
+                            <goal>generate-spi</goal>
+                            <goal>prepare-components</goal>
+                            <goal>generate-components-list</goal>
                             <goal>generate-jaxb-list</goal>
                         </goals>
                         <phase>process-classes</phase>

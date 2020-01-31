@@ -412,7 +412,7 @@ public final class GenericsUtil {
         }
 
         for (Type typeArgument : getParameterizedType(type).getActualTypeArguments()) {
-            if (ClassUtil.isParametrizedType(typeArgument)) {
+            if (ClassUtil.isParameterizedType(typeArgument)) {
                 if (containsWildcardType(typeArgument)) {
                     return true;
                 }

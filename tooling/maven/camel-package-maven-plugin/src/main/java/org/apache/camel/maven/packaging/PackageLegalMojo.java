@@ -63,7 +63,7 @@ public class PackageLegalMojo extends AbstractGeneratorMojo {
         if (!exists) {
             try (InputStream isLicense = getClass().getResourceAsStream("/camel-LICENSE.txt")) {
                 String license = IOUtils.toString(isLicense, StandardCharsets.UTF_8);
-                updateResource(legalOutDir.resolve("META-INF").resolve("LICENSE.txt"), license);
+                updateResource(legalOutDir, "META-INF/LICENSE.txt", license);
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to write legal files. Reason: " + e, e);
             }
@@ -73,7 +73,7 @@ public class PackageLegalMojo extends AbstractGeneratorMojo {
         if (!exists) {
             try (InputStream isNotice = getClass().getResourceAsStream("/camel-NOTICE.txt")) {
                 String notice = IOUtils.toString(isNotice, StandardCharsets.UTF_8);
-                updateResource(legalOutDir.resolve("META-INF").resolve("NOTICE.txt"), notice);
+                updateResource(legalOutDir, "META-INF/NOTICE.txt", notice);
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to write legal files. Reason: " + e, e);
             }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tools.apt.helper;
+package org.apache.camel.maven.packaging;
 
 import java.util.Comparator;
 import java.util.Objects;
@@ -133,8 +133,8 @@ public final class EndpointHelper {
         public int compare(BaseOptionModel o1, BaseOptionModel o2) {
             String name1 = o1.getName();
             String name2 = o2.getName();
-            String label1 = o1.getLabel() != null ? o1.getLabel() : "common";
-            String label2 = o2.getLabel() != null ? o2.getLabel() : "common";
+            String label1 = !Strings.isNullOrEmpty(o1.getLabel()) ? o1.getLabel() : "common";
+            String label2 = !Strings.isNullOrEmpty(o2.getLabel()) ? o2.getLabel() : "common";
             String group1 = o1.getGroup();
             String group2 = o2.getGroup();
 

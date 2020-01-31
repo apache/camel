@@ -45,7 +45,7 @@ public class PackageModelMojo extends AbstractGeneratorMojo {
     /**
      * The output directory for generated models file
      */
-    @Parameter(defaultValue = "${project.build.directory}/generated/camel/models")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File outDir;
 
     /**
@@ -70,17 +70,16 @@ public class PackageModelMojo extends AbstractGeneratorMojo {
             // sort
             .sorted().collect(Collectors.toList());
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("# " + GENERATED_MSG + NL);
-        for (String name : models) {
-            sb.append(name).append(NL);
+        if (!models.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("# " + GENERATED_MSG + NL);
+            for (String name : models) {
+                sb.append(name).append(NL);
+            }
+
+            updateResource(camelMetaDir.toPath(), "model.properties", sb.toString());
+            getLog().info("Generated " + "model.properties" + " containing " + models.size() + " Camel models");
         }
-
-        Path outFile = camelMetaDir.toPath().resolve("model.properties");
-        updateResource(outFile, sb.toString());
-        getLog().info("Generated " + outFile + " containing " + models.size() + " Camel models");
-
-        addResourceDirectory(outDir.toPath());
     }
 
 }

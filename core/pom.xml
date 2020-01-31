@@ -77,25 +77,52 @@
                         <id>generate</id>
                         <goals>
                             <goal>jandex</goal>
+                            <goal>generate-schema</goal>
+                            <goal>generate-type-converter-loader</goal>
+                            <goal>generate-spi</goal>
                             <goal>generate-jaxb-list</goal>
+                            <goal>generate-eips-list</goal>
+                            <goal>generate-components-list</goal>
+                            <goal>generate-dataformats-list</goal>
+                            <goal>generate-languages-list</goal>
+                            <goal>prepare-main</goal>
+                            <goal>generate-xml-parser</goal>
                         </goals>
                         <phase>process-classes</phase>
+                    </execution>
+                    <execution>
+                        <id>validate</id>
+                        <goals>
+                            <goal>validate-components</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                    </execution>
+                    <execution>
+                        <id>readme</id>
+                        <goals>
+                            <goal>update-readme</goal>
+                        </goals>
+                        <phase>package</phase>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy-generated-resources</id>
+                        <phase>generate-sources</phase>
                         <goals>
-                            <goal>resources</goal>
+                            <goal>add-source</goal>
+                            <goal>add-resource</goal>
                         </goals>
-                        <phase>process-classes</phase>
                         <configuration>
+                            <sources>
+                                <source>src/generated/java</source>
+                            </sources>
                             <resources>
                                 <resource>
-                                    <directory>${basedir}/target/generated/camel/jaxb</directory>
+                                    <directory>src/generated/resources</directory>
                                 </resource>
                             </resources>
                         </configuration>

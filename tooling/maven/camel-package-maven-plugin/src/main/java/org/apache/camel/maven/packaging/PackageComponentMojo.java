@@ -43,7 +43,7 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
     /**
      * The output directory for generated components file
      */
-    @Parameter(defaultValue = "${project.build.directory}/generated/camel/components")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File componentOutDir;
 
     /**
@@ -51,6 +51,19 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
      */
     @Parameter(defaultValue = "${project.build.directory}")
     protected File buildDir;
+
+    public PackageComponentMojo() {
+    }
+
+    public PackageComponentMojo(Log log, MavenProject project, MavenProjectHelper projectHelper,
+                                File buildDir, File componentOutDir, BuildContext buildContext) {
+        setLog(log);
+        this.project = project;
+        this.projectHelper = projectHelper;
+        this.buildDir = buildDir;
+        this.componentOutDir = componentOutDir;
+        this.buildContext = buildContext;
+    }
 
     /**
      * Execute goal.
@@ -61,11 +74,11 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        prepareComponent(getLog(), project, projectHelper, buildDir, componentOutDir, buildContext);
+        prepareComponent();
     }
 
-    public static int prepareComponent(Log log, MavenProject project, MavenProjectHelper projectHelper, File buildDir, File componentOutDir, BuildContext buildContext)
-        throws MojoExecutionException {
+    public int prepareComponent() throws MojoExecutionException {
+        Log log = getLog();
 
         File camelMetaDir = new File(componentOutDir, "META-INF/services/org/apache/camel/");
 
@@ -84,7 +97,7 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
         int count = 0;
 
         Set<String> components = new HashSet<>();
-        File f = new File(project.getBasedir(), "target/classes");
+        File f = componentOutDir;
         f = new File(f, "META-INF/services/org/apache/camel/component");
         if (f.exists() && f.isDirectory()) {
             File[] files = f.listFiles();
@@ -109,55 +122,15 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
         }
 
         if (count > 0) {
-            // we need to enrich the component json files with data we know have
-            // from this plugin
-            enrichComponentJsonFiles(log, project, buildDir, components);
-        }
-
-        if (count > 0) {
             String names = buffer.toString();
-            Path outFile = camelMetaDir.toPath().resolve("component.properties");
             String properties = createProperties(project, "components", names);
-            updateResource(buildContext, outFile, properties);
-            log.info("Generated " + outFile + " containing " + count + " Camel " + (count > 1 ? "components: " : "component: ") + names);
+            updateResource(camelMetaDir.toPath(), "component.properties", properties);
+            log.info("Generated " + "components" + " containing " + count + " Camel " + (count > 1 ? "components: " : "component: ") + names);
         } else {
             log.debug("No META-INF/services/org/apache/camel/component directory found. Are you sure you have created a Camel component?");
         }
 
         return count;
-    }
-
-    private static void enrichComponentJsonFiles(Log log, MavenProject project, File buildDir, Set<String> components) throws MojoExecutionException {
-        Set<File> files = new HashSet<>();
-        PackageHelper.findJsonFiles(buildDir, files);
-
-        for (File file : files) {
-            // clip the .json suffix
-            String name = file.getName().substring(0, file.getName().length() - 5);
-            if (components.contains(name)) {
-                log.debug("Enriching component: " + name);
-                try {
-                    String text = PackageHelper.loadText(file);
-                    text = text.replace("@@@DESCRIPTION@@@", project.getDescription());
-                    text = text.replace("@@@GROUPID@@@", project.getGroupId());
-                    text = text.replace("@@@ARTIFACTID@@@", project.getArtifactId());
-                    text = text.replace("@@@VERSIONID@@@", project.getVersion());
-
-                    // special for deprecated where you can quickly specify that
-                    // in the pom.xml name
-                    boolean deprecated = project.getName().contains("(deprecated)");
-                    if (deprecated) {
-                        // must start with 4 leading spaces as we want to
-                        // replace the marker in the top of the file
-                        text = text.replaceFirst(" {4}\"deprecated\": false,", "    \"deprecated\": true,");
-                    }
-
-                    updateResource(null, file.toPath(), text);
-                } catch (IOException e) {
-                    throw new MojoExecutionException("Failed to update file " + file + ". Reason: " + e, e);
-                }
-            }
-        }
     }
 
 }

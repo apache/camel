@@ -38,7 +38,7 @@
         <module>meta-annotations</module>
         <module>spi-annotations</module>
         <module>camel-tooling-model</module>
-        <module>apt</module>
+<!--        <module>apt</module>-->
         <module>camel-util-json</module>
         <module>camel-tooling-util</module>
         <module>swagger-rest-dsl-generator</module>

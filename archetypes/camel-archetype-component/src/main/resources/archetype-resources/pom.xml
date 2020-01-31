@@ -50,13 +50,6 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     
-    <!-- support camel documentation -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>apt</artifactId>
-      <version>${camel-version}</version>
-    </dependency>
-    
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
