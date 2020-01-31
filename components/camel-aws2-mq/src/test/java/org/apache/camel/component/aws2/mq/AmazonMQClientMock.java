@@ -50,21 +50,21 @@ public class AmazonMQClientMock implements MqClient {
 
     @Override
     public DeleteBrokerResponse deleteBroker(DeleteBrokerRequest deleteBrokerRequest) {
-    	DeleteBrokerResponse.Builder builder = DeleteBrokerResponse.builder();
-    	builder.brokerId("1");
+        DeleteBrokerResponse.Builder builder = DeleteBrokerResponse.builder();
+        builder.brokerId("1");
         return builder.build();
     }
 
     @Override
     public DescribeBrokerResponse describeBroker(DescribeBrokerRequest describeBrokerRequest) {
-    	DescribeBrokerResponse.Builder builder = DescribeBrokerResponse.builder();
+        DescribeBrokerResponse.Builder builder = DescribeBrokerResponse.builder();
         builder.brokerId("1").brokerName("Test").brokerState(BrokerState.RUNNING.toString());
         return builder.build();
     }
 
     @Override
     public ListBrokersResponse listBrokers(ListBrokersRequest listBrokersRequest) {
-    	ListBrokersResponse.Builder builder = ListBrokersResponse.builder();
+        ListBrokersResponse.Builder builder = ListBrokersResponse.builder();
         BrokerSummary.Builder bs = BrokerSummary.builder();
         bs.brokerArn("aws:test");
         bs.brokerId("1");
@@ -78,13 +78,13 @@ public class AmazonMQClientMock implements MqClient {
 
     @Override
     public RebootBrokerResponse rebootBroker(RebootBrokerRequest rebootBrokerRequest) {
-    	RebootBrokerResponse.Builder builder = RebootBrokerResponse.builder();
+        RebootBrokerResponse.Builder builder = RebootBrokerResponse.builder();
         return builder.build();
     }
 
     @Override
     public UpdateBrokerResponse updateBroker(UpdateBrokerRequest updateBrokerRequest) {
-    	UpdateBrokerResponse.Builder builder = UpdateBrokerResponse.builder();
+        UpdateBrokerResponse.Builder builder = UpdateBrokerResponse.builder();
         ConfigurationId.Builder cId = ConfigurationId.builder();
         cId.id("1");
         cId.revision(12);
@@ -92,16 +92,16 @@ public class AmazonMQClientMock implements MqClient {
         return builder.build();
     }
 
-	@Override
-	public String serviceName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String serviceName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public void close() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
+
+    }
 
 }

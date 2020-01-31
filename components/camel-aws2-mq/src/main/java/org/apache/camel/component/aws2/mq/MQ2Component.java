@@ -38,16 +38,16 @@ public class MQ2Component extends DefaultComponent {
     private String secretKey;
     @Metadata
     private String region;
-    @Metadata(label = "advanced")    
+    @Metadata(label = "advanced")
     private MQ2Configuration configuration;
-    
+
     public MQ2Component() {
         this(null);
     }
-    
+
     public MQ2Component(CamelContext context) {
         super(context);
-        
+
         registerExtension(new MQ2ComponentVerifierExtension());
     }
 
@@ -63,10 +63,10 @@ public class MQ2Component extends DefaultComponent {
         if (configuration.getAmazonMqClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonMQClient or accessKey and secretKey must be specified");
         }
-        
+
         return endpoint;
     }
-    
+
     public MQ2Configuration getConfiguration() {
         return configuration;
     }
@@ -99,7 +99,7 @@ public class MQ2Component extends DefaultComponent {
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
-    
+
     public String getRegion() {
         return region;
     }
