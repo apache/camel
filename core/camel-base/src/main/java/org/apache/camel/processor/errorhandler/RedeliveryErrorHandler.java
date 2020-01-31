@@ -473,12 +473,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             } else {
                 // Simple delivery
                 outputAsync.process(exchange, doneSync -> {
-                    // only process if the exchange hasn't failed
-                    // and it has not been handled by the error processor
+                    // only continue with callback if we are done
                     if (isDone(exchange)) {
                         reactiveExecutor.schedule(callback);
                     } else {
-                        // error occurred so loop back around which we do by invoking the processAsyncErrorHandler
+                        // error occurred so loop back around and call ourselves
                         reactiveExecutor.schedule(this);
                     }
                 });
