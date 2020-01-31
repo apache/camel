@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.workday;
 
-import java.util.Map;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
@@ -27,27 +25,26 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.PropertyBindingSupport;
-
 /**
  * Represents a camel-workday endpoint.
  */
 
-@UriEndpoint(firstVersion = "3.1.0-SNAPSHOT", scheme = "workday-raas", title = "Workday", syntax = "workday-raas:uri", label = "hcm")
+@UriEndpoint(firstVersion = "3.1.0-SNAPSHOT", scheme = "workday", title = "Workday", syntax = "workday:uri", label = "hcm")
 public class WorkdayEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "The partial URL for RAAS report.")
     @Metadata(required = true)
     private String uri;
-
+    
     @UriParam
     private WorkdayConfiguration workdayConfiguration;
 
     public WorkdayEndpoint() {
     }
 
-    public WorkdayEndpoint(String uri, WorkdayComponent component) {
+    public WorkdayEndpoint(String uri, WorkdayComponent component, WorkdayConfiguration configuration) {
         super(uri, component);
+        this.workdayConfiguration = configuration;
     }
 
     public Producer createProducer() throws Exception {
@@ -58,21 +55,6 @@ public class WorkdayEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
 
         throw new NoSuchEndpointException("Workday consumer is not implemented.");
-    }
-
-    @Override
-    public void configureProperties(Map<String, Object> options) {
-        super.configureProperties(options);
-
-        try {
-            if (this.workdayConfiguration == null) {
-                this.workdayConfiguration = new WorkdayConfiguration();
-            }
-
-            PropertyBindingSupport.bindProperties(getCamelContext(), this.workdayConfiguration, options);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
-        }
     }
 
     @Override

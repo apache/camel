@@ -30,7 +30,7 @@ public class WorkdayComponentTest extends CamelTestSupport {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
         WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint)workdayComponent
-            .createEndpoint("workday-raas:/<Owner>/<ReportName>?" + "host=impl.workday.com" + "&tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
+            .createEndpoint("workday:/<Owner>/<ReportName>?" + "host=impl.workday.com" + "&tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
                             + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda" + "&format=json");
 
         WorkdayConfiguration workdayConfiguration = workdayEndpoint.getWorkdayConfiguration();
@@ -50,7 +50,7 @@ public class WorkdayComponentTest extends CamelTestSupport {
         try {
 
             WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint)workdayComponent
-                .createEndpoint("workday-raas:/<Owner>/<ReportName>?" + "tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
+                .createEndpoint("workday:/<Owner>/<ReportName>?" + "tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
                                 + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda" + "&format=json");
         } catch (ResolveEndpointFailedException exception) {
 
@@ -67,7 +67,7 @@ public class WorkdayComponentTest extends CamelTestSupport {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
         WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint)workdayComponent
-            .createEndpoint("workday-raas:/ISU_Camel/Custom_Report_Employees?" + "host=camel.myworkday.com" + "&tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
+            .createEndpoint("workday:/ISU_Camel/Custom_Report_Employees?" + "host=camel.myworkday.com" + "&tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
                             + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda" + "&param=test1");
 
         String workdayUri = workdayEndpoint.getUri();

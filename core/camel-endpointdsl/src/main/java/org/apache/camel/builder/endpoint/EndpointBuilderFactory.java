@@ -329,6 +329,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.WebsocketEndpointBuilderFactory.WebsocketBuilders,
             org.apache.camel.builder.endpoint.dsl.WekaEndpointBuilderFactory.WekaBuilders,
             org.apache.camel.builder.endpoint.dsl.WordpressEndpointBuilderFactory.WordpressBuilders,
+            org.apache.camel.builder.endpoint.dsl.WorkdayEndpointBuilderFactory.WorkdayBuilders,
             org.apache.camel.builder.endpoint.dsl.WsEndpointBuilderFactory.WsBuilders,
             org.apache.camel.builder.endpoint.dsl.XChangeEndpointBuilderFactory.XChangeBuilders,
             org.apache.camel.builder.endpoint.dsl.XJEndpointBuilderFactory.XJBuilders,
