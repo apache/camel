@@ -150,7 +150,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
         if (factory == null) {
             String name = apiComponentName != null ? apiComponentName : config.getApiComponent();
             if (name == null) {
-                name = DEFAULT_API_COMPONENT_NAME;//use openapi first
+                name = DEFAULT_API_COMPONENT_NAME; //use openapi first
             }
             FactoryFinder finder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
             factory = finder.newInstance(name, RestApiProcessorFactory.class).orElse(null);
@@ -159,7 +159,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
         if (factory == null) {
             String name = apiComponentName != null ? apiComponentName : config.getApiComponent();
             if (name == null) {
-                name = "swagger";//use swagger as fallback
+                name = "swagger"; //use swagger as fallback
             }
             FactoryFinder finder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
             factory = finder.newInstance(name, RestApiProcessorFactory.class).orElse(null);

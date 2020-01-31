@@ -103,15 +103,15 @@ public class RestComponentVerifierExtension extends DefaultComponentVerifierExte
                     final Map<String, Object> restParameters = new HashMap<>(parameters);
                     Stream.concat(model.getComponentOptions().stream(),
                                   model.getOptions().stream()).forEach(o -> {
-                        String name = o.getName();
-                        Object val = restParameters.remove(name);
-                        if (val != null) {
-                            // Add rest prefix to properties belonging to the rest
-                            // component so the underlying component know we want
-                            // to validate rest-related stuffs.
-                            restParameters.put("rest." + name, parameters.get(name));
-                        }
-                    });
+                                      String name = o.getName();
+                                      Object val = restParameters.remove(name);
+                                      if (val != null) {
+                                          // Add rest prefix to properties belonging to the rest
+                                          // component so the underlying component know we want
+                                          // to validate rest-related stuffs.
+                                          restParameters.put("rest." + name, parameters.get(name));
+                                      }
+                                  });
 
                     if (scope == Scope.CONNECTIVITY) {
                         // need to include endpoint path parameters as otherwise we cannot verify connectivity
