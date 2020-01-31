@@ -287,7 +287,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
                         // ignore as filter is maybe not a pattern
                     }
                 }
-           }
+            }
         }
         return answer;
     }
