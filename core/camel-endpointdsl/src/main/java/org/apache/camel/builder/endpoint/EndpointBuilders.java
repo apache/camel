@@ -210,6 +210,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.LogEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.LuceneEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.LumberjackEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.MQ2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.MQEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory,
