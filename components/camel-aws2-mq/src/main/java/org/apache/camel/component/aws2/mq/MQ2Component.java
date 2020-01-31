@@ -27,7 +27,7 @@ import org.apache.camel.support.DefaultComponent;
 import software.amazon.awssdk.services.mq.MqClient;
 
 /**
- * For working with Amazon MQ version 2.
+ * For working with Amazon MQ SDK v2.
  */
 @Component("aws2-mq")
 public class MQ2Component extends DefaultComponent {

@@ -17,7 +17,7 @@
 package org.apache.camel.component.aws2.mq;
 
 /**
- * Constants used in Camel AWS MQ module
+ * Constants used in Camel AWS MQ module SDK v2
  */
 public interface MQ2Constants {
     String OPERATION = "CamelAwsMQOperation";
