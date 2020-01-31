@@ -242,22 +242,6 @@
     <build>
         <plugins>
 
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-testCompile</id>
-                        <phase>process-test-sources</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                        <configuration>
-                            <proc>none</proc>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
             <!-- generate the attached tests jar -->
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>

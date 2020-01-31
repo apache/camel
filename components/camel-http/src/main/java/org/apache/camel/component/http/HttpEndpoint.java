@@ -122,7 +122,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     private int connectionsPerRoute;
     @UriParam(label = "security", description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier")
     private HostnameVerifier x509HostnameVerifier;
-    @UriParam(label = "producer", description = "To use custom host header for producer.")
+    @UriParam(label = "producer", description = "To use custom host header for producer. When not set in query will " +
+            "be ignored. When set will override host header derived from url.")
     private String customHostHeader;
 
     public HttpEndpoint() {

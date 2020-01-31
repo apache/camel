@@ -305,7 +305,7 @@
                         <preparationGoals>clean install</preparationGoals>
                         <goals>deploy</goals>
                         <!-- The profile we want to use when doing the release -->
-                        <arguments>-Prelease,apache-release,enable-schemagen,apt,sourcecheck,hibernate</arguments>
+                        <arguments>-Prelease,apache-release,enable-schemagen,sourcecheck,hibernate</arguments>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                     </configuration>
                 </plugin>

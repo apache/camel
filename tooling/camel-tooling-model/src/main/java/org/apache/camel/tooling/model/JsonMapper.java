@@ -79,19 +79,7 @@ public final class JsonMapper {
     public static ComponentModel generateComponentModel(JsonObject obj) {
         JsonObject mobj = (JsonObject) obj.get("component");
         ComponentModel model = new ComponentModel();
-        parseModel(mobj, model);
-        model.setScheme(mobj.getString("scheme"));
-        model.setExtendsScheme(mobj.getString("extendsScheme"));
-        model.setAlternativeSchemes(mobj.getString("alternativeSchemes"));
-        model.setSyntax(mobj.getString("syntax"));
-        model.setAlternativeSyntax(mobj.getString("alternativeSyntax"));
-        model.setAsync(mobj.getBooleanOrDefault("async", false));
-        model.setConsumerOnly(mobj.getBooleanOrDefault("consumerOnly", false));
-        model.setProducerOnly(mobj.getBooleanOrDefault("producerOnly", false));
-        model.setLenientProperties(mobj.getBooleanOrDefault("lenientProperties", false));
-        model.setGroupId(mobj.getString("groupId"));
-        model.setArtifactId(mobj.getString("artifactId"));
-        model.setVersion(mobj.getString("version"));
+        parseComponentModel(mobj, model);
         JsonObject mcprp = (JsonObject) obj.get("componentProperties");
         if (mcprp != null) {
             for (Map.Entry<String, Object> entry : mcprp.entrySet()) {
@@ -111,6 +99,22 @@ public final class JsonMapper {
             }
         }
         return model;
+    }
+
+    public static void parseComponentModel(JsonObject mobj, ComponentModel model) {
+        parseModel(mobj, model);
+        model.setScheme(mobj.getString("scheme"));
+        model.setExtendsScheme(mobj.getString("extendsScheme"));
+        model.setAlternativeSchemes(mobj.getString("alternativeSchemes"));
+        model.setSyntax(mobj.getString("syntax"));
+        model.setAlternativeSyntax(mobj.getString("alternativeSyntax"));
+        model.setAsync(mobj.getBooleanOrDefault("async", false));
+        model.setConsumerOnly(mobj.getBooleanOrDefault("consumerOnly", false));
+        model.setProducerOnly(mobj.getBooleanOrDefault("producerOnly", false));
+        model.setLenientProperties(mobj.getBooleanOrDefault("lenientProperties", false));
+        model.setGroupId(mobj.getString("groupId"));
+        model.setArtifactId(mobj.getString("artifactId"));
+        model.setVersion(mobj.getString("version"));
     }
 
     public static String createParameterJsonSchema(ComponentModel model) {

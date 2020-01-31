@@ -129,7 +129,7 @@ public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent 
     }
 
     /**
-     * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object
+     * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object.
      * <p/>
      * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
      * data from the request to Java and that can be a potential security risk.

@@ -28,6 +28,7 @@ import org.apache.camel.parser.model.CamelEndpointDetails;
 import org.apache.camel.parser.model.CamelNodeDetails;
 import org.apache.camel.parser.model.CamelRouteDetails;
 import org.apache.camel.parser.model.CamelSimpleExpressionDetails;
+import org.apache.camel.tooling.util.Strings;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Expression;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.MemberValuePair;
@@ -37,7 +38,6 @@ import org.jboss.forge.roaster.model.Annotation;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
-import org.jboss.forge.roaster.model.util.Strings;
 
 /**
  * A Camel RouteBuilder parser that parses Camel Java routes source code.
@@ -138,7 +138,7 @@ public final class RouteBuilderParser {
             }
 
             // we only want to add fields which are not used in the route
-            if (!Strings.isBlank(uri) && findEndpointByUri(endpoints, uri) == null) {
+            if (!Strings.isNullOrEmpty(uri) && findEndpointByUri(endpoints, uri) == null) {
 
                 // we only want the relative dir name from the
                 String fileName = fullyQualifiedFileName;

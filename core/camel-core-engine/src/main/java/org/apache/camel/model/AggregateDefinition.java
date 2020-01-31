@@ -912,7 +912,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition> i
     }
 
     /**
-     * Sets the custom aggregate repository to use
+     * Sets the custom aggregate repository to use.
      * <p/>
      * Will by default use
      * {@link org.apache.camel.processor.aggregate.MemoryAggregationRepository}

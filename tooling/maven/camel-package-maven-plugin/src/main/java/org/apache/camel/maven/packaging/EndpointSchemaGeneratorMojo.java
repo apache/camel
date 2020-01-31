@@ -1,0 +1,1423 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.maven.packaging;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.camel.maven.packaging.generics.GenericsUtil;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.ComponentModel.ComponentOptionModel;
+import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
+import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.EipModel.EipOptionModel;
+import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.tooling.util.JavadocHelper;
+import org.apache.camel.tooling.util.PackageHelper;
+import org.apache.camel.tooling.util.Strings;
+import org.apache.camel.tooling.util.srcgen.GenericType;
+import org.apache.camel.util.json.Jsoner;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Javadoc;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.SimpleType;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.jboss.forge.roaster.model.JavaDoc;
+import org.jboss.forge.roaster.model.JavaDocCapable;
+import org.jboss.forge.roaster.model.impl.TypeImpl;
+import org.jboss.forge.roaster.model.source.FieldSource;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
+import org.jboss.forge.roaster.model.source.MethodSource;
+import org.jboss.jandex.AnnotationInstance;
+import org.jboss.jandex.AnnotationTarget;
+import org.jboss.jandex.DotName;
+import org.jboss.jandex.IndexReader;
+import org.jboss.jandex.IndexView;
+
+@Mojo(name = "generate-endpoint-schema", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
+
+    public static final DotName URI_ENDPOINT = DotName.createSimple(UriEndpoint.class.getName());
+    public static final DotName COMPONENT = DotName.createSimple(Component.class.getName());
+
+    private static final String HEADER_FILTER_STRATEGY_JAVADOC = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.";
+
+    @Parameter(defaultValue = "${project.build.outputDirectory}")
+    protected File classesDirectory;
+    @Parameter(defaultValue = "${project.basedir}/src/generated/java")
+    protected File sourcesOutputDir;
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
+    protected File resourcesOutputDir;
+
+    protected ClassLoader projectClassLoader;
+    protected IndexView indexView;
+    protected Map<String, String> resources = new HashMap<>();
+    protected List<Path> sourceRoots;
+    protected Map<String, String> sources = new HashMap<>();
+    protected Map<String, JavaClassSource> parsed = new HashMap<>();
+
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        if (!classesDirectory.isDirectory()) {
+            return;
+        }
+
+        for (AnnotationInstance ai : getIndex().getAnnotations(URI_ENDPOINT)) {
+
+            Class<?> classElement = loadClass(ai.target().asClass().name().toString());
+            final UriEndpoint uriEndpoint = classElement.getAnnotation(UriEndpoint.class);
+            if (uriEndpoint != null) {
+                String scheme = uriEndpoint.scheme();
+                String extendsScheme = uriEndpoint.extendsScheme();
+                String title = uriEndpoint.title();
+                final String label = uriEndpoint.label();
+                validateSchemaName(scheme, classElement);
+                if (!Strings.isNullOrEmpty(scheme)) {
+                    // support multiple schemes separated by comma, which maps to
+                    // the exact same component
+                    // for example camel-mail has a bunch of component schema names
+                    // that does that
+                    String[] schemes = scheme.split(",");
+                    String[] titles = title.split(",");
+                    String[] extendsSchemes = extendsScheme.split(",");
+                    for (int i = 0; i < schemes.length; i++) {
+                        final String alias = schemes[i];
+                        final String extendsAlias = i < extendsSchemes.length ? extendsSchemes[i] : extendsSchemes[0];
+                        String aTitle = i < titles.length ? titles[i] : titles[0];
+
+                        // some components offer a secure alternative which we need
+                        // to amend the title accordingly
+                        if (secureAlias(schemes[0], alias)) {
+                            aTitle += " (Secure)";
+                        }
+                        final String aliasTitle = aTitle;
+
+                        writeJSonSchemeAndPropertyConfigurer(classElement, uriEndpoint, aliasTitle, alias, extendsAlias, label, schemes);
+                    }
+                }
+            }
+        }
+    }
+
+    private void validateSchemaName(final String schemaName, final Class<?> classElement) {
+        // our schema name has to be in lowercase
+        if (!schemaName.equals(schemaName.toLowerCase())) {
+            getLog().warn(String.format("Mixed case schema name in '%s' with value '%s' has been deprecated. Please use lowercase only!",
+                    classElement.getName(), schemaName));
+        }
+    }
+
+    protected void writeJSonSchemeAndPropertyConfigurer(Class<?> classElement, UriEndpoint uriEndpoint, String title,
+                                                        String scheme, String extendsScheme, String label, String[] schemes) {
+        // gather component information
+        ComponentModel componentModel = findComponentProperties(uriEndpoint, classElement, title, scheme, extendsScheme, label, schemes);
+
+        // get endpoint information which is divided into paths and options
+        // (though there should really only be one path)
+        ComponentModel parentData = null;
+        Class<?> superclass = classElement.getSuperclass();
+        if (superclass != null) {
+            UriEndpoint parentUriEndpoint = superclass.getAnnotation(UriEndpoint.class);
+            if (parentUriEndpoint != null) {
+                String parentScheme = parentUriEndpoint.scheme().split(",")[0];
+                String superClassName = superclass.getName();
+                String packageName = superClassName.substring(0, superClassName.lastIndexOf("."));
+                String fileName = packageName.replace('.', '/') + "/" + parentScheme + ".json";
+                String json = loadResource(fileName);
+                parentData = JsonMapper.generateComponentModel(json);
+            }
+        }
+
+        // component options
+        Class<?> componentClassElement = loadClass(componentModel.getJavaType());
+        if (componentClassElement != null) {
+            findComponentClassProperties(componentModel, componentClassElement, "", parentData, null, null);
+        }
+
+        // endpoint options
+        findClassProperties(componentModel, classElement, "", uriEndpoint.excludeProperties(), parentData, null, null);
+
+        // enhance and generate
+        enhanceComponentModel(componentModel, parentData, uriEndpoint.excludeProperties());
+
+        // if the component has known class name
+        if (!"@@@JAVATYPE@@@".equals(componentModel.getJavaType())) {
+            generateComponentConfigurer(uriEndpoint, scheme, schemes, componentModel);
+        }
+
+        String json = JsonMapper.createParameterJsonSchema(componentModel);
+
+        // write json schema
+        String name = classElement.getName();
+        String packageName = name.substring(0, name.lastIndexOf("."));
+        String fileName = scheme + PackageHelper.JSON_SUFIX;
+
+        String file = packageName.replace('.', '/') + "/" + fileName;
+        updateResource(resourcesOutputDir.toPath(), file, json);
+
+        generateEndpointConfigurer(classElement, uriEndpoint, scheme, schemes, componentModel);
+    }
+
+    protected void updateResource(Path dir, String file, String data) {
+        resources.put(file, data);
+        super.updateResource(dir, file, data);
+    }
+
+    private String loadResource(String fileName) {
+        if (resources.containsKey(fileName)) {
+            return resources.get(fileName);
+        }
+        String data;
+        try (InputStream is = getProjectClassLoader().getResourceAsStream(fileName)) {
+            if (is == null) {
+                throw new FileNotFoundException("Resource: " + fileName);
+            }
+            data = PackageHelper.loadText(is);
+        } catch (Exception e) {
+            throw new RuntimeException("Error: " + e.toString(), e);
+        }
+        resources.put(fileName, data);
+        return data;
+    }
+
+    private void enhanceComponentModel(ComponentModel componentModel, ComponentModel parentData, String excludeProperties) {
+        componentModel.getComponentOptions().removeIf(option -> filterOutOption(componentModel, option));
+        componentModel.getComponentOptions().forEach(option -> fixDoc(option, parentData != null ? parentData.getComponentOptions() : null));
+        componentModel.getEndpointOptions().removeIf(option -> filterOutOption(componentModel, option));
+        componentModel.getEndpointOptions().forEach(option -> fixDoc(option, parentData != null ? parentData.getEndpointOptions() : null));
+        componentModel.getEndpointOptions().sort(EndpointHelper.createOverallComparator(componentModel.getSyntax()));
+        // merge with parent, removing excluded and overriden properties
+        if (parentData != null) {
+            Set<String> componentOptionNames = componentModel.getComponentOptions().stream().map(BaseOptionModel::getName).collect(Collectors.toSet());
+            Set<String> endpointOptionNames = componentModel.getEndpointOptions().stream().map(BaseOptionModel::getName).collect(Collectors.toSet());
+            Collections.addAll(endpointOptionNames, excludeProperties.split(","));
+            parentData.getComponentOptions().removeIf(option -> componentOptionNames.contains(option.getName()));
+            parentData.getEndpointOptions().removeIf(option -> endpointOptionNames.contains(option.getName()));
+            componentModel.getComponentOptions().addAll(parentData.getComponentOptions());
+            componentModel.getEndpointOptions().addAll(parentData.getEndpointOptions());
+        }
+
+    }
+
+    private void fixDoc(BaseOptionModel option, List<? extends BaseOptionModel> parentOptions) {
+        String doc = getDocumentationWithNotes(option);
+        if (Strings.isNullOrEmpty(doc) && parentOptions != null) {
+            doc = parentOptions.stream().filter(opt -> Objects.equals(opt.getName(), option.getName())).map(BaseOptionModel::getDescription).findFirst().orElse(null);
+        }
+        // as its json we need to sanitize the docs
+        doc = JavadocHelper.sanitizeDescription(doc, false);
+        option.setDescription(doc);
+
+        if (isNullOrEmpty(doc)) {
+            throw new IllegalStateException("Empty doc for option: " + option.getName() + ", parent options: "
+                    + (parentOptions != null ? Jsoner.serialize(JsonMapper.asJsonObject(parentOptions)) : "<null>"));
+        }
+    }
+
+    private boolean filterOutOption(ComponentModel component, BaseOptionModel option) {
+        String label = option.getLabel();
+        if (label != null) {
+            return component.isConsumerOnly() && label.contains("producer") || component.isProducerOnly() && label.contains("consumer");
+        } else {
+            return false;
+        }
+    }
+
+    public String getDocumentationWithNotes(BaseOptionModel option) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(option.getDescription());
+
+        if (!Strings.isNullOrEmpty(option.getDefaultValueNote())) {
+            if (sb.charAt(sb.length() - 1) != '.') {
+                sb.append('.');
+            }
+            sb.append(" Default value notice: ").append(option.getDefaultValueNote());
+        }
+
+        if (!Strings.isNullOrEmpty(option.getDeprecationNote())) {
+            if (sb.charAt(sb.length() - 1) != '.') {
+                sb.append('.');
+            }
+            sb.append(" Deprecation note: ").append(option.getDeprecationNote());
+        }
+
+        return sb.toString();
+    }
+
+    private void generateComponentConfigurer(UriEndpoint uriEndpoint, String scheme, String[] schemes, ComponentModel componentModel) {
+        Class<?> parent;
+        if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
+            // special for activemq and amqp scheme which should reuse jms
+            parent = loadClass("org.apache.camel.component.jms.JmsComponentConfigurer");
+        } else {
+            parent = loadClass("org.apache.camel.spi.GeneratedPropertyConfigurer");
+        }
+        String fqComponentClassName = componentModel.getJavaType();
+        String componentClassName = fqComponentClassName.substring(fqComponentClassName.lastIndexOf('.') + 1);
+        String className = componentClassName + "Configurer";
+        String packageName = fqComponentClassName.substring(0, fqComponentClassName.lastIndexOf('.'));
+        String fqClassName = packageName + "." + className;
+
+        if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
+            generateExtendConfigurer(parent, packageName, className, fqClassName, componentModel.getScheme() + "-component");
+        } else if (uriEndpoint.generateConfigurer() && !componentModel.getComponentOptions().isEmpty()) {
+            // only generate this once for the first scheme
+            if (schemes == null || schemes[0].equals(scheme)) {
+                generatePropertyConfigurer(parent, packageName, className, fqClassName, componentClassName, componentModel.getScheme() + "-component",
+                        componentModel.getComponentOptions());
+            }
+        }
+    }
+
+    private void generateEndpointConfigurer(Class<?> classElement, UriEndpoint uriEndpoint, String scheme, String[] schemes,
+                                            ComponentModel componentModel) {
+        Class<?> parent;
+        if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
+            // special for activemq and amqp scheme which should reuse jms
+            parent = loadClass("org.apache.camel.component.jms.JmsEndpointConfigurer");
+        } else {
+            parent = loadClass("org.apache.camel.spi.GeneratedPropertyConfigurer");
+        }
+        String fqEndpointClassName = classElement.getName();
+        String packageName = fqEndpointClassName.substring(0, fqEndpointClassName.lastIndexOf('.'));
+        String endpointClassName = classElement.getSimpleName();
+        String className = endpointClassName + "Configurer";
+        String fqClassName = packageName + "." + className;
+
+        if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
+            generateExtendConfigurer(parent, packageName, className, fqClassName, componentModel.getScheme() + "-endpoint");
+        } else if (uriEndpoint.generateConfigurer() && !componentModel.getComponentOptions().isEmpty()) {
+            // only generate this once for the first scheme
+            if (schemes == null || schemes[0].equals(scheme)) {
+                generatePropertyConfigurer(parent, packageName, className, fqClassName, endpointClassName, componentModel.getScheme() + "-endpoint",
+                        componentModel.getEndpointParameterOptions());
+            }
+        }
+    }
+
+    protected ComponentModel findComponentProperties(UriEndpoint uriEndpoint, Class<?> endpointClassElement, String title, String scheme,
+                                                     String extendsScheme, String label, String[] schemes) {
+        ComponentModel model = new ComponentModel();
+        model.setScheme(scheme);
+        model.setExtendsScheme(extendsScheme);
+        // alternative schemes
+        if (schemes != null && schemes.length > 1) {
+            model.setAlternativeSchemes(String.join(",", schemes));
+        }
+        // if the scheme is an alias then replace the scheme name from the
+        // syntax with the alias
+        String syntax = scheme + ":" + Strings.after(uriEndpoint.syntax(), ":");
+        // alternative syntax is optional
+        if (!Strings.isNullOrEmpty(uriEndpoint.alternativeSyntax())) {
+            String alternativeSyntax = scheme + ":" + Strings.after(uriEndpoint.alternativeSyntax(), ":");
+            model.setAlternativeSyntax(alternativeSyntax);
+        }
+        model.setSyntax(syntax);
+        model.setTitle(title);
+        model.setLabel(label);
+        model.setConsumerOnly(uriEndpoint.consumerOnly());
+        model.setProducerOnly(uriEndpoint.producerOnly());
+        model.setLenientProperties(uriEndpoint.lenientProperties());
+        model.setAsync(loadClass("org.apache.camel.AsyncEndpoint").isAssignableFrom(endpointClassElement));
+
+        // what is the first version this component was added to Apache Camel
+        String firstVersion = uriEndpoint.firstVersion();
+        if (Strings.isNullOrEmpty(firstVersion) && endpointClassElement.getAnnotation(Metadata.class) != null) {
+            // fallback to @Metadata if not from @UriEndpoint
+            firstVersion = endpointClassElement.getAnnotation(Metadata.class).firstVersion();
+        }
+        if (!Strings.isNullOrEmpty(firstVersion)) {
+            model.setFirstVersion(firstVersion);
+        }
+
+        // get the java type class name via the @Component annotation from its
+        // component class
+        for (AnnotationInstance ai : getIndex().getAnnotations(COMPONENT)) {
+            String[] cschemes = ai.value().asString().split(",");
+            if (Arrays.asList(cschemes).contains(scheme) && ai.target().kind() == AnnotationTarget.Kind.CLASS) {
+                String name = ai.target().asClass().name().toString();
+                model.setJavaType(name);
+                break;
+            }
+        }
+
+        // we can mark a component as deprecated by using the annotation
+        boolean deprecated = endpointClassElement.getAnnotation(Deprecated.class) != null
+                                || project.getName().contains("(deprecated)");
+        model.setDeprecated(deprecated);
+        String deprecationNote = null;
+        if (endpointClassElement.getAnnotation(Metadata.class) != null) {
+            deprecationNote = endpointClassElement.getAnnotation(Metadata.class).deprecationNote();
+        }
+        model.setDeprecationNote(deprecationNote);
+
+        // these information is not available at compile time and we enrich
+        // these later during the camel-package-maven-plugin
+        if (model.getJavaType() == null) {
+            throw new IllegalStateException("Could not find component java type");
+        }
+        model.setDescription(project.getDescription());
+        model.setGroupId(project.getGroupId());
+        model.setArtifactId(project.getArtifactId());
+        model.setVersion(project.getVersion());
+
+        // favor to use endpoint class javadoc as description
+        String doc = getDocComment(endpointClassElement);
+        if (doc != null) {
+            // need to sanitize the description first (we only want a
+            // summary)
+            doc = JavadocHelper.sanitizeDescription(doc, true);
+            // the javadoc may actually be empty, so only change the doc if
+            // we got something
+            if (!Strings.isNullOrEmpty(doc)) {
+                model.setDescription(doc);
+            }
+        }
+
+        return model;
+    }
+
+    protected void findComponentClassProperties(ComponentModel componentModel, Class<?> classElement,
+                                                String prefix, ComponentModel parentData,
+                                                String nestedTypeName, String nestedFieldName) {
+        final Class<?> orgClassElement = classElement;
+        while (true) {
+            Metadata componentAnnotation = classElement.getAnnotation(Metadata.class);
+            if (componentAnnotation != null && Objects.equals("verifiers", componentAnnotation.label())) {
+                componentModel.setVerifiers(componentAnnotation.enums());
+            }
+
+            // We order the methods according to the source code to keep compatibility
+            // with the old apt processing tool, however, we could get rid of that
+            JavaClassSource source = javaClassSource(classElement.getName());
+            List<MethodSource<JavaClassSource>> methodSources = source.getMethods().stream()
+                    .filter(method -> method.isPublic()
+                            && method.getName().startsWith("set")
+                            && method.getParameters().size() == 1
+                            && method.getReturnType().getName().equals("void")).collect(Collectors.toList());
+
+            List<Method> methods = Stream.of(classElement.getDeclaredMethods()).filter(method -> {
+                Metadata metadata = method.getAnnotation(Metadata.class);
+                String methodName = method.getName();
+                if (metadata != null && metadata.skip()) {
+                    return false;
+                }
+                if (method.isSynthetic() || !Modifier.isPublic(method.getModifiers())) {
+                    return false;
+                }
+                // must be the setter
+                boolean isSetter = methodName.startsWith("set")
+                        && method.getParameters().length == 1
+                        && method.getReturnType() == Void.TYPE;
+                if (!isSetter) {
+                    return false;
+                }
+
+                // skip unwanted methods as they are inherited from default
+                // component and are not intended for end users to configure
+                if ("setEndpointClass".equals(methodName) || "setCamelContext".equals(methodName)
+                        || "setEndpointHeaderFilterStrategy".equals(methodName) || "setApplicationContext".equals(methodName)) {
+                    return false;
+                }
+                if (isGroovyMetaClassProperty(method)) {
+                    return false;
+                }
+                return true;
+            }).sorted(Comparator.comparing(m -> {
+                int index = -1;
+                for (int i = 0; i < methodSources.size(); i++) {
+                    MethodSource<?> ms = methodSources.get(i);
+                    if (ms.getName().equals(m.getName())
+                            && ms.getReturnType().getName().equals("void")
+                            && ms.getParameters().size() == 1
+                            && getSimpleName(ms.getParameters().get(0).getType())
+                                    .equals(m.getParameters()[0].getType().getSimpleName())
+                    ) {
+                        index = i;
+                    }
+                }
+                if (index >= 0) {
+                    return index;
+                }
+                throw new IllegalStateException();
+            })).collect(Collectors.toList());
+
+            for (Method method : methods) {
+                String methodName = method.getName();
+                Metadata metadata = method.getAnnotation(Metadata.class);
+                boolean deprecated = method.getAnnotation(Deprecated.class) != null;
+                String deprecationNote = null;
+                if (metadata != null) {
+                    deprecationNote = metadata.deprecationNote();
+                }
+
+                // we usually favor putting the @Metadata annotation on the
+                // field instead of the setter, so try to use it if its there
+                String fieldName = methodName.substring(3);
+                fieldName = fieldName.substring(0, 1).toLowerCase() + fieldName.substring(1);
+                Field field;
+                try {
+                    field = classElement.getDeclaredField(fieldName);
+                } catch (NoSuchFieldException e) {
+                    field = null;
+                }
+                if (field != null && metadata == null) {
+                    metadata = field.getAnnotation(Metadata.class);
+                }
+                if (metadata != null && metadata.skip()) {
+                    continue;
+                }
+
+                boolean required = metadata != null && metadata.required();
+                String label = metadata != null ? metadata.label() : null;
+                boolean secret = metadata != null && metadata.secret();
+
+                // we do not yet have default values / notes / as no annotation
+                // support yet
+                // String defaultValueNote = param.defaultValueNote();
+                Object defaultValue = metadata != null ? metadata.defaultValue() : "";
+                String defaultValueNote = null;
+
+                String name = prefix + fieldName;
+                String displayName = metadata != null ? metadata.displayName() : null;
+                // compute a display name if we don't have anything
+                if (Strings.isNullOrEmpty(displayName)) {
+                    displayName = Strings.asTitle(name);
+                }
+
+                Class<?> fieldType = method.getParameters()[0].getType();
+                String fieldTypeName = getTypeName(GenericsUtil.resolveParameterTypes(orgClassElement, method)[0]);
+
+                String docComment = findJavaDoc(method, fieldName, name, classElement, false);
+                if (Strings.isNullOrEmpty(docComment)) {
+                    docComment = metadata != null ? metadata.description() : null;
+                }
+                if (Strings.isNullOrEmpty(docComment)) {
+                    // apt cannot grab javadoc from camel-core, only from
+                    // annotations
+                    if ("setHeaderFilterStrategy".equals(methodName)) {
+                        docComment = HEADER_FILTER_STRATEGY_JAVADOC;
+                    } else {
+                        docComment = "";
+                    }
+                }
+
+                // gather enums
+                List<String> enums = null;
+
+                boolean isEnum;
+                if (metadata != null && !Strings.isNullOrEmpty(metadata.enums())) {
+                    isEnum = true;
+                    String[] values = metadata.enums().split(",");
+                    enums = Stream.of(values).map(String::trim).collect(Collectors.toList());
+                } else {
+                    isEnum = fieldType.isEnum();
+                    if (isEnum) {
+                        enums = new ArrayList<>();
+                        for (Object val : fieldType.getEnumConstants()) {
+                            enums.add(val.toString());
+                        }
+                    }
+                }
+
+                // the field type may be overloaded by another type
+                if (metadata != null && !Strings.isNullOrEmpty(metadata.javaType())) {
+                    fieldTypeName = metadata.javaType();
+                }
+
+                if (isNullOrEmpty(defaultValue) && "boolean".equals(fieldTypeName)) {
+                    defaultValue = false;
+                }
+                if (isNullOrEmpty(defaultValue)) {
+                    defaultValue = "";
+                }
+
+                String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
+                // filter out consumer/producer only
+                boolean accept = true;
+                if (componentModel.isConsumerOnly() && "producer".equals(group)) {
+                    accept = false;
+                } else if (componentModel.isProducerOnly() && "consumer".equals(group)) {
+                    accept = false;
+                }
+                if (accept) {
+                    ComponentOptionModel option = new ComponentOptionModel();
+                    option.setKind("property");
+                    option.setName(name);
+                    option.setDisplayName(displayName);
+                    option.setType(getType(fieldTypeName, false));
+                    option.setJavaType(fieldTypeName);
+                    option.setRequired(required);
+                    option.setDefaultValue(defaultValue);
+                    option.setDefaultValueNote(defaultValueNote);
+                    option.setDescription(docComment.trim());
+                    option.setDeprecated(deprecated);
+                    option.setDeprecationNote(deprecationNote);
+                    option.setSecret(secret);
+                    option.setGroup(group);
+                    option.setLabel(label);
+                    option.setEnums(enums);
+                    option.setConfigurationClass(nestedTypeName);
+                    option.setConfigurationField(nestedFieldName);
+                    if (componentModel.getComponentOptions().stream().noneMatch(opt -> name.equals(opt.getName()))) {
+                        componentModel.addComponentOption(option);
+                    }
+                }
+            }
+
+            // check super classes which may also have fields
+            Class<?> superclass = classElement.getSuperclass();
+            if (superclass != null && superclass != Object.class) {
+                classElement = superclass;
+            } else {
+                break;
+            }
+        }
+    }
+
+    private String getSimpleName(org.jboss.forge.roaster.model.Type<?> type) {
+        boolean isArray = type.isArray();
+        if (!isArray && type instanceof TypeImpl) {
+            try {
+                Field field = TypeImpl.class.getDeclaredField("type");
+                field.setAccessible(true);
+                org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Type domType =
+                        (org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Type) field.get(type);
+                if (domType.getParent() instanceof SingleVariableDeclaration) {
+                    isArray = ((SingleVariableDeclaration) domType.getParent()).isVarargs();
+                }
+            } catch (Throwable t) {
+                throw new RuntimeException(t);
+            }
+        }
+        return isArray ? type.getSimpleName() + "[]" : type.getSimpleName();
+    }
+
+    protected void findClassProperties(ComponentModel componentModel, Class<?> classElement,
+                                       String prefix, String excludeProperties,
+                                       ComponentModel parentData, String nestedTypeName, String nestedFieldName) {
+        final Class<?> orgClassElement = classElement;
+        while (true) {
+            for (Field fieldElement : classElement.getDeclaredFields()) {
+
+                Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+                if (metadata != null && metadata.skip()) {
+                    continue;
+                }
+                boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
+                String deprecationNote = null;
+                if (metadata != null) {
+                    deprecationNote = metadata.deprecationNote();
+                }
+                Boolean secret = metadata != null ? metadata.secret() : null;
+
+                UriPath path = fieldElement.getAnnotation(UriPath.class);
+                String fieldName = fieldElement.getName();
+                if (path != null) {
+                    String name = prefix + (Strings.isNullOrEmpty(path.name()) ? fieldName : path.name());
+
+                    // should we exclude the name?
+                    if (excludeProperty(excludeProperties, name)) {
+                        continue;
+                    }
+
+                    Object defaultValue = path.defaultValue();
+                    if ("".equals(defaultValue) && metadata != null) {
+                        defaultValue = metadata.defaultValue();
+                    }
+                    boolean required = metadata != null && metadata.required();
+                    String label = path.label();
+                    if (Strings.isNullOrEmpty(label) && metadata != null) {
+                        label = metadata.label();
+                    }
+                    String displayName = path.displayName();
+                    if (Strings.isNullOrEmpty(displayName)) {
+                        displayName = metadata != null ? metadata.displayName() : null;
+                    }
+                    // compute a display name if we don't have anything
+                    if (Strings.isNullOrEmpty(displayName)) {
+                        displayName = Strings.asTitle(name);
+                    }
+
+                    Class<?> fieldTypeElement = fieldElement.getType();
+                    String fieldTypeName = getTypeName(GenericsUtil.resolveType(orgClassElement, fieldElement));
+
+                    String docComment = path.description();
+                    if (Strings.isNullOrEmpty(docComment)) {
+                        docComment = findJavaDoc(fieldElement, fieldName, name, classElement, false);
+                    }
+
+                    // gather enums
+                    List<String> enums = null;
+
+                    if (!Strings.isNullOrEmpty(path.enums())) {
+                        String[] values = path.enums().split(",");
+                        enums = Stream.of(values).map(String::trim).collect(Collectors.toList());
+                    } else if (fieldTypeElement.isEnum()) {
+                        enums = new ArrayList<>();
+                        for (Object val : fieldTypeElement.getEnumConstants()) {
+                            enums.add(val.toString());
+                        }
+                    }
+
+                    // the field type may be overloaded by another type
+                    if (!Strings.isNullOrEmpty(path.javaType())) {
+                        fieldTypeName = path.javaType();
+                    }
+                    if (isNullOrEmpty(defaultValue) && "boolean".equals(fieldTypeName)) {
+                        defaultValue = false;
+                    }
+                    if (isNullOrEmpty(defaultValue)) {
+                        defaultValue = null;
+                    }
+
+                    boolean isSecret = secret != null && secret || path.secret();
+                    String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
+                    EndpointOptionModel option = new EndpointOptionModel();
+                    option.setKind("path");
+                    option.setName(name);
+                    option.setDisplayName(displayName);
+                    option.setType(getType(fieldTypeName, false));
+                    option.setJavaType(fieldTypeName);
+                    option.setRequired(required);
+                    option.setDefaultValue(defaultValue);
+//                    option.setDefaultValueNote(defaultValueNote);
+                    option.setDescription(docComment.trim());
+                    option.setDeprecated(deprecated);
+                    option.setDeprecationNote(deprecationNote);
+                    option.setSecret(isSecret);
+                    option.setGroup(group);
+                    option.setLabel(label);
+                    option.setEnums(enums);
+                    option.setConfigurationClass(nestedTypeName);
+                    option.setConfigurationField(nestedFieldName);
+                    if (componentModel.getEndpointOptions().stream().noneMatch(opt -> name.equals(opt.getName()))) {
+                        componentModel.addEndpointOption(option);
+                    }
+                }
+
+                UriParam param = fieldElement.getAnnotation(UriParam.class);
+                fieldName = fieldElement.getName();
+                if (param != null) {
+                    String name = prefix + (Strings.isNullOrEmpty(param.name()) ? fieldName : param.name());
+
+                    // should we exclude the name?
+                    if (excludeProperty(excludeProperties, name)) {
+                        continue;
+                    }
+
+                    String paramOptionalPrefix = param.optionalPrefix();
+                    String paramPrefix = param.prefix();
+                    boolean multiValue = param.multiValue();
+                    Object defaultValue = param.defaultValue();
+                    if (isNullOrEmpty(defaultValue) && metadata != null) {
+                        defaultValue = metadata.defaultValue();
+                    }
+                    String defaultValueNote = param.defaultValueNote();
+                    boolean required = metadata != null && metadata.required();
+                    String label = param.label();
+                    if (Strings.isNullOrEmpty(label) && metadata != null) {
+                        label = metadata.label();
+                    }
+                    String displayName = param.displayName();
+                    if (Strings.isNullOrEmpty(displayName)) {
+                        displayName = metadata != null ? metadata.displayName() : null;
+                    }
+                    // compute a display name if we don't have anything
+                    if (Strings.isNullOrEmpty(displayName)) {
+                        displayName = Strings.asTitle(name);
+                    }
+
+                    // if the field type is a nested parameter then iterate
+                    // through its fields
+                    Class<?> fieldTypeElement = fieldElement.getType();
+                    String fieldTypeName = getTypeName(GenericsUtil.resolveType(orgClassElement, fieldElement));
+                    UriParams fieldParams = fieldTypeElement.getAnnotation(UriParams.class);
+                    if (fieldParams != null) {
+                        String nestedPrefix = prefix;
+                        String extraPrefix = fieldParams.prefix();
+                        if (!Strings.isNullOrEmpty(extraPrefix)) {
+                            nestedPrefix += extraPrefix;
+                        }
+                        nestedTypeName = fieldTypeName;
+                        nestedFieldName = fieldElement.getName();
+                        findClassProperties(componentModel, fieldTypeElement, nestedPrefix, excludeProperties, null, nestedTypeName, nestedFieldName);
+                        nestedTypeName = null;
+                        nestedFieldName = null;
+                    } else {
+                        String docComment = param.description();
+                        if (Strings.isNullOrEmpty(docComment)) {
+                            docComment = findJavaDoc(fieldElement, fieldName, name, classElement, false);
+                        }
+                        if (Strings.isNullOrEmpty(docComment)) {
+                            docComment = "";
+                        }
+
+                        // gather enums
+                        List<String> enums = null;
+
+                        if (!Strings.isNullOrEmpty(param.enums())) {
+                            String[] values = param.enums().split(",");
+                            enums = Stream.of(values).map(String::trim).collect(Collectors.toList());
+                        } else if (fieldTypeElement.isEnum()) {
+                            enums = new ArrayList<>();
+                            for (Object val : fieldTypeElement.getEnumConstants()) {
+                                enums.add(val.toString());
+                            }
+                        }
+
+                        // the field type may be overloaded by another type
+                        if (!Strings.isNullOrEmpty(param.javaType())) {
+                            fieldTypeName = param.javaType();
+                        }
+
+                        if (isNullOrEmpty(defaultValue) && "boolean".equals(fieldTypeName)) {
+                            defaultValue = false;
+                        }
+                        if (isNullOrEmpty(defaultValue)) {
+                            defaultValue = "";
+                        }
+
+                        boolean isSecret = secret != null && secret || param.secret();
+                        String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
+                        EndpointOptionModel option = new EndpointOptionModel();
+                        option.setKind("parameter");
+                        option.setName(name);
+                        option.setDisplayName(displayName);
+                        option.setType(getType(fieldTypeName, false));
+                        option.setJavaType(fieldTypeName);
+                        option.setRequired(required);
+                        option.setDefaultValue(defaultValue);
+                        option.setDefaultValueNote(defaultValueNote);
+                        option.setDescription(docComment.trim());
+                        option.setDeprecated(deprecated);
+                        option.setDeprecationNote(deprecationNote);
+                        option.setSecret(isSecret);
+                        option.setGroup(group);
+                        option.setLabel(label);
+                        option.setEnums(enums);
+                        option.setConfigurationClass(nestedTypeName);
+                        option.setConfigurationField(nestedFieldName);
+                        option.setPrefix(paramPrefix);
+                        option.setOptionalPrefix(paramOptionalPrefix);
+                        option.setMultiValue(multiValue);
+                        if (componentModel.getEndpointOptions().stream().noneMatch(opt -> name.equals(opt.getName()))) {
+                            componentModel.addEndpointOption(option);
+                        }
+                    }
+                }
+            }
+
+            // check super classes which may also have fields
+            Class<?> superclass = classElement.getSuperclass();
+            if (superclass != null) {
+                classElement = superclass;
+            } else {
+                break;
+            }
+        }
+    }
+
+    private static boolean isNullOrEmpty(Object value) {
+        return value == null || "".equals(value) || "null".equals(value);
+    }
+
+    private static boolean excludeProperty(String excludeProperties, String name) {
+        String[] excludes = excludeProperties.split(",");
+        for (String exclude : excludes) {
+            if (name.equals(exclude)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean secureAlias(String scheme, String alias) {
+        if (scheme.equals(alias)) {
+            return false;
+        }
+
+        // if alias is like scheme but with ending s its secured
+        if ((scheme + "s").equals(alias)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    // CHECKSTYLE:ON
+
+    private static boolean isGroovyMetaClassProperty(final Method method) {
+        final String methodName = method.getName();
+
+        if (!"setMetaClass".equals(methodName)) {
+            return false;
+        }
+
+        return "groovy.lang.MetaClass".equals(method.getReturnType().getName());
+    }
+
+    protected void generateExtendConfigurer(Class<?> parent, String pn, String cn, String fqn, String scheme) {
+
+        String pfqn = parent.getName();
+        String psn = pfqn.substring(pfqn.lastIndexOf('.') + 1);
+        try (Writer w = new StringWriter()) {
+            PropertyConfigurerGenerator.generateExtendConfigurer(pn, cn, pfqn, psn, w);
+            updateResource(sourcesOutputDir.toPath(), fqn.replace('.', '/') + ".java", w.toString());
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to generate source code file: " + fqn + ": " + e.getMessage(), e);
+        }
+        generateMetaInfConfigurer(scheme, fqn);
+    }
+
+    protected void generatePropertyConfigurer(Class<?> parent, String pn, String cn, String fqn, String en, String scheme,
+                                              Collection<? extends BaseOptionModel> options) {
+
+        try (Writer w = new StringWriter()) {
+            PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, options, w);
+            updateResource(sourcesOutputDir.toPath(), fqn.replace('.', '/') + ".java", w.toString());
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to generate source code file: " + fqn + ": " + e.getMessage(), e);
+        }
+        generateMetaInfConfigurer(scheme, fqn);
+    }
+
+    protected void generateMetaInfConfigurer(String name, String fqn) {
+        try (Writer w = new StringWriter()) {
+            w.append("# " + GENERATED_MSG + "\n");
+            w.append("class=").append(fqn).append("\n");
+            updateResource(resourcesOutputDir.toPath(), "META-INF/services/org/apache/camel/configurer/" + name, w.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected void generatePropertyPlaceholderProviderSource(Class<?> classElement, EipModel eipModel, Set<EipOptionModel> options,
+                                                             Set<String> propertyPlaceholderDefinitions) {
+
+        // not ever model classes support property placeholders as this has been
+        // limited to mainly Camel routes
+        // so filter out unwanted models
+        boolean rest = classElement.getName().startsWith("org.apache.camel.model.rest.");
+        boolean processor = loadClass("org.apache.camel.model.ProcessorDefinition").isAssignableFrom(classElement);
+        boolean language = loadClass("org.apache.camel.model.language.ExpressionDefinition").isAssignableFrom(classElement);
+        boolean dataformat = loadClass("org.apache.camel.model.DataFormatDefinition").isAssignableFrom(classElement);
+
+        if (!rest && !processor && !language && !dataformat) {
+            return;
+        }
+
+        Class<?> parent = loadClass("org.apache.camel.spi.PropertyPlaceholderConfigurer");
+        String fqnDef = classElement.getName();
+
+        generatePropertyPlaceholderProviderSource(parent, fqnDef, options);
+        propertyPlaceholderDefinitions.add(fqnDef);
+
+        // we also need to generate from when we generate route as from can also
+        // configure property placeholders
+        if (fqnDef.equals("org.apache.camel.model.RouteDefinition")) {
+            fqnDef = "org.apache.camel.model.FromDefinition";
+
+            options.clear();
+            options.add(createOption("id", null, null, "java.lang.String", false, null, null, false, null, false, null, false, null, false));
+            options.add(createOption("uri", null, null, "java.lang.String", false, null, null, false, null, false, null, false, null, false));
+
+            generatePropertyPlaceholderProviderSource(parent, fqnDef, options);
+            propertyPlaceholderDefinitions.add(fqnDef);
+        }
+    }
+
+    protected void generatePropertyPlaceholderProviderSource(Class<?> parent, String fqnDef, Set<EipOptionModel> options) {
+
+        String def = fqnDef.substring(fqnDef.lastIndexOf('.') + 1);
+        String cn = def + "PropertyPlaceholderProvider";
+        String fqn = "org.apache.camel.model.placeholder." + cn;
+
+        try (Writer w = new StringWriter()) {
+            PropertyPlaceholderGenerator.generatePropertyPlaceholderProviderSource(def, fqnDef, cn, options, w);
+            updateResource(sourcesOutputDir.toPath(), fqn.replace('.', '/') + ".java", w.toString());
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to generate source code file: " + fqn, e);
+        }
+    }
+
+    private void generatePropertyPlaceholderDefinitionsHelper(Set<String> propertyPlaceholderDefinitions) {
+
+        String fqn = "org.apache.camel.model.placeholder.DefinitionPropertiesPlaceholderProviderHelper";
+
+        try (Writer w = new StringWriter()) {
+            PropertyPlaceholderGenerator.generatePropertyPlaceholderDefinitionsHelper(propertyPlaceholderDefinitions, w);
+            updateResource(sourcesOutputDir.toPath(), fqn.replace('.', '/') + ".java", w.toString());
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to generate source code file: " + fqn, e);
+        }
+    }
+
+    private Class<?> loadClass(String name) {
+        try {
+            return getProjectClassLoader().loadClass(name);
+        } catch (ClassNotFoundException e) {
+            throw (NoClassDefFoundError) new NoClassDefFoundError(name).initCause(e);
+        }
+    }
+
+    private ClassLoader getProjectClassLoader() {
+        if (projectClassLoader == null) {
+            try {
+                projectClassLoader = DynamicClassLoader.createDynamicClassLoader(project.getCompileClasspathElements());
+            } catch (DependencyResolutionRequiredException e) {
+                throw new RuntimeException("Unable to create project classloader", e);
+            }
+        }
+        return projectClassLoader;
+    }
+
+    private IndexView getIndex() {
+        if (indexView == null) {
+            Path output = Paths.get(project.getBuild().getOutputDirectory());
+            try (InputStream is = Files.newInputStream(output.resolve("META-INF/jandex.idx"))) {
+                indexView = new IndexReader(is).read();
+            } catch (IOException e) {
+                throw new RuntimeException("IOException: " + e.getMessage(), e);
+            }
+        }
+        return indexView;
+    }
+
+    private String findDefaultValue(Field fieldElement, String fieldTypeName) {
+        String defaultValue = null;
+        Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+        if (metadata != null) {
+            if (!Strings.isNullOrEmpty(metadata.defaultValue())) {
+                defaultValue = metadata.defaultValue();
+            }
+        }
+        if (defaultValue == null) {
+            // if its a boolean type, then we use false as the default
+            if ("boolean".equals(fieldTypeName) || "java.lang.Boolean".equals(fieldTypeName)) {
+                defaultValue = "false";
+            }
+        }
+
+        return defaultValue;
+    }
+
+    private boolean findRequired(Field fieldElement, boolean defaultValue) {
+        Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+        if (metadata != null) {
+            return metadata.required();
+        }
+        return defaultValue;
+    }
+
+    private EipOptionModel createOption(String name, String displayName, String kind, String type, boolean required, String defaultValue, String description, boolean deprecated,
+                                        String deprecationNote, boolean enumType, Set<String> enums, boolean oneOf, Set<String> oneOfs, boolean asPredicate) {
+        EipOptionModel option = new EipOptionModel();
+        option.setName(name);
+        option.setDisplayName(Strings.isNullOrEmpty(displayName) ? Strings.asTitle(name) : displayName);
+        option.setKind(kind);
+        option.setRequired(required);
+        option.setDefaultValue("java.lang.Boolean".equals(type) && !Strings.isNullOrEmpty(defaultValue) ? Boolean.parseBoolean(defaultValue) : defaultValue);
+        option.setDescription(JavadocHelper.sanitizeDescription(description, false));
+        option.setDeprecated(deprecated);
+        option.setDeprecationNote(Strings.isNullOrEmpty(deprecationNote) ? null : deprecationNote);
+        option.setType(getType(type, enumType));
+        option.setJavaType(type);
+        option.setEnums(enums != null && !enums.isEmpty() ? new ArrayList<>(enums) : null);
+        option.setOneOfs(oneOfs != null && !oneOfs.isEmpty() ? new ArrayList<>(oneOfs) : null);
+        option.setAsPredicate(asPredicate);
+        return option;
+    }
+
+    private boolean hasSuperClass(Class<?> classElement, String superClassName) {
+        return loadClass(superClassName).isAssignableFrom(classElement);
+    }
+
+    private String findJavaDoc(AnnotatedElement member, String fieldName, String name, Class<?> classElement, boolean builderPattern) {
+        if (member instanceof Method) {
+            try {
+                Field field = classElement.getDeclaredField(fieldName);
+                Metadata md = field.getAnnotation(Metadata.class);
+                if (md != null) {
+                    String doc = md.description();
+                    if (!Strings.isNullOrEmpty(doc)) {
+                        return doc;
+                    }
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        if (member != null) {
+            Metadata md = member.getAnnotation(Metadata.class);
+            if (md != null) {
+                String doc = md.description();
+                if (!Strings.isNullOrEmpty(doc)) {
+                    return doc;
+                }
+            }
+        }
+
+        JavaClassSource source;
+        try {
+            source = javaClassSource(classElement.getName());
+        } catch (Exception e) {
+            return "";
+        }
+        FieldSource<JavaClassSource> field = source.getField(fieldName);
+        if (field != null) {
+            String doc = getJavaDocText(loadJavaSource(classElement.getName()), field);
+            if (!Strings.isNullOrEmpty(doc)) {
+                return doc;
+            }
+        }
+
+        String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+        for (MethodSource<JavaClassSource> setter : source.getMethods()) {
+            if (setter.getParameters().size() == 1
+                    && setter.getName().equals(setterName)) {
+                String doc = getJavaDocText(loadJavaSource(classElement.getName()), setter);
+                if (!Strings.isNullOrEmpty(doc)) {
+                    return doc;
+                }
+            }
+        }
+
+        String propName = Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+        for (MethodSource<JavaClassSource> getter : source.getMethods()) {
+            if (getter.getParameters().size() == 0
+                    && (getter.getName().equals("get" + propName) || getter.getName().equals("is" + propName))) {
+                String doc = getJavaDocText(loadJavaSource(classElement.getName()), getter);
+                if (!Strings.isNullOrEmpty(doc)) {
+                    return doc;
+                }
+            }
+        }
+
+        if (builderPattern) {
+            if (name != null && !name.equals(fieldName)) {
+                for (MethodSource<JavaClassSource> builder : source.getMethods()) {
+                    if (builder.getParameters().size() == 1 && builder.getName().equals(name)) {
+                        String doc = getJavaDocText(loadJavaSource(classElement.getName()), builder);
+                        if (!Strings.isNullOrEmpty(doc)) {
+                            return doc;
+                        }
+                    }
+                }
+                for (MethodSource<JavaClassSource> builder : source.getMethods()) {
+                    if (builder.getParameters().size() == 0 && builder.getName().equals(name)) {
+                        String doc = getJavaDocText(loadJavaSource(classElement.getName()), builder);
+                        if (!Strings.isNullOrEmpty(doc)) {
+                            return doc;
+                        }
+                    }
+                }
+            }
+            for (MethodSource<JavaClassSource> builder : source.getMethods()) {
+                if (builder.getParameters().size() == 1 && builder.getName().equals(fieldName)) {
+                    String doc = getJavaDocText(loadJavaSource(classElement.getName()), builder);
+                    if (!Strings.isNullOrEmpty(doc)) {
+                        return doc;
+                    }
+                }
+            }
+            for (MethodSource<JavaClassSource> builder : source.getMethods()) {
+                if (builder.getParameters().size() == 0 && builder.getName().equals(fieldName)) {
+                    String doc = getJavaDocText(loadJavaSource(classElement.getName()), builder);
+                    if (!Strings.isNullOrEmpty(doc)) {
+                        return doc;
+                    }
+                }
+            }
+        }
+
+        return "";
+    }
+
+    static String getJavaDocText(String source, JavaDocCapable<?> member) {
+        JavaDoc<?> javaDoc = member.getJavaDoc();
+        Javadoc jd = (Javadoc) javaDoc.getInternal();
+        if (source != null && jd.tags().size() > 0) {
+            ASTNode n = (ASTNode) jd.tags().get(0);
+            String txt = source.substring(n.getStartPosition(), n.getStartPosition() + n.getLength());
+            return txt
+                    .replaceAll(" *\n *\\* *\n", "\n\n")
+                    .replaceAll(" *\n *\\* +", "\n");
+        }
+        return null;
+    }
+
+    private String getDocComment(Class<?> classElement) {
+        JavaClassSource source = javaClassSource(classElement.getName());
+        return getJavaDocText(loadJavaSource(classElement.getName()), source);
+    }
+
+    private JavaClassSource javaClassSource(String className) {
+        return parsed.computeIfAbsent(className, this::doParseJavaClassSource);
+    }
+
+    private List<Path> getSourceRoots() {
+        if (sourceRoots == null) {
+            try {
+                sourceRoots = project.getCompileSourceRoots().stream()
+                        .map(Paths::get)
+                        .collect(Collectors.toList());
+                Path camelRoot = PackageHelper.findCamelCoreDirectory(project.getBasedir())
+                        .toPath().getParent().getParent();
+                project.getCompileClasspathElements().stream()
+                        .flatMap(dep -> {
+                            // m2 repo dependency
+                            if (dep.contains("/org/apache/camel/")) {
+                                String name = Strings.before(Strings.after(dep, "/org/apache/camel/"), "/");
+                                return Stream.of(name);
+                            // reactor dependency
+                            } else if (dep.startsWith(camelRoot.toString() + "/")) {
+                                String name = Strings.before(Strings.after(dep, camelRoot.toString() + "/"), "/target");
+                                int idx = name.lastIndexOf("/");
+                                if (idx > 0) {
+                                    name = name.substring(idx + 1);
+                                }
+                                return Stream.of(name);
+                            } else {
+                                return Stream.empty();
+                            }
+                        })
+                        .flatMap(dep -> Stream.of(
+                                "core/" + dep,
+                                "components/" + dep,
+                                "components/camel-as2/" + dep,
+                                "components/camel-box/" + dep,
+                                "components/camel-debezium-common/" + dep,
+                                "components/camel-fhir/" + dep,
+                                "components/camel-olingo2/" + dep,
+                                "components/camel-olingo4/" + dep,
+                                "components/camel-salesforce/" + dep,
+                                "components/camel-servicenow/" + dep))
+                        .flatMap(dep -> Stream.of(
+                                dep + "/src/main/java",
+                                dep + "/src/generated/java"))
+                        .map(camelRoot::resolve)
+                        .filter(Files::isDirectory)
+                        .forEach(sourceRoots::add);
+            } catch (DependencyResolutionRequiredException e) {
+                throw new RuntimeException("Unable to find source roots", e);
+            }
+        }
+        return sourceRoots;
+    }
+
+    private JavaClassSource doParseJavaClassSource(String className) {
+        try {
+            String source = loadJavaSource(className);
+            return (JavaClassSource) Roaster.parse(source);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to parse java class " + className, e);
+        }
+    }
+
+    private String loadJavaSource(String className) {
+        return sources.computeIfAbsent(className, this::doLoadJavaSource);
+    }
+
+    private String doLoadJavaSource(String className) {
+        try {
+            Path file = getSourceRoots().stream()
+                    .map(d -> d.resolve(className.replace('.', '/') + ".java"))
+                    .filter(Files::isRegularFile)
+                    .findFirst()
+                    .orElse(null);
+            if (file == null) {
+                throw new FileNotFoundException("Unable to find source for " + className);
+            }
+            return PackageHelper.loadText(file);
+        } catch (IOException e) {
+            String classpath;
+            try {
+                classpath = project.getCompileClasspathElements().toString();
+            } catch (Exception e2) {
+                classpath = e2.toString();
+            }
+            throw new RuntimeException("Unable to load source for class " + className + " in folders " + getSourceRoots()
+                    + " (classpath: " + classpath + ")");
+        }
+    }
+
+    private static String getTypeName(Type fieldType) {
+        String fieldTypeName = new GenericType(fieldType).toString();
+        fieldTypeName = fieldTypeName.replace('$', '.');
+        return fieldTypeName;
+    }
+
+    /**
+     * Gets the JSon schema type.
+     *
+     * @param type the java type
+     * @return the json schema type, is never null, but returns <tt>object</tt>
+     *         as the generic type
+     */
+    public static String getType(String type, boolean enumType) {
+        if (enumType) {
+            return "enum";
+        } else if (type == null) {
+            // return generic type for unknown type
+            return "object";
+        } else if (type.equals(URI.class.getName()) || type.equals(URL.class.getName())) {
+            return "string";
+        } else if (type.equals(File.class.getName())) {
+            return "string";
+        } else if (type.equals(Date.class.getName())) {
+            return "string";
+        } else if (type.startsWith("java.lang.Class")) {
+            return "string";
+        } else if (type.startsWith("java.util.List") || type.startsWith("java.util.Collection")) {
+            return "array";
+        }
+
+        String primitive = getPrimitiveType(type);
+        if (primitive != null) {
+            return primitive;
+        }
+
+        return "object";
+    }
+
+    /**
+     * Gets the JSon schema primitive type.
+     *
+     * @param name the java type
+     * @return the json schema primitive type, or <tt>null</tt> if not a
+     *         primitive
+     */
+    public static String getPrimitiveType(String name) {
+        // special for byte[] or Object[] as its common to use
+        if ("java.lang.byte[]".equals(name) || "byte[]".equals(name)) {
+            return "string";
+        } else if ("java.lang.Byte[]".equals(name) || "Byte[]".equals(name)) {
+            return "array";
+        } else if ("java.lang.Object[]".equals(name) || "Object[]".equals(name)) {
+            return "array";
+        } else if ("java.lang.String[]".equals(name) || "String[]".equals(name)) {
+            return "array";
+        } else if ("java.lang.Character".equals(name) || "Character".equals(name) || "char".equals(name)) {
+            return "string";
+        } else if ("java.lang.String".equals(name) || "String".equals(name)) {
+            return "string";
+        } else if ("java.lang.Boolean".equals(name) || "Boolean".equals(name) || "boolean".equals(name)) {
+            return "boolean";
+        } else if ("java.lang.Integer".equals(name) || "Integer".equals(name) || "int".equals(name)) {
+            return "integer";
+        } else if ("java.lang.Long".equals(name) || "Long".equals(name) || "long".equals(name)) {
+            return "integer";
+        } else if ("java.lang.Short".equals(name) || "Short".equals(name) || "short".equals(name)) {
+            return "integer";
+        } else if ("java.lang.Byte".equals(name) || "Byte".equals(name) || "byte".equals(name)) {
+            return "integer";
+        } else if ("java.lang.Float".equals(name) || "Float".equals(name) || "float".equals(name)) {
+            return "number";
+        } else if ("java.lang.Double".equals(name) || "Double".equals(name) || "double".equals(name)) {
+            return "number";
+        }
+
+        return null;
+    }
+
+    private static final class EipOptionComparator implements Comparator<EipOptionModel> {
+
+        private final EipModel model;
+
+        private EipOptionComparator(EipModel model) {
+            this.model = model;
+        }
+
+        @Override
+        public int compare(EipOptionModel o1, EipOptionModel o2) {
+            int weight = weight(o1);
+            int weight2 = weight(o2);
+
+            if (weight == weight2) {
+                // keep the current order
+                return 1;
+            } else {
+                // sort according to weight
+                return weight2 - weight;
+            }
+        }
+
+        private int weight(EipOptionModel o) {
+            String name = o.getName();
+
+            // these should be first
+            if ("expression".equals(name)) {
+                return 10;
+            }
+
+            // these should be last
+            if ("description".equals(name)) {
+                return -10;
+            } else if ("id".equals(name)) {
+                return -9;
+            } else if ("pattern".equals(name) && "to".equals(model.getName())) {
+                // and pattern only for the to model
+                return -8;
+            }
+            return 0;
+        }
+    }
+
+}

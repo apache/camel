@@ -24,6 +24,7 @@ import org.apache.camel.parser.ParserResult;
 import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.roaster.AnonymousMethodSource;
 import org.apache.camel.parser.roaster.StatementFieldSource;
+import org.apache.camel.tooling.util.Strings;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Block;
@@ -55,7 +56,6 @@ import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
-import org.jboss.forge.roaster.model.util.Strings;
 
 /**
  * A Camel Java parser that only depends on the Roaster API.
@@ -233,7 +233,7 @@ public final class CamelJavaParserHelper {
                     for (Object arg : args) {
                         if (isValidArgument(name, arg)) {
                             String routeId = getLiteralValue(clazz, block, (Expression) arg);
-                            if (!Strings.isBlank(routeId)) {
+                            if (!Strings.isNullOrEmpty(routeId)) {
                                 int position = ((Expression) arg).getStartPosition();
                                 int len = ((Expression) arg).getLength();
                                 uris.add(new ParserResult(name, position, len, routeId));
@@ -343,7 +343,7 @@ public final class CamelJavaParserHelper {
     private static void extractEndpointUriFromArgument(String node, JavaClassSource clazz, Block block, List<ParserResult> uris, Object arg, boolean strings, boolean fields) {
         if (strings) {
             String uri = getLiteralValue(clazz, block, (Expression) arg);
-            if (!Strings.isBlank(uri)) {
+            if (!Strings.isNullOrEmpty(uri)) {
                 int position = ((Expression) arg).getStartPosition();
                 int len = ((Expression) arg).getLength();
 
@@ -381,7 +381,7 @@ public final class CamelJavaParserHelper {
                         }
                     }
                     String uri = CamelJavaParserHelper.getLiteralValue(clazz, block, exp);
-                    if (!Strings.isBlank(uri)) {
+                    if (!Strings.isNullOrEmpty(uri)) {
                         int position = ((SimpleName) arg).getStartPosition();
                         int len = ((SimpleName) arg).getLength();
                         uris.add(new ParserResult(node, position, len, uri));
@@ -392,7 +392,7 @@ public final class CamelJavaParserHelper {
                     if (fi instanceof VariableDeclaration) {
                         Expression exp = ((VariableDeclaration) fi).getInitializer();
                         String uri = CamelJavaParserHelper.getLiteralValue(clazz, block, exp);
-                        if (!Strings.isBlank(uri)) {
+                        if (!Strings.isNullOrEmpty(uri)) {
                             // we want the position of the field, and not in the route
                             int position = ((VariableDeclaration) fi).getStartPosition();
                             int len = ((VariableDeclaration) fi).getLength();
@@ -456,7 +456,7 @@ public final class CamelJavaParserHelper {
                 // it is a String type
                 Object arg = args.get(0);
                 String simple = getLiteralValue(clazz, block, (Expression) arg);
-                if (!Strings.isBlank(simple)) {
+                if (!Strings.isNullOrEmpty(simple)) {
                     // is this a simple expression that is called as a predicate or expression
                     boolean predicate = false;
                     Expression parent = mi.getExpression();

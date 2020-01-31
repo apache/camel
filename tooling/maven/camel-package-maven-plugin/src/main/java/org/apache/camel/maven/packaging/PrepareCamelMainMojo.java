@@ -17,7 +17,7 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,9 +26,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.MainModel.MainGroupModel;
-import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.tooling.util.JavadocHelper;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -45,12 +43,12 @@ import org.jboss.forge.roaster.model.source.MethodSource;
  * tooling support.
  */
 @Mojo(name = "prepare-main", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE)
-public class PrepareCamelMainMojo extends AbstractMojo {
+public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
 
     /**
      * The output directory for generated spring boot tooling file
      */
-    @Parameter(readonly = true, defaultValue = "${project.build.directory}/../src/main/resources/META-INF/")
+    @Parameter(readonly = true, defaultValue = "${project.basedir}/src/generated/resources")
     protected File outFolder;
 
     /**
@@ -59,17 +57,20 @@ public class PrepareCamelMainMojo extends AbstractMojo {
     @Parameter(readonly = true, defaultValue = "${project.build.directory}/")
     protected File buildDir;
 
+    @Parameter(defaultValue = "${camel-generate-main}")
+    protected boolean generateMain;
+
     /**
      * Parses the Camel Main configuration java source file.
      */
-    public static List<MainModel.MainOptionModel> parseConfigurationSource(String fileName) throws FileNotFoundException {
+    public static List<MainModel.MainOptionModel> parseConfigurationSource(String fileName) throws IOException {
         return parseConfigurationSource(new File(fileName));
     }
 
     /**
      * Parses the Camel Main configuration java source file.
      */
-    public static List<MainModel.MainOptionModel> parseConfigurationSource(File file) throws FileNotFoundException {
+    public static List<MainModel.MainOptionModel> parseConfigurationSource(File file) throws IOException {
         final List<MainModel.MainOptionModel> answer = new ArrayList<>();
 
         JavaClassSource clazz = (JavaClassSource)Roaster.parse(file);
@@ -147,10 +148,14 @@ public class PrepareCamelMainMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (!generateMain) {
+            return;
+        }
+
         final List<MainModel.MainOptionModel> data = new ArrayList<>();
 
         // scan for configuration files
-        File[] files = new File(buildDir, "../src/main/java/org/apache/camel/main").listFiles(f -> f.isFile() && f.getName().endsWith("Properties.java"));
+        File[] files = new File(project.getBasedir(), "src/main/java/org/apache/camel/main").listFiles(f -> f.isFile() && f.getName().endsWith("Properties.java"));
 
         for (File file : files) {
             getLog().info("Parsing Camel Main configuration file: " + file);
@@ -206,12 +211,7 @@ public class PrepareCamelMainMojo extends AbstractMojo {
 
             String json = JsonMapper.createJsonSchema(model);
 
-            File file = new File(outFolder, "camel-main-configuration-metadata.json");
-            try {
-                FileUtil.updateFile(file.toPath(), json);
-            } catch (Throwable e) {
-                throw new MojoFailureException("Cannot write to file " + file + " due " + e.getMessage(), e);
-            }
+            updateResource(outFolder.toPath(), "META-INF/camel-main-configuration-metadata.json", json);
         }
     }
 

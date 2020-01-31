@@ -17,7 +17,6 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.file.Path;
@@ -62,7 +61,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
     /**
      * The output directory for generated dataformats file
      */
-    @Parameter(defaultValue = "${project.build.directory}/generated/camel/dataformats")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File dataFormatOutDir;
 
     /**
@@ -80,8 +79,25 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
     /**
      * The output directory for generated dataformats file
      */
-    @Parameter(defaultValue = "${project.build.directory}/classes")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File schemaOutDir;
+
+    public PackageDataFormatMojo() {
+    }
+
+    public PackageDataFormatMojo(Log log, MavenProject project, MavenProjectHelper projectHelper,
+                                 File dataFormatOutDir, File configurerSourceOutDir,
+                                 File configurerResourceOutDir, File schemaOutDir,
+                                 BuildContext buildContext) {
+        setLog(log);
+        this.project = project;
+        this.projectHelper = projectHelper;
+        this.dataFormatOutDir = dataFormatOutDir;
+        this.configurerSourceOutDir = configurerSourceOutDir;
+        this.configurerResourceOutDir = configurerResourceOutDir;
+        this.schemaOutDir = schemaOutDir;
+        this.buildContext = buildContext;
+    }
 
     /**
      * Execute goal.
@@ -93,12 +109,11 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, configurerSourceOutDir, configurerResourceOutDir, schemaOutDir, buildContext);
+        prepareDataFormat();
     }
 
-    public static int prepareDataFormat(Log log, MavenProject project, MavenProjectHelper projectHelper, File dataFormatOutDir, File configurerSourceOutDir,
-                                        File configurerResourceOutDir, File schemaOutDir, BuildContext buildContext)
-        throws MojoExecutionException {
+    public int prepareDataFormat() throws MojoExecutionException {
+        Log log = getLog();
 
         File camelMetaDir = new File(dataFormatOutDir, "META-INF/services/org/apache/camel/");
 
@@ -164,7 +179,9 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
                         // write this to the directory
                         Path out = schemaOutDir.toPath().resolve(schemaSubDirectory(dataFormatModel.getJavaType())).resolve(name + PackageHelper.JSON_SUFIX);
-                        updateResource(buildContext, out, schema);
+                        updateResource(schemaOutDir.toPath(),
+                                schemaSubDirectory(dataFormatModel.getJavaType()) + "/" + name + PackageHelper.JSON_SUFIX,
+                                schema);
 
                         if (log.isDebugEnabled()) {
                             log.debug("Generated " + out + " containing JSon schema for " + name + " data format");
@@ -180,9 +197,11 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                         if (!names.isEmpty()) {
                             log.warn("Unmapped options: " + String.join(",", names));
                         }
-                        updateResource(buildContext, configurerSourceOutDir.toPath().resolve(pn.replace('.', '/')).resolve(cn + "Configurer.java"),
+                        updateResource(configurerSourceOutDir.toPath(),
+                                       pn.replace('.', '/') + "/" + cn + "Configurer.java",
                                        generatePropertyConfigurer(pn, cn + "Configurer", cn, options));
-                        updateResource(buildContext, configurerResourceOutDir.toPath().resolve("META-INF/services/org/apache/camel/configurer/" + name + "-dataformat-configurer"),
+                        updateResource(configurerResourceOutDir.toPath(),
+                                       "META-INF/services/org/apache/camel/configurer/" + name + "-dataformat-configurer",
                                        generateMetaInfConfigurer(pn + "." + cn + "Configurer"));
                     }
                 } else {
@@ -196,10 +215,9 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
         if (count > 0) {
             String names = buffer.toString();
-            Path outFile = camelMetaDir.toPath().resolve("dataformat.properties");
             String properties = createProperties(project, "dataFormats", names);
-            updateResource(buildContext, outFile, properties);
-            log.info("Generated " + outFile + " containing " + count + " Camel " + (count > 1 ? "dataformats: " : "dataformat: ") + names);
+            updateResource(camelMetaDir.toPath(), "dataformat.properties", properties);
+            log.info("Generated dataformat.properties containing " + count + " Camel " + (count > 1 ? "dataformats: " : "dataformat: ") + names);
         } else {
             log.debug("No META-INF/services/org/apache/camel/dataformat directory found. Are you sure you have created a Camel data format?");
         }
@@ -380,7 +398,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
     /**
      * Parses the Camel Main configuration java source file.
      */
-    private static List<DataFormatOptionModel> parseConfigurationSource(MavenProject project, String className) throws FileNotFoundException {
+    private static List<DataFormatOptionModel> parseConfigurationSource(MavenProject project, String className) throws IOException {
         final List<DataFormatOptionModel> answer = new ArrayList<>();
         File file = new File(project.getBasedir(), "src/main/java/" + className.replace('.', '/') + ".java");
         if (!file.exists()) {
@@ -417,7 +435,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
     public static String generatePropertyConfigurer(String pn, String cn, String en, Collection<DataFormatOptionModel> options) throws IOException {
 
         try (StringWriter w = new StringWriter()) {
-            w.write("/* Generated by camel-package-maven-plugin - do not edit this file! */\n");
+            w.write("/* " + GENERATED_MSG + " */\n");
             w.write("package " + pn + ";\n");
             w.write("\n");
             w.write("import java.util.HashMap;\n");
@@ -428,7 +446,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             w.write("import org.apache.camel.support.component.PropertyConfigurerSupport;\n");
             w.write("\n");
             w.write("/**\n");
-            w.write(" * Source code generated by camel-package-maven-plugin - do not edit this file!\n");
+            w.write(" * " + GENERATED_MSG + "\n");
             w.write(" */\n");
             w.write("@SuppressWarnings(\"unchecked\")\n");
             w.write("public class " + cn + " extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {\n");
@@ -460,7 +478,8 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
     }
 
     public static String generateMetaInfConfigurer(String fqn) {
-        return "# Generated by camel-package-maven-plugin\nclass=" + fqn + "\n";
+        return "# " + GENERATED_MSG + NL +
+               "class=" + fqn + NL;
     }
 
 }

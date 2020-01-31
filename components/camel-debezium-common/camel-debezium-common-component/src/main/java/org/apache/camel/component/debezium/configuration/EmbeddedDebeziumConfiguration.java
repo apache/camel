@@ -38,41 +38,64 @@ public abstract class EmbeddedDebeziumConfiguration {
 
     private Class<?> connectorClass;
     // name
-    @UriPath(label = LABEL_NAME)
+    @UriPath(label = LABEL_NAME, description = "Unique name for the connector. " +
+            "Attempting to register again with the same name will fail.")
     @Metadata(required = true)
     private String name;
     // offset.storage
-    @UriParam(label = LABEL_NAME, defaultValue = "org.apache.kafka.connect.storage.FileOffsetBackingStore")
+    @UriParam(label = LABEL_NAME, defaultValue = "org.apache.kafka.connect.storage.FileOffsetBackingStore",
+            description = "The name of the Java class that is responsible for persistence of connector offsets.")
     private String offsetStorage = DebeziumConstants.DEFAULT_OFFSET_STORAGE;
     // offset.storage.file.filename
-    @UriParam(label = LABEL_NAME)
+    @UriParam(label = LABEL_NAME, description = "Path to file where offsets are to be stored. " +
+            "Required when offset.storage is set to the FileOffsetBackingStore.")
     private String offsetStorageFileName;
     // offset.storage.topic
-    @UriParam(label = LABEL_NAME)
+    @UriParam(label = LABEL_NAME, description = "The name of the Kafka topic where offsets are " +
+            "to be stored. Required when offset.storage is set to the KafkaOffsetBackingStore.")
     private String offsetStorageTopic;
     // offset.storage.partitions
-    @UriParam(label = LABEL_NAME)
+    @UriParam(label = LABEL_NAME, description = "The number of partitions used when creating the " +
+            "offset storage topic. Required when offset.storage is set to the 'KafkaOffsetBackingStore'.")
     private int offsetStoragePartitions;
     // offset.storage.replication.factor
-    @UriParam(label = LABEL_NAME)
+    @UriParam(label = LABEL_NAME, description = "Replication factor used when creating the offset " +
+            "storage topic. Required when offset.storage is set to the KafkaOffsetBackingStore")
     private int offsetStorageReplicationFactor;
     // offset.commit.policy
-    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.embedded.spi.OffsetCommitPolicy.PeriodicCommitOffsetPolicy")
+    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.embedded.spi.OffsetCommitPolicy.PeriodicCommitOffsetPolicy",
+            description = "The name of the Java class of the commit policy. It defines when offsets " +
+                    "commit has to be triggered based on the number of events processed and the " +
+                    "time elapsed since the last commit. This class must implement the interface " +
+                    "'OffsetCommitPolicy'. The default is a periodic commit policy based upon " +
+                    "time intervals.")
     private String offsetCommitPolicy = OffsetCommitPolicy.PeriodicCommitOffsetPolicy.class.getName();
     // offset.flush.interval.ms
-    @UriParam(label = LABEL_NAME, defaultValue = "60000")
+    @UriParam(label = LABEL_NAME, defaultValue = "60000", description = "Interval at which to try committing " +
+            "offsets. The default is 1 minute.")
     private long offsetFlushIntervalMs = 60000;
     // offset.commit.timeout.ms
-    @UriParam(label = LABEL_NAME, defaultValue = "5000")
+    @UriParam(label = LABEL_NAME, defaultValue = "5000", description = "Maximum number of milliseconds " +
+            "to wait for records to flush and partition offset data to be committed to offset storage " +
+            "before cancelling the process and restoring the offset data to be committed in a future " +
+            "attempt. The default is 5 seconds.")
     private long offsetCommitTimeoutMs = 5000;
     // internal.key.converter
-    @UriParam(label = LABEL_NAME, defaultValue = "org.apache.kafka.connect.json.JsonConverter")
+    @UriParam(label = LABEL_NAME, defaultValue = "org.apache.kafka.connect.json.JsonConverter",
+            description = "The Converter class that should be used to serialize and deserialize key data " +
+                    "for offsets. The default is JSON converter.")
     private String internalKeyConverter = JsonConverter.class.getName();
     // internal.value.converter
-    @UriParam(label = LABEL_NAME, defaultValue = "org.apache.kafka.connect.json.JsonConverter")
+    @UriParam(label = LABEL_NAME, defaultValue = "org.apache.kafka.connect.json.JsonConverter",
+            description = "The Converter class that should be used to serialize and deserialize value " +
+                    "data for offsets. The default is JSON converter.")
     private String internalValueConverter = JsonConverter.class.getName();
     // Additional properties
-    @UriParam(label = "common", prefix = "additionalProperties.", multiValue = true)
+    @UriParam(label = "common", prefix = "additionalProperties.", multiValue = true,
+            description = "Additional properties for debezium components in case they can't be set directly " +
+                    "on the camel configurations (e.g: setting Kafka Connect properties needed by Debezium engine, " +
+                    "for example setting KafkaOffsetBackingStore), the properties have to be prefixed with " +
+                    "`additionalProperties.`. E.g: `additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro`")
     private Map<String, Object> additionalProperties = new HashMap<>();
 
     public EmbeddedDebeziumConfiguration() {

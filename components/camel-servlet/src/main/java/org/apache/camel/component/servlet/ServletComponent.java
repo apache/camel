@@ -50,7 +50,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
     private String servletName = "CamelServlet";
     @Metadata(label = "consumer,advanced", description = "To use a custom org.apache.camel.component.servlet.HttpRegistry.")
     private HttpRegistry httpRegistry;
-    @Metadata(label = "consumer,advanced", description = "Whether to automatic bind multipart/form-data as attachments on the Camel Exchange}."
+    @Metadata(label = "consumer,advanced", description = "Whether to automatic bind multipart/form-data as attachments on the Camel Exchange."
         + " The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together."
         + " Remove disableStreamCache to use AttachmentMultipartBinding."
         + " This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.")

@@ -22,14 +22,15 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import org.apache.camel.maven.packaging.dsl.DslHelper;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.tooling.util.Strings;
+import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
@@ -42,8 +43,6 @@ public class ComponentsDslMetadataRegistry {
     private Set<String> componentsDslFactories;
     private File metadataFile;
 
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
     public ComponentsDslMetadataRegistry(final File componentDslDir, final File metadataFile) {
         // First: Load the content of the metadata file into memory
         componentsCache = loadMetadataFileIntoMap(metadataFile);
@@ -52,13 +51,23 @@ public class ComponentsDslMetadataRegistry {
     }
 
     private Map<String, EnrichedComponentModel> loadMetadataFileIntoMap(final File metadataFile) {
-        return gson.fromJson(loadJson(metadataFile), new TypeToken<Map<String, EnrichedComponentModel>>() { }.getType());
+        String json = loadJson(metadataFile);
+        JsonObject obj = JsonMapper.deserialize(json);
+        Map<String, EnrichedComponentModel> models = new TreeMap<>();
+        obj.forEach((k, v) -> models.put(k, loadModel((JsonObject) v)));
+        return models;
+    }
+
+    private EnrichedComponentModel loadModel(JsonObject json) {
+        EnrichedComponentModel model = new EnrichedComponentModel();
+        JsonMapper.parseComponentModel(json, model);
+        return model;
     }
 
     private Set<String> loadComponentsFactoriesFromDir(final File componentDir) {
         return DslHelper.loadAllJavaFiles(componentDir).stream()
                 .map(file -> Strings.before(file.getName(), "."))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(TreeSet::new));
     }
 
     public void addComponentToMetadataAndSyncMetadataFile(final EnrichedComponentModel componentModel, final String key) {
@@ -87,7 +96,9 @@ public class ComponentsDslMetadataRegistry {
     }
 
     private void writeCacheIntoMetadataFile() {
-        final String jsonText = gson.toJson(componentsCache);
+        JsonObject json = new JsonObject();
+        componentsCache.forEach((k, v) -> json.put(k, JsonMapper.asJsonObject(v).get("component")));
+        final String jsonText = JsonMapper.serialize(json);
         try {
             FileUtil.updateFile(metadataFile.toPath(), jsonText);
         } catch (IOException ex) {

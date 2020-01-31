@@ -111,8 +111,8 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     @UriParam(label = "consumer,websocket", defaultValue = "false")
     private boolean fireWebSocketChannelEvents;
     @UriParam(label = "consumer,advanced",
-        description = "Specifies a comma-delimited set of Undertow HttpHandler instances to lookup in your Registry."
-        + " These handlers are added to the Undertow handler chain (for example, to add security)."
+        description = "Specifies a comma-delimited set of io.undertow.server.HttpHandler instances to lookup in"
+        + " your Registry. These handlers are added to the Undertow handler chain (for example, to add security)."
         + " Important: You can not use different handlers with different Undertow endpoints using the same port number."
         + " The handlers is associated to the port number. If you need different handlers, then use different port numbers.")
     private String handlers;

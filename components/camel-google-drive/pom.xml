@@ -203,6 +203,7 @@
                                     <replacement>contentChannel</replacement>
                                 </substitution>
                             </substitutions>
+                            <generatedSrcDir>${project.basedir}/src/generated/java</generatedSrcDir>
                         </configuration>
                     </execution>
                 </executions>
@@ -214,17 +215,6 @@
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <version>1.8</version>
                 <executions>
-                    <execution>
-                        <id>add-generated-sources</id>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-sources/camel-component</source>
-                            </sources>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>add-generated-test-sources</id>
                         <goals>

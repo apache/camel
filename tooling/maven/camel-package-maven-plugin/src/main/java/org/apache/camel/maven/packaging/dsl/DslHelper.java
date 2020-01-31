@@ -110,11 +110,8 @@ public final class DslHelper {
     }
 
     public static String generateComponentBuilderClassName(final EnrichedComponentModel componentModel, final String suffix) {
-        // if we have an alternative schema, we just append the schema name to the classname
-        if (componentModel.isAlias()) {
-            return StringUtils.capitalize(toCamelCaseLower(componentModel.getScheme())) + componentModel.getShortJavaType() + suffix;
-        }
-        return componentModel.getShortJavaType() + suffix;
+        return StringUtils.capitalize(toCamelCaseLower(componentModel.getScheme()))
+                + "Component" + suffix;
     }
 
     private static String wrapEnumValues(List<String> enumValues) {

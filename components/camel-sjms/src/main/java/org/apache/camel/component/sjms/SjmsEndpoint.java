@@ -92,7 +92,8 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
                 + " If you need transaction against multiple JMS providers, use jms component to leverage XA transaction.")
     private boolean sharedJMSSession = true;
     @UriParam(label = "producer",
-            description = "Sets the reply to destination name used for InOut producer endpoints.")
+            description = "Sets the reply to destination name used for InOut producer endpoints. The type of the reply " +
+                    "to destination can be determined by the starting prefix (topic: or queue:) in its name.")
     private String namedReplyTo;
     @UriParam(defaultValue = "AUTO_ACKNOWLEDGE", enums = "SESSION_TRANSACTED,CLIENT_ACKNOWLEDGE,AUTO_ACKNOWLEDGE,DUPS_OK_ACKNOWLEDGE",
             description = "The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE")

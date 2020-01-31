@@ -71,7 +71,7 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
     /**
      * The output directory for generated components file
      */
-    @Parameter(defaultValue = "${project.build.directory}/generated/camel/jaxb")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File jaxbIndexOutDir;
 
     /**
@@ -110,14 +110,13 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
             if (project.getCompileSourceRoots().stream().map(Paths::get).map(p -> p.resolve(fn)).anyMatch(Files::isRegularFile)) {
                 continue;
             }
-            Path file = jaxbIndexDir.resolve(fn);
             StringBuilder sb = new StringBuilder();
             sb.append("# " + GENERATED_MSG + NL);
             for (String s : entry.getValue()) {
                 sb.append(s);
                 sb.append(NL);
             }
-            updateResource(file, sb.toString());
+            updateResource(jaxbIndexDir, fn, sb.toString());
         }
 
         getLog().info("Generated " + jaxbIndexOutDir + " containing " + count + " jaxb.index elements");

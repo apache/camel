@@ -41,14 +41,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- use the Camel apt compiler plugin -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>apt</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
     </dependencies>
 
     <build>

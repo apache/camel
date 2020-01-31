@@ -390,6 +390,9 @@
                         <id>generate</id>
                         <goals>
                             <goal>jandex</goal>
+                            <goal>generate-type-converter-loader</goal>
+                            <goal>generate-spi</goal>
+                            <goal>generate-endpoint-schema</goal>
                             <goal>prepare-components</goal>
                             <goal>generate-components-list</goal>
                         </goals>
@@ -431,34 +434,6 @@
                             <resources>
                                 <resource>
                                     <directory>src/generated/resources</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-generated-resources</id>
-                        <goals>
-                            <goal>resources</goal>
-                        </goals>
-                        <phase>process-classes</phase>
-                        <configuration>
-                            <resources>
-                                <resource>
-                                    <directory>${basedir}/target/generated/camel/components</directory>
-                                </resource>
-                                <resource>
-                                    <directory>${basedir}/target/generated/camel/dataformats</directory>
-                                </resource>
-                                <resource>
-                                    <directory>${basedir}/target/generated/camel/languages</directory>
-                                </resource>
-                                <resource>
-                                    <directory>${basedir}/target/generated/camel/others</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -523,25 +498,4 @@
         </plugins>
     </build>
 
-    <profiles>
-        <!-- enables the APT dependency so that it can be disabled in IDE builds -->
-        <profile>
-            <id>apt</id>
-            <activation>
-                <property>
-                    <name>!dummy.prop.to.keep.this.profile.active.even.when.other.profiles.are.active</name>
-                </property>
-            </activation>
-
-            <dependencies>
-                <!-- enable Camel APT processors -->
-                <dependency>
-                    <groupId>org.apache.camel</groupId>
-                    <artifactId>apt</artifactId>
-                    <version>${project.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
 </project>

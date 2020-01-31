@@ -78,7 +78,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     @UriParam(defaultValue = "true", label = "advanced", description = "Sets whether we should stepwise change "
                                                                        + "directories while traversing file structures when downloading files, or as well when uploading a file "
                                                                        + "to a directory. <p/> You can disable this if you for example are in a situation where you cannot change "
-                                                                       + "directory on the FTP server due security reasons. @param stepwise whether to use change directory or not")
+                                                                       + "directory on the FTP server due security reasons.")
     private boolean stepwise = true;
     @UriParam(defaultValue = "UNIX", description = "Sets the path separator to be used. <p/> UNIX = Uses unix style "
                                                    + "path separator Windows = Uses windows style path separator Auto = (is default) Use existing path " + "separator in file name")

@@ -41,13 +41,6 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
-        <!-- enable the APT processor -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>apt</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- testing -->
         <dependency>
             <groupId>junit</groupId>

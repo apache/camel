@@ -17,9 +17,12 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
+import java.io.IOError;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +40,7 @@ import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
+import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -51,12 +55,24 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
  * Generate Endpoint DSL source files for Components.
  */
 @Mojo(name = "generate-component-dsl", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
-public class ComponentDslMojo extends AbstractDslMojo {
+public class ComponentDslMojo extends AbstractGeneratorMojo {
+    /**
+     * The project build directory
+     */
+    @Parameter(defaultValue = "${project.build.directory}")
+    protected File buildDir;
+
+    /**
+     * The base directory
+     */
+    @Parameter(defaultValue = "${basedir}")
+    protected File baseDir;
+
     /**
      * The output directory
      */
     @Parameter
-    protected File outputJavaDir;
+    protected File sourcesOutputDir;
 
     /**
      * Component DSL Pom file
@@ -88,6 +104,7 @@ public class ComponentDslMojo extends AbstractDslMojo {
     @Parameter(defaultValue = "org.apache.camel.builder.component.dsl")
     protected String componentsDslFactoriesPackageName;
 
+    DynamicClassLoader projectClassLoader;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -97,14 +114,15 @@ public class ComponentDslMojo extends AbstractDslMojo {
             throw new RuntimeException(e.getMessage(), e);
         }
 
-        if (outputJavaDir == null) {
-            outputJavaDir = findCamelDirectory(baseDir, "core/camel-componentdsl/src/main/java");
+        Path root = findCamelDirectory(baseDir, "core/camel-componentdsl").toPath();
+        if (sourcesOutputDir == null) {
+            sourcesOutputDir = root.resolve("src/generated/java").toFile();
         }
         if (outputResourcesDir == null) {
-            outputResourcesDir = findCamelDirectory(baseDir, "core/camel-componentdsl/src/main/resources");
+            outputResourcesDir = root.resolve("src/generated/resources").toFile();
         }
         if (componentDslPom == null) {
-            componentDslPom = findCamelDirectory(baseDir, "core/camel-componentdsl").toPath().resolve("pom.xml").toFile();
+            componentDslPom = root.resolve("pom.xml").toFile();
         }
         if (componentsMetadata == null) {
             componentsMetadata = outputResourcesDir.toPath().resolve("metadata.json").toFile();
@@ -113,7 +131,9 @@ public class ComponentDslMojo extends AbstractDslMojo {
         Map<File, Supplier<String>> files;
 
         try {
-            files = Files.find(buildDir.toPath(), Integer.MAX_VALUE, (p, a) -> a.isRegularFile() && p.toFile().getName().endsWith(PackageHelper.JSON_SUFIX)).collect(Collectors.toMap(Path::toFile, s -> cache(() -> loadJson(s.toFile()))));
+            files = Files.find(buildDir.toPath(), Integer.MAX_VALUE,
+                        (p, a) -> a.isRegularFile() && p.toFile().getName().endsWith(PackageHelper.JSON_SUFIX))
+                    .collect(Collectors.toMap(Path::toFile, s -> cache(() -> loadJson(s.toFile()))));
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -159,7 +179,10 @@ public class ComponentDslMojo extends AbstractDslMojo {
         // Update components metadata
         final ComponentsDslMetadataRegistry componentsDslMetadataRegistry = syncAndUpdateComponentsMetadataRegistry(model, componentDslBuilderFactoryGenerator.getGeneratedClassName());
 
-        final Set<EnrichedComponentModel> componentCachedModels = new HashSet<>(componentsDslMetadataRegistry.getComponentCacheFromMemory().values());
+        final Set<EnrichedComponentModel> componentCachedModels = new TreeSet<>(
+                Comparator.comparing(EnrichedComponentModel::getScheme)
+        );
+        componentCachedModels.addAll(componentsDslMetadataRegistry.getComponentCacheFromMemory().values());
 
         // Create components DSL entry builder factories
         syncAndGenerateComponentsBuilderFactories(componentCachedModels);
@@ -170,7 +193,7 @@ public class ComponentDslMojo extends AbstractDslMojo {
 
     private ComponentDslBuilderFactoryGenerator syncAndGenerateSpecificComponentsBuilderFactories(final EnrichedComponentModel componentModel) throws MojoFailureException {
         final ComponentDslBuilderFactoryGenerator componentDslBuilderFactoryGenerator = ComponentDslBuilderFactoryGenerator.generateClass(componentModel, projectClassLoader, componentsDslPackageName);
-        writeSourceIfChanged(componentDslBuilderFactoryGenerator.printClassAsString(), componentsDslFactoriesPackageName.replace('.', '/'), componentDslBuilderFactoryGenerator.getGeneratedClassName() + ".java", outputJavaDir);
+        writeSourceIfChanged(componentDslBuilderFactoryGenerator.printClassAsString(), componentsDslFactoriesPackageName.replace('.', '/'), componentDslBuilderFactoryGenerator.getGeneratedClassName() + ".java", sourcesOutputDir);
 
         getLog().info("Regenerate " + componentDslBuilderFactoryGenerator.getGeneratedClassName());
 
@@ -178,7 +201,7 @@ public class ComponentDslMojo extends AbstractDslMojo {
     }
 
     private ComponentsDslMetadataRegistry syncAndUpdateComponentsMetadataRegistry(final EnrichedComponentModel componentModel, final String className) {
-        final ComponentsDslMetadataRegistry componentsDslMetadataRegistry = new ComponentsDslMetadataRegistry(outputJavaDir.toPath().resolve(componentsDslFactoriesPackageName.replace('.', '/')).toFile(), componentsMetadata);
+        final ComponentsDslMetadataRegistry componentsDslMetadataRegistry = new ComponentsDslMetadataRegistry(sourcesOutputDir.toPath().resolve(componentsDslFactoriesPackageName.replace('.', '/')).toFile(), componentsMetadata);
         componentsDslMetadataRegistry.addComponentToMetadataAndSyncMetadataFile(componentModel, className);
 
         getLog().info("Update components metadata with " + className);
@@ -188,7 +211,7 @@ public class ComponentDslMojo extends AbstractDslMojo {
 
     private void syncAndGenerateComponentsBuilderFactories(final Set<EnrichedComponentModel> componentCachedModels) throws MojoFailureException {
         final ComponentsBuilderFactoryGenerator componentsBuilderFactoryGenerator = ComponentsBuilderFactoryGenerator.generateClass(componentCachedModels, projectClassLoader, componentsDslPackageName);
-        writeSourceIfChanged(componentsBuilderFactoryGenerator.printClassAsString(), componentsDslPackageName.replace('.', '/'), componentsBuilderFactoryGenerator.getGeneratedClassName() + ".java", outputJavaDir);
+        writeSourceIfChanged(componentsBuilderFactoryGenerator.printClassAsString(), componentsDslPackageName.replace('.', '/'), componentsBuilderFactoryGenerator.getGeneratedClassName() + ".java", sourcesOutputDir);
 
         getLog().info("Regenerate " + componentsBuilderFactoryGenerator.getGeneratedClassName());
     }
@@ -207,16 +230,13 @@ public class ComponentDslMojo extends AbstractDslMojo {
             final String before = Strings.before(pomText, startMainComponentImportMarker).trim();
             final String after = Strings.after(pomText, endMainComponentImportMarker).trim();
 
-            // generate unique Artifacts IDs
-            final Map<String, List<ComponentModel>> uniqueArtifacts = componentsModels.values()
-                    .stream()
-                    .collect(Collectors.groupingBy(ComponentModel::getArtifactId, Collectors.toList()));
-
-            final StringBuilder stringBuilder = new StringBuilder();
-
-            uniqueArtifacts.forEach((artifactKey, groupedComponentsModel) -> stringBuilder.append(generateDependencyModule(groupedComponentsModel.get(0))));
-
-            final String updatedPom = before + "\n\t\t" + startMainComponentImportMarker + "\n" + stringBuilder.toString() + "\t\t"
+            final String updatedPom = before + "\n\t\t" + startMainComponentImportMarker + "\n"
+                    + componentsModels.values().stream()
+                        .map(this::generateDependencyModule)
+                        .sorted()
+                        .distinct()
+                        .collect(Collectors.joining())
+                    + "\t\t"
                     + endMainComponentImportMarker + "\n\t\t" + after;
             updateResource(buildContext, componentDslPom.toPath(), updatedPom);
         } catch (IOException e) {
@@ -231,5 +251,71 @@ public class ComponentDslMojo extends AbstractDslMojo {
                 + "\t\t\t<scope>provided</scope>\n"
                 + "\t\t\t<version>${project.version}</version>\n"
                 + "\t\t</dependency>\n";
+    }
+
+    protected static String loadJson(File file) {
+        try {
+            return loadText(file);
+        } catch (IOException e) {
+            throw new IOError(e);
+        }
+    }
+
+    protected static String loadComponentJson(Map<File, Supplier<String>> jsonFiles, String componentName) {
+        return loadJsonOfType(jsonFiles, componentName, "component");
+    }
+
+    protected static String loadJsonOfType(Map<File, Supplier<String>> jsonFiles, String modelName, String type) {
+        for (Map.Entry<File, Supplier<String>> entry : jsonFiles.entrySet()) {
+            if (entry.getKey().getName().equals(modelName + ".json")) {
+                String json = entry.getValue().get();
+                if (json.contains("\"kind\": \"" + type + "\"")) {
+                    return json;
+                }
+            }
+        }
+        return null;
+    }
+
+    protected void findComponentNames(File dir, Set<String> componentNames) {
+        File f = new File(dir, "classes/META-INF/services/org/apache/camel/component");
+
+        if (f.exists() && f.isDirectory()) {
+            File[] files = f.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    // skip directories as there may be a sub .resolver
+                    // directory
+                    if (file.isDirectory()) {
+                        continue;
+                    }
+                    String name = file.getName();
+                    if (name.charAt(0) != '.') {
+                        componentNames.add(name);
+                    }
+                }
+            }
+        }
+    }
+
+    protected void writeSourceIfChanged(JavaClass source, String filePath, String fileName, File outputDir, boolean innerClassesLast) throws MojoFailureException {
+        writeSourceIfChanged(source.printClass(innerClassesLast), filePath, fileName, outputDir);
+    }
+
+    protected void writeSourceIfChanged(String source, String filePath, String fileName, File outputDir) throws MojoFailureException {
+        Path target = outputDir.toPath().resolve(filePath).resolve(fileName);
+
+        try {
+            String header;
+            try (InputStream is = getClass().getClassLoader().getResourceAsStream("license-header-java.txt")) {
+                header = loadText(is);
+            }
+            String code = header + source;
+            getLog().debug("Source code generated:\n" + code);
+
+            updateResource(buildContext, target, code);
+        } catch (Exception e) {
+            throw new MojoFailureException("IOError with file " + target, e);
+        }
     }
 }

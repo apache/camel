@@ -43,14 +43,27 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
     /**
      * The output directory for generated components file
      */
-    @Parameter(defaultValue = "${project.build.directory}/generated/camel/others")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File otherOutDir;
 
     /**
      * The output directory for generated languages file
      */
-    @Parameter(defaultValue = "${project.build.directory}/classes")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File schemaOutDir;
+
+    public PackageOtherMojo() {
+    }
+
+    public PackageOtherMojo(Log log, MavenProject project, MavenProjectHelper projectHelper, File otherOutDir,
+                            File schemaOutDir, BuildContext buildContext) {
+        setLog(log);
+        this.project = project;
+        this.projectHelper = projectHelper;
+        this.otherOutDir = otherOutDir;
+        this.schemaOutDir = schemaOutDir;
+        this.buildContext = buildContext;
+    }
 
     /**
      * Execute goal.
@@ -75,11 +88,11 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
             return;
         }
 
-        prepareOthers(getLog(), project, projectHelper, otherOutDir, schemaOutDir, buildContext);
+        prepareOthers();
     }
 
-    public static void prepareOthers(Log log, MavenProject project, MavenProjectHelper projectHelper, File otherOutDir, File schemaOutDir, BuildContext buildContext)
-        throws MojoExecutionException {
+    public void prepareOthers() throws MojoExecutionException {
+        Log log = getLog();
 
         // first we need to setup the output directory because the next check
         // can stop the build before the end and eclipse always needs to know
@@ -118,11 +131,11 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
             String schema = JsonMapper.createJsonSchema(otherModel);
 
             // write this to the directory
-            Path out = schemaOutDir.toPath().resolve(name + PackageHelper.JSON_SUFIX);
-            updateResource(buildContext, out, schema);
+            String fileName = name + PackageHelper.JSON_SUFIX;
+            updateResource(schemaOutDir.toPath(), fileName, schema);
 
             if (log.isDebugEnabled()) {
-                log.debug("Generated " + out + " containing JSon schema for " + name + " other");
+                log.debug("Generated " + fileName + " containing JSon schema for " + name + " other");
             }
         } catch (Exception e) {
             throw new MojoExecutionException("Error loading other model. Reason: " + e, e);
@@ -131,10 +144,9 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
         // now create properties file
         File camelMetaDir = new File(otherOutDir, "META-INF/services/org/apache/camel/");
 
-        Path outFile = camelMetaDir.toPath().resolve("other.properties");
         String properties = createProperties(project, "name", name);
-        updateResource(buildContext, outFile, properties);
-        log.info("Generated " + outFile + " containing 1 Camel other: " + name);
+        updateResource(camelMetaDir.toPath(), "other.properties", properties);
+        log.info("Generated other.properties containing 1 Camel other: " + name);
     }
 
 }
