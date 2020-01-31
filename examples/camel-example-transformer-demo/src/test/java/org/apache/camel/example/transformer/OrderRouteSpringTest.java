@@ -105,7 +105,8 @@ public class OrderRouteSpringTest {
         Exchange answer = xmlProducer.send("direct:xml", ex -> {
             ((DataTypeAware)ex.getIn()).setBody(order, new DataType("xml:XMLOrder"));
         });
-        XMLUnit.compareXML(expectedAnswer, answer.getOut().getBody(String.class));
+        String xml = answer.getMessage().getBody(String.class);
+        XMLUnit.compareXML(expectedAnswer, xml);
         mockCsv.assertIsSatisfied();
     }
 

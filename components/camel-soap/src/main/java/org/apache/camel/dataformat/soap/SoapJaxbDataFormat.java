@@ -236,13 +236,13 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     }
 
     public void setElementNameStrategy(Object nameStrategy) {
-        if (nameStrategy == null) {
-            this.elementNameStrategy = null;
-        } else if (nameStrategy instanceof ElementNameStrategy) {
-            this.elementNameStrategy = (ElementNameStrategy) nameStrategy;
-        } else {
-            throw new IllegalArgumentException("The argument for setElementNameStrategy should be subClass of "
-                    + ElementNameStrategy.class.getName());
+        if (nameStrategy != null) {
+            if (nameStrategy instanceof ElementNameStrategy) {
+                this.elementNameStrategy = (ElementNameStrategy) nameStrategy;
+            } else {
+                throw new IllegalArgumentException("The argument for setElementNameStrategy should be subClass of "
+                        + ElementNameStrategy.class.getName());
+            }
         }
     }
 
