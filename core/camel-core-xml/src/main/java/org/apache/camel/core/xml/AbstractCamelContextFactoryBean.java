@@ -816,6 +816,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getAllowUseOriginalMessage();
 
+    public abstract String getCaseInsensitiveHeaders();
+
     public abstract String getRuntimeEndpointRegistryEnabled();
 
     public abstract String getManagementNamePattern();
@@ -935,6 +937,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getAllowUseOriginalMessage() != null) {
             context.setAllowUseOriginalMessage(CamelContextHelper.parseBoolean(context, getAllowUseOriginalMessage()));
+        }
+        if (getCaseInsensitiveHeaders() != null) {
+            context.setCaseInsensitiveHeaders(CamelContextHelper.parseBoolean(context, getCaseInsensitiveHeaders()));
         }
         if (getRuntimeEndpointRegistryEnabled() != null) {
             context.getRuntimeEndpointRegistry().setEnabled(CamelContextHelper.parseBoolean(context, getRuntimeEndpointRegistryEnabled()));

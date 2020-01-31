@@ -59,6 +59,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean logExhaustedMessageBody;
     private boolean autoStartup = true;
     private boolean allowUseOriginalMessage;
+    private boolean caseInsensitiveHeaders = true;
     private boolean endpointRuntimeStatisticsEnabled;
     private boolean endpointLazyStartProducer;
     private boolean endpointBridgeErrorHandler;
@@ -525,6 +526,24 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setAllowUseOriginalMessage(boolean allowUseOriginalMessage) {
         this.allowUseOriginalMessage = allowUseOriginalMessage;
+    }
+
+    public boolean isCaseInsensitiveHeaders() {
+        return caseInsensitiveHeaders;
+    }
+
+    /**
+     * Whether to use case sensitive or insensitive headers.
+     *
+     * Important: When using case sensitive (this is set to false).
+     * Then the map is case sensitive which means headers such as content-type and Content-Type are
+     * two different keys which can be a problem for some protocols such as HTTP based, which rely on case insensitive headers.
+     * However case sensitive implementations can yield faster performance. Therefore use case sensitive implementation with care.
+     *
+     * Default is true.
+     */
+    public void setCaseInsensitiveHeaders(boolean caseInsensitiveHeaders) {
+        this.caseInsensitiveHeaders = caseInsensitiveHeaders;
     }
 
     public boolean isEndpointRuntimeStatisticsEnabled() {
@@ -1201,6 +1220,21 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withAllowUseOriginalMessage(boolean allowUseOriginalMessage) {
         this.allowUseOriginalMessage = allowUseOriginalMessage;
+        return (T) this;
+    }
+
+    /**
+     * Whether to use case sensitive or insensitive headers.
+     *
+     * Important: When using case sensitive (this is set to false).
+     * Then the map is case sensitive which means headers such as content-type and Content-Type are
+     * two different keys which can be a problem for some protocols such as HTTP based, which rely on case insensitive headers.
+     * However case sensitive implementations can yield faster performance. Therefore use case sensitive implementation with care.
+     *
+     * Default is true.
+     */
+    public T withCaseInsensitiveHeaders(boolean caseInsensitiveHeaders) {
+        this.caseInsensitiveHeaders = caseInsensitiveHeaders;
         return (T) this;
     }
 

@@ -126,6 +126,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     private String allowUseOriginalMessage;
 
     @XmlAttribute
+    private String caseInsensitiveHeaders;
+
+    @XmlAttribute
     private String runtimeEndpointRegistryEnabled;
 
     @XmlAttribute
@@ -712,6 +715,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setAllowUseOriginalMessage(String allowUseOriginalMessage) {
         this.allowUseOriginalMessage = allowUseOriginalMessage;
+    }
+
+    @Override
+    public String getCaseInsensitiveHeaders() {
+        return caseInsensitiveHeaders;
+    }
+
+    public void setCaseInsensitiveHeaders(String caseInsensitiveHeaders) {
+        this.caseInsensitiveHeaders = caseInsensitiveHeaders;
     }
 
     @Override
