@@ -41,8 +41,8 @@ public class WriteClientTest extends AbstractMiloServerTest {
     private static final String MILO_SERVER_ITEM_1 = "milo-server:myitem1";
     private static final String MILO_SERVER_ITEM_2 = "milo-server:myitem2";
 
-    private static final String MILO_CLIENT_BASE_C1 = "milo-client:tcp://foo:bar@localhost:@@port@@";
-    private static final String MILO_CLIENT_BASE_C2 = "milo-client:tcp://foo2:bar2@localhost:@@port@@";
+    private static final String MILO_CLIENT_BASE_C1 = "milo-client:opc.tcp://foo:bar@localhost:@@port@@";
+    private static final String MILO_CLIENT_BASE_C2 = "milo-client:opc.tcp://foo2:bar2@localhost:@@port@@";
 
     private static final String MILO_CLIENT_ITEM_C1_1 = MILO_CLIENT_BASE_C1 + "?node=" + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1")
                                                         + "&overrideHost=true";

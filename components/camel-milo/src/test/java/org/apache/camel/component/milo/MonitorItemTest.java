@@ -34,9 +34,9 @@ public class MonitorItemTest extends AbstractMiloServerTest {
 
     private static final String MILO_SERVER_ITEM_1 = "milo-server:myitem1";
 
-    private static final String MILO_CLIENT_ITEM_C1_1 = "milo-client:tcp://foo:bar@localhost:@@port@@?node="
-                                                        + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1")
-                                                        + "&allowedSecurityPolicies=None&overrideHost=true";
+    private static final String MILO_CLIENT_ITEM_C1_1 = "milo-client:opc.tcp://foo:bar@localhost:@@port@@?node="
+                                                    + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1")
+                                                    + "&allowedSecurityPolicies=None&overrideHost=true";
 
     private static final String MOCK_TEST_1 = "mock:test1";
 

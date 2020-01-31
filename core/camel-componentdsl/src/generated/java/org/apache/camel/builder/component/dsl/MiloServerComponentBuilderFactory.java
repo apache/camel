@@ -73,6 +73,18 @@ public interface MiloServerComponentBuilderFactory {
             return this;
         }
         /**
+         * The path to be appended to the end of the endpoint url. (doesn't need
+         * to start with '/').
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default MiloServerComponentBuilder path(java.lang.String path) {
+            doSetProperty("path", path);
+            return this;
+        }
+        /**
          * The application URI.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -105,42 +117,6 @@ public interface MiloServerComponentBuilderFactory {
          */
         default MiloServerComponentBuilder bindPort(int bindPort) {
             doSetProperty("bindPort", bindPort);
-            return this;
-        }
-        /**
-         * Set whether strict endpoint URLs are enforced.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default MiloServerComponentBuilder strictEndpointUrlsEnabled(
-                boolean strictEndpointUrlsEnabled) {
-            doSetProperty("strictEndpointUrlsEnabled", strictEndpointUrlsEnabled);
-            return this;
-        }
-        /**
-         * Server name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default MiloServerComponentBuilder serverName(
-                java.lang.String serverName) {
-            doSetProperty("serverName", serverName);
-            return this;
-        }
-        /**
-         * Server hostname.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default MiloServerComponentBuilder hostname(java.lang.String hostname) {
-            doSetProperty("hostname", hostname);
             return this;
         }
         /**
@@ -251,12 +227,12 @@ public interface MiloServerComponentBuilderFactory {
          * Server certificate manager.
          * 
          * The option is a:
-         * <code>org.eclipse.milo.opcua.stack.core.application.CertificateManager</code> type.
+         * <code>org.eclipse.milo.opcua.stack.core.security.CertificateManager</code> type.
          * 
          * Group: common
          */
         default MiloServerComponentBuilder certificateManager(
-                org.eclipse.milo.opcua.stack.core.application.CertificateManager certificateManager) {
+                org.eclipse.milo.opcua.stack.core.security.CertificateManager certificateManager) {
             doSetProperty("certificateManager", certificateManager);
             return this;
         }
@@ -264,12 +240,12 @@ public interface MiloServerComponentBuilderFactory {
          * Validator for client certificates.
          * 
          * The option is a:
-         * <code>java.util.function.Supplier<org.eclipse.milo.opcua.stack.core.application.CertificateValidator></code> type.
+         * <code>java.util.function.Supplier<org.eclipse.milo.opcua.stack.core.security.CertificateValidator></code> type.
          * 
          * Group: common
          */
         default MiloServerComponentBuilder certificateValidator(
-                java.util.function.Supplier<org.eclipse.milo.opcua.stack.core.application.CertificateValidator> certificateValidator) {
+                java.util.function.Supplier<org.eclipse.milo.opcua.stack.core.security.CertificateValidator> certificateValidator) {
             doSetProperty("certificateValidator", certificateValidator);
             return this;
         }
@@ -358,12 +334,10 @@ public interface MiloServerComponentBuilderFactory {
             switch (name) {
             case "namespaceUri": ((MiloServerComponent) component).setNamespaceUri((java.lang.String) value); return true;
             case "applicationName": ((MiloServerComponent) component).setApplicationName((java.lang.String) value); return true;
+            case "path": ((MiloServerComponent) component).setPath((java.lang.String) value); return true;
             case "applicationUri": ((MiloServerComponent) component).setApplicationUri((java.lang.String) value); return true;
             case "productUri": ((MiloServerComponent) component).setProductUri((java.lang.String) value); return true;
             case "bindPort": ((MiloServerComponent) component).setBindPort((int) value); return true;
-            case "strictEndpointUrlsEnabled": ((MiloServerComponent) component).setStrictEndpointUrlsEnabled((boolean) value); return true;
-            case "serverName": ((MiloServerComponent) component).setServerName((java.lang.String) value); return true;
-            case "hostname": ((MiloServerComponent) component).setHostname((java.lang.String) value); return true;
             case "securityPolicies": ((MiloServerComponent) component).setSecurityPolicies((java.util.Set<org.eclipse.milo.opcua.stack.core.security.SecurityPolicy>) value); return true;
             case "securityPoliciesById": ((MiloServerComponent) component).setSecurityPoliciesById((java.util.Collection<java.lang.String>) value); return true;
             case "userAuthenticationCredentials": ((MiloServerComponent) component).setUserAuthenticationCredentials((java.lang.String) value); return true;
@@ -372,8 +346,8 @@ public interface MiloServerComponentBuilderFactory {
             case "bindAddresses": ((MiloServerComponent) component).setBindAddresses((java.lang.String) value); return true;
             case "buildInfo": ((MiloServerComponent) component).setBuildInfo((org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo) value); return true;
             case "serverCertificate": ((MiloServerComponent) component).setServerCertificate((org.apache.camel.component.milo.KeyStoreLoader.Result) value); return true;
-            case "certificateManager": ((MiloServerComponent) component).setCertificateManager((org.eclipse.milo.opcua.stack.core.application.CertificateManager) value); return true;
-            case "certificateValidator": ((MiloServerComponent) component).setCertificateValidator((java.util.function.Supplier<org.eclipse.milo.opcua.stack.core.application.CertificateValidator>) value); return true;
+            case "certificateManager": ((MiloServerComponent) component).setCertificateManager((org.eclipse.milo.opcua.stack.core.security.CertificateManager) value); return true;
+            case "certificateValidator": ((MiloServerComponent) component).setCertificateValidator((java.util.function.Supplier<org.eclipse.milo.opcua.stack.core.security.CertificateValidator>) value); return true;
             case "defaultCertificateValidator": ((MiloServerComponent) component).setDefaultCertificateValidator((java.io.File) value); return true;
             case "basicPropertyBinding": ((MiloServerComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((MiloServerComponent) component).setLazyStartProducer((boolean) value); return true;
