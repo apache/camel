@@ -20,15 +20,15 @@ package org.apache.camel.component.aws2.mq;
  * Constants used in Camel AWS MQ module
  */
 public interface MQ2Constants {
-    String OPERATION                  = "CamelAwsMQOperation";
-    String MAX_RESULTS                = "CamelAwsMQMaxResults";
-    String BROKER_NAME                = "CamelAwsMQBrokerName";
-    String BROKER_ENGINE              = "CamelAwsMQBrokerEngine";
-    String BROKER_ENGINE_VERSION      = "CamelAwsMQBrokerEngineVersion";
-    String BROKER_ID                  = "CamelAwsMQBrokerID";
-    String CONFIGURATION_ID           = "CamelAwsMQConfigurationID";
-    String BROKER_DEPLOYMENT_MODE     = "CamelAwsMQBrokerDeploymentMode";
-    String BROKER_INSTANCE_TYPE       = "CamelAwsMQBrokerInstanceType";
-    String BROKER_USERS               = "CamelAwsMQBrokerUsers";
+    String OPERATION = "CamelAwsMQOperation";
+    String MAX_RESULTS = "CamelAwsMQMaxResults";
+    String BROKER_NAME = "CamelAwsMQBrokerName";
+    String BROKER_ENGINE = "CamelAwsMQBrokerEngine";
+    String BROKER_ENGINE_VERSION = "CamelAwsMQBrokerEngineVersion";
+    String BROKER_ID = "CamelAwsMQBrokerID";
+    String CONFIGURATION_ID = "CamelAwsMQConfigurationID";
+    String BROKER_DEPLOYMENT_MODE = "CamelAwsMQBrokerDeploymentMode";
+    String BROKER_INSTANCE_TYPE = "CamelAwsMQBrokerInstanceType";
+    String BROKER_USERS = "CamelAwsMQBrokerUsers";
     String BROKER_PUBLICLY_ACCESSIBLE = "CamelAwsMQBrokerPubliclyAccessible";
 }

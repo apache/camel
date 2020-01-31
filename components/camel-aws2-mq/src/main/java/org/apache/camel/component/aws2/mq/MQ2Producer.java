@@ -26,7 +26,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.mq.MqClient;
 import software.amazon.awssdk.services.mq.model.ConfigurationId;
@@ -177,7 +176,7 @@ public class MQ2Producer extends DefaultProducer {
             publiclyAccessible = exchange.getIn().getHeader(MQ2Constants.BROKER_PUBLICLY_ACCESSIBLE, Boolean.class);
             builder.publiclyAccessible(publiclyAccessible);
         } else {
-        	builder.publiclyAccessible(false);
+            builder.publiclyAccessible(false);
         }
         CreateBrokerResponse result;
         try {
@@ -209,7 +208,7 @@ public class MQ2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void rebootBroker(MqClient mqClient, Exchange exchange) {
         String brokerId;
         RebootBrokerRequest.Builder builder = RebootBrokerRequest.builder();
@@ -229,7 +228,7 @@ public class MQ2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void updateBroker(MqClient mqClient, Exchange exchange) {
         String brokerId;
         ConfigurationId configurationId;
@@ -256,7 +255,7 @@ public class MQ2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void describeBroker(MqClient mqClient, Exchange exchange) {
         String brokerId;
         DescribeBrokerRequest.Builder builder = DescribeBrokerRequest.builder();
@@ -276,7 +275,7 @@ public class MQ2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }

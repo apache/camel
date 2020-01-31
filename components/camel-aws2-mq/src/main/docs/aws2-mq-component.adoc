@@ -1,4 +1,7 @@
+[[aws2-mq-component]]
 = AWS 2 MQ Component
+
+*Since Camel 3.1*
 
 // HEADER START
 *Only producer is supported*

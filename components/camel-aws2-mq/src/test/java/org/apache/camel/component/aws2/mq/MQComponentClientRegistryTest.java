@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.mq;
 
-import org.apache.camel.component.aws2.mq.MQ2Component;
-import org.apache.camel.component.aws2.mq.MQ2Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -29,15 +27,15 @@ public class MQComponentClientRegistryTest extends CamelTestSupport {
         AmazonMQClientMock awsMQClient = new AmazonMQClientMock();
         context.getRegistry().bind("awsMQClient", awsMQClient);
         MQ2Component component = context.getComponent("aws2-mq", MQ2Component.class);
-        MQ2Endpoint endpoint = (MQ2Endpoint) component.createEndpoint("aws2-mq://MyQueue");
+        MQ2Endpoint endpoint = (MQ2Endpoint)component.createEndpoint("aws2-mq://MyQueue");
 
         assertNotNull(endpoint.getConfiguration().getAmazonMqClient());
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalMQClientMisconfiguration() throws Exception {
 
         MQ2Component component = context.getComponent("aws2-mq", MQ2Component.class);
-        MQ2Endpoint endpoint = (MQ2Endpoint) component.createEndpoint("aws2-mq://MyQueue");
+        MQ2Endpoint endpoint = (MQ2Endpoint)component.createEndpoint("aws2-mq://MyQueue");
     }
 }
