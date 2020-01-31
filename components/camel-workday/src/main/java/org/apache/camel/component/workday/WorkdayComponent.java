@@ -33,8 +33,8 @@ public class WorkdayComponent extends DefaultComponent {
     public static final String RAAS_ENDPOINT_URL = "https://%s/ccx/service/customreport2/%s%s";
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-
-        WorkdayEndpoint endpoint = new WorkdayEndpoint(uri, this);
+        WorkdayConfiguration configuration = new WorkdayConfiguration();
+        WorkdayEndpoint endpoint = new WorkdayEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
         return endpoint;
