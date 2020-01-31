@@ -30,14 +30,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit test to verify that we can pool a BINARY file from the FTP Server and store it on a local file path
+ * Unit test to verify that we can pool a BINARY file from the FTP Server and
+ * store it on a local file path
  */
 public class FromFtpToBinaryFilesTest extends FtpServerTestSupport {
 
     // must user "consumer." prefix on the parameters to the file component
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/incoming?password=admin&binary=true"
-                + "&delay=2000&recursive=true";
+        return "ftp://admin@localhost:" + getPort() + "/incoming?password=admin&binary=true" + "&delay=2000&recursive=true";
     }
 
     @Override
@@ -68,10 +68,10 @@ public class FromFtpToBinaryFilesTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
+        // prepares the FTP Server by creating a file on the server that we want
+        // to unit
         // test that we can pool and store as a local file
-        String ftpUrl = "ftp://admin@localhost:" + getPort() + "/incoming?password=admin&binary=true"
-                + "&delay=2000&recursive=false";
+        String ftpUrl = "ftp://admin@localhost:" + getPort() + "/incoming?password=admin&binary=true" + "&delay=2000&recursive=false";
         Endpoint endpoint = context.getEndpoint(ftpUrl);
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody(IOConverter.toFile("src/test/data/ftpbinarytest/logo.jpeg"));
@@ -81,8 +81,7 @@ public class FromFtpToBinaryFilesTest extends FtpServerTestSupport {
         producer.process(exchange);
         producer.stop();
 
-        ftpUrl = "ftp://admin@localhost:" + getPort() + "/incoming/a?password=admin&binary=true"
-                + "&delay=2000&recursive=false";
+        ftpUrl = "ftp://admin@localhost:" + getPort() + "/incoming/a?password=admin&binary=true" + "&delay=2000&recursive=false";
         endpoint = context.getEndpoint(ftpUrl);
         exchange = endpoint.createExchange();
         exchange.getIn().setBody(IOConverter.toFile("src/test/data/ftpbinarytest/logo1.jpeg"));

@@ -42,8 +42,7 @@ public class FromFtpExclusiveReadNoneStrategyTest extends FtpServerTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(FromFtpExclusiveReadNoneStrategyTest.class);
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/slowfile?password=admin"
-                + "&readLock=none&delay=500";
+        return "ftp://admin@localhost:" + getPort() + "/slowfile?password=admin" + "&readLock=none&delay=500";
     }
 
     // Cannot test on windows due file system works differently with file locks
@@ -65,13 +64,16 @@ public class FromFtpExclusiveReadNoneStrategyTest extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        // send a message to seda:start to trigger the creating of the slowfile to poll
+        // send a message to seda:start to trigger the creating of the slowfile
+        // to poll
         template.sendBody("seda:start", "Create the slow file");
 
         mock.assertIsSatisfied();
 
-        // we read only part of the file as we dont have exclusive read and thus read part of the
-        // file currently in progress of being written - so we get only the Hello World part
+        // we read only part of the file as we dont have exclusive read and thus
+        // read part of the
+        // file currently in progress of being written - so we get only the
+        // Hello World part
         String body = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
         LOG.debug("Body is: " + body);
         assertFalse(body.endsWith("Bye World"), "Should not wait and read the entire file");

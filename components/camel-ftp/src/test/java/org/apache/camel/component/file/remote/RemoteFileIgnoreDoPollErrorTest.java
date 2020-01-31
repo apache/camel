@@ -103,14 +103,17 @@ public class RemoteFileIgnoreDoPollErrorTest {
                     return "true".equals(doPollResult);
                 }
             }
+
             @Override
             protected boolean pollDirectory(String fileName, List<GenericFile<Object>> genericFiles, int depth) {
                 return false;
             }
+
             @Override
             protected boolean isMatched(GenericFile<Object> file, String doneFileName, List<Object> files) {
                 return false;
             }
+
             @Override
             protected boolean ignoreCannotRetrieveFile(String name, Exchange exchange, Exception cause) {
                 return ignoreCannotRetrieveFile;

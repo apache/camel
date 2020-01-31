@@ -27,8 +27,7 @@ import org.junit.jupiter.api.Test;
 public class FromFtpServerLanguageCodeAndTimeoutTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort()
-            + "/codetimeout/?password=admin&ftpClientConfig.serverLanguageCode=fr&ftpClient.dataTimeout=4000";
+        return "ftp://admin@localhost:" + getPort() + "/codetimeout/?password=admin&ftpClientConfig.serverLanguageCode=fr&ftpClient.dataTimeout=4000";
     }
 
     @Override
@@ -37,12 +36,12 @@ public class FromFtpServerLanguageCodeAndTimeoutTest extends FtpServerTestSuppor
         super.setUp();
         prepareFtpServer();
     }
-    
+
     @Test
     public void testLanguageCodeAndTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        
+
         mock.assertIsSatisfied();
     }
 

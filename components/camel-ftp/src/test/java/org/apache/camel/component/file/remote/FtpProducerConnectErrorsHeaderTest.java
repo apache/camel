@@ -40,12 +40,7 @@ public class FtpProducerConnectErrorsHeaderTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start")
-                        .doTry()
-                            .to(getFtpUrl())
-                        .doCatch(Exception.class)
-                            .to("mock:result")
-                        .endDoTry();
+                from("direct:start").doTry().to(getFtpUrl()).doCatch(Exception.class).to("mock:result").endDoTry();
             }
         };
     }

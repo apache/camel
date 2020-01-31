@@ -44,7 +44,7 @@ public class FromFtpSedaDeleteFileTest extends FtpServerTestSupport {
         super.setUp();
         prepareFtpServer();
     }
-    
+
     @Test
     public void testPollFileAndShouldBeDeleted() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -61,7 +61,8 @@ public class FromFtpSedaDeleteFileTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
+        // prepares the FTP Server by creating a file on the server that we want
+        // to unit
         // test that we can pool and store as a local file
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
@@ -83,11 +84,7 @@ public class FromFtpSedaDeleteFileTest extends FtpServerTestSupport {
             public void configure() throws Exception {
                 from(getFtpUrl()).to("seda:foo");
 
-                from("seda:foo")
-                    .delay(750)
-                    .log("${body}")
-                    .delay(750)
-                    .to("mock:result");
+                from("seda:foo").delay(750).log("${body}").delay(750).to("mock:result");
             }
         };
     }

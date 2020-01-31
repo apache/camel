@@ -31,13 +31,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
 
     private static boolean invoked;
-    
+
     @BindToRegistry("myRepo")
     private MyIdempotentRepository myIdempotentRepo = new MyIdempotentRepository();
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort()
-                + "/idempotent?password=admin&binary=false&idempotent=true&idempotentRepository=#myRepo&delete=true";
+        return "ftp://admin@localhost:" + getPort() + "/idempotent?password=admin&binary=false&idempotent=true&idempotentRepository=#myRepo&delete=true";
     }
 
     @Test
@@ -60,13 +59,14 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
         // move file back
         sendFile(getFtpUrl(), "Hello World", "report.txt");
 
-        // should NOT consume the file again, let 2 secs pass to let the consumer try to consume it but it should not
+        // should NOT consume the file again, let 2 secs pass to let the
+        // consumer try to consume it but it should not
         Thread.sleep(2000);
         assertMockEndpointsSatisfied();
 
         assertTrue(invoked, "MyIdempotentRepository should have been invoked");
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -101,10 +101,10 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
         public boolean confirm(String key) {
             return true;
         }
-        
+
         @Override
         public void clear() {
-            return;  
+            return;
         }
 
         @Override

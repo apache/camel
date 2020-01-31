@@ -30,18 +30,18 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RemoteFileProducer.class);
     private boolean loggedIn;
-    
+
     private transient String remoteFileProducerToString;
-    
+
     protected RemoteFileProducer(RemoteFileEndpoint<T> endpoint, RemoteFileOperations<T> operations) {
         super(endpoint, operations);
     }
-    
+
     @Override
     public String getFileSeparator() {
         return "/";
     }
-    
+
     @Override
     public String normalizePath(String name) {
         return name;
@@ -58,7 +58,8 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
         try {
             processExchange(exchange, target);
         } finally {
-            // remove the write file name header as we only want to use it once (by design)
+            // remove the write file name header as we only want to use it once
+            // (by design)
             exchange.getIn().removeHeader(Exchange.OVERRULE_FILE_NAME);
             // and restore existing file name
             exchange.getIn().setHeader(Exchange.FILE_NAME, existing);
@@ -66,17 +67,18 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
     }
 
     protected RemoteFileOperations<T> getOperations() {
-        return (RemoteFileOperations<T>) operations;
+        return (RemoteFileOperations<T>)operations;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public RemoteFileEndpoint<T> getEndpoint() {
-        return (RemoteFileEndpoint<T>) super.getEndpoint();
+        return (RemoteFileEndpoint<T>)super.getEndpoint();
     }
 
     /**
-     * The file could not be written. We need to disconnect from the remote server.
+     * The file could not be written. We need to disconnect from the remote
+     * server.
      */
     @Override
     public void handleFailedWrite(Exchange exchange, Exception exception) throws Exception {
@@ -107,7 +109,8 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
 
     @Override
     public void preWriteCheck(Exchange exchange) throws Exception {
-        // before writing send a noop to see if the connection is alive and works
+        // before writing send a noop to see if the connection is alive and
+        // works
         boolean noop = false;
         if (loggedIn) {
             if (getEndpoint().getConfiguration().isSendNoop()) {
@@ -121,7 +124,8 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
                 }
                 LOG.trace("preWriteCheck send noop success: {}", noop);
             } else {
-                // okay send noop is disabled then we would regard the op as success
+                // okay send noop is disabled then we would regard the op as
+                // success
                 noop = true;
                 LOG.trace("preWriteCheck send noop disabled");
             }
@@ -161,7 +165,8 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
     @Override
     protected void doStart() throws Exception {
         LOG.debug("Starting");
-        // do not connect when component starts, just wait until we process as we will
+        // do not connect when component starts, just wait until we process as
+        // we will
         // connect at that time if needed
         super.doStart();
     }
@@ -190,7 +195,8 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
 
     @Override
     public boolean isSingleton() {
-        // this producer is stateful because the remote file operations is not thread safe
+        // this producer is stateful because the remote file operations is not
+        // thread safe
         return false;
     }
 

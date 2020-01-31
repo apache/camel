@@ -38,7 +38,7 @@ public class SftpUseListFalseTest extends SftpServerTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "report.txt");
         mock.expectedBodiesReceived(expected);
-        
+
         context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
@@ -50,9 +50,8 @@ public class SftpUseListFalseTest extends SftpServerTestSupport {
             @Override
             public void configure() throws Exception {
                 from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
-                    + "?username=admin&password=admin&delay=10s&disconnect=true&stepwise=false&useList=false&fileName=report.txt&delete=true")
-                    .routeId("foo").noAutoStartup()
-                    .to("mock:result");
+                     + "?username=admin&password=admin&delay=10s&disconnect=true&stepwise=false&useList=false&fileName=report.txt&delete=true").routeId("foo").noAutoStartup()
+                         .to("mock:result");
             }
         };
     }

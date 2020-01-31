@@ -27,13 +27,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FtpPollEnrichBridgeErrorHandlerTest extends BaseServerTestSupport {
 
-    // we want to poll enrich from FTP and therefore want to fail fast if something is wrong
+    // we want to poll enrich from FTP and therefore want to fail fast if
+    // something is wrong
     // and then bridge that error to the Camel routing error handler
     // so we need to turn of reconnection attempts
-    // and turn of auto create as that will pre-login to check if the directory exists
+    // and turn of auto create as that will pre-login to check if the directory
+    // exists
     // and in case of connection error then throw that as an exception
     private String uri = "ftp://admin@localhost:" + getPort() + "/unknown/?password=admin"
-            + "&maximumReconnectAttempts=0&autoCreate=false&throwExceptionOnConnectFailed=true&bridgeErrorHandler=true";
+                         + "&maximumReconnectAttempts=0&autoCreate=false&throwExceptionOnConnectFailed=true&bridgeErrorHandler=true";
 
     @Test
     public void testPollEnrich() throws Exception {
@@ -59,12 +61,14 @@ public class FtpPollEnrichBridgeErrorHandlerTest extends BaseServerTestSupport {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 from("seda:start")
-                    // the FTP server is not running and therefore we should get an exception
+                    // the FTP server is not running and therefore we should get
+                    // an exception
                     // and use 60s timeout
-                    // and turn on aggregation on exception as we have turned on bridge error handler,
-                    // so we want to run out custom aggregation strategy for exceptions as well
-                    .pollEnrich(uri, 60000, new MyAggregationStrategy(), true)
-                    .to("mock:result");
+                    // and turn on aggregation on exception as we have turned on
+                    // bridge error handler,
+                    // so we want to run out custom aggregation strategy for
+                    // exceptions as well
+                    .pollEnrich(uri, 60000, new MyAggregationStrategy(), true).to("mock:result");
             }
         };
     }
@@ -76,13 +80,16 @@ public class FtpPollEnrichBridgeErrorHandlerTest extends BaseServerTestSupport {
             if (newExchange != null) {
                 copyResultsPreservePattern(oldExchange, newExchange);
             } else {
-                // if no newExchange then there was no message from the external resource
-                // and therefore we should set an empty body to indicate this fact
+                // if no newExchange then there was no message from the external
+                // resource
+                // and therefore we should set an empty body to indicate this
+                // fact
                 // but keep headers/attachments as we want to propagate those
                 oldExchange.getIn().setBody(null);
                 oldExchange.setOut(null);
             }
-            // in case of exception we are bridged then we want to perform redeliveries etc.
+            // in case of exception we are bridged then we want to perform
+            // redeliveries etc.
             // so we need to turn of exhausted redelivery
             oldExchange.removeProperties(Exchange.REDELIVERY_EXHAUSTED);
             return oldExchange;

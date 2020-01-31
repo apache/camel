@@ -25,8 +25,7 @@ import org.junit.jupiter.api.Test;
 public class FromFtpRecursiveNoopTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/noop?password=admin&binary=false&initialDelay=3000"
-                + "&recursive=true&noop=true";
+        return "ftp://admin@localhost:" + getPort() + "/noop?password=admin&binary=false&initialDelay=3000" + "&recursive=true&noop=true";
     }
 
     @Override
@@ -62,10 +61,7 @@ public class FromFtpRecursiveNoopTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(getFtpUrl())
-                    .convertBodyTo(String.class)
-                    .to("log:ftp")
-                    .to("mock:result");
+                from(getFtpUrl()).convertBodyTo(String.class).to("log:ftp").to("mock:result");
             }
         };
     }

@@ -771,7 +771,6 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 target.setBody(bos.toByteArray());
             }
 
-
             createResultHeadersFromExchange(null, exchange);
             return true;
         } catch (SftpException e) {
@@ -1152,12 +1151,13 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     }
 
     /**
-     * Helper method which gets result code and message from sftpException and puts it into header.
-     * In case that exception is null, it sets successfull response.
+     * Helper method which gets result code and message from sftpException and
+     * puts it into header. In case that exception is null, it sets successfull
+     * response.
      */
     private void createResultHeadersFromExchange(SftpException sftpException, Exchange exchange) {
 
-        //if exception is null, it means that result was ok
+        // if exception is null, it means that result was ok
         if (sftpException == null) {
             exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, OK_STATUS);
             exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, OK_MESSAGE);

@@ -34,9 +34,7 @@ public class SftpSetOperationsTest extends SftpServerTestSupport {
         }
 
         String preferredAuthentications = "password,publickey";
-        String uri = "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR 
-            + "?username=admin&password=admin&ciphers=blowfish-cbc" 
-            + "&preferredAuthentications=password,publickey";
+        String uri = "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&ciphers=blowfish-cbc" + "&preferredAuthentications=password,publickey";
         template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         // test setting the cipher doesn't interfere with message payload

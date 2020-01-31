@@ -38,10 +38,11 @@ public final class SftpProcessStrategyFactory {
 
     public static GenericFileProcessStrategy<ChannelSftp.LsEntry> createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
 
-        // We assume a value is present only if its value not null for String and 'true' for boolean
-        Expression moveExpression = (Expression) params.get("move");
-        Expression moveFailedExpression = (Expression) params.get("moveFailed");
-        Expression preMoveExpression = (Expression) params.get("preMove");
+        // We assume a value is present only if its value not null for String
+        // and 'true' for boolean
+        Expression moveExpression = (Expression)params.get("move");
+        Expression moveFailedExpression = (Expression)params.get("moveFailed");
+        Expression preMoveExpression = (Expression)params.get("preMove");
         boolean isNoop = params.get("noop") != null;
         boolean isDelete = params.get("delete") != null;
         boolean isMove = moveExpression != null || preMoveExpression != null || moveFailedExpression != null;
@@ -92,54 +93,54 @@ public final class SftpProcessStrategyFactory {
 
     @SuppressWarnings("unchecked")
     private static GenericFileExclusiveReadLockStrategy<ChannelSftp.LsEntry> getExclusiveReadLockStrategy(Map<String, Object> params) {
-        GenericFileExclusiveReadLockStrategy<ChannelSftp.LsEntry> strategy = (GenericFileExclusiveReadLockStrategy<ChannelSftp.LsEntry>) params.get("exclusiveReadLockStrategy");
+        GenericFileExclusiveReadLockStrategy<ChannelSftp.LsEntry> strategy = (GenericFileExclusiveReadLockStrategy<ChannelSftp.LsEntry>)params.get("exclusiveReadLockStrategy");
         if (strategy != null) {
             return strategy;
         }
 
         // no explicit strategy set then fallback to readLock option
-        String readLock = (String) params.get("readLock");
+        String readLock = (String)params.get("readLock");
         if (ObjectHelper.isNotEmpty(readLock)) {
             if ("none".equals(readLock) || "false".equals(readLock)) {
                 return null;
             } else if ("rename".equals(readLock)) {
                 GenericFileRenameExclusiveReadLockStrategy<ChannelSftp.LsEntry> readLockStrategy = new GenericFileRenameExclusiveReadLockStrategy<>();
-                Long timeout = (Long) params.get("readLockTimeout");
+                Long timeout = (Long)params.get("readLockTimeout");
                 if (timeout != null) {
                     readLockStrategy.setTimeout(timeout);
                 }
-                Long checkInterval = (Long) params.get("readLockCheckInterval");
+                Long checkInterval = (Long)params.get("readLockCheckInterval");
                 if (checkInterval != null) {
                     readLockStrategy.setCheckInterval(checkInterval);
                 }
-                LoggingLevel readLockLoggingLevel = (LoggingLevel) params.get("readLockLoggingLevel");
+                LoggingLevel readLockLoggingLevel = (LoggingLevel)params.get("readLockLoggingLevel");
                 if (readLockLoggingLevel != null) {
                     readLockStrategy.setReadLockLoggingLevel(readLockLoggingLevel);
                 }
                 return readLockStrategy;
             } else if ("changed".equals(readLock)) {
                 SftpChangedExclusiveReadLockStrategy readLockStrategy = new SftpChangedExclusiveReadLockStrategy();
-                Long timeout = (Long) params.get("readLockTimeout");
+                Long timeout = (Long)params.get("readLockTimeout");
                 if (timeout != null) {
                     readLockStrategy.setTimeout(timeout);
                 }
-                Long checkInterval = (Long) params.get("readLockCheckInterval");
+                Long checkInterval = (Long)params.get("readLockCheckInterval");
                 if (checkInterval != null) {
                     readLockStrategy.setCheckInterval(checkInterval);
                 }
-                Long minLength = (Long) params.get("readLockMinLength");
+                Long minLength = (Long)params.get("readLockMinLength");
                 if (minLength != null) {
                     readLockStrategy.setMinLength(minLength);
                 }
-                Long minAge = (Long) params.get("readLockMinAge");
+                Long minAge = (Long)params.get("readLockMinAge");
                 if (null != minAge) {
                     readLockStrategy.setMinAge(minAge);
                 }
-                Boolean fastExistsCheck = (Boolean) params.get("fastExistsCheck");
+                Boolean fastExistsCheck = (Boolean)params.get("fastExistsCheck");
                 if (fastExistsCheck != null) {
                     readLockStrategy.setFastExistsCheck(fastExistsCheck);
                 }
-                LoggingLevel readLockLoggingLevel = (LoggingLevel) params.get("readLockLoggingLevel");
+                LoggingLevel readLockLoggingLevel = (LoggingLevel)params.get("readLockLoggingLevel");
                 if (readLockLoggingLevel != null) {
                     readLockStrategy.setReadLockLoggingLevel(readLockLoggingLevel);
                 }

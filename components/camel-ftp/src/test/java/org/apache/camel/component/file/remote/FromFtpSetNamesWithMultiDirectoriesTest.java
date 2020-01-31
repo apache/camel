@@ -32,8 +32,8 @@ import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit test to verify that using option setNames and having multi remote directories the files
- * are stored locally in the same directory layout.
+ * Unit test to verify that using option setNames and having multi remote
+ * directories the files are stored locally in the same directory layout.
  */
 public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSupport {
 
@@ -77,7 +77,8 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
+        // prepares the FTP Server by creating a file on the server that we want
+        // to unit
         // test that we can pool and store as a local file
         String ftpUrl = "ftp://admin@localhost:" + getPort() + "/incoming/data1/?password=admin&binary=true";
         Endpoint endpoint = context.getEndpoint(ftpUrl);
@@ -104,9 +105,7 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl())
-                    .routeId("foo").noAutoStartup()
-                    .to("file:target/ftpsetnamestest", "mock:result");
+                from(getFtpUrl()).routeId("foo").noAutoStartup().to("file:target/ftpsetnamestest", "mock:result");
             }
         };
     }

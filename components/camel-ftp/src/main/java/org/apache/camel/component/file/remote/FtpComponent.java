@@ -45,7 +45,8 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
     protected GenericFileEndpoint<FTPFile> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String baseUri = getBaseUri(uri);
 
-        // lets make sure we create a new configuration as each endpoint can customize its own version
+        // lets make sure we create a new configuration as each endpoint can
+        // customize its own version
         // must pass on baseUri to the configuration (see above)
         FtpConfiguration config = new FtpConfiguration(new URI(baseUri));
 
@@ -59,9 +60,10 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
     }
 
     /**
-     * Get the base uri part before the options as they can be non URI valid such as the expression using $ chars
-     * and the URI constructor will regard $ as an illegal character and we don't want to enforce end users to
-     * to escape the $ for the expression (file language)
+     * Get the base uri part before the options as they can be non URI valid
+     * such as the expression using $ chars and the URI constructor will regard
+     * $ as an illegal character and we don't want to enforce end users to to
+     * escape the $ for the expression (file language)
      */
     protected String getBaseUri(String uri) {
         String baseUri = uri;
@@ -72,9 +74,10 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
     }
 
     /**
-     * Extract additional ftp client configuration options from the parameters map (parameters starting with 
-     * 'ftpClientConfig.'). To remember these parameters, we set them in the endpoint and we can use them 
-     * when creating a client.
+     * Extract additional ftp client configuration options from the parameters
+     * map (parameters starting with 'ftpClientConfig.'). To remember these
+     * parameters, we set them in the endpoint and we can use them when creating
+     * a client.
      */
     protected void extractAndSetFtpClientConfigParameters(Map<String, Object> parameters, FtpEndpoint<FTPFile> answer) {
         if (PropertiesHelper.hasProperties(parameters, "ftpClientConfig.")) {
@@ -82,11 +85,11 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
             answer.setFtpClientConfigParameters(param);
         }
     }
-    
+
     /**
-     * Extract additional ftp client options from the parameters map (parameters starting with 
-     * 'ftpClient.'). To remember these parameters, we set them in the endpoint and we can use them 
-     * when creating a client.
+     * Extract additional ftp client options from the parameters map (parameters
+     * starting with 'ftpClient.'). To remember these parameters, we set them in
+     * the endpoint and we can use them when creating a client.
      */
     protected void extractAndSetFtpClientParameters(Map<String, Object> parameters, FtpEndpoint<FTPFile> answer) {
         if (PropertiesHelper.hasProperties(parameters, "ftpClient.")) {

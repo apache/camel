@@ -24,12 +24,12 @@ import org.junit.jupiter.api.Test;
  * Test the ftps component over SSL (implicit) without client authentication
  */
 public class FileToFtpsImplicitSSLWithoutClientAuthTest extends FtpsServerImplicitSSLWithoutClientAuthTestSupport {
-    
+
     protected String getFtpUrl() {
         return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
-                + "&securityProtocol=SSLv3&implicit=true&delete=true";
+               + "&securityProtocol=SSLv3&implicit=true&delete=true";
     }
-    
+
     @Test
     public void testFromFileToFtp() throws Exception {
         // some platforms cannot test SSL

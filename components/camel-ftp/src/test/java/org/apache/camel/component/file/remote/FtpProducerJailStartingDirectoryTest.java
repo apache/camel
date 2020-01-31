@@ -62,10 +62,7 @@ public class FtpProducerJailStartingDirectoryTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .setHeader(Exchange.FILE_NAME, simple("../${file:name}"))
-                    .to(getFtpUrl())
-                    .to("mock:result");
+                from("direct:start").setHeader(Exchange.FILE_NAME, simple("../${file:name}")).to(getFtpUrl()).to("mock:result");
             }
         };
     }

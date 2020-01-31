@@ -49,11 +49,11 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     @Override
     @SuppressWarnings("unchecked")
     public RemoteFileEndpoint<T> getEndpoint() {
-        return (RemoteFileEndpoint<T>) super.getEndpoint();
+        return (RemoteFileEndpoint<T>)super.getEndpoint();
     }
 
     protected RemoteFileOperations<T> getOperations() {
-        return (RemoteFileOperations<T>) operations;
+        return (RemoteFileOperations<T>)operations;
     }
 
     @Override
@@ -93,8 +93,10 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             LOG.trace("postPollCheck on {}", getEndpoint().getConfiguration().remoteServerInformation());
         }
 
-        // if we did not poll any messages, but are configured to disconnect then we need to do this now
-        // as there is no exchanges to be routed that otherwise will disconnect from the last UoW
+        // if we did not poll any messages, but are configured to disconnect
+        // then we need to do this now
+        // as there is no exchanges to be routed that otherwise will disconnect
+        // from the last UoW
         if (polledMessages == 0) {
             if (getEndpoint().isDisconnect()) {
                 LOG.trace("postPollCheck disconnect from: {}", getEndpoint());
@@ -105,11 +107,13 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
     @Override
     protected boolean processExchange(Exchange exchange) {
-        // mark the exchange to be processed synchronously as the ftp client is not thread safe
+        // mark the exchange to be processed synchronously as the ftp client is
+        // not thread safe
         // and we must execute the callbacks in the same thread as this consumer
         exchange.setProperty(Exchange.UNIT_OF_WORK_PROCESS_SYNC, Boolean.TRUE);
 
-        // defer disconnect til the UoW is complete - but only the last exchange from the batch should do that
+        // defer disconnect til the UoW is complete - but only the last exchange
+        // from the batch should do that
         boolean isLast = exchange.getProperty(Exchange.BATCH_COMPLETE, true, Boolean.class);
         if (isLast && getEndpoint().isDisconnect()) {
             exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
@@ -121,7 +125,8 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
                 @Override
                 public boolean allowHandover() {
-                    // do not allow handover as we must execute the callbacks in the same thread as this consumer
+                    // do not allow handover as we must execute the callbacks in
+                    // the same thread as this consumer
                     return false;
                 }
 
@@ -186,7 +191,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     }
 
     protected void connectIfNecessary() throws IOException {
-        // We need to send a noop first to check if the connection is still open 
+        // We need to send a noop first to check if the connection is still open
         boolean isConnected = false;
         try {
             isConnected = getOperations().sendNoop();
@@ -201,7 +206,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Not connected/logged in, connecting to: {}", remoteServer());
             }
-            loggedIn = getOperations().connect((RemoteFileConfiguration) endpoint.getConfiguration(), null);
+            loggedIn = getOperations().connect((RemoteFileConfiguration)endpoint.getConfiguration(), null);
             if (loggedIn) {
                 LOG.debug("Connected and logged in to: {}", remoteServer());
             }
@@ -212,34 +217,38 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
      * Returns human readable server information for logging purpose
      */
     protected String remoteServer() {
-        return ((RemoteFileEndpoint<?>) endpoint).remoteServerInformation();
+        return ((RemoteFileEndpoint<?>)endpoint).remoteServerInformation();
     }
 
     /**
-     * Executes doPollDirectory and on exception checks if it can be ignored by calling ignoreCannotRetrieveFile.
+     * Executes doPollDirectory and on exception checks if it can be ignored by
+     * calling ignoreCannotRetrieveFile.
      *
-     * @param absolutePath  the path of the directory to poll
-     * @param dirName       the name of the directory to poll
-     * @param fileList      current list of files gathered
-     * @param depth         the current depth of the directory
-     * @return whether or not to continue polling, <tt>false</tt> means the maxMessagesPerPoll limit has been hit
-     * @throws GenericFileOperationFailedException if the exception during doPollDirectory can not be ignored
+     * @param absolutePath the path of the directory to poll
+     * @param dirName the name of the directory to poll
+     * @param fileList current list of files gathered
+     * @param depth the current depth of the directory
+     * @return whether or not to continue polling, <tt>false</tt> means the
+     *         maxMessagesPerPoll limit has been hit
+     * @throws GenericFileOperationFailedException if the exception during
+     *             doPollDirectory can not be ignored
      */
     protected boolean doSafePollSubDirectory(String absolutePath, String dirName, List<GenericFile<T>> fileList, int depth) {
         try {
             LOG.trace("Polling sub directory: {} from: {}", absolutePath, endpoint);
-            //Try to poll the directory
+            // Try to poll the directory
             return doPollDirectory(absolutePath, dirName, fileList, depth);
         } catch (Exception e) {
             LOG.debug("Caught exception {}", e.getMessage());
             if (ignoreCannotRetrieveFile(absolutePath, null, e)) {
                 LOG.trace("Ignoring file error {} for {}", e.getMessage(), absolutePath);
-                //indicate no files in this directory to poll, continue with fileList
+                // indicate no files in this directory to poll, continue with
+                // fileList
                 return true;
             } else {
                 LOG.trace("Not ignoring file error {} for {}", e.getMessage(), absolutePath);
                 if (e instanceof GenericFileOperationFailedException) {
-                    throw (GenericFileOperationFailedException) e;
+                    throw (GenericFileOperationFailedException)e;
                 } else {
                     throw new GenericFileOperationFailedException("Cannot poll sub-directory: " + absolutePath + " from: " + endpoint, e);
                 }
@@ -254,7 +263,8 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
      * @param dirName The name of the directory to poll
      * @param fileList current list of files gathered
      * @param depth the current depth of the directory
-     * @return whether or not to continue polling, <tt>false</tt> means the maxMessagesPerPoll limit has been hit
+     * @return whether or not to continue polling, <tt>false</tt> means the
+     *         maxMessagesPerPoll limit has been hit
      */
     protected abstract boolean doPollDirectory(String absolutePath, String dirName, List<GenericFile<T>> fileList, int depth);
 }

@@ -51,7 +51,8 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
     void disconnect() throws GenericFileOperationFailedException;
 
     /**
-     * Forces a hard disconnect from the remote server and cause the client to be re-created on next poll.
+     * Forces a hard disconnect from the remote server and cause the client to
+     * be re-created on next poll.
      *
      * @throws GenericFileOperationFailedException can be thrown
      */
@@ -68,8 +69,9 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
     /**
      * Sends a site command to the remote server
      *
-     * @param command  the command
-     * @return <tt>true</tt> if the command was a success, <tt>false</tt> otherwise
+     * @param command the command
+     * @return <tt>true</tt> if the command was a success, <tt>false</tt>
+     *         otherwise
      * @throws GenericFileOperationFailedException can be thrown
      */
     boolean sendSiteCommand(String command) throws GenericFileOperationFailedException;

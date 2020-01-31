@@ -56,7 +56,7 @@ public class FtpStreamingMoveTest extends FtpServerTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        GenericFile<?> remoteFile = (GenericFile<?>) mock.getExchanges().get(0).getIn().getBody();
+        GenericFile<?> remoteFile = (GenericFile<?>)mock.getExchanges().get(0).getIn().getBody();
         assertTrue(remoteFile.getBody() instanceof InputStream);
 
         // give time for consumer to rename file
@@ -71,9 +71,7 @@ public class FtpStreamingMoveTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(getFtpUrl())
-                    .routeId("foo").noAutoStartup()
-                    .to("mock:result");
+                from(getFtpUrl()).routeId("foo").noAutoStartup().to("mock:result");
             }
         };
     }

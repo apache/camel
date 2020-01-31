@@ -20,8 +20,7 @@ public class FromFtpRecursiveNoopNotStepwiseTest extends FromFtpRecursiveNoopTes
 
     @Override
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/noop?password=admin&binary=false&initialDelay=3000"
-                + "&recursive=true&noop=true&stepwise=false";
+        return "ftp://admin@localhost:" + getPort() + "/noop?password=admin&binary=false&initialDelay=3000" + "&recursive=true&noop=true&stepwise=false";
     }
 
 }
