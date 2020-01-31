@@ -23,7 +23,8 @@ import org.apache.camel.Exchange;
 public interface GenericFileOperations<T> {
 
     /**
-     * Sets the endpoint as some implementations need access to the endpoint and how its configured.
+     * Sets the endpoint as some implementations need access to the endpoint and
+     * how its configured.
      *
      * @param endpoint the endpoint
      */
@@ -51,19 +52,19 @@ public interface GenericFileOperations<T> {
      * Renames the file
      *
      * @param from original name
-     * @param to   the new name
+     * @param to the new name
      * @return true if renamed, false if not
      * @throws GenericFileOperationFailedException can be thrown
      */
     boolean renameFile(String from, String to) throws GenericFileOperationFailedException;
 
     /**
-     * Builds the directory structure. Will test if the
-     * folder already exists.
+     * Builds the directory structure. Will test if the folder already exists.
      *
      * @param directory the directory path to build as a relative string name
      * @param absolute whether the directory is an absolute or relative path
-     * @return true if build or already exists, false if not possible (could be lack of permissions)
+     * @return true if build or already exists, false if not possible (could be
+     *         lack of permissions)
      * @throws GenericFileOperationFailedException can be thrown
      */
     boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException;
@@ -71,14 +72,14 @@ public interface GenericFileOperations<T> {
     /**
      * Retrieves the file
      *
-     * @param name     name of the file
+     * @param name name of the file
      * @param exchange stream to write the content of the file into
-     * @param size     the total file size to retrieve, if possible to determine
+     * @param size the total file size to retrieve, if possible to determine
      * @return true if file has been retrieved, false if not
      * @throws GenericFileOperationFailedException can be thrown
      */
     boolean retrieveFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException;
-    
+
     /**
      * Releases the resources consumed by a retrieved file
      * 
@@ -90,9 +91,9 @@ public interface GenericFileOperations<T> {
     /**
      * Stores the content as a new remote file (upload)
      *
-     * @param name     name of new file
+     * @param name name of new file
      * @param exchange with the content content of the file
-     * @param size     the total file size to store, if possible to determine
+     * @param size the total file size to store, if possible to determine
      * @return true if the file was stored, false if not
      * @throws GenericFileOperationFailedException can be thrown
      */

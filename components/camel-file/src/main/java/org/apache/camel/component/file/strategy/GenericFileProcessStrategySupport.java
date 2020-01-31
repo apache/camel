@@ -63,7 +63,8 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
 
     @Override
     public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
-        // if we use exclusive read then acquire the exclusive read (waiting until we got it)
+        // if we use exclusive read then acquire the exclusive read (waiting
+        // until we got it)
         if (exclusiveReadLockStrategy != null) {
             boolean lock = exclusiveReadLockStrategy.acquireExclusiveReadLock(operations, file, exchange);
             if (!lock) {
@@ -115,7 +116,7 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
     public void setExclusiveReadLockStrategy(GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy) {
         this.exclusiveReadLockStrategy = exclusiveReadLockStrategy;
     }
-    
+
     protected GenericFile<T> renameFile(GenericFileOperations<T> operations, GenericFile<T> from, GenericFile<T> to) throws IOException {
         // deleting any existing files before renaming
         try {
@@ -123,10 +124,10 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
         } catch (GenericFileOperationFailedException e) {
             // ignore the file does not exists
         }
-        
+
         // make parent folder if missing
         boolean mkdir = operations.buildDirectory(to.getParent(), to.isAbsolute());
-        
+
         if (!mkdir) {
             throw new GenericFileOperationFailedException("Cannot create directory: " + to.getParent() + " (could be because of denied permissions)");
         }
@@ -152,7 +153,7 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
     @Override
     protected void doStart() throws Exception {
         if (exclusiveReadLockStrategy instanceof CamelContextAware) {
-            ((CamelContextAware) exclusiveReadLockStrategy).setCamelContext(camelContext);
+            ((CamelContextAware)exclusiveReadLockStrategy).setCamelContext(camelContext);
         }
         ServiceHelper.startService(exclusiveReadLockStrategy);
     }
@@ -167,4 +168,3 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
         ServiceHelper.stopAndShutdownService(exclusiveReadLockStrategy);
     }
 }
-

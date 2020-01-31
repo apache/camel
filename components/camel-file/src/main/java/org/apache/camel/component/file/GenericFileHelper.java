@@ -22,8 +22,10 @@ public final class GenericFileHelper {
     }
 
     public static String asExclusiveReadLockKey(GenericFile file, String key) {
-        // use the copy from absolute path as that was the original path of the file when the lock was acquired
-        // for example if the file consumer uses preMove then the file is moved and therefore has another name
+        // use the copy from absolute path as that was the original path of the
+        // file when the lock was acquired
+        // for example if the file consumer uses preMove then the file is moved
+        // and therefore has another name
         // that would no longer match
         String path = file.getCopyFromAbsoluteFilePath() != null ? file.getCopyFromAbsoluteFilePath() : file.getAbsoluteFilePath();
         return asExclusiveReadLockKey(path, key);

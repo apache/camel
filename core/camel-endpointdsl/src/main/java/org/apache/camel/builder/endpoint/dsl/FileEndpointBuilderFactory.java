@@ -471,8 +471,10 @@ public interface FileEndpointBuilderFactory {
          * Is used to exclude files, if filename matches the regex pattern
          * (matching is case in-senstive). Notice if you use symbols such as
          * plus sign and others you would need to configure this using the RAW()
-         * syntax if configuring this as an endpoint uri. See more details at
-         * configuring endpoint uris.
+         * syntax if configuring this as an endpoint uri. See more details at a
+         * href=
+         * http://camel.apache.org/how-do-i-configure-endpoints.htmlconfiguring
+         * endpoint uris.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -659,8 +661,10 @@ public interface FileEndpointBuilderFactory {
          * Is used to include files, if filename matches the regex pattern
          * (matching is case in-sensitive). Notice if you use symbols such as
          * plus sign and others you would need to configure this using the RAW()
-         * syntax if configuring this as an endpoint uri. See more details at
-         * configuring endpoint uris.
+         * syntax if configuring this as an endpoint uri. See more details at a
+         * href=
+         * http://camel.apache.org/how-do-i-configure-endpoints.htmlconfiguring
+         * endpoint uris.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

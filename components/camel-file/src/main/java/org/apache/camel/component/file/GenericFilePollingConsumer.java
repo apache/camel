@@ -39,12 +39,14 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
     @Override
     protected Consumer createConsumer() throws Exception {
         // lets add ourselves as a consumer
-        GenericFileConsumer consumer = (GenericFileConsumer) super.createConsumer();
+        GenericFileConsumer consumer = (GenericFileConsumer)super.createConsumer();
         // do not start scheduler as we poll manually
         consumer.setStartScheduler(false);
-        // when using polling consumer we poll only 1 file per poll so we can limit
+        // when using polling consumer we poll only 1 file per poll so we can
+        // limit
         consumer.setMaxMessagesPerPoll(1);
-        // however do not limit eager as we may sort the files and thus need to do a full scan so we can sort afterwards
+        // however do not limit eager as we may sort the files and thus need to
+        // do a full scan so we can sort afterwards
         consumer.setEagerLimitMaxMessagesPerPoll(false);
         // we only want to poll once so disconnect by default
         return consumer;
@@ -69,7 +71,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
 
     @Override
     protected GenericFileConsumer getConsumer() {
-        return (GenericFileConsumer) super.getConsumer();
+        return (GenericFileConsumer)super.getConsumer();
     }
 
     @Override
@@ -133,7 +135,8 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
                         LOG.debug("Retrying attempt {} to poll: {}", retryCounter, this.getEndpoint());
                     }
 
-                    // mark we are polling which should also include the begin/poll/commit
+                    // mark we are polling which should also include the
+                    // begin/poll/commit
                     boolean begin = pollStrategy.begin(getConsumer(), getEndpoint());
                     if (begin) {
                         retryCounter++;
@@ -144,7 +147,8 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
                             // send an "empty" exchange
                             processEmptyMessage();
                         } else if (polledMessages == 0 && timeout > 0) {
-                            // if we did not poll a file and we are using timeout then try to poll again
+                            // if we did not poll a file and we are using
+                            // timeout then try to poll again
                             done = false;
                         }
 

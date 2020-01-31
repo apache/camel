@@ -19,7 +19,9 @@ package org.apache.camel.component.file;
 /**
  * File filter using AntPathMatcher.
  * <p/>
- * Exclude take precedence over includes. If a file match both exclude and include it will be regarded as excluded.
+ * Exclude take precedence over includes. If a file match both exclude and
+ * include it will be regarded as excluded.
+ * 
  * @param <T>
  */
 public class AntPathMatcherGenericFileFilter<T> implements GenericFileFilter<T> {
@@ -63,21 +65,24 @@ public class AntPathMatcherGenericFileFilter<T> implements GenericFileFilter<T> 
     }
 
     /**
-     * Sets excludes using a single string where each element can be separated with comma
+     * Sets excludes using a single string where each element can be separated
+     * with comma
      */
     public void setExcludes(String excludes) {
         filter.setExcludes(excludes);
     }
 
     /**
-     * Sets includes using a single string where each element can be separated with comma
+     * Sets includes using a single string where each element can be separated
+     * with comma
      */
     public void setIncludes(String includes) {
         filter.setIncludes(includes);
     }
 
     /**
-     * Sets case sensitive flag on {@link org.apache.camel.component.file.AntPathMatcherFileFilter}
+     * Sets case sensitive flag on
+     * {@link org.apache.camel.component.file.AntPathMatcherFileFilter}
      * <p/>
      * Is by default turned on <tt>true</tt>.
      */

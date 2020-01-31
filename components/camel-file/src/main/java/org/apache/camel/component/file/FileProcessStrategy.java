@@ -26,7 +26,7 @@ import org.apache.camel.spi.annotations.SubServiceFactory;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.TYPE })
+@Target({ElementType.TYPE})
 @SubServiceFactory("strategy.factory")
 public @interface FileProcessStrategy {
 

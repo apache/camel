@@ -56,7 +56,8 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
     @Override
     public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
 
-        // special for file lock strategy as we must release that lock first before we can delete the file
+        // special for file lock strategy as we must release that lock first
+        // before we can delete the file
         boolean releaseEager = exclusiveReadLockStrategy instanceof FileLockExclusiveReadLockStrategy;
 
         if (releaseEager) {
@@ -79,7 +80,8 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
                     break;
                 }
 
-                // some OS can report false when deleting but the file is still deleted
+                // some OS can report false when deleting but the file is still
+                // deleted
                 // use exists to check instead
                 boolean exits = operations.existsFile(file.getAbsoluteFilePath());
                 if (!exits) {
@@ -109,7 +111,8 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
 
             // moved the failed file if specifying the moveFailed option
             if (failureRenamer != null) {
-                // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
+                // create a copy and bind the file to the exchange to be used by
+                // the renamer to evaluate the file name
                 Exchange copy = ExchangeHelper.createCopy(exchange, true);
                 file.bindToExchange(copy);
                 // must preserve message id
