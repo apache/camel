@@ -26,6 +26,7 @@ import java.util.function.Predicate;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -57,7 +58,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     //   requires API changes and thus is best kept for future Camel work
 
     private final Exchange exchange;
-    private final CamelContext context;
+    private final ExtendedCamelContext context;
     final InflightRepository inflightRepository;
     final boolean allowUseOriginalMessage;
     final boolean useBreadcrumb;
@@ -83,7 +84,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         this.log = LOG;
         this.allowUseOriginalMessage = allowUseOriginalMessage;
         this.useBreadcrumb = useBreadcrumb;
-        this.context = exchange.getContext();
+        this.context = (ExtendedCamelContext) exchange.getContext();
         this.inflightRepository = inflightRepository;
 
         if (allowUseOriginalMessage) {
