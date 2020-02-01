@@ -347,11 +347,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
      * Simple task to perform calling the processor with no redelivery support
      */
     protected class SimpleTask implements Runnable {
-        private ExtendedExchange exchange;
-        private AsyncCallback callback;
+        private final ExtendedExchange exchange;
+        private final AsyncCallback callback;
 
         public SimpleTask(Exchange exchange, AsyncCallback callback) {
-            // init with values from the error handler
             this.exchange = (ExtendedExchange) exchange;
             this.callback = callback;
         }
@@ -565,9 +564,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
      * Task to perform calling the processor and handling redelivery if it fails (more advanced than ProcessTask)
      */
     protected class RedeliveryTask implements Runnable {
-        private Exchange original;
-        private ExtendedExchange exchange;
-        private AsyncCallback callback;
+        private final Exchange original;
+        private final ExtendedExchange exchange;
+        private final AsyncCallback callback;
         private int redeliveryCounter;
         private long redeliveryDelay;
         private Predicate retryWhilePredicate;
@@ -583,7 +582,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         private boolean useOriginalInBody;
 
         public RedeliveryTask(Exchange exchange, AsyncCallback callback) {
-            // init with values from the error handler
             this.retryWhilePredicate = retryWhilePolicy;
             this.currentRedeliveryPolicy = redeliveryPolicy;
             this.handledPredicate = getDefaultHandledPredicate();
