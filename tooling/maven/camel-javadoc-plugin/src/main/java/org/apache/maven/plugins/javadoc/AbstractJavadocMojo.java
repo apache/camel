@@ -2514,7 +2514,7 @@ public abstract class AbstractJavadocMojo extends AbstractMojo {
      * argument string that will be included in the javadoc commandline
      * execution.
      *
-     * @param sourceFolders the collection of paths to the source files
+     * @param sourcePaths the collection of paths to the source files
      * @return a String that contains the exclude argument that will be used by
      *         javadoc
      * @throws MavenReportException
