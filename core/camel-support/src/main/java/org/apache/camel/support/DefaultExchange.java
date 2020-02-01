@@ -46,8 +46,8 @@ public final class DefaultExchange implements ExtendedExchange {
 
     private final CamelContext context;
     private final long created;
-    // optimize to create properties always
-    private final Map<String, Object> properties = new ConcurrentHashMap<>();
+    // optimize to create properties always and with a reasonable small size
+    private final Map<String, Object> properties = new ConcurrentHashMap<>(8);
     private Message in;
     private Message out;
     private Exception exception;
