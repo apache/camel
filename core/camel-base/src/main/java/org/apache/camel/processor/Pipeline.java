@@ -93,18 +93,20 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (exchange.isTransacted()) {
-            reactiveExecutor.scheduleSync(() -> Pipeline.this.doProcess(exchange, callback, processors, size, new AtomicInteger(), true));
+            reactiveExecutor.scheduleSync(() -> Pipeline.this.doProcess(exchange, callback, processors, size, new AtomicInteger()));
         } else {
-            reactiveExecutor.scheduleMain(() -> Pipeline.this.doProcess(exchange, callback, processors, size, new AtomicInteger(), true));
+            reactiveExecutor.scheduleMain(() -> Pipeline.this.doProcess(exchange, callback, processors, size, new AtomicInteger()));
         }
         return false;
     }
 
-    protected void doProcess(Exchange exchange, AsyncCallback callback, List<AsyncProcessor> processors, int size, AtomicInteger index, boolean first) {
+    protected void doProcess(Exchange exchange, AsyncCallback callback, List<AsyncProcessor> processors, int size, AtomicInteger index) {
         // optimize to use an atomic index counter for tracking how long we are in the processors list (uses less memory than iterator on array list)
 
         boolean stop = exchange.isRouteStop();
-        boolean more = index.get() < size;
+        int num = index.get();
+        boolean more = num < size;
+        boolean first = num == 0;
 
         if (!stop && more && (first || continueProcessing(exchange, "so breaking out of pipeline", LOG))) {
 
@@ -118,7 +120,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
             AsyncProcessor processor = processors.get(index.getAndIncrement());
 
             processor.process(exchange, doneSync ->
-                    reactiveExecutor.schedule(() -> doProcess(exchange, callback, processors, size, index, false)));
+                    reactiveExecutor.schedule(() -> doProcess(exchange, callback, processors, size, index)));
         } else {
             ExchangeHelper.copyResults(exchange, exchange);
 
