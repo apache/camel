@@ -208,10 +208,10 @@ public class DefaultRouteContext implements RouteContext {
             // wrap in route lifecycle
             internal.addAdvice(new CamelInternalProcessor.RouteLifecycleAdvice());
 
-            // wrap in REST binding
+            // add advices
             advices.forEach(internal::addAdvice);
 
-            // and create the route that wraps the UoW
+            // and create the route that wraps all of this
             Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), internal);
             edcr.getProperties().putAll(properties);
 
@@ -572,7 +572,7 @@ public class DefaultRouteContext implements RouteContext {
         Set<NamedNode> list = getErrorHandlers(source);
         Set<NamedNode> previous = errorHandlers.put(target, list);
         if (list != previous && ObjectHelper.isNotEmpty(previous) && ObjectHelper.isNotEmpty(list)) {
-            throw new IllegalStateException("multiple references with different handlers");
+            throw new IllegalStateException("Multiple references with different handlers");
         }
     }
 }
