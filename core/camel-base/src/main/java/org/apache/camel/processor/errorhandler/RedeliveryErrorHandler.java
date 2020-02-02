@@ -346,7 +346,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     /**
      * Simple task to perform calling the processor with no redelivery support
      */
-    protected class SimpleTask implements Runnable, AsyncCallback {
+    protected class SimpleTask implements Runnable {
         private final ExtendedExchange exchange;
         private final AsyncCallback callback;
 
@@ -358,17 +358,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         @Override
         public String toString() {
             return "SimpleTask";
-        }
-
-        @Override
-        public void done(boolean doneSync) {
-            // only continue routing with the original callback
-            if (isDone(exchange)) {
-                reactiveExecutor.schedule(callback);
-            } else {
-                // error occurred so loop back around and call ourselves
-                reactiveExecutor.schedule(this);
-            }
         }
 
         /**
@@ -392,11 +381,19 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 onExceptionOccurred();
                 prepareExchangeAfterFailure(exchange);
 
-                // we do not support redelivery so continue routing with the original callback
+                // we do not support redelivery so continue callback
                 reactiveExecutor.schedule(callback);
             } else {
-                // optimize to call done on ourselves
-                outputAsync.process(exchange, this);
+                // Simple delivery
+                outputAsync.process(exchange, doneSync -> {
+                    // only continue with callback if we are done
+                    if (isDone(exchange)) {
+                        reactiveExecutor.schedule(callback);
+                    } else {
+                        // error occurred so loop back around and call ourselves
+                        reactiveExecutor.schedule(this);
+                    }
+                });
             }
         }
 
