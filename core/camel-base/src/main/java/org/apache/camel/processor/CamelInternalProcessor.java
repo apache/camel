@@ -163,11 +163,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         @Override
         public void done(boolean doneSync) {
-            // noop as we override run method
-        }
-
-        @Override
-        public void run() {
             try {
                 for (int i = advices.size() - 1, j = states.length - 1; i >= 0; i--) {
                     CamelInternalProcessorAdvice task = advices.get(i);
