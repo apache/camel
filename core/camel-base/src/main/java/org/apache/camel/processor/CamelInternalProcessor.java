@@ -146,6 +146,53 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         return null;
     }
 
+    /**
+     * Callback task to process the advices after processing.
+     */
+    private class AsyncAfterTask implements AsyncCallback {
+
+        private final Object[] states;
+        private final Exchange exchange;
+        private final AsyncCallback originalCallback;
+
+        private AsyncAfterTask(Object[] states, Exchange exchange, AsyncCallback originalCallback) {
+            this.states = states;
+            this.exchange = exchange;
+            this.originalCallback = originalCallback;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public void done(boolean doneSync) {
+            try {
+                for (int i = advices.size() - 1, j = states.length - 1; i >= 0; i--) {
+                    CamelInternalProcessorAdvice task = advices.get(i);
+                    Object state = null;
+                    if (task.hasState()) {
+                        state = states[j--];
+                    }
+                    try {
+                        task.after(exchange, state);
+                    } catch (Throwable e) {
+                        exchange.setException(e);
+                        // allow all advices to complete even if there was an exception
+                    }
+                }
+            } finally {
+                // ----------------------------------------------------------
+                // CAMEL END USER - DEBUG ME HERE +++ START +++
+                // ----------------------------------------------------------
+                // callback must be called
+                if (originalCallback != null) {
+                    reactiveExecutor.schedule(originalCallback);
+                }
+                // ----------------------------------------------------------
+                // CAMEL END USER - DEBUG ME HERE +++ END +++
+                // ----------------------------------------------------------
+            }
+        }
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public boolean process(Exchange exchange, AsyncCallback originalCallback) {
@@ -187,34 +234,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
 
         // create internal callback which will execute the advices in reverse order when done
-        AsyncCallback callback = doneSync -> {
-            try {
-                for (int i = advices.size() - 1, j = states.length - 1; i >= 0; i--) {
-                    CamelInternalProcessorAdvice task = advices.get(i);
-                    Object state = null;
-                    if (task.hasState()) {
-                        state = states[j--];
-                    }
-                    try {
-                        task.after(exchange, state);
-                    } catch (Throwable e) {
-                        exchange.setException(e);
-                        // allow all advices to complete even if there was an exception
-                    }
-                }
-            } finally {
-                // ----------------------------------------------------------
-                // CAMEL END USER - DEBUG ME HERE +++ START +++
-                // ----------------------------------------------------------
-                // callback must be called
-                if (originalCallback != null) {
-                    reactiveExecutor.schedule(originalCallback);
-                }
-                // ----------------------------------------------------------
-                // CAMEL END USER - DEBUG ME HERE +++ END +++
-                // ----------------------------------------------------------
-            }
-        };
+        AsyncCallback callback = new AsyncAfterTask(states, exchange, originalCallback);
 
         if (exchange.isTransacted()) {
             // must be synchronized for transacted exchanges
