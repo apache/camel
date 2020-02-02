@@ -210,10 +210,23 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         // you can see in the code below.
         // ----------------------------------------------------------
 
-        if (processor == null || !continueProcessing(exchange)) {
+        if (processor == null || exchange.isRouteStop()) {
             // no processor or we should not continue then we are done
             originalCallback.done(true);
             return true;
+        }
+
+        boolean forceShutdown = shutdownStrategy.forceShutdown(this);
+        if (forceShutdown) {
+            String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: " + exchange;
+            LOG.debug(msg);
+            if (exchange.getException() == null) {
+                exchange.setException(new RejectedExecutionException(msg));
+            }
+            // force shutdown so we should not continue
+            originalCallback.done(true);
+            return true;
+
         }
 
         // optimise to use object array for states, and only for the number of advices that keep state
@@ -296,30 +309,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     @Override
     public String toString() {
         return processor != null ? processor.toString() : super.toString();
-    }
-
-    /**
-     * Strategy to determine if we should continue processing the {@link Exchange}.
-     */
-    private boolean continueProcessing(Exchange exchange) {
-        if (exchange.isRouteStop()) {
-            LOG.debug("Exchange is marked to stop routing: {}", exchange);
-            return false;
-        }
-
-        // determine if we can still run, or the camel context is forcing a shutdown
-        boolean forceShutdown = shutdownStrategy.forceShutdown(this);
-        if (forceShutdown) {
-            String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: " + exchange;
-            LOG.debug(msg);
-            if (exchange.getException() == null) {
-                exchange.setException(new RejectedExecutionException(msg));
-            }
-            return false;
-        }
-
-        // yes we can continue
-        return true;
     }
 
     /**
