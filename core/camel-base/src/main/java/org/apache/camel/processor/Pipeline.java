@@ -71,7 +71,35 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
 
         @Override
         public void run() {
-            doProcess(this, exchange, callback, index);
+            boolean stop = exchange.isRouteStop();
+            int num = index.get();
+            boolean more = num < size;
+            boolean first = num == 0;
+
+            if (!stop && more && (first || continueProcessing(exchange, "so breaking out of pipeline", LOG))) {
+
+                // prepare for next run
+                if (exchange.hasOut()) {
+                    exchange.setIn(exchange.getOut());
+                    exchange.setOut(null);
+                }
+
+                // get the next processor
+                AsyncProcessor processor = processors.get(index.getAndIncrement());
+
+                processor.process(exchange, doneSync -> reactiveExecutor.schedule(this));
+            } else {
+                ExchangeHelper.copyResults(exchange, exchange);
+
+                // logging nextExchange as it contains the exchange that might have altered the payload and since
+                // we are logging the completion if will be confusing if we log the original instead
+                // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                }
+
+                reactiveExecutor.schedule(callback);
+            }
         }
     }
 
@@ -119,40 +147,6 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
             reactiveExecutor.scheduleMain(task);
         }
         return false;
-    }
-
-    protected void doProcess(PipelineTask task, Exchange exchange, AsyncCallback callback, AtomicInteger index) {
-        // optimize to use an atomic index counter for tracking how long we are in the processors list (uses less memory than iterator on array list)
-
-        boolean stop = exchange.isRouteStop();
-        int num = index.get();
-        boolean more = num < size;
-        boolean first = num == 0;
-
-        if (!stop && more && (first || continueProcessing(exchange, "so breaking out of pipeline", LOG))) {
-
-            // prepare for next run
-            if (exchange.hasOut()) {
-                exchange.setIn(exchange.getOut());
-                exchange.setOut(null);
-            }
-
-            // get the next processor
-            AsyncProcessor processor = processors.get(index.getAndIncrement());
-
-            processor.process(exchange, doneSync -> reactiveExecutor.schedule(task));
-        } else {
-            ExchangeHelper.copyResults(exchange, exchange);
-
-            // logging nextExchange as it contains the exchange that might have altered the payload and since
-            // we are logging the completion if will be confusing if we log the original instead
-            // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
-            }
-
-            reactiveExecutor.schedule(callback);
-        }
     }
 
     @Override
