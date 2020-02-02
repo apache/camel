@@ -149,21 +149,16 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     /**
      * Callback task to process the advices after processing.
      */
-    private static final class AsyncAfterTask implements AsyncCallback {
+    private final class AsyncAfterTask implements AsyncCallback {
 
-        private final List<CamelInternalProcessorAdvice<?>> advices;
         private final Object[] states;
         private final Exchange exchange;
         private final AsyncCallback originalCallback;
-        private final ReactiveExecutor reactiveExecutor;
 
-        private AsyncAfterTask(List<CamelInternalProcessorAdvice<?>> advices, Object[] states,
-                               Exchange exchange, AsyncCallback originalCallback, ReactiveExecutor reactiveExecutor) {
-            this.advices = advices;
+        private AsyncAfterTask(Object[] states, Exchange exchange, AsyncCallback originalCallback) {
             this.states = states;
             this.exchange = exchange;
             this.originalCallback = originalCallback;
-            this.reactiveExecutor = reactiveExecutor;
         }
 
         @Override
@@ -256,7 +251,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
 
         // create internal callback which will execute the advices in reverse order when done
-        AsyncCallback callback = new AsyncAfterTask(advices, states, exchange, originalCallback, reactiveExecutor);
+        AsyncCallback callback = new AsyncAfterTask(states, exchange, originalCallback);
 
         if (exchange.isTransacted()) {
             // must be synchronized for transacted exchanges
