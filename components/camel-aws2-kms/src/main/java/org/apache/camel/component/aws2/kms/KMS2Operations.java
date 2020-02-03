@@ -18,10 +18,5 @@ package org.apache.camel.component.aws2.kms;
 
 public enum KMS2Operations {
 
-    listKeys,
-    createKey,
-    disableKey,
-    scheduleKeyDeletion,
-    describeKey,
-    enableKey
+    listKeys, createKey, disableKey, scheduleKeyDeletion, describeKey, enableKey
 }

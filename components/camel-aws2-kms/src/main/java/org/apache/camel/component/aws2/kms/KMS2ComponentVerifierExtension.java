@@ -18,17 +18,16 @@ package org.apache.camel.component.aws2.kms;
 
 import java.util.Map;
 
+import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
+import org.apache.camel.component.extension.verifier.ResultBuilder;
+import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
+import org.apache.camel.component.extension.verifier.ResultErrorHelper;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.kms.KmsClientBuilder;
-
-import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
-import org.apache.camel.component.extension.verifier.ResultBuilder;
-import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
-import org.apache.camel.component.extension.verifier.ResultErrorHelper;
 
 public class KMS2ComponentVerifierExtension extends DefaultComponentVerifierExtension {
 

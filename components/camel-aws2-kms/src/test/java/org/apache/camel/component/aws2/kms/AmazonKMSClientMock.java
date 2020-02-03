@@ -42,7 +42,7 @@ public class AmazonKMSClientMock implements KmsClient {
 
     @Override
     public CreateKeyResponse createKey(CreateKeyRequest createKeyRequest) {
-    	CreateKeyResponse.Builder res = CreateKeyResponse.builder();
+        CreateKeyResponse.Builder res = CreateKeyResponse.builder();
         KeyMetadata.Builder metadata = KeyMetadata.builder();
         metadata.keyId("test");
         metadata.enabled(true);
@@ -52,7 +52,7 @@ public class AmazonKMSClientMock implements KmsClient {
 
     @Override
     public DescribeKeyResponse describeKey(DescribeKeyRequest describeKeyRequest) {
-    	DescribeKeyResponse.Builder res = DescribeKeyResponse.builder();
+        DescribeKeyResponse.Builder res = DescribeKeyResponse.builder();
         KeyMetadata.Builder metadata = KeyMetadata.builder();
         metadata.enabled(false);
         metadata.description("MyCamelKey");
@@ -69,13 +69,13 @@ public class AmazonKMSClientMock implements KmsClient {
 
     @Override
     public EnableKeyResponse enableKey(EnableKeyRequest enableKeyRequest) {
-    	EnableKeyResponse res = EnableKeyResponse.builder().build();
+        EnableKeyResponse res = EnableKeyResponse.builder().build();
         return res;
     }
 
     @Override
     public ListKeysResponse listKeys(ListKeysRequest listKeysRequest) {
-    	ListKeysResponse.Builder result = ListKeysResponse.builder();
+        ListKeysResponse.Builder result = ListKeysResponse.builder();
         List<KeyListEntry> keyList = new ArrayList<>();
         KeyListEntry.Builder kle = KeyListEntry.builder();
         kle.keyId("keyId");
@@ -86,21 +86,21 @@ public class AmazonKMSClientMock implements KmsClient {
 
     @Override
     public ScheduleKeyDeletionResponse scheduleKeyDeletion(ScheduleKeyDeletionRequest scheduleKeyDeletionRequest) {
-    	ScheduleKeyDeletionResponse.Builder response = ScheduleKeyDeletionResponse.builder();
-    	response.keyId("test");
+        ScheduleKeyDeletionResponse.Builder response = ScheduleKeyDeletionResponse.builder();
+        response.keyId("test");
         return response.build();
     }
 
-	@Override
-	public String serviceName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String serviceName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public void close() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
+
+    }
 
 }

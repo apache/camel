@@ -24,7 +24,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-
 import software.amazon.awssdk.services.kms.KmsClient;
 
 /**
@@ -39,23 +38,23 @@ public class KMS2Component extends DefaultComponent {
     private String secretKey;
     @Metadata
     private String region;
-    @Metadata(label = "advanced")    
+    @Metadata(label = "advanced")
     private KMS2Configuration configuration;
-    
+
     public KMS2Component() {
         this(null);
     }
-    
+
     public KMS2Component(CamelContext context) {
         super(context);
-        
+
         registerExtension(new KMS2ComponentVerifierExtension());
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         KMS2Configuration configuration = this.configuration != null ? this.configuration.copy() : new KMS2Configuration();
-        
+
         KMS2Endpoint endpoint = new KMS2Endpoint(uri, this, configuration);
         endpoint.getConfiguration().setAccessKey(accessKey);
         endpoint.getConfiguration().setSecretKey(secretKey);
@@ -65,10 +64,10 @@ public class KMS2Component extends DefaultComponent {
         if (configuration.getKmsClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon kms client or accessKey and secretKey must be specified");
         }
-        
+
         return endpoint;
     }
-    
+
     public KMS2Configuration getConfiguration() {
         return configuration;
     }
@@ -101,7 +100,7 @@ public class KMS2Component extends DefaultComponent {
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
-    
+
     public String getRegion() {
         return region;
     }

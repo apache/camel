@@ -21,7 +21,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.kms.KmsClient;
 
@@ -92,7 +91,7 @@ public class KMS2Configuration implements Cloneable {
     public void setOperation(KMS2Operations operation) {
         this.operation = operation;
     }
-    
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
@@ -131,15 +130,14 @@ public class KMS2Configuration implements Cloneable {
     }
 
     /**
-     * The region in which EKS client needs to work. When using this
-     * parameter, the configuration will expect the lowercase name of the
-     * region (for example ap-east-1) You'll need to use the name
-     * Region.EU_WEST_1.id()
+     * The region in which EKS client needs to work. When using this parameter,
+     * the configuration will expect the lowercase name of the region (for
+     * example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
     // *************************************************
     //
     // *************************************************

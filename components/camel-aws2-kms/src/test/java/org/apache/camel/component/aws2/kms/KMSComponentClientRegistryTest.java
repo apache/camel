@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.kms;
 
-import org.apache.camel.component.aws2.kms.KMS2Component;
-import org.apache.camel.component.aws2.kms.KMS2Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -33,7 +31,7 @@ public class KMSComponentClientRegistryTest extends CamelTestSupport {
 
         assertNotNull(endpoint.getConfiguration().getKmsClient());
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalKMSClientMisconfiguration() throws Exception {
 
