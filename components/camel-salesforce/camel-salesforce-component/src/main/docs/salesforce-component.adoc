@@ -633,7 +633,7 @@ for details on how to generate the DTO.
 
 
 // component options: START
-The Salesforce component supports 33 options, which are listed below.
+The Salesforce component supports 34 options, which are listed below.
 
 
 
@@ -658,6 +658,7 @@ The Salesforce component supports 33 options, which are listed below.
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters | false | boolean
 | *httpClientIdleTimeout* (common) | Timeout used by the HttpClient when waiting for response from the Salesforce server. | 10000 | long
 | *httpClientConnection Timeout* (common) | Connection timeout used by the HttpClient when connecting to the Salesforce server. | 60000 | long
+| *httpMaxContentLength* (common) | Max content length of an HTTP response. |  | Integer
 | *httpProxyHost* (proxy) | Hostname of the HTTP proxy server to use. |  | String
 | *httpProxyPort* (proxy) | Port number of the HTTP proxy server to use. |  | Integer
 | *httpProxyUsername* (security) | Username to use to authenticate against the HTTP proxy server. |  | String
@@ -774,7 +775,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 88 options, which are listed below.
+The component supports 89 options, which are listed below.
 
 
 
@@ -836,6 +837,7 @@ The component supports 88 options, which are listed below.
 | *camel.component.salesforce.http-client-connection-timeout* | Connection timeout used by the HttpClient when connecting to the Salesforce server. | 60000 | Long
 | *camel.component.salesforce.http-client-idle-timeout* | Timeout used by the HttpClient when waiting for response from the Salesforce server. | 10000 | Long
 | *camel.component.salesforce.http-client-properties* | Used to set any properties that can be configured on the underlying HTTP client. Have a look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options. |  | Map
+| *camel.component.salesforce.http-max-content-length* | Max content length of an HTTP response. |  | Integer
 | *camel.component.salesforce.http-proxy-auth-uri* | Used in authentication against the HTTP proxy server, needs to match the URI of the proxy server in order for the httpProxyUsername and httpProxyPassword to be used for authentication. |  | String
 | *camel.component.salesforce.http-proxy-excluded-addresses* | A list of addresses for which HTTP proxy server should not be used. |  | Set
 | *camel.component.salesforce.http-proxy-host* | Hostname of the HTTP proxy server to use. |  | String

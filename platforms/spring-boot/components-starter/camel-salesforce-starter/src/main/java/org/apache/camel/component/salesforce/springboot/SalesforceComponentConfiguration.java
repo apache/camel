@@ -163,6 +163,10 @@ public class SalesforceComponentConfiguration
      */
     private Long httpClientConnectionTimeout = 60000L;
     /**
+     * Max content length of an HTTP response.
+     */
+    private Integer httpMaxContentLength;
+    /**
      * Hostname of the HTTP proxy server to use.
      */
     private String httpProxyHost;
@@ -388,6 +392,14 @@ public class SalesforceComponentConfiguration
 
     public void setHttpClientConnectionTimeout(Long httpClientConnectionTimeout) {
         this.httpClientConnectionTimeout = httpClientConnectionTimeout;
+    }
+
+    public Integer getHttpMaxContentLength() {
+        return httpMaxContentLength;
+    }
+
+    public void setHttpMaxContentLength(Integer httpMaxContentLength) {
+        this.httpMaxContentLength = httpMaxContentLength;
     }
 
     public String getHttpProxyHost() {
