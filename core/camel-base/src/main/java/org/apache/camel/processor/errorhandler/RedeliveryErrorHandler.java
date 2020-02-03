@@ -366,7 +366,15 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         @Override
         public void run() {
             // can we still run
-            if (!isRunAllowed()) {
+            boolean run = true;
+            boolean forceShutdown = shutdownStrategy.forceShutdown(RedeliveryErrorHandler.this);
+            if (forceShutdown) {
+                run = false;
+            }
+            if (run && isStoppingOrStopped()) {
+                run = false;
+            }
+            if (!run) {
                 LOG.trace("Run not allowed, will reject executing exchange: {}", exchange);
                 if (exchange.getException() == null) {
                     exchange.setException(new RejectedExecutionException());
@@ -395,17 +403,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     }
                 });
             }
-        }
-
-        protected boolean isRunAllowed() {
-            // if camel context is forcing a shutdown then do not allow running
-            boolean forceShutdown = shutdownStrategy.forceShutdown(RedeliveryErrorHandler.this);
-            if (forceShutdown) {
-                return false;
-            }
-
-            // we cannot run if we are stopping/stopped
-            return !isStoppingOrStopped();
         }
 
         protected void handleException() {
