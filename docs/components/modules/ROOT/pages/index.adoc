@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 315 in 253 JAR artifacts (1 deprecated)
+Number of Components: 316 in 254 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -201,6 +201,8 @@ Number of Components: 315 in 253 JAR artifacts (1 deprecated)
 | xref:facebook-component.adoc[Facebook] (camel-facebook) | 2.14 | The Facebook component provides access to all of the Facebook APIs accessible using Facebook4J.
 
 | xref:fhir-component.adoc[FHIR] (camel-fhir) | 2.23 | The fhir component is used for working with the FHIR protocol (health care).
+
+| xref:file-component.adoc[File] (camel-file) | 1.0 | The file component is used for reading or writing files.
 
 | xref:file-watch-component.adoc[File Watch] (camel-file-watch) | 3.0 | The file-watch is used to monitor file events in directory using java.nio.file.WatchService
 
