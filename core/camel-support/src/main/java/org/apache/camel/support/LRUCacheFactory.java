@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class LRUCacheFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LRUCacheFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LRUCacheFactory.class);
 
     private static volatile LRUCacheFactory instance;
 
@@ -66,7 +66,7 @@ public abstract class LRUCacheFactory {
     }
 
     private static LRUCacheFactory createLRUCacheFactory() {
-        LOGGER.trace("createLRUCacheFactory");
+        LOG.trace("createLRUCacheFactory");
         try {
             ClassLoader classLoader = LRUCacheFactory.class.getClassLoader();
             URL url = classLoader.getResource("META-INF/services/org/apache/camel/lru-cache-factory");
@@ -77,17 +77,20 @@ public abstract class LRUCacheFactory {
                 }
                 String clazzName = props.getProperty("class");
                 if (clazzName != null) {
-                    LOGGER.trace("Loading class: {}", clazzName);
+                    LOG.trace("Loading class: {}", clazzName);
                     Class<?> clazz = classLoader.loadClass(clazzName);
-                    LOGGER.trace("Creating LURCacheFactory instance from class: {}", clazzName);
+                    LOG.trace("Creating LURCacheFactory instance from class: {}", clazzName);
                     Object factory = clazz.getDeclaredConstructor().newInstance();
-                    LOGGER.trace("Created LURCacheFactory instance: {}", factory);
+                    LOG.trace("Created LURCacheFactory instance: {}", factory);
+                    LOG.info("Using LURCacheFactory: {}", factory);
                     return (LRUCacheFactory) factory;
                 }
             }
         } catch (Throwable t) {
-            LOGGER.warn("Error creating LRUCacheFactory. Will use DefaultLRUCacheFactory.", t);
+            LOG.warn("Error creating LRUCacheFactory. Will use DefaultLRUCacheFactory.", t);
         }
+        // use deafult
+        LOG.debug("Creating DefaultLRUCacheFactory");
         return new DefaultLRUCacheFactory();
     }
     

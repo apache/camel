@@ -44,7 +44,6 @@ public final class CaffeineLRUCacheFactory extends LRUCacheFactory {
         }
     }
 
-
     /**
      * Warm-up the LRUCache to startup Apache Camel faster.
      */
@@ -207,4 +206,8 @@ public final class CaffeineLRUCacheFactory extends LRUCacheFactory {
         return new CaffeineLRUWeakCache<>(initialCapacity, maximumCacheSize, stopOnEviction);
     }
 
+    @Override
+    public String toString() {
+        return "camel-caffeine-lrucache";
+    }
 }
