@@ -114,6 +114,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-websocket</artifactId>
+			<scope>provided</scope>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-lumberjack</artifactId>
 			<scope>provided</scope>
 			<version>${project.version}</version>
@@ -330,6 +336,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-weka</artifactId>
+			<scope>provided</scope>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring-batch</artifactId>
 			<scope>provided</scope>
 			<version>${project.version}</version>
@@ -426,13 +438,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-aws2-eks</artifactId>
+			<artifactId>camel-xj</artifactId>
 			<scope>provided</scope>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-xj</artifactId>
+			<artifactId>camel-aws2-eks</artifactId>
 			<scope>provided</scope>
 			<version>${project.version}</version>
 		</dependency>
@@ -558,12 +570,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-atmosphere-websocket</artifactId>
-			<scope>provided</scope>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-debezium-mongodb</artifactId>
 			<scope>provided</scope>
 			<version>${project.version}</version>
@@ -619,6 +625,12 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jdbc</artifactId>
+			<scope>provided</scope>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-spark</artifactId>
 			<scope>provided</scope>
 			<version>${project.version}</version>
 		</dependency>
@@ -733,12 +745,6 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-rest-openapi</artifactId>
-			<scope>provided</scope>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-spark-rest</artifactId>
 			<scope>provided</scope>
 			<version>${project.version}</version>
 		</dependency>
@@ -1140,13 +1146,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-xmpp</artifactId>
+			<artifactId>camel-jira</artifactId>
 			<scope>provided</scope>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-jira</artifactId>
+			<artifactId>camel-xmpp</artifactId>
 			<scope>provided</scope>
 			<version>${project.version}</version>
 		</dependency>

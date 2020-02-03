@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.maven.packaging.dsl.component.ComponentDslBuilderFactoryGenerator;
 import org.apache.camel.maven.packaging.dsl.component.ComponentsBuilderFactoryGenerator;
 import org.apache.camel.maven.packaging.dsl.component.ComponentsDslMetadataRegistry;
+import org.apache.camel.maven.packaging.dsl.component.EnrichedComponentModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
@@ -143,21 +144,22 @@ public class ComponentDslMojo extends AbstractDslMojo {
             Map<String, List<ComponentModel>> grModels = allModels.stream().collect(Collectors.groupingBy(ComponentModel::getJavaType));
             for (String componentClass : grModels.keySet()) {
                 List<ComponentModel> compModels = grModels.get(componentClass);
-                ComponentModel model = compModels.get(0); // They should be
-
-                createComponentDsl(model);
+                for(ComponentModel model: compModels) {
+                    // if more than one, we have a component class with multiple components aliases
+                    createComponentDsl(new EnrichedComponentModel(model, compModels.size() > 1));
+                }
             }
         }
     }
 
-    private void createComponentDsl(final ComponentModel model) throws MojoExecutionException, MojoFailureException {
+    private void createComponentDsl(final EnrichedComponentModel model) throws MojoExecutionException, MojoFailureException {
         // Create components DSL factories
         final ComponentDslBuilderFactoryGenerator componentDslBuilderFactoryGenerator = syncAndGenerateSpecificComponentsBuilderFactories(model);
 
         // Update components metadata
         final ComponentsDslMetadataRegistry componentsDslMetadataRegistry = syncAndUpdateComponentsMetadataRegistry(model, componentDslBuilderFactoryGenerator.getGeneratedClassName());
 
-        final Set<ComponentModel> componentCachedModels = new HashSet<>(componentsDslMetadataRegistry.getComponentCacheFromMemory().values());
+        final Set<EnrichedComponentModel> componentCachedModels = new HashSet<>(componentsDslMetadataRegistry.getComponentCacheFromMemory().values());
 
         // Create components DSL entry builder factories
         syncAndGenerateComponentsBuilderFactories(componentCachedModels);
@@ -166,7 +168,7 @@ public class ComponentDslMojo extends AbstractDslMojo {
         syncPomFile(componentDslPom, componentsDslMetadataRegistry.getComponentCacheFromMemory());
     }
 
-    private ComponentDslBuilderFactoryGenerator syncAndGenerateSpecificComponentsBuilderFactories(final ComponentModel componentModel) throws MojoFailureException {
+    private ComponentDslBuilderFactoryGenerator syncAndGenerateSpecificComponentsBuilderFactories(final EnrichedComponentModel componentModel) throws MojoFailureException {
         final ComponentDslBuilderFactoryGenerator componentDslBuilderFactoryGenerator = ComponentDslBuilderFactoryGenerator.generateClass(componentModel, projectClassLoader, componentsDslPackageName);
         writeSourceIfChanged(componentDslBuilderFactoryGenerator.printClassAsString(), componentsDslFactoriesPackageName.replace('.', '/'), componentDslBuilderFactoryGenerator.getGeneratedClassName() + ".java", outputJavaDir);
 
@@ -175,7 +177,7 @@ public class ComponentDslMojo extends AbstractDslMojo {
         return componentDslBuilderFactoryGenerator;
     }
 
-    private ComponentsDslMetadataRegistry syncAndUpdateComponentsMetadataRegistry(final ComponentModel componentModel, final String className) {
+    private ComponentsDslMetadataRegistry syncAndUpdateComponentsMetadataRegistry(final EnrichedComponentModel componentModel, final String className) {
         final ComponentsDslMetadataRegistry componentsDslMetadataRegistry = new ComponentsDslMetadataRegistry(outputJavaDir.toPath().resolve(componentsDslFactoriesPackageName.replace('.', '/')).toFile(), componentsMetadata);
         componentsDslMetadataRegistry.addComponentToMetadataAndSyncMetadataFile(componentModel, className);
 
@@ -184,14 +186,14 @@ public class ComponentDslMojo extends AbstractDslMojo {
         return componentsDslMetadataRegistry;
     }
 
-    private void syncAndGenerateComponentsBuilderFactories(final Set<ComponentModel> componentCachedModels) throws MojoFailureException {
+    private void syncAndGenerateComponentsBuilderFactories(final Set<EnrichedComponentModel> componentCachedModels) throws MojoFailureException {
         final ComponentsBuilderFactoryGenerator componentsBuilderFactoryGenerator = ComponentsBuilderFactoryGenerator.generateClass(componentCachedModels, projectClassLoader, componentsDslPackageName);
         writeSourceIfChanged(componentsBuilderFactoryGenerator.printClassAsString(), componentsDslPackageName.replace('.', '/'), componentsBuilderFactoryGenerator.getGeneratedClassName() + ".java", outputJavaDir);
 
         getLog().info("Regenerate " + componentsBuilderFactoryGenerator.getGeneratedClassName());
     }
 
-    private void syncPomFile(final File pomFile, final Map<String, ComponentModel> componentsModels) throws MojoExecutionException {
+    private void syncPomFile(final File pomFile, final Map<String, EnrichedComponentModel> componentsModels) throws MojoExecutionException {
         final String startMainComponentImportMarker = "<!-- START: camel components import -->";
         final String endMainComponentImportMarker = "<!-- END: camel components import -->";
 

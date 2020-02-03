@@ -39,6 +39,14 @@ public interface ComponentBuilder <C extends Component> {
     C build(CamelContext context);
 
     /**
+     * Builds and register a component to the provided {@link CamelContext}.
+     *
+     * @param context the camel context
+     * @param componentName the name the component is registered as
+     */
+    void register(CamelContext context, String componentName);
+
+    /**
      * Adds an option to this component. This API is only intended for Camel
      * internally.
      */

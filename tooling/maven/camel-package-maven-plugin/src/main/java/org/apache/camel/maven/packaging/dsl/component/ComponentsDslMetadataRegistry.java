@@ -28,7 +28,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.apache.camel.maven.packaging.dsl.DslHelper;
-import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.tooling.util.Strings;
 
@@ -39,7 +38,7 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
  */
 public class ComponentsDslMetadataRegistry {
 
-    private Map<String, ComponentModel> componentsCache;
+    private Map<String, EnrichedComponentModel> componentsCache;
     private Set<String> componentsDslFactories;
     private File metadataFile;
 
@@ -52,8 +51,8 @@ public class ComponentsDslMetadataRegistry {
         this.metadataFile = metadataFile;
     }
 
-    private Map<String, ComponentModel> loadMetadataFileIntoMap(final File metadataFile) {
-        return gson.fromJson(loadJson(metadataFile), new TypeToken<Map<String, ComponentModel>>() { }.getType());
+    private Map<String, EnrichedComponentModel> loadMetadataFileIntoMap(final File metadataFile) {
+        return gson.fromJson(loadJson(metadataFile), new TypeToken<Map<String, EnrichedComponentModel>>() { }.getType());
     }
 
     private Set<String> loadComponentsFactoriesFromDir(final File componentDir) {
@@ -62,7 +61,7 @@ public class ComponentsDslMetadataRegistry {
                 .collect(Collectors.toSet());
     }
 
-    public void addComponentToMetadataAndSyncMetadataFile(final ComponentModel componentModel, final String key) {
+    public void addComponentToMetadataAndSyncMetadataFile(final EnrichedComponentModel componentModel, final String key) {
         // put the component into the cache
         componentsCache.put(key, new ModifiedComponentModel(componentModel));
 
@@ -96,7 +95,7 @@ public class ComponentsDslMetadataRegistry {
         }
     }
 
-    public Map<String, ComponentModel> getComponentCacheFromMemory() {
+    public Map<String, EnrichedComponentModel> getComponentCacheFromMemory() {
         return componentsCache;
     }
 
@@ -108,8 +107,8 @@ public class ComponentsDslMetadataRegistry {
         }
     }
 
-    private static class ModifiedComponentModel extends ComponentModel {
-        public ModifiedComponentModel(final ComponentModel componentModel) {
+    private static class ModifiedComponentModel extends EnrichedComponentModel {
+        public ModifiedComponentModel(final EnrichedComponentModel componentModel) {
             name = componentModel.getName();
             title = componentModel.getTitle();
             description = componentModel.getDescription();
@@ -131,6 +130,7 @@ public class ComponentsDslMetadataRegistry {
             groupId = componentModel.getGroupId();
             artifactId = componentModel.getArtifactId();
             version = componentModel.getVersion();
+            isAlias = componentModel.isAlias();
         }
     }
 

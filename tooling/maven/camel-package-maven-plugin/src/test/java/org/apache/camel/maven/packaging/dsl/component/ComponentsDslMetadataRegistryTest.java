@@ -41,7 +41,7 @@ class ComponentsDslMetadataRegistryTest {
 
         final File classesDir = FileSystems.getDefault().getPath(".").resolve("src/test/java/org/apache/camel/maven/packaging/dsl/component").toFile();
 
-        final ComponentModel componentModel = JsonMapper.generateComponentModel(json);
+        final EnrichedComponentModel componentModel = new EnrichedComponentModel(JsonMapper.generateComponentModel(json), false);
         final ComponentsDslMetadataRegistry componentsDslMetadataRegistry = new ComponentsDslMetadataRegistry(classesDir, metadata);
 
         // check for size

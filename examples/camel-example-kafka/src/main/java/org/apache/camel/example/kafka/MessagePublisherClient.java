@@ -51,11 +51,9 @@ public final class MessagePublisherClient {
                 camelContext.getPropertiesComponent().setLocation("classpath:application.properties");
 
                 // setup kafka component with the brokers
-                KafkaComponent kafka = ComponentsBuilderFactory.kafka()
+                ComponentsBuilderFactory.kafka()
                         .brokers("{{kafka.host}}:{{kafka.port}}")
-                        .build(camelContext);
-                
-                camelContext.addComponent("kafka", kafka);
+                        .register(camelContext, "kafka");
 
                 from("direct:kafkaStart").routeId("DirectToKafka")
                     .to("kafka:{{producer.topic}}").log("${headers}");

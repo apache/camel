@@ -16,6 +16,7 @@
  */
 package org.apache.camel.maven.packaging.dsl.component;
 
+import org.apache.camel.maven.packaging.dsl.DslHelper;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.camel.tooling.util.srcgen.Method;
@@ -29,21 +30,21 @@ public final class ComponentDslInnerBuilderGenerator {
     private static final String BUILDER_SUFFIX = "Builder";
 
     private final JavaClass javaClass;
-    private final ComponentModel componentModel;
+    private final EnrichedComponentModel componentModel;
 
-    private ComponentDslInnerBuilderGenerator(final JavaClass javaClass, final ComponentModel componentModel) {
+    private ComponentDslInnerBuilderGenerator(final JavaClass javaClass, final EnrichedComponentModel componentModel) {
         this.javaClass = javaClass;
         this.componentModel = componentModel;
         // generate class
         generateJavaClass();
     }
 
-    public static ComponentDslInnerBuilderGenerator generateClass(final JavaClass javaClass, final ComponentModel componentModel) {
+    public static ComponentDslInnerBuilderGenerator generateClass(final JavaClass javaClass, final EnrichedComponentModel componentModel) {
         return new ComponentDslInnerBuilderGenerator(javaClass, componentModel);
     }
 
-    public static String getExpectedGeneratedInterfaceName(final ComponentModel componentModel) {
-        return componentModel.getShortJavaType() + BUILDER_SUFFIX;
+    public static String getExpectedGeneratedInterfaceName(final EnrichedComponentModel componentModel) {
+        return DslHelper.generateComponentBuilderClassName(componentModel, BUILDER_SUFFIX);
     }
 
     public String getGeneratedInterfaceName() {

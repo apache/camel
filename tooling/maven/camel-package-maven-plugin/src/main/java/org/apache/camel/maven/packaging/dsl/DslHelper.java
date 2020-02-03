@@ -22,7 +22,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.camel.maven.packaging.dsl.component.EnrichedComponentModel;
 import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.CaseUtils;
 
 public final class DslHelper {
@@ -49,7 +51,7 @@ public final class DslHelper {
     }
 
     public static String toCamelCaseLower(final String schema) {
-        String convertedText = CaseUtils.toCamelCase(schema, false, '-');
+        String convertedText = CaseUtils.toCamelCase(schema, false, '-', '+');
         if (convertedText != null) {
             switch (convertedText) {
             case "class":
@@ -105,6 +107,14 @@ public final class DslHelper {
             }
         }
         return desc;
+    }
+
+    public static String generateComponentBuilderClassName(final EnrichedComponentModel componentModel, final String suffix) {
+        // if we have an alternative schema, we just append the schema name to the classname
+        if (componentModel.isAlias()) {
+            return StringUtils.capitalize(toCamelCaseLower(componentModel.getScheme())) + componentModel.getShortJavaType() + suffix;
+        }
+        return componentModel.getShortJavaType() + suffix;
     }
 
     private static String wrapEnumValues(List<String> enumValues) {

@@ -33,7 +33,7 @@ class ComponentDslBuilderFactoryGeneratorTest {
     @Test
     public void testIfCreateJavaClassCorrectly() throws IOException {
         final String json = PackageHelper.loadText(new File(Objects.requireNonNull(getClass().getClassLoader().getResource("json/test_component.json")).getFile()));
-        final ComponentModel componentModel = JsonMapper.generateComponentModel(json);
+        final EnrichedComponentModel componentModel = new EnrichedComponentModel(JsonMapper.generateComponentModel(json), false);
 
         final ComponentDslBuilderFactoryGenerator componentDslBuilderFactoryGenerator = ComponentDslBuilderFactoryGenerator.generateClass(componentModel, getClass().getClassLoader(), "org.apache.camel.builder.component");
 

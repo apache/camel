@@ -83,8 +83,7 @@ public class ComponentsBuilderFactoryTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                final TimerComponent timerComponent = ComponentsBuilderFactory.timer().build();
-                context.addComponent("awesomeTimer", timerComponent);
+                ComponentsBuilderFactory.timer().register(context, "awesomeTimer");
 
                 from("awesomeTimer:foo?delay=-1&repeatCount=10")
                         .to("mock:result");

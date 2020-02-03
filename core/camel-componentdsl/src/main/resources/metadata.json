@@ -1,66 +1,8 @@
 {
-  "KafkaComponentBuilderFactory": {
-    "scheme": "kafka",
-    "syntax": "kafka:topic",
-    "async": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false,
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-kafka",
-    "version": "3.1.0-SNAPSHOT",
-    "endpointOptions": [],
-    "title": "Kafka",
-    "description": "The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.",
-    "firstVersion": "2.13.0",
-    "javaType": "org.apache.camel.component.kafka.KafkaComponent",
-    "label": "messaging",
-    "deprecated": false,
-    "deprecationNote": "messaging",
-    "options": []
-  },
-  "DebeziumMySqlComponentBuilderFactory": {
-    "scheme": "debezium-mysql",
-    "syntax": "debezium-mysql:name",
-    "async": false,
-    "consumerOnly": true,
-    "producerOnly": false,
-    "lenientProperties": false,
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-debezium-mysql",
-    "version": "3.1.0-SNAPSHOT",
-    "endpointOptions": [],
-    "title": "Debezium MySQL Connector",
-    "description": "Represents a Debezium MySQL endpoint which is used to capture changes in MySQL database so that that applications can see those changes and respond to them.",
-    "firstVersion": "3.0.0",
-    "javaType": "org.apache.camel.component.debezium.DebeziumMySqlComponent",
-    "label": "database,sql,mysql",
-    "deprecated": false,
-    "deprecationNote": "database,sql,mysql",
-    "options": []
-  },
-  "TimerComponentBuilderFactory": {
-    "scheme": "timer",
-    "syntax": "timer:timerName",
-    "async": false,
-    "consumerOnly": true,
-    "producerOnly": false,
-    "lenientProperties": false,
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-timer",
-    "version": "3.1.0-SNAPSHOT",
-    "endpointOptions": [],
-    "title": "Timer",
-    "description": "The timer component is used for generating message exchanges when a timer fires.",
-    "firstVersion": "1.0.0",
-    "javaType": "org.apache.camel.component.timer.TimerComponent",
-    "label": "core,scheduling",
-    "deprecated": false,
-    "deprecationNote": "core,scheduling",
-    "options": []
-  },
   "ClassComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "class",
+    "extendsScheme": "",
     "syntax": "class:beanName",
     "async": false,
     "consumerOnly": false,
@@ -80,7 +22,9 @@
     "options": []
   },
   "BeanComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "bean",
+    "extendsScheme": "",
     "syntax": "bean:beanName",
     "async": false,
     "consumerOnly": false,
@@ -100,7 +44,9 @@
     "options": []
   },
   "BrowseComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "browse",
+    "extendsScheme": "",
     "syntax": "browse:name",
     "async": false,
     "consumerOnly": false,
@@ -120,7 +66,9 @@
     "options": []
   },
   "ControlBusComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "controlbus",
+    "extendsScheme": "",
     "syntax": "controlbus:command:language",
     "async": false,
     "consumerOnly": false,
@@ -140,7 +88,9 @@
     "options": []
   },
   "DataFormatComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "dataformat",
+    "extendsScheme": "",
     "syntax": "dataformat:name:operation",
     "async": false,
     "consumerOnly": false,
@@ -160,7 +110,9 @@
     "options": []
   },
   "MockComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "mock",
+    "extendsScheme": "",
     "syntax": "mock:name",
     "async": false,
     "consumerOnly": false,
@@ -180,7 +132,9 @@
     "options": []
   },
   "DataSetComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "dataset",
+    "extendsScheme": "",
     "syntax": "dataset:name",
     "async": false,
     "consumerOnly": false,
@@ -200,7 +154,9 @@
     "options": []
   },
   "DataSetTestComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "dataset-test",
+    "extendsScheme": "",
     "syntax": "dataset-test:name",
     "async": false,
     "consumerOnly": false,
@@ -220,7 +176,9 @@
     "options": []
   },
   "DirectComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "direct",
+    "extendsScheme": "",
     "syntax": "direct:name",
     "async": false,
     "consumerOnly": false,
@@ -240,7 +198,9 @@
     "options": []
   },
   "DirectVmComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "direct-vm",
+    "extendsScheme": "",
     "syntax": "direct-vm:name",
     "async": true,
     "consumerOnly": false,
@@ -260,7 +220,9 @@
     "options": []
   },
   "FileComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "file",
+    "extendsScheme": "",
     "syntax": "file:directoryName",
     "async": false,
     "consumerOnly": false,
@@ -280,7 +242,9 @@
     "options": []
   },
   "LanguageComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "language",
+    "extendsScheme": "",
     "syntax": "language:languageName:resourceUri",
     "async": false,
     "consumerOnly": false,
@@ -300,7 +264,9 @@
     "options": []
   },
   "LogComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "log",
+    "extendsScheme": "",
     "syntax": "log:loggerName",
     "async": false,
     "consumerOnly": false,
@@ -320,7 +286,9 @@
     "options": []
   },
   "RefComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "ref",
+    "extendsScheme": "",
     "syntax": "ref:name",
     "async": false,
     "consumerOnly": false,
@@ -340,7 +308,9 @@
     "options": []
   },
   "RestApiComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "rest-api",
+    "extendsScheme": "",
     "syntax": "rest-api:path/contextIdPattern",
     "async": false,
     "consumerOnly": true,
@@ -360,7 +330,9 @@
     "options": []
   },
   "RestComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "rest",
+    "extendsScheme": "",
     "syntax": "rest:method:path:uriTemplate",
     "async": false,
     "consumerOnly": false,
@@ -380,7 +352,9 @@
     "options": []
   },
   "SagaComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "saga",
+    "extendsScheme": "",
     "syntax": "saga:action",
     "async": false,
     "consumerOnly": false,
@@ -400,7 +374,9 @@
     "options": []
   },
   "SchedulerComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "scheduler",
+    "extendsScheme": "",
     "syntax": "scheduler:name",
     "async": false,
     "consumerOnly": true,
@@ -420,7 +396,9 @@
     "options": []
   },
   "SedaComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "seda",
+    "extendsScheme": "",
     "syntax": "seda:name",
     "async": true,
     "consumerOnly": false,
@@ -440,7 +418,9 @@
     "options": []
   },
   "VmComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "vm",
+    "extendsScheme": "",
     "syntax": "vm:name",
     "async": true,
     "consumerOnly": false,
@@ -460,7 +440,9 @@
     "options": []
   },
   "StubComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "stub",
+    "extendsScheme": "",
     "syntax": "stub:name",
     "async": true,
     "consumerOnly": false,
@@ -479,8 +461,32 @@
     "deprecationNote": "core,testing",
     "options": []
   },
+  "TimerComponentBuilderFactory": {
+    "isAlias": false,
+    "scheme": "timer",
+    "extendsScheme": "",
+    "syntax": "timer:timerName",
+    "async": false,
+    "consumerOnly": true,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-timer",
+    "version": "3.1.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "Timer",
+    "description": "The timer component is used for generating message exchanges when a timer fires.",
+    "firstVersion": "1.0.0",
+    "javaType": "org.apache.camel.component.timer.TimerComponent",
+    "label": "core,scheduling",
+    "deprecated": false,
+    "deprecationNote": "core,scheduling",
+    "options": []
+  },
   "ValidatorComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "validator",
+    "extendsScheme": "",
     "syntax": "validator:resourceUri",
     "async": false,
     "consumerOnly": false,
@@ -500,7 +506,9 @@
     "options": []
   },
   "XsltComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "xslt",
+    "extendsScheme": "",
     "syntax": "xslt:resourceUri",
     "async": false,
     "consumerOnly": false,
@@ -520,7 +528,9 @@
     "options": []
   },
   "CronComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "cron",
+    "extendsScheme": "",
     "syntax": "cron:name",
     "async": false,
     "consumerOnly": true,
@@ -540,7 +550,9 @@
     "options": []
   },
   "EventComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "spring-event",
+    "extendsScheme": "",
     "syntax": "spring-event:name",
     "async": false,
     "consumerOnly": false,
@@ -559,8 +571,10 @@
     "deprecationNote": "spring,eventbus",
     "options": []
   },
-  "HttpComponentBuilderFactory": {
+  "HttpHttpComponentBuilderFactory": {
+    "isAlias": true,
     "scheme": "http",
+    "extendsScheme": "",
     "alternativeSchemes": "http,https",
     "syntax": "http:httpUri",
     "async": false,
@@ -580,8 +594,33 @@
     "deprecationNote": "http",
     "options": []
   },
+  "HttpsHttpComponentBuilderFactory": {
+    "isAlias": true,
+    "scheme": "https",
+    "extendsScheme": "",
+    "alternativeSchemes": "http,https",
+    "syntax": "https:httpUri",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": true,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-http",
+    "version": "3.1.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "HTTPS (Secure)",
+    "description": "For calling out to external HTTP servers using Apache HTTP Client 4.x.",
+    "firstVersion": "2.3.0",
+    "javaType": "org.apache.camel.component.http.HttpComponent",
+    "label": "http",
+    "deprecated": false,
+    "deprecationNote": "http",
+    "options": []
+  },
   "IPFSComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "ipfs",
+    "extendsScheme": "",
     "syntax": "ipfs:ipfsCmd",
     "async": false,
     "consumerOnly": false,
@@ -601,6 +640,7 @@
     "options": []
   },
   "JettyHttpComponent9BuilderFactory": {
+    "isAlias": false,
     "scheme": "jetty",
     "extendsScheme": "http",
     "syntax": "jetty:httpUri",
@@ -622,7 +662,9 @@
     "options": []
   },
   "UndertowComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "undertow",
+    "extendsScheme": "",
     "syntax": "undertow:httpURI",
     "async": true,
     "consumerOnly": false,
@@ -642,7 +684,9 @@
     "options": []
   },
   "CxfRsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "cxfrs",
+    "extendsScheme": "",
     "syntax": "cxfrs:beanId:address",
     "async": false,
     "consumerOnly": false,
@@ -662,7 +706,9 @@
     "options": []
   },
   "CxfComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "cxf",
+    "extendsScheme": "",
     "syntax": "cxf:beanId:address",
     "async": true,
     "consumerOnly": false,
@@ -682,7 +728,9 @@
     "options": []
   },
   "JmsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "jms",
+    "extendsScheme": "",
     "syntax": "jms:destinationType:destinationName",
     "async": true,
     "consumerOnly": false,
@@ -702,7 +750,9 @@
     "options": []
   },
   "MasterComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "zookeeper-master",
+    "extendsScheme": "",
     "syntax": "zookeeper-master:groupName:consumerEndpointUri",
     "async": false,
     "consumerOnly": true,
@@ -722,7 +772,9 @@
     "options": []
   },
   "ServiceComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "service",
+    "extendsScheme": "",
     "syntax": "service:delegateUri",
     "async": false,
     "consumerOnly": true,
@@ -742,7 +794,9 @@
     "options": []
   },
   "JdbcComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "jdbc",
+    "extendsScheme": "",
     "syntax": "jdbc:dataSourceName",
     "async": false,
     "consumerOnly": false,
@@ -762,6 +816,7 @@
     "options": []
   },
   "ActiveMQComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "activemq",
     "extendsScheme": "jms",
     "syntax": "activemq:destinationType:destinationName",
@@ -783,7 +838,9 @@
     "options": []
   },
   "AhcComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "ahc",
+    "extendsScheme": "",
     "syntax": "ahc:httpUri",
     "async": true,
     "consumerOnly": false,
@@ -802,7 +859,8 @@
     "deprecationNote": "http",
     "options": []
   },
-  "WsComponentBuilderFactory": {
+  "AhcWsWsComponentBuilderFactory": {
+    "isAlias": true,
     "scheme": "ahc-ws",
     "extendsScheme": "ahc",
     "alternativeSchemes": "ahc-ws,ahc-wss",
@@ -824,7 +882,31 @@
     "deprecationNote": "websocket",
     "options": []
   },
+  "AhcWssWsComponentBuilderFactory": {
+    "isAlias": true,
+    "scheme": "ahc-wss",
+    "extendsScheme": "ahc",
+    "alternativeSchemes": "ahc-ws,ahc-wss",
+    "syntax": "ahc-wss:httpUri",
+    "async": true,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-ahc-ws",
+    "version": "3.1.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "AHC Secure Websocket (Secure)",
+    "description": "To exchange data with external Websocket servers using Async Http Client.",
+    "firstVersion": "2.14.0",
+    "javaType": "org.apache.camel.component.ahc.ws.WsComponent",
+    "label": "websocket",
+    "deprecated": false,
+    "deprecationNote": "websocket",
+    "options": []
+  },
   "AMQPComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "amqp",
     "extendsScheme": "jms",
     "syntax": "amqp:destinationType:destinationName",
@@ -846,7 +928,9 @@
     "options": []
   },
   "ApnsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "apns",
+    "extendsScheme": "",
     "syntax": "apns:name",
     "async": false,
     "consumerOnly": false,
@@ -866,7 +950,9 @@
     "options": []
   },
   "AS2ComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "as2",
+    "extendsScheme": "",
     "syntax": "as2:apiName/methodName",
     "async": false,
     "consumerOnly": false,
@@ -886,7 +972,9 @@
     "options": []
   },
   "AsteriskComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "asterisk",
+    "extendsScheme": "",
     "syntax": "asterisk:name",
     "async": false,
     "consumerOnly": false,
@@ -906,7 +994,9 @@
     "options": []
   },
   "AtmosComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "atmos",
+    "extendsScheme": "",
     "syntax": "atmos:name/operation",
     "async": false,
     "consumerOnly": false,
@@ -926,6 +1016,7 @@
     "options": []
   },
   "ServletComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "servlet",
     "extendsScheme": "http",
     "syntax": "servlet:contextPath",
@@ -947,28 +1038,31 @@
     "options": []
   },
   "WebsocketComponentBuilderFactory": {
-    "scheme": "atmosphere-websocket",
-    "extendsScheme": "servlet",
-    "syntax": "atmosphere-websocket:servicePath",
+    "isAlias": false,
+    "scheme": "websocket",
+    "extendsScheme": "",
+    "syntax": "websocket:host:port/resourceUri",
     "async": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false,
     "groupId": "org.apache.camel",
-    "artifactId": "camel-atmosphere-websocket",
+    "artifactId": "camel-websocket",
     "version": "3.1.0-SNAPSHOT",
     "endpointOptions": [],
-    "title": "Atmosphere Websocket",
-    "description": "To exchange data with external Websocket clients using Atmosphere.",
-    "firstVersion": "2.14.0",
-    "javaType": "org.apache.camel.component.atmosphere.websocket.WebsocketComponent",
+    "title": "Jetty Websocket",
+    "description": "The websocket component provides websocket endpoints with Jetty for communicating with clients using websocket.",
+    "firstVersion": "2.10.0",
+    "javaType": "org.apache.camel.component.websocket.WebsocketComponent",
     "label": "websocket",
     "deprecated": false,
     "deprecationNote": "websocket",
     "options": []
   },
   "AtomComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "atom",
+    "extendsScheme": "",
     "syntax": "atom:feedUri",
     "async": false,
     "consumerOnly": true,
@@ -988,7 +1082,9 @@
     "options": []
   },
   "AtomixSetComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "atomix-set",
+    "extendsScheme": "",
     "syntax": "atomix-set:resourceName",
     "async": false,
     "consumerOnly": false,
@@ -1008,7 +1104,9 @@
     "options": []
   },
   "AtomixQueueComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "atomix-queue",
+    "extendsScheme": "",
     "syntax": "atomix-queue:resourceName",
     "async": false,
     "consumerOnly": false,
@@ -1028,7 +1126,9 @@
     "options": []
   },
   "AtomixMapComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "atomix-map",
+    "extendsScheme": "",
     "syntax": "atomix-map:resourceName",
     "async": false,
     "consumerOnly": false,
@@ -1048,7 +1148,9 @@
     "options": []
   },
   "AtomixMultiMapComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "atomix-multimap",
+    "extendsScheme": "",
     "syntax": "atomix-multimap:resourceName",
     "async": false,
     "consumerOnly": false,
@@ -1068,7 +1170,9 @@
     "options": []
   },
   "AtomixValueComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "atomix-value",
+    "extendsScheme": "",
     "syntax": "atomix-value:resourceName",
     "async": false,
     "consumerOnly": false,
@@ -1088,7 +1192,9 @@
     "options": []
   },
   "AtomixMessagingComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "atomix-messaging",
+    "extendsScheme": "",
     "syntax": "atomix-messaging:resourceName",
     "async": false,
     "consumerOnly": false,
@@ -1108,7 +1214,9 @@
     "options": []
   },
   "AvroComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "avro",
+    "extendsScheme": "",
     "syntax": "avro:transport:host:port/messageName",
     "async": true,
     "consumerOnly": false,
@@ -1128,7 +1236,9 @@
     "options": []
   },
   "CwComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws-cw",
+    "extendsScheme": "",
     "syntax": "aws-cw:namespace",
     "async": false,
     "consumerOnly": false,
@@ -1148,7 +1258,9 @@
     "options": []
   },
   "DdbStreamComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws-ddbstream",
+    "extendsScheme": "",
     "syntax": "aws-ddbstream:tableName",
     "async": false,
     "consumerOnly": true,
@@ -1168,7 +1280,9 @@
     "options": []
   },
   "DdbComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws-ddb",
+    "extendsScheme": "",
     "syntax": "aws-ddb:tableName",
     "async": false,
     "consumerOnly": false,
@@ -1188,7 +1302,9 @@
     "options": []
   },
   "EC2ComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws-ec2",
+    "extendsScheme": "",
     "syntax": "aws-ec2:label",
     "async": false,
     "consumerOnly": false,
@@ -1208,7 +1324,9 @@
     "options": []
   },
   "ECSComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws-ecs",
+    "extendsScheme": "",
     "syntax": "aws-ecs:label",
     "async": false,
     "consumerOnly": false,
@@ -1228,7 +1346,9 @@
     "options": []
   },
   "EKSComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws-eks",
+    "extendsScheme": "",
     "syntax": "aws-eks:label",
     "async": false,
     "consumerOnly": false,
@@ -1248,7 +1368,9 @@
     "options": []
   },
   "IAMComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws-iam",
+    "extendsScheme": "",
     "syntax": "aws-iam:label",
     "async": false,
     "consumerOnly": false,
@@ -1268,7 +1390,9 @@
     "options": []
   },
   "KinesisComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws-kinesis",
+    "extendsScheme": "",
     "syntax": "aws-kinesis:streamName",
     "async": false,
     "consumerOnly": false,
@@ -1288,7 +1412,9 @@
     "options": []
   },
   "KinesisFirehoseComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws-kinesis-firehose",
+    "extendsScheme": "",
     "syntax": "aws-kinesis-firehose:streamName",
     "async": false,
     "consumerOnly": false,
@@ -1308,7 +1434,9 @@
     "options": []
   },
   "KMSComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws-kms",
+    "extendsScheme": "",
     "syntax": "aws-kms:label",
     "async": false,
     "consumerOnly": false,
@@ -1328,7 +1456,9 @@
     "options": []
   },
   "LambdaComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws-lambda",
+    "extendsScheme": "",
     "syntax": "aws-lambda:function",
     "async": false,
     "consumerOnly": false,
@@ -1348,7 +1478,9 @@
     "options": []
   },
   "MQComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws-mq",
+    "extendsScheme": "",
     "syntax": "aws-mq:label",
     "async": false,
     "consumerOnly": false,
@@ -1368,7 +1500,9 @@
     "options": []
   },
   "MSKComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws-msk",
+    "extendsScheme": "",
     "syntax": "aws-msk:label",
     "async": false,
     "consumerOnly": false,
@@ -1388,7 +1522,9 @@
     "options": []
   },
   "S3ComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws-s3",
+    "extendsScheme": "",
     "syntax": "aws-s3://bucketNameOrArn",
     "async": false,
     "consumerOnly": false,
@@ -1408,7 +1544,9 @@
     "options": []
   },
   "SdbComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws-sdb",
+    "extendsScheme": "",
     "syntax": "aws-sdb:domainName",
     "async": false,
     "consumerOnly": false,
@@ -1428,7 +1566,9 @@
     "options": []
   },
   "SesComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws-ses",
+    "extendsScheme": "",
     "syntax": "aws-ses:from",
     "async": false,
     "consumerOnly": false,
@@ -1448,7 +1588,9 @@
     "options": []
   },
   "SnsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws-sns",
+    "extendsScheme": "",
     "syntax": "aws-sns:topicNameOrArn",
     "async": false,
     "consumerOnly": false,
@@ -1468,7 +1610,9 @@
     "options": []
   },
   "SqsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws-sqs",
+    "extendsScheme": "",
     "syntax": "aws-sqs:queueNameOrArn",
     "async": false,
     "consumerOnly": false,
@@ -1488,7 +1632,9 @@
     "options": []
   },
   "SWFComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws-swf",
+    "extendsScheme": "",
     "syntax": "aws-swf:type",
     "async": false,
     "consumerOnly": false,
@@ -1508,7 +1654,9 @@
     "options": []
   },
   "TranslateComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws-translate",
+    "extendsScheme": "",
     "syntax": "aws-translate:label",
     "async": false,
     "consumerOnly": false,
@@ -1528,7 +1676,9 @@
     "options": []
   },
   "ECS2ComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws2-ecs",
+    "extendsScheme": "",
     "syntax": "aws2-ecs:label",
     "async": false,
     "consumerOnly": false,
@@ -1547,8 +1697,32 @@
     "deprecationNote": "cloud,management",
     "options": []
   },
+  "EKS2ComponentBuilderFactory": {
+    "isAlias": false,
+    "scheme": "aws2-eks",
+    "extendsScheme": "",
+    "syntax": "aws2-eks:label",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-aws2-eks",
+    "version": "3.1.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "AWS 2 EKS",
+    "description": "The aws-eks is used for managing Amazon EKS",
+    "firstVersion": "3.1.0",
+    "javaType": "org.apache.camel.component.aws2.eks.EKS2Component",
+    "label": "cloud,management",
+    "deprecated": false,
+    "deprecationNote": "cloud,management",
+    "options": []
+  },
   "Translate2ComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "aws2-translate",
+    "extendsScheme": "",
     "syntax": "aws2-translate:label",
     "async": false,
     "consumerOnly": false,
@@ -1568,7 +1742,9 @@
     "options": []
   },
   "QueueServiceComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "azure-queue",
+    "extendsScheme": "",
     "syntax": "azure-queue:containerAndQueueUri",
     "async": false,
     "consumerOnly": false,
@@ -1588,7 +1764,9 @@
     "options": []
   },
   "BlobServiceComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "azure-blob",
+    "extendsScheme": "",
     "syntax": "azure-blob:containerOrBlobUri",
     "async": false,
     "consumerOnly": false,
@@ -1608,7 +1786,9 @@
     "options": []
   },
   "BeanValidatorComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "bean-validator",
+    "extendsScheme": "",
     "syntax": "bean-validator:label",
     "async": false,
     "consumerOnly": false,
@@ -1628,7 +1808,9 @@
     "options": []
   },
   "BeanstalkComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "beanstalk",
+    "extendsScheme": "",
     "syntax": "beanstalk:connectionSettings",
     "async": true,
     "consumerOnly": false,
@@ -1648,7 +1830,9 @@
     "options": []
   },
   "BonitaComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "bonita",
+    "extendsScheme": "",
     "syntax": "bonita:operation",
     "async": false,
     "consumerOnly": false,
@@ -1668,7 +1852,9 @@
     "options": []
   },
   "BoxComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "box",
+    "extendsScheme": "",
     "syntax": "box:apiName/methodName",
     "async": false,
     "consumerOnly": false,
@@ -1688,7 +1874,9 @@
     "options": []
   },
   "BraintreeComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "braintree",
+    "extendsScheme": "",
     "syntax": "braintree:apiName/methodName",
     "async": false,
     "consumerOnly": false,
@@ -1708,7 +1896,9 @@
     "options": []
   },
   "CaffeineLoadCacheComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "caffeine-loadcache",
+    "extendsScheme": "",
     "syntax": "caffeine-loadcache:cacheName",
     "async": false,
     "consumerOnly": false,
@@ -1728,7 +1918,9 @@
     "options": []
   },
   "CaffeineCacheComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "caffeine-cache",
+    "extendsScheme": "",
     "syntax": "caffeine-cache:cacheName",
     "async": false,
     "consumerOnly": false,
@@ -1748,7 +1940,9 @@
     "options": []
   },
   "CassandraComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "cql",
+    "extendsScheme": "",
     "syntax": "cql:beanRef:hosts:port/keyspace",
     "async": false,
     "consumerOnly": false,
@@ -1768,7 +1962,9 @@
     "options": []
   },
   "ChatScriptComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "chatscript",
+    "extendsScheme": "",
     "syntax": "chatscript:host:port/botName",
     "async": false,
     "consumerOnly": false,
@@ -1788,7 +1984,9 @@
     "options": []
   },
   "ChunkComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "chunk",
+    "extendsScheme": "",
     "syntax": "chunk:resourceUri",
     "async": false,
     "consumerOnly": false,
@@ -1808,7 +2006,9 @@
     "options": []
   },
   "CMComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "cm-sms",
+    "extendsScheme": "",
     "syntax": "cm-sms:host",
     "async": false,
     "consumerOnly": false,
@@ -1828,7 +2028,9 @@
     "options": []
   },
   "CMISComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "cmis",
+    "extendsScheme": "",
     "syntax": "cmis:cmsUrl",
     "async": false,
     "consumerOnly": false,
@@ -1847,8 +2049,10 @@
     "deprecationNote": "cms,database",
     "options": []
   },
-  "CoAPComponentBuilderFactory": {
+  "CoapCoAPComponentBuilderFactory": {
+    "isAlias": true,
     "scheme": "coap",
+    "extendsScheme": "",
     "alternativeSchemes": "coap,coaps,coap+tcp,coaps+tcp",
     "syntax": "coap:uri",
     "async": false,
@@ -1868,8 +2072,79 @@
     "deprecationNote": "iot",
     "options": []
   },
-  "CometdComponentBuilderFactory": {
+  "CoapTcpCoAPComponentBuilderFactory": {
+    "isAlias": true,
+    "scheme": "coap+tcp",
+    "extendsScheme": "",
+    "alternativeSchemes": "coap,coaps,coap+tcp,coaps+tcp",
+    "syntax": "coap+tcp:uri",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-coap",
+    "version": "3.1.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "CoAP",
+    "description": "The coap component is used for sending and receiving messages from COAP capable devices.",
+    "firstVersion": "2.16.0",
+    "javaType": "org.apache.camel.coap.CoAPComponent",
+    "label": "iot",
+    "deprecated": false,
+    "deprecationNote": "iot",
+    "options": []
+  },
+  "CoapsCoAPComponentBuilderFactory": {
+    "isAlias": true,
+    "scheme": "coaps",
+    "extendsScheme": "",
+    "alternativeSchemes": "coap,coaps,coap+tcp,coaps+tcp",
+    "syntax": "coaps:uri",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-coap",
+    "version": "3.1.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "CoAP (Secure)",
+    "description": "The coap component is used for sending and receiving messages from COAP capable devices.",
+    "firstVersion": "2.16.0",
+    "javaType": "org.apache.camel.coap.CoAPComponent",
+    "label": "iot",
+    "deprecated": false,
+    "deprecationNote": "iot",
+    "options": []
+  },
+  "CoapsTcpCoAPComponentBuilderFactory": {
+    "isAlias": true,
+    "scheme": "coaps+tcp",
+    "extendsScheme": "",
+    "alternativeSchemes": "coap,coaps,coap+tcp,coaps+tcp",
+    "syntax": "coaps+tcp:uri",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-coap",
+    "version": "3.1.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "CoAP",
+    "description": "The coap component is used for sending and receiving messages from COAP capable devices.",
+    "firstVersion": "2.16.0",
+    "javaType": "org.apache.camel.coap.CoAPComponent",
+    "label": "iot",
+    "deprecated": false,
+    "deprecationNote": "iot",
+    "options": []
+  },
+  "CometdCometdComponentBuilderFactory": {
+    "isAlias": true,
     "scheme": "cometd",
+    "extendsScheme": "",
     "alternativeSchemes": "cometd,cometds",
     "syntax": "cometd:host:port/channelName",
     "async": false,
@@ -1889,8 +2164,33 @@
     "deprecationNote": "websocket",
     "options": []
   },
+  "CometdsCometdComponentBuilderFactory": {
+    "isAlias": true,
+    "scheme": "cometds",
+    "extendsScheme": "",
+    "alternativeSchemes": "cometd,cometds",
+    "syntax": "cometds:host:port/channelName",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-cometd",
+    "version": "3.1.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "CometD (Secure)",
+    "description": "The cometd component is a transport for working with the Jetty implementation of the cometd/bayeux protocol.",
+    "firstVersion": "2.0.0",
+    "javaType": "org.apache.camel.component.cometd.CometdComponent",
+    "label": "websocket",
+    "deprecated": false,
+    "deprecationNote": "websocket",
+    "options": []
+  },
   "ConsulComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "consul",
+    "extendsScheme": "",
     "syntax": "consul:apiEndpoint",
     "async": false,
     "consumerOnly": false,
@@ -1910,7 +2210,9 @@
     "options": []
   },
   "CordaComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "corda",
+    "extendsScheme": "",
     "syntax": "corda:node",
     "async": false,
     "consumerOnly": false,
@@ -1930,7 +2232,9 @@
     "options": []
   },
   "CouchbaseComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "couchbase",
+    "extendsScheme": "",
     "syntax": "couchbase:protocol:hostname:port",
     "async": false,
     "consumerOnly": false,
@@ -1950,7 +2254,9 @@
     "options": []
   },
   "CouchDbComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "couchdb",
+    "extendsScheme": "",
     "syntax": "couchdb:protocol:hostname:port/database",
     "async": false,
     "consumerOnly": false,
@@ -1970,7 +2276,9 @@
     "options": []
   },
   "CryptoCmsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "crypto-cms",
+    "extendsScheme": "",
     "syntax": "crypto-cms:cryptoOperation:name",
     "async": false,
     "consumerOnly": false,
@@ -1990,7 +2298,9 @@
     "options": []
   },
   "DigitalSignatureComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "crypto",
+    "extendsScheme": "",
     "syntax": "crypto:cryptoOperation:name",
     "async": false,
     "consumerOnly": false,
@@ -2010,7 +2320,9 @@
     "options": []
   },
   "DebeziumMongodbComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "debezium-mongodb",
+    "extendsScheme": "",
     "syntax": "debezium-mongodb:name",
     "async": false,
     "consumerOnly": true,
@@ -2029,8 +2341,32 @@
     "deprecationNote": "database,nosql,mongodb",
     "options": []
   },
+  "DebeziumMySqlComponentBuilderFactory": {
+    "isAlias": false,
+    "scheme": "debezium-mysql",
+    "extendsScheme": "",
+    "syntax": "debezium-mysql:name",
+    "async": false,
+    "consumerOnly": true,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-debezium-mysql",
+    "version": "3.1.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "Debezium MySQL Connector",
+    "description": "Represents a Debezium MySQL endpoint which is used to capture changes in MySQL database so that that applications can see those changes and respond to them.",
+    "firstVersion": "3.0.0",
+    "javaType": "org.apache.camel.component.debezium.DebeziumMySqlComponent",
+    "label": "database,sql,mysql",
+    "deprecated": false,
+    "deprecationNote": "database,sql,mysql",
+    "options": []
+  },
   "DebeziumPostgresComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "debezium-postgres",
+    "extendsScheme": "",
     "syntax": "debezium-postgres:name",
     "async": false,
     "consumerOnly": true,
@@ -2050,7 +2386,9 @@
     "options": []
   },
   "DebeziumSqlserverComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "debezium-sqlserver",
+    "extendsScheme": "",
     "syntax": "debezium-sqlserver:name",
     "async": false,
     "consumerOnly": true,
@@ -2070,7 +2408,9 @@
     "options": []
   },
   "DigitalOceanComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "digitalocean",
+    "extendsScheme": "",
     "syntax": "digitalocean:operation",
     "async": false,
     "consumerOnly": false,
@@ -2090,7 +2430,9 @@
     "options": []
   },
   "DisruptorComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "disruptor",
+    "extendsScheme": "",
     "alternativeSchemes": "disruptor,disruptor-vm",
     "syntax": "disruptor:name",
     "async": true,
@@ -2111,7 +2453,9 @@
     "options": []
   },
   "DisruptorVmComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "disruptor-vm",
+    "extendsScheme": "",
     "alternativeSchemes": "disruptor,disruptor-vm",
     "syntax": "disruptor-vm:name",
     "async": true,
@@ -2132,7 +2476,9 @@
     "options": []
   },
   "DnsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "dns",
+    "extendsScheme": "",
     "syntax": "dns:dnsType",
     "async": false,
     "consumerOnly": false,
@@ -2152,7 +2498,9 @@
     "options": []
   },
   "DockerComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "docker",
+    "extendsScheme": "",
     "syntax": "docker:operation",
     "async": false,
     "consumerOnly": false,
@@ -2172,7 +2520,9 @@
     "options": []
   },
   "DozerComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "dozer",
+    "extendsScheme": "",
     "syntax": "dozer:name",
     "async": false,
     "consumerOnly": false,
@@ -2192,7 +2542,9 @@
     "options": []
   },
   "DrillComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "drill",
+    "extendsScheme": "",
     "syntax": "drill:host",
     "async": false,
     "consumerOnly": false,
@@ -2212,7 +2564,9 @@
     "options": []
   },
   "DropboxComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "dropbox",
+    "extendsScheme": "",
     "syntax": "dropbox:operation",
     "async": false,
     "consumerOnly": false,
@@ -2232,7 +2586,9 @@
     "options": []
   },
   "EhcacheComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "ehcache",
+    "extendsScheme": "",
     "syntax": "ehcache:cacheName",
     "async": false,
     "consumerOnly": false,
@@ -2252,7 +2608,9 @@
     "options": []
   },
   "ElasticsearchComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "elasticsearch-rest",
+    "extendsScheme": "",
     "syntax": "elasticsearch-rest:clusterName",
     "async": false,
     "consumerOnly": false,
@@ -2272,7 +2630,9 @@
     "options": []
   },
   "SqlStoredComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "sql-stored",
+    "extendsScheme": "",
     "syntax": "sql-stored:template",
     "async": false,
     "consumerOnly": false,
@@ -2292,7 +2652,9 @@
     "options": []
   },
   "SqlComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "sql",
+    "extendsScheme": "",
     "syntax": "sql:query",
     "async": false,
     "consumerOnly": false,
@@ -2312,7 +2674,9 @@
     "options": []
   },
   "ElsqlComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "elsql",
+    "extendsScheme": "",
     "syntax": "elsql:elsqlName:resourceUri",
     "async": false,
     "consumerOnly": false,
@@ -2332,6 +2696,7 @@
     "options": []
   },
   "ElytronComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "elytron",
     "extendsScheme": "undertow",
     "syntax": "elytron:httpURI",
@@ -2353,7 +2718,9 @@
     "options": []
   },
   "EtcdComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "etcd",
+    "extendsScheme": "",
     "syntax": "etcd:namespace/path",
     "async": false,
     "consumerOnly": false,
@@ -2373,7 +2740,9 @@
     "options": []
   },
   "EventAdminComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "eventadmin",
+    "extendsScheme": "",
     "syntax": "eventadmin:topic",
     "async": false,
     "consumerOnly": false,
@@ -2393,7 +2762,9 @@
     "options": []
   },
   "ExecComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "exec",
+    "extendsScheme": "",
     "syntax": "exec:executable",
     "async": false,
     "consumerOnly": false,
@@ -2413,7 +2784,9 @@
     "options": []
   },
   "FacebookComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "facebook",
+    "extendsScheme": "",
     "syntax": "facebook:methodName",
     "async": false,
     "consumerOnly": false,
@@ -2433,7 +2806,9 @@
     "options": []
   },
   "NettyComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "netty",
+    "extendsScheme": "",
     "syntax": "netty:protocol:host:port",
     "async": true,
     "consumerOnly": false,
@@ -2453,7 +2828,9 @@
     "options": []
   },
   "MinaComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "mina",
+    "extendsScheme": "",
     "syntax": "mina:protocol:host:port",
     "async": false,
     "consumerOnly": false,
@@ -2473,7 +2850,9 @@
     "options": []
   },
   "FhirComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "fhir",
+    "extendsScheme": "",
     "syntax": "fhir:apiName/methodName",
     "async": false,
     "consumerOnly": false,
@@ -2493,7 +2872,9 @@
     "options": []
   },
   "FileWatchComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "file-watch",
+    "extendsScheme": "",
     "syntax": "file-watch:path",
     "async": false,
     "consumerOnly": true,
@@ -2513,7 +2894,9 @@
     "options": []
   },
   "FlatpackComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "flatpack",
+    "extendsScheme": "",
     "syntax": "flatpack:type:resourceUri",
     "async": false,
     "consumerOnly": false,
@@ -2533,7 +2916,9 @@
     "options": []
   },
   "FlinkComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "flink",
+    "extendsScheme": "",
     "syntax": "flink:endpointType",
     "async": false,
     "consumerOnly": false,
@@ -2553,7 +2938,9 @@
     "options": []
   },
   "FopComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "fop",
+    "extendsScheme": "",
     "syntax": "fop:outputType",
     "async": false,
     "consumerOnly": false,
@@ -2573,7 +2960,9 @@
     "options": []
   },
   "FreemarkerComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "freemarker",
+    "extendsScheme": "",
     "syntax": "freemarker:resourceUri",
     "async": false,
     "consumerOnly": false,
@@ -2593,7 +2982,9 @@
     "options": []
   },
   "SshComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "ssh",
+    "extendsScheme": "",
     "syntax": "ssh:host:port",
     "alternativeSyntax": "ssh:username:password@host:port",
     "async": false,
@@ -2614,6 +3005,7 @@
     "options": []
   },
   "FtpsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "ftps",
     "extendsScheme": "file",
     "syntax": "ftps:host:port/directoryName",
@@ -2636,6 +3028,7 @@
     "options": []
   },
   "SftpComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "sftp",
     "extendsScheme": "file",
     "syntax": "sftp:host:port/directoryName",
@@ -2657,6 +3050,7 @@
     "options": []
   },
   "FtpComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "ftp",
     "extendsScheme": "file",
     "syntax": "ftp:host:port/directoryName",
@@ -2679,7 +3073,9 @@
     "options": []
   },
   "GangliaComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "ganglia",
+    "extendsScheme": "",
     "syntax": "ganglia:host:port",
     "async": false,
     "consumerOnly": false,
@@ -2699,7 +3095,9 @@
     "options": []
   },
   "GeoCoderComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "geocoder",
+    "extendsScheme": "",
     "syntax": "geocoder:address:latlng",
     "async": false,
     "consumerOnly": false,
@@ -2719,7 +3117,9 @@
     "options": []
   },
   "GitComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "git",
+    "extendsScheme": "",
     "syntax": "git:localPath",
     "async": false,
     "consumerOnly": false,
@@ -2739,7 +3139,9 @@
     "options": []
   },
   "GitHubComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "github",
+    "extendsScheme": "",
     "syntax": "github:type/branchName",
     "async": false,
     "consumerOnly": false,
@@ -2759,7 +3161,9 @@
     "options": []
   },
   "GoogleBigQueryComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "google-bigquery",
+    "extendsScheme": "",
     "syntax": "google-bigquery:projectId:datasetId:tableId",
     "async": false,
     "consumerOnly": false,
@@ -2779,7 +3183,9 @@
     "options": []
   },
   "GoogleBigQuerySQLComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "google-bigquery-sql",
+    "extendsScheme": "",
     "syntax": "google-bigquery-sql:projectId:query",
     "async": false,
     "consumerOnly": false,
@@ -2799,7 +3205,9 @@
     "options": []
   },
   "GoogleCalendarComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "google-calendar",
+    "extendsScheme": "",
     "syntax": "google-calendar:apiName/methodName",
     "async": false,
     "consumerOnly": false,
@@ -2819,7 +3227,9 @@
     "options": []
   },
   "GoogleCalendarStreamComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "google-calendar-stream",
+    "extendsScheme": "",
     "syntax": "google-calendar-stream:index",
     "async": false,
     "consumerOnly": true,
@@ -2839,7 +3249,9 @@
     "options": []
   },
   "GoogleDriveComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "google-drive",
+    "extendsScheme": "",
     "syntax": "google-drive:apiName/methodName",
     "async": false,
     "consumerOnly": false,
@@ -2859,7 +3271,9 @@
     "options": []
   },
   "GoogleMailComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "google-mail",
+    "extendsScheme": "",
     "syntax": "google-mail:apiName/methodName",
     "async": false,
     "consumerOnly": false,
@@ -2879,7 +3293,9 @@
     "options": []
   },
   "GoogleMailStreamComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "google-mail-stream",
+    "extendsScheme": "",
     "syntax": "google-mail-stream:index",
     "async": false,
     "consumerOnly": true,
@@ -2899,7 +3315,9 @@
     "options": []
   },
   "GooglePubsubComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "google-pubsub",
+    "extendsScheme": "",
     "syntax": "google-pubsub:projectId:destinationName",
     "async": false,
     "consumerOnly": false,
@@ -2919,7 +3337,9 @@
     "options": []
   },
   "GoogleSheetsStreamComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "google-sheets-stream",
+    "extendsScheme": "",
     "syntax": "google-sheets-stream:apiName",
     "async": false,
     "consumerOnly": true,
@@ -2939,7 +3359,9 @@
     "options": []
   },
   "GoogleSheetsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "google-sheets",
+    "extendsScheme": "",
     "syntax": "google-sheets:apiName/methodName",
     "async": false,
     "consumerOnly": false,
@@ -2959,7 +3381,9 @@
     "options": []
   },
   "GoraComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "gora",
+    "extendsScheme": "",
     "syntax": "gora:name",
     "async": false,
     "consumerOnly": false,
@@ -2979,7 +3403,9 @@
     "options": []
   },
   "StreamComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "stream",
+    "extendsScheme": "",
     "syntax": "stream:kind",
     "async": false,
     "consumerOnly": false,
@@ -2999,7 +3425,9 @@
     "options": []
   },
   "GrapeComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "grape",
+    "extendsScheme": "",
     "syntax": "grape:defaultCoordinates",
     "async": false,
     "consumerOnly": false,
@@ -3019,7 +3447,9 @@
     "options": []
   },
   "GraphqlComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "graphql",
+    "extendsScheme": "",
     "syntax": "graphql:httpUri",
     "async": false,
     "consumerOnly": false,
@@ -3039,7 +3469,9 @@
     "options": []
   },
   "GrpcComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "grpc",
+    "extendsScheme": "",
     "syntax": "grpc:host:port/service",
     "async": false,
     "consumerOnly": false,
@@ -3059,7 +3491,9 @@
     "options": []
   },
   "GuavaEventBusComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "guava-eventbus",
+    "extendsScheme": "",
     "syntax": "guava-eventbus:eventBusRef",
     "async": false,
     "consumerOnly": false,
@@ -3079,7 +3513,9 @@
     "options": []
   },
   "HazelcastListComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "hazelcast-list",
+    "extendsScheme": "",
     "syntax": "hazelcast-list:cacheName",
     "async": false,
     "consumerOnly": false,
@@ -3099,7 +3535,9 @@
     "options": []
   },
   "HazelcastReplicatedmapComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "hazelcast-replicatedmap",
+    "extendsScheme": "",
     "syntax": "hazelcast-replicatedmap:cacheName",
     "async": false,
     "consumerOnly": false,
@@ -3119,7 +3557,9 @@
     "options": []
   },
   "HazelcastQueueComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "hazelcast-queue",
+    "extendsScheme": "",
     "syntax": "hazelcast-queue:cacheName",
     "async": false,
     "consumerOnly": false,
@@ -3139,7 +3579,9 @@
     "options": []
   },
   "HazelcastMapComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "hazelcast-map",
+    "extendsScheme": "",
     "syntax": "hazelcast-map:cacheName",
     "async": false,
     "consumerOnly": false,
@@ -3159,7 +3601,9 @@
     "options": []
   },
   "HazelcastSetComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "hazelcast-set",
+    "extendsScheme": "",
     "syntax": "hazelcast-set:cacheName",
     "async": false,
     "consumerOnly": false,
@@ -3179,7 +3623,9 @@
     "options": []
   },
   "HazelcastTopicComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "hazelcast-topic",
+    "extendsScheme": "",
     "syntax": "hazelcast-topic:cacheName",
     "async": false,
     "consumerOnly": false,
@@ -3199,7 +3645,9 @@
     "options": []
   },
   "HazelcastSedaComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "hazelcast-seda",
+    "extendsScheme": "",
     "syntax": "hazelcast-seda:cacheName",
     "async": false,
     "consumerOnly": false,
@@ -3219,7 +3667,9 @@
     "options": []
   },
   "HazelcastMultimapComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "hazelcast-multimap",
+    "extendsScheme": "",
     "syntax": "hazelcast-multimap:cacheName",
     "async": false,
     "consumerOnly": false,
@@ -3239,7 +3689,9 @@
     "options": []
   },
   "HazelcastRingbufferComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "hazelcast-ringbuffer",
+    "extendsScheme": "",
     "syntax": "hazelcast-ringbuffer:cacheName",
     "async": false,
     "consumerOnly": false,
@@ -3259,7 +3711,9 @@
     "options": []
   },
   "HazelcastAtomicnumberComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "hazelcast-atomicvalue",
+    "extendsScheme": "",
     "syntax": "hazelcast-atomicvalue:cacheName",
     "async": false,
     "consumerOnly": false,
@@ -3279,7 +3733,9 @@
     "options": []
   },
   "HazelcastInstanceComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "hazelcast-instance",
+    "extendsScheme": "",
     "syntax": "hazelcast-instance:cacheName",
     "async": false,
     "consumerOnly": true,
@@ -3299,7 +3755,9 @@
     "options": []
   },
   "HBaseComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "hbase",
+    "extendsScheme": "",
     "syntax": "hbase:tableName",
     "async": false,
     "consumerOnly": false,
@@ -3319,7 +3777,9 @@
     "options": []
   },
   "HdfsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "hdfs",
+    "extendsScheme": "",
     "syntax": "hdfs:hostName:port/path",
     "async": false,
     "consumerOnly": false,
@@ -3339,7 +3799,9 @@
     "options": []
   },
   "HipchatComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "hipchat",
+    "extendsScheme": "",
     "syntax": "hipchat:protocol:host:port",
     "async": false,
     "consumerOnly": false,
@@ -3359,7 +3821,9 @@
     "options": []
   },
   "ClientComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "iec60870-client",
+    "extendsScheme": "",
     "syntax": "iec60870-client:uriPath",
     "async": false,
     "consumerOnly": false,
@@ -3379,7 +3843,9 @@
     "options": []
   },
   "ServerComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "iec60870-server",
+    "extendsScheme": "",
     "syntax": "iec60870-server:uriPath",
     "async": false,
     "consumerOnly": false,
@@ -3399,7 +3865,9 @@
     "options": []
   },
   "IgniteQueueComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "ignite-queue",
+    "extendsScheme": "",
     "syntax": "ignite-queue:name",
     "async": false,
     "consumerOnly": false,
@@ -3419,7 +3887,9 @@
     "options": []
   },
   "IgniteSetComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "ignite-set",
+    "extendsScheme": "",
     "syntax": "ignite-set:name",
     "async": false,
     "consumerOnly": false,
@@ -3439,7 +3909,9 @@
     "options": []
   },
   "IgniteCacheComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "ignite-cache",
+    "extendsScheme": "",
     "syntax": "ignite-cache:cacheName",
     "async": false,
     "consumerOnly": false,
@@ -3459,7 +3931,9 @@
     "options": []
   },
   "IgniteIdGenComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "ignite-idgen",
+    "extendsScheme": "",
     "syntax": "ignite-idgen:name",
     "async": false,
     "consumerOnly": false,
@@ -3479,7 +3953,9 @@
     "options": []
   },
   "IgniteComputeComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "ignite-compute",
+    "extendsScheme": "",
     "syntax": "ignite-compute:endpointId",
     "async": false,
     "consumerOnly": false,
@@ -3499,7 +3975,9 @@
     "options": []
   },
   "IgniteMessagingComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "ignite-messaging",
+    "extendsScheme": "",
     "syntax": "ignite-messaging:topic",
     "async": false,
     "consumerOnly": false,
@@ -3519,7 +3997,9 @@
     "options": []
   },
   "IgniteEventsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "ignite-events",
+    "extendsScheme": "",
     "syntax": "ignite-events:endpointId",
     "async": false,
     "consumerOnly": true,
@@ -3539,7 +4019,9 @@
     "options": []
   },
   "InfinispanComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "infinispan",
+    "extendsScheme": "",
     "syntax": "infinispan:cacheName",
     "async": false,
     "consumerOnly": false,
@@ -3559,7 +4041,9 @@
     "options": []
   },
   "InfluxDbComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "influxdb",
+    "extendsScheme": "",
     "syntax": "influxdb:connectionBean",
     "async": false,
     "consumerOnly": false,
@@ -3579,7 +4063,9 @@
     "options": []
   },
   "IOTAComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "iota",
+    "extendsScheme": "",
     "syntax": "iota:name",
     "async": false,
     "consumerOnly": false,
@@ -3599,7 +4085,9 @@
     "options": []
   },
   "IrcComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "irc",
+    "extendsScheme": "",
     "syntax": "irc:hostname:port",
     "alternativeSyntax": "irc:username:password@hostname:port",
     "async": false,
@@ -3620,7 +4108,9 @@
     "options": []
   },
   "IronMQComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "ironmq",
+    "extendsScheme": "",
     "syntax": "ironmq:queueName",
     "async": false,
     "consumerOnly": false,
@@ -3640,7 +4130,9 @@
     "options": []
   },
   "JBPMComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "jbpm",
+    "extendsScheme": "",
     "syntax": "jbpm:connectionURL",
     "async": false,
     "consumerOnly": false,
@@ -3660,7 +4152,9 @@
     "options": []
   },
   "JCacheComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "jcache",
+    "extendsScheme": "",
     "syntax": "jcache:cacheName",
     "async": false,
     "consumerOnly": false,
@@ -3680,7 +4174,9 @@
     "options": []
   },
   "JcloudsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "jclouds",
+    "extendsScheme": "",
     "syntax": "jclouds:command:providerId",
     "async": false,
     "consumerOnly": false,
@@ -3700,7 +4196,9 @@
     "options": []
   },
   "JcrComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "jcr",
+    "extendsScheme": "",
     "syntax": "jcr:host/base",
     "alternativeSyntax": "jcr:username:password@host/base",
     "async": false,
@@ -3721,7 +4219,9 @@
     "options": []
   },
   "JGroupsRaftComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "jgroups-raft",
+    "extendsScheme": "",
     "syntax": "jgroups-raft:clusterName",
     "async": false,
     "consumerOnly": false,
@@ -3741,7 +4241,9 @@
     "options": []
   },
   "JGroupsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "jgroups",
+    "extendsScheme": "",
     "syntax": "jgroups:clusterName",
     "async": false,
     "consumerOnly": false,
@@ -3761,7 +4263,9 @@
     "options": []
   },
   "JingComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "jing",
+    "extendsScheme": "",
     "syntax": "jing:resourceUri",
     "async": false,
     "consumerOnly": false,
@@ -3780,28 +4284,10 @@
     "deprecationNote": "validation",
     "options": []
   },
-  "JiraComponentBuilderFactory": {
-    "scheme": "jira",
-    "syntax": "jira:type",
-    "async": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false,
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-jira",
-    "version": "3.1.0-SNAPSHOT",
-    "endpointOptions": [],
-    "title": "Jira",
-    "description": "The jira component interacts with the JIRA issue tracker.",
-    "firstVersion": "3.0",
-    "javaType": "org.apache.camel.component.jira.JiraComponent",
-    "label": "api,reporting",
-    "deprecated": false,
-    "deprecationNote": "api,reporting",
-    "options": []
-  },
   "JMXComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "jmx",
+    "extendsScheme": "",
     "syntax": "jmx:serverURL",
     "async": false,
     "consumerOnly": true,
@@ -3821,7 +4307,9 @@
     "options": []
   },
   "JoltComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "jolt",
+    "extendsScheme": "",
     "syntax": "jolt:resourceUri",
     "async": false,
     "consumerOnly": false,
@@ -3841,7 +4329,9 @@
     "options": []
   },
   "JooqComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "jooq",
+    "extendsScheme": "",
     "syntax": "jooq:entityType",
     "async": false,
     "consumerOnly": false,
@@ -3861,7 +4351,9 @@
     "options": []
   },
   "JpaComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "jpa",
+    "extendsScheme": "",
     "syntax": "jpa:entityType",
     "async": false,
     "consumerOnly": false,
@@ -3881,6 +4373,7 @@
     "options": []
   },
   "ScpComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "scp",
     "extendsScheme": "ftp",
     "syntax": "scp:host:port/directoryName",
@@ -3902,7 +4395,9 @@
     "options": []
   },
   "JsltComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "jslt",
+    "extendsScheme": "",
     "syntax": "jslt:resourceUri",
     "async": false,
     "consumerOnly": false,
@@ -3922,7 +4417,9 @@
     "options": []
   },
   "JsonValidatorComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "json-validator",
+    "extendsScheme": "",
     "syntax": "json-validator:resourceUri",
     "async": false,
     "consumerOnly": false,
@@ -3942,7 +4439,9 @@
     "options": []
   },
   "Jt400ComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "jt400",
+    "extendsScheme": "",
     "syntax": "jt400:userID:password/systemName/objectPath.type",
     "async": false,
     "consumerOnly": false,
@@ -3961,8 +4460,32 @@
     "deprecationNote": "messaging",
     "options": []
   },
+  "KafkaComponentBuilderFactory": {
+    "isAlias": false,
+    "scheme": "kafka",
+    "extendsScheme": "",
+    "syntax": "kafka:topic",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-kafka",
+    "version": "3.1.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "Kafka",
+    "description": "The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.",
+    "firstVersion": "2.13.0",
+    "javaType": "org.apache.camel.component.kafka.KafkaComponent",
+    "label": "messaging",
+    "deprecated": false,
+    "deprecationNote": "messaging",
+    "options": []
+  },
   "KubernetesServicesComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "kubernetes-services",
+    "extendsScheme": "",
     "syntax": "kubernetes-services:masterUrl",
     "async": false,
     "consumerOnly": false,
@@ -3982,7 +4505,9 @@
     "options": []
   },
   "KubernetesNamespacesComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "kubernetes-namespaces",
+    "extendsScheme": "",
     "syntax": "kubernetes-namespaces:masterUrl",
     "async": false,
     "consumerOnly": false,
@@ -4002,7 +4527,9 @@
     "options": []
   },
   "KubernetesNodesComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "kubernetes-nodes",
+    "extendsScheme": "",
     "syntax": "kubernetes-nodes:masterUrl",
     "async": false,
     "consumerOnly": false,
@@ -4022,7 +4549,9 @@
     "options": []
   },
   "KubernetesPodsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "kubernetes-pods",
+    "extendsScheme": "",
     "syntax": "kubernetes-pods:masterUrl",
     "async": false,
     "consumerOnly": false,
@@ -4042,7 +4571,9 @@
     "options": []
   },
   "KubernetesJobComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "kubernetes-job",
+    "extendsScheme": "",
     "syntax": "kubernetes-job:masterUrl",
     "async": false,
     "consumerOnly": false,
@@ -4062,7 +4593,9 @@
     "options": []
   },
   "KubernetesDeploymentsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "kubernetes-deployments",
+    "extendsScheme": "",
     "syntax": "kubernetes-deployments:masterUrl",
     "async": false,
     "consumerOnly": false,
@@ -4082,7 +4615,9 @@
     "options": []
   },
   "KubernetesReplicationControllersComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "kubernetes-replication-controllers",
+    "extendsScheme": "",
     "syntax": "kubernetes-replication-controllers:masterUrl",
     "async": false,
     "consumerOnly": false,
@@ -4102,7 +4637,9 @@
     "options": []
   },
   "KubernetesPersistentVolumesComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "kubernetes-persistent-volumes",
+    "extendsScheme": "",
     "syntax": "kubernetes-persistent-volumes:masterUrl",
     "async": false,
     "consumerOnly": false,
@@ -4122,7 +4659,9 @@
     "options": []
   },
   "KubernetesPersistentVolumesClaimsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "kubernetes-persistent-volumes-claims",
+    "extendsScheme": "",
     "syntax": "kubernetes-persistent-volumes-claims:masterUrl",
     "async": false,
     "consumerOnly": false,
@@ -4142,7 +4681,9 @@
     "options": []
   },
   "KubernetesConfigMapsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "kubernetes-config-maps",
+    "extendsScheme": "",
     "syntax": "kubernetes-config-maps:masterUrl",
     "async": false,
     "consumerOnly": false,
@@ -4162,7 +4703,9 @@
     "options": []
   },
   "KubernetesResourcesQuotaComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "kubernetes-resources-quota",
+    "extendsScheme": "",
     "syntax": "kubernetes-resources-quota:masterUrl",
     "async": false,
     "consumerOnly": false,
@@ -4182,7 +4725,9 @@
     "options": []
   },
   "KubernetesSecretsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "kubernetes-secrets",
+    "extendsScheme": "",
     "syntax": "kubernetes-secrets:masterUrl",
     "async": false,
     "consumerOnly": false,
@@ -4202,7 +4747,9 @@
     "options": []
   },
   "OpenshiftBuildsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "openshift-builds",
+    "extendsScheme": "",
     "syntax": "openshift-builds:masterUrl",
     "async": false,
     "consumerOnly": false,
@@ -4222,7 +4769,9 @@
     "options": []
   },
   "KubernetesHPAComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "kubernetes-hpa",
+    "extendsScheme": "",
     "syntax": "kubernetes-hpa:masterUrl",
     "async": false,
     "consumerOnly": false,
@@ -4242,7 +4791,9 @@
     "options": []
   },
   "OpenshiftBuildConfigsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "openshift-build-configs",
+    "extendsScheme": "",
     "syntax": "openshift-build-configs:masterUrl",
     "async": false,
     "consumerOnly": false,
@@ -4262,7 +4813,9 @@
     "options": []
   },
   "KubernetesServiceAccountsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "kubernetes-service-accounts",
+    "extendsScheme": "",
     "syntax": "kubernetes-service-accounts:masterUrl",
     "async": false,
     "consumerOnly": false,
@@ -4282,7 +4835,9 @@
     "options": []
   },
   "KuduComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "kudu",
+    "extendsScheme": "",
     "syntax": "kudu:host:port/tableName",
     "async": false,
     "consumerOnly": false,
@@ -4302,7 +4857,9 @@
     "options": []
   },
   "LdapComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "ldap",
+    "extendsScheme": "",
     "syntax": "ldap:dirContextName",
     "async": false,
     "consumerOnly": false,
@@ -4322,7 +4879,9 @@
     "options": []
   },
   "LdifComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "ldif",
+    "extendsScheme": "",
     "syntax": "ldif:ldapConnectionName",
     "async": false,
     "consumerOnly": false,
@@ -4342,7 +4901,9 @@
     "options": []
   },
   "LuceneComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "lucene",
+    "extendsScheme": "",
     "syntax": "lucene:host:operation",
     "async": false,
     "consumerOnly": false,
@@ -4362,7 +4923,9 @@
     "options": []
   },
   "LumberjackComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "lumberjack",
+    "extendsScheme": "",
     "syntax": "lumberjack:host:port",
     "async": false,
     "consumerOnly": true,
@@ -4382,7 +4945,9 @@
     "options": []
   },
   "QuartzComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "quartz",
+    "extendsScheme": "",
     "syntax": "quartz:groupName/triggerName",
     "async": false,
     "consumerOnly": true,
@@ -4401,8 +4966,10 @@
     "deprecationNote": "scheduling",
     "options": []
   },
-  "MailComponentBuilderFactory": {
+  "ImapMailComponentBuilderFactory": {
+    "isAlias": true,
     "scheme": "imap",
+    "extendsScheme": "",
     "alternativeSchemes": "imap,imaps,pop3,pop3s,smtp,smtps",
     "syntax": "imap:host:port",
     "alternativeSyntax": "imap:username:password@host:port",
@@ -4423,8 +4990,130 @@
     "deprecationNote": "mail",
     "options": []
   },
+  "ImapsMailComponentBuilderFactory": {
+    "isAlias": true,
+    "scheme": "imaps",
+    "extendsScheme": "",
+    "alternativeSchemes": "imap,imaps,pop3,pop3s,smtp,smtps",
+    "syntax": "imaps:host:port",
+    "alternativeSyntax": "imaps:username:password@host:port",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-mail",
+    "version": "3.1.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "IMAPS (Secure)",
+    "description": "To send or receive emails using imap/pop3 or smtp protocols.",
+    "firstVersion": "1.0.0",
+    "javaType": "org.apache.camel.component.mail.MailComponent",
+    "label": "mail",
+    "deprecated": false,
+    "deprecationNote": "mail",
+    "options": []
+  },
+  "Pop3MailComponentBuilderFactory": {
+    "isAlias": true,
+    "scheme": "pop3",
+    "extendsScheme": "",
+    "alternativeSchemes": "imap,imaps,pop3,pop3s,smtp,smtps",
+    "syntax": "pop3:host:port",
+    "alternativeSyntax": "pop3:username:password@host:port",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-mail",
+    "version": "3.1.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "POP3",
+    "description": "To send or receive emails using imap/pop3 or smtp protocols.",
+    "firstVersion": "1.0.0",
+    "javaType": "org.apache.camel.component.mail.MailComponent",
+    "label": "mail",
+    "deprecated": false,
+    "deprecationNote": "mail",
+    "options": []
+  },
+  "Pop3sMailComponentBuilderFactory": {
+    "isAlias": true,
+    "scheme": "pop3s",
+    "extendsScheme": "",
+    "alternativeSchemes": "imap,imaps,pop3,pop3s,smtp,smtps",
+    "syntax": "pop3s:host:port",
+    "alternativeSyntax": "pop3s:username:password@host:port",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-mail",
+    "version": "3.1.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "POP3S",
+    "description": "To send or receive emails using imap/pop3 or smtp protocols.",
+    "firstVersion": "1.0.0",
+    "javaType": "org.apache.camel.component.mail.MailComponent",
+    "label": "mail",
+    "deprecated": false,
+    "deprecationNote": "mail",
+    "options": []
+  },
+  "SmtpMailComponentBuilderFactory": {
+    "isAlias": true,
+    "scheme": "smtp",
+    "extendsScheme": "",
+    "alternativeSchemes": "imap,imaps,pop3,pop3s,smtp,smtps",
+    "syntax": "smtp:host:port",
+    "alternativeSyntax": "smtp:username:password@host:port",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-mail",
+    "version": "3.1.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "SMTP",
+    "description": "To send or receive emails using imap/pop3 or smtp protocols.",
+    "firstVersion": "1.0.0",
+    "javaType": "org.apache.camel.component.mail.MailComponent",
+    "label": "mail",
+    "deprecated": false,
+    "deprecationNote": "mail",
+    "options": []
+  },
+  "SmtpsMailComponentBuilderFactory": {
+    "isAlias": true,
+    "scheme": "smtps",
+    "extendsScheme": "",
+    "alternativeSchemes": "imap,imaps,pop3,pop3s,smtp,smtps",
+    "syntax": "smtps:host:port",
+    "alternativeSyntax": "smtps:username:password@host:port",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-mail",
+    "version": "3.1.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "SMTPS",
+    "description": "To send or receive emails using imap/pop3 or smtp protocols.",
+    "firstVersion": "1.0.0",
+    "javaType": "org.apache.camel.component.mail.MailComponent",
+    "label": "mail",
+    "deprecated": false,
+    "deprecationNote": "mail",
+    "options": []
+  },
   "MetricsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "metrics",
+    "extendsScheme": "",
     "syntax": "metrics:metricsType:metricsName",
     "async": false,
     "consumerOnly": false,
@@ -4444,7 +5133,9 @@
     "options": []
   },
   "MicrometerComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "micrometer",
+    "extendsScheme": "",
     "syntax": "micrometer:metricsType:metricsName",
     "async": false,
     "consumerOnly": false,
@@ -4464,7 +5155,9 @@
     "options": []
   },
   "MicroProfileMetricsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "microprofile-metrics",
+    "extendsScheme": "",
     "syntax": "microprofile-metrics:metricType:metricName",
     "async": false,
     "consumerOnly": false,
@@ -4484,7 +5177,9 @@
     "options": []
   },
   "MiloServerComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "milo-server",
+    "extendsScheme": "",
     "syntax": "milo-server:itemId",
     "async": false,
     "consumerOnly": false,
@@ -4504,7 +5199,9 @@
     "options": []
   },
   "MiloClientComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "milo-client",
+    "extendsScheme": "",
     "syntax": "milo-client:endpointUri",
     "async": false,
     "consumerOnly": false,
@@ -4524,7 +5221,9 @@
     "options": []
   },
   "SjmsBatchComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "sjms-batch",
+    "extendsScheme": "",
     "syntax": "sjms-batch:destinationName",
     "async": false,
     "consumerOnly": true,
@@ -4544,7 +5243,9 @@
     "options": []
   },
   "SjmsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "sjms",
+    "extendsScheme": "",
     "syntax": "sjms:destinationType:destinationName",
     "async": true,
     "consumerOnly": false,
@@ -4564,7 +5265,9 @@
     "options": []
   },
   "MllpComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "mllp",
+    "extendsScheme": "",
     "syntax": "mllp:hostname:port",
     "async": false,
     "consumerOnly": false,
@@ -4584,7 +5287,9 @@
     "options": []
   },
   "GridFsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "mongodb-gridfs",
+    "extendsScheme": "",
     "syntax": "mongodb-gridfs:connectionBean",
     "async": false,
     "consumerOnly": false,
@@ -4604,7 +5309,9 @@
     "options": []
   },
   "MongoDbComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "mongodb",
+    "extendsScheme": "",
     "syntax": "mongodb:connectionBean",
     "async": false,
     "consumerOnly": false,
@@ -4624,7 +5331,9 @@
     "options": []
   },
   "MsvComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "msv",
+    "extendsScheme": "",
     "syntax": "msv:resourceUri",
     "async": false,
     "consumerOnly": false,
@@ -4644,7 +5353,9 @@
     "options": []
   },
   "MustacheComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "mustache",
+    "extendsScheme": "",
     "syntax": "mustache:resourceUri",
     "async": false,
     "consumerOnly": false,
@@ -4664,7 +5375,9 @@
     "options": []
   },
   "MvelComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "mvel",
+    "extendsScheme": "",
     "syntax": "mvel:resourceUri",
     "async": false,
     "consumerOnly": false,
@@ -4684,7 +5397,9 @@
     "options": []
   },
   "MyBatisComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "mybatis",
+    "extendsScheme": "",
     "syntax": "mybatis:statement",
     "async": false,
     "consumerOnly": false,
@@ -4704,7 +5419,9 @@
     "options": []
   },
   "MyBatisBeanComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "mybatis-bean",
+    "extendsScheme": "",
     "syntax": "mybatis-bean:beanName:methodName",
     "async": false,
     "consumerOnly": false,
@@ -4724,7 +5441,9 @@
     "options": []
   },
   "NagiosComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "nagios",
+    "extendsScheme": "",
     "syntax": "nagios:host:port",
     "async": false,
     "consumerOnly": false,
@@ -4744,7 +5463,9 @@
     "options": []
   },
   "NatsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "nats",
+    "extendsScheme": "",
     "syntax": "nats:topic",
     "async": false,
     "consumerOnly": false,
@@ -4764,6 +5485,7 @@
     "options": []
   },
   "NettyHttpComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "netty-http",
     "extendsScheme": "netty",
     "syntax": "netty-http:protocol:host:port/path",
@@ -4785,7 +5507,9 @@
     "options": []
   },
   "NitriteComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "nitrite",
+    "extendsScheme": "",
     "syntax": "nitrite:database",
     "async": false,
     "consumerOnly": false,
@@ -4805,7 +5529,9 @@
     "options": []
   },
   "NsqComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "nsq",
+    "extendsScheme": "",
     "syntax": "nsq:topic",
     "async": false,
     "consumerOnly": false,
@@ -4825,7 +5551,9 @@
     "options": []
   },
   "Olingo2ComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "olingo2",
+    "extendsScheme": "",
     "syntax": "olingo2:apiName/methodName",
     "async": false,
     "consumerOnly": false,
@@ -4845,7 +5573,9 @@
     "options": []
   },
   "Olingo4ComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "olingo4",
+    "extendsScheme": "",
     "syntax": "olingo4:apiName/methodName",
     "async": false,
     "consumerOnly": false,
@@ -4865,7 +5595,9 @@
     "options": []
   },
   "SwiftComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "openstack-swift",
+    "extendsScheme": "",
     "syntax": "openstack-swift:host",
     "async": false,
     "consumerOnly": false,
@@ -4885,7 +5617,9 @@
     "options": []
   },
   "GlanceComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "openstack-glance",
+    "extendsScheme": "",
     "syntax": "openstack-glance:host",
     "async": false,
     "consumerOnly": false,
@@ -4905,7 +5639,9 @@
     "options": []
   },
   "NeutronComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "openstack-neutron",
+    "extendsScheme": "",
     "syntax": "openstack-neutron:host",
     "async": false,
     "consumerOnly": false,
@@ -4925,7 +5661,9 @@
     "options": []
   },
   "NovaComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "openstack-nova",
+    "extendsScheme": "",
     "syntax": "openstack-nova:host",
     "async": false,
     "consumerOnly": false,
@@ -4945,7 +5683,9 @@
     "options": []
   },
   "CinderComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "openstack-cinder",
+    "extendsScheme": "",
     "syntax": "openstack-cinder:host",
     "async": false,
     "consumerOnly": false,
@@ -4965,7 +5705,9 @@
     "options": []
   },
   "KeystoneComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "openstack-keystone",
+    "extendsScheme": "",
     "syntax": "openstack-keystone:host",
     "async": false,
     "consumerOnly": false,
@@ -4985,7 +5727,9 @@
     "options": []
   },
   "OptaPlannerComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "optaplanner",
+    "extendsScheme": "",
     "syntax": "optaplanner:configFile",
     "async": false,
     "consumerOnly": false,
@@ -5005,7 +5749,9 @@
     "options": []
   },
   "PahoComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "paho",
+    "extendsScheme": "",
     "syntax": "paho:topic",
     "async": false,
     "consumerOnly": false,
@@ -5025,7 +5771,9 @@
     "options": []
   },
   "PaxLoggingComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "paxlogging",
+    "extendsScheme": "",
     "syntax": "paxlogging:appender",
     "async": false,
     "consumerOnly": true,
@@ -5045,7 +5793,9 @@
     "options": []
   },
   "PdfComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "pdf",
+    "extendsScheme": "",
     "syntax": "pdf:operation",
     "async": false,
     "consumerOnly": false,
@@ -5065,7 +5815,9 @@
     "options": []
   },
   "PgReplicationSlotComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "pg-replication-slot",
+    "extendsScheme": "",
     "syntax": "pg-replication-slot:host:port/database/slot:outputPlugin",
     "async": false,
     "consumerOnly": true,
@@ -5085,7 +5837,9 @@
     "options": []
   },
   "PgEventComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "pgevent",
+    "extendsScheme": "",
     "syntax": "pgevent:host:port/database/channel",
     "async": false,
     "consumerOnly": false,
@@ -5105,7 +5859,9 @@
     "options": []
   },
   "PlatformHttpComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "platform-http",
+    "extendsScheme": "",
     "syntax": "platform-http:path",
     "async": true,
     "consumerOnly": true,
@@ -5125,7 +5881,9 @@
     "options": []
   },
   "PrinterComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "lpr",
+    "extendsScheme": "",
     "syntax": "lpr:hostname:port/printername",
     "async": false,
     "consumerOnly": false,
@@ -5145,7 +5903,9 @@
     "options": []
   },
   "PubNubComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "pubnub",
+    "extendsScheme": "",
     "syntax": "pubnub:channel",
     "async": false,
     "consumerOnly": false,
@@ -5165,7 +5925,9 @@
     "options": []
   },
   "PulsarComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "pulsar",
+    "extendsScheme": "",
     "syntax": "pulsar:persistence://tenant/namespace/topic",
     "async": false,
     "consumerOnly": false,
@@ -5185,7 +5947,9 @@
     "options": []
   },
   "QuickfixjComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "quickfix",
+    "extendsScheme": "",
     "syntax": "quickfix:configurationName",
     "async": false,
     "consumerOnly": false,
@@ -5205,7 +5969,9 @@
     "options": []
   },
   "RabbitMQComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "rabbitmq",
+    "extendsScheme": "",
     "syntax": "rabbitmq:exchangeName",
     "async": true,
     "consumerOnly": false,
@@ -5225,7 +5991,9 @@
     "options": []
   },
   "ReactiveStreamsComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "reactive-streams",
+    "extendsScheme": "",
     "syntax": "reactive-streams:stream",
     "async": false,
     "consumerOnly": false,
@@ -5245,7 +6013,9 @@
     "options": []
   },
   "RestSwaggerComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "rest-swagger",
+    "extendsScheme": "",
     "syntax": "rest-swagger:specificationUri#operationId",
     "async": false,
     "consumerOnly": false,
@@ -5265,7 +6035,9 @@
     "options": []
   },
   "RestOpenApiComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "rest-openapi",
+    "extendsScheme": "",
     "syntax": "rest-openapi:specificationUri#operationId",
     "async": false,
     "consumerOnly": false,
@@ -5285,7 +6057,9 @@
     "options": []
   },
   "RobotFrameworkComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "robotframework",
+    "extendsScheme": "",
     "syntax": "robotframework:resourceUri",
     "async": false,
     "consumerOnly": false,
@@ -5305,6 +6079,7 @@
     "options": []
   },
   "RssComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "rss",
     "extendsScheme": "atom",
     "syntax": "rss:feedUri",
@@ -5326,7 +6101,9 @@
     "options": []
   },
   "SalesforceComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "salesforce",
+    "extendsScheme": "",
     "syntax": "salesforce:operationName:topicName",
     "async": false,
     "consumerOnly": false,
@@ -5346,7 +6123,9 @@
     "options": []
   },
   "VelocityComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "velocity",
+    "extendsScheme": "",
     "syntax": "velocity:resourceUri",
     "async": false,
     "consumerOnly": false,
@@ -5366,7 +6145,9 @@
     "options": []
   },
   "NetWeaverComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "sap-netweaver",
+    "extendsScheme": "",
     "syntax": "sap-netweaver:url",
     "async": false,
     "consumerOnly": false,
@@ -5386,7 +6167,9 @@
     "options": []
   },
   "XsltSaxonComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "xslt-saxon",
+    "extendsScheme": "",
     "syntax": "xslt-saxon:resourceUri",
     "async": false,
     "consumerOnly": false,
@@ -5406,7 +6189,9 @@
     "options": []
   },
   "XQueryComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "xquery",
+    "extendsScheme": "",
     "syntax": "xquery:resourceUri",
     "async": false,
     "consumerOnly": false,
@@ -5426,7 +6211,9 @@
     "options": []
   },
   "SchematronComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "schematron",
+    "extendsScheme": "",
     "syntax": "schematron:path",
     "async": false,
     "consumerOnly": false,
@@ -5446,7 +6233,9 @@
     "options": []
   },
   "ServiceNowComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "servicenow",
+    "extendsScheme": "",
     "syntax": "servicenow:instanceName",
     "async": false,
     "consumerOnly": false,
@@ -5465,8 +6254,10 @@
     "deprecationNote": "api,cloud,management",
     "options": []
   },
-  "SipComponentBuilderFactory": {
+  "SipSipComponentBuilderFactory": {
+    "isAlias": true,
     "scheme": "sip",
+    "extendsScheme": "",
     "alternativeSchemes": "sip,sips",
     "syntax": "sip:uri",
     "async": false,
@@ -5486,7 +6277,31 @@
     "deprecationNote": "mobile",
     "options": []
   },
+  "SipsSipComponentBuilderFactory": {
+    "isAlias": true,
+    "scheme": "sips",
+    "extendsScheme": "",
+    "alternativeSchemes": "sip,sips",
+    "syntax": "sips:uri",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-sip",
+    "version": "3.1.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "SIP (Secure)",
+    "description": "To send and receive messages using the SIP protocol (used in telco and mobile).",
+    "firstVersion": "2.5.0",
+    "javaType": "org.apache.camel.component.sip.SipComponent",
+    "label": "mobile",
+    "deprecated": false,
+    "deprecationNote": "mobile",
+    "options": []
+  },
   "Sjms2ComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "sjms2",
     "extendsScheme": "sjms",
     "syntax": "sjms2:destinationType:destinationName",
@@ -5508,7 +6323,9 @@
     "options": []
   },
   "SlackComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "slack",
+    "extendsScheme": "",
     "syntax": "slack:channel",
     "async": false,
     "consumerOnly": false,
@@ -5527,8 +6344,10 @@
     "deprecationNote": "social",
     "options": []
   },
-  "SmppComponentBuilderFactory": {
+  "SmppSmppComponentBuilderFactory": {
+    "isAlias": true,
     "scheme": "smpp",
+    "extendsScheme": "",
     "alternativeSchemes": "smpp,smpps",
     "syntax": "smpp:host:port",
     "async": false,
@@ -5548,8 +6367,33 @@
     "deprecationNote": "mobile",
     "options": []
   },
+  "SmppsSmppComponentBuilderFactory": {
+    "isAlias": true,
+    "scheme": "smpps",
+    "extendsScheme": "",
+    "alternativeSchemes": "smpp,smpps",
+    "syntax": "smpps:host:port",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": true,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-smpp",
+    "version": "3.1.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "SMPP (Secure)",
+    "description": "To send and receive SMS using a SMSC (Short Message Service Center).",
+    "firstVersion": "2.2.0",
+    "javaType": "org.apache.camel.component.smpp.SmppComponent",
+    "label": "mobile",
+    "deprecated": false,
+    "deprecationNote": "mobile",
+    "options": []
+  },
   "SnmpComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "snmp",
+    "extendsScheme": "",
     "syntax": "snmp:host:port",
     "async": false,
     "consumerOnly": false,
@@ -5568,8 +6412,10 @@
     "deprecationNote": "monitoring",
     "options": []
   },
-  "SolrComponentBuilderFactory": {
+  "SolrSolrComponentBuilderFactory": {
+    "isAlias": true,
     "scheme": "solr",
+    "extendsScheme": "",
     "alternativeSchemes": "solr,solrs,solrCloud",
     "syntax": "solr:url",
     "async": false,
@@ -5589,8 +6435,56 @@
     "deprecationNote": "monitoring,search",
     "options": []
   },
+  "SolrcloudSolrComponentBuilderFactory": {
+    "isAlias": true,
+    "scheme": "solrCloud",
+    "extendsScheme": "",
+    "alternativeSchemes": "solr,solrs,solrCloud",
+    "syntax": "solrCloud:url",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-solr",
+    "version": "3.1.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "Solr",
+    "description": "The solr component allows you to interface with an Apache Lucene Solr server.",
+    "firstVersion": "2.9.0",
+    "javaType": "org.apache.camel.component.solr.SolrComponent",
+    "label": "monitoring,search",
+    "deprecated": false,
+    "deprecationNote": "monitoring,search",
+    "options": []
+  },
+  "SolrsSolrComponentBuilderFactory": {
+    "isAlias": true,
+    "scheme": "solrs",
+    "extendsScheme": "",
+    "alternativeSchemes": "solr,solrs,solrCloud",
+    "syntax": "solrs:url",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-solr",
+    "version": "3.1.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "Solr (Secure)",
+    "description": "The solr component allows you to interface with an Apache Lucene Solr server.",
+    "firstVersion": "2.9.0",
+    "javaType": "org.apache.camel.component.solr.SolrComponent",
+    "label": "monitoring,search",
+    "deprecated": false,
+    "deprecationNote": "monitoring,search",
+    "options": []
+  },
   "SoroushBotComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "soroush",
+    "extendsScheme": "",
     "syntax": "soroush:action",
     "async": false,
     "consumerOnly": false,
@@ -5610,27 +6504,31 @@
     "options": []
   },
   "SparkComponentBuilderFactory": {
-    "scheme": "spark-rest",
-    "syntax": "spark-rest:verb:path",
+    "isAlias": false,
+    "scheme": "spark",
+    "extendsScheme": "",
+    "syntax": "spark:endpointType",
     "async": false,
-    "consumerOnly": true,
-    "producerOnly": false,
+    "consumerOnly": false,
+    "producerOnly": true,
     "lenientProperties": false,
     "groupId": "org.apache.camel",
-    "artifactId": "camel-spark-rest",
+    "artifactId": "camel-spark",
     "version": "3.1.0-SNAPSHOT",
     "endpointOptions": [],
-    "title": "Spark Rest",
-    "description": "The spark-rest component is used for hosting REST services which has been defined using Camel rest-dsl.",
-    "firstVersion": "2.14.0",
-    "javaType": "org.apache.camel.component.sparkrest.SparkComponent",
-    "label": "rest",
+    "title": "Spark",
+    "description": "The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.",
+    "firstVersion": "2.17.0",
+    "javaType": "org.apache.camel.component.spark.SparkComponent",
+    "label": "bigdata,iot",
     "deprecated": false,
-    "deprecationNote": "rest",
+    "deprecationNote": "bigdata,iot",
     "options": []
   },
   "SplunkComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "splunk",
+    "extendsScheme": "",
     "syntax": "splunk:name",
     "async": false,
     "consumerOnly": false,
@@ -5650,7 +6548,9 @@
     "options": []
   },
   "SpringBatchComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "spring-batch",
+    "extendsScheme": "",
     "syntax": "spring-batch:jobName",
     "async": false,
     "consumerOnly": false,
@@ -5670,7 +6570,9 @@
     "options": []
   },
   "SpringIntegrationComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "spring-integration",
+    "extendsScheme": "",
     "syntax": "spring-integration:defaultChannel",
     "async": false,
     "consumerOnly": false,
@@ -5690,7 +6592,9 @@
     "options": []
   },
   "SpringLdapComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "spring-ldap",
+    "extendsScheme": "",
     "syntax": "spring-ldap:templateName",
     "async": false,
     "consumerOnly": false,
@@ -5710,7 +6614,9 @@
     "options": []
   },
   "RedisComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "spring-redis",
+    "extendsScheme": "",
     "syntax": "spring-redis:host:port",
     "async": false,
     "consumerOnly": false,
@@ -5730,7 +6636,9 @@
     "options": []
   },
   "SpringWebserviceComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "spring-ws",
+    "extendsScheme": "",
     "syntax": "spring-ws:type:lookupKey:webServiceEndpointUri",
     "async": false,
     "consumerOnly": false,
@@ -5750,7 +6658,9 @@
     "options": []
   },
   "StAXComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "stax",
+    "extendsScheme": "",
     "syntax": "stax:contentHandlerClass",
     "async": false,
     "consumerOnly": false,
@@ -5770,7 +6680,9 @@
     "options": []
   },
   "StompComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "stomp",
+    "extendsScheme": "",
     "syntax": "stomp:destination",
     "async": true,
     "consumerOnly": false,
@@ -5790,7 +6702,9 @@
     "options": []
   },
   "StringTemplateComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "string-template",
+    "extendsScheme": "",
     "syntax": "string-template:resourceUri",
     "async": false,
     "consumerOnly": false,
@@ -5810,7 +6724,9 @@
     "options": []
   },
   "WebhookComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "webhook",
+    "extendsScheme": "",
     "syntax": "webhook:endpointUri",
     "async": false,
     "consumerOnly": true,
@@ -5830,7 +6746,9 @@
     "options": []
   },
   "TelegramComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "telegram",
+    "extendsScheme": "",
     "syntax": "telegram:type",
     "async": false,
     "consumerOnly": false,
@@ -5850,7 +6768,9 @@
     "options": []
   },
   "ThriftComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "thrift",
+    "extendsScheme": "",
     "syntax": "thrift:host:port/service",
     "async": false,
     "consumerOnly": false,
@@ -5870,7 +6790,9 @@
     "options": []
   },
   "TikaComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "tika",
+    "extendsScheme": "",
     "syntax": "tika:operation",
     "async": false,
     "consumerOnly": false,
@@ -5890,7 +6812,9 @@
     "options": []
   },
   "TwilioComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "twilio",
+    "extendsScheme": "",
     "syntax": "twilio:apiName/methodName",
     "async": false,
     "consumerOnly": false,
@@ -5910,7 +6834,9 @@
     "options": []
   },
   "TwitterTimelineComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "twitter-timeline",
+    "extendsScheme": "",
     "syntax": "twitter-timeline:timelineType",
     "async": false,
     "consumerOnly": false,
@@ -5930,7 +6856,9 @@
     "options": []
   },
   "TwitterSearchComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "twitter-search",
+    "extendsScheme": "",
     "syntax": "twitter-search:keywords",
     "async": false,
     "consumerOnly": false,
@@ -5950,7 +6878,9 @@
     "options": []
   },
   "TwitterDirectMessageComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "twitter-directmessage",
+    "extendsScheme": "",
     "syntax": "twitter-directmessage:user",
     "async": false,
     "consumerOnly": false,
@@ -5970,7 +6900,9 @@
     "options": []
   },
   "VertxComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "vertx",
+    "extendsScheme": "",
     "syntax": "vertx:address",
     "async": true,
     "consumerOnly": false,
@@ -5990,7 +6922,9 @@
     "options": []
   },
   "WeatherComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "weather",
+    "extendsScheme": "",
     "syntax": "weather:name",
     "async": false,
     "consumerOnly": false,
@@ -6010,7 +6944,9 @@
     "options": []
   },
   "Web3jComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "web3j",
+    "extendsScheme": "",
     "syntax": "web3j:nodeAddress",
     "async": false,
     "consumerOnly": false,
@@ -6030,7 +6966,9 @@
     "options": []
   },
   "JSR356WebSocketComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "websocket-jsr356",
+    "extendsScheme": "",
     "syntax": "websocket-jsr356:uri",
     "async": false,
     "consumerOnly": false,
@@ -6049,8 +6987,32 @@
     "deprecationNote": "http",
     "options": []
   },
+  "WekaComponentBuilderFactory": {
+    "isAlias": false,
+    "scheme": "weka",
+    "extendsScheme": "",
+    "syntax": "weka:cmd?options",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-weka",
+    "version": "3.1.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "Weka",
+    "description": "The camel-weka component provides Data Mining functionality through Weka.",
+    "firstVersion": "3.1.0",
+    "javaType": "org.apache.camel.component.weka.WekaComponent",
+    "label": "data mining",
+    "deprecated": false,
+    "deprecationNote": "data mining",
+    "options": []
+  },
   "WordpressComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "wordpress",
+    "extendsScheme": "",
     "syntax": "wordpress:operation",
     "async": false,
     "consumerOnly": false,
@@ -6070,7 +7032,9 @@
     "options": []
   },
   "XChangeComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "xchange",
+    "extendsScheme": "",
     "syntax": "xchange:name",
     "async": false,
     "consumerOnly": false,
@@ -6090,7 +7054,9 @@
     "options": []
   },
   "XJComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "xj",
+    "extendsScheme": "",
     "syntax": "xj:resourceUri",
     "async": false,
     "consumerOnly": false,
@@ -6110,7 +7076,9 @@
     "options": []
   },
   "XmlSignatureComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "xmlsecurity",
+    "extendsScheme": "",
     "syntax": "xmlsecurity:command:name",
     "async": false,
     "consumerOnly": false,
@@ -6130,7 +7098,9 @@
     "options": []
   },
   "XmppComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "xmpp",
+    "extendsScheme": "",
     "syntax": "xmpp:host:port/participant",
     "alternativeSyntax": "xmpp:user:password@host:port/participant",
     "async": false,
@@ -6151,7 +7121,9 @@
     "options": []
   },
   "YammerComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "yammer",
+    "extendsScheme": "",
     "syntax": "yammer:function",
     "async": false,
     "consumerOnly": false,
@@ -6171,7 +7143,9 @@
     "options": []
   },
   "ZendeskComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "zendesk",
+    "extendsScheme": "",
     "syntax": "zendesk:methodName",
     "async": false,
     "consumerOnly": false,
@@ -6191,7 +7165,9 @@
     "options": []
   },
   "ZooKeeperComponentBuilderFactory": {
+    "isAlias": false,
     "scheme": "zookeeper",
+    "extendsScheme": "",
     "syntax": "zookeeper:serverUrls/path",
     "async": false,
     "consumerOnly": false,
@@ -6210,24 +7186,26 @@
     "deprecationNote": "clustering",
     "options": []
   },
-  "EKS2ComponentBuilderFactory": {
-    "scheme": "aws2-eks",
-    "syntax": "aws2-eks:label",
+  "JiraComponentBuilderFactory": {
+    "isAlias": false,
+    "scheme": "jira",
+    "extendsScheme": "",
+    "syntax": "jira:type",
     "async": false,
     "consumerOnly": false,
-    "producerOnly": true,
+    "producerOnly": false,
     "lenientProperties": false,
     "groupId": "org.apache.camel",
-    "artifactId": "camel-aws2-eks",
+    "artifactId": "camel-jira",
     "version": "3.1.0-SNAPSHOT",
     "endpointOptions": [],
-    "title": "AWS 2 EKS",
-    "description": "The aws-eks is used for managing Amazon EKS",
-    "firstVersion": "3.1.0",
-    "javaType": "org.apache.camel.component.aws2.eks.EKS2Component",
-    "label": "cloud,management",
+    "title": "Jira",
+    "description": "The jira component interacts with the JIRA issue tracker.",
+    "firstVersion": "3.0",
+    "javaType": "org.apache.camel.component.jira.JiraComponent",
+    "label": "api,reporting",
     "deprecated": false,
-    "deprecationNote": "cloud,management",
+    "deprecationNote": "api,reporting",
     "options": []
   }
 }

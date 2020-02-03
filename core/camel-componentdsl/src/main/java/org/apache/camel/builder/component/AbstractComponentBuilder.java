@@ -41,6 +41,14 @@ public abstract class AbstractComponentBuilder<C extends Component> {
         return component;
     }
 
+    public void register(final CamelContext context, final String componentName) {
+        final C component = buildConcreteComponent();
+
+        configureComponentProperties(component, context);
+
+        context.addComponent(componentName, component);
+    }
+
     public void doSetProperty(final String key, final Object value) {
         properties.put(key, value);
     }
