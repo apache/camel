@@ -476,7 +476,7 @@
         <mybatis-version>3.5.3</mybatis-version>
         <narayana-version>5.10.4.Final</narayana-version>
         <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
-        <nessus-weka-version>1.0.0</nessus-weka-version>
+        <nessus-weka-version>1.0.1</nessus-weka-version>
         <nsq-client-version>1.0.0.RC4</nsq-client-version>
         <neoscada-version>0.4.0</neoscada-version>
         <netty3-version>3.10.6.Final</netty3-version>
