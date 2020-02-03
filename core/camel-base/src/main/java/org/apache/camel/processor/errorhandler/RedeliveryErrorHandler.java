@@ -557,7 +557,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 }
             }
         }
-   }
+    }
 
 
     /**
