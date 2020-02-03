@@ -225,12 +225,12 @@ public class DefaultMessage extends MessageSupport {
     public void setHeaders(Map<String, Object> headers) {
         HeadersMapFactory factory = camelContext.getHeadersMapFactory();
         if (factory != null) {
-           if (factory.isInstanceOf(headers)) {
-               this.headers = headers;
-           } else {
-               // create a new map
-               this.headers = camelContext.getHeadersMapFactory().newMap(headers);
-           }
+            if (factory.isInstanceOf(headers)) {
+                this.headers = headers;
+            } else {
+                // create a new map
+                this.headers = camelContext.getHeadersMapFactory().newMap(headers);
+            }
         } else {
             // should not really happen but some tests rely on using camel context that is not started
             this.headers = new HashMap<>(headers);
