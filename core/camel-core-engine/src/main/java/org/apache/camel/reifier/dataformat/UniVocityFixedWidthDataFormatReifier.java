@@ -16,12 +16,11 @@
  */
 package org.apache.camel.reifier.dataformat;
 
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat;
+import org.apache.camel.model.dataformat.UniVocityHeader;
 
 public class UniVocityFixedWidthDataFormatReifier extends UniVocityAbstractDataFormatReifier<UniVocityFixedWidthDataFormat> {
 
@@ -38,17 +37,16 @@ public class UniVocityFixedWidthDataFormatReifier extends UniVocityAbstractDataF
         properties.put("padding", definition.getPadding());
     }
 
-    private List<String> getFieldLengths() {
+    private int[] getFieldLengths() {
         if (definition.getHeaders() != null) {
-            return definition.getHeaders().stream()
-                    .map(header -> {
-                        String length = header.getLength();
-                        if (length == null) {
-                            throw new IllegalArgumentException("The length of all headers must be defined.");
-                        }
-                        return length;
-                    })
-                    .collect(Collectors.toList());
+            int i = 0;
+            int[] arr = new int[definition.getHeaders().size()];
+            for (UniVocityHeader header : definition.getHeaders()) {
+                String len = header.getLength();
+                int num = Integer.parseInt(len);
+                arr[i++] = num;
+            }
+            return arr;
         } else {
             return null;
         }
