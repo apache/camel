@@ -35,7 +35,7 @@ import software.amazon.awssdk.services.mq.MqClient;
 import software.amazon.awssdk.services.mq.MqClientBuilder;
 
 /**
- * The aws-mq is used for managing Amazon MQ instances.
+ * The aws2-mq is used for managing Amazon MQ instances.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-mq", title = "AWS 2 MQ", syntax = "aws2-mq:label", producerOnly = true, label = "cloud,management")
 public class MQ2Endpoint extends ScheduledPollEndpoint {
