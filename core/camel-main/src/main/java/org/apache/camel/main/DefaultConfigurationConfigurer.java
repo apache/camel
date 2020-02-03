@@ -90,6 +90,7 @@ public final class DefaultConfigurationConfigurer {
         if (config.getBeanIntrospectionLoggingLevel() != null) {
             camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setLoggingLevel(config.getBeanIntrospectionLoggingLevel());
         }
+        camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().afterPropertiesConfigured(camelContext);
 
         if (!config.isJmxEnabled()) {
             camelContext.disableJMX();

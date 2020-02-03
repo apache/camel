@@ -17,14 +17,18 @@
 package org.apache.camel.impl.engine;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.StartupListener;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.CamelLogger;
@@ -34,15 +38,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("deprecation")
-public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntrospection {
+public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntrospection, CamelContextAware, StartupListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBeanIntrospection.class);
     private static final Pattern SECRETS = Pattern.compile(".*(passphrase|password|secretKey).*", Pattern.CASE_INSENSITIVE);
 
+    private CamelContext camelContext;
+    private volatile boolean preStartDone;
+    private final List<String> preStartLogs = new ArrayList<>();
     private final AtomicLong invoked = new AtomicLong();
     private volatile boolean extendedStatistics;
     private LoggingLevel loggingLevel = LoggingLevel.TRACE;
     private CamelLogger logger = new CamelLogger(LOG, loggingLevel);
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     @Override
     public long getInvokedCounter() {
@@ -77,19 +94,28 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
         if (args != null && args.length > 0) {
             obj = Arrays.asList(args);
         }
+
+        String line;
         if (target == null) {
-            logger.log("Invoked: " + invoked.get() + " times (overall) [Method: " + method + "]");
+            line = "Invoked: " + invoked.get() + " times (overall) [Method: " + method + "]";
         } else if (args == null) {
-            logger.log("Invoked: " + invoked.get() + " times (overall) [Method: " + method + ", Target: " + target + "]");
+            line = "Invoked: " + invoked.get() + " times (overall) [Method: " + method + ", Target: " + target + "]";
         } else {
-            logger.log("Invoked: " + invoked.get() + " times (overall) [Method: " + method + ", Target: " + target + ", Arguments: " + obj + "]");
+            line = "Invoked: " + invoked.get() + " times (overall) [Method: " + method + ", Target: " + target + ", Arguments: " + obj + "]";
+        }
+
+        if (preStartDone) {
+            logger.log(line);
+        } else {
+            // remember log lines before we are starting
+            preStartLogs.add(line);
         }
     }
 
     @Override
     public ClassInfo cacheClass(Class<?> clazz) {
         invoked.incrementAndGet();
-        if (logger.shouldLog()) {
+        if (!preStartDone || logger.shouldLog()) {
             log("cacheClass", clazz);
         }
         return IntrospectionSupport.cacheClass(clazz);
@@ -99,7 +125,7 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
     public void clearCache() {
         if (invoked.get() > 0) {
             invoked.incrementAndGet();
-            if (logger.shouldLog()) {
+            if (!preStartDone || logger.shouldLog()) {
                 log("clearCache", null);
             }
             IntrospectionSupport.clearCache();
@@ -118,7 +144,7 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
     @Override
     public boolean getProperties(Object target, Map<String, Object> properties, String optionPrefix) {
         invoked.incrementAndGet();
-        if (logger.shouldLog()) {
+        if (!preStartDone || logger.shouldLog()) {
             log("getProperties", target);
         }
         return IntrospectionSupport.getProperties(target, properties, optionPrefix);
@@ -127,7 +153,7 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
     @Override
     public boolean getProperties(Object target, Map<String, Object> properties, String optionPrefix, boolean includeNull) {
         invoked.incrementAndGet();
-        if (logger.shouldLog()) {
+        if (!preStartDone || logger.shouldLog()) {
             log("getProperties", target);
         }
         return IntrospectionSupport.getProperties(target, properties, optionPrefix, includeNull);
@@ -136,7 +162,7 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
     @Override
     public Object getOrElseProperty(Object target, String propertyName, Object defaultValue, boolean ignoreCase) {
         invoked.incrementAndGet();
-        if (logger.shouldLog()) {
+        if (!preStartDone || logger.shouldLog()) {
             log("getOrElseProperty", target, propertyName);
         }
         return IntrospectionSupport.getOrElseProperty(target, propertyName, defaultValue, ignoreCase);
@@ -145,7 +171,7 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
     @Override
     public Method getPropertyGetter(Class<?> type, String propertyName, boolean ignoreCase) throws NoSuchMethodException {
         invoked.incrementAndGet();
-        if (logger.shouldLog()) {
+        if (!preStartDone || logger.shouldLog()) {
             log("getPropertyGetter", type, propertyName);
         }
         return IntrospectionSupport.getPropertyGetter(type, propertyName, ignoreCase);
@@ -154,7 +180,7 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
     @Override
     public boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName, boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) throws Exception {
         invoked.incrementAndGet();
-        if (logger.shouldLog()) {
+        if (!preStartDone || logger.shouldLog()) {
             Object text = value;
             if (SECRETS.matcher(name).find()) {
                 text = "xxxxxx";
@@ -167,7 +193,7 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
     @Override
     public boolean setProperty(CamelContext context, Object target, String name, Object value) throws Exception {
         invoked.incrementAndGet();
-        if (logger.shouldLog()) {
+        if (!preStartDone || logger.shouldLog()) {
             Object text = value;
             if (SECRETS.matcher(name).find()) {
                 text = "xxxxxx";
@@ -180,15 +206,25 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
     @Override
     public Set<Method> findSetterMethods(Class<?> clazz, String name, boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) {
         invoked.incrementAndGet();
-        if (logger.shouldLog()) {
+        if (!preStartDone || logger.shouldLog()) {
             log("findSetterMethods", clazz);
         }
         return IntrospectionSupport.findSetterMethods(clazz, name, allowBuilderPattern, allowPrivateSetter, ignoreCase);
     }
 
     @Override
+    public void afterPropertiesConfigured(CamelContext camelContext) {
+        // log any pre starting logs so we can see them all
+        preStartLogs.forEach(logger::log);
+        preStartLogs.clear();
+        preStartDone = true;
+    }
+
+    @Override
     protected void doStart() throws Exception {
-        // noop
+        if (camelContext != null) {
+            camelContext.addStartupListener(this);
+        }
     }
 
     @Override
@@ -201,5 +237,11 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
         } else {
             LOG.debug("Stopping BeanIntrospection which was invoked: {} times", invoked.get());
         }
+    }
+
+    @Override
+    public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
+        // ensure after properties is called
+        afterPropertiesConfigured(camelContext);
     }
 }

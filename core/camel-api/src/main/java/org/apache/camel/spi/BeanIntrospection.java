@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.AfterPropertiesConfigured;
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.StaticService;
@@ -31,7 +32,7 @@ import org.apache.camel.TypeConverter;
  *
  * End users should favour using {@link org.apache.camel.support.PropertyBindingSupport} instead.
  */
-public interface BeanIntrospection extends StaticService {
+public interface BeanIntrospection extends StaticService, AfterPropertiesConfigured {
 
     /**
      * Structure of an introspected class.
