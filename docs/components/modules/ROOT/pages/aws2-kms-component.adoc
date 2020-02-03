@@ -1,5 +1,6 @@
 [[aws2-kms-component]]
 = AWS 2 KMS Component
+:page-source: components/camel-aws2-kms/src/main/docs/aws2-kms-component.adoc
 
 *Since Camel 3.1*
 

@@ -45,6 +45,7 @@
 * xref:aws-xray.adoc[AWS XRay Component]
 * xref:aws2-ecs-component.adoc[AWS 2 ECS Component]
 * xref:aws2-eks-component.adoc[AWS 2 EKS Component]
+* xref:aws2-kms-component.adoc[AWS 2 KMS Component]
 * xref:aws2-mq-component.adoc[AWS 2 MQ Component]
 * xref:aws2-msk-component.adoc[AWS 2 MSK Component]
 * xref:aws2-translate-component.adoc[AWS 2 Translate Component]

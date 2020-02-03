@@ -292,7 +292,7 @@ public interface WekaEndpointBuilderFactory {
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-weka
          * 
-         * Syntax: <code>weka:cmd?options</code>
+         * Syntax: <code>weka:cmd</code>
          * 
          * Path parameter: read
          * The read command
@@ -327,7 +327,7 @@ public interface WekaEndpointBuilderFactory {
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-weka
      * 
-     * Syntax: <code>weka:cmd?options</code>
+     * Syntax: <code>weka:cmd</code>
      * 
      * Path parameter: read
      * The read command
