@@ -84,18 +84,18 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
 
         // assertions of the response
         assertNotNull(out);
-        assertNotNull(out.getOut());
-        assertNotNull(out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA));
+        assertNotNull(out.getMessage());
+        assertNotNull(out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA));
 
-        List<Map<String, Object>> generatedKeys = out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
+        List<Map<String, Object>> generatedKeys = out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
         assertNotNull("out body could not be converted to a List - was: "
-                + out.getOut().getBody(), generatedKeys);
+                + out.getMessage().getBody(), generatedKeys);
         assertEquals(1, generatedKeys.get(0).size());
 
         Map<String, Object> row = generatedKeys.get(0);
-        assertEquals("auto increment value should be 3", Integer.valueOf(3), row.get("ID"));
+        assertEquals("auto increment value should be 3", 3, row.get("ID"));
 
-        assertEquals("generated keys row count should be one", 1, out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT));
+        assertEquals("generated keys row count should be one", 1, out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT));
     }
 
     @Test
@@ -115,20 +115,20 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
 
         // assertions of the response
         assertNotNull(out);
-        assertNotNull(out.getOut());
-        assertNotNull(out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA));
-        assertEquals("123", out.getOut().getHeader("foo"));
+        assertNotNull(out.getMessage());
+        assertNotNull(out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA));
+        assertEquals("123", out.getMessage().getHeader("foo"));
 
-        List<Map<String, Object>> generatedKeys = out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
+        List<Map<String, Object>> generatedKeys = out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
         assertNotNull("out body could not be converted to a List - was: "
-            + out.getOut().getBody(), generatedKeys);
+            + out.getMessage().getBody(), generatedKeys);
         assertEquals(2, generatedKeys.get(0).size());
 
         Map<String, Object> row = generatedKeys.get(0);
-        assertEquals("auto increment value of ID1 should be 5", Integer.valueOf(5), row.get("ID1"));
-        assertEquals("auto increment value of ID2 should be 6", Integer.valueOf(6), row.get("ID2"));
+        assertEquals("auto increment value of ID1 should be 5", 5, row.get("ID1"));
+        assertEquals("auto increment value of ID2 should be 6", 6, row.get("ID2"));
 
-        assertEquals("generated keys row count should be one", 1, out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT));
+        assertEquals("generated keys row count should be one", 1, out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT));
     }
 
     @Test
@@ -152,23 +152,23 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
 
         // assertions of the response
         assertNotNull(out);
-        assertNotNull(out.getOut());
-        assertNotNull(out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA));
-        assertEquals("123", out.getOut().getHeader("foo"));
+        assertNotNull(out.getMessage());
+        assertNotNull(out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA));
+        assertEquals("123", out.getMessage().getHeader("foo"));
 
-        List<Map<String, Object>> generatedKeys = out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
+        List<Map<String, Object>> generatedKeys = out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
         assertNotNull("out body could not be converted to a List - was: "
-            + out.getOut().getBody(), generatedKeys);
+            + out.getMessage().getBody(), generatedKeys);
 
          // it seems not to work with Derby...
         assertEquals(4, generatedKeys.size());
 
         int id = 3;
         for (Map<String, Object> row : generatedKeys) {
-            assertEquals("auto increment value should be " + id, Integer.valueOf(id++), row.get("ID"));
+            assertEquals("auto increment value should be " + id, id++, row.get("ID"));
         }
 
-        assertEquals("generated keys row count should be four", 4, out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT));
+        assertEquals("generated keys row count should be four", 4, out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT));
     }
 
     @Test
@@ -188,19 +188,19 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
 
         // assertions of the response
         assertNotNull(out);
-        assertNotNull(out.getOut());
-        assertNotNull(out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA));
-        assertEquals("123", out.getOut().getHeader("foo"));
+        assertNotNull(out.getMessage());
+        assertNotNull(out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA));
+        assertEquals("123", out.getMessage().getHeader("foo"));
 
-        List<Map<String, Object>> generatedKeys = out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
+        List<Map<String, Object>> generatedKeys = out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
         assertNotNull("out body could not be converted to a List - was: "
-                + out.getOut().getBody(), generatedKeys);
+                + out.getMessage().getBody(), generatedKeys);
         assertEquals(1, generatedKeys.get(0).size());
 
         Map<String, Object> row = generatedKeys.get(0);
-        assertEquals("auto increment value should be 3", Integer.valueOf(3), row.get("ID"));
+        assertEquals("auto increment value should be 3", 3, row.get("ID"));
 
-        assertEquals("generated keys row count should be one", 1, out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT));
+        assertEquals("generated keys row count should be one", 1, out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT));
     }
 
     @Test
@@ -220,18 +220,18 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
 
         // assertions of the response
         assertNotNull(out);
-        assertNotNull(out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA));
-        assertEquals("123", out.getOut().getHeader("foo"));
+        assertNotNull(out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA));
+        assertEquals("123", out.getMessage().getHeader("foo"));
 
-        List<Map<String, Object>> generatedKeys = out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
+        List<Map<String, Object>> generatedKeys = out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
         assertNotNull("out body could not be converted to a List - was: "
-                + out.getOut().getBody(), generatedKeys);
+                + out.getMessage().getBody(), generatedKeys);
         assertEquals(1, generatedKeys.get(0).size());
 
         Map<String, Object> row = generatedKeys.get(0);
-        assertEquals("auto increment value should be 3", Integer.valueOf(3), row.get("ID"));
+        assertEquals("auto increment value should be 3", 3, row.get("ID"));
 
-        assertEquals("generated keys row count should be one", 1, out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT));
+        assertEquals("generated keys row count should be one", 1, out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT));
     }
 
     @Test
@@ -266,11 +266,11 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         // now we send the exchange to the endpoint, and receives the response from Camel
         Exchange out = template.send(endpoint, exchange);
 
-        List<Map<String, Object>> result = out.getOut().getBody(List.class);
+        List<Map<String, Object>> result = out.getMessage().getBody(List.class);
         assertEquals("We should get 3 projects", 3, result.size());
 
-        List<Map<String, Object>> generatedKeys = out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
+        List<Map<String, Object>> generatedKeys = out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
         assertEquals("We should not get any keys", 0, generatedKeys.size());
-        assertEquals("We should not get any keys", 0, out.getOut().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT));
+        assertEquals("We should not get any keys", 0, out.getMessage().getHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT));
     }
 }
