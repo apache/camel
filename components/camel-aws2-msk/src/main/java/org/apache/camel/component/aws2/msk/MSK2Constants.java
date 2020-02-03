@@ -17,7 +17,7 @@
 package org.apache.camel.component.aws2.msk;
 
 /**
- * Constants used in Camel AWS MSK module
+ * Constants used in Camel AWS MSK module SDK v2
  */
 public interface MSK2Constants {
     String OPERATION                         = "CamelAwsMSKOperation";

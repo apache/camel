@@ -28,7 +28,7 @@ import org.apache.camel.support.DefaultComponent;
 import software.amazon.awssdk.services.kafka.KafkaClient;
 
 /**
- * For working with Amazon MSK.
+ * For working with Amazon MSK SDK v2.
  */
 @Component("aws2-msk")
 public class MSK2Component extends DefaultComponent {
