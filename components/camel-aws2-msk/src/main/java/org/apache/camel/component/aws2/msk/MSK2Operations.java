@@ -18,8 +18,5 @@ package org.apache.camel.component.aws2.msk;
 
 public enum MSK2Operations {
 
-    listClusters,
-    createCluster,
-    deleteCluster,
-    describeCluster
+    listClusters, createCluster, deleteCluster, describeCluster
 }

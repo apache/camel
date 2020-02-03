@@ -19,12 +19,10 @@ package org.apache.camel.component.aws2.msk;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.aws2.msk.MSK2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import software.amazon.awssdk.services.kafka.model.BrokerNodeGroupInfo;
 import software.amazon.awssdk.services.kafka.model.ClusterState;
 import software.amazon.awssdk.services.kafka.model.CreateClusterResponse;
@@ -93,8 +91,7 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
         assertEquals("test-kafka", resultGet.clusterArn());
         assertEquals(ClusterState.DELETING.name(), resultGet.state().toString());
     }
-    
-    
+
     @Test
     public void mskDescribeClusterTest() throws Exception {
 

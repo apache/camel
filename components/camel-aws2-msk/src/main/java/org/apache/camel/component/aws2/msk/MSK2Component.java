@@ -24,7 +24,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-
 import software.amazon.awssdk.services.kafka.KafkaClient;
 
 /**
@@ -39,16 +38,16 @@ public class MSK2Component extends DefaultComponent {
     private String secretKey;
     @Metadata
     private String region;
-    @Metadata(label = "advanced")    
+    @Metadata(label = "advanced")
     private MSK2Configuration configuration;
-    
+
     public MSK2Component() {
         this(null);
     }
-    
+
     public MSK2Component(CamelContext context) {
         super(context);
-        
+
         registerExtension(new MSK2ComponentVerifierExtension());
     }
 
@@ -66,7 +65,7 @@ public class MSK2Component extends DefaultComponent {
         }
         return endpoint;
     }
-    
+
     public MSK2Configuration getConfiguration() {
         return configuration;
     }
@@ -99,7 +98,7 @@ public class MSK2Component extends DefaultComponent {
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
-    
+
     public String getRegion() {
         return region;
     }

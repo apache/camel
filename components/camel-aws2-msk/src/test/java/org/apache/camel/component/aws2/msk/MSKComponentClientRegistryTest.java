@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.msk;
 
-import org.apache.camel.component.aws2.msk.MSK2Component;
-import org.apache.camel.component.aws2.msk.MSK2Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -29,15 +27,15 @@ public class MSKComponentClientRegistryTest extends CamelTestSupport {
         AmazonMSKClientMock awsMSKClient = new AmazonMSKClientMock();
         context.getRegistry().bind("awsMskClient", awsMSKClient);
         MSK2Component component = context.getComponent("aws2-msk", MSK2Component.class);
-        MSK2Endpoint endpoint = (MSK2Endpoint) component.createEndpoint("aws2-msk://label");
+        MSK2Endpoint endpoint = (MSK2Endpoint)component.createEndpoint("aws2-msk://label");
 
         assertNotNull(endpoint.getConfiguration().getMskClient());
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalMSKClientMisconfiguration() throws Exception {
 
         MSK2Component component = context.getComponent("aws2-msk", MSK2Component.class);
-        MSK2Endpoint endpoint = (MSK2Endpoint) component.createEndpoint("aws2-msk://label");
+        MSK2Endpoint endpoint = (MSK2Endpoint)component.createEndpoint("aws2-msk://label");
     }
 }
