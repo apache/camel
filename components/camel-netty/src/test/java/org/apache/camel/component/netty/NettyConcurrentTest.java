@@ -26,13 +26,19 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.netty.codec.ObjectDecoder;
+import org.apache.camel.component.netty.codec.ObjectEncoder;
 import org.apache.camel.util.StopWatch;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import io.netty.channel.ChannelHandler;
+import io.netty.handler.codec.serialization.ClassResolvers;
 
 public class NettyConcurrentTest extends BaseNettyTest {
 
@@ -69,7 +75,7 @@ public class NettyConcurrentTest extends BaseNettyTest {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {
                 public String call() throws Exception {
-                    String reply = template.requestBody("netty:tcp://localhost:{{port}}", index, String.class);
+                    String reply = template.requestBody("netty:tcp://localhost:{{port}}?encoders=#encoder&decoders=#decoder", index, String.class);
                     log.debug("Sent {} received {}", index, reply);
                     assertEquals("Bye " + index, reply);
                     return reply;
@@ -93,11 +99,26 @@ public class NettyConcurrentTest extends BaseNettyTest {
         executor.shutdownNow();
     }
 
+    @BindToRegistry("encoder")
+    public ChannelHandler getEncoder() throws Exception {
+        return new ShareableChannelHandlerFactory(new ObjectEncoder());
+    }
+
+    @BindToRegistry("decoder")
+    public ChannelHandler getDecoder() throws Exception {
+        return new DefaultChannelHandlerFactory() {
+            @Override
+            public ChannelHandler newChannelHandler() {
+                return new ObjectDecoder(ClassResolvers.weakCachingResolver(null));
+            }
+        };
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("netty:tcp://localhost:{{port}}?sync=true").process(new Processor() {
+                from("netty:tcp://localhost:{{port}}?sync=true&encoders=#encoder&decoders=#decoder").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Bye " + body);

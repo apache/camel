@@ -209,7 +209,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                 if ("udp".equalsIgnoreCase(protocol)) {
                     encoders.add(ChannelHandlerFactories.newDatagramPacketEncoder());
                 }
-                // are we textline or object?
+                // are we textline or byte array
                 if (isTextline()) {
                     Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;
                     encoders.add(ChannelHandlerFactories.newStringEncoder(charset, protocol));
@@ -225,11 +225,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                     encoders.add(ChannelHandlerFactories.newByteArrayEncoder(protocol));
                     decoders.add(ChannelHandlerFactories.newByteArrayDecoder(protocol));
                 } else {
-                    // object serializable is then used
-                    encoders.add(ChannelHandlerFactories.newObjectEncoder(protocol));
-                    decoders.add(ChannelHandlerFactories.newObjectDecoder(protocol));
-
-                    LOG.debug("Using object encoders and decoders");
+                    // Fall back to allowing Strings to be serialized only
+                    Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;
+                    encoders.add(ChannelHandlerFactories.newStringEncoder(charset, protocol));
+                    decoders.add(ChannelHandlerFactories.newStringDecoder(charset, protocol));
                 }
                 if ("udp".equalsIgnoreCase(protocol)) {
                     decoders.add(ChannelHandlerFactories.newDatagramPacketDecoder());
@@ -300,7 +299,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     /**
      * Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec;
-     * if not specified or the value is false, then Object Serialization is assumed over TCP.
+     * if not specified or the value is false, then Object Serialization is assumed over TCP - however only Strings
+     * are allowed to be serialized by default.
      */
     public void setTextline(boolean textline) {
         this.textline = textline;
