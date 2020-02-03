@@ -52,7 +52,7 @@ Number of Components: 316 in 254 JAR artifacts (1 deprecated)
 
 | xref:aws2-mq-component.adoc[AWS 2 MQ] (camel-aws2-mq) | 3.1 | The aws-mq is used for managing Amazon MQ instances.
 
-| xref:aws2-msk-component.adoc[AWS 2 MSK] (camel-aws2-msk) | 3.1 | The aws-msk is used for managing Amazon MSK
+| xref:aws2-msk-component.adoc[AWS 2 MSK] (camel-aws2-msk) | 3.1 | The aws2-msk is used for managing Amazon MSK
 
 | xref:aws2-translate-component.adoc[AWS 2 Translate] (camel-aws2-translate) | 3.1 | The aws2-translate component is used for managing Amazon Translate
 
@@ -738,7 +738,7 @@ Number of Data Formats: 45 in 37 JAR artifacts (0 deprecated)
 
 | xref:secureXML-dataformat.adoc[XML Security] (camel-xmlsecurity) | 2.0 | The XML Security data format facilitates encryption and decryption of XML payloads.
 
-| xref:xstream-dataformat.adoc[XStream] (camel-xstream) | 1.3 | XSTream data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
+| xref:xstream-dataformat.adoc[XStream] (camel-xstream) | 1.3 | XStream data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
 
 | xref:yaml-snakeyaml-dataformat.adoc[YAML SnakeYAML] (camel-snakeyaml) | 2.17 | YAML is a data format to marshal and unmarshal Java objects to and from YAML.
 
