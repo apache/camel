@@ -37,7 +37,7 @@ public class ReadWriteTest {
     public void wekaVersion() throws Exception {
 
         try (CamelContext camelctx = new DefaultCamelContext()) {
-            
+
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
@@ -45,38 +45,37 @@ public class ReadWriteTest {
                 }
             });
             camelctx.start();
-            
+
             ProducerTemplate producer = camelctx.createProducerTemplate();
             String res = producer.requestBody("direct:start", null, String.class);
             Assert.assertTrue(res.startsWith("3.8"));
         }
     }
-    
+
     @Test
     public void readCsvFile() throws Exception {
 
         try (CamelContext camelctx = new DefaultCamelContext()) {
-            
+
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("file:src/test/resources/data?fileName=sfny.csv&noop=true")
-                        .to("weka:read").to("direct:end");
+                    from("file:src/test/resources/data?fileName=sfny.csv&noop=true").to("weka:read").to("direct:end");
                 }
             });
             camelctx.start();
-            
+
             ConsumerTemplate consumer = camelctx.createConsumerTemplate();
             Dataset dataset = consumer.receiveBody("direct:end", Dataset.class);
             Assert.assertNotNull(dataset);
         }
     }
-    
+
     @Test
     public void readCsvUrl() throws Exception {
 
         try (CamelContext camelctx = new DefaultCamelContext()) {
-            
+
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
@@ -84,21 +83,21 @@ public class ReadWriteTest {
                 }
             });
             camelctx.start();
-            
+
             Path absPath = Paths.get("src/test/resources/data/sfny.csv").toAbsolutePath();
             URL sourceUrl = absPath.toUri().toURL();
-            
+
             ProducerTemplate producer = camelctx.createProducerTemplate();
             Dataset dataset = producer.requestBody("direct:start", sourceUrl, Dataset.class);
             Assert.assertNotNull(dataset);
         }
     }
-    
+
     @Test
     public void readCsvInputStream() throws Exception {
 
         try (CamelContext camelctx = new DefaultCamelContext()) {
-            
+
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
@@ -106,10 +105,10 @@ public class ReadWriteTest {
                 }
             });
             camelctx.start();
-            
+
             Path absPath = Paths.get("src/test/resources/data/sfny.csv").toAbsolutePath();
             InputStream input = absPath.toUri().toURL().openStream();
-            
+
             ProducerTemplate producer = camelctx.createProducerTemplate();
             Dataset dataset = producer.requestBody("direct:start", input, Dataset.class);
             Assert.assertNotNull(dataset);
@@ -120,7 +119,7 @@ public class ReadWriteTest {
     public void readArffWithPath() throws Exception {
 
         try (CamelContext camelctx = new DefaultCamelContext()) {
-            
+
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
@@ -128,7 +127,7 @@ public class ReadWriteTest {
                 }
             });
             camelctx.start();
-            
+
             ProducerTemplate producer = camelctx.createProducerTemplate();
             Dataset dataset = producer.requestBody("direct:start", null, Dataset.class);
             Assert.assertNotNull(dataset);
@@ -139,7 +138,7 @@ public class ReadWriteTest {
     public void readArffInputStream() throws Exception {
 
         try (CamelContext camelctx = new DefaultCamelContext()) {
-            
+
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
@@ -147,10 +146,10 @@ public class ReadWriteTest {
                 }
             });
             camelctx.start();
-            
+
             Path absPath = Paths.get("src/test/resources/data/sfny.arff").toAbsolutePath();
             InputStream input = absPath.toUri().toURL().openStream();
-            
+
             ProducerTemplate producer = camelctx.createProducerTemplate();
             Dataset dataset = producer.requestBody("direct:start", input, Dataset.class);
             Assert.assertNotNull(dataset);
@@ -161,22 +160,21 @@ public class ReadWriteTest {
     public void writeDatasetWithConversion() throws Exception {
 
         try (CamelContext camelctx = new DefaultCamelContext()) {
-            
+
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:start")
-                        .to("file:target/data?fileName=sfny.arff");
+                    from("direct:start").to("file:target/data?fileName=sfny.arff");
                 }
             });
             camelctx.start();
-            
+
             Path inpath = Paths.get("src/test/resources/data/sfny.arff");
             Dataset dataset = Dataset.create(inpath);
-            
+
             ProducerTemplate producer = camelctx.createProducerTemplate();
             producer.sendBody("direct:start", dataset);
-            
+
             Path outpath = Paths.get("target/data/sfny.arff");
             dataset = Dataset.create(outpath);
             Assert.assertNotNull(dataset);
@@ -187,23 +185,21 @@ public class ReadWriteTest {
     public void writeDatasetWithoutPath() throws Exception {
 
         try (CamelContext camelctx = new DefaultCamelContext()) {
-            
+
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:start")
-                        .to("weka:write")
-                        .to("file:target/data?fileName=sfny.arff");
+                    from("direct:start").to("weka:write").to("file:target/data?fileName=sfny.arff");
                 }
             });
             camelctx.start();
-            
+
             Path inpath = Paths.get("src/test/resources/data/sfny.arff");
             Dataset dataset = Dataset.create(inpath);
-            
+
             ProducerTemplate producer = camelctx.createProducerTemplate();
             producer.sendBody("direct:start", dataset);
-            
+
             Path outpath = Paths.get("target/data/sfny.arff");
             dataset = Dataset.create(outpath);
             Assert.assertNotNull(dataset);
@@ -214,26 +210,25 @@ public class ReadWriteTest {
     public void writeDatasetWithPath() throws Exception {
 
         try (CamelContext camelctx = new DefaultCamelContext()) {
-            
+
             camelctx.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:start")
-                        .to("weka:write?path=target/data/sfny.arff");
+                    from("direct:start").to("weka:write?path=target/data/sfny.arff");
                 }
             });
             camelctx.start();
-            
+
             Path inpath = Paths.get("src/test/resources/data/sfny.arff");
             Dataset dataset = Dataset.create(inpath);
-            
+
             ProducerTemplate producer = camelctx.createProducerTemplate();
             producer.sendBody("direct:start", dataset);
-            
+
             Path outpath = Paths.get("target/data/sfny.arff");
             dataset = Dataset.create(outpath);
             Assert.assertNotNull(dataset);
         }
     }
-    
+
 }

@@ -25,7 +25,7 @@ public class WekaConfiguration {
 
     // Available commands
     public enum Command {
-        filter, read, write, version 
+        filter, read, write, version
     }
 
     @UriPath(description = "The filter command")
@@ -38,7 +38,7 @@ public class WekaConfiguration {
     private String path;
 
     private Command command;
-    
+
     Command getCommand() {
         return command;
     }

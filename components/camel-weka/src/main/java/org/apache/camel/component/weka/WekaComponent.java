@@ -32,10 +32,10 @@ public class WekaComponent extends DefaultComponent {
         WekaConfiguration config = new WekaConfiguration();
         WekaEndpoint endpoint = new WekaEndpoint(urispec, this, config);
         setProperties(endpoint, params);
-        
+
         Command command = Command.valueOf(remaining);
         config.setCommand(command);
-        
+
         return endpoint;
     }
 }

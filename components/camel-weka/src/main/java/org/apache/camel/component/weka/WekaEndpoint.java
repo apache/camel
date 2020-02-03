@@ -30,12 +30,11 @@ import weka.core.Version;
 /**
  * The camel-weka component provides Data Mining functionality through Weka.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "weka", title = "Weka",
-        syntax = "weka:cmd", producerOnly = true, label = "Datamining")
+@UriEndpoint(firstVersion = "3.1.0", scheme = "weka", title = "Weka", syntax = "weka:cmd", producerOnly = true, label = "Datamining")
 public class WekaEndpoint extends DefaultEndpoint {
 
     static final Logger LOG = LoggerFactory.getLogger(WekaEndpoint.class);
-    
+
     @UriParam
     private final WekaConfiguration configuration;
 
