@@ -513,7 +513,8 @@ public interface NettyEndpointBuilderFactory {
         /**
          * Only used for TCP. If no codec is specified, you can use this flag to
          * indicate a text line based codec; if not specified or the value is
-         * false, then Object Serialization is assumed over TCP.
+         * false, then Object Serialization is assumed over TCP - however only
+         * Strings are allowed to be serialized by default.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -526,7 +527,8 @@ public interface NettyEndpointBuilderFactory {
         /**
          * Only used for TCP. If no codec is specified, you can use this flag to
          * indicate a text line based codec; if not specified or the value is
-         * false, then Object Serialization is assumed over TCP.
+         * false, then Object Serialization is assumed over TCP - however only
+         * Strings are allowed to be serialized by default.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1950,7 +1952,8 @@ public interface NettyEndpointBuilderFactory {
         /**
          * Only used for TCP. If no codec is specified, you can use this flag to
          * indicate a text line based codec; if not specified or the value is
-         * false, then Object Serialization is assumed over TCP.
+         * false, then Object Serialization is assumed over TCP - however only
+         * Strings are allowed to be serialized by default.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1963,7 +1966,8 @@ public interface NettyEndpointBuilderFactory {
         /**
          * Only used for TCP. If no codec is specified, you can use this flag to
          * indicate a text line based codec; if not specified or the value is
-         * false, then Object Serialization is assumed over TCP.
+         * false, then Object Serialization is assumed over TCP - however only
+         * Strings are allowed to be serialized by default.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -3228,7 +3232,8 @@ public interface NettyEndpointBuilderFactory {
         /**
          * Only used for TCP. If no codec is specified, you can use this flag to
          * indicate a text line based codec; if not specified or the value is
-         * false, then Object Serialization is assumed over TCP.
+         * false, then Object Serialization is assumed over TCP - however only
+         * Strings are allowed to be serialized by default.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -3241,7 +3246,8 @@ public interface NettyEndpointBuilderFactory {
         /**
          * Only used for TCP. If no codec is specified, you can use this flag to
          * indicate a text line based codec; if not specified or the value is
-         * false, then Object Serialization is assumed over TCP.
+         * false, then Object Serialization is assumed over TCP - however only
+         * Strings are allowed to be serialized by default.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
