@@ -30,10 +30,11 @@ import javax.activation.FileDataSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import junit.framework.TestCase;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import junit.framework.TestCase;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
