@@ -1,5 +1,6 @@
 [[aws2-msk-component]]
 = AWS 2 MSK Component
+:page-source: components/camel-aws2-msk/src/main/docs/aws2-msk-component.adoc
 
 *Since Camel 3.1*
 
