@@ -172,11 +172,11 @@ public interface WekaEndpointBuilderFactory {
          * The camel-weka component provides Data Mining functionality through
          * Weka.
          * 
-         * Category: data mining
+         * Category: Datamining
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-weka
          * 
-         * Syntax: <code>weka:cmd?options</code>
+         * Syntax: <code>weka:cmd</code>
          * 
          * Path parameter: filter
          * The filter command
@@ -192,11 +192,11 @@ public interface WekaEndpointBuilderFactory {
      * Weka (camel-weka)
      * The camel-weka component provides Data Mining functionality through Weka.
      * 
-     * Category: data mining
+     * Category: Datamining
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-weka
      * 
-     * Syntax: <code>weka:cmd?options</code>
+     * Syntax: <code>weka:cmd</code>
      * 
      * Path parameter: filter
      * The filter command
