@@ -158,7 +158,7 @@ with the following path and query parameters:
 | *delimiter* (codec) | The delimiter to use for the textline codec. Possible values are LINE and NULL. | LINE | TextLineDelimiter
 | *encoders* (codec) | A list of encoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | List
 | *encoding* (codec) | The encoding (a charset name) to use for the textline codec. If not provided, Camel will use the JVM default Charset. |  | String
-| *textline* (codec) | Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not specified or the value is false, then Object Serialization is assumed over TCP. | false | boolean
+| *textline* (codec) | Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not specified or the value is false, then Object Serialization is assumed over TCP - however only Strings are allowed to be serialized by default. | false | boolean
 | *enabledProtocols* (security) | Which protocols to enable when using SSL | TLSv1,TLSv1.1,TLSv1.2 | String
 | *keyStoreFile* (security) | Client side certificate keystore to be used for encryption |  | File
 | *keyStoreFormat* (security) | Keystore format to be used for payload encryption. Defaults to JKS if not set |  | String
@@ -258,7 +258,7 @@ The component supports 80 options, which are listed below.
 | *camel.component.netty.configuration.ssl-handler* | Reference to a class that could be used to return an SSL Handler |  | SslHandler
 | *camel.component.netty.configuration.sync* | Setting to set endpoint as one-way or request-response | true | Boolean
 | *camel.component.netty.configuration.tcp-no-delay* | Setting to improve TCP protocol performance | true | Boolean
-| *camel.component.netty.configuration.textline* | Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not specified or the value is false, then Object Serialization is assumed over TCP. | false | Boolean
+| *camel.component.netty.configuration.textline* | Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not specified or the value is false, then Object Serialization is assumed over TCP. However note that only Strings are serialized, anything else will only be serialized with a custom encoder/decoder. | false | Boolean
 | *camel.component.netty.configuration.transfer-exchange* | Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are transferred: In body, Out body, fault body, In headers, Out headers, fault headers, exchange properties, exchange exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level. | false | Boolean
 | *camel.component.netty.configuration.trust-store-resource* | Server side certificate keystore to be used for encryption. Is loaded by default from classpath, but you can prefix with "classpath:", "file:", or "http:" to load the resource from different systems. |  | String
 | *camel.component.netty.configuration.udp-byte-array-codec* | For UDP only. If enabled the using byte array codec instead of Java serialization protocol. | false | Boolean
@@ -379,16 +379,28 @@ operations.
 
 === A UDP Netty endpoint using Request-Reply and serialized object payload
 
+Note that Object serialization is not allowed by default, and so a decoder must be configured.
+
 [source,java]
 ----
+@BindToRegistry("decoder")
+public ChannelHandler getDecoder() throws Exception {
+    return new DefaultChannelHandlerFactory() {
+        @Override
+        public ChannelHandler newChannelHandler() {
+            return new DatagramPacketObjectDecoder(ClassResolvers.weakCachingResolver(null));
+        }
+    };
+}
+
 RouteBuilder builder = new RouteBuilder() {
   public void configure() {
-    from("netty:udp://0.0.0.0:5155?sync=true")
+    from("netty:udp://0.0.0.0:5155?sync=true&decoders=#decoder")
       .process(new Processor() {
          public void process(Exchange exchange) throws Exception {
            Poetry poetry = (Poetry) exchange.getIn().getBody();
-           poetry.setPoet("Dr. Sarojini Naidu");
-           exchange.getOut().setBody(poetry);
+           // Process poetry in some way
+           exchange.getOut().setBody("Message received);
          }
        }
     }
