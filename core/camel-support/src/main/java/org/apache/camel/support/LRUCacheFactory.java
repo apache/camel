@@ -82,14 +82,14 @@ public abstract class LRUCacheFactory {
                     LOG.trace("Creating LURCacheFactory instance from class: {}", clazzName);
                     Object factory = clazz.getDeclaredConstructor().newInstance();
                     LOG.trace("Created LURCacheFactory instance: {}", factory);
-                    LOG.info("Using LURCacheFactory: {}", factory);
+                    LOG.info("Detected and using LURCacheFactory: {}", factory);
                     return (LRUCacheFactory) factory;
                 }
             }
         } catch (Throwable t) {
             LOG.warn("Error creating LRUCacheFactory. Will use DefaultLRUCacheFactory.", t);
         }
-        // use deafult
+        // use default
         LOG.debug("Creating DefaultLRUCacheFactory");
         return new DefaultLRUCacheFactory();
     }

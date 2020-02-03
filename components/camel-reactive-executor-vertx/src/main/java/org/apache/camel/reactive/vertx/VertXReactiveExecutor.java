@@ -92,4 +92,9 @@ public class VertXReactiveExecutor extends ServiceSupport implements ReactiveExe
             vertx.close();
         }
     }
+
+    @Override
+    public String toString() {
+        return "camel-reactive-executor-vertx";
+    }
 }

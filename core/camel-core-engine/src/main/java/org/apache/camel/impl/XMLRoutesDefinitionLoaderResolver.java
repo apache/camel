@@ -53,7 +53,7 @@ public class XMLRoutesDefinitionLoaderResolver {
             }
             if (XMLRoutesDefinitionLoader.class.isAssignableFrom(type)) {
                 XMLRoutesDefinitionLoader answer = (XMLRoutesDefinitionLoader) context.getInjector().newInstance(type, false);
-                LOG.info("Detected and using custom XMLRoutesDefinitionLoader: {}", answer);
+                LOG.info("Detected and using XMLRoutesDefinitionLoader: {}", answer);
                 return answer;
             } else {
                 throw new IllegalArgumentException("Type is not a XMLRoutesDefinitionLoader implementation. Found: " + type.getName());
