@@ -28,7 +28,7 @@ for this component:
 
 [source,java]
 ---------------------------------
-weka://cmd?options
+weka://cmd
 ---------------------------------
 
 == Options
@@ -289,7 +289,3 @@ try (CamelContext camelctx = new DefaultCamelContext()) {
 * https://www.cs.waikato.ac.nz/ml/weka/courses.html[Machine Learning Courses,window=_blank]
 * https://waikato.github.io/weka-wiki/documentation/[Weka Documentation,window=_blank]
 * https://tdiesler.github.io/nessus-weka[Nessus-Weka,window=_blank]
-
-
-
-
