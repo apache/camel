@@ -29,7 +29,7 @@ for this component:
 
 [source,java]
 ---------------------------------
-weka://cmd?options
+weka://cmd
 ---------------------------------
 
 == Options
@@ -51,7 +51,7 @@ The Weka component supports 2 options, which are listed below.
 The Weka endpoint is configured using URI syntax:
 
 ----
-weka:cmd?options
+weka:cmd
 ----
 
 with the following path and query parameters:
@@ -133,8 +133,7 @@ This component is not supported in Karaf
 
 === Read + Filter + Write
 
-This first example shows how to read a CSV file with the file component and then pass it on to Weka. 
-In Weka we apply a few filters to the data set and then pass it on to the file component for writing. 
+This first example shows how to read a CSV file with the file component and then pass it on to Weka. In Weka we apply a few filters to the data set and then pass it on to the file component for writing. 
 
 [source,java]
 ----
@@ -158,16 +157,43 @@ In Weka we apply a few filters to the data set and then pass it on to the file c
     }
 ----
 
-The second example does the same as above without use of the file component.
-For supported input types see `WekaTypeConverters`.
+Here we do the same as above without use of the file component.
 
 [source,java]
 ----
     @Override
     public void configure() throws Exception {
         
+        // Initiate the route from somewhere
+        .from("...")
+        
         // Use Weka to read the CSV file
-        .from("direct:start")
+        .to("weka:read?path=src/test/resources/data/sfny.csv")
+        
+        // Convert the 'in_sf' attribute to nominal
+        .to("weka:filter?apply=NumericToNominal -R first")
+        
+        // Move the 'in_sf' attribute to the end
+        .to("weka:filter?apply=Reorder -R 2-last,1")
+        
+        // Rename the relation
+        .to("weka:filter?apply=RenameRelation -modify sfny")
+        
+        // Use Weka to write the Arff file
+        .to("weka:write?path=target/data/sfny.arff");
+    }
+----
+
+In this example, would the client provide the input path or some other supported type.
+Have a look at the  `WekaTypeConverters` for the set of supported input types.
+
+[source,java]
+----
+    @Override
+    public void configure() throws Exception {
+        
+        // Initiate the route from somewhere
+        .from("...")
         
         // Convert the 'in_sf' attribute to nominal
         .to("weka:filter?apply=NumericToNominal -R first")
@@ -198,7 +224,7 @@ try (CamelContext camelctx = new DefaultCamelContext()) {
         @Override
         public void configure() throws Exception {
             
-            // Use weka to read the model training data
+            // Use the file component to read the training data
             from("file:src/test/resources/data?fileName=sfny-train.arff")
             
             // Build a J48 classifier using cross-validation with 10 folds
@@ -227,7 +253,7 @@ try (CamelContext camelctx = new DefaultCamelContext()) {
         @Override
         public void configure() throws Exception {
             
-            // Use weka to read the data file
+            // Use the file component to read the test data
             from("file:src/test/resources/data?fileName=sfny-test.arff")
             
             // Remove the class attribute 
@@ -264,7 +290,3 @@ try (CamelContext camelctx = new DefaultCamelContext()) {
 * https://www.cs.waikato.ac.nz/ml/weka/courses.html[Machine Learning Courses,window=_blank]
 * https://waikato.github.io/weka-wiki/documentation/[Weka Documentation,window=_blank]
 * https://tdiesler.github.io/nessus-weka[Nessus-Weka,window=_blank]
-
-
-
-
