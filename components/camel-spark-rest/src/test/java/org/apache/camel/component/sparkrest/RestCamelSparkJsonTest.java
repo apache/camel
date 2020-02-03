@@ -17,7 +17,6 @@
 package org.apache.camel.component.sparkrest;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -25,16 +24,11 @@ public class RestCamelSparkJsonTest extends BaseSparkTest {
 
     @Test
     public void testSparkHello() throws Exception {
-        Exchange out = template.request("http://localhost:" + getPort() + "/spark/hello", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
-            }
-        });
+        Exchange out = template.request("http://localhost:" + getPort() + "/spark/hello", exchange -> exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json"));
         assertNotNull(out);
 
-        assertEquals("application/json", out.getOut().getHeader(Exchange.CONTENT_TYPE));
-        assertEquals("{'reply': 'Hello World'}", out.getOut().getBody(String.class));
+        assertEquals("application/json", out.getMessage().getHeader(Exchange.CONTENT_TYPE));
+        assertEquals("{'reply': 'Hello World'}", out.getMessage().getBody(String.class));
     }
 
     @Override
