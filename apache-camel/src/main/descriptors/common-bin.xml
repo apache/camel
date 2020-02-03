@@ -82,6 +82,7 @@
         <include>org.apache.camel:camel-aws-xray</include>
         <include>org.apache.camel:camel-aws2-ecs</include>
         <include>org.apache.camel:camel-aws2-eks</include>
+        <include>org.apache.camel:camel-aws2-msk</include>
         <include>org.apache.camel:camel-aws2-mq</include>
         <include>org.apache.camel:camel-aws2-translate</include>
         <include>org.apache.camel:camel-azure</include>
