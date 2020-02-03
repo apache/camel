@@ -24,7 +24,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.kms.model.CreateKeyRequest;
@@ -125,7 +124,7 @@ public class KMS2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void createKey(KmsClient kmsClient, Exchange exchange) {
         CreateKeyRequest.Builder builder = CreateKeyRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.DESCRIPTION))) {
@@ -142,7 +141,7 @@ public class KMS2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void disableKey(KmsClient kmsClient, Exchange exchange) {
         DisableKeyRequest.Builder builder = DisableKeyRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.KEY_ID))) {
@@ -161,7 +160,7 @@ public class KMS2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void scheduleKeyDeletion(KmsClient kmsClient, Exchange exchange) {
         ScheduleKeyDeletionRequest.Builder builder = ScheduleKeyDeletionRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.KEY_ID))) {
@@ -173,7 +172,7 @@ public class KMS2Producer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.PENDING_WINDOW_IN_DAYS))) {
             int pendingWindows = exchange.getIn().getHeader(KMS2Constants.PENDING_WINDOW_IN_DAYS, Integer.class);
             builder.pendingWindowInDays(pendingWindows);
-        } 
+        }
         ScheduleKeyDeletionResponse result;
         try {
             result = kmsClient.scheduleKeyDeletion(builder.build());
@@ -184,7 +183,7 @@ public class KMS2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void describeKey(KmsClient kmsClient, Exchange exchange) {
         DescribeKeyRequest.Builder builder = DescribeKeyRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.KEY_ID))) {
@@ -203,7 +202,7 @@ public class KMS2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void enableKey(KmsClient kmsClient, Exchange exchange) {
         EnableKeyRequest.Builder builder = EnableKeyRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KMS2Constants.KEY_ID))) {
@@ -222,7 +221,7 @@ public class KMS2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
         if (exchange.getPattern().isOutCapable()) {
             Message out = exchange.getOut();

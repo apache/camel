@@ -20,9 +20,9 @@ package org.apache.camel.component.aws2.kms;
  * Constants used in Camel AWS KMS module
  */
 public interface KMS2Constants {
-    String OPERATION                = "CamelAwsKMSOperation";
-    String LIMIT                    = "CamelAwsKMSLimit";
-    String DESCRIPTION              = "CamelAwsKMSDescription";
-    String KEY_ID                   = "CamelAwsKMSKeyId";
-    String PENDING_WINDOW_IN_DAYS   = "CamelAwsKMSPendingWindowInDays";
+    String OPERATION = "CamelAwsKMSOperation";
+    String LIMIT = "CamelAwsKMSLimit";
+    String DESCRIPTION = "CamelAwsKMSDescription";
+    String KEY_ID = "CamelAwsKMSKeyId";
+    String PENDING_WINDOW_IN_DAYS = "CamelAwsKMSPendingWindowInDays";
 }
