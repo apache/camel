@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Component;
-import org.apache.camel.component.aws2.msk.MSK2Operations;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Assert;

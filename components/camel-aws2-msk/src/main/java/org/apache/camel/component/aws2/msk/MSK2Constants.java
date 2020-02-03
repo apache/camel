@@ -20,11 +20,11 @@ package org.apache.camel.component.aws2.msk;
  * Constants used in Camel AWS MSK module SDK v2
  */
 public interface MSK2Constants {
-    String OPERATION                         = "CamelAwsMSKOperation";
-    String CLUSTERS_FILTER                   = "CamelAwsMSKClusterFilter";
-    String CLUSTER_NAME                      = "CamelAwsMSKClusterName";
-    String CLUSTER_ARN                       = "CamelAwsMSKClusterArn";
-    String CLUSTER_KAFKA_VERSION             = "CamelAwsMSKClusterKafkaVersion";
-    String BROKER_NODES_NUMBER               = "CamelAwsMSKBrokerNodesNumber";
-    String BROKER_NODES_GROUP_INFO           = "CamelAwsMSKBrokerNodesGroupInfo";
+    String OPERATION = "CamelAwsMSKOperation";
+    String CLUSTERS_FILTER = "CamelAwsMSKClusterFilter";
+    String CLUSTER_NAME = "CamelAwsMSKClusterName";
+    String CLUSTER_ARN = "CamelAwsMSKClusterArn";
+    String CLUSTER_KAFKA_VERSION = "CamelAwsMSKClusterKafkaVersion";
+    String BROKER_NODES_NUMBER = "CamelAwsMSKBrokerNodesNumber";
+    String BROKER_NODES_GROUP_INFO = "CamelAwsMSKBrokerNodesGroupInfo";
 }

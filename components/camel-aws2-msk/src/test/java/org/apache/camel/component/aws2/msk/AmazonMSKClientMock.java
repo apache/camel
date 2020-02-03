@@ -38,7 +38,7 @@ public class AmazonMSKClientMock implements KafkaClient {
 
     @Override
     public ListClustersResponse listClusters(ListClustersRequest request) {
-    	ListClustersResponse.Builder result = ListClustersResponse.builder();
+        ListClustersResponse.Builder result = ListClustersResponse.builder();
         List<ClusterInfo> info = new ArrayList<>();
         ClusterInfo.Builder info1 = ClusterInfo.builder();
         info1.clusterName("test-kafka");
@@ -57,12 +57,12 @@ public class AmazonMSKClientMock implements KafkaClient {
 
     @Override
     public DeleteClusterResponse deleteCluster(DeleteClusterRequest request) {
-    	DeleteClusterResponse.Builder res = DeleteClusterResponse.builder();
+        DeleteClusterResponse.Builder res = DeleteClusterResponse.builder();
         res.clusterArn(request.clusterArn());
         res.state(ClusterState.DELETING.name());
         return res.build();
     }
-    
+
     @Override
     public DescribeClusterResponse describeCluster(DescribeClusterRequest request) {
         DescribeClusterResponse.Builder res = DescribeClusterResponse.builder();
@@ -73,12 +73,12 @@ public class AmazonMSKClientMock implements KafkaClient {
         return res.build();
     }
 
-	@Override
-	public String serviceName() {
-		return null;
-	}
+    @Override
+    public String serviceName() {
+        return null;
+    }
 
-	@Override
-	public void close() {	
-	}
+    @Override
+    public void close() {
+    }
 }

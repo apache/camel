@@ -16,6 +16,14 @@
  */
 package org.apache.camel.component.aws2.msk;
 
+import org.apache.camel.BindToRegistry;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import software.amazon.awssdk.services.kafka.model.BrokerNodeGroupInfo;
 import software.amazon.awssdk.services.kafka.model.ClusterState;
 import software.amazon.awssdk.services.kafka.model.CreateClusterResponse;
@@ -23,21 +31,11 @@ import software.amazon.awssdk.services.kafka.model.DeleteClusterResponse;
 import software.amazon.awssdk.services.kafka.model.DescribeClusterResponse;
 import software.amazon.awssdk.services.kafka.model.ListClustersResponse;
 
-import org.apache.camel.BindToRegistry;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.aws2.msk.MSK2Constants;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
-
 public class MSKProducerTest extends CamelTestSupport {
 
     @BindToRegistry("amazonMskClient")
     AmazonMSKClientMock clientMock = new AmazonMSKClientMock();
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint mock;
 
@@ -97,8 +95,7 @@ public class MSKProducerTest extends CamelTestSupport {
         assertEquals("test-kafka", resultGet.clusterArn());
         assertEquals(ClusterState.DELETING.name(), resultGet.state().toString());
     }
-    
-    
+
     @Test
     public void mskDescribeClusterTest() throws Exception {
 

@@ -24,7 +24,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.kafka.KafkaClient;
 import software.amazon.awssdk.services.kafka.model.BrokerNodeGroupInfo;
@@ -141,7 +140,7 @@ public class MSK2Producer extends DefaultProducer {
         }
         CreateClusterResponse response;
         try {
-        	response = mskClient.createCluster(builder.build());
+            response = mskClient.createCluster(builder.build());
         } catch (AwsServiceException ase) {
             LOG.trace("Create Cluster command returned the error code {}", ase.getMessage());
             throw ase;
@@ -168,7 +167,7 @@ public class MSK2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void describeCluster(KafkaClient mskClient, Exchange exchange) {
         DescribeClusterRequest.Builder builder = DescribeClusterRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MSK2Constants.CLUSTER_ARN))) {

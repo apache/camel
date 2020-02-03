@@ -16,11 +16,8 @@
  */
 package org.apache.camel.component.aws2.msk;
 
-import org.apache.camel.component.aws2.msk.MSK2Component;
-import org.apache.camel.component.aws2.msk.MSK2Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 
@@ -56,8 +53,9 @@ public class MSKComponentConfigurationTest extends CamelTestSupport {
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Region.US_WEST_1.toString());
-        MSK2Endpoint endpoint = (MSK2Endpoint)component.createEndpoint("aws2-msk://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
-        
+        MSK2Endpoint endpoint = (MSK2Endpoint)component
+            .createEndpoint("aws2-msk://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
+
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
