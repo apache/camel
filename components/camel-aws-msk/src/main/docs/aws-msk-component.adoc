@@ -168,6 +168,7 @@ Camel-AWS MSK component provides the following operation on the producer side:
 - listClusters
 - createCluster
 - deleteCluster
+- describeCluster
 
 == Producer Examples
 
