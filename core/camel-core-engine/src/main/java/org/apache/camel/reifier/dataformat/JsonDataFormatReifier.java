@@ -45,10 +45,15 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
         properties.put("enableFeatures", definition.getEnableFeatures());
         properties.put("disableFeatures", definition.getDisableFeatures());
         properties.put("allowUnmarshallType", definition.getAllowUnmarshallType());
-        if (definition.getLibrary() == JsonLibrary.XStream) {
+        if (definition.getLibrary() == JsonLibrary.XStream && definition.getPermissions() == null) {
             // if we have the unmarshal type, but no permission set, then use it to be allowed
-            properties.put("permissions", or(definition.getPermissions(),
-                    definition.getUnmarshalType() != null ? "+" + definition.getUnmarshalType() : null));
+            String type = definition.getUnmarshalTypeName();
+            if (type == null && definition.getUnmarshalType() != null) {
+                type = definition.getUnmarshalType().getName();
+            }
+            properties.put("permissions", type);
+            // xstream has no unarmshalType option
+            properties.remove("unmarshalType");
         }
     }
 
