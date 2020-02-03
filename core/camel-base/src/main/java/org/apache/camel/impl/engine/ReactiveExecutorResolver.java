@@ -51,7 +51,7 @@ public class ReactiveExecutorResolver {
             }
             if (ReactiveExecutor.class.isAssignableFrom(type)) {
                 ReactiveExecutor answer = (ReactiveExecutor) context.getInjector().newInstance(type, false);
-                LOG.debug("Detected and using ReactiveExecutor: {}", answer);
+                LOG.info("Detected and using ReactiveExecutor: {}", answer);
                 return answer;
             } else {
                 throw new IllegalArgumentException("Type is not a ReactiveExecutor implementation. Found: " + type.getName());

@@ -43,6 +43,16 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-engine</artifactId>
         </dependency>
+        <!-- and use the caffeine lrucache which is the best LRU cache implementation -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-caffeine-lrucache</artifactId>
+        </dependency>
+        <!-- and the fast headersmap -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-headersmap</artifactId>
+        </dependency>
 
         <!-- testing -->
         <dependency>
