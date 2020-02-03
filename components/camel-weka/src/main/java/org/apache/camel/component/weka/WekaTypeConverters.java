@@ -28,14 +28,14 @@ import weka.core.Instances;
 public class WekaTypeConverters {
 
     @Converter
-    public static InputStream toInputStream(Dataset dataset)  {
+    public static InputStream toInputStream(Dataset dataset) {
         Instances instances = dataset.getInstances();
         return toInputStream(instances);
     }
 
     @Converter
-    public static InputStream toInputStream(Instances instances)  {
+    public static InputStream toInputStream(Instances instances) {
         byte[] bytes = instances.toString().getBytes();
         return new ByteArrayInputStream(bytes);
     }
- }
+}
