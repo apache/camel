@@ -45,4 +45,9 @@ public class FastHeadersMapFactory implements HeadersMapFactory {
     public boolean isCaseInsensitive() {
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "camel-headersmap";
+    }
 }
