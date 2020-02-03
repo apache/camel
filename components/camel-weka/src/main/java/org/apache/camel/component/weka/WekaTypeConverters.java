@@ -19,13 +19,15 @@ package org.apache.camel.component.weka;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import org.apache.camel.Converter;
-
 import io.nessus.weka.Dataset;
+import org.apache.camel.Converter;
 import weka.core.Instances;
 
 @Converter
-public class WekaTypeConverters {
+public final class WekaTypeConverters {
+    
+    private WekaTypeConverters() {
+    }
 
     @Converter
     public static InputStream toInputStream(Dataset dataset) {

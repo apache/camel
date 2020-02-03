@@ -27,15 +27,14 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.nio.file.Paths;
 
+import io.nessus.weka.AssertState;
+import io.nessus.weka.Dataset;
+import io.nessus.weka.UncheckedException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.weka.WekaConfiguration.Command;
 import org.apache.camel.support.DefaultProducer;
-
-import io.nessus.weka.AssertState;
-import io.nessus.weka.Dataset;
-import io.nessus.weka.UncheckedException;
 import weka.core.Instances;
 import weka.core.converters.ArffLoader;
 import weka.core.converters.CSVLoader;
@@ -177,9 +176,9 @@ public class WekaProducer extends DefaultProducer {
 
         try {
 
-            if (input.markSupported())
+            if (input.markSupported()) {
                 input.mark(10240);
-
+            }
             // First try .arff
             try {
                 Loader loader = new ArffLoader();
