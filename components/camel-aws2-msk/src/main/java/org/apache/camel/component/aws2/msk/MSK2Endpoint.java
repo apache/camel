@@ -36,7 +36,7 @@ import software.amazon.awssdk.services.kafka.KafkaClient;
 import software.amazon.awssdk.services.kafka.KafkaClientBuilder;
 
 /**
- * The aws-msk is used for managing Amazon MSK
+ * The aws2-msk is used for managing Amazon MSK
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-msk", title = "AWS 2 MSK", syntax = "aws2-msk:label", producerOnly = true, label = "cloud,management")
 public class MSK2Endpoint extends ScheduledPollEndpoint {
