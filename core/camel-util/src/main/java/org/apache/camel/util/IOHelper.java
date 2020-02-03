@@ -574,7 +574,7 @@ public final class IOHelper {
         @Override
         public int read() throws IOException {
             if (bufferBytes == null || bufferBytes.remaining() <= 0) {
-                bufferedChars.clear();
+                BufferCaster.cast(bufferedChars).clear();
                 int len = reader.read(bufferedChars);
                 bufferedChars.flip();
                 if (len == -1) {
