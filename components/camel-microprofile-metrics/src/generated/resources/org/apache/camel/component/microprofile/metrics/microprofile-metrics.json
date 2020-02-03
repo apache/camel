@@ -1,0 +1,44 @@
+{
+  "component": {
+    "kind": "component",
+    "scheme": "microprofile-metrics",
+    "extendsScheme": "",
+    "syntax": "microprofile-metrics:metricType:metricName",
+    "title": "MicroProfile Metrics",
+    "description": "Camel metrics exposed with Eclipse MicroProfile Metrics",
+    "label": "monitoring",
+    "deprecated": false,
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "javaType": "org.apache.camel.component.microprofile.metrics.MicroProfileMetricsComponent",
+    "firstVersion": "3.0.0",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-microprofile-metrics",
+    "version": "3.1.0-SNAPSHOT"
+  },
+  "componentProperties": {
+    "metricRegistry": { "kind": "property", "displayName": "Metric Registry", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.eclipse.microprofile.metrics.MetricRegistry", "deprecated": false, "secret": false, "description": "Use a custom MetricRegistry." },
+    "basicPropertyBinding": { "kind": "property", "displayName": "Basic Property Binding", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities" },
+    "lazyStartProducer": { "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." }
+  },
+  "properties": {
+    "metricType": { "kind": "path", "displayName": "Metric Type", "group": "producer", "label": "", "required": true, "type": "object", "javaType": "org.eclipse.microprofile.metrics.MetricType", "enum": [ "concurrent gauge", "counter", "gauge", "meter", "histogram", "timer", "invalid" ], "deprecated": false, "deprecationNote": "", "secret": false, "description": "Metric type" },
+    "metricName": { "kind": "path", "displayName": "Metric Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "secret": false, "description": "Metric name" },
+    "action": { "kind": "parameter", "displayName": "Action", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Action to use when using the timer type" },
+    "counterIncrement": { "kind": "parameter", "displayName": "Counter Increment", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "secret": false, "description": "Increment value when using the counter type" },
+    "description": { "kind": "parameter", "displayName": "Description", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Metric description" },
+    "displayName": { "kind": "parameter", "displayName": "Display Name", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Metric display name" },
+    "gaugeDecrement": { "kind": "parameter", "displayName": "Gauge Decrement", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "description": "Decrement metric value when using concurrent gauge type" },
+    "gaugeIncrement": { "kind": "parameter", "displayName": "Gauge Increment", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "description": "Increment metric value when using the concurrent gauge type" },
+    "gaugeValue": { "kind": "parameter", "displayName": "Gauge Value", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "java.lang.Number", "deprecated": false, "secret": false, "description": "Decrement metric value when using concurrent gauge type" },
+    "lazyStartProducer": { "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "mark": { "kind": "parameter", "displayName": "Mark", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "secret": false, "description": "Mark value to set when using the meter type" },
+    "metricUnit": { "kind": "parameter", "displayName": "Metric Unit", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Metric unit. See org.eclipse.microprofile.metrics.MetricUnits" },
+    "tags": { "kind": "parameter", "displayName": "Tags", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Comma delimited list of tags associated with the metric in the format tagName=tagValue" },
+    "value": { "kind": "parameter", "displayName": "Value", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "secret": false, "description": "Value to set when using the histogram type" },
+    "basicPropertyBinding": { "kind": "parameter", "displayName": "Basic Property Binding", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities" },
+    "synchronous": { "kind": "parameter", "displayName": "Synchronous", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": "false", "description": "Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported)." }
+  }
+}

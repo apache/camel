@@ -1,0 +1,17 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "restProperty",
+    "title": "Rest Property",
+    "description": "A key value pair",
+    "javaType": "org.apache.camel.model.rest.RestPropertyDefinition",
+    "label": "rest",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "key": { "kind": "attribute", "displayName": "Key", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Property key" },
+    "value": { "kind": "attribute", "displayName": "Value", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Property value" }
+  }
+}

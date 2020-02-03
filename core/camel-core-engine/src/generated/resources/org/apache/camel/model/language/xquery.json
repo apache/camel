@@ -1,0 +1,21 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "xquery",
+    "title": "XQuery",
+    "description": "To use XQuery (XML) in Camel expressions or predicates.",
+    "firstVersion": "1.0.0",
+    "javaType": "org.apache.camel.model.language.XQueryExpression",
+    "label": "language,xml",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "expression": { "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The expression value in your chosen language syntax" },
+    "type": { "kind": "attribute", "displayName": "Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the class name of the result type (type from output) The default result type is NodeSet" },
+    "headerName": { "kind": "attribute", "displayName": "Header Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Name of header to use as input, instead of the message body" },
+    "trim": { "kind": "attribute", "displayName": "Trim", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" }
+  }
+}

@@ -128,7 +128,7 @@ with the following path and query parameters:
 | *checkIdleInterval* (advanced) | How often (time in millis) in to run the idle checker background task. This option is only in use if the splitter strategy is IDLE. | 500 | int
 | *chunkSize* (advanced) | When reading a normal file, this is split into chunks producing a message per chunk. | 4096 | int
 | *compressionCodec* (advanced) | The compression codec to use. The value can be one of: DEFAULT, GZIP, BZIP2 | DEFAULT | HdfsCompressionCodec
-| *compressionType* (advanced) | The compression type to use (is default not in use) | NONE | CompressionType
+| *compressionType* (advanced) | The compression type to use (is default not in use). The value can be one of: NONE, RECORD, BLOCK | NONE | CompressionType
 | *openedSuffix* (advanced) | When a file is opened for reading/writing the file is renamed with this suffix to avoid to read it during the writing phase. | opened | String
 | *readSuffix* (advanced) | Once the file has been read is renamed with this suffix to avoid to read it again. | read | String
 | *replication* (advanced) | The HDFS replication factor | 3 | short

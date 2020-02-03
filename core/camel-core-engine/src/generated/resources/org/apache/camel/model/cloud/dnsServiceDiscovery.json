@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "dnsServiceDiscovery",
+    "title": "Dns Service Discovery",
+    "javaType": "org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration",
+    "label": "routing,cloud,service-discovery",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "proto": { "kind": "attribute", "displayName": "Proto", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "_tcp", "description": "The transport protocol of the desired service." },
+    "domain": { "kind": "attribute", "displayName": "Domain", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The domain name;" },
+    "properties": { "kind": "element", "displayName": "Properties", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.PropertyDefinition>", "deprecated": false, "secret": false, "description": "Set client properties to use. These properties are specific to what service call implementation are in use. For example if using ribbon, then the client properties are define in com.netflix.client.config.CommonClientConfigKey." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

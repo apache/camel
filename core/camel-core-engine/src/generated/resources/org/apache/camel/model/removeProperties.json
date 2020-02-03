@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "removeProperties",
+    "title": "Remove Properties",
+    "description": "Removes message exchange properties whose name matches a specified pattern",
+    "javaType": "org.apache.camel.model.RemovePropertiesDefinition",
+    "label": "eip,transformation",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "pattern": { "kind": "attribute", "displayName": "Pattern", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Name or pattern of properties to remove. The pattern is matched in the following order: 1 = exact match 2 = wildcard (pattern ends with a and the name starts with the pattern) 3 = regular expression (all of above is case in-sensitive)." },
+    "excludePattern": { "kind": "attribute", "displayName": "Exclude Pattern", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Name or pattern of properties to not remove. The pattern is matched in the following order: 1 = exact match 2 = wildcard (pattern ends with a and the name starts with the pattern) 3 = regular expression (all of above is case in-sensitive)." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

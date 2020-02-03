@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "cachingServiceDiscovery",
+    "title": "Caching Service Discovery",
+    "javaType": "org.apache.camel.model.cloud.CachingServiceCallServiceDiscoveryConfiguration",
+    "label": "routing,cloud,service-discovery",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "timeout": { "kind": "attribute", "displayName": "Timeout", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "defaultValue": "60", "description": "Set the time the services will be retained." },
+    "units": { "kind": "attribute", "displayName": "Units", "required": false, "type": "enum", "javaType": "java.util.concurrent.TimeUnit", "enum": [ "DAYS", "HOURS", "MICROSECONDS", "MILLISECONDS", "MINUTES", "NANOSECONDS", "SECONDS" ], "deprecated": false, "secret": false, "defaultValue": "SECONDS", "description": "Set the time unit for the timeout." },
+    "serviceDiscoveryConfiguration": { "kind": "element", "displayName": "Service Discovery Configuration", "required": true, "type": "object", "javaType": "org.apache.camel.model.cloud.ServiceCallServiceDiscoveryConfiguration", "oneOf": [ "combinedServiceDiscovery", "consulServiceDiscovery", "dnsServiceDiscovery", "etcdServiceDiscovery", "kubernetesServiceDiscovery", "staticServiceDiscovery" ], "deprecated": false, "secret": false, "description": "Set the service-call configuration to use" },
+    "properties": { "kind": "element", "displayName": "Properties", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.PropertyDefinition>", "deprecated": false, "secret": false, "description": "Set client properties to use. These properties are specific to what service call implementation are in use. For example if using ribbon, then the client properties are define in com.netflix.client.config.CommonClientConfigKey." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

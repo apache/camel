@@ -1,0 +1,20 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "responseMessage",
+    "title": "Response Message",
+    "description": "To specify the rest operation response messages using Swagger. This maps to the Swagger Response Message Object.",
+    "javaType": "org.apache.camel.model.rest.RestOperationResponseMsgDefinition",
+    "label": "rest",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "code": { "kind": "attribute", "displayName": "Code", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "200", "description": "The response code such as a HTTP status code" },
+    "message": { "kind": "attribute", "displayName": "Message", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The response message (description)" },
+    "responseModel": { "kind": "attribute", "displayName": "Response Model", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The response model" },
+    "header": { "kind": "element", "displayName": "Header", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestOperationResponseHeaderDefinition>", "deprecated": false, "secret": false, "description": "Adds a response header" },
+    "examples": { "kind": "element", "displayName": "Examples", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestPropertyDefinition>", "deprecated": false, "secret": false, "description": "Examples of response messages" }
+  }
+}

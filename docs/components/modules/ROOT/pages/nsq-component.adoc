@@ -70,7 +70,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *topic* | *Required* The name of topic we want to use |  | String
+| *topic* | *Required* The NSQ topic |  | String
 |===
 
 
@@ -82,14 +82,14 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *servers* (common) | The hostnames of one or more nsqlookupd servers (consumer) or nsqd servers (producer). |  | String
 | *userAgent* (common) | A String to identify the kind of client |  | String
-| *autoFinish* (consumer) | Automatically finish the NSQ message when it is retrieved from the quese and before the Exchange is processed. | true | Boolean
+| *autoFinish* (consumer) | Automatically finish the NSQ Message when it is retrieved from the queue and before the Exchange is processed | true | Boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *channel* (consumer) | The name of channel we want to use |  | String
-| *lookupInterval* (consumer) | The lookup retry interval | 5000 | long
-| *lookupServerPort* (consumer) | The port of the nsqdlookupd server | 4161 | int
-| *messageTimeout* (consumer) | The NSQ message timeout for a consumer. | -1 | long
+| *channel* (consumer) | The NSQ channel |  | String
+| *lookupInterval* (consumer) | The lookup interval | 5000 | long
+| *lookupServerPort* (consumer) | The NSQ lookup server port | 4161 | int
+| *messageTimeout* (consumer) | The NSQ consumer timeout period for messages retrieved from the queue. A value of -1 is the server default | -1 | long
 | *poolSize* (consumer) | Consumer pool size | 10 | int
-| *requeueInterval* (consumer) | The requeue interval | -1 | long
+| *requeueInterval* (consumer) | The requeue interval in milliseconds. A value of -1 is the server default | -1 | long
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean

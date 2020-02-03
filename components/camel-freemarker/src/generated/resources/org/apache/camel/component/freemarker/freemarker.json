@@ -1,0 +1,36 @@
+{
+  "component": {
+    "kind": "component",
+    "scheme": "freemarker",
+    "extendsScheme": "",
+    "syntax": "freemarker:resourceUri",
+    "title": "Freemarker",
+    "description": "Transforms the message using a FreeMarker template.",
+    "label": "transformation",
+    "deprecated": false,
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "javaType": "org.apache.camel.component.freemarker.FreemarkerComponent",
+    "firstVersion": "2.10.0",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-freemarker",
+    "version": "3.1.0-SNAPSHOT"
+  },
+  "componentProperties": {
+    "configuration": { "kind": "property", "displayName": "Configuration", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "freemarker.template.Configuration", "deprecated": false, "secret": false, "description": "To use an existing freemarker.template.Configuration instance as the configuration." },
+    "basicPropertyBinding": { "kind": "property", "displayName": "Basic Property Binding", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities" },
+    "lazyStartProducer": { "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." }
+  },
+  "properties": {
+    "resourceUri": { "kind": "path", "displayName": "Resource Uri", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "secret": false, "description": "Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod." },
+    "configuration": { "kind": "parameter", "displayName": "Configuration", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "freemarker.template.Configuration", "deprecated": false, "secret": false, "description": "Sets the Freemarker configuration to use" },
+    "contentCache": { "kind": "parameter", "displayName": "Content Cache", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": "false", "description": "Sets whether to use resource content cache or not" },
+    "encoding": { "kind": "parameter", "displayName": "Encoding", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the encoding to be used for loading the template file." },
+    "lazyStartProducer": { "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "templateUpdateDelay": { "kind": "parameter", "displayName": "Template Update Delay", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "secret": false, "description": "Number of seconds the loaded template resource will remain in the cache." },
+    "basicPropertyBinding": { "kind": "parameter", "displayName": "Basic Property Binding", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities" },
+    "synchronous": { "kind": "parameter", "displayName": "Synchronous", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": "false", "description": "Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported)." }
+  }
+}

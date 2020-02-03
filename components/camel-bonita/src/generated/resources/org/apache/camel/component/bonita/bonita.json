@@ -1,0 +1,36 @@
+{
+  "component": {
+    "kind": "component",
+    "scheme": "bonita",
+    "extendsScheme": "",
+    "syntax": "bonita:operation",
+    "title": "Bonita",
+    "description": "Used for communicating with a remote Bonita BPM process engine.",
+    "label": "process",
+    "deprecated": false,
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "javaType": "org.apache.camel.component.bonita.BonitaComponent",
+    "firstVersion": "2.19.0",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-bonita",
+    "version": "3.1.0-SNAPSHOT"
+  },
+  "componentProperties": {
+    "basicPropertyBinding": { "kind": "property", "displayName": "Basic Property Binding", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities" },
+    "lazyStartProducer": { "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." }
+  },
+  "properties": {
+    "operation": { "kind": "path", "displayName": "Operation", "group": "producer", "label": "", "required": true, "type": "object", "javaType": "org.apache.camel.component.bonita.util.BonitaOperation", "enum": [ "startCase" ], "deprecated": false, "deprecationNote": "", "secret": false, "configurationClass": "org.apache.camel.component.bonita.BonitaConfiguration", "configurationField": "configuration", "description": "Operation to use" },
+    "hostname": { "kind": "parameter", "displayName": "Hostname", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "localhost", "configurationClass": "org.apache.camel.component.bonita.BonitaConfiguration", "configurationField": "configuration", "description": "Hostname where Bonita engine runs" },
+    "lazyStartProducer": { "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "port": { "kind": "parameter", "displayName": "Port", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "8080", "configurationClass": "org.apache.camel.component.bonita.BonitaConfiguration", "configurationField": "configuration", "description": "Port of the server hosting Bonita engine" },
+    "processName": { "kind": "parameter", "displayName": "Process Name", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.bonita.BonitaConfiguration", "configurationField": "configuration", "description": "Name of the process involved in the operation" },
+    "basicPropertyBinding": { "kind": "parameter", "displayName": "Basic Property Binding", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities" },
+    "synchronous": { "kind": "parameter", "displayName": "Synchronous", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": "false", "description": "Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported)." },
+    "password": { "kind": "parameter", "displayName": "Password", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "configurationClass": "org.apache.camel.component.bonita.BonitaConfiguration", "configurationField": "configuration", "description": "Password to authenticate to Bonita engine." },
+    "username": { "kind": "parameter", "displayName": "Username", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "configurationClass": "org.apache.camel.component.bonita.BonitaConfiguration", "configurationField": "configuration", "description": "Username to authenticate to Bonita engine." }
+  }
+}

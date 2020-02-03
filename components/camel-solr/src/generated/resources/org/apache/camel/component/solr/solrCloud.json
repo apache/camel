@@ -1,0 +1,46 @@
+{
+  "component": {
+    "kind": "component",
+    "scheme": "solrCloud",
+    "extendsScheme": "",
+    "alternativeSchemes": "solr,solrs,solrCloud",
+    "syntax": "solrCloud:url",
+    "title": "Solr",
+    "description": "The solr component allows you to interface with an Apache Lucene Solr server.",
+    "label": "monitoring,search",
+    "deprecated": false,
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "javaType": "org.apache.camel.component.solr.SolrComponent",
+    "firstVersion": "2.9.0",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-solr",
+    "version": "3.1.0-SNAPSHOT"
+  },
+  "componentProperties": {
+    "basicPropertyBinding": { "kind": "property", "displayName": "Basic Property Binding", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities" },
+    "lazyStartProducer": { "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." }
+  },
+  "properties": {
+    "url": { "kind": "path", "displayName": "Url", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "secret": false, "description": "Hostname and port for the solr server" },
+    "allowCompression": { "kind": "parameter", "displayName": "Allow Compression", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "description": "Server side must support gzip or deflate for this to have any effect" },
+    "connectionTimeout": { "kind": "parameter", "displayName": "Connection Timeout", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "description": "connectionTimeout on the underlying HttpConnectionManager" },
+    "defaultMaxConnectionsPerHost": { "kind": "parameter", "displayName": "Default Max Connections Per Host", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "description": "maxConnectionsPerHost on the underlying HttpConnectionManager" },
+    "followRedirects": { "kind": "parameter", "displayName": "Follow Redirects", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "description": "indicates whether redirects are used to get to the Solr server" },
+    "lazyStartProducer": { "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "maxRetries": { "kind": "parameter", "displayName": "Max Retries", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "description": "Maximum number of retries to attempt in the event of transient errors" },
+    "maxTotalConnections": { "kind": "parameter", "displayName": "Max Total Connections", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "description": "maxTotalConnection on the underlying HttpConnectionManager" },
+    "requestHandler": { "kind": "parameter", "displayName": "Request Handler", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Set the request handler to be used" },
+    "soTimeout": { "kind": "parameter", "displayName": "So Timeout", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "description": "Read timeout on the underlying HttpConnectionManager. This is desirable for queries, but probably not for indexing" },
+    "streamingQueueSize": { "kind": "parameter", "displayName": "Streaming Queue Size", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "secret": false, "defaultValue": "10", "description": "Set the queue size for the StreamingUpdateSolrServer" },
+    "streamingThreadCount": { "kind": "parameter", "displayName": "Streaming Thread Count", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "secret": false, "defaultValue": "2", "description": "Set the number of threads for the StreamingUpdateSolrServer" },
+    "basicPropertyBinding": { "kind": "parameter", "displayName": "Basic Property Binding", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities" },
+    "synchronous": { "kind": "parameter", "displayName": "Synchronous", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": "false", "description": "Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported)." },
+    "password": { "kind": "parameter", "displayName": "Password", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "Sets password for basic auth plugin enabled servers" },
+    "username": { "kind": "parameter", "displayName": "Username", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "Sets username for basic auth plugin enabled servers" },
+    "collection": { "kind": "parameter", "displayName": "Collection", "group": "solrCloud", "label": "solrCloud", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Set the collection name which the solrCloud server could use" },
+    "zkHost": { "kind": "parameter", "displayName": "Zk Host", "group": "solrCloud", "label": "solrCloud", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Set the ZooKeeper host information which the solrCloud could use, such as zkhost=localhost:8123." }
+  }
+}

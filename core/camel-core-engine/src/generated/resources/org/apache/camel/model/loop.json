@@ -1,0 +1,20 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "loop",
+    "title": "Loop",
+    "description": "Processes a message multiple times",
+    "javaType": "org.apache.camel.model.LoopDefinition",
+    "label": "eip,routing",
+    "deprecated": false,
+    "input": true,
+    "output": true
+  },
+  "properties": {
+    "expression": { "kind": "expression", "displayName": "Expression", "required": true, "type": "object", "javaType": "org.apache.camel.model.language.ExpressionDefinition", "oneOf": [ "constant", "exchangeProperty", "groovy", "header", "hl7terser", "jsonpath", "language", "method", "mvel", "ognl", "ref", "simple", "spel", "tokenize", "xpath", "xquery", "xtokenize" ], "deprecated": false, "secret": false, "description": "Expression to define how many times we should loop. Notice the expression is only evaluated once, and should return a number as how many times to loop. A value of zero or negative means no looping. The loop is like a for-loop fashion, if you want a while loop, then the dynamic router may be a better choice." },
+    "copy": { "kind": "attribute", "displayName": "Copy", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "If the copy attribute is true, a copy of the input Exchange is used for each iteration. That means each iteration will start from a copy of the same message. By default loop will loop the same exchange all over, so each iteration may have different message content." },
+    "doWhile": { "kind": "attribute", "displayName": "Do While", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Enables the while loop that loops until the predicate evaluates to false or null." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "customLoadBalancer",
+    "title": "Custom Load Balancer",
+    "description": "Custom load balancer",
+    "javaType": "org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition",
+    "label": "eip,routing,loadbalance",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "ref": { "kind": "attribute", "displayName": "Ref", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Refers to the custom load balancer to lookup from the registry" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

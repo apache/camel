@@ -1,0 +1,16 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "restContextRef",
+    "title": "Rest Context Ref",
+    "description": "To refer to an XML file with rest services defined using the rest-dsl",
+    "javaType": "org.apache.camel.model.RestContextRefDefinition",
+    "label": "configuration,rest",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "ref": { "kind": "attribute", "displayName": "Ref", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Reference to the rest-dsl" }
+  }
+}

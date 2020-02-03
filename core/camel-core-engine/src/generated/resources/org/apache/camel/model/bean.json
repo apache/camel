@@ -1,0 +1,22 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "bean",
+    "title": "Bean",
+    "description": "Calls a java bean",
+    "javaType": "org.apache.camel.model.BeanDefinition",
+    "label": "eip,endpoint",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "ref": { "kind": "attribute", "displayName": "Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets a reference to a bean to use" },
+    "method": { "kind": "attribute", "displayName": "Method", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the method name on the bean to use" },
+    "beanType": { "kind": "attribute", "displayName": "Bean Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the Class of the bean" },
+    "cache": { "kind": "attribute", "displayName": "Cache", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": true, "secret": false, "defaultValue": true, "description": "Use singleton option instead" },
+    "scope": { "kind": "attribute", "displayName": "Scope", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "Prototype", "Request", "Singleton" ], "deprecated": false, "secret": false, "defaultValue": "Singleton", "description": "Scope of bean. When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint. The bean should be thread-safe in case concurrent threads is calling the bean at the same time. When using request scope the bean is created or looked up once per request (exchange). This can be used if you want to store state on a bean while processing a request and you want to call the same bean instance multiple times while processing the request. The bean does not have to be thread-safe as the instance is only called from the same request. When using delegate scope, then the bean will be looked up or created per call. However in case of lookup then this is delegated to the bean registry such as Spring or CDI (if in use), which depends on their configuration can act as either singleton or prototype scope. so when using delegate then this depends on the delegated registry." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

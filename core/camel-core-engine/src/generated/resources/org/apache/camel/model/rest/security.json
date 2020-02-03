@@ -1,0 +1,17 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "security",
+    "title": "Security",
+    "description": "Rest security definition",
+    "javaType": "org.apache.camel.model.rest.SecurityDefinition",
+    "label": "rest,security",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "key": { "kind": "attribute", "displayName": "Key", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Key used to refer to this security definition" },
+    "scopes": { "kind": "attribute", "displayName": "Scopes", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The scopes to allow (separate multiple scopes by comma)" }
+  }
+}

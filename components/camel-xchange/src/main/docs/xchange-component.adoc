@@ -75,8 +75,8 @@ with the following path and query parameters:
 | *currency* (producer) | The currency |  | Currency
 | *currencyPair* (producer) | The currency pair |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *method* (producer) | *Required* The method to execute |  | XChangeMethod
-| *service* (producer) | *Required* The service to call |  | XChangeService
+| *method* (producer) | *Required* The method to execute. The value can be one of: balances, fundingHistory, wallets, currencies, currencyMetaData, currencyPairs, currencyPairMetaData, ticker |  | XChangeMethod
+| *service* (producer) | *Required* The service to call. The value can be one of: marketdata, metadata, account |  | XChangeService
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===

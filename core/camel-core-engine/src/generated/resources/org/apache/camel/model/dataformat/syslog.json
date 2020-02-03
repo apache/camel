@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "syslog",
+    "title": "Syslog",
+    "description": "The Syslog dataformat is used for working with RFC3164 and RFC5424 messages (logging and monitoring).",
+    "firstVersion": "2.6.0",
+    "javaType": "org.apache.camel.model.dataformat.SyslogDataFormat",
+    "label": "dataformat,transformation,monitoring",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

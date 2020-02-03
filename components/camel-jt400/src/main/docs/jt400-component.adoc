@@ -50,7 +50,7 @@ The JT400 component supports 4 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *connectionPool* (advanced) | Returns the default connection pool used by this component. |  | AS400ConnectionPool
+| *connectionPool* (advanced) | Default connection pool used by the component. Note that this pool is lazily initialized. This is because in a scenario where the user always provides a pool, it would be wasteful for Camel to initialize and keep an idle pool. |  | AS400ConnectionPool
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
@@ -88,13 +88,13 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *ccsid* (common) | Sets the CCSID to use for the connection with the AS/400 system. |  | int
-| *format* (common) | Sets the data format for sending messages. | text | Format
+| *format* (common) | Sets the data format for sending messages. The value can be one of: text, binary | text | Format
 | *guiAvailable* (common) | Sets whether AS/400 prompting is enabled in the environment running Camel. | false | boolean
 | *keyed* (common) | Whether to use keyed or non-keyed data queues. | false | boolean
 | *searchKey* (common) | Search key for keyed data queues. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *readTimeout* (consumer) | Timeout in millis the consumer will wait while trying to read a new message of the data queue. | 30000 | int
-| *searchType* (consumer) | Search type such as EQ for equal etc. | EQ | SearchType
+| *searchType* (consumer) | Search type such as EQ for equal etc. The value can be one of: EQ, NE, LT, LE, GT, GE | EQ | SearchType
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern

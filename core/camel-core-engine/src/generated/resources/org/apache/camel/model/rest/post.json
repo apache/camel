@@ -1,0 +1,30 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "post",
+    "title": "Post",
+    "description": "Rest POST command",
+    "javaType": "org.apache.camel.model.rest.PostVerbDefinition",
+    "label": "rest",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "method": { "kind": "attribute", "displayName": "Method", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The HTTP verb such as GET, POST, DELETE, etc." },
+    "uri": { "kind": "attribute", "displayName": "Uri", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Uri template of this REST service such as \/{id}." },
+    "consumes": { "kind": "attribute", "displayName": "Consumes", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To define the content type what the REST service consumes (accept as input), such as application\/xml or application\/json. This option will override what may be configured on a parent level" },
+    "produces": { "kind": "attribute", "displayName": "Produces", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To define the content type what the REST service produces (uses for output), such as application\/xml or application\/json This option will override what may be configured on a parent level" },
+    "bindingMode": { "kind": "attribute", "displayName": "Binding Mode", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "auto", "description": "Sets the binding mode to use. This option will override what may be configured on a parent level The default value is auto" },
+    "skipBindingOnErrorCode": { "kind": "attribute", "displayName": "Skip Binding On Error Code", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json \/ xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level" },
+    "clientRequestValidation": { "kind": "attribute", "displayName": "Client Request Validation", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the client is supported by the Rest-DSL configuration of its consumes\/produces settings. This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned. The default value is false." },
+    "enableCORS": { "kind": "attribute", "displayName": "Enable CORS", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level The default value is false." },
+    "type": { "kind": "attribute", "displayName": "Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the class name to use for binding from input to POJO for the incoming data This option will override what may be configured on a parent level. The canonical name of the class of the input data. Append a to the end of the canonical name if you want the input to be an array type." },
+    "outType": { "kind": "attribute", "displayName": "Out Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the class name to use for binding from POJO to output for the outgoing data This option will override what may be configured on a parent level The canonical name of the class of the input data. Append a to the end of the canonical name if you want the input to be an array type." },
+    "toOrRoute": { "kind": "element", "displayName": "To Or Route", "required": true, "type": "object", "javaType": "org.apache.camel.model.OptionalIdentifiedDefinition<java.lang.Object>", "oneOf": [ "route", "to", "toD" ], "deprecated": false, "secret": false, "description": "To route from this REST service to a Camel endpoint, or an inlined route" },
+    "routeId": { "kind": "attribute", "displayName": "Route Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The route id this rest-dsl is using (read-only)" },
+    "apiDocs": { "kind": "attribute", "displayName": "Api Docs", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Whether to include or exclude the VerbDefinition in API documentation. The default value is true." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

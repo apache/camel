@@ -1,0 +1,20 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "throwException",
+    "title": "Throw Exception",
+    "description": "Throws an exception",
+    "javaType": "org.apache.camel.model.ThrowExceptionDefinition",
+    "label": "error",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "ref": { "kind": "attribute", "displayName": "Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Reference to the exception instance to lookup from the registry to throw" },
+    "message": { "kind": "attribute", "displayName": "Message", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To create a new exception instance and use the given message as caused message (supports simple language)" },
+    "exceptionType": { "kind": "attribute", "displayName": "Exception Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The class of the exception to create using the message." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

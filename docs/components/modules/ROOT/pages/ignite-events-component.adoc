@@ -23,9 +23,9 @@ The Ignite Events component supports 5 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *ignite* (consumer) | Sets the Ignite instance. |  | Ignite
-| *configurationResource* (consumer) | Sets the resource from where to load the configuration. It can be a: URI, String (URI) or an InputStream. |  | Object
-| *igniteConfiguration* (consumer) | Allows the user to set a programmatic IgniteConfiguration. |  | IgniteConfiguration
+| *ignite* (consumer) | Ignite instance. |  | Ignite
+| *configurationResource* (consumer) | Resource from where to load configuration. |  | Object
+| *igniteConfiguration* (consumer) | Ignite configuration. |  | IgniteConfiguration
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===

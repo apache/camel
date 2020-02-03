@@ -1,0 +1,20 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "sample",
+    "title": "Sample",
+    "description": "Extract a sample of the messages passing through a route",
+    "javaType": "org.apache.camel.model.SamplingDefinition",
+    "label": "eip,routing",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "samplePeriod": { "kind": "attribute", "displayName": "Sample Period", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "secret": false, "defaultValue": "1", "description": "Sets the sample period during which only a single Exchange will pass through." },
+    "messageFrequency": { "kind": "attribute", "displayName": "Message Frequency", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "secret": false, "description": "Sets the sample message count which only a single Exchange will pass through after this many received." },
+    "units": { "kind": "attribute", "displayName": "Units", "required": false, "type": "enum", "javaType": "java.util.concurrent.TimeUnit", "enum": [ "DAYS", "HOURS", "MICROSECONDS", "MILLISECONDS", "MINUTES", "NANOSECONDS", "SECONDS" ], "deprecated": false, "secret": false, "defaultValue": "SECONDS", "description": "Sets the time units for the sample period, defaulting to seconds." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

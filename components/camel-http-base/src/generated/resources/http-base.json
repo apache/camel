@@ -1,0 +1,12 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "http-base",
+    "title": "Http Base",
+    "description": "Camel HTTP base",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-http-base",
+    "version": "3.1.0-SNAPSHOT"
+  }
+}

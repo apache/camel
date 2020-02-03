@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "blueprint",
+    "title": "Blueprint",
+    "description": "Using Camel with OSGi Blueprint",
+    "deprecated": false,
+    "firstVersion": "2.4.0",
+    "label": "java,osgi",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-blueprint",
+    "version": "3.1.0-SNAPSHOT"
+  }
+}

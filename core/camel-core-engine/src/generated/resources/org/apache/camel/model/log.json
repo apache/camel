@@ -1,0 +1,22 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "log",
+    "title": "Log",
+    "description": "Logs the defined message to the logger",
+    "javaType": "org.apache.camel.model.LogDefinition",
+    "label": "eip,configuration",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "message": { "kind": "attribute", "displayName": "Message", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the log message (uses simple language)" },
+    "loggingLevel": { "kind": "attribute", "displayName": "Logging Level", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "DEBUG", "ERROR", "INFO", "OFF", "TRACE", "WARN" ], "deprecated": false, "secret": false, "defaultValue": "INFO", "description": "Sets the logging level. The default value is INFO" },
+    "logName": { "kind": "attribute", "displayName": "Log Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the name of the logger" },
+    "marker": { "kind": "attribute", "displayName": "Marker", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To use slf4j marker" },
+    "loggerRef": { "kind": "attribute", "displayName": "Logger Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To refer to a custom logger instance to lookup from the registry." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

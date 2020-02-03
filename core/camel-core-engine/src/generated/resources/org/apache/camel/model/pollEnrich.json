@@ -1,0 +1,25 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "pollEnrich",
+    "title": "Poll Enrich",
+    "description": "Enriches messages with data polled from a secondary resource",
+    "javaType": "org.apache.camel.model.PollEnrichDefinition",
+    "label": "eip,transformation",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "expression": { "kind": "expression", "displayName": "Expression", "required": true, "type": "object", "javaType": "org.apache.camel.model.language.ExpressionDefinition", "oneOf": [ "constant", "exchangeProperty", "groovy", "header", "hl7terser", "jsonpath", "language", "method", "mvel", "ognl", "ref", "simple", "spel", "tokenize", "xpath", "xquery", "xtokenize" ], "deprecated": false, "secret": false, "description": "Expression that computes the endpoint uri to use as the resource endpoint to enrich from" },
+    "timeout": { "kind": "attribute", "displayName": "Timeout", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "-1", "description": "Timeout in millis when polling from the external service. The timeout has influence about the poll enrich behavior. It basically operations in three different modes: negative value - Waits until a message is available and then returns it. Warning that this method could block indefinitely if no messages are available. 0 - Attempts to receive a message exchange immediately without waiting and returning null if a message exchange is not available yet. positive value - Attempts to receive a message exchange, waiting up to the given timeout to expire if a message is not yet available. Returns null if timed out The default value is -1 and therefore the method could block indefinitely, and therefore its recommended to use a timeout value" },
+    "strategyRef": { "kind": "attribute", "displayName": "Strategy Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Refers to an AggregationStrategy to be used to merge the reply from the external service, into a single outgoing message. By default Camel will use the reply from the external service as outgoing message." },
+    "strategyMethodName": { "kind": "attribute", "displayName": "Strategy Method Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy." },
+    "strategyMethodAllowNull": { "kind": "attribute", "displayName": "Strategy Method Allow Null", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "If this option is false then the aggregate method is not used if there was no data to enrich. If this option is true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the AggregationStrategy." },
+    "aggregateOnException": { "kind": "attribute", "displayName": "Aggregate On Exception", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "If this option is false then the aggregate method is not used if there was an exception thrown while trying to retrieve the data to enrich from the resource. Setting this option to true allows end users to control what to do if there was an exception in the aggregate method. For example to suppress the exception or set a custom message body etc." },
+    "cacheSize": { "kind": "attribute", "displayName": "Cache Size", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the maximum size used by the org.apache.camel.spi.ConsumerCache which is used to cache and reuse consumers when uris are reused." },
+    "ignoreInvalidEndpoint": { "kind": "attribute", "displayName": "Ignore Invalid Endpoint", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Ignore the invalidate endpoint exception when try to create a producer with that endpoint" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

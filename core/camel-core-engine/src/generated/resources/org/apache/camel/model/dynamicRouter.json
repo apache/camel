@@ -1,0 +1,21 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "dynamicRouter",
+    "title": "Dynamic Router",
+    "description": "Routes messages based on dynamic rules",
+    "javaType": "org.apache.camel.model.DynamicRouterDefinition",
+    "label": "eip,endpoint,routing",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "expression": { "kind": "expression", "displayName": "Expression", "required": true, "type": "object", "javaType": "org.apache.camel.model.language.ExpressionDefinition", "oneOf": [ "constant", "exchangeProperty", "groovy", "header", "hl7terser", "jsonpath", "language", "method", "mvel", "ognl", "ref", "simple", "spel", "tokenize", "xpath", "xquery", "xtokenize" ], "deprecated": false, "secret": false, "description": "Expression to call that returns the endpoint(s) to route to in the dynamic routing. Important: The expression will be called in a while loop fashion, until the expression returns null which means the dynamic router is finished." },
+    "uriDelimiter": { "kind": "attribute", "displayName": "Uri Delimiter", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": ",", "description": "Sets the uri delimiter to use" },
+    "ignoreInvalidEndpoints": { "kind": "attribute", "displayName": "Ignore Invalid Endpoints", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Ignore the invalidate endpoint exception when try to create a producer with that endpoint" },
+    "cacheSize": { "kind": "attribute", "displayName": "Cache Size", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the maximum size used by the org.apache.camel.spi.ProducerCache which is used to cache and reuse producers when using this dynamic router, when uris are reused." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

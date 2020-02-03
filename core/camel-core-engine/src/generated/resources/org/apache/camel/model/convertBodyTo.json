@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "convertBodyTo",
+    "title": "Convert Body To",
+    "description": "Converts the message body to another type",
+    "javaType": "org.apache.camel.model.ConvertBodyDefinition",
+    "label": "eip,transformation",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "type": { "kind": "attribute", "displayName": "Type", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The java type to convert to" },
+    "charset": { "kind": "attribute", "displayName": "Charset", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To use a specific charset when converting" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

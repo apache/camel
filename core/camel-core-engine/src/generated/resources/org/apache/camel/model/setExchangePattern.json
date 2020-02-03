@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "setExchangePattern",
+    "title": "Set Exchange Pattern",
+    "description": "Sets the exchange pattern on the message exchange",
+    "javaType": "org.apache.camel.model.SetExchangePatternDefinition",
+    "label": "configuration",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "pattern": { "kind": "attribute", "displayName": "Pattern", "required": true, "type": "enum", "javaType": "org.apache.camel.ExchangePattern", "enum": [ "InOnly", "InOptionalOut", "InOut" ], "deprecated": false, "secret": false, "description": "Sets the new exchange pattern of the Exchange to be used from this point forward" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

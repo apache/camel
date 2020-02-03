@@ -1,0 +1,12 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "dummy-component",
+    "title": "Dummy Component",
+    "description": "Camel Dummy Component",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "dummy-component",
+    "version": "3.1.0-SNAPSHOT"
+  }
+}
