@@ -72,7 +72,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *metricsType* | *Required* Type of metrics |  | Type
+| *metricsType* | *Required* Type of metrics. The value can be one of: COUNTER, GAUGE, LONG_TASK_TIMER, TIMER, DISTRIBUTION_SUMMARY, OTHER |  | Type
 | *metricsName* | *Required* Name of metrics |  | String
 | *tags* | Tags of metrics |  | Iterable
 |===

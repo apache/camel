@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "propertiesLocation",
+    "title": "Properties Location",
+    "description": "Properties to use with properties placeholder",
+    "javaType": "org.apache.camel.core.xml.CamelPropertyPlaceholderLocationDefinition",
+    "label": "spring,configuration",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "resolver": { "kind": "attribute", "displayName": "Resolver", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "classpath", "description": "The resolver to use to locate the location" },
+    "path": { "kind": "attribute", "displayName": "Path", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Property locations to use." },
+    "optional": { "kind": "attribute", "displayName": "Optional", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "If the location is optional." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

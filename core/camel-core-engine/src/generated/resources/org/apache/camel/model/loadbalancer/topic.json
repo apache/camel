@@ -1,0 +1,16 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "topic",
+    "title": "Topic",
+    "description": "Topic load balancer The topic load balancer sends to all destinations (rather like JMS Topics)",
+    "javaType": "org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition",
+    "label": "eip,routing,loadbalance",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "wireTap",
+    "title": "Wire Tap",
+    "description": "Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.",
+    "javaType": "org.apache.camel.model.WireTapDefinition",
+    "label": "eip,endpoint,routing",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "processorRef": { "kind": "attribute", "displayName": "Processor Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Reference to a Processor to use for creating a new body as the message to use for wire tapping" },
+    "body": { "kind": "expression", "displayName": "Body", "required": false, "type": "object", "javaType": "org.apache.camel.model.ExpressionSubElementDefinition", "oneOf": [ "constant", "exchangeProperty", "groovy", "header", "hl7terser", "jsonpath", "language", "method", "mvel", "ognl", "ref", "simple", "spel", "tokenize", "xpath", "xquery", "xtokenize" ], "deprecated": false, "secret": false, "description": "Uses the expression for creating a new body as the message to use for wire tapping" },
+    "executorServiceRef": { "kind": "attribute", "displayName": "Executor Service Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Uses a custom thread pool" },
+    "copy": { "kind": "attribute", "displayName": "Copy", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "true", "description": "Uses a copy of the original exchange" },
+    "dynamicUri": { "kind": "attribute", "displayName": "Dynamic Uri", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "true", "description": "Whether the uri is dynamic or static. If the uri is dynamic then the simple language is used to evaluate a dynamic uri to use as the wire-tap destination, for each incoming message. This works similar to how the toD EIP pattern works. If static then the uri is used as-is as the wire-tap destination." },
+    "onPrepareRef": { "kind": "attribute", "displayName": "On Prepare Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Uses the Processor when preparing the org.apache.camel.Exchange to be send. This can be used to deep-clone messages that should be send, or any custom logic needed before the exchange is send." },
+    "uri": { "kind": "attribute", "displayName": "Uri", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression." },
+    "pattern": { "kind": "attribute", "displayName": "Pattern", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the optional ExchangePattern used to invoke this endpoint" },
+    "cacheSize": { "kind": "attribute", "displayName": "Cache Size", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the maximum size used by the org.apache.camel.spi.ConsumerCache which is used to cache and reuse producers." },
+    "ignoreInvalidEndpoint": { "kind": "attribute", "displayName": "Ignore Invalid Endpoint", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Ignore the invalidate endpoint exception when try to create a producer with that endpoint" },
+    "allowOptimisedComponents": { "kind": "attribute", "displayName": "Allow Optimised Components", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "true", "description": "Whether to allow components to optimise toD if they are org.apache.camel.spi.SendDynamicAware ." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

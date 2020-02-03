@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "transform",
+    "title": "Transform",
+    "description": "Transforms the message body based on an expression",
+    "javaType": "org.apache.camel.model.TransformDefinition",
+    "label": "eip,transformation",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "expression": { "kind": "expression", "displayName": "Expression", "required": true, "type": "object", "javaType": "org.apache.camel.model.language.ExpressionDefinition", "oneOf": [ "constant", "exchangeProperty", "groovy", "header", "hl7terser", "jsonpath", "language", "method", "mvel", "ognl", "ref", "simple", "spel", "tokenize", "xpath", "xquery", "xtokenize" ], "deprecated": false, "secret": false, "description": "Expression to return the transformed message body (the new message body to use)" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

@@ -761,7 +761,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 
 | xref:bean-language.adoc[Bean method] (camel-bean) | 1.3 | To use a Java bean (aka method call) in Camel expressions or predicates.
 
-| xref:constant-language.adoc[Constant] (camel-base) | 1.5 | To use a constant value in Camel expressions or predicates.
+| xref:constant-language.adoc[Constant] (camel-base) | 1.5 | To use a constant value in Camel expressions or predicates. Important: this is a fixed constant value that is only set once during starting up the route, do not use this if you want dynamic values during routing.
 
 | xref:exchangeProperty-language.adoc[ExchangeProperty] (camel-base) | 2.0 | To use a Camel Exchange property in expressions or predicates.
 
@@ -798,7 +798,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 36 in 36 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 44 in 44 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -808,11 +808,19 @@ Number of Miscellaneous Components: 36 in 36 JAR artifacts (0 deprecated)
 
 | xref:aws-xray.adoc[AWS XRay] (camel-aws-xray) | 2.21 | Distributed tracing using AWS XRay
 
+| xref:aws2-kms.adoc[Aws2 Kms] (camel-aws2-kms) |  | A Camel Amazon KMS Web Service Component Version 2
+
+| xref:aws2-mq.adoc[Aws2 Mq] (camel-aws2-mq) |  | A Camel Amazon MQ Web Service Component Version 2
+
+| xref:aws2-msk.adoc[Aws2 Msk] (camel-aws2-msk) |  | A Camel Amazon MSK Web Service Component Version 2
+
 | xref:blueprint.adoc[Blueprint] (camel-blueprint) | 2.4 | Using Camel with OSGi Blueprint
 
 | xref:cdi.adoc[CDI] (camel-cdi) | 2.10 | Using Camel with CDI
 
 | xref:cxf-transport.adoc[CXF Transport] (camel-cxf-transport) | 2.8 | Camel Transport for Apache CXF
+
+| xref:fhir.adoc[Fhir] (camel-fhir) |  | Camel FHIR HL7 support
 
 | xref:hystrix.adoc[Hystrix] (camel-hystrix) | 2.18 | Circuit Breaker EIP using Netflix Hystrix
 
@@ -827,6 +835,10 @@ Number of Miscellaneous Components: 36 in 36 JAR artifacts (0 deprecated)
 | xref:microprofile-config.adoc[Microprofile Config] (camel-microprofile-config) | 3.0 | Bridging Eclipse MicroProfile Config with Camel properties
 
 | xref:microprofile-health.adoc[Microprofile Health] (camel-microprofile-health) | 3.0 | Bridging Eclipse MicroProfile Health with Camel health checks
+
+| xref:olingo2.adoc[Olingo2] (camel-olingo2) |  | Camel Olingo2 component
+
+| xref:olingo4.adoc[Olingo4] (camel-olingo4) |  | Camel Olingo4 component
 
 | xref:openapi-java.adoc[Openapi Java] (camel-openapi-java) | 3.1 | Rest-dsl support for using openapi doc
 
@@ -843,6 +855,10 @@ Number of Miscellaneous Components: 36 in 36 JAR artifacts (0 deprecated)
 | xref:ribbon.adoc[Ribbon] (camel-ribbon) | 2.18 | Using Netflix Ribbon for client side load balancing
 
 | xref:rxjava.adoc[RxJava] (camel-rxjava) | 2.22 | RxJava based back-end for Camel's reactive streams component
+
+| xref:salesforce.adoc[Salesforce] (camel-salesforce) |  | Camel Salesforce support
+
+| xref:servicenow.adoc[Servicenow] (camel-servicenow) |  | Camel ServiceNow support
 
 | xref:shiro.adoc[Shiro] (camel-shiro) | 2.5 | Security using Shiro
 

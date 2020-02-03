@@ -1,0 +1,24 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "onCompletion",
+    "title": "On Completion",
+    "description": "Route to be executed when normal route processing completes",
+    "javaType": "org.apache.camel.model.OnCompletionDefinition",
+    "label": "configuration",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "mode": { "kind": "attribute", "displayName": "Mode", "required": false, "type": "enum", "javaType": "org.apache.camel.model.OnCompletionMode", "enum": [ "AfterConsumer", "BeforeConsumer" ], "deprecated": false, "secret": false, "defaultValue": "AfterConsumer", "description": "Sets the on completion mode. The default value is AfterConsumer" },
+    "onCompleteOnly": { "kind": "attribute", "displayName": "On Complete Only", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Will only synchronize when the org.apache.camel.Exchange completed successfully (no errors)." },
+    "onFailureOnly": { "kind": "attribute", "displayName": "On Failure Only", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Will only synchronize when the org.apache.camel.Exchange ended with failure (exception or FAULT message)." },
+    "onWhen": { "kind": "element", "displayName": "On When", "required": false, "type": "object", "javaType": "org.apache.camel.model.WhenDefinition", "deprecated": false, "secret": false, "asPredicate": true, "description": "Sets an additional predicate that should be true before the onCompletion is triggered. To be used for fine grained controlling whether a completion callback should be invoked or not" },
+    "parallelProcessing": { "kind": "attribute", "displayName": "Parallel Processing", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "If enabled then the on completion process will run asynchronously by a separate thread from a thread pool. By default this is false, meaning the on completion process will run synchronously using the same caller thread as from the route." },
+    "executorServiceRef": { "kind": "attribute", "displayName": "Executor Service Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Refers to a custom Thread Pool to be used for parallel processing. Notice if you set this option, then parallel processing is automatic implied, and you do not have to enable that option as well." },
+    "useOriginalMessage": { "kind": "attribute", "displayName": "Use Original Message", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Will use the original input message body when an org.apache.camel.Exchange for this on completion. By default this feature is off." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

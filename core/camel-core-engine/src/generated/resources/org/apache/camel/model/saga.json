@@ -1,0 +1,24 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "saga",
+    "title": "Saga",
+    "description": "Enables sagas on the route",
+    "javaType": "org.apache.camel.model.SagaDefinition",
+    "label": "eip,routing",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "propagation": { "kind": "attribute", "displayName": "Propagation", "required": false, "type": "enum", "javaType": "org.apache.camel.model.SagaPropagation", "enum": [ "MANDATORY", "NEVER", "NOT_SUPPORTED", "REQUIRED", "REQUIRES_NEW", "SUPPORTS" ], "deprecated": false, "secret": false, "defaultValue": "REQUIRED", "description": "Set the Saga propagation mode (REQUIRED, REQUIRES_NEW, MANDATORY, SUPPORTS, NOT_SUPPORTED, NEVER)." },
+    "completionMode": { "kind": "attribute", "displayName": "Completion Mode", "required": false, "type": "enum", "javaType": "org.apache.camel.model.SagaCompletionMode", "enum": [ "AUTO", "MANUAL" ], "deprecated": false, "secret": false, "defaultValue": "AUTO", "description": "Determine how the saga should be considered complete. When set to AUTO, the saga is completed when the exchange that initiates the saga is processed successfully, or compensated when it completes exceptionally. When set to MANUAL, the user must complete or compensate the saga using the saga:complete or saga:compensate endpoints." },
+    "timeoutInMilliseconds": { "kind": "attribute", "displayName": "Timeout In Milliseconds", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "secret": false, "description": "Set the maximum amount of time for the Saga. After the timeout is expired, the saga will be compensated automatically (unless a different decision has been taken in the meantime)." },
+    "compensation": { "kind": "element", "displayName": "Compensation", "required": false, "type": "object", "javaType": "org.apache.camel.model.SagaActionUriDefinition", "deprecated": false, "secret": false, "description": "The compensation endpoint URI that must be called to compensate all changes done in the route. The route corresponding to the compensation URI must perform compensation and complete without error. If errors occur during compensation, the saga service may call again the compensation URI to retry." },
+    "completion": { "kind": "element", "displayName": "Completion", "required": false, "type": "object", "javaType": "org.apache.camel.model.SagaActionUriDefinition", "deprecated": false, "secret": false, "description": "The completion endpoint URI that will be called when the Saga is completed successfully. The route corresponding to the completion URI must perform completion tasks and terminate without error. If errors occur during completion, the saga service may call again the completion URI to retry." },
+    "option": { "kind": "element", "displayName": "Option", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.SagaOptionDefinition>", "deprecated": false, "secret": false, "description": "Allows to save properties of the current exchange in order to re-use them in a compensation\/completion callback route. Options are usually helpful e.g. to store and retrieve identifiers of objects that should be deleted in compensating actions. Option values will be transformed into input headers of the compensation\/completion exchange." },
+    "sagaServiceRef": { "kind": "attribute", "displayName": "Saga Service Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Refers to the id to lookup in the registry for the specific CamelSagaService to use." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "combinedServiceDiscovery",
+    "title": "Combined Service Discovery",
+    "javaType": "org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration",
+    "label": "routing,cloud,service-discovery",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "serviceDiscoveryConfigurations": { "kind": "element", "displayName": "Service Discovery Configurations", "required": true, "type": "array", "javaType": "java.util.List<org.apache.camel.model.cloud.ServiceCallServiceDiscoveryConfiguration>", "oneOf": [ "cachingServiceDiscovery", "consulServiceDiscovery", "dnsServiceDiscovery", "etcdServiceDiscovery", "kubernetesServiceDiscovery", "staticServiceDiscovery" ], "deprecated": false, "secret": false, "description": "List of ServiceDiscovery configuration to use" },
+    "properties": { "kind": "element", "displayName": "Properties", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.PropertyDefinition>", "deprecated": false, "secret": false, "description": "Set client properties to use. These properties are specific to what service call implementation are in use. For example if using ribbon, then the client properties are define in com.netflix.client.config.CommonClientConfigKey." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

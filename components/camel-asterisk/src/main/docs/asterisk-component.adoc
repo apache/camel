@@ -62,7 +62,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *name* | *Required* Logical name |  | String
+| *name* | *Required* Name of component |  | String
 |===
 
 

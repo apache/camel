@@ -69,7 +69,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *metricsType* | *Required* Type of metrics. The value can be one of: GAUGE, COUNTER, HISTOGRAM, METER, TIMER |  | MetricsType
+| *metricsType* | *Required* Type of metrics. The value can be one of: gauge, counter, histogram, meter, timer |  | MetricsType
 | *metricsName* | *Required* Name of metrics |  | String
 |===
 

@@ -1,0 +1,40 @@
+{
+  "component": {
+    "kind": "component",
+    "scheme": "flink",
+    "extendsScheme": "",
+    "syntax": "flink:endpointType",
+    "title": "Flink",
+    "description": "The flink component can be used to send DataSet jobs to Apache Flink cluster.",
+    "label": "hadoop",
+    "deprecated": false,
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "javaType": "org.apache.camel.component.flink.FlinkComponent",
+    "firstVersion": "2.18.0",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-flink",
+    "version": "3.1.0-SNAPSHOT"
+  },
+  "componentProperties": {
+    "dataSet": { "kind": "property", "displayName": "Data Set", "group": "producer", "required": false, "type": "object", "javaType": "org.apache.flink.api.java.DataSet", "deprecated": false, "secret": false, "description": "DataSet to compute against." },
+    "dataStream": { "kind": "property", "displayName": "Data Stream", "group": "producer", "required": false, "type": "object", "javaType": "org.apache.flink.streaming.api.datastream.DataStream", "deprecated": false, "secret": false, "description": "DataStream to compute against." },
+    "dataSetCallback": { "kind": "property", "displayName": "Data Set Callback", "group": "producer", "required": false, "type": "object", "javaType": "org.apache.camel.component.flink.DataSetCallback", "deprecated": false, "secret": false, "description": "Function performing action against a DataSet." },
+    "dataStreamCallback": { "kind": "property", "displayName": "Data Stream Callback", "group": "producer", "required": false, "type": "object", "javaType": "org.apache.camel.component.flink.DataStreamCallback", "deprecated": false, "secret": false, "description": "Function performing action against a DataStream." },
+    "basicPropertyBinding": { "kind": "property", "displayName": "Basic Property Binding", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities" },
+    "lazyStartProducer": { "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." }
+  },
+  "properties": {
+    "endpointType": { "kind": "path", "displayName": "Endpoint Type", "group": "producer", "label": "", "required": true, "type": "object", "javaType": "org.apache.camel.component.flink.EndpointType", "enum": [ "dataset", "datastream" ], "deprecated": false, "deprecationNote": "", "secret": false, "description": "Type of the endpoint (dataset, datastream)." },
+    "collect": { "kind": "parameter", "displayName": "Collect", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": "true", "description": "Indicates if results should be collected or counted." },
+    "dataSet": { "kind": "parameter", "displayName": "Data Set", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "org.apache.flink.api.java.DataSet", "deprecated": false, "secret": false, "description": "DataSet to compute against." },
+    "dataSetCallback": { "kind": "parameter", "displayName": "Data Set Callback", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "org.apache.camel.component.flink.DataSetCallback", "deprecated": false, "secret": false, "description": "Function performing action against a DataSet." },
+    "dataStream": { "kind": "parameter", "displayName": "Data Stream", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "org.apache.flink.streaming.api.datastream.DataStream", "deprecated": false, "secret": false, "description": "DataStream to compute against." },
+    "dataStreamCallback": { "kind": "parameter", "displayName": "Data Stream Callback", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "org.apache.camel.component.flink.DataStreamCallback", "deprecated": false, "secret": false, "description": "Function performing action against a DataStream." },
+    "lazyStartProducer": { "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "basicPropertyBinding": { "kind": "parameter", "displayName": "Basic Property Binding", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities" },
+    "synchronous": { "kind": "parameter", "displayName": "Synchronous", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": "false", "description": "Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported)." }
+  }
+}

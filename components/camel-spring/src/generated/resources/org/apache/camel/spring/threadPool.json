@@ -1,0 +1,26 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "threadPool",
+    "title": "Thread Pool",
+    "description": "Configuration of thread pools",
+    "javaType": "org.apache.camel.spring.CamelThreadPoolFactoryBean",
+    "label": "spring,configuration",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "poolSize": { "kind": "attribute", "displayName": "Pool Size", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the core pool size (threads to keep minimum in pool)" },
+    "maxPoolSize": { "kind": "attribute", "displayName": "Max Pool Size", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the maximum pool size" },
+    "keepAliveTime": { "kind": "attribute", "displayName": "Keep Alive Time", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the keep alive time for inactive threads" },
+    "timeUnit": { "kind": "attribute", "displayName": "Time Unit", "required": false, "type": "enum", "javaType": "java.util.concurrent.TimeUnit", "enum": [ "DAYS", "HOURS", "MICROSECONDS", "MILLISECONDS", "MINUTES", "NANOSECONDS", "SECONDS" ], "deprecated": false, "secret": false, "defaultValue": "SECONDS", "description": "Sets the time unit used for keep alive time" },
+    "maxQueueSize": { "kind": "attribute", "displayName": "Max Queue Size", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the maximum number of tasks in the work queue. Use -1 for an unbounded queue" },
+    "allowCoreThreadTimeOut": { "kind": "attribute", "displayName": "Allow Core Thread Time Out", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets whether to allow core threads to timeout" },
+    "rejectedPolicy": { "kind": "attribute", "displayName": "Rejected Policy", "required": false, "type": "enum", "javaType": "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy", "enum": [ "Abort", "CallerRuns", "Discard", "DiscardOldest" ], "deprecated": false, "secret": false, "defaultValue": "CallerRuns", "description": "Sets the handler for tasks which cannot be executed by the thread pool." },
+    "threadName": { "kind": "attribute", "displayName": "Thread Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To use a custom thread name \/ pattern" },
+    "scheduled": { "kind": "attribute", "displayName": "Scheduled", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether to use a scheduled thread pool" },
+    "camelContextId": { "kind": "attribute", "displayName": "Camel Context Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Id of CamelContext to use if there are multiple CamelContexts in the same JVM" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

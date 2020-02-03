@@ -1,0 +1,25 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "consulServiceDiscovery",
+    "title": "Consul Service Discovery",
+    "javaType": "org.apache.camel.model.cloud.ConsulServiceCallServiceDiscoveryConfiguration",
+    "label": "routing,cloud,service-discovery",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "url": { "kind": "attribute", "displayName": "Url", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The Consul agent URL" },
+    "datacenter": { "kind": "attribute", "displayName": "Datacenter", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The data center" },
+    "aclToken": { "kind": "attribute", "displayName": "Acl Token", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the ACL token to be used with Consul" },
+    "userName": { "kind": "attribute", "displayName": "User Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the username to be used for basic authentication" },
+    "password": { "kind": "attribute", "displayName": "Password", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the password to be used for basic authentication" },
+    "connectTimeoutMillis": { "kind": "attribute", "displayName": "Connect Timeout Millis", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "secret": false, "description": "Connect timeout for OkHttpClient" },
+    "readTimeoutMillis": { "kind": "attribute", "displayName": "Read Timeout Millis", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "secret": false, "description": "Read timeout for OkHttpClient" },
+    "writeTimeoutMillis": { "kind": "attribute", "displayName": "Write Timeout Millis", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "secret": false, "description": "Write timeout for OkHttpClient" },
+    "blockSeconds": { "kind": "attribute", "displayName": "Block Seconds", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "defaultValue": "10", "description": "The seconds to wait for a watch event, default 10 seconds" },
+    "properties": { "kind": "element", "displayName": "Properties", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.PropertyDefinition>", "deprecated": false, "secret": false, "description": "Set client properties to use. These properties are specific to what service call implementation are in use. For example if using ribbon, then the client properties are define in com.netflix.client.config.CommonClientConfigKey." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

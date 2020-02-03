@@ -111,7 +111,7 @@ with the following path and query parameters:
 | *timeout* (producer) | Timeout (in milliseconds) before a SEDA producer will stop waiting for an asynchronous task to complete. You can disable timeout by using 0 or a negative value. | 30000 | long
 | *waitForTaskToComplete* (producer) | Option to specify whether the caller should wait for the async task to complete or not before continuing. The following three options are supported: Always, Never or IfReplyExpected. The first two values are self-explanatory. The last value, IfReplyExpected, will only wait if the message is Request Reply based. The default option is IfReplyExpected. The value can be one of: Never, IfReplyExpected, Always | IfReplyExpected | WaitForTaskToComplete
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *queue* (advanced) | Define the queue instance which will be used by the endpoint. This option is only for rare use-cases where you want to use a custom queue instance. |  | BlockingQueue
+| *queue* (advanced) | Define the queue instance which will be used by the endpoint |  | BlockingQueue
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END

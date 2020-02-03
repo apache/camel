@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "avro",
+    "title": "Avro",
+    "description": "The Avro data format is used for serialization and deserialization of messages using Apache Avro binary dataformat.",
+    "firstVersion": "2.14.0",
+    "javaType": "org.apache.camel.model.dataformat.AvroDataFormat",
+    "label": "dataformat,transformation",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "instanceClassName": { "kind": "attribute", "displayName": "Instance Class Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Class name to use for marshal and unmarshalling" },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

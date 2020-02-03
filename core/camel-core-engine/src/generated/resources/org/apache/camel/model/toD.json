@@ -1,0 +1,22 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "toD",
+    "title": "To D",
+    "description": "Sends the message to a dynamic endpoint You can specify multiple languages in the uri separated by the plus sign, such as mock:language:xpath:\/order\/uri where mock: would be a prefix to a xpath expression. For more dynamic behavior use Recipient List or Dynamic Router EIP instead.",
+    "javaType": "org.apache.camel.model.ToDynamicDefinition",
+    "label": "eip,endpoint,routing",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "uri": { "kind": "attribute", "displayName": "Uri", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression." },
+    "pattern": { "kind": "attribute", "displayName": "Pattern", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the optional ExchangePattern used to invoke this endpoint" },
+    "cacheSize": { "kind": "attribute", "displayName": "Cache Size", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the maximum size used by the org.apache.camel.spi.ConsumerCache which is used to cache and reuse producers." },
+    "ignoreInvalidEndpoint": { "kind": "attribute", "displayName": "Ignore Invalid Endpoint", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Ignore the invalidate endpoint exception when try to create a producer with that endpoint" },
+    "allowOptimisedComponents": { "kind": "attribute", "displayName": "Allow Optimised Components", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "true", "description": "Whether to allow components to optimise toD if they are org.apache.camel.spi.SendDynamicAware ." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

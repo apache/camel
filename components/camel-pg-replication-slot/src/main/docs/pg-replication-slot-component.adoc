@@ -69,11 +69,11 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *slot* | *Required* Replication slot name. |  | String
-| *host* | PostgreSQL server host | localhost | String
-| *port* | PostgreSQL server port | 5432 | Integer
-| *database* | *Required* PostgreSQL database name |  | String
-| *outputPlugin* | *Required* Output plugin name (e.g. test_decoding, wal2json) |  | String
+| *slot* | *Required* Replication Slot name |  | String
+| *host* | Postgres host | localhost | String
+| *port* | Postgres port | 5432 | Integer
+| *database* | *Required* Postgres database name |  | String
+| *outputPlugin* | *Required* Output plugin name |  | String
 |===
 
 
@@ -83,8 +83,8 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *password* (common) | PostgreSQL password |  | String
-| *user* (common) | PostgreSQL username | postgres | String
+| *password* (common) | Postgres password |  | String
+| *user* (common) | Postgres user | postgres | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler

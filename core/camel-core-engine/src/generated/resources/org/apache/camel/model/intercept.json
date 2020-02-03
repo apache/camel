@@ -1,0 +1,17 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "intercept",
+    "title": "Intercept",
+    "description": "Intercepts a message at each step in the route",
+    "javaType": "org.apache.camel.model.InterceptDefinition",
+    "label": "configuration",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

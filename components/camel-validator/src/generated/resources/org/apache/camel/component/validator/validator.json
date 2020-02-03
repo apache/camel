@@ -1,0 +1,41 @@
+{
+  "component": {
+    "kind": "component",
+    "scheme": "validator",
+    "extendsScheme": "",
+    "syntax": "validator:resourceUri",
+    "title": "Validator",
+    "description": "Validates the payload of a message using XML Schema and JAXP Validation.",
+    "label": "core,validation",
+    "deprecated": false,
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "javaType": "org.apache.camel.component.validator.ValidatorComponent",
+    "firstVersion": "1.1.0",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-validator",
+    "version": "3.1.0-SNAPSHOT"
+  },
+  "componentProperties": {
+    "resourceResolverFactory": { "kind": "property", "displayName": "Resource Resolver Factory", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.component.validator.ValidatorResourceResolverFactory", "deprecated": false, "secret": false, "description": "To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI" },
+    "basicPropertyBinding": { "kind": "property", "displayName": "Basic Property Binding", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities" },
+    "lazyStartProducer": { "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." }
+  },
+  "properties": {
+    "resourceUri": { "kind": "path", "displayName": "Resource Uri", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "secret": false, "description": "URL to a local resource on the classpath, or a reference to lookup a bean in the Registry, or a full URL to a remote resource or resource on the file system which contains the XSD to validate against." },
+    "failOnNullBody": { "kind": "parameter", "displayName": "Fail On Null Body", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": "true", "description": "Whether to fail if no body exists." },
+    "failOnNullHeader": { "kind": "parameter", "displayName": "Fail On Null Header", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": "true", "description": "Whether to fail if no header exists when validating against a header." },
+    "headerName": { "kind": "parameter", "displayName": "Header Name", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To validate against a header instead of the message body." },
+    "lazyStartProducer": { "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "basicPropertyBinding": { "kind": "parameter", "displayName": "Basic Property Binding", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities" },
+    "errorHandler": { "kind": "parameter", "displayName": "Error Handler", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.support.processor.validation.ValidatorErrorHandler", "deprecated": false, "secret": false, "description": "To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception." },
+    "resourceResolver": { "kind": "parameter", "displayName": "Resource Resolver", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.w3c.dom.ls.LSResourceResolver", "deprecated": false, "secret": false, "description": "To use a custom LSResourceResolver. Do not use together with resourceResolverFactory" },
+    "resourceResolverFactory": { "kind": "parameter", "displayName": "Resource Resolver Factory", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.component.validator.ValidatorResourceResolverFactory", "deprecated": false, "secret": false, "description": "To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI. The default resource resolver factory resturns a resource resolver which can read files from the class path and file system. Do not use together with resourceResolver." },
+    "schemaFactory": { "kind": "parameter", "displayName": "Schema Factory", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "javax.xml.validation.SchemaFactory", "deprecated": false, "secret": false, "description": "To use a custom javax.xml.validation.SchemaFactory" },
+    "schemaLanguage": { "kind": "parameter", "displayName": "Schema Language", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "http:\/\/www.w3.org\/2001\/XMLSchema", "description": "Configures the W3C XML Schema Namespace URI." },
+    "synchronous": { "kind": "parameter", "displayName": "Synchronous", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": "false", "description": "Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported)." },
+    "useSharedSchema": { "kind": "parameter", "displayName": "Use Shared Schema", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": "true", "description": "Whether the Schema instance should be shared or not. This option is introduced to work around a JDK 1.6.x bug. Xerces should not have this issue." }
+  }
+}

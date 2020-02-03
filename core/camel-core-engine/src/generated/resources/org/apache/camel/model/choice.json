@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "choice",
+    "title": "Choice",
+    "description": "Routes messages based on a series of predicates",
+    "javaType": "org.apache.camel.model.ChoiceDefinition",
+    "label": "eip,routing",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "whenClauses": { "kind": "element", "displayName": "When Clauses", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.WhenDefinition>", "oneOf": [ "when" ], "deprecated": false, "secret": false, "asPredicate": true, "description": "Sets the when clauses" },
+    "otherwise": { "kind": "element", "displayName": "Otherwise", "required": false, "type": "object", "javaType": "org.apache.camel.model.OtherwiseDefinition", "oneOf": [ "otherwise" ], "deprecated": false, "secret": false, "description": "Sets the otherwise node" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "component": {
+    "kind": "component",
+    "scheme": "mybatis-bean",
+    "extendsScheme": "",
+    "syntax": "mybatis-bean:beanName:methodName",
+    "title": "MyBatis Bean",
+    "description": "Performs a query, insert, update or delete in a relational database using MyBatis.",
+    "label": "database,sql",
+    "deprecated": false,
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "javaType": "org.apache.camel.component.mybatis.MyBatisBeanComponent",
+    "firstVersion": "2.22.0",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-mybatis",
+    "version": "3.1.0-SNAPSHOT"
+  },
+  "componentProperties": {
+    "sqlSessionFactory": { "kind": "property", "displayName": "Sql Session Factory", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.ibatis.session.SqlSessionFactory", "deprecated": false, "secret": false, "description": "To use the SqlSessionFactory" },
+    "configurationUri": { "kind": "property", "displayName": "Configuration Uri", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "SqlMapConfig.xml", "description": "Location of MyBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath" },
+    "basicPropertyBinding": { "kind": "property", "displayName": "Basic Property Binding", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities" },
+    "lazyStartProducer": { "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." }
+  },
+  "properties": {
+    "beanName": { "kind": "path", "displayName": "Bean Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "secret": false, "description": "Name of the bean with the MyBatis annotations. This can either by a type alias or a FQN class name." },
+    "methodName": { "kind": "path", "displayName": "Method Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "secret": false, "description": "Name of the method on the bean that has the SQL query to be executed." },
+    "executorType": { "kind": "parameter", "displayName": "Executor Type", "group": "producer", "label": "producer", "required": false, "type": "object", "javaType": "org.apache.ibatis.session.ExecutorType", "enum": [ "SIMPLE", "REUSE", "BATCH" ], "deprecated": false, "secret": false, "defaultValue": "SIMPLE", "description": "The executor type to be used while executing statements. simple - executor does nothing special. reuse - executor reuses prepared statements. batch - executor reuses statements and batches updates." },
+    "inputHeader": { "kind": "parameter", "displayName": "Input Header", "group": "producer", "label": "producer", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "User the header value for input parameters instead of the message body. By default, inputHeader == null and the input parameters are taken from the message body. If outputHeader is set, the value is used and query parameters will be taken from the header instead of the body." },
+    "lazyStartProducer": { "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "outputHeader": { "kind": "parameter", "displayName": "Output Header", "group": "producer", "label": "producer", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Store the query result in a header instead of the message body. By default, outputHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If outputHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. Setting outputHeader will also omit populating the default CamelMyBatisResult header since it would be the same as outputHeader all the time." },
+    "basicPropertyBinding": { "kind": "parameter", "displayName": "Basic Property Binding", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities" },
+    "synchronous": { "kind": "parameter", "displayName": "Synchronous", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": "false", "description": "Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported)." }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "routeContextRef",
+    "title": "Route Context Ref",
+    "description": "To refer to an XML file with routes defined using the xml-dsl",
+    "javaType": "org.apache.camel.model.RouteContextRefDefinition",
+    "label": "configuration",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "ref": { "kind": "attribute", "displayName": "Ref", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Reference to the routes in the xml dsl" }
+  }
+}

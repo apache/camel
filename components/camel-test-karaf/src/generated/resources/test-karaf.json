@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "test-karaf",
+    "title": "Test Karaf",
+    "description": "Camel integration testing with Apache Karaf",
+    "deprecated": false,
+    "firstVersion": "2.18.0",
+    "label": "testing,java,osgi",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-test-karaf",
+    "version": "3.1.0-SNAPSHOT"
+  }
+}

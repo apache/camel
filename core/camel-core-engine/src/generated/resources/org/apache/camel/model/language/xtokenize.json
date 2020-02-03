@@ -1,0 +1,21 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "xtokenize",
+    "title": "XML Tokenize",
+    "description": "To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.",
+    "firstVersion": "2.14.0",
+    "javaType": "org.apache.camel.model.language.XMLTokenizerExpression",
+    "label": "language,core,xml",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "headerName": { "kind": "attribute", "displayName": "Header Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Name of header to tokenize instead of using the message body." },
+    "mode": { "kind": "attribute", "displayName": "Mode", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The extraction mode. The available extraction modes are: i - injecting the contextual namespace bindings into the extracted token (default) w - wrapping the extracted token in its ancestor context u - unwrapping the extracted token to its child content t - extracting the text content of the specified element" },
+    "group": { "kind": "attribute", "displayName": "Group", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "description": "To group N parts together" },
+    "trim": { "kind": "attribute", "displayName": "Trim", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" }
+  }
+}

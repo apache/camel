@@ -1,0 +1,22 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "etcdServiceDiscovery",
+    "title": "Etcd Service Discovery",
+    "javaType": "org.apache.camel.model.cloud.EtcdServiceCallServiceDiscoveryConfiguration",
+    "label": "routing,cloud,service-discovery",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "uris": { "kind": "attribute", "displayName": "Uris", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The URIs the client can connect to." },
+    "userName": { "kind": "attribute", "displayName": "User Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The user name to use for basic authentication." },
+    "password": { "kind": "attribute", "displayName": "Password", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The password to use for basic authentication." },
+    "timeout": { "kind": "attribute", "displayName": "Timeout", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "secret": false, "description": "To set the maximum time an action could take to complete." },
+    "servicePath": { "kind": "attribute", "displayName": "Service Path", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "\/services\/", "description": "The path to look for for service discovery" },
+    "type": { "kind": "attribute", "displayName": "Type", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "on-demand", "watch" ], "deprecated": false, "secret": false, "defaultValue": "on-demand", "description": "To set the discovery type, valid values are on-demand and watch." },
+    "properties": { "kind": "element", "displayName": "Properties", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.PropertyDefinition>", "deprecated": false, "secret": false, "description": "Set client properties to use. These properties are specific to what service call implementation are in use. For example if using ribbon, then the client properties are define in com.netflix.client.config.CommonClientConfigKey." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

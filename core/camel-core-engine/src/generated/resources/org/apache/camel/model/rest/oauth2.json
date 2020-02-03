@@ -1,0 +1,21 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "oauth2",
+    "title": "Oauth2",
+    "description": "Rest security OAuth2 definition",
+    "javaType": "org.apache.camel.model.rest.RestSecurityOAuth2",
+    "label": "rest,security",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "authorizationUrl": { "kind": "attribute", "displayName": "Authorization Url", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The authorization URL to be used for this flow. This SHOULD be in the form of a URL. Required for implicit and access code flows" },
+    "tokenUrl": { "kind": "attribute", "displayName": "Token Url", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The token URL to be used for this flow. This SHOULD be in the form of a URL. Required for password, application, and access code flows." },
+    "flow": { "kind": "attribute", "displayName": "Flow", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "accessCode", "application", "implicit", "password" ], "deprecated": false, "secret": false, "description": "The flow used by the OAuth2 security scheme. Valid values are implicit, password, application or accessCode." },
+    "scopes": { "kind": "element", "displayName": "Scopes", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestPropertyDefinition>", "deprecated": false, "secret": false, "description": "The available scopes for an OAuth2 security scheme" },
+    "key": { "kind": "attribute", "displayName": "Key", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Key used to refer to this security definition" },
+    "description": { "kind": "attribute", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "A short description for security scheme." }
+  }
+}

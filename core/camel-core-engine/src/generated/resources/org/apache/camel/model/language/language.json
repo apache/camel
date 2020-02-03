@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "language",
+    "title": "Language",
+    "description": "To use the specified language in Camel expressions or predicates.",
+    "javaType": "org.apache.camel.model.language.LanguageExpression",
+    "label": "language,core",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "expression": { "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The expression value in your chosen language syntax" },
+    "language": { "kind": "attribute", "displayName": "Language", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The name of the language to use" },
+    "trim": { "kind": "attribute", "displayName": "Trim", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "component": {
+    "kind": "component",
+    "scheme": "geocoder",
+    "extendsScheme": "",
+    "syntax": "geocoder:address:latlng",
+    "title": "Geocoder",
+    "description": "The geocoder component is used for looking up geocodes (latitude and longitude) for a given address, or reverse lookup.",
+    "label": "api,location",
+    "deprecated": false,
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "javaType": "org.apache.camel.component.geocoder.GeoCoderComponent",
+    "firstVersion": "2.12.0",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-geocoder",
+    "version": "3.1.0-SNAPSHOT"
+  },
+  "componentProperties": {
+    "basicPropertyBinding": { "kind": "property", "displayName": "Basic Property Binding", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities" },
+    "lazyStartProducer": { "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." }
+  },
+  "properties": {
+    "address": { "kind": "path", "displayName": "Address", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The geo address which should be prefixed with address:" },
+    "latlng": { "kind": "path", "displayName": "Latlng", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The geo latitude and longitude which should be prefixed with latlng:" },
+    "headersOnly": { "kind": "parameter", "displayName": "Headers Only", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether to only enrich the Exchange with headers, and leave the body as-is." },
+    "language": { "kind": "parameter", "displayName": "Language", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "en", "description": "The language to use." },
+    "lazyStartProducer": { "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "basicPropertyBinding": { "kind": "parameter", "displayName": "Basic Property Binding", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities" },
+    "synchronous": { "kind": "parameter", "displayName": "Synchronous", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": "false", "description": "Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported)." },
+    "proxyAuthDomain": { "kind": "parameter", "displayName": "Proxy Auth Domain", "group": "proxy", "label": "proxy", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Domain for proxy NTML authentication" },
+    "proxyAuthHost": { "kind": "parameter", "displayName": "Proxy Auth Host", "group": "proxy", "label": "proxy", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Optional host for proxy NTML authentication" },
+    "proxyAuthMethod": { "kind": "parameter", "displayName": "Proxy Auth Method", "group": "proxy", "label": "proxy", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Authentication method for proxy, either as Basic, Digest or NTLM." },
+    "proxyAuthPassword": { "kind": "parameter", "displayName": "Proxy Auth Password", "group": "proxy", "label": "proxy", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Password for proxy authentication" },
+    "proxyAuthUsername": { "kind": "parameter", "displayName": "Proxy Auth Username", "group": "proxy", "label": "proxy", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Username for proxy authentication" },
+    "proxyHost": { "kind": "parameter", "displayName": "Proxy Host", "group": "proxy", "label": "proxy", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The proxy host name" },
+    "proxyPort": { "kind": "parameter", "displayName": "Proxy Port", "group": "proxy", "label": "proxy", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "description": "The proxy port number" },
+    "apiKey": { "kind": "parameter", "displayName": "Api Key", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "To use google apiKey" },
+    "clientId": { "kind": "parameter", "displayName": "Client Id", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "To use google premium with this client id" },
+    "clientKey": { "kind": "parameter", "displayName": "Client Key", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "To use google premium with this client key" }
+  }
+}

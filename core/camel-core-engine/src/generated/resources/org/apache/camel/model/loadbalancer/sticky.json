@@ -1,0 +1,17 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "sticky",
+    "title": "Sticky",
+    "description": "Sticky load balancer Sticky load balancing using an Expression to calculate a correlation key to perform the sticky load balancing; rather like jsessionid in the web or JMSXGroupID in JMS.",
+    "javaType": "org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition",
+    "label": "eip,routing,loadbalance",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "correlationExpression": { "kind": "expression", "displayName": "Correlation Expression", "required": true, "type": "object", "javaType": "org.apache.camel.model.ExpressionSubElementDefinition", "oneOf": [ "constant", "exchangeProperty", "groovy", "header", "hl7terser", "jsonpath", "language", "method", "mvel", "ognl", "ref", "simple", "spel", "tokenize", "xpath", "xquery", "xtokenize" ], "deprecated": false, "secret": false, "description": "The correlation expression to use to calculate the correlation key" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

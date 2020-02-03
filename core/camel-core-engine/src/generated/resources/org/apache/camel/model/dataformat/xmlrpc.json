@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "xmlrpc",
+    "title": "XML RPC",
+    "description": "The XML RPC data format is used for working with the XML RPC protocol.",
+    "firstVersion": "2.11.0",
+    "javaType": "org.apache.camel.model.dataformat.XmlRpcDataFormat",
+    "label": "dataformat,transformation,xml",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "request": { "kind": "attribute", "displayName": "Request", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether to marshal\/unmarshal request or response Is by default false" },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

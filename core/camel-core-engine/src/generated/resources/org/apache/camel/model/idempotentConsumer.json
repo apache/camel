@@ -1,0 +1,23 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "idempotentConsumer",
+    "title": "Idempotent Consumer",
+    "description": "Filters out duplicate messages",
+    "javaType": "org.apache.camel.model.IdempotentConsumerDefinition",
+    "label": "eip,routing",
+    "deprecated": false,
+    "input": true,
+    "output": true
+  },
+  "properties": {
+    "expression": { "kind": "expression", "displayName": "Expression", "required": true, "type": "object", "javaType": "org.apache.camel.model.language.ExpressionDefinition", "oneOf": [ "constant", "exchangeProperty", "groovy", "header", "hl7terser", "jsonpath", "language", "method", "mvel", "ognl", "ref", "simple", "spel", "tokenize", "xpath", "xquery", "xtokenize" ], "deprecated": false, "secret": false, "description": "Expression used to calculate the correlation key to use for duplicate check. The Exchange which has the same correlation key is regarded as a duplicate and will be rejected." },
+    "messageIdRepositoryRef": { "kind": "attribute", "displayName": "Message Id Repository Ref", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the reference name of the message id repository" },
+    "eager": { "kind": "attribute", "displayName": "Eager", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "true", "description": "Sets whether to eagerly add the key to the idempotent repository or wait until the exchange is complete. Eager is default enabled." },
+    "completionEager": { "kind": "attribute", "displayName": "Completion Eager", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets whether to complete the idempotent consumer eager or when the exchange is done. If this option is true to complete eager, then the idempotent consumer will trigger its completion when the exchange reached the end of the block of the idempotent consumer pattern. So if the exchange is continued routed after the block ends, then whatever happens there does not affect the state. If this option is false (default) to not complete eager, then the idempotent consumer will complete when the exchange is done being routed. So if the exchange is continued routed after the block ends, then whatever happens there also affect the state. For example if the exchange failed due to an exception, then the state of the idempotent consumer will be a rollback." },
+    "skipDuplicate": { "kind": "attribute", "displayName": "Skip Duplicate", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "true", "description": "Sets whether to skip duplicates or not. The default behavior is to skip duplicates. A duplicate message would have the Exchange property org.apache.camel.Exchange#DUPLICATE_MESSAGE set to a Boolean#TRUE value. A none duplicate message will not have this property set." },
+    "removeOnFailure": { "kind": "attribute", "displayName": "Remove On Failure", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "true", "description": "Sets whether to remove or keep the key on failure. The default behavior is to remove the key on failure." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

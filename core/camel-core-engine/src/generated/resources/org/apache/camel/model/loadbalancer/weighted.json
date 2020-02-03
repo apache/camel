@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "weighted",
+    "title": "Weighted",
+    "description": "Weighted load balancer The weighted load balancing policy allows you to specify a processing load distribution ratio for each server with respect to others. In addition to the weight, endpoint selection is then further refined using random distribution based on weight.",
+    "javaType": "org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition",
+    "label": "eip,routing,loadbalance",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "roundRobin": { "kind": "attribute", "displayName": "Round Robin", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To enable round robin mode. By default the weighted distribution mode is used. The default value is false." },
+    "distributionRatio": { "kind": "attribute", "displayName": "Distribution Ratio", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The distribution ratio is a delimited String consisting on integer weights separated by delimiters for example 2,3,5. The distributionRatio must match the number of endpoints and\/or processors specified in the load balancer list." },
+    "distributionRatioDelimiter": { "kind": "attribute", "displayName": "Distribution Ratio Delimiter", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": ",", "description": "Delimiter used to specify the distribution ratio. The default value is ," },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

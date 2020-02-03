@@ -1,0 +1,16 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "dataFormats",
+    "title": "Data formats",
+    "description": "To configure data formats",
+    "javaType": "org.apache.camel.model.dataformat.DataFormatsDefinition",
+    "label": "dataformat,transformation",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "dataFormats": { "kind": "element", "displayName": "Data Formats", "required": true, "type": "array", "javaType": "java.util.List<org.apache.camel.model.DataFormatDefinition>", "oneOf": [ "any23", "asn1", "avro", "barcode", "base64", "beanio", "bindy", "cbor", "crypto", "csv", "custom", "fhirJson", "fhirXml", "flatpack", "grok", "gzip", "hl7", "ical", "jacksonxml", "jaxb", "json", "jsonApi", "lzf", "mimeMultipart", "pgp", "protobuf", "rss", "secureXML", "soapjaxb", "syslog", "tarfile", "thrift", "tidyMarkup", "univocity-csv", "univocity-fixed", "univocity-tsv", "xmlrpc", "xstream", "yaml", "zip", "zipfile" ], "deprecated": false, "secret": false, "description": "A list holding the configured data formats" }
+  }
+}

@@ -68,7 +68,7 @@ The MongoDB component supports 4 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *mongoConnection* (common) | Set a client used for connection: all endpoints generated from the component will share this connection bean. |  | MongoClient
+| *mongoConnection* (common) | A connection client provided externally |  | MongoClient
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
@@ -95,7 +95,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *connectionBean* | *Required* Name of com.mongodb.Mongo to use. |  | String
+| *connectionBean* | *Required* Sets the connection bean reference used to lookup a client for connecting to a database. |  | String
 |===
 
 
@@ -109,7 +109,7 @@ with the following path and query parameters:
 | *collectionIndex* (common) | Sets the collection index (JSON FORMAT : { field1 : order1, field2 : order2}) |  | String
 | *createCollection* (common) | Create collection during initialisation if it doesn't exist. Default is true. | true | boolean
 | *database* (common) | Sets the name of the MongoDB database to target |  | String
-| *mongoConnection* (common) | Sets the Mongo instance that represents the backing connection |  | MongoClient
+| *mongoConnection* (common) | Sets the connection bean used as a client for connecting to a database. |  | MongoClient
 | *operation* (common) | Sets the operation this endpoint will execute against MongoDB. The value can be one of: findById, findOneByQuery, findAll, findDistinct, insert, save, update, remove, bulkWrite, aggregate, getDbStats, getColStats, count, command |  | MongoDbOperation
 | *outputType* (common) | Convert the output of the producer to the selected type : DocumentList Document or MongoIterable. DocumentList or MongoIterable applies to findAll and aggregate. Document applies to all other operations. The value can be one of: DocumentList, Document, MongoIterable |  | MongoDbOutputType
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean

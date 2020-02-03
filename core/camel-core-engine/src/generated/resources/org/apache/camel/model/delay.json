@@ -1,0 +1,21 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "delay",
+    "title": "Delay",
+    "description": "Delays processing for a specified length of time",
+    "javaType": "org.apache.camel.model.DelayDefinition",
+    "label": "eip,routing",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "expression": { "kind": "expression", "displayName": "Expression", "required": true, "type": "object", "javaType": "org.apache.camel.model.language.ExpressionDefinition", "oneOf": [ "constant", "exchangeProperty", "groovy", "header", "hl7terser", "jsonpath", "language", "method", "mvel", "ognl", "ref", "simple", "spel", "tokenize", "xpath", "xquery", "xtokenize" ], "deprecated": false, "secret": false, "description": "Expression to define how long time to wait (in millis)" },
+    "executorServiceRef": { "kind": "attribute", "displayName": "Executor Service Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Refers to a custom Thread Pool if asyncDelay has been enabled." },
+    "asyncDelayed": { "kind": "attribute", "displayName": "Async Delayed", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "true", "description": "Enables asynchronous delay which means the thread will not block while delaying." },
+    "callerRunsWhenRejected": { "kind": "attribute", "displayName": "Caller Runs When Rejected", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "true", "description": "Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}
