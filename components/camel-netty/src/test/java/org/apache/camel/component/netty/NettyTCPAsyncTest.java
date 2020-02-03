@@ -19,6 +19,7 @@ package org.apache.camel.component.netty;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -28,6 +29,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
 import org.junit.Test;
+
+import io.netty.channel.ChannelHandler;
 
 public class NettyTCPAsyncTest extends BaseNettyTest {
     @EndpointInject("mock:result")
@@ -50,11 +53,21 @@ public class NettyTCPAsyncTest extends BaseNettyTest {
         });
     }
 
+    @BindToRegistry("encoder")
+    public ChannelHandler getEncoder() throws Exception {
+        return ChannelHandlerFactories.newByteArrayEncoder("tcp");
+    }
+
+    @BindToRegistry("decoder")
+    public ChannelHandler getDecoder() throws Exception {
+        return ChannelHandlerFactories.newByteArrayDecoder("tcp");
+    }
+
     @Test
     public void testTCPInOnlyWithNettyConsumer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        sendFile("netty:tcp://localhost:{{port}}?sync=false");
+        sendFile("netty:tcp://localhost:{{port}}?sync=false&encoders=#encoder");
 
         mock.assertIsSatisfied();
     }
@@ -64,7 +77,7 @@ public class NettyTCPAsyncTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:{{port}}?sync=false")
+                from("netty:tcp://localhost:{{port}}?sync=false&decoders=#decoder")
                     .to("log:result")
                     .to("mock:result");
             }
