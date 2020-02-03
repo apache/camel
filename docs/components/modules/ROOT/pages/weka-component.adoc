@@ -51,7 +51,7 @@ The Weka component supports 2 options, which are listed below.
 The Weka endpoint is configured using URI syntax:
 
 ----
-weka:cmd?options
+weka:cmd
 ----
 
 with the following path and query parameters:
