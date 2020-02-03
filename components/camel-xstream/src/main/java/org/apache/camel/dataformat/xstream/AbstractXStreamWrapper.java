@@ -185,7 +185,7 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
 
             addDefaultPermissions(xstream);
             if (this.permissions != null) {
-                // permissions ::= pterm (',' pterm)*   # consits of one or more terms
+                // permissions ::= pterm (',' pterm)*   # consists of one or more terms
                 // pterm       ::= aod? wterm           # each term preceded by an optional sign 
                 // aod         ::= '+' | '-'            # indicates allow or deny where allow if omitted
                 // wterm       ::= a class name with optional wildcard characters

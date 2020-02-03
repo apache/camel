@@ -38,7 +38,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
- * XSTream data format is used for unmarshal a XML payload to POJO or to marshal
+ * XStream data format is used for unmarshal a XML payload to POJO or to marshal
  * POJO back to XML payload.
  */
 @Metadata(firstVersion = "1.3.0", label = "dataformat,transformation,xml,json", title = "XStream")
@@ -198,7 +198,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
      * system property. The permission can be specified in a syntax where a plus
      * sign is allow, and minus sign is deny. <br/>
      * Wildcards is supported by using <tt>.*</tt> as prefix. For example to
-     * allow <tt>com.foo</tt> and all subpackages then specfy
+     * allow <tt>com.foo</tt> and all subpackages then specify
      * <tt>+com.foo.*</tt>. Multiple permissions can be configured separated by
      * comma, such as <tt>+com.foo.*,-com.foo.bar.MySecretBean</tt>. <br/>
      * The following default permission is always included:
