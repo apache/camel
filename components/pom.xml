@@ -125,6 +125,7 @@
         <module>camel-aws-translate</module>
         <module>camel-aws2-ecs</module>
         <module>camel-aws2-eks</module>
+        <module>camel-aws2-kms</module>
         <module>camel-aws2-msk</module>
         <module>camel-aws2-mq</module>
         <module>camel-aws2-translate</module>
