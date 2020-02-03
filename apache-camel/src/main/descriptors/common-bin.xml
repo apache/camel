@@ -42,6 +42,9 @@
         <include>org.apache.camel:camel-main</include>
         <include>org.apache.camel:camel-tooling-model</include>
         <include>org.apache.camel:camel-tooling-util</include>
+        <include>org.apache.camel:camel-headersmap</include>
+        <include>org.apache.camel:camel-caffeine-lrucache</include>
+        <include>org.apache.camel:camel-xml-io</include>
 
         <!-- NOTE: auto-generated list of components when building camel catalog -->
         <!-- camel components: START -->
@@ -403,9 +406,6 @@
         <include>org.apache.camel:camel-commands-core</include>
         <include>org.apache.camel.karaf:camel-karaf-commands</include>
         <include>org.apache.camel:camel-route-parser</include>
-        <include>org.apache.camel:camel-headersmap</include>
-        <include>org.apache.camel:camel-caffeine-lrucache</include>
-        <include>org.apache.camel:camel-reactive-executor-vertx</include>
       </includes>
     </dependencySet>
 

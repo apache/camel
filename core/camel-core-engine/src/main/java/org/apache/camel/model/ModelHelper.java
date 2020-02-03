@@ -252,7 +252,10 @@ public final class ModelHelper {
      * @param inputStream the xml stream
      * @throws Exception is thrown if an error is encountered unmarshalling from
      *             xml to model
+     *
+     * @deprecated use {@link org.apache.camel.spi.XMLRoutesDefinitionLoader} from {@link ExtendedCamelContext}
      */
+    @Deprecated
     public static RoutesDefinition loadRoutesDefinition(CamelContext context, InputStream inputStream) throws Exception {
         XmlConverter xmlConverter = newXmlConverter(context);
         Document dom = xmlConverter.toDOMDocument(inputStream, null);
@@ -268,7 +271,9 @@ public final class ModelHelper {
      * @param node the xml node
      * @throws Exception is thrown if an error is encountered unmarshalling from
      *             xml to model
+     * @deprecated use {@link org.apache.camel.spi.XMLRoutesDefinitionLoader} from {@link ExtendedCamelContext}
      */
+    @Deprecated
     public static RoutesDefinition loadRoutesDefinition(CamelContext context, Node node) throws Exception {
         JAXBContext jaxbContext = getJAXBContext(context);
 
@@ -303,6 +308,10 @@ public final class ModelHelper {
         return answer;
     }
 
+    /**
+     * @deprecated use {@link org.apache.camel.spi.XMLRoutesDefinitionLoader} from {@link ExtendedCamelContext}
+     */
+    @Deprecated
     public static RestsDefinition loadRestsDefinition(CamelContext context, InputStream is) throws Exception {
         // load routes using JAXB
         Unmarshaller unmarshaller = getJAXBContext(context).createUnmarshaller();

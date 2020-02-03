@@ -96,6 +96,7 @@ import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 import org.apache.camel.support.DefaultRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -333,6 +334,11 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     }
 
     @Override
+    protected XMLRoutesDefinitionLoader createXMLRoutesDefinitionLoader() {
+        return new XMLRoutesDefinitionLoaderResolver().resolve(this);
+    }
+
+    @Override
     protected Tracer createTracer() {
         Tracer tracer = null;
         if (getRegistry() != null) {
@@ -376,4 +382,6 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     protected ReactiveExecutor createReactiveExecutor() {
         return new ReactiveExecutorResolver().resolve(this);
     }
+
+
 }

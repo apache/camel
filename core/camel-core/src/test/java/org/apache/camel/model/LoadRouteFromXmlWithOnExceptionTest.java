@@ -20,6 +20,7 @@ import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
@@ -41,7 +42,8 @@ public class LoadRouteFromXmlWithOnExceptionTest extends ContextTestSupport {
     @Test
     public void testLoadRouteFromXmlWitOnException() throws Exception {
         InputStream is = getClass().getResourceAsStream("barOnExceptionRoute.xml");
-        RoutesDefinition routes = ModelHelper.loadRoutesDefinition(context, is);
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
         context.addRouteDefinitions(routes.getRoutes());
         context.start();
 
