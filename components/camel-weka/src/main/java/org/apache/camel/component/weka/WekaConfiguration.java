@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.weka;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -25,18 +26,50 @@ public class WekaConfiguration {
 
     // Available commands
     public enum Command {
-        filter, read, write, version
+        filter, model, read, write, push, pop, version 
     }
 
+    // Not used, only here for documentation
+    
+    @UriPath(description = "The read command")
+    private String read;
+    @UriPath(description = "The write command")
+    private String write;
     @UriPath(description = "The filter command")
     private String filter;
+    @UriPath(description = "The model command")
+    private String model;
+    @UriPath(description = "The push command")
+    private String push;
+    @UriPath(description = "The pop command")
+    private String pop;
     @UriPath(description = "The version command")
     private String version;
-    @UriParam(description = "The Weka filter/classifier spec (i.e. Name [Options])")
-    private String apply;
-    @UriParam(description = "An optional in/out path for the read/write commands")
+    
+    // Read/Write parameters
+    @UriParam(description = "An in/out path for the read/write commands")
     private String path;
 
+    // Filter parameters
+    @UriParam(description = "The filter spec (i.e. Name [Options])", label = "filter")
+    private String apply;
+    
+    // Model parameters
+    @UriParam(description = "The classifier spec (i.e. Name [Options])", label = "model")
+    private String build;
+    @UriParam(description = "Flag on whether to use cross-validation with the current dataset", label = "model")
+    private boolean xval;
+    @UriParam(description = "The named dataset to train the classifier with", label = "model")
+    private String dsname;
+    @UriParam(description = "Numer of folds to use for cross-validation", label = "model") @Metadata(defaultValue = "10")
+    private int folds = 10;
+    @UriParam(description = "An optional seed for the randomizer", label = "model") @Metadata(defaultValue = "1")
+    private int seed = 1;
+    @UriParam(description = "Path to save the model to", label = "model")
+    private String saveTo;
+    @UriParam(description = "Path to load the model from", label = "model")
+    private String loadFrom;
+    
     private Command command;
 
     Command getCommand() {
@@ -55,6 +88,14 @@ public class WekaConfiguration {
         this.apply = apply;
     }
 
+    String getBuild() {
+        return build;
+    }
+
+    void setBuild(String build) {
+        this.build = build;
+    }
+
     String getPath() {
         return path;
     }
@@ -62,4 +103,53 @@ public class WekaConfiguration {
     void setPath(String path) {
         this.path = path;
     }
+
+    boolean isXval() {
+        return xval;
+    }
+
+    void setXval(boolean xval) {
+        this.xval = xval;
+    }
+
+    int getFolds() {
+        return folds;
+    }
+
+    void setFolds(int folds) {
+        this.folds = folds;
+    }
+
+    int getSeed() {
+        return seed;
+    }
+
+    void setSeed(int seed) {
+        this.seed = seed;
+    }
+
+    String getSaveTo() {
+        return saveTo;
+    }
+
+    void setSaveTo(String saveTo) {
+        this.saveTo = saveTo;
+    }
+
+    String getLoadFrom() {
+        return loadFrom;
+    }
+
+    void setLoadFrom(String loadFrom) {
+        this.loadFrom = loadFrom;
+    }
+
+    String getDsname() {
+        return dsname;
+    }
+
+    void setDsname(String dsname) {
+        this.dsname = dsname;
+    }
+
 }

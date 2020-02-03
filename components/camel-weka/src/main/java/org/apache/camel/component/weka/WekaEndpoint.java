@@ -22,17 +22,13 @@ import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import weka.core.Version;
 
 /**
  * The camel-weka component provides Data Mining functionality through Weka.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "weka", title = "Weka", syntax = "weka:cmd", producerOnly = true, label = "Datamining")
+@UriEndpoint(firstVersion = "3.1.0", scheme = "weka", title = "Weka", syntax = "weka:cmd?options", producerOnly = true, label = "Datamining")
 public class WekaEndpoint extends DefaultEndpoint {
-
-    static final Logger LOG = LoggerFactory.getLogger(WekaEndpoint.class);
 
     @UriParam
     private final WekaConfiguration configuration;
@@ -42,13 +38,17 @@ public class WekaEndpoint extends DefaultEndpoint {
         this.configuration = config;
     }
 
-    @Override
-    public WekaComponent getComponent() {
-        return (WekaComponent)super.getComponent();
+    public WekaConfiguration getConfiguration() {
+        return configuration;
     }
 
     @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
+    public WekaComponent getComponent() {
+        return (WekaComponent) super.getComponent();
+    }
+
+    @Override
+    public Consumer createConsumer(Processor processor) {
         throw new UnsupportedOperationException();
     }
 
@@ -57,8 +57,9 @@ public class WekaEndpoint extends DefaultEndpoint {
         return new WekaProducer(this);
     }
 
-    public WekaConfiguration getConfiguration() {
-        return configuration;
+    @Override
+    public boolean isSingleton() {
+        return false;
     }
 
     String wekaVersion() {
