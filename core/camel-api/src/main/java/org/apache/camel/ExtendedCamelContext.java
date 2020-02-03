@@ -48,6 +48,7 @@ import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.UnitOfWorkFactory;
+import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 
 /**
  * Extended {@link CamelContext} which contains the methods and APIs that are not primary intended for Camel end users
@@ -391,4 +392,15 @@ public interface ExtendedCamelContext extends CamelContext {
      * Used as internal optimization in Camel to flag whether event notification is applicable or not.
      */
     void setEventNotificationApplicable(boolean eventNotificationApplicable);
+
+    /**
+     * Sets a custom {@link XMLRoutesDefinitionLoader} to be used.
+     */
+    void setXMLRoutesDefinitionLoader(XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader);
+
+    /**
+     * Gets the {@link XMLRoutesDefinitionLoader} to be used.
+     */
+    XMLRoutesDefinitionLoader getXMLRoutesDefinitionLoader();
+
 }

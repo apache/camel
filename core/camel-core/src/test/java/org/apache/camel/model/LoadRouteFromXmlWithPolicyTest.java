@@ -20,6 +20,7 @@ import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.JndiRegistry;
@@ -44,7 +45,8 @@ public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
     @Test
     public void testLoadRouteFromXmlWitPolicy() throws Exception {
         InputStream is = getClass().getResourceAsStream("barPolicyRoute.xml");
-        RoutesDefinition routes = ModelHelper.loadRoutesDefinition(context, is);
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
         context.addRouteDefinitions(routes.getRoutes());
         context.start();
 

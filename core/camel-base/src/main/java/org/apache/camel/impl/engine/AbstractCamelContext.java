@@ -138,6 +138,7 @@ import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
+import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
@@ -243,6 +244,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private volatile HeadersMapFactory headersMapFactory;
     private volatile BeanProxyFactory beanProxyFactory;
     private volatile BeanProcessorFactory beanProcessorFactory;
+    private volatile XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader;
     private volatile ClassResolver classResolver;
     private volatile PackageScanClassResolver packageScanClassResolver;
     private volatile PackageScanResourceResolver packageScanResourceResolver;
@@ -3366,6 +3368,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         getDataFormatResolver();
         getManagementStrategy();
         getHeadersMapFactory();
+        getXMLRoutesDefinitionLoader();
         getClassResolver();
         getNodeIdFactory();
         getProcessorFactory();
@@ -4125,6 +4128,21 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         this.headersMapFactory = doAddService(headersMapFactory);
     }
 
+    public XMLRoutesDefinitionLoader getXMLRoutesDefinitionLoader() {
+        if (xmlRoutesDefinitionLoader == null) {
+            synchronized (lock) {
+                if (xmlRoutesDefinitionLoader == null) {
+                    setXMLRoutesDefinitionLoader(createXMLRoutesDefinitionLoader());
+                }
+            }
+        }
+        return xmlRoutesDefinitionLoader;
+    }
+
+    public void setXMLRoutesDefinitionLoader(XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader) {
+        this.xmlRoutesDefinitionLoader = xmlRoutesDefinitionLoader;
+    }
+
     @Override
     public ReactiveExecutor getReactiveExecutor() {
         if (reactiveExecutor == null) {
@@ -4283,6 +4301,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     protected abstract BeanProcessorFactory createBeanProcessorFactory();
 
     protected abstract BeanIntrospection createBeanIntrospection();
+
+    protected abstract XMLRoutesDefinitionLoader createXMLRoutesDefinitionLoader();
 
     protected abstract Tracer createTracer();
 
