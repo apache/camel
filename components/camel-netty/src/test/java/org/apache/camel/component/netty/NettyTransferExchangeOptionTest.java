@@ -18,6 +18,9 @@ package org.apache.camel.component.netty;
 
 import java.nio.charset.Charset;
 
+import io.netty.channel.ChannelHandler;
+import io.netty.handler.codec.serialization.ClassResolvers;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -29,9 +32,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.codec.ObjectDecoder;
 import org.apache.camel.component.netty.codec.ObjectEncoder;
 import org.junit.Test;
-
-import io.netty.channel.ChannelHandler;
-import io.netty.handler.codec.serialization.ClassResolvers;
 
 public class NettyTransferExchangeOptionTest extends BaseNettyTest {
 
