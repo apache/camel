@@ -1,4 +1,4 @@
-package org.apache.camel.impl;
+package org.apache.camel.xml.jaxb;
 
 import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
@@ -33,9 +33,10 @@ import org.w3c.dom.Node;
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
 /**
- * Default {@link XMLRoutesDefinitionLoader} which uses JAXB.
+ * JAXB based {@link XMLRoutesDefinitionLoader}. This is the default loader used historically by Camel.
+ * The camel-xml-io parser is a light-weight alternative.
  */
-public class DefaultXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader {
+public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader {
 
     @Override
     public Object loadRoutesDefinition(CamelContext context, InputStream inputStream) throws Exception {
@@ -96,6 +97,11 @@ public class DefaultXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoad
         }
 
         return answer;
+    }
+
+    @Override
+    public String toString() {
+        return "camel-xml-jaxb";
     }
 
     private static JAXBContext getJAXBContext(CamelContext context) throws JAXBException {
