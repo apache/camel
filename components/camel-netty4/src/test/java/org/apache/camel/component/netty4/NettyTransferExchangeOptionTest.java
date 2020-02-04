@@ -17,7 +17,6 @@
 package org.apache.camel.component.netty4;
 
 import java.nio.charset.Charset;
-import java.util.Properties;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;

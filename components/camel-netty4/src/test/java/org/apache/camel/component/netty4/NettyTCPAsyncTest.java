@@ -25,15 +25,10 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.netty4.codec.ObjectDecoder;
-import org.apache.camel.component.netty4.codec.ObjectEncoder;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.IOHelper;
 import org.junit.Test;
-
-import io.netty.channel.ChannelHandler;
-import io.netty.handler.codec.serialization.ClassResolvers;
 
 public class NettyTCPAsyncTest extends BaseNettyTest {
     @EndpointInject(uri = "mock:result")
