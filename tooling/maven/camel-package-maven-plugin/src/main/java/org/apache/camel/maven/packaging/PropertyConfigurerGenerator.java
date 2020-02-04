@@ -46,9 +46,6 @@ public final class PropertyConfigurerGenerator {
         w.write("/* " + AbstractGeneratorMojo.GENERATED_MSG + " */\n");
         w.write("package " + pn + ";\n");
         w.write("\n");
-        w.write("import java.util.HashMap;\n");
-        w.write("import java.util.Map;\n");
-        w.write("\n");
         w.write("import org.apache.camel.CamelContext;\n");
         w.write("import org.apache.camel.spi.GeneratedPropertyConfigurer;\n");
         w.write("import org.apache.camel.support.component.PropertyConfigurerSupport;\n");
