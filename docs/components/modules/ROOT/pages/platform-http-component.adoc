@@ -72,7 +72,7 @@ with the following path and query parameters:
 | *httpMethodRestrict* (consumer) | A comma separated list of HTTP methods to serve, e.g. GET,POST . If no methods are specified, all methods will be served. |  | String
 | *produces* (consumer) | The content type this endpoint produces, such as application/xml or application/json. |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *fileNameExtWhitelist* (consumer) | A comma or whitespace separated list of file extensions. Uploads having these extensions will be stored locally. Null value or asterisk () will allow all files. |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *headerFilterStrategy* (advanced) | To use a custom HeaderFilterStrategy to filter headers to and from Camel message. |  | HeaderFilterStrategy

@@ -138,7 +138,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *protocol* | *Required* The protocol to use which is either http, https or proxy - a consumer only option. |  | String
+| *protocol* | *Required* The protocol to use which is either http, https or proxy - a consumer only option. The value can be one of: http, https |  | String
 | *host* | *Required* The local hostname such as localhost, or 0.0.0.0 when being a consumer. The remote HTTP server hostname when using producer. |  | String
 | *port* | The host port number |  | int
 | *path* | Resource path |  | String
@@ -173,9 +173,9 @@ with the following path and query parameters:
 | *maxHeaderSize* (consumer) | The maximum length of all headers. If the sum of the length of each header exceeds this value, a io.netty.handler.codec.TooLongFrameException will be raised. | 8192 | int
 | *nettyServerBootstrapFactory* (consumer) | To use a custom NettyServerBootstrapFactory |  | NettyServerBootstrapFactory
 | *nettySharedHttpServer* (consumer) | To use a shared Netty HTTP server. See Netty HTTP Server Example for more details. |  | NettySharedHttpServer
-| *noReplyLogLevel* (consumer) | If sync is enabled this option dictates NettyConsumer which logging level to use when logging a there is no reply to send back. | WARN | LoggingLevel
-| *serverClosedChannelException CaughtLogLevel* (consumer) | If the server (NettyConsumer) catches an java.nio.channels.ClosedChannelException then its logged using this logging level. This is used to avoid logging the closed channel exceptions, as clients can disconnect abruptly and then cause a flood of closed exceptions in the Netty server. | DEBUG | LoggingLevel
-| *serverExceptionCaughtLogLevel* (consumer) | If the server (NettyConsumer) catches an exception then its logged using this logging level. | WARN | LoggingLevel
+| *noReplyLogLevel* (consumer) | If sync is enabled this option dictates NettyConsumer which logging level to use when logging a there is no reply to send back. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | WARN | LoggingLevel
+| *serverClosedChannelException CaughtLogLevel* (consumer) | If the server (NettyConsumer) catches an java.nio.channels.ClosedChannelException then its logged using this logging level. This is used to avoid logging the closed channel exceptions, as clients can disconnect abruptly and then cause a flood of closed exceptions in the Netty server. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | DEBUG | LoggingLevel
+| *serverExceptionCaughtLogLevel* (consumer) | If the server (NettyConsumer) catches an exception then its logged using this logging level. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | WARN | LoggingLevel
 | *serverInitializerFactory* (consumer) | To use a custom ServerInitializerFactory |  | ServerInitializerFactory
 | *traceEnabled* (consumer) | Specifies whether to enable HTTP TRACE for this Netty HTTP consumer. By default TRACE is turned off. | false | boolean
 | *urlDecodeHeaders* (consumer) | If this option is enabled, then during binding from Netty to Camel Message then the header values will be URL decoded (eg %20 will be a space character. Notice this option is used by the default org.apache.camel.component.netty.http.NettyHttpBinding and therefore if you implement a custom org.apache.camel.component.netty.http.NettyHttpBinding then you would need to decode the headers accordingly to this option. | false | boolean
@@ -227,7 +227,7 @@ with the following path and query parameters:
 | *trustStoreResource* (security) | Server side certificate keystore to be used for encryption. Is loaded by default from classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean

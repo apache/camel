@@ -39,7 +39,7 @@ The JSon XStream dataformat supports 20 options, which are listed below.
 | objectMapper |  | String | Lookup and use the existing ObjectMapper with the given id when using Jackson.
 | useDefaultObjectMapper | true | Boolean | Whether to lookup and use default Jackson ObjectMapper from the registry.
 | prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
-| library | XStream | JsonLibrary | Which json library to use.
+| library | XStream | JsonLibrary | Which json library to use. The value can be one of: Fastjson, Gson, Jackson, Johnzon, XStream
 | unmarshalTypeName |  | String | Class name of the java type to use when unarmshalling
 | jsonView |  | Class | When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations
 | include |  | String | If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL

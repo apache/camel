@@ -21,7 +21,7 @@ The JAXB dataformat supports 18 options, which are listed below.
 | Name | Default | Java Type | Description
 | contextPath |  | String | Package name where your JAXB classes are located.
 | schema |  | String | To validate against an existing schema. Your can use the prefix classpath:, file: or http: to specify how the resource should by resolved. You can separate multiple schema files by using the ',' character.
-| schemaSeverityLevel | 0 | Integer | Sets the schema severity level to use when validating against a schema. This level determines the minimum severity error that triggers JAXB to stop continue parsing. The default value of 0 (warning) means that any error (warning, error or fatal error) will trigger JAXB to stop. There are the following three levels: 0=warning, 1=error, 2=fatal error.
+| schemaSeverityLevel | 0 | Integer | Sets the schema severity level to use when validating against a schema. This level determines the minimum severity error that triggers JAXB to stop continue parsing. The default value of 0 (warning) means that any error (warning, error or fatal error) will trigger JAXB to stop. There are the following three levels: 0=warning, 1=error, 2=fatal error. The value can be one of: 0, 1, 2
 | prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
 | objectFactory | false | Boolean | Whether to allow using ObjectFactory classes to create the POJO classes during marshalling. This only applies to POJO classes that has not been annotated with JAXB and providing jaxb.index descriptor files.
 | ignoreJAXBElement | false | Boolean | Whether to ignore JAXBElement elements - only needed to be set to false in very special use-cases.

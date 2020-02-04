@@ -159,14 +159,14 @@ with the following path and query parameters:
 | *consumeDelete* (consumer) | If true, the entity is deleted after it is consumed; if false, the entity is not deleted. | true | boolean
 | *consumeLockEntity* (consumer) | Specifies whether or not to set an exclusive lock on each entity bean while processing the results from polling. | true | boolean
 | *deleteHandler* (consumer) | To use a custom DeleteHandler to delete the row after the consumer is done processing the exchange |  | DeleteHandler
-| *lockModeType* (consumer) | To configure the lock mode on the consumer. | PESSIMISTIC_WRITE | LockModeType
+| *lockModeType* (consumer) | To configure the lock mode on the consumer. The value can be one of: READ, WRITE, OPTIMISTIC, OPTIMISTIC_FORCE_INCREMENT, PESSIMISTIC_READ, PESSIMISTIC_WRITE, PESSIMISTIC_FORCE_INCREMENT, NONE | PESSIMISTIC_WRITE | LockModeType
 | *maxMessagesPerPoll* (consumer) | An integer value to define the maximum number of messages to gather per poll. By default, no maximum is set. Can be used to avoid polling many thousands of messages when starting up the server. Set a value of 0 or negative to disable. |  | int
 | *preDeleteHandler* (consumer) | To use a custom Pre-DeleteHandler to delete the row after the consumer has read the entity. |  | DeleteHandler
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *skipLockedEntity* (consumer) | To configure whether to use NOWAIT on lock and silently skip the entity. | false | boolean
 | *transacted* (consumer) | Whether to run the consumer in transacted mode, by which all messages will either commit or rollback, when the entire batch has been processed. The default behavior (false) is to commit all the previously successfully processed messages, and only rollback the last failed message. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *parameters* (consumer) | This key/value mapping is used for building the query parameters. It is expected to be of the generic type java.util.Map where the keys are the named parameters of a given JPA query and the values are their corresponding effective values you want to select for. When it's used for producer, Simple expression can be used as a parameter value. It allows you to retrieve parameter values from the message body, header and etc. |  | Map
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *findEntity* (producer) | If enabled then the producer will find a single entity by using the message body as key and entityType as the class type. This can be used instead of a query to find a single entity. | false | boolean
@@ -187,12 +187,12 @@ with the following path and query parameters:
 | *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
 | *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
 | *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
-| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | TRACE | LoggingLevel
 | *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
-| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component | none | String
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component. The value can be one of: none, spring, quartz | none | String
 | *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
-| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. The value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END

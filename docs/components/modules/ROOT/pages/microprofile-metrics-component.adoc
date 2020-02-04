@@ -62,7 +62,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *metricType* | *Required* Metric type |  | MetricType
+| *metricType* | *Required* Metric type. The value can be one of: CONCURRENT_GAUGE, COUNTER, GAUGE, METERED, HISTOGRAM, TIMER, INVALID |  | MetricType
 | *metricName* | *Required* Metric name |  | String
 |===
 

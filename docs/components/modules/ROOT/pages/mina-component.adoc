@@ -130,8 +130,8 @@ with the following path and query parameters:
 | *clientMode* (consumer) | If the clientMode is true, mina consumer will connect the address as a TCP client. | false | boolean
 | *disconnectOnNoReply* (consumer) | If sync is enabled then this option dictates MinaConsumer if it should disconnect where there is no reply to send back. | true | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *noReplyLogLevel* (consumer) | If sync is enabled this option dictates MinaConsumer which logging level to use when logging a there is no reply to send back. | WARN | LoggingLevel
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *noReplyLogLevel* (consumer) | If sync is enabled this option dictates MinaConsumer which logging level to use when logging a there is no reply to send back. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | WARN | LoggingLevel
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *cachedAddress* (producer) | Whether to create the InetAddress once and reuse. Setting this to false allows to pickup DNS changes in the network. | true | boolean
 | *lazySessionCreation* (producer) | Sessions can be lazily created to avoid exceptions, if the remote server is not up and running when the Camel producer is started. | true | boolean
@@ -147,7 +147,7 @@ with the following path and query parameters:
 | *encoding* (codec) | You can configure the encoding (a charset name) to use for the TCP textline codec and the UDP protocol. If not provided, Camel will use the JVM default Charset |  | String
 | *filters* (codec) | You can set a list of Mina IoFilters to use. |  | List
 | *textline* (codec) | Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not specified or the value is false, then Object Serialization is assumed over TCP. | false | boolean
-| *textlineDelimiter* (codec) | Only used for TCP and if textline=true. Sets the text line delimiter to use. If none provided, Camel will use DEFAULT. This delimiter is used to mark the end of text. |  | MinaTextLineDelimiter
+| *textlineDelimiter* (codec) | Only used for TCP and if textline=true. Sets the text line delimiter to use. If none provided, Camel will use DEFAULT. This delimiter is used to mark the end of text. The value can be one of: DEFAULT, AUTO, UNIX, WINDOWS, MAC |  | MinaTextLineDelimiter
 | *autoStartTls* (security) | Whether to auto start SSL handshake. | true | boolean
 | *sslContextParameters* (security) | To configure SSL security. |  | SSLContextParameters
 |===

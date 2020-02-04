@@ -21,7 +21,7 @@ The CSV dataformat supports 29 options, which are listed below.
 |===
 | Name | Default | Java Type | Description
 | formatRef |  | String | The reference format to use, it will be updated with the other format options, the default value is CSVFormat.DEFAULT
-| formatName |  | String | The name of the format to use, the default value is CSVFormat.DEFAULT
+| formatName |  | String | The name of the format to use, the default value is CSVFormat.DEFAULT. The value can be one of: DEFAULT, EXCEL, INFORMIX_UNLOAD, INFORMIX_UNLOAD_CSV, MYSQL, RFC4180
 | commentMarkerDisabled | false | Boolean | Disables the comment marker of the reference format.
 | commentMarker |  | String | Sets the comment marker of the reference format.
 | delimiter |  | String | Sets the delimiter to use. The default value is , (comma)

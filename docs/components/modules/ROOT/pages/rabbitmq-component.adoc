@@ -106,7 +106,7 @@ The RabbitMQ component supports 52 options, which are listed below.
 | *deadLetterExchange* (common) | The name of the dead letter exchange |  | String
 | *deadLetterQueue* (common) | The name of the dead letter queue |  | String
 | *deadLetterRoutingKey* (common) | The routing key for the dead letter exchange |  | String
-| *deadLetterExchangeType* (common) | The type of the dead letter exchange | direct | String
+| *deadLetterExchangeType* (common) | The type of the dead letter exchange. The value can be one of: direct, fanout, headers, topic | direct | String
 | *allowNullHeaders* (producer) | Allow pass null values to header | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
@@ -145,12 +145,12 @@ with the following path and query parameters:
 | *automaticRecoveryEnabled* (common) | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when existing connection has failures) | true | Boolean
 | *connectionFactory* (common) | To use a custom RabbitMQ connection factory. When this option is set, all connection options (connectionTimeout, requestedChannelMax...) set on URI are not used |  | ConnectionFactory
 | *deadLetterExchange* (common) | The name of the dead letter exchange |  | String
-| *deadLetterExchangeType* (common) | The type of the dead letter exchange | direct | String
+| *deadLetterExchangeType* (common) | The type of the dead letter exchange. The value can be one of: direct, fanout, headers, topic | direct | String
 | *deadLetterQueue* (common) | The name of the dead letter queue |  | String
 | *deadLetterRoutingKey* (common) | The routing key for the dead letter exchange |  | String
 | *declare* (common) | If the option is true, camel declare the exchange and queue name and bind them together. If the option is false, camel won't declare the exchange and queue name on the server. | true | boolean
 | *durable* (common) | If we are declaring a durable exchange (the exchange will survive a server restart) | true | boolean
-| *exchangeType* (common) | The exchange type such as direct or topic. | direct | String
+| *exchangeType* (common) | The exchange type such as direct or topic. The value can be one of: direct, fanout, headers, topic | direct | String
 | *exclusive* (common) | Exclusive queues may only be accessed by the current connection, and are deleted when that connection closes. | false | boolean
 | *hostname* (common) | The hostname of the running rabbitmq instance or cluster. |  | String
 | *passive* (common) | Passive queues depend on the queue already to be available at RabbitMQ. | false | boolean
@@ -170,7 +170,7 @@ with the following path and query parameters:
 | *prefetchGlobal* (consumer) | If the settings should be applied to the entire channel rather than each consumer You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time | false | boolean
 | *prefetchSize* (consumer) | The maximum amount of content (measured in octets) that the server will deliver, 0 if unlimited. You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time |  | int
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *threadPoolSize* (consumer) | The consumer uses a Thread Pool Executor with a fixed number of threads. This setting allows you to set that number of threads. | 10 | int
 | *allowNullHeaders* (producer) | Allow pass null values to header | false | boolean
 | *bridgeEndpoint* (producer) | If the bridgeEndpoint is true, the producer will ignore the message header of rabbitmq.EXCHANGE_NAME and rabbitmq.ROUTING_KEY | false | boolean

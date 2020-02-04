@@ -57,7 +57,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *method* | *Required* HTTP method to use. |  | String
+| *method* | *Required* HTTP method to use. The value can be one of: get, post, put, delete, patch, head, trace, connect, options |  | String
 | *path* | *Required* The base path |  | String
 | *uriTemplate* | The uri template |  | String
 |===
@@ -78,9 +78,9 @@ with the following path and query parameters:
 | *consumerComponentName* (consumer) | The Camel Rest component to use for (consumer) the REST transport, such as jetty, servlet, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found, then that is being used. |  | String
 | *description* (consumer) | Human description to document this REST service |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *apiDoc* (producer) | The openapi api doc resource to use. The resource is loaded from classpath by default and must be in JSon format. |  | String
-| *bindingMode* (producer) | Configures the binding mode for the producer. If set to anything other than 'off' the producer will try to convert the body of the incoming message from inType to the json or xml, and the response from json or xml to outType. |  | RestBindingMode
+| *bindingMode* (producer) | Configures the binding mode for the producer. If set to anything other than 'off' the producer will try to convert the body of the incoming message from inType to the json or xml, and the response from json or xml to outType. The value can be one of: auto, off, json, xml, json_xml |  | RestBindingMode
 | *host* (producer) | Host and port of HTTP service to use (override host in openapi schema) |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *producerComponentName* (producer) | The Camel Rest component to use for (producer) the REST transport, such as http, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that is being used. |  | String

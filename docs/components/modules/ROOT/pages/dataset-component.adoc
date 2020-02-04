@@ -89,7 +89,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *dataSetIndex* (common) | Controls the behaviour of the CamelDataSetIndex header. For Consumers: - off = the header will not be set - strict/lenient = the header will be set For Producers: - off = the header value will not be verified, and will not be set if it is not present = strict = the header value must be present and will be verified = lenient = the header value will be verified if it is present, and will be set if it is not present | lenient | String
+| *dataSetIndex* (common) | Controls the behaviour of the CamelDataSetIndex header. For Consumers: - off = the header will not be set - strict/lenient = the header will be set For Producers: - off = the header value will not be verified, and will not be set if it is not present = strict = the header value must be present and will be verified = lenient = the header value will be verified if it is present, and will be set if it is not present. The value can be one of: strict, lenient, off | lenient | String
 | *initialDelay* (consumer) | Time period in millis to wait before starting sending messages. | 1000 | long
 | *minRate* (consumer) | Wait until the DataSet contains at least this number of messages | 0 | int
 | *preloadSize* (consumer) | Sets how many messages should be preloaded (sent) before the route completes its initialization | 0 | long
