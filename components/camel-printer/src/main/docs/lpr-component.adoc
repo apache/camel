@@ -99,10 +99,10 @@ with the following path and query parameters:
 | *mediaSize* (producer) | Sets the stationary as defined by enumeration names in the javax.print.attribute.standard.MediaSizeName API. The default setting is to use North American Letter sized stationary. The value's case is ignored, e.g. values of iso_a4 and ISO_A4 may be used. | na-letter | String
 | *mediaTray* (producer) | Sets MediaTray supported by the javax.print.DocFlavor API, for example upper,middle etc. |  | String
 | *mimeType* (producer) | Sets mimeTypes supported by the javax.print.DocFlavor API |  | String
-| *orientation* (producer) | Sets the page orientation. | portrait | String
+| *orientation* (producer) | Sets the page orientation. The value can be one of: portrait, landscape, reverse-portrait, reverse-landscape | portrait | String
 | *printerPrefix* (producer) | Sets the prefix name of the printer, it is useful when the printer name does not start with //hostname/printer |  | String
 | *sendToPrinter* (producer) | etting this option to false prevents sending of the print data to the printer | true | boolean
-| *sides* (producer) | Sets one sided or two sided printing based on the javax.print.attribute.standard.Sides API | one-sided | String
+| *sides* (producer) | Sets one sided or two sided printing based on the javax.print.attribute.standard.Sides API. The value can be one of: one-sided, duplex, tumble, two-sided-short-edge, two-sided-long-edge | one-sided | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===

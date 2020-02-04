@@ -68,7 +68,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *operation* | *Required* Operation type |  | PdfOperation
+| *operation* | *Required* Operation type. The value can be one of: create, append, extractText |  | PdfOperation
 |===
 
 
@@ -78,15 +78,15 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *font* (producer) | Font | Helvetica | String
+| *font* (producer) | Font. The value can be one of: Courier, Courier-Bold, Courier-Oblique, Courier-BoldOblique, Helvetica, Helvetica-Bold, Helvetica-Oblique, Helvetica-BoldOblique, Times-Roman, Times-Bold, Times-Italic, Times-BoldItalic, Symbol, ZapfDingbats | Helvetica | String
 | *fontSize* (producer) | Font size in pixels | 14 | float
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *marginBottom* (producer) | Margin bottom in pixels | 20 | int
 | *marginLeft* (producer) | Margin left in pixels | 20 | int
 | *marginRight* (producer) | Margin right in pixels | 40 | int
 | *marginTop* (producer) | Margin top in pixels | 20 | int
-| *pageSize* (producer) | Page size | A4 | String
-| *textProcessingFactory* (producer) | Text processing to use. autoFormatting: Text is getting sliced by words, then max amount of words that fits in the line will be written into pdf document. With this strategy all words that doesn't fit in the line will be moved to the new line. lineTermination: Builds set of classes for line-termination writing strategy. Text getting sliced by line termination symbol and then it will be written regardless it fits in the line or not. | lineTermination | TextProcessingFactory
+| *pageSize* (producer) | Page size. The value can be one of: LETTER, LEGAL, A0, A1, A2, A3, A4, A5, A6 | A4 | String
+| *textProcessingFactory* (producer) | Text processing to use. autoFormatting: Text is getting sliced by words, then max amount of words that fits in the line will be written into pdf document. With this strategy all words that doesn't fit in the line will be moved to the new line. lineTermination: Builds set of classes for line-termination writing strategy. Text getting sliced by line termination symbol and then it will be written regardless it fits in the line or not. The value can be one of: autoFormatting, lineTermination | lineTermination | TextProcessingFactory
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===

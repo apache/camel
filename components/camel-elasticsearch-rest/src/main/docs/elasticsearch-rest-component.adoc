@@ -95,7 +95,7 @@ with the following path and query parameters:
 | *indexName* (producer) | The name of the index to act against |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *maxRetryTimeout* (producer) | The time in ms before retry | 30000 | int
-| *operation* (producer) | What operation to perform |  | ElasticsearchOperation
+| *operation* (producer) | What operation to perform. The value can be one of: Index, Update, Bulk, BulkIndex, GetById, MultiGet, MultiSearch, Delete, DeleteIndex, Search, Exists, Ping |  | ElasticsearchOperation
 | *scrollKeepAliveMs* (producer) | Time in ms during which elasticsearch will keep search context alive | 60000 | int
 | *sniffAfterFailureDelay* (producer) | The delay of a sniff execution scheduled after a failure (in milliseconds) | 60000 | int
 | *snifferInterval* (producer) | The interval between consecutive ordinary sniff executions in milliseconds. Will be honoured when sniffOnFailure is disabled or when there are no failures between consecutive sniff executions | 300000 | int

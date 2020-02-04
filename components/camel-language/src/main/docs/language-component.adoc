@@ -70,7 +70,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *languageName* | *Required* Sets the name of the language to use |  | String
+| *languageName* | *Required* Sets the name of the language to use. The value can be one of: bean, constant, exchangeProperty, file, groovy, header, javascript, jsonpath, mvel, ognl, , ref, simple, spel, sql, terser, tokenize, xpath, xquery, xtokenize |  | String
 | *resourceUri* | Path to the resource, or a reference to lookup a bean in the Registry to use as the resource |  | String
 |===
 

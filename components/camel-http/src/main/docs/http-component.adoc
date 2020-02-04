@@ -121,7 +121,7 @@ with the following path and query parameters:
 | *connectionClose* (producer) | Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false. | false | boolean
 | *copyHeaders* (producer) | If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy. Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers). | true | boolean
 | *customHostHeader* (producer) | Defines a custom host header which will be sent when producing http request. When not set in query will be ignored. When set will override host header derived from url. Default: null |  | String
-| *httpMethod* (producer) | Configure the HTTP method to use. The HttpMethod header cannot override this option if set. |  | HttpMethods
+| *httpMethod* (producer) | Configure the HTTP method to use. The HttpMethod header cannot override this option if set. The value can be one of: GET, POST, PUT, DELETE, HEAD, OPTIONS, TRACE, PATCH |  | HttpMethods
 | *ignoreResponseBody* (producer) | If this option is true, The http producer won't read response body and cache the input stream | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *preserveHostHeader* (producer) | If the option is true, HttpProducer will set the Host header to the value contained in the current exchange Host header, useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client, this allows applications which use the Host header to generate accurate URL's for a proxied service | false | boolean
@@ -148,10 +148,10 @@ with the following path and query parameters:
 | *useSystemProperties* (advanced) | To use System Properties as fallback for configuration | false | boolean
 | *proxyAuthDomain* (proxy) | Proxy authentication domain to use with NTML |  | String
 | *proxyAuthHost* (proxy) | Proxy authentication host |  | String
-| *proxyAuthMethod* (proxy) | Proxy authentication method to use |  | String
+| *proxyAuthMethod* (proxy) | Proxy authentication method to use. The value can be one of: Basic, Digest, NTLM |  | String
 | *proxyAuthPassword* (proxy) | Proxy authentication password |  | String
 | *proxyAuthPort* (proxy) | Proxy authentication port |  | int
-| *proxyAuthScheme* (proxy) | Proxy authentication scheme to use |  | String
+| *proxyAuthScheme* (proxy) | Proxy authentication scheme to use. The value can be one of: http, https |  | String
 | *proxyAuthUsername* (proxy) | Proxy authentication username |  | String
 | *proxyHost* (proxy) | Proxy hostname to use |  | String
 | *proxyPort* (proxy) | Proxy port to use |  | int
@@ -159,7 +159,7 @@ with the following path and query parameters:
 | *authenticationPreemptive* (security) | If this option is true, camel-http sends preemptive basic authentication to the server. | false | boolean
 | *authHost* (security) | Authentication host to use with NTML |  | String
 | *authMethod* (security) | Authentication methods allowed to use as a comma separated list of values Basic, Digest or NTLM. |  | String
-| *authMethodPriority* (security) | Which authentication method to prioritize to use, either as Basic, Digest or NTLM. |  | String
+| *authMethodPriority* (security) | Which authentication method to prioritize to use, either as Basic, Digest or NTLM. The value can be one of: Basic, Digest, NTLM |  | String
 | *authPassword* (security) | Authentication password |  | String
 | *authUsername* (security) | Authentication username |  | String
 | *sslContextParameters* (security) | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need. |  | SSLContextParameters

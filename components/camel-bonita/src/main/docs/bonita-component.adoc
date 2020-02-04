@@ -49,7 +49,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *operation* | *Required* Operation to use |  | BonitaOperation
+| *operation* | *Required* Operation to use. The value can be one of: startCase |  | BonitaOperation
 |===
 
 
