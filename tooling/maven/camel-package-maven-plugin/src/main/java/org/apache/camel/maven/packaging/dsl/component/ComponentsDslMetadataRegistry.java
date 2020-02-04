@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
@@ -52,7 +53,7 @@ public class ComponentsDslMetadataRegistry {
     }
 
     private Map<String, EnrichedComponentModel> loadMetadataFileIntoMap(final File metadataFile) {
-        return gson.fromJson(loadJson(metadataFile), new TypeToken<Map<String, EnrichedComponentModel>>() { }.getType());
+        return gson.fromJson(loadJson(metadataFile), new TypeToken<TreeMap<String, EnrichedComponentModel>>() { }.getType());
     }
 
     private Set<String> loadComponentsFactoriesFromDir(final File componentDir) {

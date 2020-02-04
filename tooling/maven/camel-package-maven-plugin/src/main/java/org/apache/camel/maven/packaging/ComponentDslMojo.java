@@ -21,10 +21,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -159,7 +161,7 @@ public class ComponentDslMojo extends AbstractDslMojo {
         // Update components metadata
         final ComponentsDslMetadataRegistry componentsDslMetadataRegistry = syncAndUpdateComponentsMetadataRegistry(model, componentDslBuilderFactoryGenerator.getGeneratedClassName());
 
-        final Set<EnrichedComponentModel> componentCachedModels = new HashSet<>(componentsDslMetadataRegistry.getComponentCacheFromMemory().values());
+        final Set<EnrichedComponentModel> componentCachedModels = new LinkedHashSet<>(componentsDslMetadataRegistry.getComponentCacheFromMemory().values());
 
         // Create components DSL entry builder factories
         syncAndGenerateComponentsBuilderFactories(componentCachedModels);
@@ -210,7 +212,7 @@ public class ComponentDslMojo extends AbstractDslMojo {
             // generate unique Artifacts IDs
             final Map<String, List<ComponentModel>> uniqueArtifacts = componentsModels.values()
                     .stream()
-                    .collect(Collectors.groupingBy(ComponentModel::getArtifactId, Collectors.toList()));
+                    .collect(Collectors.groupingBy(ComponentModel::getArtifactId, TreeMap::new, Collectors.toList()));
 
             final StringBuilder stringBuilder = new StringBuilder();
 
