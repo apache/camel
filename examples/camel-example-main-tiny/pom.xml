@@ -55,7 +55,7 @@
                 </exclusion>
                 <exclusion>
                     <groupId>org.apache.camel</groupId>
-                    <artifactId>camel-tooling-mode</artifactId>
+                    <artifactId>camel-tooling-model</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.apache.camel</groupId>
