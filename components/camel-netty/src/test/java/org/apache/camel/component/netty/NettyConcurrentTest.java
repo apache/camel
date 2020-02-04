@@ -26,6 +26,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import io.netty.channel.ChannelHandler;
+import io.netty.handler.codec.serialization.ClassResolvers;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -36,9 +39,6 @@ import org.apache.camel.component.netty.codec.ObjectEncoder;
 import org.apache.camel.util.StopWatch;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import io.netty.channel.ChannelHandler;
-import io.netty.handler.codec.serialization.ClassResolvers;
 
 public class NettyConcurrentTest extends BaseNettyTest {
 

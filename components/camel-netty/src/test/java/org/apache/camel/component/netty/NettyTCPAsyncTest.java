@@ -19,6 +19,8 @@ package org.apache.camel.component.netty;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import io.netty.channel.ChannelHandler;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -29,8 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
 import org.junit.Test;
-
-import io.netty.channel.ChannelHandler;
 
 public class NettyTCPAsyncTest extends BaseNettyTest {
     @EndpointInject("mock:result")
