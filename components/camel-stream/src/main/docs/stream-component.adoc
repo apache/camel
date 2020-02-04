@@ -75,7 +75,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *kind* | *Required* Kind of stream to use such as System.in or System.out. |  | String
+| *kind* | *Required* Kind of stream to use such as System.in or System.out. The value can be one of: in, out, err, header, file |  | String
 |===
 
 
@@ -98,7 +98,7 @@ with the following path and query parameters:
 | *scanStream* (consumer) | To be used for continuously reading a stream such as the unix tail command. | false | boolean
 | *scanStreamDelay* (consumer) | Delay in milliseconds between read attempts when using scanStream. |  | long
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *autoCloseCount* (producer) | Number of messages to process before closing stream on Producer side. Never close stream by default (only when Producer is stopped). If more messages are sent, the stream is reopened for another autoCloseCount batch. |  | int
 | *closeOnDone* (producer) | This option is used in combination with Splitter and streaming to the same file. The idea is to keep the stream open and only close when the Splitter is done, to improve performance. Mind this requires that you only stream to the same file, and not 2 or more files. | false | boolean
 | *delay* (producer) | Initial delay in milliseconds before producing the stream. |  | long

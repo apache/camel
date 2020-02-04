@@ -658,7 +658,7 @@ The Salesforce component supports 34 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *authenticationType* (security) | Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT. Salesforce component can auto-determine the authentication method to use from the properties set, set this property to eliminate any ambiguity. |  | AuthenticationType
+| *authenticationType* (security) | Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT. Salesforce component can auto-determine the authentication method to use from the properties set, set this property to eliminate any ambiguity. The value can be one of: USERNAME_PASSWORD, REFRESH_TOKEN, JWT |  | AuthenticationType
 | *loginConfig* (security) | All authentication configuration in one nested bean, all properties set there can be set directly on the component as well |  | SalesforceLoginConfig
 | *instanceUrl* (security) | URL of the Salesforce instance used after authentication, by default received from Salesforce on successful authentication |  | String
 | *loginUrl* (security) | *Required* URL of the Salesforce instance used for authentication, by default set to \https://login.salesforce.com | https://login.salesforce.com | String
@@ -719,7 +719,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *operationName* | The operation to use |  | OperationName
+| *operationName* | The operation to use. The value can be one of: getVersions, getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject, createSObject, updateSObject, deleteSObject, getSObjectWithId, upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore, queryAll, search, apexCall, recent, createJob, getJob, closeJob, abortJob, createBatch, getBatch, getAllBatches, getRequest, getResults, createBatchQuery, getQueryResultIds, getQueryResult, getRecentReports, getReportDescription, executeSyncReport, executeAsyncReport, getReportInstances, getReportResults, limits, approval, approvals, composite-tree, composite-batch, composite |  | OperationName
 | *topicName* | The name of the topic/channel to use |  | String
 |===
 
@@ -736,9 +736,9 @@ with the following path and query parameters:
 | *apiVersion* (common) | Salesforce API version, defaults to SalesforceEndpointConfig.DEFAULT_VERSION |  | String
 | *backoffIncrement* (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | long
 | *batchId* (common) | Bulk API Batch ID |  | String
-| *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV |  | ContentType
+| *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV. The value can be one of: XML, CSV, JSON, ZIP_XML, ZIP_CSV, ZIP_JSON |  | ContentType
 | *defaultReplayId* (common) | Default replayId setting if no value is found in initialReplayIdMap |  | Long
-| *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON |  | PayloadFormat
+| *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON. The value can be one of: JSON, XML |  | PayloadFormat
 | *httpClient* (common) | Custom Jetty Http Client to use to connect to Salesforce. |  | SalesforceHttpClient
 | *includeDetails* (common) | Include details in Salesforce1 Analytics report, defaults to false. |  | Boolean
 | *initialReplayIdMap* (common) | Replay IDs to start from per channel name. |  | Map
@@ -746,11 +746,11 @@ with the following path and query parameters:
 | *jobId* (common) | Bulk API Job ID |  | String
 | *limit* (common) | Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation. |  | Integer
 | *maxBackoff* (common) | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | long
-| *notFoundBehaviour* (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL NotFoundBehaviour#NULL or should a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION - the default. |  | NotFoundBehaviour
-| *notifyForFields* (common) | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE |  | NotifyForFieldsEnum
+| *notFoundBehaviour* (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL NotFoundBehaviour#NULL or should a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION - the default. The value can be one of: EXCEPTION, NULL |  | NotFoundBehaviour
+| *notifyForFields* (common) | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE. The value can be one of: ALL, REFERENCED, SELECT, WHERE |  | NotifyForFieldsEnum
 | *notifyForOperationCreate* (common) | Notify for create operation, defaults to false (API version = 29.0) |  | Boolean
 | *notifyForOperationDelete* (common) | Notify for delete operation, defaults to false (API version = 29.0) |  | Boolean
-| *notifyForOperations* (common) | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version 29.0) |  | NotifyForOperationsEnum
+| *notifyForOperations* (common) | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version 29.0). The value can be one of: ALL, CREATE, EXTENDED, UPDATE |  | NotifyForOperationsEnum
 | *notifyForOperationUndelete* (common) | Notify for un-delete operation, defaults to false (API version = 29.0) |  | Boolean
 | *notifyForOperationUpdate* (common) | Notify for update operation, defaults to false (API version = 29.0) |  | Boolean
 | *objectMapper* (common) | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects. |  | ObjectMapper
@@ -771,7 +771,7 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *replayId* (consumer) | The replayId value to use when subscribing |  | Long
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean

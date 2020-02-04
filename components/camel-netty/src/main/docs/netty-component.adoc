@@ -88,7 +88,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *protocol* | *Required* The protocol to use which can be tcp or udp. |  | String
+| *protocol* | *Required* The protocol to use which can be tcp or udp. The value can be one of: tcp, udp |  | String
 | *host* | *Required* The hostname. For the consumer the hostname is localhost or 0.0.0.0. For the producer the hostname is the remote host to connect to |  | String
 | *port* | *Required* The host port number |  | int
 |===
@@ -116,12 +116,12 @@ with the following path and query parameters:
 | *bossGroup* (consumer) | Set the BossGroup which could be used for handling the new connection of the server side across the NettyEndpoint |  | EventLoopGroup
 | *disconnectOnNoReply* (consumer) | If sync is enabled then this option dictates NettyConsumer if it should disconnect where there is no reply to send back. | true | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *nettyServerBootstrapFactory* (consumer) | To use a custom NettyServerBootstrapFactory |  | NettyServerBootstrapFactory
 | *networkInterface* (consumer) | When using UDP then this option can be used to specify a network interface by its name, such as eth0 to join a multicast group. |  | String
-| *noReplyLogLevel* (consumer) | If sync is enabled this option dictates NettyConsumer which logging level to use when logging a there is no reply to send back. | WARN | LoggingLevel
-| *serverClosedChannelException CaughtLogLevel* (consumer) | If the server (NettyConsumer) catches an java.nio.channels.ClosedChannelException then its logged using this logging level. This is used to avoid logging the closed channel exceptions, as clients can disconnect abruptly and then cause a flood of closed exceptions in the Netty server. | DEBUG | LoggingLevel
-| *serverExceptionCaughtLogLevel* (consumer) | If the server (NettyConsumer) catches an exception then its logged using this logging level. | WARN | LoggingLevel
+| *noReplyLogLevel* (consumer) | If sync is enabled this option dictates NettyConsumer which logging level to use when logging a there is no reply to send back. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | WARN | LoggingLevel
+| *serverClosedChannelException CaughtLogLevel* (consumer) | If the server (NettyConsumer) catches an java.nio.channels.ClosedChannelException then its logged using this logging level. This is used to avoid logging the closed channel exceptions, as clients can disconnect abruptly and then cause a flood of closed exceptions in the Netty server. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | DEBUG | LoggingLevel
+| *serverExceptionCaughtLogLevel* (consumer) | If the server (NettyConsumer) catches an exception then its logged using this logging level. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | WARN | LoggingLevel
 | *serverInitializerFactory* (consumer) | To use a custom ServerInitializerFactory |  | ServerInitializerFactory
 | *usingExecutorService* (consumer) | Whether to use ordered thread pool, to ensure events are processed orderly on the same channel. | true | boolean
 | *connectTimeout* (producer) | Time to wait for a socket connection to be available. Value is in milliseconds. | 10000 | int
@@ -154,7 +154,7 @@ with the following path and query parameters:
 | *autoAppendDelimiter* (codec) | Whether or not to auto append missing end delimiter when sending using the textline codec. | true | boolean
 | *decoderMaxLineLength* (codec) | The max line length to use for the textline codec. | 1024 | int
 | *decoders* (codec) | A list of decoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | List
-| *delimiter* (codec) | The delimiter to use for the textline codec. Possible values are LINE and NULL. | LINE | TextLineDelimiter
+| *delimiter* (codec) | The delimiter to use for the textline codec. Possible values are LINE and NULL. The value can be one of: LINE, NULL | LINE | TextLineDelimiter
 | *encoders* (codec) | A list of encoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | List
 | *encoding* (codec) | The encoding (a charset name) to use for the textline codec. If not provided, Camel will use the JVM default Charset. |  | String
 | *textline* (codec) | Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not specified or the value is false, then Object Serialization is assumed over TCP - however only Strings are allowed to be serialized by default. | false | boolean

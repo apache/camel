@@ -95,7 +95,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *outputType* | *Required* The primary output format is PDF but other output formats are also supported. |  | FopOutputType
+| *outputType* | *Required* The primary output format is PDF but other output formats are also supported. The value can be one of: pdf, ps, pcl, png, jpeg, svg, xml, mif, rtf, txt |  | FopOutputType
 |===
 
 

@@ -91,7 +91,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *endpointType* | *Required* Type of the endpoint (rdd, dataframe, hive). |  | EndpointType
+| *endpointType* | *Required* Type of the endpoint (rdd, dataframe, hive). The value can be one of: rdd, dataframe, hive |  | EndpointType
 |===
 
 

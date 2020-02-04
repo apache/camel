@@ -719,7 +719,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
         return null;
     }
 
-    private static ComponentModel generateComponentModel(String json) {
+    private ComponentModel generateComponentModel(String json) {
         ComponentModel component = JsonMapper.generateComponentModel(json);
         Stream.concat(component.getComponentOptions().stream(), component.getEndpointOptions().stream()).filter(BaseOptionModel::isRequired).forEach(option -> {
             String desc = "*Required* " + option.getDescription();
@@ -733,6 +733,14 @@ public class UpdateReadmeMojo extends AbstractMojo {
                 }
                 desc = desc + " Deprecation note: " + option.getDeprecationNote();
             }
+            option.setDescription(desc);
+        });
+        Stream.concat(component.getComponentOptions().stream(), component.getEndpointOptions().stream()).filter(o -> o.getEnums() != null).forEach(option -> {
+            String desc = option.getDescription();
+            if (!desc.endsWith(".")) {
+                desc = desc + ".";
+            }
+            desc = desc + " The value can be one of: " + wrapEnumValues(option.getEnums());
             option.setDescription(desc);
         });
         return component;
@@ -793,6 +801,11 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
     private boolean isFailFast() {
         return failFast != null && failFast;
+    }
+
+    private String wrapEnumValues(List<String> enumValues) {
+        // comma to space so we can wrap words (which uses space)
+        return String.join(", ", enumValues);
     }
 
 }

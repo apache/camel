@@ -91,7 +91,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *host* | *Required* The URL to the lucene server |  | String
-| *operation* | *Required* Operation to do such as insert or query. |  | LuceneOperation
+| *operation* | *Required* Operation to do such as insert or query. The value can be one of: insert, query |  | LuceneOperation
 |===
 
 

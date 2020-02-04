@@ -57,7 +57,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *name* | *Required* Name of data format |  | String
-| *operation* | *Required* Operation to use either marshal or unmarshal |  | String
+| *operation* | *Required* Operation to use either marshal or unmarshal. The value can be one of: marshal, unmarshal |  | String
 |===
 
 
