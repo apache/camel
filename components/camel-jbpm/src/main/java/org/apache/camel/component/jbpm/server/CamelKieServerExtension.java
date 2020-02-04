@@ -25,11 +25,11 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.jbpm.JBPMConstants;
 import org.apache.camel.component.jbpm.config.CamelContextBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.FromDefinition;
-import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.jbpm.services.api.service.ServiceRegistry;
@@ -98,7 +98,8 @@ public class CamelKieServerExtension implements KieServerExtension {
 
             try (InputStream is = this.getClass().getResourceAsStream("/global-camel-routes.xml")) {
                 if (is != null) {
-                    RoutesDefinition routes = ModelHelper.loadRoutesDefinition(camelContext, is);
+                    ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+                    RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(camelContext, is);
                     camelContext.addRouteDefinitions(routes.getRoutes());
                 }
             } catch (Exception e) {
@@ -132,7 +133,8 @@ public class CamelKieServerExtension implements KieServerExtension {
                 DefaultCamelContext context = (DefaultCamelContext)buildDeploymentContext(id, classloader);
                 context.setName("KIE Server Camel context for container " + kieContainerInstance.getContainerId());
 
-                RoutesDefinition routes = ModelHelper.loadRoutesDefinition(context, is);
+                ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+                RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(context, is);
                 annotateKJarRoutes(routes, id);
                 context.addRouteDefinitions(routes.getRoutes());
                 
