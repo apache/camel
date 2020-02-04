@@ -94,6 +94,14 @@ Should be changed to
 ipfs:add
 ----
 
+=== camel-core-engine
+
+XML and JAXB has been moved out of camel-base and camel-core-engine.
+
+The camel-jaxp JAR has XML parsers and type converters.
+The camel-xml-jaxb has support for loading XML DSL routes using JAXB.
+An alternative is to use the new camel-xml-io for loading XML routes which is more light-weight and faster than JAXB.
+
 === Graceful Shutdown Timeout
 
 When shutting down Camel, then the default timeout has changed from 300 seconds (5 minutes) to 45 seconds.
