@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.IOHelper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -65,20 +66,29 @@ public class NettyTCPChainedTest extends BaseNettyTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
         sendFile("direct:chainedCalls");
-        
+
         mock.assertIsSatisfied();
     }
-    
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+
+        jndi.bind("encoder", ChannelHandlerFactories.newByteArrayEncoder("tcp"));
+
+        return jndi;
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty4:tcp://localhost:{{port}}?sync=false")
+                from("netty4:tcp://localhost:{{port}}?sync=false&encoders=#encoder")
                     .to("log:result")
                     .to("mock:result");
                 from("direct:nettyCall")
-                        .to("netty4:tcp://localhost:{{port}}?sync=false&disconnect=true&workerCount=1");
+                        .to("netty4:tcp://localhost:{{port}}?sync=false&disconnect=true&workerCount=1&encoders=#encoder");
                 from("direct:chainedCalls")
                         .to("direct:nettyCall")
                         .to("direct:nettyCall");

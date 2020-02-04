@@ -149,7 +149,8 @@ public class NettyComponentConfiguration
         /**
          * Only used for TCP. If no codec is specified, you can use this flag to
          * indicate a text line based codec; if not specified or the value is
-         * false, then Object Serialization is assumed over TCP.
+         * false, then Object Serialization is assumed over TCP - however only
+         * Strings are allowed to be serialized by default.
          */
         private Boolean textline = false;
         /**

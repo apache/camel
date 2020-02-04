@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty4;
 
 import java.nio.charset.Charset;
+import java.util.Properties;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -25,10 +26,16 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.netty4.codec.ObjectDecoder;
+import org.apache.camel.component.netty4.codec.ObjectEncoder;
+import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
+import io.netty.channel.ChannelHandler;
+import io.netty.handler.codec.serialization.ClassResolvers;
+
 /**
- * @version 
+ * @version
  */
 public class NettyTransferExchangeOptionTest extends BaseNettyTest {
 
@@ -44,8 +51,23 @@ public class NettyTransferExchangeOptionTest extends BaseNettyTest {
         assertExchange(exchange, true);
     }
 
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+
+        jndi.bind("encoder", new ShareableChannelHandlerFactory(new ObjectEncoder()));
+        jndi.bind("decoder", new DefaultChannelHandlerFactory() {
+            @Override
+            public ChannelHandler newChannelHandler() {
+                return new ObjectDecoder(ClassResolvers.weakCachingResolver(null));
+            }
+        });
+
+        return jndi;
+    }
+
     private Exchange sendExchange(boolean setException) throws Exception {
-        Endpoint endpoint = context.getEndpoint("netty4:tcp://localhost:{{port}}?transferExchange=true");
+        Endpoint endpoint = context.getEndpoint("netty4:tcp://localhost:{{port}}?transferExchange=true&encoders=#encoder&decoders=#decoder");
         Exchange exchange = endpoint.createExchange();
 
         Message message = exchange.getIn();
@@ -97,7 +119,7 @@ public class NettyTransferExchangeOptionTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("netty4:tcp://localhost:{{port}}?transferExchange=true").process(new Processor() {
+                from("netty4:tcp://localhost:{{port}}?transferExchange=true&encoders=#encoder&decoders=#decoder").process(new Processor() {
                     public void process(Exchange e) throws InterruptedException {
                         assertNotNull(e.getIn().getBody());
                         assertNotNull(e.getIn().getHeaders());

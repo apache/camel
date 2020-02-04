@@ -219,7 +219,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                 if ("udp".equalsIgnoreCase(protocol)) {
                     encoders.add(ChannelHandlerFactories.newDatagramPacketEncoder());
                 }
-                // are we textline or object?
+                // are we textline or byte array
                 if (isTextline()) {
                     Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;
                     encoders.add(ChannelHandlerFactories.newStringEncoder(charset, protocol));
@@ -235,11 +235,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                     encoders.add(ChannelHandlerFactories.newByteArrayEncoder(protocol));
                     decoders.add(ChannelHandlerFactories.newByteArrayDecoder(protocol));
                 } else {
-                    // object serializable is then used
-                    encoders.add(ChannelHandlerFactories.newObjectEncoder(protocol));
-                    decoders.add(ChannelHandlerFactories.newObjectDecoder(protocol));
-
-                    LOG.debug("Using object encoders and decoders");
+                    // Fall back to allowing Strings to be serialized only
+                    Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;
+                    encoders.add(ChannelHandlerFactories.newStringEncoder(charset, protocol));
+                    decoders.add(ChannelHandlerFactories.newStringDecoder(charset, protocol));
                 }
                 if ("udp".equalsIgnoreCase(protocol)) {
                     decoders.add(ChannelHandlerFactories.newDatagramPacketDecoder());
@@ -293,7 +292,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     /**
      * Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec;
-     * if not specified or the value is false, then Object Serialization is assumed over TCP.
+     * if not specified or the value is false, then Object Serialization is assumed over TCP - however only Strings
+     * are allowed to be serialized by default.
      */
     public void setTextline(boolean textline) {
         this.textline = textline;
@@ -433,7 +433,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     public boolean isAllowSerializedHeaders() {
         return allowSerializedHeaders;
     }
-    
+
     /**
      * Only used for TCP when transferExchange is true. When set to true, serializable objects in headers and properties
      * will be added to the exchange. Otherwise Camel will exclude any non-serializable objects and log it at WARN
@@ -442,7 +442,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     public void setAllowSerializedHeaders(final boolean allowSerializedHeaders) {
         this.allowSerializedHeaders = allowSerializedHeaders;
     }
-    
+
     public boolean isDisconnectOnNoReply() {
         return disconnectOnNoReply;
     }
@@ -657,7 +657,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
      * When using this, the channel is not returned to the connection pool until the {@link Exchange} is done; or disconnected
      * if the disconnect option is set to true.
      * <p/>
-     * The reused {@link Channel} is stored on the {@link Exchange} as an exchange property with the key {@link NettyConstants#NETTY_CHANNEL} 
+     * The reused {@link Channel} is stored on the {@link Exchange} as an exchange property with the key {@link NettyConstants#NETTY_CHANNEL}
      * which allows you to obtain the channel during routing and use it as well.
      */
     public void setReuseChannel(boolean reuseChannel) {

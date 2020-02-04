@@ -30,9 +30,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.netty4.codec.ObjectDecoder;
+import org.apache.camel.component.netty4.codec.ObjectEncoder;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.StopWatch;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import io.netty.channel.ChannelHandler;
+import io.netty.handler.codec.serialization.ClassResolvers;
 
 public class NettyConcurrentTest extends BaseNettyTest {
 
@@ -52,6 +58,21 @@ public class NettyConcurrentTest extends BaseNettyTest {
         doSendMessages(250000, 100);
     }
 
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+
+        jndi.bind("encoder", new ShareableChannelHandlerFactory(new ObjectEncoder()));
+        jndi.bind("decoder", new DefaultChannelHandlerFactory() {
+            @Override
+            public ChannelHandler newChannelHandler() {
+                return new ObjectDecoder(ClassResolvers.weakCachingResolver(null));
+            }
+        });
+
+        return jndi;
+    }
+
     private void doSendMessages(int files, int poolSize) throws Exception {
         StopWatch watch = new StopWatch();
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(files).create();
@@ -64,7 +85,7 @@ public class NettyConcurrentTest extends BaseNettyTest {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {
                 public String call() throws Exception {
-                    String reply = template.requestBody("netty4:tcp://localhost:{{port}}", index, String.class);
+                    String reply = template.requestBody("netty4:tcp://localhost:{{port}}?encoders=#encoder&decoders=#decoder", index, String.class);
                     log.debug("Sent {} received {}", index, reply);
                     assertEquals("Bye " + index, reply);
                     return reply;
@@ -92,7 +113,7 @@ public class NettyConcurrentTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("netty4:tcp://localhost:{{port}}?sync=true").process(new Processor() {
+                from("netty4:tcp://localhost:{{port}}?sync=true&encoders=#encoder&decoders=#decoder").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Bye " + body);

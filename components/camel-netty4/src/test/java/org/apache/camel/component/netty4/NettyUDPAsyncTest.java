@@ -42,7 +42,7 @@ public class NettyUDPAsyncTest extends BaseNettyTest {
         mock.expectedMessageCount(1);
         mock.message(0).body().startsWith("Song Of A Dream".getBytes());
 
-        sendFile("netty4:udp://localhost:{{port}}?sync=false");
+        sendFile("netty4:udp://localhost:{{port}}?sync=false&udpByteArrayCodec=true");
 
         mock.assertIsSatisfied();
     }
@@ -54,7 +54,7 @@ public class NettyUDPAsyncTest extends BaseNettyTest {
             public void configure() throws Exception {
                 from("netty4:udp://localhost:{{port}}?sync=false")
                     .to("mock:result")
-                    .to("log:Message"); 
+                    .to("log:Message");
             }
         };
     }
