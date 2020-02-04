@@ -81,6 +81,7 @@ import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
@@ -336,6 +337,11 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     @Override
     protected XMLRoutesDefinitionLoader createXMLRoutesDefinitionLoader() {
         return new XMLRoutesDefinitionLoaderResolver().resolve(this);
+    }
+
+    @Override
+    protected ModelToXMLDumper createModelToXMLDumper() {
+        return new ModelToXMLDumperResolver().resolve(this);
     }
 
     @Override

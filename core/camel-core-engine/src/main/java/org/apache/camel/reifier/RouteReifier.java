@@ -33,7 +33,6 @@ import org.apache.camel.builder.AdviceWithTask;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.Model;
-import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.PropertyDefinition;
@@ -191,7 +190,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         String beforeAsXml = null;
         if (logRoutesAsXml && log.isInfoEnabled()) {
             try {
-                beforeAsXml = ModelHelper.dumpModelAsXml(camelContext, definition);
+                ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+                beforeAsXml = ecc.getModelToXMLDumper().dumpModelAsXml(camelContext, definition);
             } catch (Throwable e) {
                 // ignore, it may be due jaxb is not on classpath etc
             }
@@ -223,7 +223,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         if (beforeAsXml != null && logRoutesAsXml && log.isInfoEnabled()) {
             try {
-                String afterAsXml = ModelHelper.dumpModelAsXml(camelContext, merged);
+                ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+                String afterAsXml = ecc.getModelToXMLDumper().dumpModelAsXml(camelContext, merged);
                 log.info("Adviced route before/after as XML:\n{}\n{}", beforeAsXml, afterAsXml);
             } catch (Throwable e) {
                 // ignore, it may be due jaxb is not on classpath etc

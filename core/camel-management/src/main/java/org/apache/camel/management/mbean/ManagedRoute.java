@@ -38,6 +38,7 @@ import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -353,7 +354,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         String id = route.getId();
         RouteDefinition def = context.getExtension(Model.class).getRouteDefinition(id);
         if (def != null) {
-            return ModelHelper.dumpModelAsXml(context, def, resolvePlaceholders, resolveDelegateEndpoints);
+            ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+            return ecc.getModelToXMLDumper().dumpModelAsXml(context, def, resolvePlaceholders, resolveDelegateEndpoints);
         }
 
         return null;
