@@ -84,6 +84,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-aws2-mq</artifactId>
+			<scope>provided</scope>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-mina</artifactId>
 			<scope>provided</scope>
 			<version>${project.version}</version>
@@ -978,6 +984,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-aws2-kms</artifactId>
+			<scope>provided</scope>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-google-bigquery</artifactId>
 			<scope>provided</scope>
 			<version>${project.version}</version>
@@ -1146,6 +1158,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-workday</artifactId>
+			<scope>provided</scope>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jira</artifactId>
 			<scope>provided</scope>
 			<version>${project.version}</version>
@@ -1195,6 +1213,12 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-xslt</artifactId>
+			<scope>provided</scope>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-aws2-msk</artifactId>
 			<scope>provided</scope>
 			<version>${project.version}</version>
 		</dependency>
