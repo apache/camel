@@ -21,7 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.support.processor.validation.PredicateValidationException;
+import org.apache.camel.support.processor.PredicateValidationException;
 import org.junit.Before;
 import org.junit.Test;
 

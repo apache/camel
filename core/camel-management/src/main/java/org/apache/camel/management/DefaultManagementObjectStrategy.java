@@ -163,7 +163,7 @@ import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.support.processor.MarshalProcessor;
 import org.apache.camel.support.processor.ThroughputLogger;
 import org.apache.camel.support.processor.UnmarshalProcessor;
-import org.apache.camel.support.processor.validation.PredicateValidatingProcessor;
+import org.apache.camel.support.processor.PredicateValidatingProcessor;
 
 /**
  * Default {@link org.apache.camel.spi.ManagementObjectStrategy}.

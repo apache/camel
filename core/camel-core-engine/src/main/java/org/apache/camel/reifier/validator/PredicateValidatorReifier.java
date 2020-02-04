@@ -22,7 +22,7 @@ import org.apache.camel.impl.validator.ProcessorValidator;
 import org.apache.camel.model.validator.PredicateValidatorDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.Validator;
-import org.apache.camel.support.processor.validation.PredicateValidatingProcessor;
+import org.apache.camel.support.processor.PredicateValidatingProcessor;
 
 public class PredicateValidatorReifier extends ValidatorReifier<PredicateValidatorDefinition> {
 
