@@ -112,6 +112,11 @@
             <artifactId>gson</artifactId>
             <version>${gson-version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>${commons-text-version}</version>
+        </dependency>
 
         <!-- asciidoc to convert adoc to html files -->
         <dependency>

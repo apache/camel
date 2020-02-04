@@ -28,6 +28,9 @@
               files=".*/camel-endpointdsl/src/main/java/org/apache/camel/builder/endpoint/dsl/.*"
               />
     <suppress checks=".*"
+              files=".*/camel-componentdsl/src/main/java/org/apache/camel/builder/component/dsl/.*"
+              />
+    <suppress checks=".*"
               files=".*/platforms/spring-boot/components-starter/camel-.+-starter/src/main/java/org/apache/camel/.*"
               />
     <suppress checks=".*"
