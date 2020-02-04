@@ -62,7 +62,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *endpointType* | *Required* Type of the endpoint (dataset, datastream). |  | EndpointType
+| *endpointType* | *Required* Type of the endpoint (dataset, datastream). The value can be one of: dataset, datastream |  | EndpointType
 |===
 
 

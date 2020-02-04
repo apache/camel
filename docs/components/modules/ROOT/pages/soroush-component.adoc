@@ -84,7 +84,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *action* | *Required* The action to do. |  | SoroushAction
+| *action* | *Required* The action to do. The value can be one of: sendMessage, getMessage, uploadFile, downloadFile |  | SoroushAction
 |===
 
 
@@ -100,7 +100,7 @@ with the following path and query parameters:
 | *concurrentConsumers* (consumer) | Number of Thread created by consumer in the route. if you use this method for parallelism, it is guaranteed that messages from same user always execute in the same thread and therefore messages from the same user are processed sequentially. Default value notice: using SoroushBotSingleThreadConsumer | 1 | int
 | *queueCapacityPerThread* (consumer) | Maximum capacity of each queue when concurrentConsumers is greater than 1. if a queue become full, every message that should go to that queue will be dropped. If bridgeErrorHandler is set to true, an exchange with CongestionException is directed to ErrorHandler. You can then processed the error using onException(CongestionException.class) route. Default value notice: infinite capacity | 0 | int
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *autoDownload* (producer) | Automatically download SoroushMessage.fileUrl and SoroushMessage.thumbnailUrl if exists for the message and store them in SoroushMessage.file and SoroushMessage.thumbnail field | false | boolean
 | *autoUploadFile* (producer) | Automatically upload attachments when a message goes to the sendMessage endpoint and the SoroushMessage.file (SoroushMessage.thumbnail) has been set and SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is null | true | boolean
 | *downloadThumbnail* (producer) | If true, when downloading an attached file, thumbnail will be downloaded if provided in the message. Otherwise, only the file will be downloaded | true | boolean

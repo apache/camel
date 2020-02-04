@@ -71,7 +71,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *cryptoOperation* | *Required* Set the Crypto operation from that supplied after the crypto scheme in the endpoint uri e.g. crypto-cms:sign sets sign as the operation. Possible values: sign, verify, encrypt, or decrypt. |  | CryptoOperation
+| *cryptoOperation* | *Required* Set the Crypto operation from that supplied after the crypto scheme in the endpoint uri e.g. crypto-cms:sign sets sign as the operation. Possible values: sign, verify, encrypt, or decrypt. The value can be one of: sign, verify, encrypt, decrypt |  | CryptoOperation
 | *name* | *Required* The name part in the URI can be chosen by the user to distinguish between different signer/verifier/encryptor/decryptor endpoints within the camel context. |  | String
 |===
 
@@ -89,7 +89,7 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *password* (decrypt) | Sets the password of the private keys. It is assumed that all private keys in the keystore have the same password. If not set then it is assumed that the password of the private keys is given by the keystore password given in the KeyStoreParameters. |  | char[]
 | *fromBase64* (decrypt_verify) | If true then the CMS message is base 64 encoded and must be decoded during the processing. Default value is false. | false | boolean
-| *contentEncryptionAlgorithm* (encrypt) | Encryption algorithm, for example DESede/CBC/PKCS5Padding. Further possible values: DESede/CBC/PKCS5Padding, AES/CBC/PKCS5Padding, Camellia/CBC/PKCS5Padding, CAST5/CBC/PKCS5Padding. |  | String
+| *contentEncryptionAlgorithm* (encrypt) | Encryption algorithm, for example DESede/CBC/PKCS5Padding. Further possible values: DESede/CBC/PKCS5Padding, AES/CBC/PKCS5Padding, Camellia/CBC/PKCS5Padding, CAST5/CBC/PKCS5Padding. The value can be one of: AES/CBC/PKCS5Padding, DESede/CBC/PKCS5Padding, Camellia/CBC/PKCS5Padding, CAST5/CBC/PKCS5Padding |  | String
 | *originatorInformationProvider* (encrypt) | Provider for the originator info. See \https://tools.ietf.org/html/rfc5652#section-6.1. The default value is null. |  | OriginatorInformationProvider
 | *recipient* (encrypt) | Recipient Info: reference to a bean which implements the interface org.apache.camel.component.crypto.cms.api.TransRecipientInfo |  | List
 | *secretKeyLength* (encrypt) | Key length for the secret symmetric key used for the content encryption. Only used if the specified content-encryption algorithm allows keys of different sizes. If contentEncryptionAlgorithm=AES/CBC/PKCS5Padding or Camellia/CBC/PKCS5Padding then 128; if contentEncryptionAlgorithm=DESede/CBC/PKCS5Padding then 192, 128; if strong encryption is enabled then for AES/CBC/PKCS5Padding and Camellia/CBC/PKCS5Padding also the key lengths 192 and 256 are possible. |  | int

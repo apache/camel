@@ -70,11 +70,11 @@ with the following path and query parameters:
 | *remoteFilter* (consumer) | The remote filter, only used by the Continuous Query Consumer. |  | CacheEntryEventSerializableFilter
 | *timeInterval* (consumer) | The time interval for the Continuous Query Consumer. | 0 | long
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *cachePeekMode* (producer) | The CachePeekMode, only needed for operations that require it (IgniteCacheOperation#SIZE). | ALL | CachePeekMode
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *cachePeekMode* (producer) | The CachePeekMode, only needed for operations that require it (IgniteCacheOperation#SIZE). The value can be one of: ALL, NEAR, PRIMARY, BACKUP, ONHEAP, OFFHEAP | ALL | CachePeekMode
 | *failIfInexistentCache* (producer) | Whether to fail the initialization if the cache doesn't exist. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | The cache operation to invoke. Possible values: GET, PUT, REMOVE, SIZE, REBALANCE, QUERY, CLEAR. |  | IgniteCacheOperation
+| *operation* (producer) | The cache operation to invoke. Possible values: GET, PUT, REMOVE, SIZE, REBALANCE, QUERY, CLEAR. The value can be one of: GET, PUT, REMOVE, SIZE, REBALANCE, QUERY, CLEAR |  | IgniteCacheOperation
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===

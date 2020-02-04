@@ -267,7 +267,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *command* | *Required* Whether to sign or verify. |  | XmlCommand
+| *command* | *Required* Whether to sign or verify. The value can be one of: sign, verify |  | XmlCommand
 | *name* | *Required* The name part in the URI can be chosen by the user to distinguish between different signer/verifier endpoints within the camel context. |  | String
 |===
 

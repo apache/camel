@@ -100,7 +100,7 @@ with the following path and query parameters:
 | *muteException* (consumer) | If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace. | false | Boolean
 | *optionsEnabled* (consumer) | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *handlers* (consumer) | Specifies a comma-delimited set of io.undertow.server.HttpHandler instances in your Registry (such as your Spring ApplicationContext). These handlers are added to the Undertow handler chain (for example, to add security). Important: You can not use different handlers with different Undertow endpoints using the same port number. The handlers is associated to the port number. If you need different handlers, then use different port numbers. |  | String
 | *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
 | *keepAlive* (producer) | Setting to ensure socket is not closed due to inactivity | true | Boolean

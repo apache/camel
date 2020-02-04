@@ -77,7 +77,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *verb* | *Required* get, post, put, patch, delete, head, trace, connect, or options. |  | String
+| *verb* | *Required* get, post, put, patch, delete, head, trace, connect, or options. The value can be one of: get, post, put, patch, delete, head, trace, connect, options |  | String
 | *path* | *Required* The content path which support Spark syntax. |  | String
 |===
 
@@ -95,7 +95,7 @@ with the following path and query parameters:
 | *transferException* (consumer) | If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
 | *urlDecodeHeaders* (consumer) | If this option is enabled, then during binding from Spark to Camel Message then the header values will be URL decoded (eg %20 will be a space character.) | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *matchOnUriPrefix* (advanced) | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found. | false | boolean
 | *sparkBinding* (advanced) | To use a custom SparkBinding to map to/from Camel message. |  | SparkBinding

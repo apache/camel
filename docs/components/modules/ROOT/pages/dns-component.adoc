@@ -85,7 +85,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *dnsType* | *Required* The type of the lookup. |  | DnsType
+| *dnsType* | *Required* The type of the lookup. The value can be one of: dig, ip, lookup, wikipedia |  | DnsType
 |===
 
 

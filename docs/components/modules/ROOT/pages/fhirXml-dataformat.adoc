@@ -18,7 +18,7 @@ The FHIR XML dataformat supports 13 options, which are listed below.
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| fhirVersion | DSTU3 | String | The version of FHIR to use. Possible values are: DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4
+| fhirVersion | DSTU3 | String | The version of FHIR to use. Possible values are: DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4. The value can be one of: DSTU2, DSTU2_1, DSTU2_HL7ORG, DSTU3, R4
 | prettyPrint | false | Boolean | Sets the pretty print flag, meaning that the parser will encode resources with human-readable spacing and newlines between elements instead of condensing output as much as possible.
 | serverBaseUrl |  | String | Sets the server's base URL used by this parser. If a value is set, resource references will be turned into relative references if they are provided as absolute URLs but have a base matching the given base.
 | omitResourceId | false | Boolean | If set to true (default is false) the ID of any resources being encoded will not be included in the output. Note that this does not apply to contained resources, only to root resources. In other words, if this is set to true, contained resources will still have local IDs but the outer/containing ID will not have an ID.
