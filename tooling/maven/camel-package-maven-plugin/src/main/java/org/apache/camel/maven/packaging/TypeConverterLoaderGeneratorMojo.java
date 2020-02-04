@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -60,11 +59,8 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        ClassLoader classLoader;
-        try {
-            classLoader = DynamicClassLoader.createDynamicClassLoader(project.getCompileClasspathElements());
-        } catch (DependencyResolutionRequiredException e) {
-            throw new MojoExecutionException("DependencyResolutionRequiredException: " + e.getMessage(), e);
+        if ("pom".equals(project.getPackaging())) {
+            return;
         }
 
         Path output = Paths.get(project.getBuild().getOutputDirectory());
