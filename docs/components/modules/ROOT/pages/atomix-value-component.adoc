@@ -74,7 +74,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *atomix* (common) | The Atomix instance to use |  | Atomix
 | *configurationUri* (common) | The Atomix configuration uri. |  | String
-| *defaultAction* (common) | The default action. | SET | Action
+| *defaultAction* (common) | The default action. The value can be one of: SET, GET, GET_AND_SET, COMPARE_AND_SET | SET | Action
 | *nodes* (common) | The address of the nodes composing the cluster. |  | String
 | *resultHeader* (common) | The header that wil carry the result. |  | String
 | *transportClassName* (common) | The class name (fqn) of the Atomix transport | io.atomix.catalyst.transport.netty.NettyTransport | String

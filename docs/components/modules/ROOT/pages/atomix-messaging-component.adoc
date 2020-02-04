@@ -73,10 +73,10 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *atomix* (common) | The Atomix instance to use |  | Atomix
-| *broadcastType* (common) | The broadcast type. | ALL | BroadcastType
+| *broadcastType* (common) | The broadcast type. The value can be one of: ALL, RANDOM | ALL | BroadcastType
 | *channelName* (common) | The messaging channel name |  | String
 | *configurationUri* (common) | The Atomix configuration uri. |  | String
-| *defaultAction* (common) | The default action. | DIRECT | Action
+| *defaultAction* (common) | The default action. The value can be one of: DIRECT, BROADCAST | DIRECT | Action
 | *memberName* (common) | The Atomix Group member name |  | String
 | *nodes* (common) | The address of the nodes composing the cluster. |  | String
 | *resultHeader* (common) | The header that wil carry the result. |  | String

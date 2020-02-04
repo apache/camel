@@ -798,7 +798,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 44 in 44 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 41 in 41 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -807,12 +807,6 @@ Number of Miscellaneous Components: 44 in 44 JAR artifacts (0 deprecated)
 | xref:attachments.adoc[Attachments] (camel-attachments) | 3.0 | Java Attachments support for Camel Message
 
 | xref:aws-xray.adoc[AWS XRay] (camel-aws-xray) | 2.21 | Distributed tracing using AWS XRay
-
-| xref:aws2-kms.adoc[Aws2 Kms] (camel-aws2-kms) |  | A Camel Amazon KMS Web Service Component Version 2
-
-| xref:aws2-mq.adoc[Aws2 Mq] (camel-aws2-mq) |  | A Camel Amazon MQ Web Service Component Version 2
-
-| xref:aws2-msk.adoc[Aws2 Msk] (camel-aws2-msk) |  | A Camel Amazon MSK Web Service Component Version 2
 
 | xref:blueprint.adoc[Blueprint] (camel-blueprint) | 2.4 | Using Camel with OSGi Blueprint
 
