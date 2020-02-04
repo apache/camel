@@ -222,6 +222,11 @@ Should now be:
     exchange.setRollbackOnly(true);
 ----
 
+==== camel-jaxp
+
+The class `org.apache.camel.processor.validation.PredicateValidatingProcessor` has moved from `camel-jaxp` JAR
+to `camel-support` JAR and renamed to `org.apache.camel.support.processor.PredicateValidatingProcessor`.
+
 ==== Java DSL
 
 The Java DSL has been revisited and the following methods have been removed:
