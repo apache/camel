@@ -242,7 +242,7 @@
         <graphql-java-version>13.0</graphql-java-version>
         <grizzly-websockets-version>2.3.25</grizzly-websockets-version>
         <grpc-version>1.27.0</grpc-version>
-        <grpc-google-auth-library-version>0.13.0</grpc-google-auth-library-version>
+        <grpc-google-auth-library-version>0.19.0</grpc-google-auth-library-version>
         <grpc-guava-version>28.1-jre</grpc-guava-version>
         <grpc-java-jwt-version>3.7.0</grpc-java-jwt-version>
         <grpc-netty-tcnative-boringssl-static-version>2.0.26.Final</grpc-netty-tcnative-boringssl-static-version>
