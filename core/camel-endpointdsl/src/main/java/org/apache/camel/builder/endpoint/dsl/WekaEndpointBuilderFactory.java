@@ -78,17 +78,6 @@ public interface WekaEndpointBuilderFactory {
             return this;
         }
         /**
-         * An in/out path for the read/write commands.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default WekaEndpointBuilder path(String path) {
-            doSetProperty("path", path);
-            return this;
-        }
-        /**
          * The filter spec (i.e. Name Options).
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -215,6 +204,17 @@ public interface WekaEndpointBuilderFactory {
             doSetProperty("xval", xval);
             return this;
         }
+        /**
+         * An in/out path for the read/write commands.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: write
+         */
+        default WekaEndpointBuilder path(String path) {
+            doSetProperty("path", path);
+            return this;
+        }
     }
 
     /**
@@ -292,28 +292,10 @@ public interface WekaEndpointBuilderFactory {
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-weka
          * 
-         * Syntax: <code>weka:cmd</code>
+         * Syntax: <code>weka:command</code>
          * 
-         * Path parameter: read
-         * The read command
-         * 
-         * Path parameter: write
-         * The write command
-         * 
-         * Path parameter: filter
-         * The filter command
-         * 
-         * Path parameter: model
-         * The model command
-         * 
-         * Path parameter: push
-         * The push command
-         * 
-         * Path parameter: pop
-         * The pop command
-         * 
-         * Path parameter: version
-         * The version command
+         * Path parameter: command
+         * The command to use
          */
         default WekaEndpointBuilder weka(String path) {
             return WekaEndpointBuilderFactory.weka(path);
@@ -327,28 +309,10 @@ public interface WekaEndpointBuilderFactory {
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-weka
      * 
-     * Syntax: <code>weka:cmd</code>
+     * Syntax: <code>weka:command</code>
      * 
-     * Path parameter: read
-     * The read command
-     * 
-     * Path parameter: write
-     * The write command
-     * 
-     * Path parameter: filter
-     * The filter command
-     * 
-     * Path parameter: model
-     * The model command
-     * 
-     * Path parameter: push
-     * The push command
-     * 
-     * Path parameter: pop
-     * The pop command
-     * 
-     * Path parameter: version
-     * The version command
+     * Path parameter: command
+     * The command to use
      */
     static WekaEndpointBuilder weka(String path) {
         class WekaEndpointBuilderImpl extends AbstractEndpointBuilder implements WekaEndpointBuilder, AdvancedWekaEndpointBuilder {

@@ -29,25 +29,11 @@ public class WekaConfiguration {
         filter, model, read, write, push, pop, version 
     }
 
-    // Not used, only here for documentation
-    
-    @UriPath(description = "The read command")
-    private String read;
-    @UriPath(description = "The write command")
-    private String write;
-    @UriPath(description = "The filter command")
-    private String filter;
-    @UriPath(description = "The model command")
-    private String model;
-    @UriPath(description = "The push command")
-    private String push;
-    @UriPath(description = "The pop command")
-    private String pop;
-    @UriPath(description = "The version command")
-    private String version;
-    
+    @UriPath(description = "The command to use")
+    private Command command;
+
     // Read/Write parameters
-    @UriParam(description = "An in/out path for the read/write commands")
+    @UriParam(description = "An in/out path for the read/write commands", label = "read,write")
     private String path;
 
     // Filter parameters
@@ -61,16 +47,15 @@ public class WekaConfiguration {
     private boolean xval;
     @UriParam(description = "The named dataset to train the classifier with", label = "model")
     private String dsname;
-    @UriParam(description = "Numer of folds to use for cross-validation", label = "model") @Metadata(defaultValue = "10")
+    @UriParam(description = "Numer of folds to use for cross-validation", label = "model", defaultValue = "10")
     private int folds = 10;
-    @UriParam(description = "An optional seed for the randomizer", label = "model") @Metadata(defaultValue = "1")
+    @UriParam(description = "An optional seed for the randomizer", label = "model", defaultValue = "1")
     private int seed = 1;
     @UriParam(description = "Path to save the model to", label = "model")
     private String saveTo;
     @UriParam(description = "Path to load the model from", label = "model")
     private String loadFrom;
     
-    private Command command;
 
     Command getCommand() {
         return command;
