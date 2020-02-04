@@ -22,6 +22,7 @@ public class JSR356WebSocketComponentConfigurer extends PropertyConfigurerSuppor
 
     private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
         switch (name) {
+        case "serverEndpointDeploymentStrategy": ((JSR356WebSocketComponent) target).setServerEndpointDeploymentStrategy(property(camelContext, org.apache.camel.websocket.jsr356.ServerEndpointDeploymentStrategy.class, value)); return true;
         case "basicPropertyBinding": ((JSR356WebSocketComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazyStartProducer": ((JSR356WebSocketComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "bridgeErrorHandler": ((JSR356WebSocketComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
@@ -31,6 +32,7 @@ public class JSR356WebSocketComponentConfigurer extends PropertyConfigurerSuppor
 
     private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
         switch (name.toLowerCase()) {
+        case "serverendpointdeploymentstrategy": ((JSR356WebSocketComponent) target).setServerEndpointDeploymentStrategy(property(camelContext, org.apache.camel.websocket.jsr356.ServerEndpointDeploymentStrategy.class, value)); return true;
         case "basicpropertybinding": ((JSR356WebSocketComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer": ((JSR356WebSocketComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler": ((JSR356WebSocketComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;

@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.websocket.server.ServerContainer;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
@@ -33,6 +34,9 @@ import static java.util.Optional.ofNullable;
 public class JSR356WebSocketComponent extends DefaultComponent {
 
     private static final Map<String, ContextBag> SERVER_CONTAINERS = new ConcurrentHashMap<>();
+
+    @Metadata(label = "advanced")
+    private ServerEndpointDeploymentStrategy serverEndpointDeploymentStrategy;
 
     @Override
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
@@ -54,6 +58,22 @@ public class JSR356WebSocketComponent extends DefaultComponent {
         return ofNullable(context)
                 .map(SERVER_CONTAINERS::get)
                 .orElseGet(() -> SERVER_CONTAINERS.size() == 1 ? SERVER_CONTAINERS.values().iterator().next() : SERVER_CONTAINERS.get(""));
+    }
+
+    public ServerEndpointDeploymentStrategy getServerEndpointDeploymentStrategy() {
+        if (serverEndpointDeploymentStrategy == null) {
+            serverEndpointDeploymentStrategy = new DefaultServerEndpointDeploymentStrategy();
+        }
+        return serverEndpointDeploymentStrategy;
+    }
+
+    /**
+     * To enable customization of how a WebSocket ServerEndpoint is configured and deployed.
+     *
+     * By default {@link DefaultServerEndpointDeploymentStrategy} is used.
+     */
+    public void setServerEndpointDeploymentStrategy(ServerEndpointDeploymentStrategy serverEndpointDeploymentStrategy) {
+        this.serverEndpointDeploymentStrategy = serverEndpointDeploymentStrategy;
     }
 
     public static final class ContextBag {

@@ -65,7 +65,6 @@ public class JSR356Consumer extends DefaultConsumer {
             final JSR356WebSocketComponent.ContextBag bag = JSR356WebSocketComponent.getContext(null);
             final CamelServerEndpoint endpoint = bag.getEndpoints().get(uri.getPath());
             if (endpoint == null) {
-                // todo: make it customizable (the endpoint config)
                 final ServerEndpointConfig.Builder configBuilder = ServerEndpointConfig.Builder.create(CamelServerEndpoint.class, uri.getPath());
                 final CamelServerEndpoint serverEndpoint = new CamelServerEndpoint();
                 bag.getEndpoints().put(uri.getPath(), serverEndpoint);
@@ -76,7 +75,8 @@ public class JSR356Consumer extends DefaultConsumer {
                         return clazz.cast(serverEndpoint);
                     }
                 });
-                bag.getContainer().addEndpoint(configBuilder.build());
+                final ServerEndpointDeploymentStrategy strategy = getEndpoint().getComponent().getServerEndpointDeploymentStrategy();
+                strategy.deploy(bag.getContainer(), configBuilder);
             } else {
                 closeTask = addObserver(endpoint);
             }
