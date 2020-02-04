@@ -219,6 +219,80 @@ bound in the previous step:
 
 Or you can create a `DataSource` in Spring like this:
 
+With spring xml:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans                                                                                                                                                                                                                                                         
+                           http://www.springframework.org/schema/beans/spring-beans.xsd                                                                                                                                                                                                                                        
+                           http://camel.apache.org/schema/spring                                                                                                                                                                                                                                                               
+                           http://camel.apache.org/schema/spring/camel-spring.xsd                                                                                                                                                                                                                                              
+                           http://www.springframework.org/schema/jdbc                                                                                                                                                                                                                                                          
+                           http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd                                                                                                                                                                                                                                      
+                           http://activemq.apache.org/schema/core                                                                                                                                                                                                                                                              
+                           http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+  <!--  PROPERTY PLACEHOLDERS  -->
+  <!--                                                                                                                                                                                                                                                                                                                         
+       You may use property placeholders data store configuration                                                                                                                                                                                                                                                              
+       for to do that, you can resolve this properties with srping                                                                                                                                                                                                                                                             
+  -->
+  <bean id="db" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
+    <property name="location" value="classpath:db.properties"/>
+  </bean>
+
+  <!-- DATA STORE CONFIGURATION -->
+
+  <!--                                                                                                                                                                                                                                                                                                                         
+       In this example the DataStore is a postgres database, you can change the jdbc connector.                                                                                                                                                                                                                                
+       Also, the property testWhileIdle and validationQuery keep connection open.                                                                                                                                                                                                                                              
+  -->                                                                                                                                                                                                                                                                                                                          
+  
+  <bean id="DataStore" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <property name="driverClassName" value="org.postgresql.Driver" />
+    <property name="url" value="jdbc:postgresql://${DB_HOST}/${DB_NAME}"/>
+    <property name="username" value="${DB_USER}" />
+    <property name="password" value="${DB_PASS}" />
+    <property name="initialSize" value="4"/>
+    <property name="maxActive" value="15"/>
+    <property name="maxIdle" value="16"/>
+    <property name="minIdle" value="8"/>
+    <property name="timeBetweenEvictionRunsMillis" value="1800"/>
+    <property name="minEvictableIdleTimeMillis" value="1800"/>
+    <property name="testOnBorrow" value="true"/>
+    <property name="testWhileIdle" value="true"/>
+    <property name="testOnReturn" value="true"/>
+    <property name="validationQuery" value="SELECT 1"/>
+    <property name="maxWait"  value="1000"/>
+    <property name="removeAbandoned" value="true"/>
+    <property name="logAbandoned" value="true"/>
+    <property name="removeAbandonedTimeout" value="30000"/>
+  </bean>
+
+  <!-- You shuould write a file with an script to initialize your database.                                                                                                                                                                                                                                                    
+  If you have nothing to do with your database, then you can write just a                                                                                                                                                                                                                                                      
+  validation query like 'SELECT *; '-->
+  <jdbc:initialize-database data-source="DataStore" enabled="true">
+    <jdbc:script location="classpath:datastore-schema.sql" />
+  </jdbc:initialize-database>
+
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+
+    <!-- CAMEL ROUTE -->
+    <route id="Reporter">
+      <from uri="direct:to-datastore"/>
+      <!-- this example is done with camel-jdbc but you can make it work with camel-sql -->
+      <setBody>
+        <simple>insert into test '${body[value]}'</simple>
+      </setBody>
+      <to uri="jdbc:DataStore"/>
+    </route>                                         
+----
+
 We create an endpoint, add the SQL query to the body of the IN message,
 and then send the exchange. The result of the query is returned in the
 OUT body:
