@@ -77,7 +77,7 @@ with the following path and query parameters:
 | *apply* (filter) | The filter spec (i.e. Name Options) |  | String
 | *build* (model) | The classifier spec (i.e. Name Options) |  | String
 | *dsname* (model) | The named dataset to train the classifier with |  | String
-| *folds* (model) | Numer of folds to use for cross-validation | 10 | int
+| *folds* (model) | Number of folds to use for cross-validation | 10 | int
 | *loadFrom* (model) | Path to load the model from |  | String
 | *saveTo* (model) | Path to save the model to |  | String
 | *seed* (model) | An optional seed for the randomizer | 1 | int
