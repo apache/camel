@@ -294,8 +294,8 @@ public interface WekaEndpointBuilderFactory {
          * 
          * Syntax: <code>weka:command</code>
          * 
-         * Path parameter: command
-         * The command to use
+         * Path parameter: command (required)
+         * The command to use.
          * The value can be one of: filter, model, read, write, push, pop,
          * version
          */
@@ -313,8 +313,8 @@ public interface WekaEndpointBuilderFactory {
      * 
      * Syntax: <code>weka:command</code>
      * 
-     * Path parameter: command
-     * The command to use
+     * Path parameter: command (required)
+     * The command to use.
      * The value can be one of: filter, model, read, write, push, pop, version
      */
     static WekaEndpointBuilder weka(String path) {
