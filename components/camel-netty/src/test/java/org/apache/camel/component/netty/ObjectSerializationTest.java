@@ -19,6 +19,9 @@ package org.apache.camel.component.netty;
 import java.util.Date;
 import java.util.Properties;
 
+import io.netty.channel.ChannelHandler;
+import io.netty.handler.codec.serialization.ClassResolvers;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -29,9 +32,6 @@ import org.apache.camel.component.netty.codec.ObjectEncoder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import io.netty.channel.ChannelHandler;
-import io.netty.handler.codec.serialization.ClassResolvers;
 
 /**
  * Object Serialization is not allowed by default. However it can be enabled by adding specific encoders/decoders.
@@ -94,7 +94,7 @@ public class ObjectSerializationTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-               from("netty:tcp://localhost:{{port}}?sync=true")
+                from("netty:tcp://localhost:{{port}}?sync=true")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             Object obj = exchange.getIn().getBody();
