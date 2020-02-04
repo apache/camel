@@ -22,11 +22,11 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.qpid.jms.JmsConnectionFactory;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
 import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_PORT;
@@ -42,7 +42,7 @@ public class AMQPRouteTraceFrameTest extends CamelTestSupport {
 
     String expectedBody = "Hello there!";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws Exception {
         broker = new BrokerService();
         broker.setPersistent(false);
@@ -52,7 +52,7 @@ public class AMQPRouteTraceFrameTest extends CamelTestSupport {
         System.setProperty(AMQP_PORT, amqpPort + "");
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() throws Exception {
         broker.stop();
     }
@@ -79,9 +79,9 @@ public class AMQPRouteTraceFrameTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("amqp-customized:queue:ping")
                     .to("log:routing")
                     .to("mock:result");
