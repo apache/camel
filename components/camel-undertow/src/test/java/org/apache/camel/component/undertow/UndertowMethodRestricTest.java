@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.undertow;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -66,12 +64,10 @@ public class UndertowMethodRestricTest extends BaseUndertowTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("undertow://http://localhost:{{port}}/methodRestrict?httpMethodRestrict=POST").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        Message in = exchange.getIn();
-                        String request = in.getBody(String.class);
-                        exchange.getOut().setBody(request + " response");
-                    }
+                from("undertow://http://localhost:{{port}}/methodRestrict?httpMethodRestrict=POST").process(exchange -> {
+                    Message in = exchange.getIn();
+                    String request = in.getBody(String.class);
+                    exchange.getMessage().setBody(request + " response");
                 });
             }
         };

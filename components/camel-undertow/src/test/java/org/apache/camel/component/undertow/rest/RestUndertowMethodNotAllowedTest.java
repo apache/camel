@@ -58,7 +58,7 @@ public class RestUndertowMethodNotAllowedTest extends BaseUndertowTest {
                         .to("mock:input")
                         .process(exchange -> {
                             String id = exchange.getIn().getHeader("id", String.class);
-                            exchange.getOut().setBody(id + ";Donald Duck");
+                            exchange.getMessage().setBody(id + ";Donald Duck");
                         });
             }
         };
