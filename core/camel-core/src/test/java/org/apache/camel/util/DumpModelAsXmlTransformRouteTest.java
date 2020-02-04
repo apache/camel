@@ -16,6 +16,7 @@
  */
 package org.apache.camel.util;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -23,7 +24,6 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.model.ModelHelper;
 import org.junit.Test;
 
 /**
@@ -33,7 +33,8 @@ public class DumpModelAsXmlTransformRouteTest extends ContextTestSupport {
 
     @Test
     public void testDumpModelAsXml() throws Exception {
-        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 

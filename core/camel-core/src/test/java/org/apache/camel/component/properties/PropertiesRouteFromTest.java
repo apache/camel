@@ -18,8 +18,8 @@ package org.apache.camel.component.properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.junit.Test;
@@ -38,7 +38,8 @@ public class PropertiesRouteFromTest extends ContextTestSupport {
         assertEquals("{{cool.start}}", uri);
 
         // use a routes definition to dump the routes
-        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("foo"));
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("foo"));
         assertTrue(xml.contains("<from uri=\"{{cool.start}}\"/>"));
         assertTrue(xml.contains("<to id=\"to1\" uri=\"{{cool.end}}\"/>"));
     }

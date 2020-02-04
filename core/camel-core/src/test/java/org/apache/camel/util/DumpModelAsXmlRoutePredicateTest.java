@@ -17,10 +17,10 @@
 package org.apache.camel.util;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.MyBarSingleton;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.model.ModelHelper;
 import org.junit.Test;
 
 /**
@@ -37,7 +37,8 @@ public class DumpModelAsXmlRoutePredicateTest extends ContextTestSupport {
 
     @Test
     public void testDumpModelAsXml() throws Exception {
-        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -46,7 +47,8 @@ public class DumpModelAsXmlRoutePredicateTest extends ContextTestSupport {
 
     @Test
     public void testDumpModelAsXmlXPath() throws Exception {
-        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myOtherRoute"));
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("myOtherRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -55,7 +57,8 @@ public class DumpModelAsXmlRoutePredicateTest extends ContextTestSupport {
 
     @Test
     public void testDumpModelAsXmlHeader() throws Exception {
-        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myFooRoute"));
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("myFooRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -64,7 +67,8 @@ public class DumpModelAsXmlRoutePredicateTest extends ContextTestSupport {
 
     @Test
     public void testDumpModelAsXmlBean() throws Exception {
-        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myBeanRoute"));
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("myBeanRoute"));
         assertNotNull(xml);
         log.info(xml);
 
