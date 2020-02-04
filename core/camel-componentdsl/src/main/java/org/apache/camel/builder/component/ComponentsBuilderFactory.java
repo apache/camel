@@ -28,29 +28,6 @@ import javax.annotation.Generated;
 public interface ComponentsBuilderFactory {
 
     /**
-     * AMQP (camel-amqp)
-     * Messaging with AMQP protocol using Apache QPid Client.
-     * 
-     * Category: messaging
-     * Since: 1.2
-     * Maven coordinates: org.apache.camel:camel-amqp
-     */
-    static org.apache.camel.builder.component.dsl.AMQPComponentBuilderFactory.AMQPComponentBuilder amqp() {
-        return org.apache.camel.builder.component.dsl.AMQPComponentBuilderFactory.amqp();
-    }
-    /**
-     * AS2 (camel-as2)
-     * Component used for transferring data secure and reliable over the
-     * internet using the AS2 protocol.
-     * 
-     * Category: file
-     * Since: 2.22
-     * Maven coordinates: org.apache.camel:camel-as2
-     */
-    static org.apache.camel.builder.component.dsl.AS2ComponentBuilderFactory.AS2ComponentBuilder as2() {
-        return org.apache.camel.builder.component.dsl.AS2ComponentBuilderFactory.as2();
-    }
-    /**
      * ActiveMQ (camel-activemq)
      * The activemq component allows messages to be sent to (or consumed from)
      * Apache ActiveMQ. This component extends the Camel JMS component.
@@ -96,6 +73,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AhcWssWsComponentBuilderFactory.ahcWss();
     }
     /**
+     * AMQP (camel-amqp)
+     * Messaging with AMQP protocol using Apache QPid Client.
+     * 
+     * Category: messaging
+     * Since: 1.2
+     * Maven coordinates: org.apache.camel:camel-amqp
+     */
+    static org.apache.camel.builder.component.dsl.AMQPComponentBuilderFactory.AMQPComponentBuilder amqp() {
+        return org.apache.camel.builder.component.dsl.AMQPComponentBuilderFactory.amqp();
+    }
+    /**
      * APNS (camel-apns)
      * For sending notifications to Apple iOS devices.
      * 
@@ -105,6 +93,18 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.ApnsComponentBuilderFactory.ApnsComponentBuilder apns() {
         return org.apache.camel.builder.component.dsl.ApnsComponentBuilderFactory.apns();
+    }
+    /**
+     * AS2 (camel-as2)
+     * Component used for transferring data secure and reliable over the
+     * internet using the AS2 protocol.
+     * 
+     * Category: file
+     * Since: 2.22
+     * Maven coordinates: org.apache.camel:camel-as2
+     */
+    static org.apache.camel.builder.component.dsl.AS2ComponentBuilderFactory.AS2ComponentBuilder as2() {
+        return org.apache.camel.builder.component.dsl.AS2ComponentBuilderFactory.as2();
     }
     /**
      * Asterisk (camel-asterisk)
@@ -219,6 +219,327 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AvroComponentBuilderFactory.avro();
     }
     /**
+     * AWS 2 ECS (camel-aws2-ecs)
+     * The aws2-ecs is used for managing Amazon ECS
+     * 
+     * Category: cloud,management
+     * Since: 3.1
+     * Maven coordinates: org.apache.camel:camel-aws2-ecs
+     */
+    static org.apache.camel.builder.component.dsl.ECS2ComponentBuilderFactory.ECS2ComponentBuilder aws2Ecs() {
+        return org.apache.camel.builder.component.dsl.ECS2ComponentBuilderFactory.aws2Ecs();
+    }
+    /**
+     * AWS 2 EKS (camel-aws2-eks)
+     * The aws-eks is used for managing Amazon EKS
+     * 
+     * Category: cloud,management
+     * Since: 3.1
+     * Maven coordinates: org.apache.camel:camel-aws2-eks
+     */
+    static org.apache.camel.builder.component.dsl.EKS2ComponentBuilderFactory.EKS2ComponentBuilder aws2Eks() {
+        return org.apache.camel.builder.component.dsl.EKS2ComponentBuilderFactory.aws2Eks();
+    }
+    /**
+     * AWS 2 KMS (camel-aws2-kms)
+     * The aws-kms is used for managing Amazon KMS
+     * 
+     * Category: cloud,management
+     * Since: 3.1
+     * Maven coordinates: org.apache.camel:camel-aws2-kms
+     */
+    static org.apache.camel.builder.component.dsl.KMS2ComponentBuilderFactory.KMS2ComponentBuilder aws2Kms() {
+        return org.apache.camel.builder.component.dsl.KMS2ComponentBuilderFactory.aws2Kms();
+    }
+    /**
+     * AWS 2 MQ (camel-aws2-mq)
+     * The aws2-mq is used for managing Amazon MQ instances.
+     * 
+     * Category: cloud,management
+     * Since: 3.1
+     * Maven coordinates: org.apache.camel:camel-aws2-mq
+     */
+    static org.apache.camel.builder.component.dsl.MQ2ComponentBuilderFactory.MQ2ComponentBuilder aws2Mq() {
+        return org.apache.camel.builder.component.dsl.MQ2ComponentBuilderFactory.aws2Mq();
+    }
+    /**
+     * AWS 2 MSK (camel-aws2-msk)
+     * The aws2-msk is used for managing Amazon MSK
+     * 
+     * Category: cloud,management
+     * Since: 3.1
+     * Maven coordinates: org.apache.camel:camel-aws2-msk
+     */
+    static org.apache.camel.builder.component.dsl.MSK2ComponentBuilderFactory.MSK2ComponentBuilder aws2Msk() {
+        return org.apache.camel.builder.component.dsl.MSK2ComponentBuilderFactory.aws2Msk();
+    }
+    /**
+     * AWS 2 Translate (camel-aws2-translate)
+     * The aws2-translate component is used for managing Amazon Translate
+     * 
+     * Category: cloud,management
+     * Since: 3.1
+     * Maven coordinates: org.apache.camel:camel-aws2-translate
+     */
+    static org.apache.camel.builder.component.dsl.Translate2ComponentBuilderFactory.Translate2ComponentBuilder aws2Translate() {
+        return org.apache.camel.builder.component.dsl.Translate2ComponentBuilderFactory.aws2Translate();
+    }
+    /**
+     * AWS CloudWatch (camel-aws-cw)
+     * The aws-cw component is used for sending metrics to an Amazon CloudWatch.
+     * 
+     * Category: cloud,monitoring
+     * Since: 2.11
+     * Maven coordinates: org.apache.camel:camel-aws-cw
+     */
+    static org.apache.camel.builder.component.dsl.CwComponentBuilderFactory.CwComponentBuilder awsCw() {
+        return org.apache.camel.builder.component.dsl.CwComponentBuilderFactory.awsCw();
+    }
+    /**
+     * AWS DynamoDB (camel-aws-ddb)
+     * The aws-ddb component is used for storing and retrieving data from
+     * Amazon's DynamoDB service.
+     * 
+     * Category: cloud,database,nosql
+     * Since: 2.10
+     * Maven coordinates: org.apache.camel:camel-aws-ddb
+     */
+    static org.apache.camel.builder.component.dsl.DdbComponentBuilderFactory.DdbComponentBuilder awsDdb() {
+        return org.apache.camel.builder.component.dsl.DdbComponentBuilderFactory.awsDdb();
+    }
+    /**
+     * AWS DynamoDB Streams (camel-aws-ddb)
+     * The aws-ddbstream component is used for working with Amazon DynamoDB
+     * Streams.
+     * 
+     * Category: cloud,messaging,streams
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-aws-ddb
+     */
+    static org.apache.camel.builder.component.dsl.DdbStreamComponentBuilderFactory.DdbStreamComponentBuilder awsDdbstream() {
+        return org.apache.camel.builder.component.dsl.DdbStreamComponentBuilderFactory.awsDdbstream();
+    }
+    /**
+     * AWS EC2 (camel-aws-ec2)
+     * The aws-ec2 is used for managing Amazon EC2 instances.
+     * 
+     * Category: cloud,management
+     * Since: 2.16
+     * Maven coordinates: org.apache.camel:camel-aws-ec2
+     */
+    static org.apache.camel.builder.component.dsl.EC2ComponentBuilderFactory.EC2ComponentBuilder awsEc2() {
+        return org.apache.camel.builder.component.dsl.EC2ComponentBuilderFactory.awsEc2();
+    }
+    /**
+     * AWS ECS (camel-aws-ecs)
+     * The aws-ecs is used for managing Amazon ECS
+     * 
+     * Category: cloud,management
+     * Since: 3.0
+     * Maven coordinates: org.apache.camel:camel-aws-ecs
+     */
+    static org.apache.camel.builder.component.dsl.ECSComponentBuilderFactory.ECSComponentBuilder awsEcs() {
+        return org.apache.camel.builder.component.dsl.ECSComponentBuilderFactory.awsEcs();
+    }
+    /**
+     * AWS EKS (camel-aws-eks)
+     * The aws-eks is used for managing Amazon EKS
+     * 
+     * Category: cloud,management
+     * Since: 3.0
+     * Maven coordinates: org.apache.camel:camel-aws-eks
+     */
+    static org.apache.camel.builder.component.dsl.EKSComponentBuilderFactory.EKSComponentBuilder awsEks() {
+        return org.apache.camel.builder.component.dsl.EKSComponentBuilderFactory.awsEks();
+    }
+    /**
+     * AWS IAM (camel-aws-iam)
+     * The aws-iam is used for managing Amazon IAM
+     * 
+     * Category: cloud,management
+     * Since: 2.23
+     * Maven coordinates: org.apache.camel:camel-aws-iam
+     */
+    static org.apache.camel.builder.component.dsl.IAMComponentBuilderFactory.IAMComponentBuilder awsIam() {
+        return org.apache.camel.builder.component.dsl.IAMComponentBuilderFactory.awsIam();
+    }
+    /**
+     * AWS Kinesis (camel-aws-kinesis)
+     * The aws-kinesis component is for consuming and producing records from
+     * Amazon Kinesis Streams.
+     * 
+     * Category: cloud,messaging
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-aws-kinesis
+     */
+    static org.apache.camel.builder.component.dsl.KinesisComponentBuilderFactory.KinesisComponentBuilder awsKinesis() {
+        return org.apache.camel.builder.component.dsl.KinesisComponentBuilderFactory.awsKinesis();
+    }
+    /**
+     * AWS Kinesis Firehose (camel-aws-kinesis)
+     * The aws-kinesis-firehose component is used for producing Amazon's Kinesis
+     * Firehose streams.
+     * 
+     * Category: cloud,messaging
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-aws-kinesis
+     */
+    static org.apache.camel.builder.component.dsl.KinesisFirehoseComponentBuilderFactory.KinesisFirehoseComponentBuilder awsKinesisFirehose() {
+        return org.apache.camel.builder.component.dsl.KinesisFirehoseComponentBuilderFactory.awsKinesisFirehose();
+    }
+    /**
+     * AWS KMS (camel-aws-kms)
+     * The aws-kms is used for managing Amazon KMS
+     * 
+     * Category: cloud,management
+     * Since: 2.21
+     * Maven coordinates: org.apache.camel:camel-aws-kms
+     */
+    static org.apache.camel.builder.component.dsl.KMSComponentBuilderFactory.KMSComponentBuilder awsKms() {
+        return org.apache.camel.builder.component.dsl.KMSComponentBuilderFactory.awsKms();
+    }
+    /**
+     * AWS Lambda (camel-aws-lambda)
+     * The aws-lambda is used for managing and invoking functions from Amazon
+     * Lambda.
+     * 
+     * Category: cloud,computing,serverless
+     * Since: 2.20
+     * Maven coordinates: org.apache.camel:camel-aws-lambda
+     */
+    static org.apache.camel.builder.component.dsl.LambdaComponentBuilderFactory.LambdaComponentBuilder awsLambda() {
+        return org.apache.camel.builder.component.dsl.LambdaComponentBuilderFactory.awsLambda();
+    }
+    /**
+     * AWS MQ (camel-aws-mq)
+     * The aws-mq is used for managing Amazon MQ instances.
+     * 
+     * Category: cloud,management
+     * Since: 2.21
+     * Maven coordinates: org.apache.camel:camel-aws-mq
+     */
+    static org.apache.camel.builder.component.dsl.MQComponentBuilderFactory.MQComponentBuilder awsMq() {
+        return org.apache.camel.builder.component.dsl.MQComponentBuilderFactory.awsMq();
+    }
+    /**
+     * AWS MSK (camel-aws-msk)
+     * The aws-msk is used for managing Amazon MSK
+     * 
+     * Category: cloud,management
+     * Since: 3.0
+     * Maven coordinates: org.apache.camel:camel-aws-msk
+     */
+    static org.apache.camel.builder.component.dsl.MSKComponentBuilderFactory.MSKComponentBuilder awsMsk() {
+        return org.apache.camel.builder.component.dsl.MSKComponentBuilderFactory.awsMsk();
+    }
+    /**
+     * AWS S3 Storage Service (camel-aws-s3)
+     * The aws-s3 component is used for storing and retrieving object from
+     * Amazon S3 Storage Service.
+     * 
+     * Category: cloud,file
+     * Since: 2.8
+     * Maven coordinates: org.apache.camel:camel-aws-s3
+     */
+    static org.apache.camel.builder.component.dsl.S3ComponentBuilderFactory.S3ComponentBuilder awsS3() {
+        return org.apache.camel.builder.component.dsl.S3ComponentBuilderFactory.awsS3();
+    }
+    /**
+     * AWS SimpleDB (camel-aws-sdb)
+     * The aws-sdb component is for storing and retrieving data from/to Amazon's
+     * SDB service.
+     * 
+     * Category: cloud,database,nosql
+     * Since: 2.9
+     * Maven coordinates: org.apache.camel:camel-aws-sdb
+     */
+    static org.apache.camel.builder.component.dsl.SdbComponentBuilderFactory.SdbComponentBuilder awsSdb() {
+        return org.apache.camel.builder.component.dsl.SdbComponentBuilderFactory.awsSdb();
+    }
+    /**
+     * AWS Simple Email Service (camel-aws-ses)
+     * The aws-ses component is used for sending emails with Amazon's SES
+     * service.
+     * 
+     * Category: cloud,mail
+     * Since: 2.9
+     * Maven coordinates: org.apache.camel:camel-aws-ses
+     */
+    static org.apache.camel.builder.component.dsl.SesComponentBuilderFactory.SesComponentBuilder awsSes() {
+        return org.apache.camel.builder.component.dsl.SesComponentBuilderFactory.awsSes();
+    }
+    /**
+     * AWS Simple Notification System (camel-aws-sns)
+     * The aws-sns component is used for sending messages to an Amazon Simple
+     * Notification Topic.
+     * 
+     * Category: cloud,mobile,messaging
+     * Since: 2.8
+     * Maven coordinates: org.apache.camel:camel-aws-sns
+     */
+    static org.apache.camel.builder.component.dsl.SnsComponentBuilderFactory.SnsComponentBuilder awsSns() {
+        return org.apache.camel.builder.component.dsl.SnsComponentBuilderFactory.awsSns();
+    }
+    /**
+     * AWS Simple Queue Service (camel-aws-sqs)
+     * The aws-sqs component is used for sending and receiving messages to
+     * Amazon's SQS service.
+     * 
+     * Category: cloud,messaging
+     * Since: 2.6
+     * Maven coordinates: org.apache.camel:camel-aws-sqs
+     */
+    static org.apache.camel.builder.component.dsl.SqsComponentBuilderFactory.SqsComponentBuilder awsSqs() {
+        return org.apache.camel.builder.component.dsl.SqsComponentBuilderFactory.awsSqs();
+    }
+    /**
+     * AWS Simple Workflow (camel-aws-swf)
+     * The aws-swf component is used for managing workflows from Amazon Simple
+     * Workflow.
+     * 
+     * Category: cloud,workflow
+     * Since: 2.13
+     * Maven coordinates: org.apache.camel:camel-aws-swf
+     */
+    static org.apache.camel.builder.component.dsl.SWFComponentBuilderFactory.SWFComponentBuilder awsSwf() {
+        return org.apache.camel.builder.component.dsl.SWFComponentBuilderFactory.awsSwf();
+    }
+    /**
+     * AWS Translate (camel-aws-translate)
+     * The aws-translate component is used for managing Amazon Translate
+     * 
+     * Category: cloud,management
+     * Since: 3.0
+     * Maven coordinates: org.apache.camel:camel-aws-translate
+     */
+    static org.apache.camel.builder.component.dsl.TranslateComponentBuilderFactory.TranslateComponentBuilder awsTranslate() {
+        return org.apache.camel.builder.component.dsl.TranslateComponentBuilderFactory.awsTranslate();
+    }
+    /**
+     * Azure Storage Blob Service (camel-azure)
+     * The azure-blob component is used for storing and retrieving blobs from
+     * Azure Storage Blob Service.
+     * 
+     * Category: cloud,database,nosql
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-azure
+     */
+    static org.apache.camel.builder.component.dsl.BlobServiceComponentBuilderFactory.BlobServiceComponentBuilder azureBlob() {
+        return org.apache.camel.builder.component.dsl.BlobServiceComponentBuilderFactory.azureBlob();
+    }
+    /**
+     * Azure Storage Queue Service (camel-azure)
+     * The azure-queue component is used for storing and retrieving messages
+     * from Azure Storage Queue Service.
+     * 
+     * Category: cloud,queue,azure
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-azure
+     */
+    static org.apache.camel.builder.component.dsl.QueueServiceComponentBuilderFactory.QueueServiceComponentBuilder azureQueue() {
+        return org.apache.camel.builder.component.dsl.QueueServiceComponentBuilderFactory.azureQueue();
+    }
+    /**
      * Bean (camel-bean)
      * The bean component is for invoking Java beans from Camel.
      * 
@@ -252,18 +573,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.BeanstalkComponentBuilderFactory.BeanstalkComponentBuilder beanstalk() {
         return org.apache.camel.builder.component.dsl.BeanstalkComponentBuilderFactory.beanstalk();
-    }
-    /**
-     * Azure Storage Blob Service (camel-azure)
-     * The azure-blob component is used for storing and retrieving blobs from
-     * Azure Storage Blob Service.
-     * 
-     * Category: cloud,database,nosql
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-azure
-     */
-    static org.apache.camel.builder.component.dsl.BlobServiceComponentBuilderFactory.BlobServiceComponentBuilder azureBlob() {
-        return org.apache.camel.builder.component.dsl.BlobServiceComponentBuilderFactory.azureBlob();
     }
     /**
      * Bonita (camel-bonita)
@@ -313,29 +622,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.BrowseComponentBuilderFactory.browse();
     }
     /**
-     * CM SMS Gateway (camel-cm-sms)
-     * The cm-sms component allows to integrate with CM SMS Gateway.
-     * 
-     * Category: mobile
-     * Since: 2.18
-     * Maven coordinates: org.apache.camel:camel-cm-sms
-     */
-    static org.apache.camel.builder.component.dsl.CMComponentBuilderFactory.CMComponentBuilder cmSms() {
-        return org.apache.camel.builder.component.dsl.CMComponentBuilderFactory.cmSms();
-    }
-    /**
-     * CMIS (camel-cmis)
-     * The cmis component uses the Apache Chemistry client API and allows you to
-     * add/read nodes to/from a CMIS compliant content repositories.
-     * 
-     * Category: cms,database
-     * Since: 2.11
-     * Maven coordinates: org.apache.camel:camel-cmis
-     */
-    static org.apache.camel.builder.component.dsl.CMISComponentBuilderFactory.CMISComponentBuilder cmis() {
-        return org.apache.camel.builder.component.dsl.CMISComponentBuilderFactory.cmis();
-    }
-    /**
      * Caffeine Cache (camel-caffeine)
      * The caffeine-cache component is used for integration with Caffeine Cache.
      * 
@@ -357,19 +643,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.CaffeineLoadCacheComponentBuilderFactory.CaffeineLoadCacheComponentBuilder caffeineLoadcache() {
         return org.apache.camel.builder.component.dsl.CaffeineLoadCacheComponentBuilderFactory.caffeineLoadcache();
-    }
-    /**
-     * Cassandra CQL (camel-cassandraql)
-     * The cql component aims at integrating Cassandra 2.0 using the CQL3 API
-     * (not the Thrift API). It's based on Cassandra Java Driver provided by
-     * DataStax.
-     * 
-     * Category: database,nosql
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-cassandraql
-     */
-    static org.apache.camel.builder.component.dsl.CassandraComponentBuilderFactory.CassandraComponentBuilder cql() {
-        return org.apache.camel.builder.component.dsl.CassandraComponentBuilderFactory.cql();
     }
     /**
      * ChatScript (camel-chatscript)
@@ -394,18 +667,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.ChunkComponentBuilderFactory.chunk();
     }
     /**
-     * OpenStack Cinder (camel-openstack)
-     * The openstack-cinder component allows messages to be sent to an OpenStack
-     * block storage services.
-     * 
-     * Category: cloud,paas
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-openstack
-     */
-    static org.apache.camel.builder.component.dsl.CinderComponentBuilderFactory.CinderComponentBuilder openstackCinder() {
-        return org.apache.camel.builder.component.dsl.CinderComponentBuilderFactory.openstackCinder();
-    }
-    /**
      * Class (camel-bean)
      * The Class component is for invoking Java classes (Java beans) from Camel.
      * 
@@ -417,17 +678,27 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.ClassComponentBuilderFactory.clas();
     }
     /**
-     * IEC 60870 Client (camel-iec60870)
-     * IEC 60870 component used for telecontrol (supervisory control and data
-     * acquisition) such as controlling electric power transmission grids and
-     * other geographically widespread control systems.
+     * CM SMS Gateway (camel-cm-sms)
+     * The cm-sms component allows to integrate with CM SMS Gateway.
      * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
+     * Category: mobile
+     * Since: 2.18
+     * Maven coordinates: org.apache.camel:camel-cm-sms
      */
-    static org.apache.camel.builder.component.dsl.ClientComponentBuilderFactory.ClientComponentBuilder iec60870Client() {
-        return org.apache.camel.builder.component.dsl.ClientComponentBuilderFactory.iec60870Client();
+    static org.apache.camel.builder.component.dsl.CMComponentBuilderFactory.CMComponentBuilder cmSms() {
+        return org.apache.camel.builder.component.dsl.CMComponentBuilderFactory.cmSms();
+    }
+    /**
+     * CMIS (camel-cmis)
+     * The cmis component uses the Apache Chemistry client API and allows you to
+     * add/read nodes to/from a CMIS compliant content repositories.
+     * 
+     * Category: cms,database
+     * Since: 2.11
+     * Maven coordinates: org.apache.camel:camel-cmis
+     */
+    static org.apache.camel.builder.component.dsl.CMISComponentBuilderFactory.CMISComponentBuilder cmis() {
+        return org.apache.camel.builder.component.dsl.CMISComponentBuilderFactory.cmis();
     }
     /**
      * CoAP (camel-coap)
@@ -538,17 +809,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.CordaComponentBuilderFactory.corda();
     }
     /**
-     * CouchDB (camel-couchdb)
-     * The couchdb component is used for integrate with CouchDB databases.
-     * 
-     * Category: database,nosql
-     * Since: 2.11
-     * Maven coordinates: org.apache.camel:camel-couchdb
-     */
-    static org.apache.camel.builder.component.dsl.CouchDbComponentBuilderFactory.CouchDbComponentBuilder couchdb() {
-        return org.apache.camel.builder.component.dsl.CouchDbComponentBuilderFactory.couchdb();
-    }
-    /**
      * Couchbase (camel-couchbase)
      * Represents a Couchbase endpoint that can query Views with a Poll strategy
      * and/or produce various type of operations.
@@ -561,6 +821,30 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.CouchbaseComponentBuilderFactory.couchbase();
     }
     /**
+     * CouchDB (camel-couchdb)
+     * The couchdb component is used for integrate with CouchDB databases.
+     * 
+     * Category: database,nosql
+     * Since: 2.11
+     * Maven coordinates: org.apache.camel:camel-couchdb
+     */
+    static org.apache.camel.builder.component.dsl.CouchDbComponentBuilderFactory.CouchDbComponentBuilder couchdb() {
+        return org.apache.camel.builder.component.dsl.CouchDbComponentBuilderFactory.couchdb();
+    }
+    /**
+     * Cassandra CQL (camel-cassandraql)
+     * The cql component aims at integrating Cassandra 2.0 using the CQL3 API
+     * (not the Thrift API). It's based on Cassandra Java Driver provided by
+     * DataStax.
+     * 
+     * Category: database,nosql
+     * Since: 2.15
+     * Maven coordinates: org.apache.camel:camel-cassandraql
+     */
+    static org.apache.camel.builder.component.dsl.CassandraComponentBuilderFactory.CassandraComponentBuilder cql() {
+        return org.apache.camel.builder.component.dsl.CassandraComponentBuilderFactory.cql();
+    }
+    /**
      * Cron (camel-cron)
      * Camel Cron Component
      * 
@@ -570,6 +854,18 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.CronComponentBuilderFactory.CronComponentBuilder cron() {
         return org.apache.camel.builder.component.dsl.CronComponentBuilderFactory.cron();
+    }
+    /**
+     * Crypto (JCE) (camel-crypto)
+     * The crypto component is used for signing and verifying exchanges using
+     * the Signature Service of the Java Cryptographic Extension (JCE).
+     * 
+     * Category: security,transformation
+     * Since: 2.3
+     * Maven coordinates: org.apache.camel:camel-crypto
+     */
+    static org.apache.camel.builder.component.dsl.DigitalSignatureComponentBuilderFactory.DigitalSignatureComponentBuilder crypto() {
+        return org.apache.camel.builder.component.dsl.DigitalSignatureComponentBuilderFactory.crypto();
     }
     /**
      * Crypto CMS (camel-crypto-cms)
@@ -584,17 +880,6 @@ public interface ComponentsBuilderFactory {
     @Deprecated
     static org.apache.camel.builder.component.dsl.CryptoCmsComponentBuilderFactory.CryptoCmsComponentBuilder cryptoCms() {
         return org.apache.camel.builder.component.dsl.CryptoCmsComponentBuilderFactory.cryptoCms();
-    }
-    /**
-     * AWS CloudWatch (camel-aws-cw)
-     * The aws-cw component is used for sending metrics to an Amazon CloudWatch.
-     * 
-     * Category: cloud,monitoring
-     * Since: 2.11
-     * Maven coordinates: org.apache.camel:camel-aws-cw
-     */
-    static org.apache.camel.builder.component.dsl.CwComponentBuilderFactory.CwComponentBuilder awsCw() {
-        return org.apache.camel.builder.component.dsl.CwComponentBuilderFactory.awsCw();
     }
     /**
      * CXF (camel-cxf)
@@ -653,30 +938,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.DataSetTestComponentBuilderFactory.DataSetTestComponentBuilder datasetTest() {
         return org.apache.camel.builder.component.dsl.DataSetTestComponentBuilderFactory.datasetTest();
-    }
-    /**
-     * AWS DynamoDB (camel-aws-ddb)
-     * The aws-ddb component is used for storing and retrieving data from
-     * Amazon's DynamoDB service.
-     * 
-     * Category: cloud,database,nosql
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-aws-ddb
-     */
-    static org.apache.camel.builder.component.dsl.DdbComponentBuilderFactory.DdbComponentBuilder awsDdb() {
-        return org.apache.camel.builder.component.dsl.DdbComponentBuilderFactory.awsDdb();
-    }
-    /**
-     * AWS DynamoDB Streams (camel-aws-ddb)
-     * The aws-ddbstream component is used for working with Amazon DynamoDB
-     * Streams.
-     * 
-     * Category: cloud,messaging,streams
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-aws-ddb
-     */
-    static org.apache.camel.builder.component.dsl.DdbStreamComponentBuilderFactory.DdbStreamComponentBuilder awsDdbstream() {
-        return org.apache.camel.builder.component.dsl.DdbStreamComponentBuilderFactory.awsDdbstream();
     }
     /**
      * Debezium MongoDB Connector (camel-debezium-mongodb)
@@ -741,18 +1002,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.DigitalOceanComponentBuilderFactory.DigitalOceanComponentBuilder digitalocean() {
         return org.apache.camel.builder.component.dsl.DigitalOceanComponentBuilderFactory.digitalocean();
-    }
-    /**
-     * Crypto (JCE) (camel-crypto)
-     * The crypto component is used for signing and verifying exchanges using
-     * the Signature Service of the Java Cryptographic Extension (JCE).
-     * 
-     * Category: security,transformation
-     * Since: 2.3
-     * Maven coordinates: org.apache.camel:camel-crypto
-     */
-    static org.apache.camel.builder.component.dsl.DigitalSignatureComponentBuilderFactory.DigitalSignatureComponentBuilder crypto() {
-        return org.apache.camel.builder.component.dsl.DigitalSignatureComponentBuilderFactory.crypto();
     }
     /**
      * Direct (camel-direct)
@@ -861,61 +1110,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.DropboxComponentBuilderFactory.dropbox();
     }
     /**
-     * AWS EC2 (camel-aws-ec2)
-     * The aws-ec2 is used for managing Amazon EC2 instances.
-     * 
-     * Category: cloud,management
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-aws-ec2
-     */
-    static org.apache.camel.builder.component.dsl.EC2ComponentBuilderFactory.EC2ComponentBuilder awsEc2() {
-        return org.apache.camel.builder.component.dsl.EC2ComponentBuilderFactory.awsEc2();
-    }
-    /**
-     * AWS 2 ECS (camel-aws2-ecs)
-     * The aws2-ecs is used for managing Amazon ECS
-     * 
-     * Category: cloud,management
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-aws2-ecs
-     */
-    static org.apache.camel.builder.component.dsl.ECS2ComponentBuilderFactory.ECS2ComponentBuilder aws2Ecs() {
-        return org.apache.camel.builder.component.dsl.ECS2ComponentBuilderFactory.aws2Ecs();
-    }
-    /**
-     * AWS ECS (camel-aws-ecs)
-     * The aws-ecs is used for managing Amazon ECS
-     * 
-     * Category: cloud,management
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-ecs
-     */
-    static org.apache.camel.builder.component.dsl.ECSComponentBuilderFactory.ECSComponentBuilder awsEcs() {
-        return org.apache.camel.builder.component.dsl.ECSComponentBuilderFactory.awsEcs();
-    }
-    /**
-     * AWS 2 EKS (camel-aws2-eks)
-     * The aws-eks is used for managing Amazon EKS
-     * 
-     * Category: cloud,management
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-aws2-eks
-     */
-    static org.apache.camel.builder.component.dsl.EKS2ComponentBuilderFactory.EKS2ComponentBuilder aws2Eks() {
-        return org.apache.camel.builder.component.dsl.EKS2ComponentBuilderFactory.aws2Eks();
-    }
-    /**
-     * AWS EKS (camel-aws-eks)
-     * The aws-eks is used for managing Amazon EKS
-     * 
-     * Category: cloud,management
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-eks
-     */
-    static org.apache.camel.builder.component.dsl.EKSComponentBuilderFactory.EKSComponentBuilder awsEks() {
-        return org.apache.camel.builder.component.dsl.EKSComponentBuilderFactory.awsEks();
-    }
-    /**
      * Ehcache (camel-ehcache)
      * The ehcache component enables you to perform caching operations using
      * Ehcache as cache implementation.
@@ -986,18 +1180,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.EventAdminComponentBuilderFactory.EventAdminComponentBuilder eventadmin() {
         return org.apache.camel.builder.component.dsl.EventAdminComponentBuilderFactory.eventadmin();
-    }
-    /**
-     * Spring Event (camel-spring)
-     * The spring-event component allows to listen for Spring Application
-     * Events.
-     * 
-     * Category: spring,eventbus
-     * Since: 1.4
-     * Maven coordinates: org.apache.camel:camel-spring
-     */
-    static org.apache.camel.builder.component.dsl.EventComponentBuilderFactory.EventComponentBuilder springEvent() {
-        return org.apache.camel.builder.component.dsl.EventComponentBuilderFactory.springEvent();
     }
     /**
      * Exec (camel-exec)
@@ -1175,18 +1357,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.GitHubComponentBuilderFactory.github();
     }
     /**
-     * OpenStack Glance (camel-openstack)
-     * The openstack-glance component allows messages to be sent to an OpenStack
-     * image services.
-     * 
-     * Category: cloud,paas
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-openstack
-     */
-    static org.apache.camel.builder.component.dsl.GlanceComponentBuilderFactory.GlanceComponentBuilder openstackGlance() {
-        return org.apache.camel.builder.component.dsl.GlanceComponentBuilderFactory.openstackGlance();
-    }
-    /**
      * Google BigQuery (camel-google-bigquery)
      * Google BigQuery data warehouse for analytics.
      * 
@@ -1334,17 +1504,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.GraphqlComponentBuilderFactory.graphql();
     }
     /**
-     * MongoDB GridFS (camel-mongodb-gridfs)
-     * Component for working with MongoDB GridFS.
-     * 
-     * Category: database,nosql
-     * Since: 2.18
-     * Maven coordinates: org.apache.camel:camel-mongodb-gridfs
-     */
-    static org.apache.camel.builder.component.dsl.GridFsComponentBuilderFactory.GridFsComponentBuilder mongodbGridfs() {
-        return org.apache.camel.builder.component.dsl.GridFsComponentBuilderFactory.mongodbGridfs();
-    }
-    /**
      * gRPC (camel-grpc)
      * The gRPC component allows to call and expose remote procedures via HTTP/2
      * with protobuf dataformat
@@ -1367,17 +1526,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.GuavaEventBusComponentBuilderFactory.GuavaEventBusComponentBuilder guavaEventbus() {
         return org.apache.camel.builder.component.dsl.GuavaEventBusComponentBuilderFactory.guavaEventbus();
-    }
-    /**
-     * HBase (camel-hbase)
-     * For reading/writing from/to an HBase store (Hadoop database).
-     * 
-     * Category: hadoop
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-hbase
-     */
-    static org.apache.camel.builder.component.dsl.HBaseComponentBuilderFactory.HBaseComponentBuilder hbase() {
-        return org.apache.camel.builder.component.dsl.HBaseComponentBuilderFactory.hbase();
     }
     /**
      * Hazelcast Atomic Number (camel-hazelcast)
@@ -1510,6 +1658,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HazelcastTopicComponentBuilderFactory.hazelcastTopic();
     }
     /**
+     * HBase (camel-hbase)
+     * For reading/writing from/to an HBase store (Hadoop database).
+     * 
+     * Category: hadoop
+     * Since: 2.10
+     * Maven coordinates: org.apache.camel:camel-hbase
+     */
+    static org.apache.camel.builder.component.dsl.HBaseComponentBuilderFactory.HBaseComponentBuilder hbase() {
+        return org.apache.camel.builder.component.dsl.HBaseComponentBuilderFactory.hbase();
+    }
+    /**
      * HDFS (camel-hdfs)
      * For reading/writing from/to an HDFS filesystem using Hadoop 2.x.
      * 
@@ -1555,38 +1714,30 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HttpsHttpComponentBuilderFactory.https();
     }
     /**
-     * AWS IAM (camel-aws-iam)
-     * The aws-iam is used for managing Amazon IAM
+     * IEC 60870 Client (camel-iec60870)
+     * IEC 60870 component used for telecontrol (supervisory control and data
+     * acquisition) such as controlling electric power transmission grids and
+     * other geographically widespread control systems.
      * 
-     * Category: cloud,management
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-aws-iam
+     * Category: iot
+     * Since: 2.20
+     * Maven coordinates: org.apache.camel:camel-iec60870
      */
-    static org.apache.camel.builder.component.dsl.IAMComponentBuilderFactory.IAMComponentBuilder awsIam() {
-        return org.apache.camel.builder.component.dsl.IAMComponentBuilderFactory.awsIam();
+    static org.apache.camel.builder.component.dsl.ClientComponentBuilderFactory.ClientComponentBuilder iec60870Client() {
+        return org.apache.camel.builder.component.dsl.ClientComponentBuilderFactory.iec60870Client();
     }
     /**
-     * IOTA (camel-iota)
-     * Component for integrate IOTA DLT
+     * IEC 60870 Server (camel-iec60870)
+     * IEC 60870 component used for telecontrol (supervisory control and data
+     * acquisition) such as controlling electric power transmission grids and
+     * other geographically widespread control systems.
      * 
-     * Category: ledger
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-iota
+     * Category: iot
+     * Since: 2.20
+     * Maven coordinates: org.apache.camel:camel-iec60870
      */
-    static org.apache.camel.builder.component.dsl.IOTAComponentBuilderFactory.IOTAComponentBuilder iota() {
-        return org.apache.camel.builder.component.dsl.IOTAComponentBuilderFactory.iota();
-    }
-    /**
-     * IPFS (camel-ipfs)
-     * The camel-ipfs component provides access to the Interplanetary File
-     * System (IPFS).
-     * 
-     * Category: file,ipfs
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-ipfs
-     */
-    static org.apache.camel.builder.component.dsl.IPFSComponentBuilderFactory.IPFSComponentBuilder ipfs() {
-        return org.apache.camel.builder.component.dsl.IPFSComponentBuilderFactory.ipfs();
+    static org.apache.camel.builder.component.dsl.ServerComponentBuilderFactory.ServerComponentBuilder iec60870Server() {
+        return org.apache.camel.builder.component.dsl.ServerComponentBuilderFactory.iec60870Server();
     }
     /**
      * Ignite Cache (camel-ignite)
@@ -1722,6 +1873,29 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.InfluxDbComponentBuilderFactory.influxdb();
     }
     /**
+     * IOTA (camel-iota)
+     * Component for integrate IOTA DLT
+     * 
+     * Category: ledger
+     * Since: 2.23
+     * Maven coordinates: org.apache.camel:camel-iota
+     */
+    static org.apache.camel.builder.component.dsl.IOTAComponentBuilderFactory.IOTAComponentBuilder iota() {
+        return org.apache.camel.builder.component.dsl.IOTAComponentBuilderFactory.iota();
+    }
+    /**
+     * IPFS (camel-ipfs)
+     * The camel-ipfs component provides access to the Interplanetary File
+     * System (IPFS).
+     * 
+     * Category: file,ipfs
+     * Since: 2.23
+     * Maven coordinates: org.apache.camel:camel-ipfs
+     */
+    static org.apache.camel.builder.component.dsl.IPFSComponentBuilderFactory.IPFSComponentBuilder ipfs() {
+        return org.apache.camel.builder.component.dsl.IPFSComponentBuilderFactory.ipfs();
+    }
+    /**
      * IRC (camel-irc)
      * The irc component implements an IRC (Internet Relay Chat) transport.
      * 
@@ -1767,52 +1941,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.JCacheComponentBuilderFactory.JCacheComponentBuilder jcache() {
         return org.apache.camel.builder.component.dsl.JCacheComponentBuilderFactory.jcache();
-    }
-    /**
-     * JGroups (camel-jgroups)
-     * The jgroups component provides exchange of messages between Camel and
-     * JGroups clusters.
-     * 
-     * Category: clustering,messaging
-     * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-jgroups
-     */
-    static org.apache.camel.builder.component.dsl.JGroupsComponentBuilderFactory.JGroupsComponentBuilder jgroups() {
-        return org.apache.camel.builder.component.dsl.JGroupsComponentBuilderFactory.jgroups();
-    }
-    /**
-     * JGroups raft (camel-jgroups-raft)
-     * The jgroups component provides exchange of messages between Camel and
-     * JGroups clusters.
-     * 
-     * Category: clustering,messaging
-     * Since: 2.24
-     * Maven coordinates: org.apache.camel:camel-jgroups-raft
-     */
-    static org.apache.camel.builder.component.dsl.JGroupsRaftComponentBuilderFactory.JGroupsRaftComponentBuilder jgroupsRaft() {
-        return org.apache.camel.builder.component.dsl.JGroupsRaftComponentBuilderFactory.jgroupsRaft();
-    }
-    /**
-     * JMX (camel-jmx)
-     * The jmx component allows to receive JMX notifications.
-     * 
-     * Category: monitoring
-     * Since: 2.6
-     * Maven coordinates: org.apache.camel:camel-jmx
-     */
-    static org.apache.camel.builder.component.dsl.JMXComponentBuilderFactory.JMXComponentBuilder jmx() {
-        return org.apache.camel.builder.component.dsl.JMXComponentBuilderFactory.jmx();
-    }
-    /**
-     * Javax Websocket (camel-websocket-jsr356)
-     * Camel WebSocket using JSR356 (javax)
-     * 
-     * Category: http
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-websocket-jsr356
-     */
-    static org.apache.camel.builder.component.dsl.JSR356WebSocketComponentBuilderFactory.JSR356WebSocketComponentBuilder websocketJsr356() {
-        return org.apache.camel.builder.component.dsl.JSR356WebSocketComponentBuilderFactory.websocketJsr356();
     }
     /**
      * JClouds (camel-jclouds)
@@ -1861,6 +1989,30 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.JettyHttpComponent9BuilderFactory.jetty();
     }
     /**
+     * JGroups (camel-jgroups)
+     * The jgroups component provides exchange of messages between Camel and
+     * JGroups clusters.
+     * 
+     * Category: clustering,messaging
+     * Since: 2.13
+     * Maven coordinates: org.apache.camel:camel-jgroups
+     */
+    static org.apache.camel.builder.component.dsl.JGroupsComponentBuilderFactory.JGroupsComponentBuilder jgroups() {
+        return org.apache.camel.builder.component.dsl.JGroupsComponentBuilderFactory.jgroups();
+    }
+    /**
+     * JGroups raft (camel-jgroups-raft)
+     * The jgroups component provides exchange of messages between Camel and
+     * JGroups clusters.
+     * 
+     * Category: clustering,messaging
+     * Since: 2.24
+     * Maven coordinates: org.apache.camel:camel-jgroups-raft
+     */
+    static org.apache.camel.builder.component.dsl.JGroupsRaftComponentBuilderFactory.JGroupsRaftComponentBuilder jgroupsRaft() {
+        return org.apache.camel.builder.component.dsl.JGroupsRaftComponentBuilderFactory.jgroupsRaft();
+    }
+    /**
      * Jing (camel-jing)
      * Validates the payload of a message using RelaxNG Syntax using Jing
      * library.
@@ -1894,6 +2046,17 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.JmsComponentBuilderFactory.JmsComponentBuilder jms() {
         return org.apache.camel.builder.component.dsl.JmsComponentBuilderFactory.jms();
+    }
+    /**
+     * JMX (camel-jmx)
+     * The jmx component allows to receive JMX notifications.
+     * 
+     * Category: monitoring
+     * Since: 2.6
+     * Maven coordinates: org.apache.camel:camel-jmx
+     */
+    static org.apache.camel.builder.component.dsl.JMXComponentBuilderFactory.JMXComponentBuilder jmx() {
+        return org.apache.camel.builder.component.dsl.JMXComponentBuilderFactory.jmx();
     }
     /**
      * JOLT (camel-jolt)
@@ -1967,28 +2130,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Jt400ComponentBuilderFactory.jt400();
     }
     /**
-     * AWS 2 KMS (camel-aws2-kms)
-     * The aws-kms is used for managing Amazon KMS
-     * 
-     * Category: cloud,management
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-aws2-kms
-     */
-    static org.apache.camel.builder.component.dsl.KMS2ComponentBuilderFactory.KMS2ComponentBuilder aws2Kms() {
-        return org.apache.camel.builder.component.dsl.KMS2ComponentBuilderFactory.aws2Kms();
-    }
-    /**
-     * AWS KMS (camel-aws-kms)
-     * The aws-kms is used for managing Amazon KMS
-     * 
-     * Category: cloud,management
-     * Since: 2.21
-     * Maven coordinates: org.apache.camel:camel-aws-kms
-     */
-    static org.apache.camel.builder.component.dsl.KMSComponentBuilderFactory.KMSComponentBuilder awsKms() {
-        return org.apache.camel.builder.component.dsl.KMSComponentBuilderFactory.awsKms();
-    }
-    /**
      * Kafka (camel-kafka)
      * The kafka component allows messages to be sent to (or consumed from)
      * Apache Kafka brokers.
@@ -1999,42 +2140,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.KafkaComponentBuilderFactory.KafkaComponentBuilder kafka() {
         return org.apache.camel.builder.component.dsl.KafkaComponentBuilderFactory.kafka();
-    }
-    /**
-     * OpenStack Keystone (camel-openstack)
-     * The openstack-keystone component allows messages to be sent to an
-     * OpenStack identity services.
-     * 
-     * Category: cloud,paas
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-openstack
-     */
-    static org.apache.camel.builder.component.dsl.KeystoneComponentBuilderFactory.KeystoneComponentBuilder openstackKeystone() {
-        return org.apache.camel.builder.component.dsl.KeystoneComponentBuilderFactory.openstackKeystone();
-    }
-    /**
-     * AWS Kinesis (camel-aws-kinesis)
-     * The aws-kinesis component is for consuming and producing records from
-     * Amazon Kinesis Streams.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-aws-kinesis
-     */
-    static org.apache.camel.builder.component.dsl.KinesisComponentBuilderFactory.KinesisComponentBuilder awsKinesis() {
-        return org.apache.camel.builder.component.dsl.KinesisComponentBuilderFactory.awsKinesis();
-    }
-    /**
-     * AWS Kinesis Firehose (camel-aws-kinesis)
-     * The aws-kinesis-firehose component is used for producing Amazon's Kinesis
-     * Firehose streams.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-aws-kinesis
-     */
-    static org.apache.camel.builder.component.dsl.KinesisFirehoseComponentBuilderFactory.KinesisFirehoseComponentBuilder awsKinesisFirehose() {
-        return org.apache.camel.builder.component.dsl.KinesisFirehoseComponentBuilderFactory.awsKinesisFirehose();
     }
     /**
      * Kubernetes ConfigMap (camel-kubernetes)
@@ -2110,18 +2215,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.KubernetesNodesComponentBuilderFactory.kubernetesNodes();
     }
     /**
-     * Kubernetes Persistent Volume Claim (camel-kubernetes)
-     * The Kubernetes Persistent Volumes Claims component provides a producer to
-     * execute kubernetes persistent volume claim operations.
-     * 
-     * Category: container,cloud,paas
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-kubernetes
-     */
-    static org.apache.camel.builder.component.dsl.KubernetesPersistentVolumesClaimsComponentBuilderFactory.KubernetesPersistentVolumesClaimsComponentBuilder kubernetesPersistentVolumesClaims() {
-        return org.apache.camel.builder.component.dsl.KubernetesPersistentVolumesClaimsComponentBuilderFactory.kubernetesPersistentVolumesClaims();
-    }
-    /**
      * Kubernetes Persistent Volume (camel-kubernetes)
      * The Kubernetes Persistent Volumes component provides a producer to
      * execute kubernetes persistent volume operations.
@@ -2132,6 +2225,18 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.KubernetesPersistentVolumesComponentBuilderFactory.KubernetesPersistentVolumesComponentBuilder kubernetesPersistentVolumes() {
         return org.apache.camel.builder.component.dsl.KubernetesPersistentVolumesComponentBuilderFactory.kubernetesPersistentVolumes();
+    }
+    /**
+     * Kubernetes Persistent Volume Claim (camel-kubernetes)
+     * The Kubernetes Persistent Volumes Claims component provides a producer to
+     * execute kubernetes persistent volume claim operations.
+     * 
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesPersistentVolumesClaimsComponentBuilderFactory.KubernetesPersistentVolumesClaimsComponentBuilder kubernetesPersistentVolumesClaims() {
+        return org.apache.camel.builder.component.dsl.KubernetesPersistentVolumesClaimsComponentBuilderFactory.kubernetesPersistentVolumesClaims();
     }
     /**
      * Kubernetes Pods (camel-kubernetes)
@@ -2220,18 +2325,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.KuduComponentBuilderFactory.kudu();
     }
     /**
-     * AWS Lambda (camel-aws-lambda)
-     * The aws-lambda is used for managing and invoking functions from Amazon
-     * Lambda.
-     * 
-     * Category: cloud,computing,serverless
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-aws-lambda
-     */
-    static org.apache.camel.builder.component.dsl.LambdaComponentBuilderFactory.LambdaComponentBuilder awsLambda() {
-        return org.apache.camel.builder.component.dsl.LambdaComponentBuilderFactory.awsLambda();
-    }
-    /**
      * Language (camel-language)
      * The language component allows you to send a message to an endpoint which
      * executes a script by any of the supported Languages in Camel.
@@ -2280,6 +2373,18 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.LogComponentBuilderFactory.log();
     }
     /**
+     * Printer (camel-printer)
+     * The printer component is used for sending messages to printers as print
+     * jobs.
+     * 
+     * Category: printing
+     * Since: 2.1
+     * Maven coordinates: org.apache.camel:camel-printer
+     */
+    static org.apache.camel.builder.component.dsl.PrinterComponentBuilderFactory.PrinterComponentBuilder lpr() {
+        return org.apache.camel.builder.component.dsl.PrinterComponentBuilderFactory.lpr();
+    }
+    /**
      * Lucene (camel-lucene)
      * To insert or query from Apache Lucene databases.
      * 
@@ -2303,62 +2408,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.LumberjackComponentBuilderFactory.lumberjack();
     }
     /**
-     * AWS 2 MQ (camel-aws2-mq)
-     * The aws2-mq is used for managing Amazon MQ instances.
-     * 
-     * Category: cloud,management
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-aws2-mq
-     */
-    static org.apache.camel.builder.component.dsl.MQ2ComponentBuilderFactory.MQ2ComponentBuilder aws2Mq() {
-        return org.apache.camel.builder.component.dsl.MQ2ComponentBuilderFactory.aws2Mq();
-    }
-    /**
-     * AWS MQ (camel-aws-mq)
-     * The aws-mq is used for managing Amazon MQ instances.
-     * 
-     * Category: cloud,management
-     * Since: 2.21
-     * Maven coordinates: org.apache.camel:camel-aws-mq
-     */
-    static org.apache.camel.builder.component.dsl.MQComponentBuilderFactory.MQComponentBuilder awsMq() {
-        return org.apache.camel.builder.component.dsl.MQComponentBuilderFactory.awsMq();
-    }
-    /**
-     * AWS 2 MSK (camel-aws2-msk)
-     * The aws2-msk is used for managing Amazon MSK
-     * 
-     * Category: cloud,management
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-aws2-msk
-     */
-    static org.apache.camel.builder.component.dsl.MSK2ComponentBuilderFactory.MSK2ComponentBuilder aws2Msk() {
-        return org.apache.camel.builder.component.dsl.MSK2ComponentBuilderFactory.aws2Msk();
-    }
-    /**
-     * AWS MSK (camel-aws-msk)
-     * The aws-msk is used for managing Amazon MSK
-     * 
-     * Category: cloud,management
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-msk
-     */
-    static org.apache.camel.builder.component.dsl.MSKComponentBuilderFactory.MSKComponentBuilder awsMsk() {
-        return org.apache.camel.builder.component.dsl.MSKComponentBuilderFactory.awsMsk();
-    }
-    /**
-     * ZooKeeper Master (camel-zookeeper-master)
-     * Represents an endpoint which only becomes active when it obtains the
-     * master lock
-     * 
-     * Category: clustering
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-zookeeper-master
-     */
-    static org.apache.camel.builder.component.dsl.MasterComponentBuilderFactory.MasterComponentBuilder zookeeperMaster() {
-        return org.apache.camel.builder.component.dsl.MasterComponentBuilderFactory.zookeeperMaster();
-    }
-    /**
      * Metrics (camel-metrics)
      * To collect various metrics directly from Camel routes using the
      * DropWizard metrics library.
@@ -2371,17 +2420,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.MetricsComponentBuilderFactory.metrics();
     }
     /**
-     * MicroProfile Metrics (camel-microprofile-metrics)
-     * Camel metrics exposed with Eclipse MicroProfile Metrics
-     * 
-     * Category: monitoring
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-microprofile-metrics
-     */
-    static org.apache.camel.builder.component.dsl.MicroProfileMetricsComponentBuilderFactory.MicroProfileMetricsComponentBuilder microprofileMetrics() {
-        return org.apache.camel.builder.component.dsl.MicroProfileMetricsComponentBuilderFactory.microprofileMetrics();
-    }
-    /**
      * Micrometer (camel-micrometer)
      * To collect various metrics directly from Camel routes using the
      * Micrometer library.
@@ -2392,6 +2430,17 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.MicrometerComponentBuilderFactory.MicrometerComponentBuilder micrometer() {
         return org.apache.camel.builder.component.dsl.MicrometerComponentBuilderFactory.micrometer();
+    }
+    /**
+     * MicroProfile Metrics (camel-microprofile-metrics)
+     * Camel metrics exposed with Eclipse MicroProfile Metrics
+     * 
+     * Category: monitoring
+     * Since: 3.0
+     * Maven coordinates: org.apache.camel:camel-microprofile-metrics
+     */
+    static org.apache.camel.builder.component.dsl.MicroProfileMetricsComponentBuilderFactory.MicroProfileMetricsComponentBuilder microprofileMetrics() {
+        return org.apache.camel.builder.component.dsl.MicroProfileMetricsComponentBuilderFactory.microprofileMetrics();
     }
     /**
      * OPC UA Client (camel-milo)
@@ -2464,6 +2513,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.MongoDbComponentBuilderFactory.mongodb();
     }
     /**
+     * MongoDB GridFS (camel-mongodb-gridfs)
+     * Component for working with MongoDB GridFS.
+     * 
+     * Category: database,nosql
+     * Since: 2.18
+     * Maven coordinates: org.apache.camel:camel-mongodb-gridfs
+     */
+    static org.apache.camel.builder.component.dsl.GridFsComponentBuilderFactory.GridFsComponentBuilder mongodbGridfs() {
+        return org.apache.camel.builder.component.dsl.GridFsComponentBuilderFactory.mongodbGridfs();
+    }
+    /**
      * MSV (camel-msv)
      * Validates the payload of a message using the MSV Library.
      * 
@@ -2497,18 +2557,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.MvelComponentBuilderFactory.mvel();
     }
     /**
-     * MyBatis Bean (camel-mybatis)
-     * Performs a query, insert, update or delete in a relational database using
-     * MyBatis.
-     * 
-     * Category: database,sql
-     * Since: 2.22
-     * Maven coordinates: org.apache.camel:camel-mybatis
-     */
-    static org.apache.camel.builder.component.dsl.MyBatisBeanComponentBuilderFactory.MyBatisBeanComponentBuilder mybatisBean() {
-        return org.apache.camel.builder.component.dsl.MyBatisBeanComponentBuilderFactory.mybatisBean();
-    }
-    /**
      * MyBatis (camel-mybatis)
      * Performs a query, poll, insert, update or delete in a relational database
      * using MyBatis.
@@ -2519,6 +2567,18 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.MyBatisComponentBuilderFactory.MyBatisComponentBuilder mybatis() {
         return org.apache.camel.builder.component.dsl.MyBatisComponentBuilderFactory.mybatis();
+    }
+    /**
+     * MyBatis Bean (camel-mybatis)
+     * Performs a query, insert, update or delete in a relational database using
+     * MyBatis.
+     * 
+     * Category: database,sql
+     * Since: 2.22
+     * Maven coordinates: org.apache.camel:camel-mybatis
+     */
+    static org.apache.camel.builder.component.dsl.MyBatisBeanComponentBuilderFactory.MyBatisBeanComponentBuilder mybatisBean() {
+        return org.apache.camel.builder.component.dsl.MyBatisBeanComponentBuilderFactory.mybatisBean();
     }
     /**
      * Nagios (camel-nagios)
@@ -2543,18 +2603,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.NatsComponentBuilderFactory.nats();
     }
     /**
-     * SAP NetWeaver (camel-sap-netweaver)
-     * The sap-netweaver component integrates with the SAP NetWeaver Gateway
-     * using HTTP transports.
-     * 
-     * Category: sap
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-sap-netweaver
-     */
-    static org.apache.camel.builder.component.dsl.NetWeaverComponentBuilderFactory.NetWeaverComponentBuilder sapNetweaver() {
-        return org.apache.camel.builder.component.dsl.NetWeaverComponentBuilderFactory.sapNetweaver();
-    }
-    /**
      * Netty (camel-netty)
      * Socket level networking using TCP or UDP with the Netty 4.x library.
      * 
@@ -2577,18 +2625,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.NettyHttpComponentBuilderFactory.nettyHttp();
     }
     /**
-     * OpenStack Neutron (camel-openstack)
-     * The openstack-neutron component allows messages to be sent to an
-     * OpenStack network services.
-     * 
-     * Category: cloud,paas
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-openstack
-     */
-    static org.apache.camel.builder.component.dsl.NeutronComponentBuilderFactory.NeutronComponentBuilder openstackNeutron() {
-        return org.apache.camel.builder.component.dsl.NeutronComponentBuilderFactory.openstackNeutron();
-    }
-    /**
      * Nitrite (camel-nitrite)
      * Used for integrating Camel with Nitrite databases.
      * 
@@ -2598,18 +2634,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.NitriteComponentBuilderFactory.NitriteComponentBuilder nitrite() {
         return org.apache.camel.builder.component.dsl.NitriteComponentBuilderFactory.nitrite();
-    }
-    /**
-     * OpenStack Nova (camel-openstack)
-     * The openstack-nova component allows messages to be sent to an OpenStack
-     * compute services.
-     * 
-     * Category: cloud,paas
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-openstack
-     */
-    static org.apache.camel.builder.component.dsl.NovaComponentBuilderFactory.NovaComponentBuilder openstackNova() {
-        return org.apache.camel.builder.component.dsl.NovaComponentBuilderFactory.openstackNova();
     }
     /**
      * NSQ (camel-nsq)
@@ -2669,6 +2693,78 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.OpenshiftBuildsComponentBuilderFactory.openshiftBuilds();
     }
     /**
+     * OpenStack Cinder (camel-openstack)
+     * The openstack-cinder component allows messages to be sent to an OpenStack
+     * block storage services.
+     * 
+     * Category: cloud,paas
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-openstack
+     */
+    static org.apache.camel.builder.component.dsl.CinderComponentBuilderFactory.CinderComponentBuilder openstackCinder() {
+        return org.apache.camel.builder.component.dsl.CinderComponentBuilderFactory.openstackCinder();
+    }
+    /**
+     * OpenStack Glance (camel-openstack)
+     * The openstack-glance component allows messages to be sent to an OpenStack
+     * image services.
+     * 
+     * Category: cloud,paas
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-openstack
+     */
+    static org.apache.camel.builder.component.dsl.GlanceComponentBuilderFactory.GlanceComponentBuilder openstackGlance() {
+        return org.apache.camel.builder.component.dsl.GlanceComponentBuilderFactory.openstackGlance();
+    }
+    /**
+     * OpenStack Keystone (camel-openstack)
+     * The openstack-keystone component allows messages to be sent to an
+     * OpenStack identity services.
+     * 
+     * Category: cloud,paas
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-openstack
+     */
+    static org.apache.camel.builder.component.dsl.KeystoneComponentBuilderFactory.KeystoneComponentBuilder openstackKeystone() {
+        return org.apache.camel.builder.component.dsl.KeystoneComponentBuilderFactory.openstackKeystone();
+    }
+    /**
+     * OpenStack Neutron (camel-openstack)
+     * The openstack-neutron component allows messages to be sent to an
+     * OpenStack network services.
+     * 
+     * Category: cloud,paas
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-openstack
+     */
+    static org.apache.camel.builder.component.dsl.NeutronComponentBuilderFactory.NeutronComponentBuilder openstackNeutron() {
+        return org.apache.camel.builder.component.dsl.NeutronComponentBuilderFactory.openstackNeutron();
+    }
+    /**
+     * OpenStack Nova (camel-openstack)
+     * The openstack-nova component allows messages to be sent to an OpenStack
+     * compute services.
+     * 
+     * Category: cloud,paas
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-openstack
+     */
+    static org.apache.camel.builder.component.dsl.NovaComponentBuilderFactory.NovaComponentBuilder openstackNova() {
+        return org.apache.camel.builder.component.dsl.NovaComponentBuilderFactory.openstackNova();
+    }
+    /**
+     * OpenStack Swift (camel-openstack)
+     * The openstack-swift component allows messages to be sent to an OpenStack
+     * object storage services.
+     * 
+     * Category: cloud,paas
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-openstack
+     */
+    static org.apache.camel.builder.component.dsl.SwiftComponentBuilderFactory.SwiftComponentBuilder openstackSwift() {
+        return org.apache.camel.builder.component.dsl.SwiftComponentBuilderFactory.openstackSwift();
+    }
+    /**
      * OptaPlanner (camel-optaplanner)
      * Solves the planning problem contained in a message with OptaPlanner.
      * 
@@ -2716,6 +2812,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.PdfComponentBuilderFactory.pdf();
     }
     /**
+     * PostgresSQL Replication Slot (camel-pg-replication-slot)
+     * Consumer endpoint to receive from PostgreSQL Replication Slot.
+     * 
+     * Category: database,sql
+     * Since: 3.0
+     * Maven coordinates: org.apache.camel:camel-pg-replication-slot
+     */
+    static org.apache.camel.builder.component.dsl.PgReplicationSlotComponentBuilderFactory.PgReplicationSlotComponentBuilder pgReplicationSlot() {
+        return org.apache.camel.builder.component.dsl.PgReplicationSlotComponentBuilderFactory.pgReplicationSlot();
+    }
+    /**
      * PostgresSQL Event (camel-pgevent)
      * The pgevent component allows for producing/consuming PostgreSQL events
      * related to the listen/notify commands.
@@ -2726,17 +2833,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.PgEventComponentBuilderFactory.PgEventComponentBuilder pgevent() {
         return org.apache.camel.builder.component.dsl.PgEventComponentBuilderFactory.pgevent();
-    }
-    /**
-     * PostgresSQL Replication Slot (camel-pg-replication-slot)
-     * Consumer endpoint to receive from PostgreSQL Replication Slot.
-     * 
-     * Category: database,sql
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-pg-replication-slot
-     */
-    static org.apache.camel.builder.component.dsl.PgReplicationSlotComponentBuilderFactory.PgReplicationSlotComponentBuilder pgReplicationSlot() {
-        return org.apache.camel.builder.component.dsl.PgReplicationSlotComponentBuilderFactory.pgReplicationSlot();
     }
     /**
      * Platform HTTP (camel-platform-http)
@@ -2770,18 +2866,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.Pop3sMailComponentBuilderFactory.Pop3sMailComponentBuilder pop3s() {
         return org.apache.camel.builder.component.dsl.Pop3sMailComponentBuilderFactory.pop3s();
-    }
-    /**
-     * Printer (camel-printer)
-     * The printer component is used for sending messages to printers as print
-     * jobs.
-     * 
-     * Category: printing
-     * Since: 2.1
-     * Maven coordinates: org.apache.camel:camel-printer
-     */
-    static org.apache.camel.builder.component.dsl.PrinterComponentBuilderFactory.PrinterComponentBuilder lpr() {
-        return org.apache.camel.builder.component.dsl.PrinterComponentBuilderFactory.lpr();
     }
     /**
      * PubNub (camel-pubnub)
@@ -2818,18 +2902,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.QuartzComponentBuilderFactory.quartz();
     }
     /**
-     * Azure Storage Queue Service (camel-azure)
-     * The azure-queue component is used for storing and retrieving messages
-     * from Azure Storage Queue Service.
-     * 
-     * Category: cloud,queue,azure
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-azure
-     */
-    static org.apache.camel.builder.component.dsl.QueueServiceComponentBuilderFactory.QueueServiceComponentBuilder azureQueue() {
-        return org.apache.camel.builder.component.dsl.QueueServiceComponentBuilderFactory.azureQueue();
-    }
-    /**
      * QuickFix (camel-quickfix)
      * The quickfix component allows to send Financial Interchange (FIX)
      * messages to the QuickFix engine.
@@ -2863,18 +2935,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.ReactiveStreamsComponentBuilderFactory.ReactiveStreamsComponentBuilder reactiveStreams() {
         return org.apache.camel.builder.component.dsl.ReactiveStreamsComponentBuilderFactory.reactiveStreams();
-    }
-    /**
-     * Spring Redis (camel-spring-redis)
-     * The spring-redis component allows sending and receiving messages from
-     * Redis.
-     * 
-     * Category: spring,nosql
-     * Since: 2.11
-     * Maven coordinates: org.apache.camel:camel-spring-redis
-     */
-    static org.apache.camel.builder.component.dsl.RedisComponentBuilderFactory.RedisComponentBuilder springRedis() {
-        return org.apache.camel.builder.component.dsl.RedisComponentBuilderFactory.springRedis();
     }
     /**
      * Ref (camel-ref)
@@ -2957,30 +3017,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.RssComponentBuilderFactory.rss();
     }
     /**
-     * AWS S3 Storage Service (camel-aws-s3)
-     * The aws-s3 component is used for storing and retrieving object from
-     * Amazon S3 Storage Service.
-     * 
-     * Category: cloud,file
-     * Since: 2.8
-     * Maven coordinates: org.apache.camel:camel-aws-s3
-     */
-    static org.apache.camel.builder.component.dsl.S3ComponentBuilderFactory.S3ComponentBuilder awsS3() {
-        return org.apache.camel.builder.component.dsl.S3ComponentBuilderFactory.awsS3();
-    }
-    /**
-     * AWS Simple Workflow (camel-aws-swf)
-     * The aws-swf component is used for managing workflows from Amazon Simple
-     * Workflow.
-     * 
-     * Category: cloud,workflow
-     * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-aws-swf
-     */
-    static org.apache.camel.builder.component.dsl.SWFComponentBuilderFactory.SWFComponentBuilder awsSwf() {
-        return org.apache.camel.builder.component.dsl.SWFComponentBuilderFactory.awsSwf();
-    }
-    /**
      * Saga (camel-saga)
      * The saga component provides access to advanced options for managing the
      * flow in the Saga EIP.
@@ -3003,6 +3039,18 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.SalesforceComponentBuilderFactory.SalesforceComponentBuilder salesforce() {
         return org.apache.camel.builder.component.dsl.SalesforceComponentBuilderFactory.salesforce();
+    }
+    /**
+     * SAP NetWeaver (camel-sap-netweaver)
+     * The sap-netweaver component integrates with the SAP NetWeaver Gateway
+     * using HTTP transports.
+     * 
+     * Category: sap
+     * Since: 2.12
+     * Maven coordinates: org.apache.camel:camel-sap-netweaver
+     */
+    static org.apache.camel.builder.component.dsl.NetWeaverComponentBuilderFactory.NetWeaverComponentBuilder sapNetweaver() {
+        return org.apache.camel.builder.component.dsl.NetWeaverComponentBuilderFactory.sapNetweaver();
     }
     /**
      * Scheduler (camel-scheduler)
@@ -3039,18 +3087,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.ScpComponentBuilderFactory.scp();
     }
     /**
-     * AWS SimpleDB (camel-aws-sdb)
-     * The aws-sdb component is for storing and retrieving data from/to Amazon's
-     * SDB service.
-     * 
-     * Category: cloud,database,nosql
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-aws-sdb
-     */
-    static org.apache.camel.builder.component.dsl.SdbComponentBuilderFactory.SdbComponentBuilder awsSdb() {
-        return org.apache.camel.builder.component.dsl.SdbComponentBuilderFactory.awsSdb();
-    }
-    /**
      * SEDA (camel-seda)
      * The seda component provides asynchronous call to another endpoint from
      * any CamelContext in the same JVM.
@@ -3061,19 +3097,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.SedaComponentBuilderFactory.SedaComponentBuilder seda() {
         return org.apache.camel.builder.component.dsl.SedaComponentBuilderFactory.seda();
-    }
-    /**
-     * IEC 60870 Server (camel-iec60870)
-     * IEC 60870 component used for telecontrol (supervisory control and data
-     * acquisition) such as controlling electric power transmission grids and
-     * other geographically widespread control systems.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     */
-    static org.apache.camel.builder.component.dsl.ServerComponentBuilderFactory.ServerComponentBuilder iec60870Server() {
-        return org.apache.camel.builder.component.dsl.ServerComponentBuilderFactory.iec60870Server();
     }
     /**
      * Service (camel-service)
@@ -3112,18 +3135,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.ServletComponentBuilderFactory.servlet();
     }
     /**
-     * AWS Simple Email Service (camel-aws-ses)
-     * The aws-ses component is used for sending emails with Amazon's SES
-     * service.
-     * 
-     * Category: cloud,mail
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-aws-ses
-     */
-    static org.apache.camel.builder.component.dsl.SesComponentBuilderFactory.SesComponentBuilder awsSes() {
-        return org.apache.camel.builder.component.dsl.SesComponentBuilderFactory.awsSes();
-    }
-    /**
      * SFTP (camel-ftp)
      * The sftp (FTP over SSH) component is used for uploading or downloading
      * files from SFTP servers.
@@ -3160,6 +3171,18 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.SipsSipComponentBuilderFactory.sips();
     }
     /**
+     * Simple JMS (camel-sjms)
+     * The sjms component (simple jms) allows messages to be sent to (or
+     * consumed from) a JMS Queue or Topic (uses JMS 1.x API).
+     * 
+     * Category: messaging
+     * Since: 2.11
+     * Maven coordinates: org.apache.camel:camel-sjms
+     */
+    static org.apache.camel.builder.component.dsl.SjmsComponentBuilderFactory.SjmsComponentBuilder sjms() {
+        return org.apache.camel.builder.component.dsl.SjmsComponentBuilderFactory.sjms();
+    }
+    /**
      * Simple JMS2 (camel-sjms2)
      * The sjms2 component (simple jms) allows messages to be sent to (or
      * consumed from) a JMS Queue or Topic (uses JMS 2.x API).
@@ -3182,18 +3205,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.SjmsBatchComponentBuilderFactory.SjmsBatchComponentBuilder sjmsBatch() {
         return org.apache.camel.builder.component.dsl.SjmsBatchComponentBuilderFactory.sjmsBatch();
-    }
-    /**
-     * Simple JMS (camel-sjms)
-     * The sjms component (simple jms) allows messages to be sent to (or
-     * consumed from) a JMS Queue or Topic (uses JMS 1.x API).
-     * 
-     * Category: messaging
-     * Since: 2.11
-     * Maven coordinates: org.apache.camel:camel-sjms
-     */
-    static org.apache.camel.builder.component.dsl.SjmsComponentBuilderFactory.SjmsComponentBuilder sjms() {
-        return org.apache.camel.builder.component.dsl.SjmsComponentBuilderFactory.sjms();
     }
     /**
      * Slack (camel-slack)
@@ -3261,18 +3272,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.SnmpComponentBuilderFactory.SnmpComponentBuilder snmp() {
         return org.apache.camel.builder.component.dsl.SnmpComponentBuilderFactory.snmp();
-    }
-    /**
-     * AWS Simple Notification System (camel-aws-sns)
-     * The aws-sns component is used for sending messages to an Amazon Simple
-     * Notification Topic.
-     * 
-     * Category: cloud,mobile,messaging
-     * Since: 2.8
-     * Maven coordinates: org.apache.camel:camel-aws-sns
-     */
-    static org.apache.camel.builder.component.dsl.SnsComponentBuilderFactory.SnsComponentBuilder awsSns() {
-        return org.apache.camel.builder.component.dsl.SnsComponentBuilderFactory.awsSns();
     }
     /**
      * Solr (camel-solr)
@@ -3357,6 +3356,18 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.SpringBatchComponentBuilderFactory.springBatch();
     }
     /**
+     * Spring Event (camel-spring)
+     * The spring-event component allows to listen for Spring Application
+     * Events.
+     * 
+     * Category: spring,eventbus
+     * Since: 1.4
+     * Maven coordinates: org.apache.camel:camel-spring
+     */
+    static org.apache.camel.builder.component.dsl.EventComponentBuilderFactory.EventComponentBuilder springEvent() {
+        return org.apache.camel.builder.component.dsl.EventComponentBuilderFactory.springEvent();
+    }
+    /**
      * Spring Integration (camel-spring-integration)
      * Bridges Camel with Spring Integration.
      * 
@@ -3378,6 +3389,18 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.SpringLdapComponentBuilderFactory.SpringLdapComponentBuilder springLdap() {
         return org.apache.camel.builder.component.dsl.SpringLdapComponentBuilderFactory.springLdap();
+    }
+    /**
+     * Spring Redis (camel-spring-redis)
+     * The spring-redis component allows sending and receiving messages from
+     * Redis.
+     * 
+     * Category: spring,nosql
+     * Since: 2.11
+     * Maven coordinates: org.apache.camel:camel-spring-redis
+     */
+    static org.apache.camel.builder.component.dsl.RedisComponentBuilderFactory.RedisComponentBuilder springRedis() {
+        return org.apache.camel.builder.component.dsl.RedisComponentBuilderFactory.springRedis();
     }
     /**
      * Spring WebService (camel-spring-ws)
@@ -3414,18 +3437,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.SqlStoredComponentBuilderFactory.SqlStoredComponentBuilder sqlStored() {
         return org.apache.camel.builder.component.dsl.SqlStoredComponentBuilderFactory.sqlStored();
-    }
-    /**
-     * AWS Simple Queue Service (camel-aws-sqs)
-     * The aws-sqs component is used for sending and receiving messages to
-     * Amazon's SQS service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.6
-     * Maven coordinates: org.apache.camel:camel-aws-sqs
-     */
-    static org.apache.camel.builder.component.dsl.SqsComponentBuilderFactory.SqsComponentBuilder awsSqs() {
-        return org.apache.camel.builder.component.dsl.SqsComponentBuilderFactory.awsSqs();
     }
     /**
      * SSH (camel-ssh)
@@ -3499,18 +3510,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.StubComponentBuilderFactory.stub();
     }
     /**
-     * OpenStack Swift (camel-openstack)
-     * The openstack-swift component allows messages to be sent to an OpenStack
-     * object storage services.
-     * 
-     * Category: cloud,paas
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-openstack
-     */
-    static org.apache.camel.builder.component.dsl.SwiftComponentBuilderFactory.SwiftComponentBuilder openstackSwift() {
-        return org.apache.camel.builder.component.dsl.SwiftComponentBuilderFactory.openstackSwift();
-    }
-    /**
      * Telegram (camel-telegram)
      * The telegram component provides access to the Telegram Bot API.
      * 
@@ -3556,28 +3555,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.TimerComponentBuilderFactory.TimerComponentBuilder timer() {
         return org.apache.camel.builder.component.dsl.TimerComponentBuilderFactory.timer();
-    }
-    /**
-     * AWS 2 Translate (camel-aws2-translate)
-     * The aws2-translate component is used for managing Amazon Translate
-     * 
-     * Category: cloud,management
-     * Since: 3.1
-     * Maven coordinates: org.apache.camel:camel-aws2-translate
-     */
-    static org.apache.camel.builder.component.dsl.Translate2ComponentBuilderFactory.Translate2ComponentBuilder aws2Translate() {
-        return org.apache.camel.builder.component.dsl.Translate2ComponentBuilderFactory.aws2Translate();
-    }
-    /**
-     * AWS Translate (camel-aws-translate)
-     * The aws-translate component is used for managing Amazon Translate
-     * 
-     * Category: cloud,management
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-aws-translate
-     */
-    static org.apache.camel.builder.component.dsl.TranslateComponentBuilderFactory.TranslateComponentBuilder awsTranslate() {
-        return org.apache.camel.builder.component.dsl.TranslateComponentBuilderFactory.awsTranslate();
     }
     /**
      * Twilio (camel-twilio)
@@ -3733,6 +3710,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.WebsocketComponentBuilderFactory.websocket();
     }
     /**
+     * Javax Websocket (camel-websocket-jsr356)
+     * Camel WebSocket using JSR356 (javax)
+     * 
+     * Category: http
+     * Since: 2.23
+     * Maven coordinates: org.apache.camel:camel-websocket-jsr356
+     */
+    static org.apache.camel.builder.component.dsl.JSR356WebSocketComponentBuilderFactory.JSR356WebSocketComponentBuilder websocketJsr356() {
+        return org.apache.camel.builder.component.dsl.JSR356WebSocketComponentBuilderFactory.websocketJsr356();
+    }
+    /**
      * Weka (camel-weka)
      * The camel-weka component provides Data Mining functionality through Weka.
      * 
@@ -3789,17 +3777,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.XJComponentBuilderFactory.xj();
     }
     /**
-     * XQuery (camel-saxon)
-     * Transforms the message using a XQuery template using Saxon.
-     * 
-     * Category: transformation
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-saxon
-     */
-    static org.apache.camel.builder.component.dsl.XQueryComponentBuilderFactory.XQueryComponentBuilder xquery() {
-        return org.apache.camel.builder.component.dsl.XQueryComponentBuilderFactory.xquery();
-    }
-    /**
      * XML Security (camel-xmlsecurity)
      * Used to sign and verify exchanges using the XML signature specification.
      * 
@@ -3820,6 +3797,17 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.XmppComponentBuilderFactory.XmppComponentBuilder xmpp() {
         return org.apache.camel.builder.component.dsl.XmppComponentBuilderFactory.xmpp();
+    }
+    /**
+     * XQuery (camel-saxon)
+     * Transforms the message using a XQuery template using Saxon.
+     * 
+     * Category: transformation
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-saxon
+     */
+    static org.apache.camel.builder.component.dsl.XQueryComponentBuilderFactory.XQueryComponentBuilder xquery() {
+        return org.apache.camel.builder.component.dsl.XQueryComponentBuilderFactory.xquery();
     }
     /**
      * XSLT (camel-xslt)
@@ -3877,5 +3865,17 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.ZooKeeperComponentBuilderFactory.ZooKeeperComponentBuilder zookeeper() {
         return org.apache.camel.builder.component.dsl.ZooKeeperComponentBuilderFactory.zookeeper();
+    }
+    /**
+     * ZooKeeper Master (camel-zookeeper-master)
+     * Represents an endpoint which only becomes active when it obtains the
+     * master lock
+     * 
+     * Category: clustering
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-zookeeper-master
+     */
+    static org.apache.camel.builder.component.dsl.MasterComponentBuilderFactory.MasterComponentBuilder zookeeperMaster() {
+        return org.apache.camel.builder.component.dsl.MasterComponentBuilderFactory.zookeeperMaster();
     }
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.maven.packaging.dsl.component;
 
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.Set;
 
@@ -96,25 +97,27 @@ public final class ComponentsBuilderFactoryGenerator {
     }
 
     private void setComponentsDslMethods() {
-        componentModels.forEach(componentModel -> {
-            final String returnType = packageName + ".dsl." + ComponentDslBuilderFactoryGenerator.getExpectedGeneratedClassName(componentModel) + "."
-                    + ComponentDslInnerBuilderGenerator.getExpectedGeneratedInterfaceName(componentModel);
+        componentModels.stream()
+                .sorted(Comparator.comparing(enrichedComponentModel -> DslHelper.toCamelCaseLower(enrichedComponentModel.getScheme())))
+                .forEach(componentModel -> {
+                    final String returnType = packageName + ".dsl." + ComponentDslBuilderFactoryGenerator.getExpectedGeneratedClassName(componentModel) + "."
+                            + ComponentDslInnerBuilderGenerator.getExpectedGeneratedInterfaceName(componentModel);
 
-            final Method componentEntryMethod = javaClass.addMethod();
+                    final Method componentEntryMethod = javaClass.addMethod();
 
-            componentEntryMethod.setStatic()
-                    .setReturnType(returnType)
-                    .setName(DslHelper.toCamelCaseLower(componentModel.getScheme()))
-                    .setBody(
-                            String.format("return %s.dsl.%s.%s();", packageName,
-                                    ComponentDslBuilderFactoryGenerator.getExpectedGeneratedClassName(componentModel),
-                                    DslHelper.toCamelCaseLower(componentModel.getScheme())));
+                    componentEntryMethod.setStatic()
+                            .setReturnType(returnType)
+                            .setName(DslHelper.toCamelCaseLower(componentModel.getScheme()))
+                            .setBody(
+                                    String.format("return %s.dsl.%s.%s();", packageName,
+                                            ComponentDslBuilderFactoryGenerator.getExpectedGeneratedClassName(componentModel),
+                                            DslHelper.toCamelCaseLower(componentModel.getScheme())));
 
-            if (componentModel.isDeprecated()) {
-                componentEntryMethod.addAnnotation(Deprecated.class);
-            }
+                    if (componentModel.isDeprecated()) {
+                        componentEntryMethod.addAnnotation(Deprecated.class);
+                    }
 
-            componentEntryMethod.getJavaDoc().setFullText(DslHelper.getMainDescriptionWithoutPathOptions(componentModel));
-        });
+                    componentEntryMethod.getJavaDoc().setFullText(DslHelper.getMainDescriptionWithoutPathOptions(componentModel));
+                });
     }
 }
