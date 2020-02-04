@@ -129,6 +129,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AtmosComponentBuilderFactory.atmos();
     }
     /**
+     * Atmosphere Websocket (camel-atmosphere-websocket)
+     * To exchange data with external Websocket clients using Atmosphere.
+     * 
+     * Category: websocket
+     * Since: 2.14
+     * Maven coordinates: org.apache.camel:camel-atmosphere-websocket
+     */
+    static org.apache.camel.builder.component.dsl.AtmosphereWebsocketComponentBuilderFactory.AtmosphereWebsocketComponentBuilder atmosphereWebsocket() {
+        return org.apache.camel.builder.component.dsl.AtmosphereWebsocketComponentBuilderFactory.atmosphereWebsocket();
+    }
+    /**
      * Atom (camel-atom)
      * The atom component is used for consuming Atom RSS feeds.
      * 
@@ -3331,6 +3342,18 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.SparkComponentBuilderFactory.SparkComponentBuilder spark() {
         return org.apache.camel.builder.component.dsl.SparkComponentBuilderFactory.spark();
+    }
+    /**
+     * Spark Rest (camel-spark-rest)
+     * The spark-rest component is used for hosting REST services which has been
+     * defined using Camel rest-dsl.
+     * 
+     * Category: rest
+     * Since: 2.14
+     * Maven coordinates: org.apache.camel:camel-spark-rest
+     */
+    static org.apache.camel.builder.component.dsl.SparkRestComponentBuilderFactory.SparkRestComponentBuilder sparkRest() {
+        return org.apache.camel.builder.component.dsl.SparkRestComponentBuilderFactory.sparkRest();
     }
     /**
      * Splunk (camel-splunk)

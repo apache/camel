@@ -114,6 +114,13 @@ public final class DslHelper {
         if (componentModel.isAlias()) {
             return StringUtils.capitalize(toCamelCaseLower(componentModel.getScheme())) + componentModel.getShortJavaType() + suffix;
         }
+        // Workarounds
+        if (componentModel.getJavaType().equals("org.apache.camel.component.atmosphere.websocket.WebsocketComponent")) {
+            return "Atmosphere" + componentModel.getShortJavaType() + suffix;
+        }
+        if (componentModel.getJavaType().equals("org.apache.camel.component.sparkrest.SparkComponent")) {
+            return "SparkRestComponent" + suffix;
+        }
         return componentModel.getShortJavaType() + suffix;
     }
 
