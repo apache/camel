@@ -17,12 +17,12 @@
 package org.apache.camel.component.workday;
 
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents the component that manages {@link WorkdayEndpoint}.
@@ -30,10 +30,11 @@ import org.apache.camel.support.DefaultComponent;
 @Component("workday")
 public class WorkdayComponent extends DefaultComponent {
 
-    public static final String RAAS_ENDPOINT_URL = "https://%s/ccx/service/customreport2/%s%s";
-
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         WorkdayConfiguration configuration = new WorkdayConfiguration();
+
+        configuration = parseConfiguration(configuration, remaining, parameters);
+
         WorkdayEndpoint endpoint = new WorkdayEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
@@ -42,37 +43,25 @@ public class WorkdayComponent extends DefaultComponent {
 
     @Override
     protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters) throws Exception {
-
         WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint)endpoint;
         WorkdayConfiguration workdayConfiguration = workdayEndpoint.getWorkdayConfiguration();
-
-        validateRequiredParameters(workdayConfiguration);
-
-        StringBuilder stringBuilder = new StringBuilder(remaining);
-        stringBuilder.append("?");
-
-        if (parameters.size() > 0) {
-
-            String params = parameters.keySet().stream().map(k -> k + "=" + parameters.get(k)).collect(Collectors.joining("&"));
-            stringBuilder.append(params);
-            stringBuilder.append("&");
-        }
-
-        stringBuilder.append("format=");
-        stringBuilder.append(workdayConfiguration.getFormat());
-
-        String uriString = String.format(RAAS_ENDPOINT_URL, workdayConfiguration.getHost(), workdayConfiguration.getTenant(), stringBuilder.toString());
-
-        workdayEndpoint.setUri(uriString);
-
+        validateConnectionParameters(workdayConfiguration);
     }
 
-    protected void validateRequiredParameters(WorkdayConfiguration workdayConfiguration) {
+    /**
+     * Parses the configuration
+     * @return the parsed and valid configuration to use
+     */
+    protected WorkdayConfiguration parseConfiguration(WorkdayConfiguration configuration, String remaining, Map<String, Object> parameters) throws Exception {
+        configuration.parseURI(remaining, parameters);
+        return configuration;
+    }
 
-        if (workdayConfiguration.getHost() == null || workdayConfiguration.getTenant() == null || workdayConfiguration.getClientId() == null
-            || workdayConfiguration.getClientSecret() == null || workdayConfiguration.getTokenRefresh() == null) {
-
-            throw new ResolveEndpointFailedException("The parameters host, tenant, clientId, clientSecret and tokenRefresh are required.");
-        }
+    protected void validateConnectionParameters(WorkdayConfiguration workdayConfiguration) {
+        ObjectHelper.notNull(workdayConfiguration.getHost(), "Host");
+        ObjectHelper.notNull(workdayConfiguration.getTenant(), "Tenant");
+        ObjectHelper.notNull(workdayConfiguration.getClientId(), "ClientId");
+        ObjectHelper.notNull(workdayConfiguration.getClientSecret(), "ClientSecret");
+        ObjectHelper.notNull(workdayConfiguration.getTokenRefresh(), "TokenRefresh");
     }
 }

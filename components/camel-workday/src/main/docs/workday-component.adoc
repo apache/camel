@@ -1,10 +1,10 @@
 [[workday-component]]
 = Workday Component
 
-*Since Camel 3.1.0-SNAPSHOT*
+*Since Camel 3.1*
 
 // HEADER START
-*Both producer and consumer is supported*
+*Only producer is supported*
 // HEADER END
 
 The *Workday*: components provides the ability to detect and parse documents with 
@@ -28,7 +28,7 @@ following dependency to their `pom.xml`:
 == Options
 
 // component options: START
-The Workday component supports 3 options, which are listed below.
+The Workday component supports 2 options, which are listed below.
 
 
 
@@ -37,7 +37,6 @@ The Workday component supports 3 options, which are listed below.
 | Name | Description | Default | Type
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -45,39 +44,37 @@ The Workday component supports 3 options, which are listed below.
 The Workday endpoint is configured using URI syntax:
 
 ----
-workday:uri
+workday:entity:path
 ----
 
 with the following path and query parameters:
 
-=== Path Parameters (1 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *uri* | *Required* The partial URL for RAAS report. |  | String
+| *entity* | *Required* The entity to be requested or subscribed via API. |  | Entity
+| *path* | *Required* The API path to access an entity structure. |  | String
 |===
 
 
-=== Query Parameters (13 parameters):
+=== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *httpConnectionManager* (advanced) | Pool connection manager for advanced configuration |  | PoolingHttpClientConnectionManager
+| *httpConnectionManager* (advanced) | Pool connection manager for advanced configuration. |  | PoolingHttpClientConnectionManager
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *format* (format) | Workday Report as a service output format. |  | String
+| *reportFormat* (format) | Workday Report as a service output format. | json | String
 | *host* (host) | *Required* Workday Host name. |  | String
-| *clientId* (security) | *Required* Workday Client Id generated by API Client for Integrations. |  | String
-| *clientSecret* (security) | *Required* Workday Client Secrect generated by API Client for Integrations. |  | String
-| *tokenRefresh* (security) | *Required* Workday Token Refresh generated for Integration system user. |  | String
+| *clientId* (security) | *Required* Workday client Id generated by API client for integrations. |  | String
+| *clientSecret* (security) | *Required* Workday client Secret generated by API client for integrations. |  | String
+| *tokenRefresh* (security) | *Required* Workday token Refresh generated for integrations system user. |  | String
 | *tenant* (tenant) | *Required* Workday Tenant name. |  | String
 |===
 // endpoint options: END
