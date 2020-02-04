@@ -36,7 +36,7 @@
 
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-support</artifactId>
+            <artifactId>camel-core-engine</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
