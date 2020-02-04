@@ -61,7 +61,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *command* | The command to use. The value can be one of: filter, model, read, write, push, pop, version |  | Command
+| *command* | *Required* The command to use. The value can be one of: filter, model, read, write, push, pop, version |  | Command
 |===
 
 
