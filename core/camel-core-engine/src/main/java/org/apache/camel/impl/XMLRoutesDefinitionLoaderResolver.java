@@ -20,6 +20,8 @@ import java.io.IOException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.NoFactoryAvailableException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 import org.slf4j.Logger;
@@ -60,9 +62,7 @@ public class XMLRoutesDefinitionLoaderResolver {
             }
         }
 
-        // fallback to default
-        LOG.debug("Creating DefaultXMLRoutesDefinitionLoader");
-        return new DefaultXMLRoutesDefinitionLoader();
+        throw new RuntimeCamelException("Cannot find XML routes loader in classpath. Add either camel-xml-io or camel-xml-jaxb to the classpath.");
     }
 
     private Class<?> findFactory(String name, CamelContext context) throws IOException {

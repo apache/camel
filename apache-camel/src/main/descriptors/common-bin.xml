@@ -45,6 +45,7 @@
         <include>org.apache.camel:camel-headersmap</include>
         <include>org.apache.camel:camel-caffeine-lrucache</include>
         <include>org.apache.camel:camel-xml-io</include>
+        <include>org.apache.camel:camel-xml-jaxb</include>
 
         <!-- NOTE: auto-generated list of components when building camel catalog -->
         <!-- camel components: START -->
