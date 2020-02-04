@@ -50,7 +50,7 @@ public class RouteProcessorDumpRouteCoverageTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .process(exchange -> exchange.getOut().setBody("Bye World"));
+                    .process(exchange -> exchange.getMessage().setBody("Bye World"));
             }
         };
     }
