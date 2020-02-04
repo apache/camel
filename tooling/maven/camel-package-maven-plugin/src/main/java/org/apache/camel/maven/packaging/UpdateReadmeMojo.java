@@ -746,7 +746,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
         return component;
     }
 
-    private static DataFormatModel generateDataFormatModel(String json) {
+    private DataFormatModel generateDataFormatModel(String json) {
         DataFormatModel model = JsonMapper.generateDataFormatModel(json);
         // skip option named id
         model.getOptions().removeIf(opt -> Objects.equals(opt.getName(), "id"));
@@ -760,6 +760,14 @@ public class UpdateReadmeMojo extends AbstractMojo {
                 }
                 desc += " Deprecation note: " + option.getDeprecationNote();
             }
+            option.setDescription(desc);
+        });
+        model.getOptions().stream().filter(o -> o.getEnums() != null).forEach(option -> {
+            String desc = option.getDescription();
+            if (!desc.endsWith(".")) {
+                desc = desc + ".";
+            }
+            desc = desc + " The value can be one of: " + wrapEnumValues(option.getEnums());
             option.setDescription(desc);
         });
         return model;
