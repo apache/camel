@@ -17,7 +17,6 @@
 package org.apache.camel.component.undertow.rest;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.junit.Test;
@@ -46,14 +45,12 @@ public class RestUndertowProducerVerbUpperCaseTest extends BaseUndertowTest {
                         .get("{id}/basic")
                         .route()
                         .to("mock:input")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
-                                assertEquals("GET", method);
+                        .process(exchange -> {
+                            String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
+                            assertEquals("GET", method);
 
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Donald Duck");
-                            }
+                            String id = exchange.getIn().getHeader("id", String.class);
+                            exchange.getMessage().setBody(id + ";Donald Duck");
                         });
             }
         };
