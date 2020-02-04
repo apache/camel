@@ -120,6 +120,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-websocket</artifactId>
+			<scope>provided</scope>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-lumberjack</artifactId>
 			<scope>provided</scope>
 			<version>${project.version}</version>
@@ -570,12 +576,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-atmosphere-websocket</artifactId>
-			<scope>provided</scope>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-debezium-mongodb</artifactId>
 			<scope>provided</scope>
 			<version>${project.version}</version>
@@ -631,6 +631,12 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jdbc</artifactId>
+			<scope>provided</scope>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-spark</artifactId>
 			<scope>provided</scope>
 			<version>${project.version}</version>
 		</dependency>
@@ -745,12 +751,6 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-rest-openapi</artifactId>
-			<scope>provided</scope>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-spark-rest</artifactId>
 			<scope>provided</scope>
 			<version>${project.version}</version>
 		</dependency>
