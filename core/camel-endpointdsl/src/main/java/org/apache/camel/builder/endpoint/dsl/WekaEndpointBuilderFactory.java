@@ -296,6 +296,8 @@ public interface WekaEndpointBuilderFactory {
          * 
          * Path parameter: command
          * The command to use
+         * The value can be one of: filter, model, read, write, push, pop,
+         * version
          */
         default WekaEndpointBuilder weka(String path) {
             return WekaEndpointBuilderFactory.weka(path);
@@ -313,6 +315,7 @@ public interface WekaEndpointBuilderFactory {
      * 
      * Path parameter: command
      * The command to use
+     * The value can be one of: filter, model, read, write, push, pop, version
      */
     static WekaEndpointBuilder weka(String path) {
         class WekaEndpointBuilderImpl extends AbstractEndpointBuilder implements WekaEndpointBuilder, AdvancedWekaEndpointBuilder {
