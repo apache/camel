@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support.processor.validation;
+package org.apache.camel.support.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
