@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.workday;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.workday.auth.AuthClientForIntegration;
 import org.apache.camel.component.workday.auth.AutheticationClient;
@@ -30,27 +33,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The camel-workday producer.
+ * The Workday Report producer.
  */
-public class WorkdayProducer extends DefaultProducer {
+public class WorkdayReportProducer extends DefaultProducer {
 
-    public static final String WORKDAY_RAAS_HEADER = "CamelWorkdayRAAS";
+    public static final String WORKDAY_URL_HEADER = "CamelWorkdayURL";
+    public static final String WORKDAY_RASS_URL_TEMPALTE = "https://%s/ccx/service/customreport2/%s%s";
 
-    private static final Logger LOG = LoggerFactory.getLogger(WorkdayProducer.class);
-
-    private String workdayUri;
+    private static final Logger LOG = LoggerFactory.getLogger(WorkdayReportProducer.class);
 
     private WorkdayEndpoint endpoint;
 
-    private WorkdayComponent component;
-
     private AutheticationClient autheticationClient;
 
-    public WorkdayProducer(WorkdayEndpoint endpoint, String workdayUri) {
+    public WorkdayReportProducer(WorkdayEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        this.workdayUri = workdayUri;
-        this.component = (WorkdayComponent)this.endpoint.getComponent();
         this.autheticationClient = new AuthClientForIntegration(this.endpoint.getWorkdayConfiguration());
     }
 
@@ -60,11 +58,11 @@ public class WorkdayProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-
         PoolingHttpClientConnectionManager httpClientConnectionManager = endpoint.getWorkdayConfiguration().getHttpConnectionManager();
         CloseableHttpClient httpClient = HttpClientBuilder.create().setConnectionManager(httpClientConnectionManager).build();
+        String workdayUri = prepareUri(endpoint.getWorkdayConfiguration());
 
-        HttpGet httpGet = new HttpGet(this.workdayUri);
+        HttpGet httpGet = new HttpGet(workdayUri);
         this.autheticationClient.configure(httpClient, httpGet);
 
         CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
@@ -80,7 +78,24 @@ public class WorkdayProducer extends DefaultProducer {
         }
 
         exchange.getIn().setBody(report);
-        exchange.getIn().setHeader(WORKDAY_RAAS_HEADER, workdayUri);
+        exchange.getIn().setHeader(WORKDAY_URL_HEADER, workdayUri);
+    }
+
+    public String prepareUri(WorkdayConfiguration configuration) {
+        Map<String, Object> parameters = configuration.getParameters();
+        StringBuilder stringBuilder = new StringBuilder(configuration.getPath());
+        stringBuilder.append("?");
+        if (parameters.size() > 0) {
+            String params = parameters.keySet().stream().map(k -> k + "=" + parameters.get(k)).collect(Collectors.joining("&"));
+            stringBuilder.append(params);
+            stringBuilder.append("&");
+        }
+
+        stringBuilder.append("format=");
+        stringBuilder.append(configuration.getReportFormat());
+        String uriString = String.format(WORKDAY_RASS_URL_TEMPALTE, configuration.getHost(), configuration.getTenant(), stringBuilder.toString());
+
+        return uriString;
     }
 
 }
