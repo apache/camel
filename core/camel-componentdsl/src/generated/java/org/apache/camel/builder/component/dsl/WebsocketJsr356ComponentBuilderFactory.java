@@ -49,6 +49,21 @@ public interface WebsocketJsr356ComponentBuilderFactory {
             extends
                 ComponentBuilder<JSR356WebSocketComponent> {
         /**
+         * To enable customization of how a WebSocket ServerEndpoint is
+         * configured and deployed. By default
+         * DefaultServerEndpointDeploymentStrategy is used.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.websocket.jsr356.ServerEndpointDeploymentStrategy</code> type.
+         * 
+         * Group: advanced
+         */
+        default WebsocketJsr356ComponentBuilder serverEndpointDeploymentStrategy(
+                org.apache.camel.websocket.jsr356.ServerEndpointDeploymentStrategy serverEndpointDeploymentStrategy) {
+            doSetProperty("serverEndpointDeploymentStrategy", serverEndpointDeploymentStrategy);
+            return this;
+        }
+        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -119,6 +134,7 @@ public interface WebsocketJsr356ComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "serverEndpointDeploymentStrategy": ((JSR356WebSocketComponent) component).setServerEndpointDeploymentStrategy((org.apache.camel.websocket.jsr356.ServerEndpointDeploymentStrategy) value); return true;
             case "basicPropertyBinding": ((JSR356WebSocketComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((JSR356WebSocketComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((JSR356WebSocketComponent) component).setBridgeErrorHandler((boolean) value); return true;
