@@ -59,6 +59,7 @@ import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutpu
 /**
  * Helper for the Camel {@link org.apache.camel.model model} classes.
  */
+@Deprecated
 public final class ModelHelper {
 
     private ModelHelper() {
@@ -76,6 +77,7 @@ public final class ModelHelper {
      * @return the output in XML (is formatted)
      * @throws JAXBException is throw if error marshalling to XML
      */
+    @Deprecated
     public static String dumpModelAsXml(CamelContext context, NamedNode definition) throws JAXBException {
         JAXBContext jaxbContext = getJAXBContext(context);
         final Map<String, String> namespaces = new LinkedHashMap<>();
@@ -143,6 +145,7 @@ public final class ModelHelper {
      * @return the output in XML (is formatted)
      * @throws Exception is throw if error marshalling to XML
      */
+    @Deprecated
     public static String dumpModelAsXml(CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean resolveDelegateEndpoints) throws Exception {
         String xml = ModelHelper.dumpModelAsXml(context, definition);
 

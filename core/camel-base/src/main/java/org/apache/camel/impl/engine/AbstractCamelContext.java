@@ -113,6 +113,7 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ManagementStrategyFactory;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
@@ -245,6 +246,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private volatile BeanProxyFactory beanProxyFactory;
     private volatile BeanProcessorFactory beanProcessorFactory;
     private volatile XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader;
+    private volatile ModelToXMLDumper modelToXMLDumper;
     private volatile ClassResolver classResolver;
     private volatile PackageScanClassResolver packageScanClassResolver;
     private volatile PackageScanResourceResolver packageScanResourceResolver;
@@ -3369,6 +3371,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         getManagementStrategy();
         getHeadersMapFactory();
         getXMLRoutesDefinitionLoader();
+        getModelToXMLDumper();
         getClassResolver();
         getNodeIdFactory();
         getProcessorFactory();
@@ -4143,6 +4146,21 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         this.xmlRoutesDefinitionLoader = xmlRoutesDefinitionLoader;
     }
 
+    public ModelToXMLDumper getModelToXMLDumper() {
+        if (modelToXMLDumper == null) {
+            synchronized (lock) {
+                if (modelToXMLDumper == null) {
+                    setModelToXMLDumper(createModelToXMLDumper());
+                }
+            }
+        }
+        return modelToXMLDumper;
+    }
+
+    public void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper) {
+        this.modelToXMLDumper = modelToXMLDumper;
+    }
+
     @Override
     public ReactiveExecutor getReactiveExecutor() {
         if (reactiveExecutor == null) {
@@ -4303,6 +4321,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     protected abstract BeanIntrospection createBeanIntrospection();
 
     protected abstract XMLRoutesDefinitionLoader createXMLRoutesDefinitionLoader();
+
+    protected abstract ModelToXMLDumper createModelToXMLDumper();
 
     protected abstract Tracer createTracer();
 

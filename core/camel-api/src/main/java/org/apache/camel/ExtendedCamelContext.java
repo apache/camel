@@ -40,6 +40,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
@@ -402,5 +403,15 @@ public interface ExtendedCamelContext extends CamelContext {
      * Gets the {@link XMLRoutesDefinitionLoader} to be used.
      */
     XMLRoutesDefinitionLoader getXMLRoutesDefinitionLoader();
+
+    /**
+     * Sets a custom {@link ModelToXMLDumper} to be used.
+     */
+    void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper);
+
+    /**
+     * Gets the {@link ModelToXMLDumper} to be used.
+     */
+    ModelToXMLDumper getModelToXMLDumper();
 
 }

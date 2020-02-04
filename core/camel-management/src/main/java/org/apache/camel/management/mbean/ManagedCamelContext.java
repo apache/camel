@@ -415,7 +415,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // use a routes definition to dump the rests
         RestsDefinition def = new RestsDefinition();
         def.setRests(rests);
-        String xml = ModelHelper.dumpModelAsXml(context, def);
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, def);
 
         // if resolving placeholders we parse the xml, and resolve the property placeholders during parsing
         if (resolvePlaceholders) {
@@ -437,7 +438,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             if (changed.get()) {
                 xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
                 RestsDefinition copy = ModelHelper.createModelFromXml(context, xml, RestsDefinition.class);
-                xml = ModelHelper.dumpModelAsXml(context, copy);
+                xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, copy);
             }
         }
 
@@ -465,7 +466,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         RoutesDefinition def = new RoutesDefinition();
         def.setRoutes(routes);
 
-        return ModelHelper.dumpModelAsXml(context, def, resolvePlaceholders, resolveDelegateEndpoints);
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        return ecc.getModelToXMLDumper().dumpModelAsXml(context, def, resolvePlaceholders, resolveDelegateEndpoints);
     }
 
     @Override

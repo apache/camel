@@ -21,15 +21,19 @@ import java.io.InputStream;
 import org.apache.camel.CamelContext;
 
 /**
- * SPI for loading routes/rests from XML input streams and parsing this to model definition classes
+ * SPI for loading routes/rests from XML input streams and parsing this to model definition classes.
  */
-// TODO: Better name?
+// TODO: Better name? XMLtoModelLoader
 public interface XMLRoutesDefinitionLoader {
 
-    // TODO: javadoc
-
+    /**
+     * Loads from XML into routes.
+     */
     Object loadRoutesDefinition(CamelContext context, InputStream inputStream) throws Exception;
 
+    /**
+     * Loads from XML into rests.
+     */
     Object loadRestsDefinition(CamelContext context, InputStream inputStream) throws Exception;
 
 }
