@@ -84,7 +84,7 @@ public class RestSwaggerReaderPropertyPlaceholderTest extends CamelTestSupport {
         RestSwaggerReader reader = new RestSwaggerReader();
 
         RestSwaggerSupport support = new RestSwaggerSupport();
-        List<RestDefinition> rests = support.getRestDefinitions(context.getName());
+        List<RestDefinition> rests = support.getRestDefinitions(context, context.getName());
 
         Swagger swagger = reader.read(rests, null, config, context.getName(), new DefaultClassResolver());
         assertNotNull(swagger);

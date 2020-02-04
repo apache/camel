@@ -41,7 +41,6 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.model.ExpressionNode;
-import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -169,8 +168,8 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             // replaced so re-create the model
             if (changed.get()) {
                 xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
-                NamedNode copy = ModelHelper.createModelFromXml(context, xml, NamedNode.class);
                 ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+                NamedNode copy = ecc.getXMLRoutesDefinitionLoader().createModelFromXml(context, xml, NamedNode.class);
                 xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, copy);
             }
         }

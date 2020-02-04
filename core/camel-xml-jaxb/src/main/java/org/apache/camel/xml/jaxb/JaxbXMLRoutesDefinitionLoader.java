@@ -24,11 +24,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.NamedNode;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.RouteDefinition;
@@ -116,6 +119,11 @@ public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader 
     }
 
     @Override
+    public <T extends NamedNode> T createModelFromXml(CamelContext context, String xml, Class<T> type) throws Exception {
+        return modelToXml(context, null, xml, type);
+    }
+
+    @Override
     public String toString() {
         return "camel-xml-jaxb";
     }
@@ -191,4 +199,47 @@ public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader 
             }
         }
     }
+
+    private static <T extends NamedNode> T modelToXml(CamelContext context, InputStream is, String xml, Class<T> type) throws Exception {
+        JAXBContext jaxbContext = getJAXBContext(context);
+
+        XmlConverter xmlConverter = newXmlConverter(context);
+        Document dom = null;
+        try {
+            if (is != null) {
+                dom = xmlConverter.toDOMDocument(is, null);
+            } else if (xml != null) {
+                dom = xmlConverter.toDOMDocument(xml, null);
+            }
+        } catch (Exception e) {
+            throw new TypeConversionException(xml, Document.class, e);
+        }
+        if (dom == null) {
+            throw new IllegalArgumentException("InputStream and XML is both null");
+        }
+
+        Map<String, String> namespaces = new LinkedHashMap<>();
+        extractNamespaces(dom, namespaces);
+
+        Binder<Node> binder = jaxbContext.createBinder();
+        Object result = binder.unmarshal(dom);
+
+        if (result == null) {
+            throw new JAXBException("Cannot unmarshal to " + type + " using JAXB");
+        }
+
+        // Restore namespaces to anything that's NamespaceAware
+        if (result instanceof RoutesDefinition) {
+            List<RouteDefinition> routes = ((RoutesDefinition)result).getRoutes();
+            for (RouteDefinition route : routes) {
+                applyNamespaces(route, namespaces);
+            }
+        } else if (result instanceof RouteDefinition) {
+            RouteDefinition route = (RouteDefinition)result;
+            applyNamespaces(route, namespaces);
+        }
+
+        return type.cast(result);
+    }
+
 }

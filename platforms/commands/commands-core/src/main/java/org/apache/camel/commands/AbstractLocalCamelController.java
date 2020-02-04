@@ -39,7 +39,6 @@ import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.model.Model;
-import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
@@ -394,7 +393,8 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             return null;
         }
 
-        return ModelHelper.dumpModelAsXml(context, route);
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        return ecc.getModelToXMLDumper().dumpModelAsXml(context, route);
     }
 
     @Override
@@ -459,7 +459,9 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         // use a rests definition to dump the rests
         RestsDefinition def = new RestsDefinition();
         def.setRests(rests);
-        return ModelHelper.dumpModelAsXml(context, def);
+
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        return ecc.getModelToXMLDumper().dumpModelAsXml(context, def);
     }
 
     @Override

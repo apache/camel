@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -51,8 +52,8 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.api.management.mbean.RouteError;
 import org.apache.camel.model.Model;
-import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RoutePolicy;
@@ -364,10 +365,13 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     @Override
     public void updateRouteFromXml(String xml) throws Exception {
         // convert to model from xml
-        RouteDefinition def = ModelHelper.createModelFromXml(context, xml, RouteDefinition.class);
-        if (def == null) {
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        InputStream is = context.getTypeConverter().convertTo(InputStream.class, xml);
+        RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(context, is);
+        if (routes == null || routes.getRoutes().isEmpty()) {
             return;
         }
+        RouteDefinition def = routes.getRoutes().get(0);
 
         // if the xml does not contain the route-id then we fix this by adding the actual route id
         // this may be needed if the route-id was auto-generated, as the intend is to update this route
