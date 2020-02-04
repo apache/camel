@@ -388,8 +388,8 @@
         <json-simple-version>1.1.1</json-simple-version>
         <json-smart-version>2.3</json-smart-version>
         <jsoup-version>1.12.1</jsoup-version>
-        <jt400-version>10.1</jt400-version>
-        <jt400-bundle-version>10.1_1</jt400-bundle-version>
+        <jt400-version>10.2</jt400-version>
+        <jt400-bundle-version>10.2_1</jt400-bundle-version>
         <juel-bundle-version>2.1.3_1</juel-bundle-version>
         <!-- camel-itest-karaf doesn't work with JUnit 4.12 at present -->
         <junit-bundle-version>4.11_1</junit-bundle-version>
