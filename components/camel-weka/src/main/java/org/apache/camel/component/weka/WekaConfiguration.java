@@ -29,7 +29,7 @@ public class WekaConfiguration {
         filter, model, read, write, push, pop, version 
     }
 
-    @UriPath(description = "The command to use")
+    @UriPath(description = "The command to use.", enums = "filter,model,read,write,push,pop,version")
     private Command command;
 
     // Read/Write parameters
