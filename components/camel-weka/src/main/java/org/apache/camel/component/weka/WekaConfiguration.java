@@ -29,7 +29,8 @@ public class WekaConfiguration {
         filter, model, read, write, push, pop, version 
     }
 
-    @UriPath(description = "The command to use.", enums = "filter,model,read,write,push,pop,version") @Metadata(required = true)
+    @UriPath(description = "The command to use.", enums = "filter,model,read,write,push,pop,version")
+    @Metadata(required = true)
     private Command command;
 
     // Read/Write parameters
@@ -47,7 +48,7 @@ public class WekaConfiguration {
     private boolean xval;
     @UriParam(description = "The named dataset to train the classifier with", label = "model")
     private String dsname;
-    @UriParam(description = "Numer of folds to use for cross-validation", label = "model", defaultValue = "10")
+    @UriParam(description = "Number of folds to use for cross-validation", label = "model", defaultValue = "10")
     private int folds = 10;
     @UriParam(description = "An optional seed for the randomizer", label = "model", defaultValue = "1")
     private int seed = 1;
