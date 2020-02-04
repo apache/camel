@@ -17,25 +17,18 @@
 package org.apache.camel.component.workday;
 
 import org.apache.camel.Consumer;
-import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-/**
- * Represents a camel-workday endpoint.
- */
 
-@UriEndpoint(firstVersion = "3.1.0-SNAPSHOT", scheme = "workday", title = "Workday", syntax = "workday:uri", label = "hcm")
+/**
+ * Represents a Workday endpoint.
+ */
+@UriEndpoint(firstVersion = "3.1.0", scheme = "workday", title = "Workday", syntax = "workday:entity:path", producerOnly = true, label = "hcm")
 public class WorkdayEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "The partial URL for RAAS report.")
-    @Metadata(required = true)
-    private String uri;
-    
     @UriParam
     private WorkdayConfiguration workdayConfiguration;
 
@@ -48,26 +41,21 @@ public class WorkdayEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-
-        return new WorkdayProducer(this, uri);
+        switch (workdayConfiguration.getEntity()) {
+        case report:
+            return new WorkdayReportProducer(this);
+        default:
+            throw new UnsupportedOperationException(String.format("Workday producer %s is not implemented", workdayConfiguration.getEntity()));
+        }
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-
-        throw new NoSuchEndpointException("Workday consumer is not implemented.");
+        throw new UnsupportedOperationException("Workday consumer is not implemented.");
     }
 
     @Override
     public boolean isLenientProperties() {
         return true;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
     }
 
     public WorkdayConfiguration getWorkdayConfiguration() {
