@@ -43,14 +43,14 @@ public class ModelToXMLDumperResolver {
         // use factory finder to find a custom implementations
         Class<?> type = null;
         try {
-            type = findFactory("xmlroutes-dumper", context);
+            type = findFactory("modelxml-dumper", context);
         } catch (Exception e) {
             // ignore
         }
 
         if (type != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Found ModelToXMLDumper: {} via: {}{}", type.getName(), factoryFinder.getResourcePath(), "xmlroutes-dumper");
+                LOG.debug("Found ModelToXMLDumper: {} via: {}{}", type.getName(), factoryFinder.getResourcePath(), "modelxml-dumper");
             }
             if (ModelToXMLDumper.class.isAssignableFrom(type)) {
                 ModelToXMLDumper answer = (ModelToXMLDumper) context.getInjector().newInstance(type, false);
