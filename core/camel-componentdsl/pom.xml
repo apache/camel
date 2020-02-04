@@ -1623,4 +1623,12 @@
         </dependency>
     </dependencies>
 
+    <!-- camel-jira -->
+    <repositories>
+        <repository>
+            <id>atlassian-public</id>
+            <url>https://packages.atlassian.com/maven-external</url>
+        </repository>
+    </repositories>
+
 </project>
