@@ -222,6 +222,11 @@ Should now be:
     exchange.setRollbackOnly(true);
 ----
 
+==== ModelHelper removed
+
+The class `org.apache.camel.model.ModelHelper` has been removed. Instead you can use its functionality from `ExtendedCamelContext` by
+the `getModelToXMLDumper` and `getXMLRoutesDefinitionLoader` methods which has APIs similar to `ModelHelper`.
+
 ==== camel-jaxp
 
 The class `org.apache.camel.processor.validation.PredicateValidatingProcessor` has moved from `camel-jaxp` JAR

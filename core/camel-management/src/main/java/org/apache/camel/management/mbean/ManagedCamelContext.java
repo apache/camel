@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -48,13 +47,11 @@ import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.model.Model;
-import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.util.xml.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -415,34 +412,9 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // use a routes definition to dump the rests
         RestsDefinition def = new RestsDefinition();
         def.setRests(rests);
+
         ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, def);
-
-        // if resolving placeholders we parse the xml, and resolve the property placeholders during parsing
-        if (resolvePlaceholders) {
-            final AtomicBoolean changed = new AtomicBoolean();
-            InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8"));
-            Document dom = XmlLineNumberParser.parseXml(is, text -> {
-                try {
-                    String after = getContext().resolvePropertyPlaceholders(text);
-                    if (!changed.get()) {
-                        changed.set(!text.equals(after));
-                    }
-                    return after;
-                } catch (Exception e) {
-                    // ignore
-                    return text;
-                }
-            });
-            // okay there were some property placeholder replaced so re-create the model
-            if (changed.get()) {
-                xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
-                RestsDefinition copy = ModelHelper.createModelFromXml(context, xml, RestsDefinition.class);
-                xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, copy);
-            }
-        }
-
-        return xml;
+        return ecc.getModelToXMLDumper().dumpModelAsXml(context, def, resolvePlaceholders, false);
     }
 
     @Override
