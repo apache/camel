@@ -219,7 +219,7 @@ bound in the previous step:
 
 Or you can create a `DataSource` in Spring like this:
 
-With srping xml:
+With spring xml:
 
 [source,xml]
 ----
