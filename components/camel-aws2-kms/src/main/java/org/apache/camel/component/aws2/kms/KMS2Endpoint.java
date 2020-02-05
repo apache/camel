@@ -35,7 +35,7 @@ import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.kms.KmsClientBuilder;
 
 /**
- * The aws-kms is used for managing Amazon KMS
+ * The aws2-kms is used for managing Amazon KMS
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-kms", title = "AWS 2 KMS", syntax = "aws2-kms:label", producerOnly = true, label = "cloud,management")
 public class KMS2Endpoint extends ScheduledPollEndpoint {
