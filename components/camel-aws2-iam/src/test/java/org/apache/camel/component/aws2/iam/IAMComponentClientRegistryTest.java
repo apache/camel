@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.iam;
 
-import org.apache.camel.component.aws2.iam.IAM2Component;
-import org.apache.camel.component.aws2.iam.IAM2Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 

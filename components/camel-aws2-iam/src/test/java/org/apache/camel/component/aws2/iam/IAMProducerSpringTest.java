@@ -19,13 +19,10 @@ package org.apache.camel.component.aws2.iam;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.aws2.iam.IAM2Constants;
-import org.apache.camel.component.aws2.iam.IAM2Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import software.amazon.awssdk.services.iam.model.AddUserToGroupResponse;
 import software.amazon.awssdk.services.iam.model.CreateAccessKeyResponse;
 import software.amazon.awssdk.services.iam.model.CreateGroupResponse;
