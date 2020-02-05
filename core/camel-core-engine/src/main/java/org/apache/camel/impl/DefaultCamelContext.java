@@ -16,9 +16,8 @@
  */
 package org.apache.camel.impl;
 
-import java.util.Map;
-
 import javax.naming.Context;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -56,10 +55,10 @@ import org.apache.camel.impl.engine.HeadersMapFactoryResolver;
 import org.apache.camel.impl.engine.PropertiesComponentFactoryResolver;
 import org.apache.camel.impl.engine.ReactiveExecutorResolver;
 import org.apache.camel.impl.engine.RestRegistryFactoryResolver;
+import org.apache.camel.impl.engine.RuntimeCamelCatalogResolver;
 import org.apache.camel.impl.engine.WebSpherePackageScanClassResolver;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
-import org.apache.camel.runtimecatalog.impl.DefaultRuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -301,7 +300,7 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
 
     @Override
     protected RuntimeCamelCatalog createRuntimeCamelCatalog() {
-        return new DefaultRuntimeCamelCatalog(this, true);
+        return new RuntimeCamelCatalogResolver().resolve(this);
     }
 
     @Override

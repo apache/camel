@@ -16,16 +16,18 @@
  */
 package org.apache.camel.runtimecatalog;
 
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
 
 /**
  * Runtime based CamelCatalog which are included in camel-core that can provided limit CamelCatalog capabilities
  */
-public interface RuntimeCamelCatalog extends StaticService {
+// TODO: Remove not needed API and rename to a better name/package
+@Deprecated
+public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
 
     // configuration
 
@@ -79,6 +81,7 @@ public interface RuntimeCamelCatalog extends StaticService {
      * @param uri  the endpoint uri
      * @return properties as key value pairs of each endpoint option
      */
+    // TODO: needed by SendDynamicAware
     Map<String, String> endpointProperties(String uri) throws URISyntaxException;
 
     /**
@@ -89,6 +92,7 @@ public interface RuntimeCamelCatalog extends StaticService {
      * @param uri  the endpoint uri
      * @return properties as key value pairs of each lenient properties
      */
+    // TODO: needed by SendDynamicAware
     Map<String, String> endpointLenientProperties(String uri) throws URISyntaxException;
 
     /**
@@ -106,6 +110,7 @@ public interface RuntimeCamelCatalog extends StaticService {
      * @param properties  the endpoint properties
      * @return validation result
      */
+    // TODO: needed for extension verifier (make SPI)
     EndpointValidationResult validateProperties(String scheme, Map<String, String> properties);
 
     /**
@@ -195,6 +200,7 @@ public interface RuntimeCamelCatalog extends StaticService {
      * @return the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
+    // TODO: needed by SendDynamicAware
     String asEndpointUri(String scheme, Map<String, String> properties, boolean encode) throws URISyntaxException;
 
     /**

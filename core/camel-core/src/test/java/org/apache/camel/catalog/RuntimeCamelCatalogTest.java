@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.runtimecatalog.impl;
+package org.apache.camel.catalog;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,13 +39,8 @@ public class RuntimeCamelCatalogTest {
 
     @BeforeClass
     public static void createCamelCatalog() {
-        catalog = new DefaultRuntimeCamelCatalog(new DefaultCamelContext());
-    }
-
-    @Test
-    public void testFromCamelContext() throws Exception {
-        String schema = new DefaultCamelContext().getExtension(RuntimeCamelCatalog.class).modelJSonSchema("choice");
-        assertNotNull(schema);
+        catalog = new DefaultRuntimeCamelCatalog();
+        catalog.setCamelContext(new DefaultCamelContext());
     }
 
     @Test
@@ -238,7 +233,7 @@ public class RuntimeCamelCatalogTest {
     public void validatePropertiesSummaryUnknown() throws Exception {
         // unknown component yammer
         EndpointValidationResult result = catalog
-            .validateEndpointProperties("yammer:MESSAGES?blah=yada&accessToken=aaa&consumerKey=&useJson=no&initialDelay=five&pollStrategy=myStrategy");
+                .validateEndpointProperties("yammer:MESSAGES?blah=yada&accessToken=aaa&consumerKey=&useJson=no&initialDelay=five&pollStrategy=myStrategy");
         assertTrue(result.isSuccess());
         assertTrue(result.hasWarnings());
         String reason = result.summaryErrorMessage(true, true, true);

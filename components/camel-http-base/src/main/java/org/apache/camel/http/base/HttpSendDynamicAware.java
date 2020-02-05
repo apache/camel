@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.SendDynamicAware;
@@ -53,7 +54,7 @@ public class HttpSendDynamicAware implements SendDynamicAware {
 
     @Override
     public DynamicAwareEntry prepare(Exchange exchange, String uri, String originalUri) throws Exception {
-        RuntimeCamelCatalog catalog = exchange.getContext().getExtension(RuntimeCamelCatalog.class);
+        RuntimeCamelCatalog catalog = exchange.getContext().adapt(ExtendedCamelContext.class).getRuntimeCamelCatalog();
         Map<String, String> properties = catalog.endpointProperties(uri);
         Map<String, String> lenient = catalog.endpointLenientProperties(uri);
         return new DynamicAwareEntry(uri, originalUri, properties, lenient);
@@ -82,7 +83,7 @@ public class HttpSendDynamicAware implements SendDynamicAware {
                     params.remove("path");
                 }
             }
-            RuntimeCamelCatalog catalog = exchange.getContext().getExtension(RuntimeCamelCatalog.class);
+            RuntimeCamelCatalog catalog = exchange.getContext().adapt(ExtendedCamelContext.class).getRuntimeCamelCatalog();
             return catalog.asEndpointUri(scheme, params, false);
         } else {
             // no need for optimisation

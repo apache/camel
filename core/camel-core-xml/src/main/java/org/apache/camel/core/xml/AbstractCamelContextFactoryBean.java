@@ -86,8 +86,6 @@ import org.apache.camel.model.validator.ValidatorsDefinition;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.reifier.transformer.TransformerReifier;
 import org.apache.camel.reifier.validator.ValidatorReifier;
-import org.apache.camel.runtimecatalog.JSonSchemaResolver;
-import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataType;
@@ -261,11 +259,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (headersMapFactory != null) {
             LOG.info("Using custom HeadersMapFactory: {}", headersMapFactory);
             getContext().adapt(ExtendedCamelContext.class).setHeadersMapFactory(headersMapFactory);
-        }
-        JSonSchemaResolver jsonSchemaResolver = getBeanForType(JSonSchemaResolver.class);
-        if (jsonSchemaResolver != null) {
-            LOG.info("Using custom JSonSchemaResolver: {}", jsonSchemaResolver);
-            getContext().getExtension(RuntimeCamelCatalog.class).setJSonSchemaResolver(jsonSchemaResolver);
         }
         // custom type converters defined as <bean>s
         Map<String, TypeConverters> typeConverters = getContext().getRegistry().findByTypeWithName(TypeConverters.class);
