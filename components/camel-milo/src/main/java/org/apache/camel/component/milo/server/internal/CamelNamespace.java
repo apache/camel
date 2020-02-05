@@ -19,78 +19,157 @@ package org.apache.camel.component.milo.server.internal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
+import com.google.common.collect.Lists;
+import org.apache.camel.component.milo.client.MiloClientConsumer;
 import org.eclipse.milo.opcua.sdk.core.Reference;
 import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
+import org.eclipse.milo.opcua.sdk.server.api.AccessContext;
 import org.eclipse.milo.opcua.sdk.server.api.DataItem;
-import org.eclipse.milo.opcua.sdk.server.api.ManagedNamespace;
 import org.eclipse.milo.opcua.sdk.server.api.MonitoredItem;
+import org.eclipse.milo.opcua.sdk.server.api.Namespace;
+import org.eclipse.milo.opcua.sdk.server.api.ServerNodeMap;
+import org.eclipse.milo.opcua.sdk.server.nodes.AttributeContext;
+import org.eclipse.milo.opcua.sdk.server.nodes.ServerNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaFolderNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaObjectNode;
 import org.eclipse.milo.opcua.sdk.server.util.SubscriptionModel;
 import org.eclipse.milo.opcua.stack.core.Identifiers;
+import org.eclipse.milo.opcua.stack.core.StatusCodes;
+import org.eclipse.milo.opcua.stack.core.UaException;
+import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
+import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
+import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UShort;
+import org.eclipse.milo.opcua.stack.core.types.enumerated.NodeClass;
+import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
+import org.eclipse.milo.opcua.stack.core.types.structured.ReadValueId;
+import org.eclipse.milo.opcua.stack.core.types.structured.WriteValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class CamelNamespace extends ManagedNamespace {
+public class CamelNamespace implements Namespace {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MiloClientConsumer.class);
+
+    private final UShort namespaceIndex;
+
+    private final String namespaceUri;
+
+    private final ServerNodeMap nodeManager;
     private final SubscriptionModel subscriptionModel;
 
-    private UaObjectNode itemsObject;
-    private UaFolderNode folder;
-
+    private final UaFolderNode folder;
+    private final UaObjectNode itemsObject;
 
     private final Map<String, CamelServerItem> itemMap = new HashMap<>();
 
-    public CamelNamespace(final String namespaceUri, final OpcUaServer server) {
-        super(server, namespaceUri);
+    public CamelNamespace(final UShort namespaceIndex, final String namespaceUri, final OpcUaServer server) {
+        this.namespaceIndex = namespaceIndex;
+        this.namespaceUri = namespaceUri;
 
+        this.nodeManager = server.getNodeMap();
         this.subscriptionModel = new SubscriptionModel(server, this);
-    }
 
-    @Override
-    protected void onStartup() {
-        super.onStartup();
         // create structure
 
-        final NodeId nodeId = newNodeId("camel");
-        final QualifiedName name = newQualifiedName("camel");
-        final LocalizedText displayName = LocalizedText.english("Camel");
+        {
+            final NodeId nodeId = new NodeId(namespaceIndex, "camel");
+            final QualifiedName name = new QualifiedName(namespaceIndex, "camel");
+            final LocalizedText displayName = LocalizedText.english("Camel");
 
-        this.folder = new UaFolderNode(getNodeContext(), nodeId, name, displayName);
-        getNodeManager().addNode(this.folder);
+            this.folder = new UaFolderNode(this.nodeManager, nodeId, name, displayName);
+            this.nodeManager.addNode(this.folder);
+        }
 
-        final NodeId nodeId2 = newNodeId("items");
-        final QualifiedName name2 = newQualifiedName("items");
-        final LocalizedText displayName2 = LocalizedText.english("Items");
-
-        this.itemsObject = UaObjectNode.builder(getNodeContext())
-                .setNodeId(nodeId2)
-                .setBrowseName(name2)
-                .setDisplayName(displayName2)
-                .setTypeDefinition(Identifiers.FolderType)
-                .build();
-        this.folder.addComponent(this.itemsObject);
-        this.itemsObject.addComponent(this.folder);
-        this.getNodeManager().addNode(this.itemsObject);
-
+        {
+            final NodeId nodeId = new NodeId(namespaceIndex, "items");
+            final QualifiedName name = new QualifiedName(namespaceIndex, "items");
+            final LocalizedText displayName = LocalizedText.english("Items");
+            this.itemsObject = new UaObjectNode(this.nodeManager, nodeId, name, displayName);
+            this.folder.addComponent(this.itemsObject);
+        }
 
         // register reference to structure
 
-        folder.addReference(new Reference(
-                folder.getNodeId(),
-                Identifiers.Organizes,
-                Identifiers.ObjectsFolder.expanded(),
-                false
-        ));
+        try {
+            server.getUaNamespace().addReference(Identifiers.ObjectsFolder, Identifiers.Organizes, true, this.folder.getNodeId().expanded(), NodeClass.Object);
+        } catch (final UaException e) {
+            throw new RuntimeException("Failed to register folder", e);
+        }
+    }
 
-        itemsObject.addReference(new Reference(
-                nodeId,
-                Identifiers.HasComponent,
-                Identifiers.ObjectNode.expanded(),
-                Reference.Direction.INVERSE
-        ));
+    @Override
+    public UShort getNamespaceIndex() {
+        return this.namespaceIndex;
+    }
+
+    @Override
+    public String getNamespaceUri() {
+        return this.namespaceUri;
+    }
+
+    @Override
+    public CompletableFuture<List<Reference>> browse(final AccessContext context, final NodeId nodeId) {
+        final ServerNode node = this.nodeManager.get(nodeId);
+
+        if (node != null) {
+            return CompletableFuture.completedFuture(node.getReferences());
+        } else {
+            final CompletableFuture<List<Reference>> f = new CompletableFuture<>();
+            f.completeExceptionally(new UaException(StatusCodes.Bad_NodeIdUnknown));
+            return f;
+        }
+    }
+
+    @Override
+    public void read(final ReadContext context, final Double maxAge, final TimestampsToReturn timestamps, final List<ReadValueId> readValueIds) {
+        final List<DataValue> results = Lists.newArrayListWithCapacity(readValueIds.size());
+
+        for (final ReadValueId id : readValueIds) {
+            final ServerNode node = this.nodeManager.get(id.getNodeId());
+
+            final DataValue value;
+
+            if (node != null) {
+                value = node.readAttribute(new AttributeContext(context), id.getAttributeId(), timestamps, id.getIndexRange(), null);
+            } else {
+                value = new DataValue(StatusCodes.Bad_NodeIdUnknown);
+            }
+
+            results.add(value);
+        }
+
+        context.complete(results);
+    }
+
+    @Override
+    public void write(final WriteContext context, final List<WriteValue> writeValues) {
+        final List<StatusCode> results = Lists.newArrayListWithCapacity(writeValues.size());
+
+        for (final WriteValue writeValue : writeValues) {
+            try {
+                final ServerNode node = this.nodeManager.getNode(writeValue.getNodeId()).orElseThrow(() -> new UaException(StatusCodes.Bad_NodeIdUnknown));
+
+                node.writeAttribute(new AttributeContext(context), writeValue.getAttributeId(), writeValue.getValue(), writeValue.getIndexRange());
+
+                if (LOG.isTraceEnabled()) {
+                    final Variant variant = writeValue.getValue().getValue();
+                    final Object o = variant != null ? variant.getValue() : null;
+                    LOG.trace("Wrote value={} to attributeId={} of {}", o, writeValue.getAttributeId(), writeValue.getNodeId());
+                }
+
+                results.add(StatusCode.GOOD);
+            } catch (final UaException e) {
+                results.add(e.getStatusCode());
+            }
+        }
+
+        context.complete(results);
     }
 
     @Override
@@ -117,7 +196,7 @@ public class CamelNamespace extends ManagedNamespace {
         synchronized (this) {
             CamelServerItem item = this.itemMap.get(itemId);
             if (item == null) {
-                item = new CamelServerItem(itemId, getNodeContext(), getNamespaceIndex(), this.itemsObject);
+                item = new CamelServerItem(itemId, this.nodeManager, this.namespaceIndex, this.itemsObject);
                 this.itemMap.put(itemId, item);
             }
             return item;

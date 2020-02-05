@@ -27,7 +27,6 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
-import org.junit.Assume;
 
 public abstract class AbstractMiloServerTest extends CamelTestSupport {
 
@@ -35,7 +34,6 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
 
     @Override
     protected void doPreSetup() throws Exception {
-        Assume.assumeTrue("Requires java 9+", isJavaVersionSatisfied(9));
         super.doPreSetup();
         this.serverPort = AvailablePortFinder.getNextAvailable();
     }
@@ -114,33 +112,14 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
         try {
 
             final KeyStoreLoader loader = new KeyStoreLoader();
-            loader.setUrl("file:src/test/resources/keystore");
-            loader.setKeyStorePassword("testtest");
-
-            loader.setKeyPassword("test");
+            loader.setUrl("file:src/test/resources/cert/cert.p12");
+            loader.setKeyStorePassword("pwd1");
+            loader.setKeyPassword("pwd1");
             return loader.load();
         } catch (final GeneralSecurityException | IOException e) {
             throw new RuntimeException(e);
         }
 
-    }
-
-    /**
-     * Return true, if java version (defined by method getRequiredJavaVersion()) is satisfied.
-     * Works for java versions 9+
-     */
-    boolean isJavaVersionSatisfied(int requiredVersion) {
-        String version = System.getProperty("java.version");
-        if (!version.startsWith("1.")) {
-            int dot = version.indexOf(".");
-            if (dot != -1) {
-                version = version.substring(0, dot);
-            }
-            if (Integer.parseInt(version) >= requiredVersion) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }
