@@ -16,11 +16,22 @@
  */
 package org.apache.camel.component.xslt.saxon;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXSource;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.TransformerFactoryImpl;
@@ -28,6 +39,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.component.xslt.XsltBuilder;
 import org.apache.camel.component.xslt.XsltEndpoint;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Injector;
@@ -51,6 +63,8 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
     private Configuration saxonConfiguration;
     @Metadata(label = "advanced")
     private Map<String, Object> saxonConfigurationProperties = new HashMap<>();
+    @Metadata(label = "advanced")
+    private Map<String, Object> saxonReaderProperties = new HashMap<>();
     @UriParam(label = "advanced", javaType = "java.lang.String")
     private List<Object> saxonExtensionFunctions;
     @UriParam(displayName = "Allow StAX", defaultValue = "true")
@@ -106,6 +120,17 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
      */
     public void setSaxonConfigurationProperties(Map<String, Object> configurationProperties) {
         this.saxonConfigurationProperties = configurationProperties;
+    }
+    
+    public Map<String, Object> getSaxonReaderProperties() {
+        return saxonReaderProperties;
+    }
+
+    /**
+     * To set custom Saxon Reader properties
+     */
+    public void setSaxonReaderProperties(Map<String, Object> saxonReaderProperties) {
+        this.saxonReaderProperties = saxonReaderProperties;
     }
 
     @ManagedAttribute(description = "Whether to allow using StAX as the javax.xml.transform.Source")
@@ -187,6 +212,55 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         loadResource(getResourceUri(), xslt);
 
         return xslt;
+    }
+    
+    /**
+     * Loads the resource.
+     *
+     * @param resourceUri  the resource to load
+     * @throws TransformerException is thrown if error loading resource
+     * @throws IOException is thrown if error loading resource
+     */
+    protected void loadResource(String resourceUri, XsltBuilder xslt) throws TransformerException, IOException {
+        LOG.trace("{} loading schema resource: {}", this, resourceUri);
+        Source source = xslt.getUriResolver().resolve(resourceUri, null);
+        if (this.saxonReaderProperties != null) {
+            //for Saxon we need to create XMLReader for the coming source
+            //so that the features configuration can take effect
+            source = createReaderForSource(source);
+        }
+        if (source == null) {
+            throw new IOException("Cannot load schema resource " + resourceUri);
+        } else {
+            xslt.setTransformerSource(source);
+        }
+        // now loaded so clear flag
+        setCacheCleared(false);
+    }
+    
+    private Source createReaderForSource(Source source) {
+        try {
+            XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+            for (Map.Entry<String, Object> entry : this.saxonReaderProperties.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                try {
+                    URI uri = new URI(key);
+                    if (value != null 
+                        && (value.toString().equals("true") || (value.toString().equals("false")))) {
+                        xmlReader.setFeature(uri.toString(), Boolean.valueOf(value.toString()));
+                    }
+                } catch (URISyntaxException e) {
+                    LOG.debug("{} isn't a valid URI, so ingore it", key);
+                }
+            }     
+            InputSource inputSource = SAXSource.sourceToInputSource(source);
+            return new SAXSource(xmlReader, inputSource);
+        } catch (SAXException e) {
+            LOG.info("Can't created XMLReader for source ", e);
+            return null;
+        }
+
     }
 
 }
