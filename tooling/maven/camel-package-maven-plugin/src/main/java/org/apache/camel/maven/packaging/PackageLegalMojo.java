@@ -38,7 +38,7 @@ public class PackageLegalMojo extends AbstractGeneratorMojo {
     /**
      * The output directory for generated components file
      */
-    @Parameter(defaultValue = "${project.build.directory}/classes")
+    @Parameter(defaultValue = "${project.build.outputDirectory}")
     protected File legalOutDir;
 
     /**
@@ -50,6 +50,9 @@ public class PackageLegalMojo extends AbstractGeneratorMojo {
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (legalOutDir == null) {
+            legalOutDir = new File(project.getBuild().getOutputDirectory());
+        }
         processLegal(legalOutDir.toPath());
     }
 

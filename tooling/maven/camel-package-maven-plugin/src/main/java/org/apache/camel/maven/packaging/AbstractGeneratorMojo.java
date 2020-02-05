@@ -27,6 +27,8 @@ import java.util.function.Supplier;
 import org.apache.camel.tooling.util.FileUtil;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -57,6 +59,15 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
      */
     @Component
     protected BuildContext buildContext;
+
+    public void execute(MavenProject project,
+                        MavenProjectHelper projectHelper,
+                        BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
+        this.project = project;
+        this.projectHelper = projectHelper;
+        this.buildContext = buildContext;
+        execute();
+    }
 
     protected void addResourceDirectory(Path path) {
         projectHelper.addResource(project, path.toString(), Collections.singletonList("**/*"), Collections.emptyList());

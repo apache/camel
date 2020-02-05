@@ -28,12 +28,16 @@ import java.util.stream.Collectors;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 import org.jboss.jandex.Index;
 import org.jboss.jandex.IndexWriter;
 import org.jboss.jandex.Indexer;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * Generate a Jandex index for classes compiled as part of the current project.
@@ -41,7 +45,7 @@ import org.jboss.jandex.Indexer;
  * @author jdcasey
  */
 @Mojo(name = "jandex", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true)
-public class PackageJandexMojo extends AbstractMojo {
+public class PackageJandexMojo extends AbstractGeneratorMojo {
 
     @Parameter(defaultValue = "${project.build.outputDirectory}")
     protected File classesDirectory;
@@ -55,6 +59,14 @@ public class PackageJandexMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${showStaleFiles}")
     private boolean showStaleFiles;
+
+    @Override
+    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
+        classesDirectory = new File(project.getBuild().getOutputDirectory());
+        index = new File(project.getBuild().getOutputDirectory(), "META-INF/jandex.idx");
+        showStaleFiles = Boolean.parseBoolean(project.getProperties().getProperty("showStaleFiles", "false"));
+        super.execute(project, projectHelper, buildContext);
+    }
 
     @Override
     public void execute() throws MojoExecutionException {

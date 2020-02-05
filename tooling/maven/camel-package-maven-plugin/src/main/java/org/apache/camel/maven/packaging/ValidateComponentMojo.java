@@ -44,13 +44,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * each option
  */
 @Mojo(name = "validate-components", threadSafe = true)
-public class ValidateComponentMojo extends AbstractMojo {
-
-    /**
-     * The maven project.
-     */
-    @Parameter(property = "project", required = true, readonly = true)
-    protected MavenProject project;
+public class ValidateComponentMojo extends AbstractGeneratorMojo {
 
     /**
      * Whether to validate if the components, data formats, and languages are
@@ -62,21 +56,8 @@ public class ValidateComponentMojo extends AbstractMojo {
     /**
      * The output directory for generated components file
      */
-    @Parameter(defaultValue = "${project.build.directory}/classes/")
+    @Parameter(defaultValue = "${project.build.outputDirectory}")
     protected File outDir;
-
-    /**
-     * Maven ProjectHelper.
-     */
-    @Component
-    private MavenProjectHelper projectHelper;
-
-    /**
-     * build context to check changed files and mark them for refresh (used for
-     * m2e compatibility)
-     */
-    @Component
-    private BuildContext buildContext;
 
     /**
      * Execute goal.
@@ -88,6 +69,12 @@ public class ValidateComponentMojo extends AbstractMojo {
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (validate == null) {
+            validate = true;
+        }
+        if (outDir == null) {
+            outDir = new File(project.getBuild().getOutputDirectory());
+        }
         if (!validate) {
             getLog().info("Validation disabled");
         } else {

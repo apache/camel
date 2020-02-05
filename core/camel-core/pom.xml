@@ -242,6 +242,18 @@
     <build>
         <plugins>
 
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-package-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- generate the attached tests jar -->
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>

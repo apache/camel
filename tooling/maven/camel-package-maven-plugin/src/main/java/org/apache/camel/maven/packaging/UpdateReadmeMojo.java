@@ -41,10 +41,12 @@ import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 import org.mvel2.templates.TemplateRuntime;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
@@ -53,13 +55,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * files in the project root directory.
  */
 @Mojo(name = "update-readme", threadSafe = true)
-public class UpdateReadmeMojo extends AbstractMojo {
-
-    /**
-     * The maven project.
-     */
-    @Parameter(property = "project", required = true, readonly = true)
-    protected MavenProject project;
+public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     /**
      * The project build directory
@@ -70,13 +66,13 @@ public class UpdateReadmeMojo extends AbstractMojo {
     /**
      * The documentation directory
      */
-    @Parameter(defaultValue = "${basedir}/src/main/docs")
+    @Parameter(defaultValue = "${project.basedir}/src/main/docs")
     protected File docDir;
 
     /**
      * The documentation EIP directory
      */
-    @Parameter(defaultValue = "${basedir}/src/main/docs/eips")
+    @Parameter(defaultValue = "${project.basedir}/src/main/docs/eips")
     protected File eipDocDir;
 
     /**
@@ -85,12 +81,13 @@ public class UpdateReadmeMojo extends AbstractMojo {
     @Parameter
     protected Boolean failFast;
 
-    /**
-     * build context to check changed files and mark them for refresh (used for
-     * m2e compatibility)
-     */
-    @Component
-    private BuildContext buildContext;
+    @Override
+    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
+        buildDir = new File(project.getBuild().getDirectory());
+        docDir = new File(project.getBasedir(), "src/main/docs");
+        eipDocDir = new File(project.getBasedir(), "src/main/docs/eips");
+        super.execute(project, projectHelper, buildContext);
+    }
 
     @Override
     public void execute() throws MojoExecutionException {

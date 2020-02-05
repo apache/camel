@@ -389,31 +389,9 @@
                     <execution>
                         <id>generate</id>
                         <goals>
-                            <goal>jandex</goal>
-                            <goal>generate-type-converter-loader</goal>
-                            <goal>generate-spi</goal>
-                            <goal>generate-endpoint-schema</goal>
-                            <goal>prepare-components</goal>
-                            <goal>generate-components-list</goal>
+                            <goal>generate</goal>
                         </goals>
                         <phase>process-classes</phase>
-                    </execution>
-                    <execution>
-                        <id>validate</id>
-                        <goals>
-                            <goal>validate-components</goal>
-                            <goal>generate-legal</goal>
-                            <goal>generate-endpoint-dsl</goal>
-                            <goal>generate-component-dsl</goal>
-                        </goals>
-                        <phase>prepare-package</phase>
-                    </execution>
-                    <execution>
-                        <id>readme</id>
-                        <goals>
-                            <goal>update-readme</goal>
-                        </goals>
-                        <phase>package</phase>
                     </execution>
                 </executions>
             </plugin>

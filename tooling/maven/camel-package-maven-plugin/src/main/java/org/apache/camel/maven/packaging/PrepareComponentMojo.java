@@ -40,13 +40,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * auto-discovery in Camel and tooling.
  */
 @Mojo(name = "prepare-components", threadSafe = true)
-public class PrepareComponentMojo extends AbstractMojo {
-
-    /**
-     * The maven project.
-     */
-    @Parameter(property = "project", required = true, readonly = true)
-    protected MavenProject project;
+public class PrepareComponentMojo extends AbstractGeneratorMojo {
 
     /**
      * The output directory for generated components file
@@ -96,18 +90,20 @@ public class PrepareComponentMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.build.directory}")
     protected File buildDir;
 
-    /**
-     * Maven ProjectHelper.
-     */
-    @Component
-    private MavenProjectHelper projectHelper;
+    @Parameter(defaultValue = "${camel-prepare-component}")
+    protected boolean prepareComponent;
 
-    /**
-     * build context to check changed files and mark them for refresh (used for
-     * m2e compatibility)
-     */
-    @Component
-    private BuildContext buildContext;
+    @Override
+    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
+        configurerSourceOutDir = new File(project.getBasedir(), "src/generated/java");
+        configurerResourceOutDir = componentOutDir
+                = dataFormatOutDir = languageOutDir
+                = otherOutDir = schemaOutDir
+                = new File(project.getBasedir(), "src/generated/resources");
+        buildDir = new File(project.getBuild().getDirectory());
+        prepareComponent = Boolean.parseBoolean(project.getProperties().getProperty("camel-prepare-component", "false"));
+        super.execute(project, projectHelper, buildContext);
+    }
 
     /**
      * Execute goal.
@@ -119,6 +115,9 @@ public class PrepareComponentMojo extends AbstractMojo {
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (!prepareComponent) {
+            return;
+        }
         int count = 0;
         count += new PackageComponentMojo(getLog(), project, projectHelper, buildDir,
                         componentOutDir, buildContext).prepareComponent();

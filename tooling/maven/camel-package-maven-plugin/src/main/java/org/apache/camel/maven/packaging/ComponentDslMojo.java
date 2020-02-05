@@ -46,6 +46,9 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 import static org.apache.camel.tooling.util.PackageHelper.loadText;
@@ -64,7 +67,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
     /**
      * The base directory
      */
-    @Parameter(defaultValue = "${basedir}")
+    @Parameter(defaultValue = "${project.basedir}")
     protected File baseDir;
 
     /**
@@ -104,6 +107,15 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
     protected String componentsDslFactoriesPackageName;
 
     DynamicClassLoader projectClassLoader;
+
+    @Override
+    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
+        buildDir = new File(project.getBuild().getDirectory());
+        baseDir = project.getBasedir();
+        componentsDslPackageName = "org.apache.camel.builder.component";
+        componentsDslFactoriesPackageName = "org.apache.camel.builder.component.dsl";
+        super.execute(project, projectHelper, buildContext);
+    }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
