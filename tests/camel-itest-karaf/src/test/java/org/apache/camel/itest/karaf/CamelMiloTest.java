@@ -16,22 +16,12 @@
  */
 package org.apache.camel.itest.karaf;
 
-import org.junit.Assume;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
 public class CamelMiloTest extends BaseKarafTest {
-
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        Assume.assumeTrue("Requires java 9+", isJavaVersionSatisfied(9));
-    }
-
     @Test
     public void testClient() throws Exception {
         testComponent("milo", "milo-client");
@@ -39,23 +29,5 @@ public class CamelMiloTest extends BaseKarafTest {
     @Test
     public void testServer() throws Exception {
         testComponent("milo", "milo-server");
-    }
-
-    /**
-     * Return true, if java version (defined by method getRequiredJavaVersion()) is satisfied.
-     * Works for java versions 9+
-     */
-    boolean isJavaVersionSatisfied(int requiredVersion) {
-        String version = System.getProperty("java.version");
-        if (!version.startsWith("1.")) {
-            int dot = version.indexOf(".");
-            if (dot != -1) {
-                version = version.substring(0, dot);
-            }
-            if (Integer.parseInt(version) >= requiredVersion) {
-                return true;
-            }
-        }
-        return false;
     }
 }

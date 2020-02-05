@@ -28,6 +28,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 import static java.util.Objects.requireNonNull;
 
 public class MiloClientConsumer extends DefaultConsumer {
