@@ -22,6 +22,8 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -122,7 +124,7 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
         }
 
         if (count > 0) {
-            String names = buffer.toString();
+            String names = Stream.of(buffer.toString().split(" ")).sorted().collect(Collectors.joining(" "));
             String properties = createProperties(project, "components", names);
             updateResource(camelMetaDir.toPath(), "component.properties", properties);
             log.info("Generated " + "components" + " containing " + count + " Camel " + (count > 1 ? "components: " : "component: ") + names);
