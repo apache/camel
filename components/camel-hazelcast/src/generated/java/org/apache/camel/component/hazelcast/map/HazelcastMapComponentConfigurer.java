@@ -12,33 +12,20 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class HazelcastMapComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "hazelcastInstance": ((HazelcastMapComponent) target).setHazelcastInstance(property(camelContext, com.hazelcast.core.HazelcastInstance.class, value)); return true;
-        case "hazelcastMode": ((HazelcastMapComponent) target).setHazelcastMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((HazelcastMapComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((HazelcastMapComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((HazelcastMapComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "hazelcastinstance": ((HazelcastMapComponent) target).setHazelcastInstance(property(camelContext, com.hazelcast.core.HazelcastInstance.class, value)); return true;
-        case "hazelcastmode": ((HazelcastMapComponent) target).setHazelcastMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((HazelcastMapComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((HazelcastMapComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((HazelcastMapComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        HazelcastMapComponent target = (HazelcastMapComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "hazelcastinstance":
+        case "hazelcastInstance": target.setHazelcastInstance(property(camelContext, com.hazelcast.core.HazelcastInstance.class, value)); return true;
+        case "hazelcastmode":
+        case "hazelcastMode": target.setHazelcastMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

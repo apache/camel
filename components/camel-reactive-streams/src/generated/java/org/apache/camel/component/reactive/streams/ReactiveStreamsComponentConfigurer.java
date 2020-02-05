@@ -12,35 +12,22 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class ReactiveStreamsComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "internalEngineConfiguration": ((ReactiveStreamsComponent) target).setInternalEngineConfiguration(property(camelContext, org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration.class, value)); return true;
-        case "backpressureStrategy": ((ReactiveStreamsComponent) target).setBackpressureStrategy(property(camelContext, org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy.class, value)); return true;
-        case "serviceType": ((ReactiveStreamsComponent) target).setServiceType(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((ReactiveStreamsComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((ReactiveStreamsComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((ReactiveStreamsComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "internalengineconfiguration": ((ReactiveStreamsComponent) target).setInternalEngineConfiguration(property(camelContext, org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration.class, value)); return true;
-        case "backpressurestrategy": ((ReactiveStreamsComponent) target).setBackpressureStrategy(property(camelContext, org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy.class, value)); return true;
-        case "servicetype": ((ReactiveStreamsComponent) target).setServiceType(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((ReactiveStreamsComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((ReactiveStreamsComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((ReactiveStreamsComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        ReactiveStreamsComponent target = (ReactiveStreamsComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "internalengineconfiguration":
+        case "internalEngineConfiguration": target.setInternalEngineConfiguration(property(camelContext, org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration.class, value)); return true;
+        case "backpressurestrategy":
+        case "backpressureStrategy": target.setBackpressureStrategy(property(camelContext, org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy.class, value)); return true;
+        case "servicetype":
+        case "serviceType": target.setServiceType(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

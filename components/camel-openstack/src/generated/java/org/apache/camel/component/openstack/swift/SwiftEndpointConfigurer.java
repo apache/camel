@@ -12,45 +12,24 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class SwiftEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "apiVersion": ((SwiftEndpoint) target).setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "config": ((SwiftEndpoint) target).setConfig(property(camelContext, org.openstack4j.core.transport.Config.class, value)); return true;
-        case "domain": ((SwiftEndpoint) target).setDomain(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazyStartProducer": ((SwiftEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": ((SwiftEndpoint) target).setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((SwiftEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "project": ((SwiftEndpoint) target).setProject(property(camelContext, java.lang.String.class, value)); return true;
-        case "subsystem": ((SwiftEndpoint) target).setSubsystem(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((SwiftEndpoint) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((SwiftEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((SwiftEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "apiversion": ((SwiftEndpoint) target).setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "config": ((SwiftEndpoint) target).setConfig(property(camelContext, org.openstack4j.core.transport.Config.class, value)); return true;
-        case "domain": ((SwiftEndpoint) target).setDomain(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer": ((SwiftEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": ((SwiftEndpoint) target).setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((SwiftEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "project": ((SwiftEndpoint) target).setProject(property(camelContext, java.lang.String.class, value)); return true;
-        case "subsystem": ((SwiftEndpoint) target).setSubsystem(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((SwiftEndpoint) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((SwiftEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((SwiftEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        SwiftEndpoint target = (SwiftEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiversion":
+        case "apiVersion": target.setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "config": target.setConfig(property(camelContext, org.openstack4j.core.transport.Config.class, value)); return true;
+        case "domain": target.setDomain(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "operation": target.setOperation(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "project": target.setProject(property(camelContext, java.lang.String.class, value)); return true;
+        case "subsystem": target.setSubsystem(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 
