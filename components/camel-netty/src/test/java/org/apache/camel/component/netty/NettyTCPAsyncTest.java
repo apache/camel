@@ -20,7 +20,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import io.netty.channel.ChannelHandler;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -33,6 +32,7 @@ import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
 public class NettyTCPAsyncTest extends BaseNettyTest {
+
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 

@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import junit.framework.TestCase;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultCamelContext;

@@ -20,7 +20,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import io.netty.channel.ChannelHandler;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -39,6 +38,7 @@ import org.junit.Test;
  * {@link io.netty.util.concurrent.BlockingOperationException} is thrown by netty.
  */
 public class NettyTCPChainedTest extends BaseNettyTest {
+
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
