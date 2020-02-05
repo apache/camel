@@ -473,7 +473,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 EKS (camel-aws2-eks)
-     * The aws-eks is used for managing Amazon EKS
+     * The aws2-eks is used for managing Amazon EKS
      * 
      * Category: cloud,management
      * Since: 3.1
@@ -484,7 +484,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 KMS (camel-aws2-kms)
-     * The aws-kms is used for managing Amazon KMS
+     * The aws2-kms is used for managing Amazon KMS
      * 
      * Category: cloud,management
      * Since: 3.1
