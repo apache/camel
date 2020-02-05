@@ -24,7 +24,6 @@ public class WorkdayComponentConfigurer extends PropertyConfigurerSupport implem
         switch (name) {
         case "basicPropertyBinding": ((WorkdayComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazyStartProducer": ((WorkdayComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((WorkdayComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
             default: return false;
         }
     }
@@ -33,7 +32,6 @@ public class WorkdayComponentConfigurer extends PropertyConfigurerSupport implem
         switch (name.toLowerCase()) {
         case "basicpropertybinding": ((WorkdayComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer": ((WorkdayComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((WorkdayComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
             default: return false;
         }
     }
