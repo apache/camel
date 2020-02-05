@@ -28,7 +28,7 @@ The AWS2 KMS component is not supported in OSGI
 
 [source,java]
 -------------------------
-aws-kms://label[?options]
+aws2-kms://label[?options]
 -------------------------
 
 You can append query options to the URI in the following format,
