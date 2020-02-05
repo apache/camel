@@ -12,51 +12,32 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class MicroProfileMetricsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "action": ((MicroProfileMetricsEndpoint) target).setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "counterIncrement": ((MicroProfileMetricsEndpoint) target).setCounterIncrement(property(camelContext, java.lang.Long.class, value)); return true;
-        case "description": ((MicroProfileMetricsEndpoint) target).setDescription(property(camelContext, java.lang.String.class, value)); return true;
-        case "displayName": ((MicroProfileMetricsEndpoint) target).setDisplayName(property(camelContext, java.lang.String.class, value)); return true;
-        case "gaugeDecrement": ((MicroProfileMetricsEndpoint) target).setGaugeDecrement(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "gaugeIncrement": ((MicroProfileMetricsEndpoint) target).setGaugeIncrement(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "gaugeValue": ((MicroProfileMetricsEndpoint) target).setGaugeValue(property(camelContext, java.lang.Number.class, value)); return true;
-        case "lazyStartProducer": ((MicroProfileMetricsEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "mark": ((MicroProfileMetricsEndpoint) target).setMark(property(camelContext, java.lang.Long.class, value)); return true;
-        case "metricUnit": ((MicroProfileMetricsEndpoint) target).setMetricUnit(property(camelContext, java.lang.String.class, value)); return true;
-        case "tags": ((MicroProfileMetricsEndpoint) target).setTags(property(camelContext, java.lang.String.class, value)); return true;
-        case "value": ((MicroProfileMetricsEndpoint) target).setValue(property(camelContext, java.lang.Long.class, value)); return true;
-        case "basicPropertyBinding": ((MicroProfileMetricsEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((MicroProfileMetricsEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "action": ((MicroProfileMetricsEndpoint) target).setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "counterincrement": ((MicroProfileMetricsEndpoint) target).setCounterIncrement(property(camelContext, java.lang.Long.class, value)); return true;
-        case "description": ((MicroProfileMetricsEndpoint) target).setDescription(property(camelContext, java.lang.String.class, value)); return true;
-        case "displayname": ((MicroProfileMetricsEndpoint) target).setDisplayName(property(camelContext, java.lang.String.class, value)); return true;
-        case "gaugedecrement": ((MicroProfileMetricsEndpoint) target).setGaugeDecrement(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "gaugeincrement": ((MicroProfileMetricsEndpoint) target).setGaugeIncrement(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "gaugevalue": ((MicroProfileMetricsEndpoint) target).setGaugeValue(property(camelContext, java.lang.Number.class, value)); return true;
-        case "lazystartproducer": ((MicroProfileMetricsEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "mark": ((MicroProfileMetricsEndpoint) target).setMark(property(camelContext, java.lang.Long.class, value)); return true;
-        case "metricunit": ((MicroProfileMetricsEndpoint) target).setMetricUnit(property(camelContext, java.lang.String.class, value)); return true;
-        case "tags": ((MicroProfileMetricsEndpoint) target).setTags(property(camelContext, java.lang.String.class, value)); return true;
-        case "value": ((MicroProfileMetricsEndpoint) target).setValue(property(camelContext, java.lang.Long.class, value)); return true;
-        case "basicpropertybinding": ((MicroProfileMetricsEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((MicroProfileMetricsEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        MicroProfileMetricsEndpoint target = (MicroProfileMetricsEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": target.setAction(property(camelContext, java.lang.String.class, value)); return true;
+        case "counterincrement":
+        case "counterIncrement": target.setCounterIncrement(property(camelContext, java.lang.Long.class, value)); return true;
+        case "description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
+        case "displayname":
+        case "displayName": target.setDisplayName(property(camelContext, java.lang.String.class, value)); return true;
+        case "gaugedecrement":
+        case "gaugeDecrement": target.setGaugeDecrement(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "gaugeincrement":
+        case "gaugeIncrement": target.setGaugeIncrement(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "gaugevalue":
+        case "gaugeValue": target.setGaugeValue(property(camelContext, java.lang.Number.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "mark": target.setMark(property(camelContext, java.lang.Long.class, value)); return true;
+        case "metricunit":
+        case "metricUnit": target.setMetricUnit(property(camelContext, java.lang.String.class, value)); return true;
+        case "tags": target.setTags(property(camelContext, java.lang.String.class, value)); return true;
+        case "value": target.setValue(property(camelContext, java.lang.Long.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

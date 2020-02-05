@@ -12,35 +12,21 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class HazelcastRingbufferEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "defaultOperation": ((HazelcastRingbufferEndpoint) target).setDefaultOperation(property(camelContext, org.apache.camel.component.hazelcast.HazelcastOperation.class, value)); return true;
-        case "hazelcastInstance": ((HazelcastRingbufferEndpoint) target).setHazelcastInstance(property(camelContext, com.hazelcast.core.HazelcastInstance.class, value)); return true;
-        case "hazelcastInstanceName": ((HazelcastRingbufferEndpoint) target).setHazelcastInstanceName(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazyStartProducer": ((HazelcastRingbufferEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((HazelcastRingbufferEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((HazelcastRingbufferEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "defaultoperation": ((HazelcastRingbufferEndpoint) target).setDefaultOperation(property(camelContext, org.apache.camel.component.hazelcast.HazelcastOperation.class, value)); return true;
-        case "hazelcastinstance": ((HazelcastRingbufferEndpoint) target).setHazelcastInstance(property(camelContext, com.hazelcast.core.HazelcastInstance.class, value)); return true;
-        case "hazelcastinstancename": ((HazelcastRingbufferEndpoint) target).setHazelcastInstanceName(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer": ((HazelcastRingbufferEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((HazelcastRingbufferEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((HazelcastRingbufferEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        HazelcastRingbufferEndpoint target = (HazelcastRingbufferEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "defaultoperation":
+        case "defaultOperation": target.setDefaultOperation(property(camelContext, org.apache.camel.component.hazelcast.HazelcastOperation.class, value)); return true;
+        case "hazelcastinstance":
+        case "hazelcastInstance": target.setHazelcastInstance(property(camelContext, com.hazelcast.core.HazelcastInstance.class, value)); return true;
+        case "hazelcastinstancename":
+        case "hazelcastInstanceName": target.setHazelcastInstanceName(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

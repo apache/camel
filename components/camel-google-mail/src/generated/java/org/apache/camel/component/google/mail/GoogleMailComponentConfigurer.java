@@ -12,33 +12,19 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class GoogleMailComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "configuration": ((GoogleMailComponent) target).setConfiguration(property(camelContext, org.apache.camel.component.google.mail.GoogleMailConfiguration.class, value)); return true;
-        case "clientFactory": ((GoogleMailComponent) target).setClientFactory(property(camelContext, org.apache.camel.component.google.mail.GoogleMailClientFactory.class, value)); return true;
-        case "basicPropertyBinding": ((GoogleMailComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((GoogleMailComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((GoogleMailComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "configuration": ((GoogleMailComponent) target).setConfiguration(property(camelContext, org.apache.camel.component.google.mail.GoogleMailConfiguration.class, value)); return true;
-        case "clientfactory": ((GoogleMailComponent) target).setClientFactory(property(camelContext, org.apache.camel.component.google.mail.GoogleMailClientFactory.class, value)); return true;
-        case "basicpropertybinding": ((GoogleMailComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((GoogleMailComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((GoogleMailComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        GoogleMailComponent target = (GoogleMailComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.google.mail.GoogleMailConfiguration.class, value)); return true;
+        case "clientfactory":
+        case "clientFactory": target.setClientFactory(property(camelContext, org.apache.camel.component.google.mail.GoogleMailClientFactory.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

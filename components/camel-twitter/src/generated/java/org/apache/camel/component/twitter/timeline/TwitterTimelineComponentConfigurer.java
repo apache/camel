@@ -12,45 +12,32 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class TwitterTimelineComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "accessToken": ((TwitterTimelineComponent) target).setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "accessTokenSecret": ((TwitterTimelineComponent) target).setAccessTokenSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "consumerKey": ((TwitterTimelineComponent) target).setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "consumerSecret": ((TwitterTimelineComponent) target).setConsumerSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpProxyHost": ((TwitterTimelineComponent) target).setHttpProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpProxyUser": ((TwitterTimelineComponent) target).setHttpProxyUser(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpProxyPassword": ((TwitterTimelineComponent) target).setHttpProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpProxyPort": ((TwitterTimelineComponent) target).setHttpProxyPort(property(camelContext, int.class, value)); return true;
-        case "basicPropertyBinding": ((TwitterTimelineComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((TwitterTimelineComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((TwitterTimelineComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "accesstoken": ((TwitterTimelineComponent) target).setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "accesstokensecret": ((TwitterTimelineComponent) target).setAccessTokenSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "consumerkey": ((TwitterTimelineComponent) target).setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "consumersecret": ((TwitterTimelineComponent) target).setConsumerSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpproxyhost": ((TwitterTimelineComponent) target).setHttpProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpproxyuser": ((TwitterTimelineComponent) target).setHttpProxyUser(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpproxypassword": ((TwitterTimelineComponent) target).setHttpProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpproxyport": ((TwitterTimelineComponent) target).setHttpProxyPort(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding": ((TwitterTimelineComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((TwitterTimelineComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((TwitterTimelineComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        TwitterTimelineComponent target = (TwitterTimelineComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "accesstokensecret":
+        case "accessTokenSecret": target.setAccessTokenSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "consumerkey":
+        case "consumerKey": target.setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "consumersecret":
+        case "consumerSecret": target.setConsumerSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpproxyhost":
+        case "httpProxyHost": target.setHttpProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpproxyuser":
+        case "httpProxyUser": target.setHttpProxyUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpproxypassword":
+        case "httpProxyPassword": target.setHttpProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpproxyport":
+        case "httpProxyPort": target.setHttpProxyPort(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 
