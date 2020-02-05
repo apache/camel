@@ -3779,10 +3779,10 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Workday (camel-workday)
-     * Represents a camel-workday endpoint.
+     * Represents a Workday endpoint.
      * 
      * Category: hcm
-     * Since: 3.1.0-SNAPSHOT
+     * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-workday
      */
     static org.apache.camel.builder.component.dsl.WorkdayComponentBuilderFactory.WorkdayComponentBuilder workday() {
