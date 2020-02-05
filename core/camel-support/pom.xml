@@ -58,10 +58,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-util</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-util-json</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
