@@ -26,7 +26,7 @@ The AWS2 Translate component is not supported in OSGI
 
 [source,java]
 -------------------------
-aws-translate://label[?options]
+aws2-translate://label[?options]
 -------------------------
 
 You can append query options to the URI in the following format,
