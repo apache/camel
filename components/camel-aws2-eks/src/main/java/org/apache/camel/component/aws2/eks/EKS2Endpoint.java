@@ -35,7 +35,7 @@ import software.amazon.awssdk.services.eks.EksClient;
 import software.amazon.awssdk.services.eks.EksClientBuilder;
 
 /**
- * The aws-eks is used for managing Amazon EKS
+ * The aws2-eks is used for managing Amazon EKS
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-eks", title = "AWS 2 EKS", syntax = "aws2-eks:label", producerOnly = true, label = "cloud,management")
 public class EKS2Endpoint extends ScheduledPollEndpoint {
