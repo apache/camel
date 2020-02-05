@@ -36,6 +36,28 @@ or explicitly - as we do here when we add the JMS Component:
 include::{examplesdir}/examples/camel-example-jms-file/src/main/java/org/apache/camel/example/jmstofile/CamelJmsToFileExample.java[tags=e2]
 ----
 
+or explicitly using the Component DSL which allows you to configure the components using DSL APIs and register them to the camel context. First you will have the import the maven package for the Component DSL:
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-componentdsl</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+and the register the component like this:
+[source,java]
+----
+ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
+
+ComponentsBuilderFactory.jms()
+         .connectionFactory(connectionFactory)
+         .acknowledgementMode(1)
+         .register(context, "test-jms");
+----
+
 The above works with any JMS provider. If we know we are using
 xref:components::activemq-component.adoc[ActiveMQ] we can use an even simpler form using the
 http://activemq.apache.org/maven/5.5.0/activemq-camel/apidocs/org/apache/activemq/camel/component/ActiveMQComponent.html#activeMQComponent%28java.lang.String%29[`activeMQComponent()`
