@@ -20,7 +20,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import software.amazon.awssdk.services.iam.IamClient;
@@ -36,7 +35,6 @@ import software.amazon.awssdk.services.iam.model.DeleteAccessKeyRequest;
 import software.amazon.awssdk.services.iam.model.DeleteAccessKeyResponse;
 import software.amazon.awssdk.services.iam.model.DeleteGroupRequest;
 import software.amazon.awssdk.services.iam.model.DeleteGroupResponse;
-import software.amazon.awssdk.services.iam.model.DeleteUserPolicyRequest;
 import software.amazon.awssdk.services.iam.model.DeleteUserRequest;
 import software.amazon.awssdk.services.iam.model.DeleteUserResponse;
 import software.amazon.awssdk.services.iam.model.GetUserRequest;
