@@ -24,6 +24,7 @@ import javax.annotation.Generated;
 import org.apache.camel.maven.packaging.AbstractGeneratorMojo;
 import org.apache.camel.maven.packaging.ComponentDslMojo;
 import org.apache.camel.maven.packaging.dsl.DslHelper;
+import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.camel.tooling.util.srcgen.Method;
 
@@ -35,10 +36,10 @@ public final class ComponentsBuilderFactoryGenerator {
     private static final String CLASS_NAME = "ComponentsBuilderFactory";
 
     private final String packageName;
-    private final Set<EnrichedComponentModel> componentModels;
+    private final Set<ComponentModel> componentModels;
     private JavaClass javaClass;
 
-    private ComponentsBuilderFactoryGenerator(final Set<EnrichedComponentModel> componentModels, final ClassLoader classLoader, final String packageName) {
+    private ComponentsBuilderFactoryGenerator(final Set<ComponentModel> componentModels, final ClassLoader classLoader, final String packageName) {
         this.componentModels = componentModels;
         this.packageName = packageName;
 
@@ -47,7 +48,7 @@ public final class ComponentsBuilderFactoryGenerator {
         generateJavaClass();
     }
 
-    public static ComponentsBuilderFactoryGenerator generateClass(final Set<EnrichedComponentModel> componentModels, final ClassLoader classLoader, final String packageName) {
+    public static ComponentsBuilderFactoryGenerator generateClass(final Set<ComponentModel> componentModels, final ClassLoader classLoader, final String packageName) {
         Objects.requireNonNull(componentModels);
         Objects.requireNonNull(classLoader);
         Objects.requireNonNull(packageName);

@@ -29,10 +29,10 @@ public final class ComponentDslInnerImplBuilderGenerator {
 
 
     private final JavaClass javaClass;
-    private final EnrichedComponentModel componentModel;
+    private final ComponentModel componentModel;
     private final String classBuilderName;
 
-    private ComponentDslInnerImplBuilderGenerator(final JavaClass javaClass, final EnrichedComponentModel componentModel, final String interfaceBuilderName) {
+    private ComponentDslInnerImplBuilderGenerator(final JavaClass javaClass, final ComponentModel componentModel, final String interfaceBuilderName) {
         this.javaClass = javaClass;
         this.componentModel = componentModel;
         this.classBuilderName = interfaceBuilderName;
@@ -40,7 +40,7 @@ public final class ComponentDslInnerImplBuilderGenerator {
         generateJavaClass();
     }
 
-    public static ComponentDslInnerImplBuilderGenerator generateClass(final JavaClass javaClass, final EnrichedComponentModel componentModel, final String classBuilderName) {
+    public static ComponentDslInnerImplBuilderGenerator generateClass(final JavaClass javaClass, final ComponentModel componentModel, final String classBuilderName) {
         return new ComponentDslInnerImplBuilderGenerator(javaClass, componentModel, classBuilderName);
     }
 

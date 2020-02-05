@@ -27,6 +27,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.camel.maven.packaging.dsl.DslHelper;
+import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.tooling.util.Strings;
@@ -39,7 +40,7 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
  */
 public class ComponentsDslMetadataRegistry {
 
-    private Map<String, EnrichedComponentModel> componentsCache;
+    private Map<String, ComponentModel> componentsCache;
     private Set<String> componentsDslFactories;
     private File metadataFile;
 
@@ -50,16 +51,16 @@ public class ComponentsDslMetadataRegistry {
         this.metadataFile = metadataFile;
     }
 
-    private Map<String, EnrichedComponentModel> loadMetadataFileIntoMap(final File metadataFile) {
+    private Map<String, ComponentModel> loadMetadataFileIntoMap(final File metadataFile) {
         String json = loadJson(metadataFile);
-        JsonObject obj = JsonMapper.deserialize(json);
-        Map<String, EnrichedComponentModel> models = new TreeMap<>();
-        obj.forEach((k, v) -> models.put(k, loadModel((JsonObject) v)));
+        JsonObject jsonObject = JsonMapper.deserialize(json);
+        Map<String, ComponentModel> models = new TreeMap<>();
+        jsonObject.forEach((jsonKey, jsonValue) -> models.put(jsonKey, loadModel((JsonObject) jsonValue)));
         return models;
     }
 
-    private EnrichedComponentModel loadModel(JsonObject json) {
-        EnrichedComponentModel model = new EnrichedComponentModel();
+    private ComponentModel loadModel(JsonObject json) {
+        final ComponentModel model = new ComponentModel();
         JsonMapper.parseComponentModel(json, model);
         return model;
     }
@@ -70,7 +71,7 @@ public class ComponentsDslMetadataRegistry {
                 .collect(Collectors.toCollection(TreeSet::new));
     }
 
-    public void addComponentToMetadataAndSyncMetadataFile(final EnrichedComponentModel componentModel, final String key) {
+    public void addComponentToMetadataAndSyncMetadataFile(final ComponentModel componentModel, final String key) {
         // put the component into the cache
         componentsCache.put(key, new ModifiedComponentModel(componentModel));
 
@@ -97,7 +98,7 @@ public class ComponentsDslMetadataRegistry {
 
     private void writeCacheIntoMetadataFile() {
         JsonObject json = new JsonObject();
-        componentsCache.forEach((k, v) -> json.put(k, JsonMapper.asJsonObject(v).get("component")));
+        componentsCache.forEach((componentKey, componentModel) -> json.put(componentKey, JsonMapper.asJsonObject(componentModel).get("component")));
         final String jsonText = JsonMapper.serialize(json);
         try {
             FileUtil.updateFile(metadataFile.toPath(), jsonText);
@@ -106,7 +107,7 @@ public class ComponentsDslMetadataRegistry {
         }
     }
 
-    public Map<String, EnrichedComponentModel> getComponentCacheFromMemory() {
+    public Map<String, ComponentModel> getComponentCacheFromMemory() {
         return componentsCache;
     }
 
@@ -118,8 +119,8 @@ public class ComponentsDslMetadataRegistry {
         }
     }
 
-    private static class ModifiedComponentModel extends EnrichedComponentModel {
-        public ModifiedComponentModel(final EnrichedComponentModel componentModel) {
+    private static class ModifiedComponentModel extends ComponentModel {
+        public ModifiedComponentModel(final ComponentModel componentModel) {
             name = componentModel.getName();
             title = componentModel.getTitle();
             description = componentModel.getDescription();
@@ -141,7 +142,6 @@ public class ComponentsDslMetadataRegistry {
             groupId = componentModel.getGroupId();
             artifactId = componentModel.getArtifactId();
             version = componentModel.getVersion();
-            isAlias = componentModel.isAlias();
         }
     }
 

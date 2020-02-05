@@ -30,20 +30,20 @@ public final class ComponentDslInnerBuilderGenerator {
     private static final String BUILDER_SUFFIX = "Builder";
 
     private final JavaClass javaClass;
-    private final EnrichedComponentModel componentModel;
+    private final ComponentModel componentModel;
 
-    private ComponentDslInnerBuilderGenerator(final JavaClass javaClass, final EnrichedComponentModel componentModel) {
+    private ComponentDslInnerBuilderGenerator(final JavaClass javaClass, final ComponentModel componentModel) {
         this.javaClass = javaClass;
         this.componentModel = componentModel;
         // generate class
         generateJavaClass();
     }
 
-    public static ComponentDslInnerBuilderGenerator generateClass(final JavaClass javaClass, final EnrichedComponentModel componentModel) {
+    public static ComponentDslInnerBuilderGenerator generateClass(final JavaClass javaClass, final ComponentModel componentModel) {
         return new ComponentDslInnerBuilderGenerator(javaClass, componentModel);
     }
 
-    public static String getExpectedGeneratedInterfaceName(final EnrichedComponentModel componentModel) {
+    public static String getExpectedGeneratedInterfaceName(final ComponentModel componentModel) {
         return DslHelper.generateComponentBuilderClassName(componentModel, BUILDER_SUFFIX);
     }
 
