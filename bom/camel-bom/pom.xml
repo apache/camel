@@ -228,12 +228,12 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-aws2-kms</artifactId>
+        <artifactId>camel-aws2-iam</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-aws2-iam</artifactId>
+        <artifactId>camel-aws2-kms</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
