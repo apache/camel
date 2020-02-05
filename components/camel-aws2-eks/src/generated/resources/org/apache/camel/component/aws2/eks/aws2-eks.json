@@ -5,7 +5,7 @@
     "extendsScheme": "",
     "syntax": "aws2-eks:label",
     "title": "AWS 2 EKS",
-    "description": "The aws-eks is used for managing Amazon EKS",
+    "description": "The aws2-eks is used for managing Amazon EKS",
     "label": "cloud,management",
     "deprecated": false,
     "async": false,
