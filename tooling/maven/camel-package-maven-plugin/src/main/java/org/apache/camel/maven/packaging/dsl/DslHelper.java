@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.camel.maven.packaging.dsl.component.EnrichedComponentModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.CaseUtils;
@@ -109,7 +108,7 @@ public final class DslHelper {
         return desc;
     }
 
-    public static String generateComponentBuilderClassName(final EnrichedComponentModel componentModel, final String suffix) {
+    public static String generateComponentBuilderClassName(final ComponentModel componentModel, final String suffix) {
         return StringUtils.capitalize(toCamelCaseLower(componentModel.getScheme()))
                 + "Component" + suffix;
     }

@@ -35,7 +35,7 @@ class ComponentsBuilderFactoryGeneratorTest {
     @Test
     public void testIfCreatesClassCorrectly() throws IOException {
         final String json = PackageHelper.loadText(new File(Objects.requireNonNull(getClass().getClassLoader().getResource("json/test_component.json")).getFile()));
-        final EnrichedComponentModel componentModel = new EnrichedComponentModel(JsonMapper.generateComponentModel(json), false);
+        final ComponentModel componentModel = JsonMapper.generateComponentModel(json);
 
         final ComponentsBuilderFactoryGenerator componentsBuilderFactoryGenerator = ComponentsBuilderFactoryGenerator.generateClass(new HashSet<>(Collections.singletonList(componentModel)),
                 getClass().getClassLoader(),

@@ -22,6 +22,7 @@ import javax.annotation.Generated;
 
 import org.apache.camel.maven.packaging.ComponentDslMojo;
 import org.apache.camel.maven.packaging.dsl.DslHelper;
+import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.camel.tooling.util.srcgen.Method;
 
@@ -31,13 +32,13 @@ import org.apache.camel.tooling.util.srcgen.Method;
 public final class ComponentDslBuilderFactoryGenerator {
     private static final String BUILDER_FACTORY_SUFFIX = "BuilderFactory";
 
-    private final EnrichedComponentModel componentModel;
+    private final ComponentModel componentModel;
     private final String packageName;
     private JavaClass javaClass;
     private ComponentDslInnerBuilderGenerator componentDslInnerBuilderGenerator;
     private ComponentDslInnerImplBuilderGenerator componentDslInnerImplBuilderGenerator;
 
-    private ComponentDslBuilderFactoryGenerator(final EnrichedComponentModel componentModel, final ClassLoader classLoader, final String packageName) {
+    private ComponentDslBuilderFactoryGenerator(final ComponentModel componentModel, final ClassLoader classLoader, final String packageName) {
         this.componentModel = componentModel;
         this.packageName = packageName;
 
@@ -46,14 +47,14 @@ public final class ComponentDslBuilderFactoryGenerator {
         generateJavaClass();
     }
 
-    public static ComponentDslBuilderFactoryGenerator generateClass(final EnrichedComponentModel componentModel, final ClassLoader classLoader, final String componentDslPackageName) {
+    public static ComponentDslBuilderFactoryGenerator generateClass(final ComponentModel componentModel, final ClassLoader classLoader, final String componentDslPackageName) {
         Objects.requireNonNull(componentModel);
         Objects.requireNonNull(classLoader);
 
         return new ComponentDslBuilderFactoryGenerator(componentModel, classLoader, componentDslPackageName);
     }
 
-    public static String getExpectedGeneratedClassName(final EnrichedComponentModel componentModel) {
+    public static String getExpectedGeneratedClassName(final ComponentModel componentModel) {
         return DslHelper.generateComponentBuilderClassName(componentModel, BUILDER_FACTORY_SUFFIX);
     }
 
