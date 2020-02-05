@@ -16,6 +16,7 @@
  */
 package org.apache.felix.bundleplugin;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,6 +29,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -417,18 +420,51 @@ public class ManifestPlugin extends BundlePlugin {
     }
 
     public static void writeManifest(Manifest manifest, File outputFile, boolean niceManifest, BuildContext buildContext, Log log) throws IOException {
-        log.debug("Write manifest to " + outputFile.getPath());
-        outputFile.getParentFile().mkdirs();
-
-        OutputStream os = buildContext.newFileOutputStream(outputFile);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
-            ManifestWriter.outputManifest(manifest, os, niceManifest);
+            ManifestWriter.outputManifest(manifest, baos, niceManifest);
         } finally {
             try {
-                os.close();
+                baos.close();
             } catch (IOException e) {
                 // nothing we can do here
             }
+        }
+
+        log.debug("Write manifest to " + outputFile.getPath());
+        if (updateFile(outputFile.toPath(), baos.toByteArray())) {
+            buildContext.refresh(outputFile);
+        }
+    }
+
+    /**
+     * Update a file with the given binary content if neeed.
+     * The file won't be modified if the content is already the same.
+     *
+     * @param path the path of the file to update
+     * @param newdata the new binary data, <code>null</code> to delete the file
+     * @return <code>true</code> if the file was modified, <code>false</code> otherwise
+     * @throws IOException if an exception occurs
+     */
+    public static boolean updateFile(Path path, byte[] newdata) throws IOException {
+        if (newdata == null) {
+            if (!Files.exists(path)) {
+                return false;
+            }
+            Files.delete(path);
+            return true;
+        } else {
+            byte[] olddata = new byte[0];
+            if (Files.exists(path) && Files.isReadable(path)) {
+                olddata = Files.readAllBytes(path);
+            }
+            if (Arrays.equals(olddata, newdata)) {
+                return false;
+            }
+            Files.createDirectories(path.getParent());
+            Files.write(path, newdata, StandardOpenOption.WRITE,
+                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            return true;
         }
     }
 
