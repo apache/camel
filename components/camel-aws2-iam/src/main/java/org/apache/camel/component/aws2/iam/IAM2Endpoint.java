@@ -87,8 +87,8 @@ public class IAM2Endpoint extends ScheduledPollEndpoint {
     }
 
     IamClient createIAMClient() {
-    	IamClient client = null;
-    	IamClientBuilder clientBuilder = IamClient.builder();
+        IamClient client = null;
+        IamClientBuilder clientBuilder = IamClient.builder();
         ProxyConfiguration.Builder proxyConfig = null;
         ApacheHttpClient.Builder httpClientBuilder = null;
         boolean isClientConfigFound = false;

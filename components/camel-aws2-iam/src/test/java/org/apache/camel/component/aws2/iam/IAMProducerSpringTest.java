@@ -117,7 +117,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
         assertEquals(1, resultGet.users().size());
         assertEquals("test", resultGet.users().get(0).userName());
     }
-    
+
     @Test
     public void iamCreateAccessKeyTest() throws Exception {
 
@@ -132,11 +132,11 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        CreateAccessKeyResponse resultGet = (CreateAccessKeyResponse) exchange.getIn().getBody();
+        CreateAccessKeyResponse resultGet = (CreateAccessKeyResponse)exchange.getIn().getBody();
         assertEquals("test", resultGet.accessKey().accessKeyId());
         assertEquals("testSecret", resultGet.accessKey().secretAccessKey());
     }
-    
+
     @Test
     public void iamDeleteAccessKeyTest() throws Exception {
 
@@ -155,7 +155,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
         DeleteAccessKeyResponse resultGet = (DeleteAccessKeyResponse)exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
-    
+
     @Test
     public void iamGetUserTest() throws Exception {
 
@@ -173,7 +173,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
         GetUserResponse resultGet = (GetUserResponse)exchange.getIn().getBody();
         assertEquals("test", resultGet.user().userName());
     }
-    
+
     @Test
     public void iamUpdateAccessKeyTest() throws Exception {
 
@@ -192,7 +192,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
         UpdateAccessKeyResponse resultGet = (UpdateAccessKeyResponse)exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
-    
+
     @Test
     public void iamCreateGroupTest() throws Exception {
 
@@ -213,7 +213,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
         assertEquals("Test", resultGet.group().groupName());
         assertEquals("/test", resultGet.group().path());
     }
-    
+
     public void iamDeleteGroupTest() throws Exception {
 
         mock.expectedMessageCount(1);
@@ -230,7 +230,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
         DeleteGroupResponse resultGet = (DeleteGroupResponse)exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
-    
+
     public void iamListGroupsTest() throws Exception {
 
         mock.expectedMessageCount(1);
@@ -248,7 +248,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
         assertEquals(1, resultGet.groups().size());
         assertEquals("Test", resultGet.groups().get(0).groupName());
     }
-    
+
     public void iamAddUserToGroupTest() throws Exception {
 
         mock.expectedMessageCount(1);
@@ -266,7 +266,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
         AddUserToGroupResponse resultGet = (AddUserToGroupResponse)exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
-    
+
     public void iamRemoveUserFromGroupTest() throws Exception {
 
         mock.expectedMessageCount(1);

@@ -121,7 +121,7 @@ public class IAMProducerTest extends CamelTestSupport {
         assertEquals(1, resultGet.users().size());
         assertEquals("test", resultGet.users().get(0).userName());
     }
-    
+
     @Test
     public void iamCreateAccessKeyTest() throws Exception {
 
@@ -136,11 +136,11 @@ public class IAMProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        CreateAccessKeyResponse resultGet = (CreateAccessKeyResponse) exchange.getIn().getBody();
+        CreateAccessKeyResponse resultGet = (CreateAccessKeyResponse)exchange.getIn().getBody();
         assertEquals("test", resultGet.accessKey().accessKeyId());
         assertEquals("testSecret", resultGet.accessKey().secretAccessKey());
     }
-    
+
     @Test
     public void iamDeleteAccessKeyTest() throws Exception {
 
@@ -159,7 +159,7 @@ public class IAMProducerTest extends CamelTestSupport {
         DeleteAccessKeyResponse resultGet = (DeleteAccessKeyResponse)exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
-    
+
     @Test
     public void iamGetUserTest() throws Exception {
 
@@ -177,7 +177,7 @@ public class IAMProducerTest extends CamelTestSupport {
         GetUserResponse resultGet = (GetUserResponse)exchange.getIn().getBody();
         assertEquals("test", resultGet.user().userName());
     }
-    
+
     @Test
     public void iamUpdateAccessKeyTest() throws Exception {
 
@@ -196,7 +196,7 @@ public class IAMProducerTest extends CamelTestSupport {
         UpdateAccessKeyResponse resultGet = (UpdateAccessKeyResponse)exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
-    
+
     @Test
     public void iamCreateGroupTest() throws Exception {
 
@@ -217,7 +217,7 @@ public class IAMProducerTest extends CamelTestSupport {
         assertEquals("Test", resultGet.group().groupName());
         assertEquals("/test", resultGet.group().path());
     }
-    
+
     public void iamDeleteGroupTest() throws Exception {
 
         mock.expectedMessageCount(1);
@@ -234,7 +234,7 @@ public class IAMProducerTest extends CamelTestSupport {
         DeleteGroupResponse resultGet = (DeleteGroupResponse)exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
-    
+
     public void iamListGroupsTest() throws Exception {
 
         mock.expectedMessageCount(1);
@@ -252,7 +252,7 @@ public class IAMProducerTest extends CamelTestSupport {
         assertEquals(1, resultGet.groups().size());
         assertEquals("Test", resultGet.groups().get(0).groupName());
     }
-    
+
     public void iamAddUserToGroupTest() throws Exception {
 
         mock.expectedMessageCount(1);
@@ -270,7 +270,7 @@ public class IAMProducerTest extends CamelTestSupport {
         AddUserToGroupResponse resultGet = (AddUserToGroupResponse)exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
-    
+
     public void iamRemoveUserFromGroupTest() throws Exception {
 
         mock.expectedMessageCount(1);

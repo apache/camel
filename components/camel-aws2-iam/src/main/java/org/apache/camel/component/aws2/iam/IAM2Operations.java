@@ -18,7 +18,5 @@ package org.apache.camel.component.aws2.iam;
 
 public enum IAM2Operations {
 
-    listAccessKeys, createUser, deleteUser, getUser, listUsers,
-    createAccessKey, deleteAccessKey, updateAccessKey, createGroup,
-    deleteGroup, listGroups, addUserToGroup, removeUserFromGroup
+    listAccessKeys, createUser, deleteUser, getUser, listUsers, createAccessKey, deleteAccessKey, updateAccessKey, createGroup, deleteGroup, listGroups, addUserToGroup, removeUserFromGroup
 }

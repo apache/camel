@@ -69,7 +69,7 @@ public class IAM2ComponentVerifierExtension extends DefaultComponentVerifierExte
             IAM2Configuration configuration = setProperties(new IAM2Configuration(), parameters);
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             IamClientBuilder clientBuilder = IamClient.builder();
-            IamClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();            
+            IamClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();
             client.listAccessKeys();
         } catch (SdkClientException e) {
             ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())

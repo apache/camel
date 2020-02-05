@@ -67,7 +67,7 @@ public class AmazonIAMClientMock implements IamClient {
 
     @Override
     public CreateGroupResponse createGroup(CreateGroupRequest createGroupRequest) {
-    	CreateGroupResponse.Builder result = CreateGroupResponse.builder();
+        CreateGroupResponse.Builder result = CreateGroupResponse.builder();
         Group.Builder group = Group.builder();
         group.groupName(createGroupRequest.groupName());
         if (createGroupRequest.path() != null) {
@@ -80,7 +80,7 @@ public class AmazonIAMClientMock implements IamClient {
 
     @Override
     public CreateUserResponse createUser(CreateUserRequest createUserRequest) {
-    	CreateUserResponse.Builder result = CreateUserResponse.builder();
+        CreateUserResponse.Builder result = CreateUserResponse.builder();
         User.Builder user = User.builder();
         user.userName("test");
         result.user(user.build());
@@ -95,19 +95,19 @@ public class AmazonIAMClientMock implements IamClient {
 
     @Override
     public DeleteGroupResponse deleteGroup(DeleteGroupRequest deleteGroupRequest) {
-    	DeleteGroupResponse result = DeleteGroupResponse.builder().build();
+        DeleteGroupResponse result = DeleteGroupResponse.builder().build();
         return result;
     }
 
     @Override
     public DeleteUserResponse deleteUser(DeleteUserRequest deleteUserRequest) {
-    	DeleteUserResponse res = DeleteUserResponse.builder().build();
+        DeleteUserResponse res = DeleteUserResponse.builder().build();
         return res;
     }
 
     @Override
     public GetUserResponse getUser(GetUserRequest getUserRequest) {
-    	GetUserResponse.Builder builder = GetUserResponse.builder();
+        GetUserResponse.Builder builder = GetUserResponse.builder();
         User.Builder user = User.builder();
         user.userName("test");
         builder.user(user.build());
@@ -116,7 +116,7 @@ public class AmazonIAMClientMock implements IamClient {
 
     @Override
     public ListAccessKeysResponse listAccessKeys() {
-    	ListAccessKeysResponse.Builder result = ListAccessKeysResponse.builder();
+        ListAccessKeysResponse.Builder result = ListAccessKeysResponse.builder();
         Collection<AccessKeyMetadata> accessKeyMetadata = new ArrayList<>();
         AccessKeyMetadata.Builder meta = AccessKeyMetadata.builder();
         meta.accessKeyId("1");
@@ -140,7 +140,7 @@ public class AmazonIAMClientMock implements IamClient {
 
     @Override
     public ListUsersResponse listUsers() {
-    	ListUsersResponse.Builder res = ListUsersResponse.builder();
+        ListUsersResponse.Builder res = ListUsersResponse.builder();
         List<User> list = new ArrayList<>();
         User.Builder user = User.builder();
         user.userName("test");
@@ -148,27 +148,28 @@ public class AmazonIAMClientMock implements IamClient {
         res.users(list);
         return res.build();
     }
+
     @Override
     public RemoveUserFromGroupResponse removeUserFromGroup(RemoveUserFromGroupRequest removeUserFromGroupRequest) {
-    	RemoveUserFromGroupResponse res = RemoveUserFromGroupResponse.builder().build();
+        RemoveUserFromGroupResponse res = RemoveUserFromGroupResponse.builder().build();
         return res;
     }
 
     @Override
     public UpdateAccessKeyResponse updateAccessKey(UpdateAccessKeyRequest updateAccessKeyRequest) {
-    	UpdateAccessKeyResponse result =UpdateAccessKeyResponse.builder().build();
+        UpdateAccessKeyResponse result = UpdateAccessKeyResponse.builder().build();
         return result;
     }
 
-	@Override
-	public String serviceName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String serviceName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public void close() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
+
+    }
 }

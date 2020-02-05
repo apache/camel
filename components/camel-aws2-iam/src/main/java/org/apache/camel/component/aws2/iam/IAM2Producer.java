@@ -140,7 +140,7 @@ public class IAM2Producer extends DefaultProducer {
     private void listAccessKeys(IamClient iamClient, Exchange exchange) {
         ListAccessKeysResponse response;
         try {
-        	response = iamClient.listAccessKeys();
+            response = iamClient.listAccessKeys();
         } catch (AwsServiceException ase) {
             LOG.trace("List Access Keys command returned the error code {}", ase.getMessage());
             throw ase;
@@ -186,7 +186,7 @@ public class IAM2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void getUser(IamClient iamClient, Exchange exchange) {
         GetUserRequest.Builder builder = GetUserRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
@@ -217,13 +217,13 @@ public class IAM2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void createAccessKey(IamClient iamClient, Exchange exchange) {
         CreateAccessKeyRequest.Builder builder = CreateAccessKeyRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.USERNAME))) {
             String userName = exchange.getIn().getHeader(IAM2Constants.USERNAME, String.class);
             builder.userName(userName);
-        } 
+        }
         CreateAccessKeyResponse result;
         try {
             result = iamClient.createAccessKey(builder.build());
@@ -234,7 +234,7 @@ public class IAM2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void deleteAccessKey(IamClient iamClient, Exchange exchange) {
         DeleteAccessKeyRequest.Builder builder = DeleteAccessKeyRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.ACCESS_KEY_ID))) {
@@ -257,7 +257,7 @@ public class IAM2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void updateAccessKey(IamClient iamClient, Exchange exchange) {
         UpdateAccessKeyRequest.Builder builder = UpdateAccessKeyRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.ACCESS_KEY_ID))) {
@@ -286,7 +286,7 @@ public class IAM2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void createGroup(IamClient iamClient, Exchange exchange) {
         CreateGroupRequest.Builder builder = CreateGroupRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.GROUP_NAME))) {
@@ -298,7 +298,7 @@ public class IAM2Producer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.GROUP_PATH))) {
             String groupPath = exchange.getIn().getHeader(IAM2Constants.GROUP_PATH, String.class);
             builder.path(groupPath);
-        } 
+        }
         CreateGroupResponse result;
         try {
             result = iamClient.createGroup(builder.build());
@@ -309,7 +309,7 @@ public class IAM2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void deleteGroup(IamClient iamClient, Exchange exchange) {
         DeleteGroupRequest.Builder builder = DeleteGroupRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.GROUP_NAME))) {
@@ -328,7 +328,7 @@ public class IAM2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void listGroups(IamClient iamClient, Exchange exchange) {
         ListGroupsResponse result;
         try {
@@ -340,7 +340,7 @@ public class IAM2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void addUserToGroup(IamClient iamClient, Exchange exchange) {
         AddUserToGroupRequest.Builder builder = AddUserToGroupRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.GROUP_NAME))) {
@@ -365,7 +365,7 @@ public class IAM2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void removeUserFromGroup(IamClient iamClient, Exchange exchange) {
         RemoveUserFromGroupRequest.Builder builder = RemoveUserFromGroupRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAM2Constants.GROUP_NAME))) {
@@ -390,7 +390,7 @@ public class IAM2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }
