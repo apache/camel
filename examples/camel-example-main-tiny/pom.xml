@@ -44,22 +44,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-engine</artifactId>
             <exclusions>
-                <!-- we dont need LRUCache, and utils -->
-                <exclusion>
-                    <groupId>org.apache.camel</groupId>
-                    <artifactId>camel-caffeine-lrucache</artifactId>
-                </exclusion>
+                <!-- we dont need json-utils -->
                 <exclusion>
                     <groupId>org.apache.camel</groupId>
                     <artifactId>camel-util-json</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.camel</groupId>
-                    <artifactId>camel-tooling-model</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.camel</groupId>
-                    <artifactId>camel-tooling-util</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
