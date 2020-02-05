@@ -143,7 +143,9 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 .filter(cpa -> cpa.target().asClass().name().toString().startsWith("org.apache.camel.model."))
                 .map(cpa -> cpa.target().asClass())
                 .collect(Collectors.toSet());
-        getLog().info(String.format("Found %d core elements", coreElements.size()));
+        if (!coreElements.isEmpty()) {
+            getLog().info(String.format("Found %d core elements", coreElements.size()));
+        }
 
         // we want them to be sorted
         Set<String> propertyPlaceholderDefinitions = new TreeSet<>(String::compareToIgnoreCase);
@@ -166,7 +168,9 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 })
                 .map(cpa -> cpa.target().asClass())
                 .collect(Collectors.toSet());
-        getLog().info(String.format("Found %d spring elements", springElements.size()));
+        if (!springElements.isEmpty()) {
+            getLog().info(String.format("Found %d spring elements", springElements.size()));
+        }
 
         for (ClassInfo element : springElements) {
             processModelClass(element, null);

@@ -125,7 +125,9 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
             updateResource(jaxbIndexDir, fn, sb.toString());
         }
 
-        getLog().info("Generated " + jaxbIndexOutDir + " containing " + count + " jaxb.index elements");
+        if (count > 0) {
+            getLog().info("Generated " + jaxbIndexOutDir + " containing " + count + " jaxb.index elements");
+        }
     }
 
     private IndexView createIndex(List<String> locations) throws MojoExecutionException {
