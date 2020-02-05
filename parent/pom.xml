@@ -764,7 +764,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-jaxp</artifactId>
+                <artifactId>camel-xml-jaxp</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

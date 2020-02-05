@@ -42,7 +42,7 @@
         <module>camel-management-api</module>
         <module>camel-management</module>
         <module>camel-base</module>
-        <module>camel-jaxp</module>
+        <module>camel-xml-jaxp</module>
         <module>camel-core-engine</module>
         <module>camel-xml-io</module>
         <module>camel-xml-jaxb</module>

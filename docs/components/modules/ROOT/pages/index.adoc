@@ -787,7 +787,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 
 | xref:tokenize-language.adoc[Tokenize] (camel-base) | 2.0 | To use Camel message body or header with a tokenizer in Camel expressions or predicates.
 
-| xref:xtokenize-language.adoc[XML Tokenize] (camel-jaxp) | 2.14 | To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.
+| xref:xtokenize-language.adoc[XML Tokenize] (camel-xml-jaxp) | 2.14 | To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.
 
 | xref:xpath-language.adoc[XPath] (camel-xpath) | 1.1 | To use XPath (XML) in Camel expressions or predicates.
 

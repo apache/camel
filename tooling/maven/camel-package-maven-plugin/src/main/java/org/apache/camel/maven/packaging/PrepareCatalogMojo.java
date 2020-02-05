@@ -161,9 +161,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File baseDir;
 
     /**
-     * The camel-jaxp directory
+     * The camel-xml-jaxp directory
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-jaxp")
+    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-xml-jaxp")
     protected File jaxpDir;
 
     /**

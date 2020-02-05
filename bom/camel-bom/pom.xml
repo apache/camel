@@ -894,11 +894,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jaxp</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbpm</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1841,6 +1836,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xml-jaxb</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-xml-jaxp</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

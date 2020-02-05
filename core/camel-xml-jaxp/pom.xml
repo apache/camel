@@ -27,7 +27,7 @@
         <relativePath>..</relativePath>
     </parent>
 
-    <artifactId>camel-jaxp</artifactId>
+    <artifactId>camel-xml-jaxp</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: JAXP</name>
     <description>Camel JAXP Support</description>
