@@ -23,7 +23,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Consumer;
 
 import org.eclipse.milo.opcua.sdk.core.AccessLevel;
-import org.eclipse.milo.opcua.sdk.server.nodes.UaNodeContext;
+import org.eclipse.milo.opcua.sdk.server.api.ServerNodeMap;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaObjectNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaVariableNode;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
@@ -49,7 +49,7 @@ public class CamelServerItem {
     private final Set<Consumer<DataValue>> listeners = new CopyOnWriteArraySet<>();
     private DataValue value = new DataValue(StatusCode.BAD);
 
-    public CamelServerItem(final String itemId, final UaNodeContext nodeContext, final UShort namespaceIndex, final UaObjectNode baseNode) {
+    public CamelServerItem(final String itemId, final ServerNodeMap nodeManager, final UShort namespaceIndex, final UaObjectNode baseNode) {
 
         this.itemId = itemId;
         this.baseNode = baseNode;
@@ -60,7 +60,7 @@ public class CamelServerItem {
 
         // create variable node
 
-        this.item = new UaVariableNode(nodeContext, nodeId, qname, displayName) {
+        this.item = new UaVariableNode(nodeManager, nodeId, qname, displayName) {
 
             @Override
             public synchronized DataValue getValue() {
@@ -79,7 +79,6 @@ public class CamelServerItem {
         this.item.setUserAccessLevel(ubyte(AccessLevel.getMask(AccessLevel.READ_WRITE)));
 
         baseNode.addComponent(this.item);
-        nodeContext.getNodeManager().addNode(this.item);
     }
 
     public void dispose() {

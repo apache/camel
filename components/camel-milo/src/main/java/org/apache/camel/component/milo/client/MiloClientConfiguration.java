@@ -353,12 +353,12 @@ public class MiloClientConfiguration implements Cloneable {
 
             String adding = null;
             try {
-                adding = SecurityPolicy.fromUri(policy).getUri();
+                adding = SecurityPolicy.fromUri(policy).getSecurityPolicyUri();
             } catch (Exception e) {
             }
             if (adding == null) {
                 try {
-                    adding = SecurityPolicy.valueOf(policy).getUri();
+                    adding = SecurityPolicy.valueOf(policy).getSecurityPolicyUri();
                 } catch (Exception e) {
                 }
             }

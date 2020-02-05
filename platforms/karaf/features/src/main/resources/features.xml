@@ -1750,26 +1750,19 @@
     <bundle dependency='true'>mvn:org.jooq/jool/${jool-version}</bundle>
     <bundle dependency='true'>mvn:com.google.code.findbugs/jsr305/${google-findbugs-jsr305-version}</bundle>
     <bundle dependency='true'>mvn:com.google.code.findbugs/annotations/${google-findbugs-annotations2-version}</bundle>
-    <bundle dependency='true'>mvn:org.bouncycastle/bcprov-jdk15on/${bouncycastle-version}</bundle>
-    <bundle dependency='true'>mvn:org.bouncycastle/bcpkix-jdk15on/${bouncycastle-version}</bundle>     
-    <bundle dependency='true'>mvn:org.bouncycastle/bcmail-jdk15on/${bouncycastle-version}</bundle>    
-    <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-resolver/${netty-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-transport/${netty-version}</bundle>    
-    <bundle dependency='true'>mvn:io.netty/netty-handler/${netty-version}</bundle>    
-    <bundle dependency='true'>mvn:io.netty/netty-codec/${netty-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.digitalpetri.fsm/strict-machine/${digitalpetri-fsm-client}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.digitalpetri.netty/netty-channel-fsm/${digitalpetri-netty-client}</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${milo-guava-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-common/${netty40-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty40-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-handler/${netty40-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport/${netty40-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec/${netty40-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
     <bundle dependency='true'>mvn:org.eclipse.milo/stack-core/${milo-version}</bundle>
     <bundle dependency='true'>mvn:org.eclipse.milo/stack-server/${milo-version}</bundle>
     <bundle dependency='true'>mvn:org.eclipse.milo/stack-client/${milo-version}</bundle>
     <bundle dependency='true'>mvn:org.eclipse.milo/sdk-core/${milo-version}</bundle>
-    <bundle dependency='true'>mvn:org.eclipse.milo/sdk-server/${milo-version}</bundle>    
-    <bundle dependency='true'>mvn:org.eclipse.milo/bsd-parser-core/${milo-version}</bundle>
+    <bundle dependency='true'>mvn:org.eclipse.milo/sdk-server/${milo-version}</bundle>
     <bundle dependency='true'>mvn:org.eclipse.milo/sdk-client/${milo-version}</bundle>
+    <bundle dependency='true'>mvn:org.eclipse.milo/bsd-parser-core/${milo-version}</bundle>
     <bundle dependency='true'>mvn:org.eclipse.milo/bsd-parser-gson/${milo-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-milo/${project.version}</bundle>
   </feature>
