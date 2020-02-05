@@ -12,43 +12,27 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class WorkdayEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "lazyStartProducer": ((WorkdayEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((WorkdayEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "httpConnectionManager": ((WorkdayEndpoint) target).getWorkdayConfiguration().setHttpConnectionManager(property(camelContext, org.apache.http.impl.conn.PoolingHttpClientConnectionManager.class, value)); return true;
-        case "synchronous": ((WorkdayEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "reportFormat": ((WorkdayEndpoint) target).getWorkdayConfiguration().setReportFormat(property(camelContext, java.lang.String.class, value)); return true;
-        case "host": ((WorkdayEndpoint) target).getWorkdayConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientId": ((WorkdayEndpoint) target).getWorkdayConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientSecret": ((WorkdayEndpoint) target).getWorkdayConfiguration().setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "tokenRefresh": ((WorkdayEndpoint) target).getWorkdayConfiguration().setTokenRefresh(property(camelContext, java.lang.String.class, value)); return true;
-        case "tenant": ((WorkdayEndpoint) target).getWorkdayConfiguration().setTenant(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "lazystartproducer": ((WorkdayEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((WorkdayEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "httpconnectionmanager": ((WorkdayEndpoint) target).getWorkdayConfiguration().setHttpConnectionManager(property(camelContext, org.apache.http.impl.conn.PoolingHttpClientConnectionManager.class, value)); return true;
-        case "synchronous": ((WorkdayEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "reportformat": ((WorkdayEndpoint) target).getWorkdayConfiguration().setReportFormat(property(camelContext, java.lang.String.class, value)); return true;
-        case "host": ((WorkdayEndpoint) target).getWorkdayConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientid": ((WorkdayEndpoint) target).getWorkdayConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientsecret": ((WorkdayEndpoint) target).getWorkdayConfiguration().setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "tokenrefresh": ((WorkdayEndpoint) target).getWorkdayConfiguration().setTokenRefresh(property(camelContext, java.lang.String.class, value)); return true;
-        case "tenant": ((WorkdayEndpoint) target).getWorkdayConfiguration().setTenant(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        WorkdayEndpoint target = (WorkdayEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "httpconnectionmanager":
+        case "httpConnectionManager": target.getWorkdayConfiguration().setHttpConnectionManager(property(camelContext, org.apache.http.impl.conn.PoolingHttpClientConnectionManager.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "reportformat":
+        case "reportFormat": target.getWorkdayConfiguration().setReportFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "host": target.getWorkdayConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientid":
+        case "clientId": target.getWorkdayConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientsecret":
+        case "clientSecret": target.getWorkdayConfiguration().setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "tokenrefresh":
+        case "tokenRefresh": target.getWorkdayConfiguration().setTokenRefresh(property(camelContext, java.lang.String.class, value)); return true;
+        case "tenant": target.getWorkdayConfiguration().setTenant(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 
