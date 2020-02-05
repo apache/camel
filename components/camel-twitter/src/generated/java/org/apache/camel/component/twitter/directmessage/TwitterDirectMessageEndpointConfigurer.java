@@ -12,111 +12,87 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class TwitterDirectMessageEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "bridgeErrorHandler": ((TwitterDirectMessageEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "sendEmptyMessageWhenIdle": ((TwitterDirectMessageEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "type": ((TwitterDirectMessageEndpoint) target).getProperties().setType(property(camelContext, org.apache.camel.component.twitter.data.EndpointType.class, value)); return true;
-        case "distanceMetric": ((TwitterDirectMessageEndpoint) target).getProperties().setDistanceMetric(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionHandler": ((TwitterDirectMessageEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((TwitterDirectMessageEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "extendedMode": ((TwitterDirectMessageEndpoint) target).getProperties().setExtendedMode(property(camelContext, boolean.class, value)); return true;
-        case "latitude": ((TwitterDirectMessageEndpoint) target).getProperties().setLatitude(property(camelContext, java.lang.Double.class, value)); return true;
-        case "locations": ((TwitterDirectMessageEndpoint) target).getProperties().setLocations(property(camelContext, java.lang.String.class, value)); return true;
-        case "longitude": ((TwitterDirectMessageEndpoint) target).getProperties().setLongitude(property(camelContext, java.lang.Double.class, value)); return true;
-        case "pollStrategy": ((TwitterDirectMessageEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "radius": ((TwitterDirectMessageEndpoint) target).getProperties().setRadius(property(camelContext, java.lang.Double.class, value)); return true;
-        case "lazyStartProducer": ((TwitterDirectMessageEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((TwitterDirectMessageEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((TwitterDirectMessageEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "count": ((TwitterDirectMessageEndpoint) target).getProperties().setCount(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "filterOld": ((TwitterDirectMessageEndpoint) target).getProperties().setFilterOld(property(camelContext, boolean.class, value)); return true;
-        case "lang": ((TwitterDirectMessageEndpoint) target).getProperties().setLang(property(camelContext, java.lang.String.class, value)); return true;
-        case "numberOfPages": ((TwitterDirectMessageEndpoint) target).getProperties().setNumberOfPages(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "sinceId": ((TwitterDirectMessageEndpoint) target).getProperties().setSinceId(property(camelContext, long.class, value)); return true;
-        case "userIds": ((TwitterDirectMessageEndpoint) target).getProperties().setUserIds(property(camelContext, java.lang.String.class, value)); return true;
-        case "backoffErrorThreshold": ((TwitterDirectMessageEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffIdleThreshold": ((TwitterDirectMessageEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffMultiplier": ((TwitterDirectMessageEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((TwitterDirectMessageEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((TwitterDirectMessageEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialDelay": ((TwitterDirectMessageEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatCount": ((TwitterDirectMessageEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runLoggingLevel": ((TwitterDirectMessageEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledExecutorService": ((TwitterDirectMessageEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((TwitterDirectMessageEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerProperties": ((TwitterDirectMessageEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startScheduler": ((TwitterDirectMessageEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeUnit": ((TwitterDirectMessageEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "useFixedDelay": ((TwitterDirectMessageEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "sortById": ((TwitterDirectMessageEndpoint) target).getProperties().setSortById(property(camelContext, boolean.class, value)); return true;
-        case "httpProxyHost": ((TwitterDirectMessageEndpoint) target).getProperties().setHttpProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpProxyPassword": ((TwitterDirectMessageEndpoint) target).getProperties().setHttpProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpProxyPort": ((TwitterDirectMessageEndpoint) target).getProperties().setHttpProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "httpProxyUser": ((TwitterDirectMessageEndpoint) target).getProperties().setHttpProxyUser(property(camelContext, java.lang.String.class, value)); return true;
-        case "accessToken": ((TwitterDirectMessageEndpoint) target).getProperties().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "accessTokenSecret": ((TwitterDirectMessageEndpoint) target).getProperties().setAccessTokenSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "consumerKey": ((TwitterDirectMessageEndpoint) target).getProperties().setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "consumerSecret": ((TwitterDirectMessageEndpoint) target).getProperties().setConsumerSecret(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "bridgeerrorhandler": ((TwitterDirectMessageEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "sendemptymessagewhenidle": ((TwitterDirectMessageEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "type": ((TwitterDirectMessageEndpoint) target).getProperties().setType(property(camelContext, org.apache.camel.component.twitter.data.EndpointType.class, value)); return true;
-        case "distancemetric": ((TwitterDirectMessageEndpoint) target).getProperties().setDistanceMetric(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionhandler": ((TwitterDirectMessageEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((TwitterDirectMessageEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "extendedmode": ((TwitterDirectMessageEndpoint) target).getProperties().setExtendedMode(property(camelContext, boolean.class, value)); return true;
-        case "latitude": ((TwitterDirectMessageEndpoint) target).getProperties().setLatitude(property(camelContext, java.lang.Double.class, value)); return true;
-        case "locations": ((TwitterDirectMessageEndpoint) target).getProperties().setLocations(property(camelContext, java.lang.String.class, value)); return true;
-        case "longitude": ((TwitterDirectMessageEndpoint) target).getProperties().setLongitude(property(camelContext, java.lang.Double.class, value)); return true;
-        case "pollstrategy": ((TwitterDirectMessageEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "radius": ((TwitterDirectMessageEndpoint) target).getProperties().setRadius(property(camelContext, java.lang.Double.class, value)); return true;
-        case "lazystartproducer": ((TwitterDirectMessageEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((TwitterDirectMessageEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((TwitterDirectMessageEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "count": ((TwitterDirectMessageEndpoint) target).getProperties().setCount(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "filterold": ((TwitterDirectMessageEndpoint) target).getProperties().setFilterOld(property(camelContext, boolean.class, value)); return true;
-        case "lang": ((TwitterDirectMessageEndpoint) target).getProperties().setLang(property(camelContext, java.lang.String.class, value)); return true;
-        case "numberofpages": ((TwitterDirectMessageEndpoint) target).getProperties().setNumberOfPages(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "sinceid": ((TwitterDirectMessageEndpoint) target).getProperties().setSinceId(property(camelContext, long.class, value)); return true;
-        case "userids": ((TwitterDirectMessageEndpoint) target).getProperties().setUserIds(property(camelContext, java.lang.String.class, value)); return true;
-        case "backofferrorthreshold": ((TwitterDirectMessageEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffidlethreshold": ((TwitterDirectMessageEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffmultiplier": ((TwitterDirectMessageEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((TwitterDirectMessageEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((TwitterDirectMessageEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialdelay": ((TwitterDirectMessageEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatcount": ((TwitterDirectMessageEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runlogginglevel": ((TwitterDirectMessageEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledexecutorservice": ((TwitterDirectMessageEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((TwitterDirectMessageEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerproperties": ((TwitterDirectMessageEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startscheduler": ((TwitterDirectMessageEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeunit": ((TwitterDirectMessageEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "usefixeddelay": ((TwitterDirectMessageEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "sortbyid": ((TwitterDirectMessageEndpoint) target).getProperties().setSortById(property(camelContext, boolean.class, value)); return true;
-        case "httpproxyhost": ((TwitterDirectMessageEndpoint) target).getProperties().setHttpProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpproxypassword": ((TwitterDirectMessageEndpoint) target).getProperties().setHttpProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpproxyport": ((TwitterDirectMessageEndpoint) target).getProperties().setHttpProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "httpproxyuser": ((TwitterDirectMessageEndpoint) target).getProperties().setHttpProxyUser(property(camelContext, java.lang.String.class, value)); return true;
-        case "accesstoken": ((TwitterDirectMessageEndpoint) target).getProperties().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "accesstokensecret": ((TwitterDirectMessageEndpoint) target).getProperties().setAccessTokenSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "consumerkey": ((TwitterDirectMessageEndpoint) target).getProperties().setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "consumersecret": ((TwitterDirectMessageEndpoint) target).getProperties().setConsumerSecret(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        TwitterDirectMessageEndpoint target = (TwitterDirectMessageEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "type": target.getProperties().setType(property(camelContext, org.apache.camel.component.twitter.data.EndpointType.class, value)); return true;
+        case "distancemetric":
+        case "distanceMetric": target.getProperties().setDistanceMetric(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "extendedmode":
+        case "extendedMode": target.getProperties().setExtendedMode(property(camelContext, boolean.class, value)); return true;
+        case "latitude": target.getProperties().setLatitude(property(camelContext, java.lang.Double.class, value)); return true;
+        case "locations": target.getProperties().setLocations(property(camelContext, java.lang.String.class, value)); return true;
+        case "longitude": target.getProperties().setLongitude(property(camelContext, java.lang.Double.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "radius": target.getProperties().setRadius(property(camelContext, java.lang.Double.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "count": target.getProperties().setCount(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "filterold":
+        case "filterOld": target.getProperties().setFilterOld(property(camelContext, boolean.class, value)); return true;
+        case "lang": target.getProperties().setLang(property(camelContext, java.lang.String.class, value)); return true;
+        case "numberofpages":
+        case "numberOfPages": target.getProperties().setNumberOfPages(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "sinceid":
+        case "sinceId": target.getProperties().setSinceId(property(camelContext, long.class, value)); return true;
+        case "userids":
+        case "userIds": target.getProperties().setUserIds(property(camelContext, java.lang.String.class, value)); return true;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffmultiplier":
+        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "repeatcount":
+        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "runlogginglevel":
+        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "schedulerproperties":
+        case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "startscheduler":
+        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "timeunit":
+        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "usefixeddelay":
+        case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "sortbyid":
+        case "sortById": target.getProperties().setSortById(property(camelContext, boolean.class, value)); return true;
+        case "httpproxyhost":
+        case "httpProxyHost": target.getProperties().setHttpProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpproxypassword":
+        case "httpProxyPassword": target.getProperties().setHttpProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpproxyport":
+        case "httpProxyPort": target.getProperties().setHttpProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "httpproxyuser":
+        case "httpProxyUser": target.getProperties().setHttpProxyUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "accesstoken":
+        case "accessToken": target.getProperties().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "accesstokensecret":
+        case "accessTokenSecret": target.getProperties().setAccessTokenSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "consumerkey":
+        case "consumerKey": target.getProperties().setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "consumersecret":
+        case "consumerSecret": target.getProperties().setConsumerSecret(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

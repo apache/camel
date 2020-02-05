@@ -12,37 +12,24 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class JGroupsRaftComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "raftHandle": ((JGroupsRaftComponent) target).setRaftHandle(property(camelContext, org.jgroups.raft.RaftHandle.class, value)); return true;
-        case "stateMachine": ((JGroupsRaftComponent) target).setStateMachine(property(camelContext, org.jgroups.protocols.raft.StateMachine.class, value)); return true;
-        case "raftId": ((JGroupsRaftComponent) target).setRaftId(property(camelContext, java.lang.String.class, value)); return true;
-        case "channelProperties": ((JGroupsRaftComponent) target).setChannelProperties(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((JGroupsRaftComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((JGroupsRaftComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((JGroupsRaftComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "rafthandle": ((JGroupsRaftComponent) target).setRaftHandle(property(camelContext, org.jgroups.raft.RaftHandle.class, value)); return true;
-        case "statemachine": ((JGroupsRaftComponent) target).setStateMachine(property(camelContext, org.jgroups.protocols.raft.StateMachine.class, value)); return true;
-        case "raftid": ((JGroupsRaftComponent) target).setRaftId(property(camelContext, java.lang.String.class, value)); return true;
-        case "channelproperties": ((JGroupsRaftComponent) target).setChannelProperties(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((JGroupsRaftComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((JGroupsRaftComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((JGroupsRaftComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        JGroupsRaftComponent target = (JGroupsRaftComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "rafthandle":
+        case "raftHandle": target.setRaftHandle(property(camelContext, org.jgroups.raft.RaftHandle.class, value)); return true;
+        case "statemachine":
+        case "stateMachine": target.setStateMachine(property(camelContext, org.jgroups.protocols.raft.StateMachine.class, value)); return true;
+        case "raftid":
+        case "raftId": target.setRaftId(property(camelContext, java.lang.String.class, value)); return true;
+        case "channelproperties":
+        case "channelProperties": target.setChannelProperties(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

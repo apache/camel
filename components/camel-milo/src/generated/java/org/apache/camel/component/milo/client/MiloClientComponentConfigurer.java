@@ -12,39 +12,26 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class MiloClientComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "defaultConfiguration": ((MiloClientComponent) target).setDefaultConfiguration(property(camelContext, org.apache.camel.component.milo.client.MiloClientConfiguration.class, value)); return true;
-        case "applicationName": ((MiloClientComponent) target).setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
-        case "applicationUri": ((MiloClientComponent) target).setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "productUri": ((MiloClientComponent) target).setProductUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "reconnectTimeout": ((MiloClientComponent) target).setReconnectTimeout(property(camelContext, java.lang.Long.class, value)); return true;
-        case "basicPropertyBinding": ((MiloClientComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((MiloClientComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((MiloClientComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "defaultconfiguration": ((MiloClientComponent) target).setDefaultConfiguration(property(camelContext, org.apache.camel.component.milo.client.MiloClientConfiguration.class, value)); return true;
-        case "applicationname": ((MiloClientComponent) target).setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
-        case "applicationuri": ((MiloClientComponent) target).setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "producturi": ((MiloClientComponent) target).setProductUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "reconnecttimeout": ((MiloClientComponent) target).setReconnectTimeout(property(camelContext, java.lang.Long.class, value)); return true;
-        case "basicpropertybinding": ((MiloClientComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((MiloClientComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((MiloClientComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        MiloClientComponent target = (MiloClientComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "defaultconfiguration":
+        case "defaultConfiguration": target.setDefaultConfiguration(property(camelContext, org.apache.camel.component.milo.client.MiloClientConfiguration.class, value)); return true;
+        case "applicationname":
+        case "applicationName": target.setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
+        case "applicationuri":
+        case "applicationUri": target.setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "producturi":
+        case "productUri": target.setProductUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "reconnecttimeout":
+        case "reconnectTimeout": target.setReconnectTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 
