@@ -29,8 +29,8 @@
 
     <artifactId>camel-xml-jaxp</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: JAXP</name>
-    <description>Camel JAXP Support</description>
+    <name>Camel :: XML JAXP</name>
+    <description>Camel XML JAXB</description>
 
     <properties>
         <firstVersion>3.0.0</firstVersion>
