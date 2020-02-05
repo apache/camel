@@ -42,7 +42,7 @@ public class BeanstalkEndpoint extends ScheduledPollEndpoint implements AsyncEnd
     final ConnectionSettings conn;
 
     @UriPath(description = "Connection settings host:port/tube")
-    private final String connectionSettings;
+    private String connectionSettings;
     @UriParam
     private BeanstalkCommand command = BeanstalkCommand.put;
     @UriParam(defaultValue = "" + BeanstalkComponent.DEFAULT_PRIORITY)
