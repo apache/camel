@@ -12,37 +12,21 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class FreemarkerEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "configuration": ((FreemarkerEndpoint) target).setConfiguration(property(camelContext, freemarker.template.Configuration.class, value)); return true;
-        case "contentCache": ((FreemarkerEndpoint) target).setContentCache(property(camelContext, boolean.class, value)); return true;
-        case "encoding": ((FreemarkerEndpoint) target).setEncoding(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazyStartProducer": ((FreemarkerEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "templateUpdateDelay": ((FreemarkerEndpoint) target).setTemplateUpdateDelay(property(camelContext, int.class, value)); return true;
-        case "basicPropertyBinding": ((FreemarkerEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((FreemarkerEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "configuration": ((FreemarkerEndpoint) target).setConfiguration(property(camelContext, freemarker.template.Configuration.class, value)); return true;
-        case "contentcache": ((FreemarkerEndpoint) target).setContentCache(property(camelContext, boolean.class, value)); return true;
-        case "encoding": ((FreemarkerEndpoint) target).setEncoding(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer": ((FreemarkerEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "templateupdatedelay": ((FreemarkerEndpoint) target).setTemplateUpdateDelay(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding": ((FreemarkerEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((FreemarkerEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        FreemarkerEndpoint target = (FreemarkerEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configuration": target.setConfiguration(property(camelContext, freemarker.template.Configuration.class, value)); return true;
+        case "contentcache":
+        case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
+        case "encoding": target.setEncoding(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "templateupdatedelay":
+        case "templateUpdateDelay": target.setTemplateUpdateDelay(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

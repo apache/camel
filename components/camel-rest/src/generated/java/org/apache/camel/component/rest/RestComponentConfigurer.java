@@ -12,39 +12,25 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class RestComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "consumerComponentName": ((RestComponent) target).setConsumerComponentName(property(camelContext, java.lang.String.class, value)); return true;
-        case "producerComponentName": ((RestComponent) target).setProducerComponentName(property(camelContext, java.lang.String.class, value)); return true;
-        case "componentName": ((RestComponent) target).setComponentName(property(camelContext, java.lang.String.class, value)); return true;
-        case "apiDoc": ((RestComponent) target).setApiDoc(property(camelContext, java.lang.String.class, value)); return true;
-        case "host": ((RestComponent) target).setHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((RestComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((RestComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((RestComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "consumercomponentname": ((RestComponent) target).setConsumerComponentName(property(camelContext, java.lang.String.class, value)); return true;
-        case "producercomponentname": ((RestComponent) target).setProducerComponentName(property(camelContext, java.lang.String.class, value)); return true;
-        case "componentname": ((RestComponent) target).setComponentName(property(camelContext, java.lang.String.class, value)); return true;
-        case "apidoc": ((RestComponent) target).setApiDoc(property(camelContext, java.lang.String.class, value)); return true;
-        case "host": ((RestComponent) target).setHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((RestComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((RestComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((RestComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        RestComponent target = (RestComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "consumercomponentname":
+        case "consumerComponentName": target.setConsumerComponentName(property(camelContext, java.lang.String.class, value)); return true;
+        case "producercomponentname":
+        case "producerComponentName": target.setProducerComponentName(property(camelContext, java.lang.String.class, value)); return true;
+        case "componentname":
+        case "componentName": target.setComponentName(property(camelContext, java.lang.String.class, value)); return true;
+        case "apidoc":
+        case "apiDoc": target.setApiDoc(property(camelContext, java.lang.String.class, value)); return true;
+        case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

@@ -12,77 +12,62 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "flowControlWindow": ((GrpcEndpoint) target).getConfiguration().setFlowControlWindow(property(camelContext, int.class, value)); return true;
-        case "maxMessageSize": ((GrpcEndpoint) target).getConfiguration().setMaxMessageSize(property(camelContext, int.class, value)); return true;
-        case "bridgeErrorHandler": ((GrpcEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "consumerStrategy": ((GrpcEndpoint) target).getConfiguration().setConsumerStrategy(property(camelContext, org.apache.camel.component.grpc.GrpcConsumerStrategy.class, value)); return true;
-        case "forwardOnCompleted": ((GrpcEndpoint) target).getConfiguration().setForwardOnCompleted(property(camelContext, boolean.class, value)); return true;
-        case "forwardOnError": ((GrpcEndpoint) target).getConfiguration().setForwardOnError(property(camelContext, boolean.class, value)); return true;
-        case "maxConcurrentCallsPerConnection": ((GrpcEndpoint) target).getConfiguration().setMaxConcurrentCallsPerConnection(property(camelContext, int.class, value)); return true;
-        case "exceptionHandler": ((GrpcEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((GrpcEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((GrpcEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "method": ((GrpcEndpoint) target).getConfiguration().setMethod(property(camelContext, java.lang.String.class, value)); return true;
-        case "producerStrategy": ((GrpcEndpoint) target).getConfiguration().setProducerStrategy(property(camelContext, org.apache.camel.component.grpc.GrpcProducerStrategy.class, value)); return true;
-        case "streamRepliesTo": ((GrpcEndpoint) target).getConfiguration().setStreamRepliesTo(property(camelContext, java.lang.String.class, value)); return true;
-        case "userAgent": ((GrpcEndpoint) target).getConfiguration().setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((GrpcEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((GrpcEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "authenticationType": ((GrpcEndpoint) target).getConfiguration().setAuthenticationType(property(camelContext, org.apache.camel.component.grpc.GrpcAuthType.class, value)); return true;
-        case "jwtAlgorithm": ((GrpcEndpoint) target).getConfiguration().setJwtAlgorithm(property(camelContext, org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm.class, value)); return true;
-        case "jwtIssuer": ((GrpcEndpoint) target).getConfiguration().setJwtIssuer(property(camelContext, java.lang.String.class, value)); return true;
-        case "jwtSecret": ((GrpcEndpoint) target).getConfiguration().setJwtSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "jwtSubject": ((GrpcEndpoint) target).getConfiguration().setJwtSubject(property(camelContext, java.lang.String.class, value)); return true;
-        case "keyCertChainResource": ((GrpcEndpoint) target).getConfiguration().setKeyCertChainResource(property(camelContext, java.lang.String.class, value)); return true;
-        case "keyPassword": ((GrpcEndpoint) target).getConfiguration().setKeyPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "keyResource": ((GrpcEndpoint) target).getConfiguration().setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
-        case "negotiationType": ((GrpcEndpoint) target).getConfiguration().setNegotiationType(property(camelContext, io.grpc.netty.NegotiationType.class, value)); return true;
-        case "serviceAccountResource": ((GrpcEndpoint) target).getConfiguration().setServiceAccountResource(property(camelContext, java.lang.String.class, value)); return true;
-        case "trustCertCollectionResource": ((GrpcEndpoint) target).getConfiguration().setTrustCertCollectionResource(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "flowcontrolwindow": ((GrpcEndpoint) target).getConfiguration().setFlowControlWindow(property(camelContext, int.class, value)); return true;
-        case "maxmessagesize": ((GrpcEndpoint) target).getConfiguration().setMaxMessageSize(property(camelContext, int.class, value)); return true;
-        case "bridgeerrorhandler": ((GrpcEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "consumerstrategy": ((GrpcEndpoint) target).getConfiguration().setConsumerStrategy(property(camelContext, org.apache.camel.component.grpc.GrpcConsumerStrategy.class, value)); return true;
-        case "forwardoncompleted": ((GrpcEndpoint) target).getConfiguration().setForwardOnCompleted(property(camelContext, boolean.class, value)); return true;
-        case "forwardonerror": ((GrpcEndpoint) target).getConfiguration().setForwardOnError(property(camelContext, boolean.class, value)); return true;
-        case "maxconcurrentcallsperconnection": ((GrpcEndpoint) target).getConfiguration().setMaxConcurrentCallsPerConnection(property(camelContext, int.class, value)); return true;
-        case "exceptionhandler": ((GrpcEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((GrpcEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((GrpcEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "method": ((GrpcEndpoint) target).getConfiguration().setMethod(property(camelContext, java.lang.String.class, value)); return true;
-        case "producerstrategy": ((GrpcEndpoint) target).getConfiguration().setProducerStrategy(property(camelContext, org.apache.camel.component.grpc.GrpcProducerStrategy.class, value)); return true;
-        case "streamrepliesto": ((GrpcEndpoint) target).getConfiguration().setStreamRepliesTo(property(camelContext, java.lang.String.class, value)); return true;
-        case "useragent": ((GrpcEndpoint) target).getConfiguration().setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((GrpcEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((GrpcEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "authenticationtype": ((GrpcEndpoint) target).getConfiguration().setAuthenticationType(property(camelContext, org.apache.camel.component.grpc.GrpcAuthType.class, value)); return true;
-        case "jwtalgorithm": ((GrpcEndpoint) target).getConfiguration().setJwtAlgorithm(property(camelContext, org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm.class, value)); return true;
-        case "jwtissuer": ((GrpcEndpoint) target).getConfiguration().setJwtIssuer(property(camelContext, java.lang.String.class, value)); return true;
-        case "jwtsecret": ((GrpcEndpoint) target).getConfiguration().setJwtSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "jwtsubject": ((GrpcEndpoint) target).getConfiguration().setJwtSubject(property(camelContext, java.lang.String.class, value)); return true;
-        case "keycertchainresource": ((GrpcEndpoint) target).getConfiguration().setKeyCertChainResource(property(camelContext, java.lang.String.class, value)); return true;
-        case "keypassword": ((GrpcEndpoint) target).getConfiguration().setKeyPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "keyresource": ((GrpcEndpoint) target).getConfiguration().setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
-        case "negotiationtype": ((GrpcEndpoint) target).getConfiguration().setNegotiationType(property(camelContext, io.grpc.netty.NegotiationType.class, value)); return true;
-        case "serviceaccountresource": ((GrpcEndpoint) target).getConfiguration().setServiceAccountResource(property(camelContext, java.lang.String.class, value)); return true;
-        case "trustcertcollectionresource": ((GrpcEndpoint) target).getConfiguration().setTrustCertCollectionResource(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        GrpcEndpoint target = (GrpcEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "flowcontrolwindow":
+        case "flowControlWindow": target.getConfiguration().setFlowControlWindow(property(camelContext, int.class, value)); return true;
+        case "maxmessagesize":
+        case "maxMessageSize": target.getConfiguration().setMaxMessageSize(property(camelContext, int.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "consumerstrategy":
+        case "consumerStrategy": target.getConfiguration().setConsumerStrategy(property(camelContext, org.apache.camel.component.grpc.GrpcConsumerStrategy.class, value)); return true;
+        case "forwardoncompleted":
+        case "forwardOnCompleted": target.getConfiguration().setForwardOnCompleted(property(camelContext, boolean.class, value)); return true;
+        case "forwardonerror":
+        case "forwardOnError": target.getConfiguration().setForwardOnError(property(camelContext, boolean.class, value)); return true;
+        case "maxconcurrentcallsperconnection":
+        case "maxConcurrentCallsPerConnection": target.getConfiguration().setMaxConcurrentCallsPerConnection(property(camelContext, int.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "method": target.getConfiguration().setMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "producerstrategy":
+        case "producerStrategy": target.getConfiguration().setProducerStrategy(property(camelContext, org.apache.camel.component.grpc.GrpcProducerStrategy.class, value)); return true;
+        case "streamrepliesto":
+        case "streamRepliesTo": target.getConfiguration().setStreamRepliesTo(property(camelContext, java.lang.String.class, value)); return true;
+        case "useragent":
+        case "userAgent": target.getConfiguration().setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "authenticationtype":
+        case "authenticationType": target.getConfiguration().setAuthenticationType(property(camelContext, org.apache.camel.component.grpc.GrpcAuthType.class, value)); return true;
+        case "jwtalgorithm":
+        case "jwtAlgorithm": target.getConfiguration().setJwtAlgorithm(property(camelContext, org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm.class, value)); return true;
+        case "jwtissuer":
+        case "jwtIssuer": target.getConfiguration().setJwtIssuer(property(camelContext, java.lang.String.class, value)); return true;
+        case "jwtsecret":
+        case "jwtSecret": target.getConfiguration().setJwtSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "jwtsubject":
+        case "jwtSubject": target.getConfiguration().setJwtSubject(property(camelContext, java.lang.String.class, value)); return true;
+        case "keycertchainresource":
+        case "keyCertChainResource": target.getConfiguration().setKeyCertChainResource(property(camelContext, java.lang.String.class, value)); return true;
+        case "keypassword":
+        case "keyPassword": target.getConfiguration().setKeyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyresource":
+        case "keyResource": target.getConfiguration().setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
+        case "negotiationtype":
+        case "negotiationType": target.getConfiguration().setNegotiationType(property(camelContext, io.grpc.netty.NegotiationType.class, value)); return true;
+        case "serviceaccountresource":
+        case "serviceAccountResource": target.getConfiguration().setServiceAccountResource(property(camelContext, java.lang.String.class, value)); return true;
+        case "trustcertcollectionresource":
+        case "trustCertCollectionResource": target.getConfiguration().setTrustCertCollectionResource(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

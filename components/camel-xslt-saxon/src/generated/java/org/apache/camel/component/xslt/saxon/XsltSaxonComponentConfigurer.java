@@ -12,43 +12,30 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class XsltSaxonComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "saxonExtensionFunctions": ((XsltSaxonComponent) target).setSaxonExtensionFunctions(property(camelContext, java.lang.String.class, value)); return true;
-        case "saxonConfiguration": ((XsltSaxonComponent) target).setSaxonConfiguration(property(camelContext, net.sf.saxon.Configuration.class, value)); return true;
-        case "saxonConfigurationProperties": ((XsltSaxonComponent) target).setSaxonConfigurationProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "uriResolverFactory": ((XsltSaxonComponent) target).setUriResolverFactory(property(camelContext, org.apache.camel.component.xslt.XsltUriResolverFactory.class, value)); return true;
-        case "uriResolver": ((XsltSaxonComponent) target).setUriResolver(property(camelContext, javax.xml.transform.URIResolver.class, value)); return true;
-        case "contentCache": ((XsltSaxonComponent) target).setContentCache(property(camelContext, boolean.class, value)); return true;
-        case "transformerFactoryConfigurationStrategy": ((XsltSaxonComponent) target).setTransformerFactoryConfigurationStrategy(property(camelContext, org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class, value)); return true;
-        case "transformerFactoryClass": ((XsltSaxonComponent) target).setTransformerFactoryClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((XsltSaxonComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((XsltSaxonComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "saxonextensionfunctions": ((XsltSaxonComponent) target).setSaxonExtensionFunctions(property(camelContext, java.lang.String.class, value)); return true;
-        case "saxonconfiguration": ((XsltSaxonComponent) target).setSaxonConfiguration(property(camelContext, net.sf.saxon.Configuration.class, value)); return true;
-        case "saxonconfigurationproperties": ((XsltSaxonComponent) target).setSaxonConfigurationProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "uriresolverfactory": ((XsltSaxonComponent) target).setUriResolverFactory(property(camelContext, org.apache.camel.component.xslt.XsltUriResolverFactory.class, value)); return true;
-        case "uriresolver": ((XsltSaxonComponent) target).setUriResolver(property(camelContext, javax.xml.transform.URIResolver.class, value)); return true;
-        case "contentcache": ((XsltSaxonComponent) target).setContentCache(property(camelContext, boolean.class, value)); return true;
-        case "transformerfactoryconfigurationstrategy": ((XsltSaxonComponent) target).setTransformerFactoryConfigurationStrategy(property(camelContext, org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class, value)); return true;
-        case "transformerfactoryclass": ((XsltSaxonComponent) target).setTransformerFactoryClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((XsltSaxonComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((XsltSaxonComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        XsltSaxonComponent target = (XsltSaxonComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "saxonextensionfunctions":
+        case "saxonExtensionFunctions": target.setSaxonExtensionFunctions(property(camelContext, java.lang.String.class, value)); return true;
+        case "saxonconfiguration":
+        case "saxonConfiguration": target.setSaxonConfiguration(property(camelContext, net.sf.saxon.Configuration.class, value)); return true;
+        case "saxonconfigurationproperties":
+        case "saxonConfigurationProperties": target.setSaxonConfigurationProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "uriresolverfactory":
+        case "uriResolverFactory": target.setUriResolverFactory(property(camelContext, org.apache.camel.component.xslt.XsltUriResolverFactory.class, value)); return true;
+        case "uriresolver":
+        case "uriResolver": target.setUriResolver(property(camelContext, javax.xml.transform.URIResolver.class, value)); return true;
+        case "contentcache":
+        case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
+        case "transformerfactoryconfigurationstrategy":
+        case "transformerFactoryConfigurationStrategy": target.setTransformerFactoryConfigurationStrategy(property(camelContext, org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class, value)); return true;
+        case "transformerfactoryclass":
+        case "transformerFactoryClass": target.setTransformerFactoryClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

@@ -12,41 +12,25 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class EtcdComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "uris": ((EtcdComponent) target).setUris(property(camelContext, java.lang.String.class, value)); return true;
-        case "sslContextParameters": ((EtcdComponent) target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "userName": ((EtcdComponent) target).setUserName(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((EtcdComponent) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "configuration": ((EtcdComponent) target).setConfiguration(property(camelContext, org.apache.camel.component.etcd.EtcdConfiguration.class, value)); return true;
-        case "useGlobalSslContextParameters": ((EtcdComponent) target).setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((EtcdComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((EtcdComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((EtcdComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "uris": ((EtcdComponent) target).setUris(property(camelContext, java.lang.String.class, value)); return true;
-        case "sslcontextparameters": ((EtcdComponent) target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "username": ((EtcdComponent) target).setUserName(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((EtcdComponent) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "configuration": ((EtcdComponent) target).setConfiguration(property(camelContext, org.apache.camel.component.etcd.EtcdConfiguration.class, value)); return true;
-        case "useglobalsslcontextparameters": ((EtcdComponent) target).setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((EtcdComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((EtcdComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((EtcdComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        EtcdComponent target = (EtcdComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "uris": target.setUris(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "username":
+        case "userName": target.setUserName(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.etcd.EtcdConfiguration.class, value)); return true;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

@@ -12,39 +12,25 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class QuickfixjComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "messageFactory": ((QuickfixjComponent) target).setMessageFactory(property(camelContext, quickfix.MessageFactory.class, value)); return true;
-        case "logFactory": ((QuickfixjComponent) target).setLogFactory(property(camelContext, quickfix.LogFactory.class, value)); return true;
-        case "messageStoreFactory": ((QuickfixjComponent) target).setMessageStoreFactory(property(camelContext, quickfix.MessageStoreFactory.class, value)); return true;
-        case "configurations": ((QuickfixjComponent) target).setConfigurations(property(camelContext, java.util.Map.class, value)); return true;
-        case "lazyCreateEngines": ((QuickfixjComponent) target).setLazyCreateEngines(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((QuickfixjComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((QuickfixjComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((QuickfixjComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "messagefactory": ((QuickfixjComponent) target).setMessageFactory(property(camelContext, quickfix.MessageFactory.class, value)); return true;
-        case "logfactory": ((QuickfixjComponent) target).setLogFactory(property(camelContext, quickfix.LogFactory.class, value)); return true;
-        case "messagestorefactory": ((QuickfixjComponent) target).setMessageStoreFactory(property(camelContext, quickfix.MessageStoreFactory.class, value)); return true;
-        case "configurations": ((QuickfixjComponent) target).setConfigurations(property(camelContext, java.util.Map.class, value)); return true;
-        case "lazycreateengines": ((QuickfixjComponent) target).setLazyCreateEngines(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((QuickfixjComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((QuickfixjComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((QuickfixjComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        QuickfixjComponent target = (QuickfixjComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "messagefactory":
+        case "messageFactory": target.setMessageFactory(property(camelContext, quickfix.MessageFactory.class, value)); return true;
+        case "logfactory":
+        case "logFactory": target.setLogFactory(property(camelContext, quickfix.LogFactory.class, value)); return true;
+        case "messagestorefactory":
+        case "messageStoreFactory": target.setMessageStoreFactory(property(camelContext, quickfix.MessageStoreFactory.class, value)); return true;
+        case "configurations": target.setConfigurations(property(camelContext, java.util.Map.class, value)); return true;
+        case "lazycreateengines":
+        case "lazyCreateEngines": target.setLazyCreateEngines(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

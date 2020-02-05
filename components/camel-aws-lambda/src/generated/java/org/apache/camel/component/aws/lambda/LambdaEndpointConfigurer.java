@@ -12,45 +12,29 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class LambdaEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "lazyStartProducer": ((LambdaEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": ((LambdaEndpoint) target).getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws.lambda.LambdaOperations.class, value)); return true;
-        case "region": ((LambdaEndpoint) target).getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "awsLambdaClient": ((LambdaEndpoint) target).getConfiguration().setAwsLambdaClient(property(camelContext, com.amazonaws.services.lambda.AWSLambda.class, value)); return true;
-        case "basicPropertyBinding": ((LambdaEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((LambdaEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "proxyHost": ((LambdaEndpoint) target).getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyPort": ((LambdaEndpoint) target).getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "proxyProtocol": ((LambdaEndpoint) target).getConfiguration().setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
-        case "accessKey": ((LambdaEndpoint) target).getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretKey": ((LambdaEndpoint) target).getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "lazystartproducer": ((LambdaEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": ((LambdaEndpoint) target).getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws.lambda.LambdaOperations.class, value)); return true;
-        case "region": ((LambdaEndpoint) target).getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "awslambdaclient": ((LambdaEndpoint) target).getConfiguration().setAwsLambdaClient(property(camelContext, com.amazonaws.services.lambda.AWSLambda.class, value)); return true;
-        case "basicpropertybinding": ((LambdaEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((LambdaEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "proxyhost": ((LambdaEndpoint) target).getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyport": ((LambdaEndpoint) target).getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "proxyprotocol": ((LambdaEndpoint) target).getConfiguration().setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
-        case "accesskey": ((LambdaEndpoint) target).getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretkey": ((LambdaEndpoint) target).getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        LambdaEndpoint target = (LambdaEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws.lambda.LambdaOperations.class, value)); return true;
+        case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "awslambdaclient":
+        case "awsLambdaClient": target.getConfiguration().setAwsLambdaClient(property(camelContext, com.amazonaws.services.lambda.AWSLambda.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": target.getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "proxyprotocol":
+        case "proxyProtocol": target.getConfiguration().setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
+        case "accesskey":
+        case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretkey":
+        case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

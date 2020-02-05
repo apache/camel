@@ -12,113 +12,97 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "apexMethod": ((SalesforceEndpoint) target).getConfiguration().setApexMethod(property(camelContext, java.lang.String.class, value)); return true;
-        case "apexQueryParams": ((SalesforceEndpoint) target).getConfiguration().setApexQueryParams(property(camelContext, java.util.Map.class, value)); return true;
-        case "apexUrl": ((SalesforceEndpoint) target).getConfiguration().setApexUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "apiVersion": ((SalesforceEndpoint) target).getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "backoffIncrement": ((SalesforceEndpoint) target).getConfiguration().setBackoffIncrement(property(camelContext, long.class, value)); return true;
-        case "batchId": ((SalesforceEndpoint) target).getConfiguration().setBatchId(property(camelContext, java.lang.String.class, value)); return true;
-        case "contentType": ((SalesforceEndpoint) target).getConfiguration().setContentType(property(camelContext, org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class, value)); return true;
-        case "defaultReplayId": ((SalesforceEndpoint) target).getConfiguration().setDefaultReplayId(property(camelContext, java.lang.Long.class, value)); return true;
-        case "format": ((SalesforceEndpoint) target).getConfiguration().setFormat(property(camelContext, org.apache.camel.component.salesforce.internal.PayloadFormat.class, value)); return true;
-        case "httpClient": ((SalesforceEndpoint) target).getConfiguration().setHttpClient(property(camelContext, org.apache.camel.component.salesforce.SalesforceHttpClient.class, value)); return true;
-        case "includeDetails": ((SalesforceEndpoint) target).getConfiguration().setIncludeDetails(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "initialReplayIdMap": ((SalesforceEndpoint) target).getConfiguration().setInitialReplayIdMap(property(camelContext, java.util.Map.class, value)); return true;
-        case "instanceId": ((SalesforceEndpoint) target).getConfiguration().setInstanceId(property(camelContext, java.lang.String.class, value)); return true;
-        case "jobId": ((SalesforceEndpoint) target).getConfiguration().setJobId(property(camelContext, java.lang.String.class, value)); return true;
-        case "limit": ((SalesforceEndpoint) target).getConfiguration().setLimit(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "maxBackoff": ((SalesforceEndpoint) target).getConfiguration().setMaxBackoff(property(camelContext, long.class, value)); return true;
-        case "notFoundBehaviour": ((SalesforceEndpoint) target).getConfiguration().setNotFoundBehaviour(property(camelContext, org.apache.camel.component.salesforce.NotFoundBehaviour.class, value)); return true;
-        case "notifyForFields": ((SalesforceEndpoint) target).getConfiguration().setNotifyForFields(property(camelContext, org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum.class, value)); return true;
-        case "notifyForOperationCreate": ((SalesforceEndpoint) target).getConfiguration().setNotifyForOperationCreate(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "notifyForOperationDelete": ((SalesforceEndpoint) target).getConfiguration().setNotifyForOperationDelete(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "notifyForOperations": ((SalesforceEndpoint) target).getConfiguration().setNotifyForOperations(property(camelContext, org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class, value)); return true;
-        case "notifyForOperationUndelete": ((SalesforceEndpoint) target).getConfiguration().setNotifyForOperationUndelete(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "notifyForOperationUpdate": ((SalesforceEndpoint) target).getConfiguration().setNotifyForOperationUpdate(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "objectMapper": ((SalesforceEndpoint) target).getConfiguration().setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
-        case "rawPayload": ((SalesforceEndpoint) target).getConfiguration().setRawPayload(property(camelContext, boolean.class, value)); return true;
-        case "reportId": ((SalesforceEndpoint) target).getConfiguration().setReportId(property(camelContext, java.lang.String.class, value)); return true;
-        case "reportMetadata": ((SalesforceEndpoint) target).getConfiguration().setReportMetadata(property(camelContext, org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata.class, value)); return true;
-        case "resultId": ((SalesforceEndpoint) target).getConfiguration().setResultId(property(camelContext, java.lang.String.class, value)); return true;
-        case "sObjectBlobFieldName": ((SalesforceEndpoint) target).getConfiguration().setSObjectBlobFieldName(property(camelContext, java.lang.String.class, value)); return true;
-        case "sObjectClass": ((SalesforceEndpoint) target).getConfiguration().setSObjectClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "sObjectFields": ((SalesforceEndpoint) target).getConfiguration().setSObjectFields(property(camelContext, java.lang.String.class, value)); return true;
-        case "sObjectId": ((SalesforceEndpoint) target).getConfiguration().setSObjectId(property(camelContext, java.lang.String.class, value)); return true;
-        case "sObjectIdName": ((SalesforceEndpoint) target).getConfiguration().setSObjectIdName(property(camelContext, java.lang.String.class, value)); return true;
-        case "sObjectIdValue": ((SalesforceEndpoint) target).getConfiguration().setSObjectIdValue(property(camelContext, java.lang.String.class, value)); return true;
-        case "sObjectName": ((SalesforceEndpoint) target).getConfiguration().setSObjectName(property(camelContext, java.lang.String.class, value)); return true;
-        case "sObjectQuery": ((SalesforceEndpoint) target).getConfiguration().setSObjectQuery(property(camelContext, java.lang.String.class, value)); return true;
-        case "sObjectSearch": ((SalesforceEndpoint) target).getConfiguration().setSObjectSearch(property(camelContext, java.lang.String.class, value)); return true;
-        case "updateTopic": ((SalesforceEndpoint) target).getConfiguration().setUpdateTopic(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((SalesforceEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "replayId": ((SalesforceEndpoint) target).setReplayId(property(camelContext, java.lang.Long.class, value)); return true;
-        case "exceptionHandler": ((SalesforceEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((SalesforceEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((SalesforceEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((SalesforceEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((SalesforceEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "apexmethod": ((SalesforceEndpoint) target).getConfiguration().setApexMethod(property(camelContext, java.lang.String.class, value)); return true;
-        case "apexqueryparams": ((SalesforceEndpoint) target).getConfiguration().setApexQueryParams(property(camelContext, java.util.Map.class, value)); return true;
-        case "apexurl": ((SalesforceEndpoint) target).getConfiguration().setApexUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "apiversion": ((SalesforceEndpoint) target).getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "backoffincrement": ((SalesforceEndpoint) target).getConfiguration().setBackoffIncrement(property(camelContext, long.class, value)); return true;
-        case "batchid": ((SalesforceEndpoint) target).getConfiguration().setBatchId(property(camelContext, java.lang.String.class, value)); return true;
-        case "contenttype": ((SalesforceEndpoint) target).getConfiguration().setContentType(property(camelContext, org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class, value)); return true;
-        case "defaultreplayid": ((SalesforceEndpoint) target).getConfiguration().setDefaultReplayId(property(camelContext, java.lang.Long.class, value)); return true;
-        case "format": ((SalesforceEndpoint) target).getConfiguration().setFormat(property(camelContext, org.apache.camel.component.salesforce.internal.PayloadFormat.class, value)); return true;
-        case "httpclient": ((SalesforceEndpoint) target).getConfiguration().setHttpClient(property(camelContext, org.apache.camel.component.salesforce.SalesforceHttpClient.class, value)); return true;
-        case "includedetails": ((SalesforceEndpoint) target).getConfiguration().setIncludeDetails(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "initialreplayidmap": ((SalesforceEndpoint) target).getConfiguration().setInitialReplayIdMap(property(camelContext, java.util.Map.class, value)); return true;
-        case "instanceid": ((SalesforceEndpoint) target).getConfiguration().setInstanceId(property(camelContext, java.lang.String.class, value)); return true;
-        case "jobid": ((SalesforceEndpoint) target).getConfiguration().setJobId(property(camelContext, java.lang.String.class, value)); return true;
-        case "limit": ((SalesforceEndpoint) target).getConfiguration().setLimit(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "maxbackoff": ((SalesforceEndpoint) target).getConfiguration().setMaxBackoff(property(camelContext, long.class, value)); return true;
-        case "notfoundbehaviour": ((SalesforceEndpoint) target).getConfiguration().setNotFoundBehaviour(property(camelContext, org.apache.camel.component.salesforce.NotFoundBehaviour.class, value)); return true;
-        case "notifyforfields": ((SalesforceEndpoint) target).getConfiguration().setNotifyForFields(property(camelContext, org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum.class, value)); return true;
-        case "notifyforoperationcreate": ((SalesforceEndpoint) target).getConfiguration().setNotifyForOperationCreate(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "notifyforoperationdelete": ((SalesforceEndpoint) target).getConfiguration().setNotifyForOperationDelete(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "notifyforoperations": ((SalesforceEndpoint) target).getConfiguration().setNotifyForOperations(property(camelContext, org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class, value)); return true;
-        case "notifyforoperationundelete": ((SalesforceEndpoint) target).getConfiguration().setNotifyForOperationUndelete(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "notifyforoperationupdate": ((SalesforceEndpoint) target).getConfiguration().setNotifyForOperationUpdate(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "objectmapper": ((SalesforceEndpoint) target).getConfiguration().setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
-        case "rawpayload": ((SalesforceEndpoint) target).getConfiguration().setRawPayload(property(camelContext, boolean.class, value)); return true;
-        case "reportid": ((SalesforceEndpoint) target).getConfiguration().setReportId(property(camelContext, java.lang.String.class, value)); return true;
-        case "reportmetadata": ((SalesforceEndpoint) target).getConfiguration().setReportMetadata(property(camelContext, org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata.class, value)); return true;
-        case "resultid": ((SalesforceEndpoint) target).getConfiguration().setResultId(property(camelContext, java.lang.String.class, value)); return true;
-        case "sobjectblobfieldname": ((SalesforceEndpoint) target).getConfiguration().setSObjectBlobFieldName(property(camelContext, java.lang.String.class, value)); return true;
-        case "sobjectclass": ((SalesforceEndpoint) target).getConfiguration().setSObjectClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "sobjectfields": ((SalesforceEndpoint) target).getConfiguration().setSObjectFields(property(camelContext, java.lang.String.class, value)); return true;
-        case "sobjectid": ((SalesforceEndpoint) target).getConfiguration().setSObjectId(property(camelContext, java.lang.String.class, value)); return true;
-        case "sobjectidname": ((SalesforceEndpoint) target).getConfiguration().setSObjectIdName(property(camelContext, java.lang.String.class, value)); return true;
-        case "sobjectidvalue": ((SalesforceEndpoint) target).getConfiguration().setSObjectIdValue(property(camelContext, java.lang.String.class, value)); return true;
-        case "sobjectname": ((SalesforceEndpoint) target).getConfiguration().setSObjectName(property(camelContext, java.lang.String.class, value)); return true;
-        case "sobjectquery": ((SalesforceEndpoint) target).getConfiguration().setSObjectQuery(property(camelContext, java.lang.String.class, value)); return true;
-        case "sobjectsearch": ((SalesforceEndpoint) target).getConfiguration().setSObjectSearch(property(camelContext, java.lang.String.class, value)); return true;
-        case "updatetopic": ((SalesforceEndpoint) target).getConfiguration().setUpdateTopic(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((SalesforceEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "replayid": ((SalesforceEndpoint) target).setReplayId(property(camelContext, java.lang.Long.class, value)); return true;
-        case "exceptionhandler": ((SalesforceEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((SalesforceEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((SalesforceEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((SalesforceEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((SalesforceEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        SalesforceEndpoint target = (SalesforceEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apexmethod":
+        case "apexMethod": target.getConfiguration().setApexMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "apexqueryparams":
+        case "apexQueryParams": target.getConfiguration().setApexQueryParams(property(camelContext, java.util.Map.class, value)); return true;
+        case "apexurl":
+        case "apexUrl": target.getConfiguration().setApexUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "apiversion":
+        case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "backoffincrement":
+        case "backoffIncrement": target.getConfiguration().setBackoffIncrement(property(camelContext, long.class, value)); return true;
+        case "batchid":
+        case "batchId": target.getConfiguration().setBatchId(property(camelContext, java.lang.String.class, value)); return true;
+        case "contenttype":
+        case "contentType": target.getConfiguration().setContentType(property(camelContext, org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class, value)); return true;
+        case "defaultreplayid":
+        case "defaultReplayId": target.getConfiguration().setDefaultReplayId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "format": target.getConfiguration().setFormat(property(camelContext, org.apache.camel.component.salesforce.internal.PayloadFormat.class, value)); return true;
+        case "httpclient":
+        case "httpClient": target.getConfiguration().setHttpClient(property(camelContext, org.apache.camel.component.salesforce.SalesforceHttpClient.class, value)); return true;
+        case "includedetails":
+        case "includeDetails": target.getConfiguration().setIncludeDetails(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "initialreplayidmap":
+        case "initialReplayIdMap": target.getConfiguration().setInitialReplayIdMap(property(camelContext, java.util.Map.class, value)); return true;
+        case "instanceid":
+        case "instanceId": target.getConfiguration().setInstanceId(property(camelContext, java.lang.String.class, value)); return true;
+        case "jobid":
+        case "jobId": target.getConfiguration().setJobId(property(camelContext, java.lang.String.class, value)); return true;
+        case "limit": target.getConfiguration().setLimit(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maxbackoff":
+        case "maxBackoff": target.getConfiguration().setMaxBackoff(property(camelContext, long.class, value)); return true;
+        case "notfoundbehaviour":
+        case "notFoundBehaviour": target.getConfiguration().setNotFoundBehaviour(property(camelContext, org.apache.camel.component.salesforce.NotFoundBehaviour.class, value)); return true;
+        case "notifyforfields":
+        case "notifyForFields": target.getConfiguration().setNotifyForFields(property(camelContext, org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum.class, value)); return true;
+        case "notifyforoperationcreate":
+        case "notifyForOperationCreate": target.getConfiguration().setNotifyForOperationCreate(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "notifyforoperationdelete":
+        case "notifyForOperationDelete": target.getConfiguration().setNotifyForOperationDelete(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "notifyforoperations":
+        case "notifyForOperations": target.getConfiguration().setNotifyForOperations(property(camelContext, org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class, value)); return true;
+        case "notifyforoperationundelete":
+        case "notifyForOperationUndelete": target.getConfiguration().setNotifyForOperationUndelete(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "notifyforoperationupdate":
+        case "notifyForOperationUpdate": target.getConfiguration().setNotifyForOperationUpdate(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "objectmapper":
+        case "objectMapper": target.getConfiguration().setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
+        case "rawpayload":
+        case "rawPayload": target.getConfiguration().setRawPayload(property(camelContext, boolean.class, value)); return true;
+        case "reportid":
+        case "reportId": target.getConfiguration().setReportId(property(camelContext, java.lang.String.class, value)); return true;
+        case "reportmetadata":
+        case "reportMetadata": target.getConfiguration().setReportMetadata(property(camelContext, org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata.class, value)); return true;
+        case "resultid":
+        case "resultId": target.getConfiguration().setResultId(property(camelContext, java.lang.String.class, value)); return true;
+        case "sobjectblobfieldname":
+        case "sObjectBlobFieldName": target.getConfiguration().setSObjectBlobFieldName(property(camelContext, java.lang.String.class, value)); return true;
+        case "sobjectclass":
+        case "sObjectClass": target.getConfiguration().setSObjectClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "sobjectfields":
+        case "sObjectFields": target.getConfiguration().setSObjectFields(property(camelContext, java.lang.String.class, value)); return true;
+        case "sobjectid":
+        case "sObjectId": target.getConfiguration().setSObjectId(property(camelContext, java.lang.String.class, value)); return true;
+        case "sobjectidname":
+        case "sObjectIdName": target.getConfiguration().setSObjectIdName(property(camelContext, java.lang.String.class, value)); return true;
+        case "sobjectidvalue":
+        case "sObjectIdValue": target.getConfiguration().setSObjectIdValue(property(camelContext, java.lang.String.class, value)); return true;
+        case "sobjectname":
+        case "sObjectName": target.getConfiguration().setSObjectName(property(camelContext, java.lang.String.class, value)); return true;
+        case "sobjectquery":
+        case "sObjectQuery": target.getConfiguration().setSObjectQuery(property(camelContext, java.lang.String.class, value)); return true;
+        case "sobjectsearch":
+        case "sObjectSearch": target.getConfiguration().setSObjectSearch(property(camelContext, java.lang.String.class, value)); return true;
+        case "updatetopic":
+        case "updateTopic": target.getConfiguration().setUpdateTopic(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "replayid":
+        case "replayId": target.setReplayId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

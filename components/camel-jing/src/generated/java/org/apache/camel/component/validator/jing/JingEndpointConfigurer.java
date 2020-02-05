@@ -12,31 +12,17 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class JingEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "compactSyntax": ((JingEndpoint) target).setCompactSyntax(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((JingEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((JingEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((JingEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "compactsyntax": ((JingEndpoint) target).setCompactSyntax(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((JingEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((JingEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((JingEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        JingEndpoint target = (JingEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "compactsyntax":
+        case "compactSyntax": target.setCompactSyntax(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

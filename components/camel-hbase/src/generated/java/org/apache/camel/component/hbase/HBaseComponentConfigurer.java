@@ -12,33 +12,19 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class HBaseComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "configuration": ((HBaseComponent) target).setConfiguration(property(camelContext, org.apache.hadoop.conf.Configuration.class, value)); return true;
-        case "poolMaxSize": ((HBaseComponent) target).setPoolMaxSize(property(camelContext, int.class, value)); return true;
-        case "basicPropertyBinding": ((HBaseComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((HBaseComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((HBaseComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "configuration": ((HBaseComponent) target).setConfiguration(property(camelContext, org.apache.hadoop.conf.Configuration.class, value)); return true;
-        case "poolmaxsize": ((HBaseComponent) target).setPoolMaxSize(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding": ((HBaseComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((HBaseComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((HBaseComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        HBaseComponent target = (HBaseComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.hadoop.conf.Configuration.class, value)); return true;
+        case "poolmaxsize":
+        case "poolMaxSize": target.setPoolMaxSize(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

@@ -12,61 +12,46 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class XJEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "allowStAX": ((XJEndpoint) target).setAllowStAX(property(camelContext, boolean.class, value)); return true;
-        case "contentCache": ((XJEndpoint) target).setContentCache(property(camelContext, boolean.class, value)); return true;
-        case "deleteOutputFile": ((XJEndpoint) target).setDeleteOutputFile(property(camelContext, boolean.class, value)); return true;
-        case "failOnNullBody": ((XJEndpoint) target).setFailOnNullBody(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((XJEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "output": ((XJEndpoint) target).setOutput(property(camelContext, org.apache.camel.component.xslt.XsltOutput.class, value)); return true;
-        case "transformDirection": ((XJEndpoint) target).setTransformDirection(property(camelContext, org.apache.camel.component.xj.TransformDirection.class, value)); return true;
-        case "transformerCacheSize": ((XJEndpoint) target).setTransformerCacheSize(property(camelContext, int.class, value)); return true;
-        case "basicPropertyBinding": ((XJEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "entityResolver": ((XJEndpoint) target).setEntityResolver(property(camelContext, org.xml.sax.EntityResolver.class, value)); return true;
-        case "errorListener": ((XJEndpoint) target).setErrorListener(property(camelContext, javax.xml.transform.ErrorListener.class, value)); return true;
-        case "resultHandlerFactory": ((XJEndpoint) target).setResultHandlerFactory(property(camelContext, org.apache.camel.component.xslt.ResultHandlerFactory.class, value)); return true;
-        case "saxonConfiguration": ((XJEndpoint) target).setSaxonConfiguration(property(camelContext, net.sf.saxon.Configuration.class, value)); return true;
-        case "saxonExtensionFunctions": ((XJEndpoint) target).setSaxonExtensionFunctions(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": ((XJEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "transformerFactory": ((XJEndpoint) target).setTransformerFactory(property(camelContext, javax.xml.transform.TransformerFactory.class, value)); return true;
-        case "transformerFactoryClass": ((XJEndpoint) target).setTransformerFactoryClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "transformerFactoryConfigurationStrategy": ((XJEndpoint) target).setTransformerFactoryConfigurationStrategy(property(camelContext, org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class, value)); return true;
-        case "uriResolver": ((XJEndpoint) target).setUriResolver(property(camelContext, javax.xml.transform.URIResolver.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "allowstax": ((XJEndpoint) target).setAllowStAX(property(camelContext, boolean.class, value)); return true;
-        case "contentcache": ((XJEndpoint) target).setContentCache(property(camelContext, boolean.class, value)); return true;
-        case "deleteoutputfile": ((XJEndpoint) target).setDeleteOutputFile(property(camelContext, boolean.class, value)); return true;
-        case "failonnullbody": ((XJEndpoint) target).setFailOnNullBody(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((XJEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "output": ((XJEndpoint) target).setOutput(property(camelContext, org.apache.camel.component.xslt.XsltOutput.class, value)); return true;
-        case "transformdirection": ((XJEndpoint) target).setTransformDirection(property(camelContext, org.apache.camel.component.xj.TransformDirection.class, value)); return true;
-        case "transformercachesize": ((XJEndpoint) target).setTransformerCacheSize(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding": ((XJEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "entityresolver": ((XJEndpoint) target).setEntityResolver(property(camelContext, org.xml.sax.EntityResolver.class, value)); return true;
-        case "errorlistener": ((XJEndpoint) target).setErrorListener(property(camelContext, javax.xml.transform.ErrorListener.class, value)); return true;
-        case "resulthandlerfactory": ((XJEndpoint) target).setResultHandlerFactory(property(camelContext, org.apache.camel.component.xslt.ResultHandlerFactory.class, value)); return true;
-        case "saxonconfiguration": ((XJEndpoint) target).setSaxonConfiguration(property(camelContext, net.sf.saxon.Configuration.class, value)); return true;
-        case "saxonextensionfunctions": ((XJEndpoint) target).setSaxonExtensionFunctions(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": ((XJEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "transformerfactory": ((XJEndpoint) target).setTransformerFactory(property(camelContext, javax.xml.transform.TransformerFactory.class, value)); return true;
-        case "transformerfactoryclass": ((XJEndpoint) target).setTransformerFactoryClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "transformerfactoryconfigurationstrategy": ((XJEndpoint) target).setTransformerFactoryConfigurationStrategy(property(camelContext, org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class, value)); return true;
-        case "uriresolver": ((XJEndpoint) target).setUriResolver(property(camelContext, javax.xml.transform.URIResolver.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        XJEndpoint target = (XJEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowstax":
+        case "allowStAX": target.setAllowStAX(property(camelContext, boolean.class, value)); return true;
+        case "contentcache":
+        case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
+        case "deleteoutputfile":
+        case "deleteOutputFile": target.setDeleteOutputFile(property(camelContext, boolean.class, value)); return true;
+        case "failonnullbody":
+        case "failOnNullBody": target.setFailOnNullBody(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "output": target.setOutput(property(camelContext, org.apache.camel.component.xslt.XsltOutput.class, value)); return true;
+        case "transformdirection":
+        case "transformDirection": target.setTransformDirection(property(camelContext, org.apache.camel.component.xj.TransformDirection.class, value)); return true;
+        case "transformercachesize":
+        case "transformerCacheSize": target.setTransformerCacheSize(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "entityresolver":
+        case "entityResolver": target.setEntityResolver(property(camelContext, org.xml.sax.EntityResolver.class, value)); return true;
+        case "errorlistener":
+        case "errorListener": target.setErrorListener(property(camelContext, javax.xml.transform.ErrorListener.class, value)); return true;
+        case "resulthandlerfactory":
+        case "resultHandlerFactory": target.setResultHandlerFactory(property(camelContext, org.apache.camel.component.xslt.ResultHandlerFactory.class, value)); return true;
+        case "saxonconfiguration":
+        case "saxonConfiguration": target.setSaxonConfiguration(property(camelContext, net.sf.saxon.Configuration.class, value)); return true;
+        case "saxonextensionfunctions":
+        case "saxonExtensionFunctions": target.setSaxonExtensionFunctions(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "transformerfactory":
+        case "transformerFactory": target.setTransformerFactory(property(camelContext, javax.xml.transform.TransformerFactory.class, value)); return true;
+        case "transformerfactoryclass":
+        case "transformerFactoryClass": target.setTransformerFactoryClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "transformerfactoryconfigurationstrategy":
+        case "transformerFactoryConfigurationStrategy": target.setTransformerFactoryConfigurationStrategy(property(camelContext, org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class, value)); return true;
+        case "uriresolver":
+        case "uriResolver": target.setUriResolver(property(camelContext, javax.xml.transform.URIResolver.class, value)); return true;
+        default: return false;
         }
     }
 

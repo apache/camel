@@ -12,53 +12,38 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "contentCache": ((XsltEndpoint) target).setContentCache(property(camelContext, boolean.class, value)); return true;
-        case "deleteOutputFile": ((XsltEndpoint) target).setDeleteOutputFile(property(camelContext, boolean.class, value)); return true;
-        case "failOnNullBody": ((XsltEndpoint) target).setFailOnNullBody(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((XsltEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "output": ((XsltEndpoint) target).setOutput(property(camelContext, org.apache.camel.component.xslt.XsltOutput.class, value)); return true;
-        case "transformerCacheSize": ((XsltEndpoint) target).setTransformerCacheSize(property(camelContext, int.class, value)); return true;
-        case "basicPropertyBinding": ((XsltEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "entityResolver": ((XsltEndpoint) target).setEntityResolver(property(camelContext, org.xml.sax.EntityResolver.class, value)); return true;
-        case "errorListener": ((XsltEndpoint) target).setErrorListener(property(camelContext, javax.xml.transform.ErrorListener.class, value)); return true;
-        case "resultHandlerFactory": ((XsltEndpoint) target).setResultHandlerFactory(property(camelContext, org.apache.camel.component.xslt.ResultHandlerFactory.class, value)); return true;
-        case "synchronous": ((XsltEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "transformerFactory": ((XsltEndpoint) target).setTransformerFactory(property(camelContext, javax.xml.transform.TransformerFactory.class, value)); return true;
-        case "transformerFactoryClass": ((XsltEndpoint) target).setTransformerFactoryClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "transformerFactoryConfigurationStrategy": ((XsltEndpoint) target).setTransformerFactoryConfigurationStrategy(property(camelContext, org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class, value)); return true;
-        case "uriResolver": ((XsltEndpoint) target).setUriResolver(property(camelContext, javax.xml.transform.URIResolver.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "contentcache": ((XsltEndpoint) target).setContentCache(property(camelContext, boolean.class, value)); return true;
-        case "deleteoutputfile": ((XsltEndpoint) target).setDeleteOutputFile(property(camelContext, boolean.class, value)); return true;
-        case "failonnullbody": ((XsltEndpoint) target).setFailOnNullBody(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((XsltEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "output": ((XsltEndpoint) target).setOutput(property(camelContext, org.apache.camel.component.xslt.XsltOutput.class, value)); return true;
-        case "transformercachesize": ((XsltEndpoint) target).setTransformerCacheSize(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding": ((XsltEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "entityresolver": ((XsltEndpoint) target).setEntityResolver(property(camelContext, org.xml.sax.EntityResolver.class, value)); return true;
-        case "errorlistener": ((XsltEndpoint) target).setErrorListener(property(camelContext, javax.xml.transform.ErrorListener.class, value)); return true;
-        case "resulthandlerfactory": ((XsltEndpoint) target).setResultHandlerFactory(property(camelContext, org.apache.camel.component.xslt.ResultHandlerFactory.class, value)); return true;
-        case "synchronous": ((XsltEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "transformerfactory": ((XsltEndpoint) target).setTransformerFactory(property(camelContext, javax.xml.transform.TransformerFactory.class, value)); return true;
-        case "transformerfactoryclass": ((XsltEndpoint) target).setTransformerFactoryClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "transformerfactoryconfigurationstrategy": ((XsltEndpoint) target).setTransformerFactoryConfigurationStrategy(property(camelContext, org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class, value)); return true;
-        case "uriresolver": ((XsltEndpoint) target).setUriResolver(property(camelContext, javax.xml.transform.URIResolver.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        XsltEndpoint target = (XsltEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "contentcache":
+        case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
+        case "deleteoutputfile":
+        case "deleteOutputFile": target.setDeleteOutputFile(property(camelContext, boolean.class, value)); return true;
+        case "failonnullbody":
+        case "failOnNullBody": target.setFailOnNullBody(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "output": target.setOutput(property(camelContext, org.apache.camel.component.xslt.XsltOutput.class, value)); return true;
+        case "transformercachesize":
+        case "transformerCacheSize": target.setTransformerCacheSize(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "entityresolver":
+        case "entityResolver": target.setEntityResolver(property(camelContext, org.xml.sax.EntityResolver.class, value)); return true;
+        case "errorlistener":
+        case "errorListener": target.setErrorListener(property(camelContext, javax.xml.transform.ErrorListener.class, value)); return true;
+        case "resulthandlerfactory":
+        case "resultHandlerFactory": target.setResultHandlerFactory(property(camelContext, org.apache.camel.component.xslt.ResultHandlerFactory.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "transformerfactory":
+        case "transformerFactory": target.setTransformerFactory(property(camelContext, javax.xml.transform.TransformerFactory.class, value)); return true;
+        case "transformerfactoryclass":
+        case "transformerFactoryClass": target.setTransformerFactoryClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "transformerfactoryconfigurationstrategy":
+        case "transformerFactoryConfigurationStrategy": target.setTransformerFactoryConfigurationStrategy(property(camelContext, org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class, value)); return true;
+        case "uriresolver":
+        case "uriResolver": target.setUriResolver(property(camelContext, javax.xml.transform.URIResolver.class, value)); return true;
+        default: return false;
         }
     }
 

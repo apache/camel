@@ -12,69 +12,52 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class GoraEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "dataStoreClass": ((GoraEndpoint) target).getConfiguration().setDataStoreClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "keyClass": ((GoraEndpoint) target).getConfiguration().setKeyClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "valueClass": ((GoraEndpoint) target).getConfiguration().setValueClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((GoraEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "concurrentConsumers": ((GoraEndpoint) target).getConfiguration().setConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "endKey": ((GoraEndpoint) target).getConfiguration().setEndKey(property(camelContext, java.lang.Object.class, value)); return true;
-        case "endTime": ((GoraEndpoint) target).getConfiguration().setEndTime(property(camelContext, long.class, value)); return true;
-        case "fields": ((GoraEndpoint) target).getConfiguration().setFields(property(camelContext, com.google.common.base.Strings.class, value)); return true;
-        case "keyRangeFrom": ((GoraEndpoint) target).getConfiguration().setKeyRangeFrom(property(camelContext, java.lang.Object.class, value)); return true;
-        case "keyRangeTo": ((GoraEndpoint) target).getConfiguration().setKeyRangeTo(property(camelContext, java.lang.Object.class, value)); return true;
-        case "limit": ((GoraEndpoint) target).getConfiguration().setLimit(property(camelContext, long.class, value)); return true;
-        case "startKey": ((GoraEndpoint) target).getConfiguration().setStartKey(property(camelContext, java.lang.Object.class, value)); return true;
-        case "startTime": ((GoraEndpoint) target).getConfiguration().setStartTime(property(camelContext, long.class, value)); return true;
-        case "timeRangeFrom": ((GoraEndpoint) target).getConfiguration().setTimeRangeFrom(property(camelContext, long.class, value)); return true;
-        case "timeRangeTo": ((GoraEndpoint) target).getConfiguration().setTimeRangeTo(property(camelContext, long.class, value)); return true;
-        case "timestamp": ((GoraEndpoint) target).getConfiguration().setTimestamp(property(camelContext, long.class, value)); return true;
-        case "exceptionHandler": ((GoraEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((GoraEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "flushOnEveryOperation": ((GoraEndpoint) target).getConfiguration().setFlushOnEveryOperation(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((GoraEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((GoraEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "hadoopConfiguration": ((GoraEndpoint) target).getConfiguration().setHadoopConfiguration(property(camelContext, org.apache.hadoop.conf.Configuration.class, value)); return true;
-        case "synchronous": ((GoraEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "datastoreclass": ((GoraEndpoint) target).getConfiguration().setDataStoreClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "keyclass": ((GoraEndpoint) target).getConfiguration().setKeyClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "valueclass": ((GoraEndpoint) target).getConfiguration().setValueClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((GoraEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "concurrentconsumers": ((GoraEndpoint) target).getConfiguration().setConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "endkey": ((GoraEndpoint) target).getConfiguration().setEndKey(property(camelContext, java.lang.Object.class, value)); return true;
-        case "endtime": ((GoraEndpoint) target).getConfiguration().setEndTime(property(camelContext, long.class, value)); return true;
-        case "fields": ((GoraEndpoint) target).getConfiguration().setFields(property(camelContext, com.google.common.base.Strings.class, value)); return true;
-        case "keyrangefrom": ((GoraEndpoint) target).getConfiguration().setKeyRangeFrom(property(camelContext, java.lang.Object.class, value)); return true;
-        case "keyrangeto": ((GoraEndpoint) target).getConfiguration().setKeyRangeTo(property(camelContext, java.lang.Object.class, value)); return true;
-        case "limit": ((GoraEndpoint) target).getConfiguration().setLimit(property(camelContext, long.class, value)); return true;
-        case "startkey": ((GoraEndpoint) target).getConfiguration().setStartKey(property(camelContext, java.lang.Object.class, value)); return true;
-        case "starttime": ((GoraEndpoint) target).getConfiguration().setStartTime(property(camelContext, long.class, value)); return true;
-        case "timerangefrom": ((GoraEndpoint) target).getConfiguration().setTimeRangeFrom(property(camelContext, long.class, value)); return true;
-        case "timerangeto": ((GoraEndpoint) target).getConfiguration().setTimeRangeTo(property(camelContext, long.class, value)); return true;
-        case "timestamp": ((GoraEndpoint) target).getConfiguration().setTimestamp(property(camelContext, long.class, value)); return true;
-        case "exceptionhandler": ((GoraEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((GoraEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "flushoneveryoperation": ((GoraEndpoint) target).getConfiguration().setFlushOnEveryOperation(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((GoraEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((GoraEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "hadoopconfiguration": ((GoraEndpoint) target).getConfiguration().setHadoopConfiguration(property(camelContext, org.apache.hadoop.conf.Configuration.class, value)); return true;
-        case "synchronous": ((GoraEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        GoraEndpoint target = (GoraEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "datastoreclass":
+        case "dataStoreClass": target.getConfiguration().setDataStoreClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyclass":
+        case "keyClass": target.getConfiguration().setKeyClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "valueclass":
+        case "valueClass": target.getConfiguration().setValueClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "concurrentconsumers":
+        case "concurrentConsumers": target.getConfiguration().setConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "endkey":
+        case "endKey": target.getConfiguration().setEndKey(property(camelContext, java.lang.Object.class, value)); return true;
+        case "endtime":
+        case "endTime": target.getConfiguration().setEndTime(property(camelContext, long.class, value)); return true;
+        case "fields": target.getConfiguration().setFields(property(camelContext, com.google.common.base.Strings.class, value)); return true;
+        case "keyrangefrom":
+        case "keyRangeFrom": target.getConfiguration().setKeyRangeFrom(property(camelContext, java.lang.Object.class, value)); return true;
+        case "keyrangeto":
+        case "keyRangeTo": target.getConfiguration().setKeyRangeTo(property(camelContext, java.lang.Object.class, value)); return true;
+        case "limit": target.getConfiguration().setLimit(property(camelContext, long.class, value)); return true;
+        case "startkey":
+        case "startKey": target.getConfiguration().setStartKey(property(camelContext, java.lang.Object.class, value)); return true;
+        case "starttime":
+        case "startTime": target.getConfiguration().setStartTime(property(camelContext, long.class, value)); return true;
+        case "timerangefrom":
+        case "timeRangeFrom": target.getConfiguration().setTimeRangeFrom(property(camelContext, long.class, value)); return true;
+        case "timerangeto":
+        case "timeRangeTo": target.getConfiguration().setTimeRangeTo(property(camelContext, long.class, value)); return true;
+        case "timestamp": target.getConfiguration().setTimestamp(property(camelContext, long.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "flushoneveryoperation":
+        case "flushOnEveryOperation": target.getConfiguration().setFlushOnEveryOperation(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "hadoopconfiguration":
+        case "hadoopConfiguration": target.getConfiguration().setHadoopConfiguration(property(camelContext, org.apache.hadoop.conf.Configuration.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

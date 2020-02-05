@@ -12,41 +12,27 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class JsonValidatorEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "contentCache": ((JsonValidatorEndpoint) target).setContentCache(property(camelContext, boolean.class, value)); return true;
-        case "failOnNullBody": ((JsonValidatorEndpoint) target).setFailOnNullBody(property(camelContext, boolean.class, value)); return true;
-        case "failOnNullHeader": ((JsonValidatorEndpoint) target).setFailOnNullHeader(property(camelContext, boolean.class, value)); return true;
-        case "headerName": ((JsonValidatorEndpoint) target).setHeaderName(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazyStartProducer": ((JsonValidatorEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((JsonValidatorEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "errorHandler": ((JsonValidatorEndpoint) target).setErrorHandler(property(camelContext, org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler.class, value)); return true;
-        case "schemaLoader": ((JsonValidatorEndpoint) target).setSchemaLoader(property(camelContext, org.apache.camel.component.jsonvalidator.JsonSchemaLoader.class, value)); return true;
-        case "synchronous": ((JsonValidatorEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "contentcache": ((JsonValidatorEndpoint) target).setContentCache(property(camelContext, boolean.class, value)); return true;
-        case "failonnullbody": ((JsonValidatorEndpoint) target).setFailOnNullBody(property(camelContext, boolean.class, value)); return true;
-        case "failonnullheader": ((JsonValidatorEndpoint) target).setFailOnNullHeader(property(camelContext, boolean.class, value)); return true;
-        case "headername": ((JsonValidatorEndpoint) target).setHeaderName(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer": ((JsonValidatorEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((JsonValidatorEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "errorhandler": ((JsonValidatorEndpoint) target).setErrorHandler(property(camelContext, org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler.class, value)); return true;
-        case "schemaloader": ((JsonValidatorEndpoint) target).setSchemaLoader(property(camelContext, org.apache.camel.component.jsonvalidator.JsonSchemaLoader.class, value)); return true;
-        case "synchronous": ((JsonValidatorEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        JsonValidatorEndpoint target = (JsonValidatorEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "contentcache":
+        case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
+        case "failonnullbody":
+        case "failOnNullBody": target.setFailOnNullBody(property(camelContext, boolean.class, value)); return true;
+        case "failonnullheader":
+        case "failOnNullHeader": target.setFailOnNullHeader(property(camelContext, boolean.class, value)); return true;
+        case "headername":
+        case "headerName": target.setHeaderName(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "errorhandler":
+        case "errorHandler": target.setErrorHandler(property(camelContext, org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler.class, value)); return true;
+        case "schemaloader":
+        case "schemaLoader": target.setSchemaLoader(property(camelContext, org.apache.camel.component.jsonvalidator.JsonSchemaLoader.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

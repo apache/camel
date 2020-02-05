@@ -12,31 +12,17 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class ServiceComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "service": ((ServiceComponent) target).setService(property(camelContext, org.apache.camel.cloud.ServiceRegistry.class, value)); return true;
-        case "serviceSelector": ((ServiceComponent) target).setServiceSelector(property(camelContext, org.apache.camel.cloud.ServiceRegistry.Selector.class, value)); return true;
-        case "basicPropertyBinding": ((ServiceComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((ServiceComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "service": ((ServiceComponent) target).setService(property(camelContext, org.apache.camel.cloud.ServiceRegistry.class, value)); return true;
-        case "serviceselector": ((ServiceComponent) target).setServiceSelector(property(camelContext, org.apache.camel.cloud.ServiceRegistry.Selector.class, value)); return true;
-        case "basicpropertybinding": ((ServiceComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((ServiceComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        ServiceComponent target = (ServiceComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "service": target.setService(property(camelContext, org.apache.camel.cloud.ServiceRegistry.class, value)); return true;
+        case "serviceselector":
+        case "serviceSelector": target.setServiceSelector(property(camelContext, org.apache.camel.cloud.ServiceRegistry.Selector.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

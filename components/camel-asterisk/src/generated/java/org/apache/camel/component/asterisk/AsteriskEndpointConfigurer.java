@@ -12,43 +12,25 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class AsteriskEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "hostname": ((AsteriskEndpoint) target).setHostname(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((AsteriskEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((AsteriskEndpoint) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((AsteriskEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((AsteriskEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((AsteriskEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "action": ((AsteriskEndpoint) target).setAction(property(camelContext, org.apache.camel.component.asterisk.AsteriskAction.class, value)); return true;
-        case "lazyStartProducer": ((AsteriskEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((AsteriskEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((AsteriskEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "hostname": ((AsteriskEndpoint) target).setHostname(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((AsteriskEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((AsteriskEndpoint) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((AsteriskEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((AsteriskEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((AsteriskEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "action": ((AsteriskEndpoint) target).setAction(property(camelContext, org.apache.camel.component.asterisk.AsteriskAction.class, value)); return true;
-        case "lazystartproducer": ((AsteriskEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((AsteriskEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((AsteriskEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        AsteriskEndpoint target = (AsteriskEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "hostname": target.setHostname(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "action": target.setAction(property(camelContext, org.apache.camel.component.asterisk.AsteriskAction.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

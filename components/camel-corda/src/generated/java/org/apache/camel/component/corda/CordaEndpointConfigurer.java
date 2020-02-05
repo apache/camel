@@ -12,41 +12,24 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class CordaEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "bridgeErrorHandler": ((CordaEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((CordaEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((CordaEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((CordaEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": ((CordaEndpoint) target).getConfiguration().setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((CordaEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((CordaEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "password": ((CordaEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((CordaEndpoint) target).getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "bridgeerrorhandler": ((CordaEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((CordaEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((CordaEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((CordaEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": ((CordaEndpoint) target).getConfiguration().setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((CordaEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((CordaEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "password": ((CordaEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((CordaEndpoint) target).getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        CordaEndpoint target = (CordaEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

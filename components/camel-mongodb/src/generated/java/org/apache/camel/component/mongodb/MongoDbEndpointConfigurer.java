@@ -12,75 +12,57 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "collection": ((MongoDbEndpoint) target).setCollection(property(camelContext, java.lang.String.class, value)); return true;
-        case "collectionIndex": ((MongoDbEndpoint) target).setCollectionIndex(property(camelContext, java.lang.String.class, value)); return true;
-        case "createCollection": ((MongoDbEndpoint) target).setCreateCollection(property(camelContext, boolean.class, value)); return true;
-        case "database": ((MongoDbEndpoint) target).setDatabase(property(camelContext, java.lang.String.class, value)); return true;
-        case "mongoConnection": ((MongoDbEndpoint) target).setMongoConnection(property(camelContext, com.mongodb.client.MongoClient.class, value)); return true;
-        case "operation": ((MongoDbEndpoint) target).setOperation(property(camelContext, org.apache.camel.component.mongodb.MongoDbOperation.class, value)); return true;
-        case "outputType": ((MongoDbEndpoint) target).setOutputType(property(camelContext, org.apache.camel.component.mongodb.MongoDbOutputType.class, value)); return true;
-        case "bridgeErrorHandler": ((MongoDbEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "consumerType": ((MongoDbEndpoint) target).setConsumerType(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionHandler": ((MongoDbEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((MongoDbEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((MongoDbEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((MongoDbEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "cursorRegenerationDelay": ((MongoDbEndpoint) target).setCursorRegenerationDelay(property(camelContext, long.class, value)); return true;
-        case "dynamicity": ((MongoDbEndpoint) target).setDynamicity(property(camelContext, boolean.class, value)); return true;
-        case "readPreference": ((MongoDbEndpoint) target).setReadPreference(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": ((MongoDbEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "writeConcern": ((MongoDbEndpoint) target).setWriteConcern(property(camelContext, java.lang.String.class, value)); return true;
-        case "writeResultAsHeader": ((MongoDbEndpoint) target).setWriteResultAsHeader(property(camelContext, boolean.class, value)); return true;
-        case "streamFilter": ((MongoDbEndpoint) target).setStreamFilter(property(camelContext, java.lang.String.class, value)); return true;
-        case "persistentId": ((MongoDbEndpoint) target).setPersistentId(property(camelContext, java.lang.String.class, value)); return true;
-        case "persistentTailTracking": ((MongoDbEndpoint) target).setPersistentTailTracking(property(camelContext, boolean.class, value)); return true;
-        case "tailTrackCollection": ((MongoDbEndpoint) target).setTailTrackCollection(property(camelContext, java.lang.String.class, value)); return true;
-        case "tailTrackDb": ((MongoDbEndpoint) target).setTailTrackDb(property(camelContext, java.lang.String.class, value)); return true;
-        case "tailTrackField": ((MongoDbEndpoint) target).setTailTrackField(property(camelContext, java.lang.String.class, value)); return true;
-        case "tailTrackIncreasingField": ((MongoDbEndpoint) target).setTailTrackIncreasingField(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "collection": ((MongoDbEndpoint) target).setCollection(property(camelContext, java.lang.String.class, value)); return true;
-        case "collectionindex": ((MongoDbEndpoint) target).setCollectionIndex(property(camelContext, java.lang.String.class, value)); return true;
-        case "createcollection": ((MongoDbEndpoint) target).setCreateCollection(property(camelContext, boolean.class, value)); return true;
-        case "database": ((MongoDbEndpoint) target).setDatabase(property(camelContext, java.lang.String.class, value)); return true;
-        case "mongoconnection": ((MongoDbEndpoint) target).setMongoConnection(property(camelContext, com.mongodb.client.MongoClient.class, value)); return true;
-        case "operation": ((MongoDbEndpoint) target).setOperation(property(camelContext, org.apache.camel.component.mongodb.MongoDbOperation.class, value)); return true;
-        case "outputtype": ((MongoDbEndpoint) target).setOutputType(property(camelContext, org.apache.camel.component.mongodb.MongoDbOutputType.class, value)); return true;
-        case "bridgeerrorhandler": ((MongoDbEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "consumertype": ((MongoDbEndpoint) target).setConsumerType(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionhandler": ((MongoDbEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((MongoDbEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((MongoDbEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((MongoDbEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "cursorregenerationdelay": ((MongoDbEndpoint) target).setCursorRegenerationDelay(property(camelContext, long.class, value)); return true;
-        case "dynamicity": ((MongoDbEndpoint) target).setDynamicity(property(camelContext, boolean.class, value)); return true;
-        case "readpreference": ((MongoDbEndpoint) target).setReadPreference(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": ((MongoDbEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "writeconcern": ((MongoDbEndpoint) target).setWriteConcern(property(camelContext, java.lang.String.class, value)); return true;
-        case "writeresultasheader": ((MongoDbEndpoint) target).setWriteResultAsHeader(property(camelContext, boolean.class, value)); return true;
-        case "streamfilter": ((MongoDbEndpoint) target).setStreamFilter(property(camelContext, java.lang.String.class, value)); return true;
-        case "persistentid": ((MongoDbEndpoint) target).setPersistentId(property(camelContext, java.lang.String.class, value)); return true;
-        case "persistenttailtracking": ((MongoDbEndpoint) target).setPersistentTailTracking(property(camelContext, boolean.class, value)); return true;
-        case "tailtrackcollection": ((MongoDbEndpoint) target).setTailTrackCollection(property(camelContext, java.lang.String.class, value)); return true;
-        case "tailtrackdb": ((MongoDbEndpoint) target).setTailTrackDb(property(camelContext, java.lang.String.class, value)); return true;
-        case "tailtrackfield": ((MongoDbEndpoint) target).setTailTrackField(property(camelContext, java.lang.String.class, value)); return true;
-        case "tailtrackincreasingfield": ((MongoDbEndpoint) target).setTailTrackIncreasingField(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        MongoDbEndpoint target = (MongoDbEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "collection": target.setCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "collectionindex":
+        case "collectionIndex": target.setCollectionIndex(property(camelContext, java.lang.String.class, value)); return true;
+        case "createcollection":
+        case "createCollection": target.setCreateCollection(property(camelContext, boolean.class, value)); return true;
+        case "database": target.setDatabase(property(camelContext, java.lang.String.class, value)); return true;
+        case "mongoconnection":
+        case "mongoConnection": target.setMongoConnection(property(camelContext, com.mongodb.client.MongoClient.class, value)); return true;
+        case "operation": target.setOperation(property(camelContext, org.apache.camel.component.mongodb.MongoDbOperation.class, value)); return true;
+        case "outputtype":
+        case "outputType": target.setOutputType(property(camelContext, org.apache.camel.component.mongodb.MongoDbOutputType.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "consumertype":
+        case "consumerType": target.setConsumerType(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "cursorregenerationdelay":
+        case "cursorRegenerationDelay": target.setCursorRegenerationDelay(property(camelContext, long.class, value)); return true;
+        case "dynamicity": target.setDynamicity(property(camelContext, boolean.class, value)); return true;
+        case "readpreference":
+        case "readPreference": target.setReadPreference(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "writeconcern":
+        case "writeConcern": target.setWriteConcern(property(camelContext, java.lang.String.class, value)); return true;
+        case "writeresultasheader":
+        case "writeResultAsHeader": target.setWriteResultAsHeader(property(camelContext, boolean.class, value)); return true;
+        case "streamfilter":
+        case "streamFilter": target.setStreamFilter(property(camelContext, java.lang.String.class, value)); return true;
+        case "persistentid":
+        case "persistentId": target.setPersistentId(property(camelContext, java.lang.String.class, value)); return true;
+        case "persistenttailtracking":
+        case "persistentTailTracking": target.setPersistentTailTracking(property(camelContext, boolean.class, value)); return true;
+        case "tailtrackcollection":
+        case "tailTrackCollection": target.setTailTrackCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "tailtrackdb":
+        case "tailTrackDb": target.setTailTrackDb(property(camelContext, java.lang.String.class, value)); return true;
+        case "tailtrackfield":
+        case "tailTrackField": target.setTailTrackField(property(camelContext, java.lang.String.class, value)); return true;
+        case "tailtrackincreasingfield":
+        case "tailTrackIncreasingField": target.setTailTrackIncreasingField(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

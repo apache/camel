@@ -12,37 +12,24 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class BeanValidatorComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "ignoreXmlConfiguration": ((BeanValidatorComponent) target).setIgnoreXmlConfiguration(property(camelContext, boolean.class, value)); return true;
-        case "validationProviderResolver": ((BeanValidatorComponent) target).setValidationProviderResolver(property(camelContext, javax.validation.ValidationProviderResolver.class, value)); return true;
-        case "messageInterpolator": ((BeanValidatorComponent) target).setMessageInterpolator(property(camelContext, javax.validation.MessageInterpolator.class, value)); return true;
-        case "traversableResolver": ((BeanValidatorComponent) target).setTraversableResolver(property(camelContext, javax.validation.TraversableResolver.class, value)); return true;
-        case "constraintValidatorFactory": ((BeanValidatorComponent) target).setConstraintValidatorFactory(property(camelContext, javax.validation.ConstraintValidatorFactory.class, value)); return true;
-        case "basicPropertyBinding": ((BeanValidatorComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((BeanValidatorComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "ignorexmlconfiguration": ((BeanValidatorComponent) target).setIgnoreXmlConfiguration(property(camelContext, boolean.class, value)); return true;
-        case "validationproviderresolver": ((BeanValidatorComponent) target).setValidationProviderResolver(property(camelContext, javax.validation.ValidationProviderResolver.class, value)); return true;
-        case "messageinterpolator": ((BeanValidatorComponent) target).setMessageInterpolator(property(camelContext, javax.validation.MessageInterpolator.class, value)); return true;
-        case "traversableresolver": ((BeanValidatorComponent) target).setTraversableResolver(property(camelContext, javax.validation.TraversableResolver.class, value)); return true;
-        case "constraintvalidatorfactory": ((BeanValidatorComponent) target).setConstraintValidatorFactory(property(camelContext, javax.validation.ConstraintValidatorFactory.class, value)); return true;
-        case "basicpropertybinding": ((BeanValidatorComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((BeanValidatorComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        BeanValidatorComponent target = (BeanValidatorComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "ignorexmlconfiguration":
+        case "ignoreXmlConfiguration": target.setIgnoreXmlConfiguration(property(camelContext, boolean.class, value)); return true;
+        case "validationproviderresolver":
+        case "validationProviderResolver": target.setValidationProviderResolver(property(camelContext, javax.validation.ValidationProviderResolver.class, value)); return true;
+        case "messageinterpolator":
+        case "messageInterpolator": target.setMessageInterpolator(property(camelContext, javax.validation.MessageInterpolator.class, value)); return true;
+        case "traversableresolver":
+        case "traversableResolver": target.setTraversableResolver(property(camelContext, javax.validation.TraversableResolver.class, value)); return true;
+        case "constraintvalidatorfactory":
+        case "constraintValidatorFactory": target.setConstraintValidatorFactory(property(camelContext, javax.validation.ConstraintValidatorFactory.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

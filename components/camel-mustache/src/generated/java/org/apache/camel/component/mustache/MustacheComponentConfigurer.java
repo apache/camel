@@ -12,29 +12,16 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class MustacheComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "mustacheFactory": ((MustacheComponent) target).setMustacheFactory(property(camelContext, com.github.mustachejava.MustacheFactory.class, value)); return true;
-        case "basicPropertyBinding": ((MustacheComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((MustacheComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "mustachefactory": ((MustacheComponent) target).setMustacheFactory(property(camelContext, com.github.mustachejava.MustacheFactory.class, value)); return true;
-        case "basicpropertybinding": ((MustacheComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((MustacheComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        MustacheComponent target = (MustacheComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "mustachefactory":
+        case "mustacheFactory": target.setMustacheFactory(property(camelContext, com.github.mustachejava.MustacheFactory.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

@@ -12,51 +12,30 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class CouchDbEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "createDatabase": ((CouchDbEndpoint) target).setCreateDatabase(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((CouchDbEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "deletes": ((CouchDbEndpoint) target).setDeletes(property(camelContext, boolean.class, value)); return true;
-        case "heartbeat": ((CouchDbEndpoint) target).setHeartbeat(property(camelContext, long.class, value)); return true;
-        case "since": ((CouchDbEndpoint) target).setSince(property(camelContext, java.lang.String.class, value)); return true;
-        case "style": ((CouchDbEndpoint) target).setStyle(property(camelContext, java.lang.String.class, value)); return true;
-        case "updates": ((CouchDbEndpoint) target).setUpdates(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((CouchDbEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((CouchDbEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((CouchDbEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((CouchDbEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((CouchDbEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "password": ((CouchDbEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((CouchDbEndpoint) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "createdatabase": ((CouchDbEndpoint) target).setCreateDatabase(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((CouchDbEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "deletes": ((CouchDbEndpoint) target).setDeletes(property(camelContext, boolean.class, value)); return true;
-        case "heartbeat": ((CouchDbEndpoint) target).setHeartbeat(property(camelContext, long.class, value)); return true;
-        case "since": ((CouchDbEndpoint) target).setSince(property(camelContext, java.lang.String.class, value)); return true;
-        case "style": ((CouchDbEndpoint) target).setStyle(property(camelContext, java.lang.String.class, value)); return true;
-        case "updates": ((CouchDbEndpoint) target).setUpdates(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((CouchDbEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((CouchDbEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((CouchDbEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((CouchDbEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((CouchDbEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "password": ((CouchDbEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((CouchDbEndpoint) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        CouchDbEndpoint target = (CouchDbEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "createdatabase":
+        case "createDatabase": target.setCreateDatabase(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "deletes": target.setDeletes(property(camelContext, boolean.class, value)); return true;
+        case "heartbeat": target.setHeartbeat(property(camelContext, long.class, value)); return true;
+        case "since": target.setSince(property(camelContext, java.lang.String.class, value)); return true;
+        case "style": target.setStyle(property(camelContext, java.lang.String.class, value)); return true;
+        case "updates": target.setUpdates(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

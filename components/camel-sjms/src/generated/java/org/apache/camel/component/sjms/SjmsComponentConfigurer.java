@@ -12,57 +12,44 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class SjmsComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "connectionFactory": ((SjmsComponent) target).setConnectionFactory(property(camelContext, javax.jms.ConnectionFactory.class, value)); return true;
-        case "connectionResource": ((SjmsComponent) target).setConnectionResource(property(camelContext, org.apache.camel.component.sjms.jms.ConnectionResource.class, value)); return true;
-        case "connectionCount": ((SjmsComponent) target).setConnectionCount(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "jmsKeyFormatStrategy": ((SjmsComponent) target).setJmsKeyFormatStrategy(property(camelContext, org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class, value)); return true;
-        case "transactionCommitStrategy": ((SjmsComponent) target).setTransactionCommitStrategy(property(camelContext, org.apache.camel.component.sjms.TransactionCommitStrategy.class, value)); return true;
-        case "destinationCreationStrategy": ((SjmsComponent) target).setDestinationCreationStrategy(property(camelContext, org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class, value)); return true;
-        case "timedTaskManager": ((SjmsComponent) target).setTimedTaskManager(property(camelContext, org.apache.camel.component.sjms.taskmanager.TimedTaskManager.class, value)); return true;
-        case "messageCreatedStrategy": ((SjmsComponent) target).setMessageCreatedStrategy(property(camelContext, org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class, value)); return true;
-        case "connectionTestOnBorrow": ((SjmsComponent) target).setConnectionTestOnBorrow(property(camelContext, boolean.class, value)); return true;
-        case "connectionUsername": ((SjmsComponent) target).setConnectionUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "connectionPassword": ((SjmsComponent) target).setConnectionPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "connectionClientId": ((SjmsComponent) target).setConnectionClientId(property(camelContext, java.lang.String.class, value)); return true;
-        case "connectionMaxWait": ((SjmsComponent) target).setConnectionMaxWait(property(camelContext, long.class, value)); return true;
-        case "headerFilterStrategy": ((SjmsComponent) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "basicPropertyBinding": ((SjmsComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((SjmsComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((SjmsComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "connectionfactory": ((SjmsComponent) target).setConnectionFactory(property(camelContext, javax.jms.ConnectionFactory.class, value)); return true;
-        case "connectionresource": ((SjmsComponent) target).setConnectionResource(property(camelContext, org.apache.camel.component.sjms.jms.ConnectionResource.class, value)); return true;
-        case "connectioncount": ((SjmsComponent) target).setConnectionCount(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "jmskeyformatstrategy": ((SjmsComponent) target).setJmsKeyFormatStrategy(property(camelContext, org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class, value)); return true;
-        case "transactioncommitstrategy": ((SjmsComponent) target).setTransactionCommitStrategy(property(camelContext, org.apache.camel.component.sjms.TransactionCommitStrategy.class, value)); return true;
-        case "destinationcreationstrategy": ((SjmsComponent) target).setDestinationCreationStrategy(property(camelContext, org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class, value)); return true;
-        case "timedtaskmanager": ((SjmsComponent) target).setTimedTaskManager(property(camelContext, org.apache.camel.component.sjms.taskmanager.TimedTaskManager.class, value)); return true;
-        case "messagecreatedstrategy": ((SjmsComponent) target).setMessageCreatedStrategy(property(camelContext, org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class, value)); return true;
-        case "connectiontestonborrow": ((SjmsComponent) target).setConnectionTestOnBorrow(property(camelContext, boolean.class, value)); return true;
-        case "connectionusername": ((SjmsComponent) target).setConnectionUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "connectionpassword": ((SjmsComponent) target).setConnectionPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "connectionclientid": ((SjmsComponent) target).setConnectionClientId(property(camelContext, java.lang.String.class, value)); return true;
-        case "connectionmaxwait": ((SjmsComponent) target).setConnectionMaxWait(property(camelContext, long.class, value)); return true;
-        case "headerfilterstrategy": ((SjmsComponent) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "basicpropertybinding": ((SjmsComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((SjmsComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((SjmsComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        SjmsComponent target = (SjmsComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "connectionfactory":
+        case "connectionFactory": target.setConnectionFactory(property(camelContext, javax.jms.ConnectionFactory.class, value)); return true;
+        case "connectionresource":
+        case "connectionResource": target.setConnectionResource(property(camelContext, org.apache.camel.component.sjms.jms.ConnectionResource.class, value)); return true;
+        case "connectioncount":
+        case "connectionCount": target.setConnectionCount(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "jmskeyformatstrategy":
+        case "jmsKeyFormatStrategy": target.setJmsKeyFormatStrategy(property(camelContext, org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class, value)); return true;
+        case "transactioncommitstrategy":
+        case "transactionCommitStrategy": target.setTransactionCommitStrategy(property(camelContext, org.apache.camel.component.sjms.TransactionCommitStrategy.class, value)); return true;
+        case "destinationcreationstrategy":
+        case "destinationCreationStrategy": target.setDestinationCreationStrategy(property(camelContext, org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class, value)); return true;
+        case "timedtaskmanager":
+        case "timedTaskManager": target.setTimedTaskManager(property(camelContext, org.apache.camel.component.sjms.taskmanager.TimedTaskManager.class, value)); return true;
+        case "messagecreatedstrategy":
+        case "messageCreatedStrategy": target.setMessageCreatedStrategy(property(camelContext, org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class, value)); return true;
+        case "connectiontestonborrow":
+        case "connectionTestOnBorrow": target.setConnectionTestOnBorrow(property(camelContext, boolean.class, value)); return true;
+        case "connectionusername":
+        case "connectionUsername": target.setConnectionUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "connectionpassword":
+        case "connectionPassword": target.setConnectionPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "connectionclientid":
+        case "connectionClientId": target.setConnectionClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "connectionmaxwait":
+        case "connectionMaxWait": target.setConnectionMaxWait(property(camelContext, long.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

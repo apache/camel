@@ -12,69 +12,52 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class TwilioEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "inBody": ((TwilioEndpoint) target).setInBody(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((TwilioEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "sendEmptyMessageWhenIdle": ((TwilioEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((TwilioEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((TwilioEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollStrategy": ((TwilioEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "lazyStartProducer": ((TwilioEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((TwilioEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((TwilioEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "backoffErrorThreshold": ((TwilioEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffIdleThreshold": ((TwilioEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffMultiplier": ((TwilioEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((TwilioEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((TwilioEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialDelay": ((TwilioEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatCount": ((TwilioEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runLoggingLevel": ((TwilioEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledExecutorService": ((TwilioEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((TwilioEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerProperties": ((TwilioEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startScheduler": ((TwilioEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeUnit": ((TwilioEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "useFixedDelay": ((TwilioEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "inbody": ((TwilioEndpoint) target).setInBody(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((TwilioEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "sendemptymessagewhenidle": ((TwilioEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((TwilioEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((TwilioEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollstrategy": ((TwilioEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "lazystartproducer": ((TwilioEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((TwilioEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((TwilioEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "backofferrorthreshold": ((TwilioEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffidlethreshold": ((TwilioEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffmultiplier": ((TwilioEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((TwilioEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((TwilioEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialdelay": ((TwilioEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatcount": ((TwilioEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runlogginglevel": ((TwilioEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledexecutorservice": ((TwilioEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((TwilioEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerproperties": ((TwilioEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startscheduler": ((TwilioEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeunit": ((TwilioEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "usefixeddelay": ((TwilioEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        TwilioEndpoint target = (TwilioEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "inbody":
+        case "inBody": target.setInBody(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffmultiplier":
+        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "repeatcount":
+        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "runlogginglevel":
+        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "schedulerproperties":
+        case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "startscheduler":
+        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "timeunit":
+        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "usefixeddelay":
+        case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

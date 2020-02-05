@@ -12,87 +12,66 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class AbstractEtcdPollingEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "recursive": ((AbstractEtcdPollingEndpoint) target).getConfiguration().setRecursive(property(camelContext, boolean.class, value)); return true;
-        case "servicePath": ((AbstractEtcdPollingEndpoint) target).getConfiguration().setServicePath(property(camelContext, java.lang.String.class, value)); return true;
-        case "timeout": ((AbstractEtcdPollingEndpoint) target).getConfiguration().setTimeout(property(camelContext, java.lang.Long.class, value)); return true;
-        case "uris": ((AbstractEtcdPollingEndpoint) target).getConfiguration().setUris(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((AbstractEtcdPollingEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "sendEmptyExchangeOnTimeout": ((AbstractEtcdPollingEndpoint) target).getConfiguration().setSendEmptyExchangeOnTimeout(property(camelContext, boolean.class, value)); return true;
-        case "sendEmptyMessageWhenIdle": ((AbstractEtcdPollingEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((AbstractEtcdPollingEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((AbstractEtcdPollingEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "fromIndex": ((AbstractEtcdPollingEndpoint) target).getConfiguration().setFromIndex(property(camelContext, java.lang.Long.class, value)); return true;
-        case "pollStrategy": ((AbstractEtcdPollingEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "lazyStartProducer": ((AbstractEtcdPollingEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "timeToLive": ((AbstractEtcdPollingEndpoint) target).getConfiguration().setTimeToLive(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "basicPropertyBinding": ((AbstractEtcdPollingEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((AbstractEtcdPollingEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "backoffErrorThreshold": ((AbstractEtcdPollingEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffIdleThreshold": ((AbstractEtcdPollingEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffMultiplier": ((AbstractEtcdPollingEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((AbstractEtcdPollingEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((AbstractEtcdPollingEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialDelay": ((AbstractEtcdPollingEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatCount": ((AbstractEtcdPollingEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runLoggingLevel": ((AbstractEtcdPollingEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledExecutorService": ((AbstractEtcdPollingEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((AbstractEtcdPollingEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerProperties": ((AbstractEtcdPollingEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startScheduler": ((AbstractEtcdPollingEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeUnit": ((AbstractEtcdPollingEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "useFixedDelay": ((AbstractEtcdPollingEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "password": ((AbstractEtcdPollingEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "sslContextParameters": ((AbstractEtcdPollingEndpoint) target).getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "userName": ((AbstractEtcdPollingEndpoint) target).getConfiguration().setUserName(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "recursive": ((AbstractEtcdPollingEndpoint) target).getConfiguration().setRecursive(property(camelContext, boolean.class, value)); return true;
-        case "servicepath": ((AbstractEtcdPollingEndpoint) target).getConfiguration().setServicePath(property(camelContext, java.lang.String.class, value)); return true;
-        case "timeout": ((AbstractEtcdPollingEndpoint) target).getConfiguration().setTimeout(property(camelContext, java.lang.Long.class, value)); return true;
-        case "uris": ((AbstractEtcdPollingEndpoint) target).getConfiguration().setUris(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((AbstractEtcdPollingEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "sendemptyexchangeontimeout": ((AbstractEtcdPollingEndpoint) target).getConfiguration().setSendEmptyExchangeOnTimeout(property(camelContext, boolean.class, value)); return true;
-        case "sendemptymessagewhenidle": ((AbstractEtcdPollingEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((AbstractEtcdPollingEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((AbstractEtcdPollingEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "fromindex": ((AbstractEtcdPollingEndpoint) target).getConfiguration().setFromIndex(property(camelContext, java.lang.Long.class, value)); return true;
-        case "pollstrategy": ((AbstractEtcdPollingEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "lazystartproducer": ((AbstractEtcdPollingEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "timetolive": ((AbstractEtcdPollingEndpoint) target).getConfiguration().setTimeToLive(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "basicpropertybinding": ((AbstractEtcdPollingEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((AbstractEtcdPollingEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "backofferrorthreshold": ((AbstractEtcdPollingEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffidlethreshold": ((AbstractEtcdPollingEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffmultiplier": ((AbstractEtcdPollingEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((AbstractEtcdPollingEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((AbstractEtcdPollingEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialdelay": ((AbstractEtcdPollingEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatcount": ((AbstractEtcdPollingEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runlogginglevel": ((AbstractEtcdPollingEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledexecutorservice": ((AbstractEtcdPollingEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((AbstractEtcdPollingEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerproperties": ((AbstractEtcdPollingEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startscheduler": ((AbstractEtcdPollingEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeunit": ((AbstractEtcdPollingEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "usefixeddelay": ((AbstractEtcdPollingEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "password": ((AbstractEtcdPollingEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "sslcontextparameters": ((AbstractEtcdPollingEndpoint) target).getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "username": ((AbstractEtcdPollingEndpoint) target).getConfiguration().setUserName(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        AbstractEtcdPollingEndpoint target = (AbstractEtcdPollingEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "recursive": target.getConfiguration().setRecursive(property(camelContext, boolean.class, value)); return true;
+        case "servicepath":
+        case "servicePath": target.getConfiguration().setServicePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        case "uris": target.getConfiguration().setUris(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "sendemptyexchangeontimeout":
+        case "sendEmptyExchangeOnTimeout": target.getConfiguration().setSendEmptyExchangeOnTimeout(property(camelContext, boolean.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "fromindex":
+        case "fromIndex": target.getConfiguration().setFromIndex(property(camelContext, java.lang.Long.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "timetolive":
+        case "timeToLive": target.getConfiguration().setTimeToLive(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffmultiplier":
+        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "repeatcount":
+        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "runlogginglevel":
+        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "schedulerproperties":
+        case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "startscheduler":
+        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "timeunit":
+        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "usefixeddelay":
+        case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "username":
+        case "userName": target.getConfiguration().setUserName(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

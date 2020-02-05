@@ -12,79 +12,63 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "useStreaming": ((UndertowEndpoint) target).setUseStreaming(property(camelContext, boolean.class, value)); return true;
-        case "accessLog": ((UndertowEndpoint) target).setAccessLog(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((UndertowEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "httpMethodRestrict": ((UndertowEndpoint) target).setHttpMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
-        case "matchOnUriPrefix": ((UndertowEndpoint) target).setMatchOnUriPrefix(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "muteException": ((UndertowEndpoint) target).setMuteException(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "optionsEnabled": ((UndertowEndpoint) target).setOptionsEnabled(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((UndertowEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((UndertowEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "handlers": ((UndertowEndpoint) target).setHandlers(property(camelContext, java.lang.String.class, value)); return true;
-        case "cookieHandler": ((UndertowEndpoint) target).setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
-        case "keepAlive": ((UndertowEndpoint) target).setKeepAlive(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "lazyStartProducer": ((UndertowEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "options": ((UndertowEndpoint) target).setOptions(property(camelContext, java.util.Map.class, value)); return true;
-        case "preserveHostHeader": ((UndertowEndpoint) target).setPreserveHostHeader(property(camelContext, boolean.class, value)); return true;
-        case "reuseAddresses": ((UndertowEndpoint) target).setReuseAddresses(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "tcpNoDelay": ((UndertowEndpoint) target).setTcpNoDelay(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "throwExceptionOnFailure": ((UndertowEndpoint) target).setThrowExceptionOnFailure(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "transferException": ((UndertowEndpoint) target).setTransferException(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "accessLogReceiver": ((UndertowEndpoint) target).setAccessLogReceiver(property(camelContext, io.undertow.server.handlers.accesslog.AccessLogReceiver.class, value)); return true;
-        case "basicPropertyBinding": ((UndertowEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "headerFilterStrategy": ((UndertowEndpoint) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "synchronous": ((UndertowEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "undertowHttpBinding": ((UndertowEndpoint) target).setUndertowHttpBinding(property(camelContext, org.apache.camel.component.undertow.UndertowHttpBinding.class, value)); return true;
-        case "fireWebSocketChannelEvents": ((UndertowEndpoint) target).setFireWebSocketChannelEvents(property(camelContext, boolean.class, value)); return true;
-        case "sendTimeout": ((UndertowEndpoint) target).setSendTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "sendToAll": ((UndertowEndpoint) target).setSendToAll(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "sslContextParameters": ((UndertowEndpoint) target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "usestreaming": ((UndertowEndpoint) target).setUseStreaming(property(camelContext, boolean.class, value)); return true;
-        case "accesslog": ((UndertowEndpoint) target).setAccessLog(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((UndertowEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "httpmethodrestrict": ((UndertowEndpoint) target).setHttpMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
-        case "matchonuriprefix": ((UndertowEndpoint) target).setMatchOnUriPrefix(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "muteexception": ((UndertowEndpoint) target).setMuteException(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "optionsenabled": ((UndertowEndpoint) target).setOptionsEnabled(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((UndertowEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((UndertowEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "handlers": ((UndertowEndpoint) target).setHandlers(property(camelContext, java.lang.String.class, value)); return true;
-        case "cookiehandler": ((UndertowEndpoint) target).setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
-        case "keepalive": ((UndertowEndpoint) target).setKeepAlive(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "lazystartproducer": ((UndertowEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "options": ((UndertowEndpoint) target).setOptions(property(camelContext, java.util.Map.class, value)); return true;
-        case "preservehostheader": ((UndertowEndpoint) target).setPreserveHostHeader(property(camelContext, boolean.class, value)); return true;
-        case "reuseaddresses": ((UndertowEndpoint) target).setReuseAddresses(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "tcpnodelay": ((UndertowEndpoint) target).setTcpNoDelay(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "throwexceptiononfailure": ((UndertowEndpoint) target).setThrowExceptionOnFailure(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "transferexception": ((UndertowEndpoint) target).setTransferException(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "accesslogreceiver": ((UndertowEndpoint) target).setAccessLogReceiver(property(camelContext, io.undertow.server.handlers.accesslog.AccessLogReceiver.class, value)); return true;
-        case "basicpropertybinding": ((UndertowEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "headerfilterstrategy": ((UndertowEndpoint) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "synchronous": ((UndertowEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "undertowhttpbinding": ((UndertowEndpoint) target).setUndertowHttpBinding(property(camelContext, org.apache.camel.component.undertow.UndertowHttpBinding.class, value)); return true;
-        case "firewebsocketchannelevents": ((UndertowEndpoint) target).setFireWebSocketChannelEvents(property(camelContext, boolean.class, value)); return true;
-        case "sendtimeout": ((UndertowEndpoint) target).setSendTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "sendtoall": ((UndertowEndpoint) target).setSendToAll(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "sslcontextparameters": ((UndertowEndpoint) target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        UndertowEndpoint target = (UndertowEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "usestreaming":
+        case "useStreaming": target.setUseStreaming(property(camelContext, boolean.class, value)); return true;
+        case "accesslog":
+        case "accessLog": target.setAccessLog(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "httpmethodrestrict":
+        case "httpMethodRestrict": target.setHttpMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
+        case "matchonuriprefix":
+        case "matchOnUriPrefix": target.setMatchOnUriPrefix(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.setMuteException(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "optionsenabled":
+        case "optionsEnabled": target.setOptionsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "handlers": target.setHandlers(property(camelContext, java.lang.String.class, value)); return true;
+        case "cookiehandler":
+        case "cookieHandler": target.setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
+        case "keepalive":
+        case "keepAlive": target.setKeepAlive(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "options": target.setOptions(property(camelContext, java.util.Map.class, value)); return true;
+        case "preservehostheader":
+        case "preserveHostHeader": target.setPreserveHostHeader(property(camelContext, boolean.class, value)); return true;
+        case "reuseaddresses":
+        case "reuseAddresses": target.setReuseAddresses(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "tcpnodelay":
+        case "tcpNoDelay": target.setTcpNoDelay(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": target.setThrowExceptionOnFailure(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "transferexception":
+        case "transferException": target.setTransferException(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "accesslogreceiver":
+        case "accessLogReceiver": target.setAccessLogReceiver(property(camelContext, io.undertow.server.handlers.accesslog.AccessLogReceiver.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "undertowhttpbinding":
+        case "undertowHttpBinding": target.setUndertowHttpBinding(property(camelContext, org.apache.camel.component.undertow.UndertowHttpBinding.class, value)); return true;
+        case "firewebsocketchannelevents":
+        case "fireWebSocketChannelEvents": target.setFireWebSocketChannelEvents(property(camelContext, boolean.class, value)); return true;
+        case "sendtimeout":
+        case "sendTimeout": target.setSendTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "sendtoall":
+        case "sendToAll": target.setSendToAll(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        default: return false;
         }
     }
 

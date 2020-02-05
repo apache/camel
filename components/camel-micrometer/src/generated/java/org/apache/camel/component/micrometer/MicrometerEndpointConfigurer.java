@@ -12,37 +12,19 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "action": ((MicrometerEndpoint) target).setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "decrement": ((MicrometerEndpoint) target).setDecrement(property(camelContext, java.lang.String.class, value)); return true;
-        case "increment": ((MicrometerEndpoint) target).setIncrement(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazyStartProducer": ((MicrometerEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "value": ((MicrometerEndpoint) target).setValue(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((MicrometerEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((MicrometerEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "action": ((MicrometerEndpoint) target).setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "decrement": ((MicrometerEndpoint) target).setDecrement(property(camelContext, java.lang.String.class, value)); return true;
-        case "increment": ((MicrometerEndpoint) target).setIncrement(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer": ((MicrometerEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "value": ((MicrometerEndpoint) target).setValue(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((MicrometerEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((MicrometerEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        MicrometerEndpoint target = (MicrometerEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": target.setAction(property(camelContext, java.lang.String.class, value)); return true;
+        case "decrement": target.setDecrement(property(camelContext, java.lang.String.class, value)); return true;
+        case "increment": target.setIncrement(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "value": target.setValue(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

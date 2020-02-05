@@ -12,65 +12,49 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class BlobServiceEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "azureBlobClient": ((BlobServiceEndpoint) target).getConfiguration().setAzureBlobClient(property(camelContext, com.microsoft.azure.storage.blob.CloudBlob.class, value)); return true;
-        case "blobOffset": ((BlobServiceEndpoint) target).getConfiguration().setBlobOffset(property(camelContext, java.lang.Long.class, value)); return true;
-        case "blobType": ((BlobServiceEndpoint) target).getConfiguration().setBlobType(property(camelContext, org.apache.camel.component.azure.blob.BlobType.class, value)); return true;
-        case "closeStreamAfterRead": ((BlobServiceEndpoint) target).getConfiguration().setCloseStreamAfterRead(property(camelContext, boolean.class, value)); return true;
-        case "credentials": ((BlobServiceEndpoint) target).getConfiguration().setCredentials(property(camelContext, com.microsoft.azure.storage.StorageCredentials.class, value)); return true;
-        case "dataLength": ((BlobServiceEndpoint) target).getConfiguration().setDataLength(property(camelContext, java.lang.Long.class, value)); return true;
-        case "fileDir": ((BlobServiceEndpoint) target).getConfiguration().setFileDir(property(camelContext, java.lang.String.class, value)); return true;
-        case "publicForRead": ((BlobServiceEndpoint) target).getConfiguration().setPublicForRead(property(camelContext, boolean.class, value)); return true;
-        case "streamReadSize": ((BlobServiceEndpoint) target).getConfiguration().setStreamReadSize(property(camelContext, int.class, value)); return true;
-        case "bridgeErrorHandler": ((BlobServiceEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((BlobServiceEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((BlobServiceEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "blobMetadata": ((BlobServiceEndpoint) target).getConfiguration().setBlobMetadata(property(camelContext, java.util.Map.class, value)); return true;
-        case "blobPrefix": ((BlobServiceEndpoint) target).getConfiguration().setBlobPrefix(property(camelContext, java.lang.String.class, value)); return true;
-        case "closeStreamAfterWrite": ((BlobServiceEndpoint) target).getConfiguration().setCloseStreamAfterWrite(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((BlobServiceEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": ((BlobServiceEndpoint) target).getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.blob.BlobServiceOperations.class, value)); return true;
-        case "streamWriteSize": ((BlobServiceEndpoint) target).getConfiguration().setStreamWriteSize(property(camelContext, int.class, value)); return true;
-        case "useFlatListing": ((BlobServiceEndpoint) target).getConfiguration().setUseFlatListing(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((BlobServiceEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((BlobServiceEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "azureblobclient": ((BlobServiceEndpoint) target).getConfiguration().setAzureBlobClient(property(camelContext, com.microsoft.azure.storage.blob.CloudBlob.class, value)); return true;
-        case "bloboffset": ((BlobServiceEndpoint) target).getConfiguration().setBlobOffset(property(camelContext, java.lang.Long.class, value)); return true;
-        case "blobtype": ((BlobServiceEndpoint) target).getConfiguration().setBlobType(property(camelContext, org.apache.camel.component.azure.blob.BlobType.class, value)); return true;
-        case "closestreamafterread": ((BlobServiceEndpoint) target).getConfiguration().setCloseStreamAfterRead(property(camelContext, boolean.class, value)); return true;
-        case "credentials": ((BlobServiceEndpoint) target).getConfiguration().setCredentials(property(camelContext, com.microsoft.azure.storage.StorageCredentials.class, value)); return true;
-        case "datalength": ((BlobServiceEndpoint) target).getConfiguration().setDataLength(property(camelContext, java.lang.Long.class, value)); return true;
-        case "filedir": ((BlobServiceEndpoint) target).getConfiguration().setFileDir(property(camelContext, java.lang.String.class, value)); return true;
-        case "publicforread": ((BlobServiceEndpoint) target).getConfiguration().setPublicForRead(property(camelContext, boolean.class, value)); return true;
-        case "streamreadsize": ((BlobServiceEndpoint) target).getConfiguration().setStreamReadSize(property(camelContext, int.class, value)); return true;
-        case "bridgeerrorhandler": ((BlobServiceEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((BlobServiceEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((BlobServiceEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "blobmetadata": ((BlobServiceEndpoint) target).getConfiguration().setBlobMetadata(property(camelContext, java.util.Map.class, value)); return true;
-        case "blobprefix": ((BlobServiceEndpoint) target).getConfiguration().setBlobPrefix(property(camelContext, java.lang.String.class, value)); return true;
-        case "closestreamafterwrite": ((BlobServiceEndpoint) target).getConfiguration().setCloseStreamAfterWrite(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((BlobServiceEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": ((BlobServiceEndpoint) target).getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.blob.BlobServiceOperations.class, value)); return true;
-        case "streamwritesize": ((BlobServiceEndpoint) target).getConfiguration().setStreamWriteSize(property(camelContext, int.class, value)); return true;
-        case "useflatlisting": ((BlobServiceEndpoint) target).getConfiguration().setUseFlatListing(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((BlobServiceEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((BlobServiceEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        BlobServiceEndpoint target = (BlobServiceEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "azureblobclient":
+        case "azureBlobClient": target.getConfiguration().setAzureBlobClient(property(camelContext, com.microsoft.azure.storage.blob.CloudBlob.class, value)); return true;
+        case "bloboffset":
+        case "blobOffset": target.getConfiguration().setBlobOffset(property(camelContext, java.lang.Long.class, value)); return true;
+        case "blobtype":
+        case "blobType": target.getConfiguration().setBlobType(property(camelContext, org.apache.camel.component.azure.blob.BlobType.class, value)); return true;
+        case "closestreamafterread":
+        case "closeStreamAfterRead": target.getConfiguration().setCloseStreamAfterRead(property(camelContext, boolean.class, value)); return true;
+        case "credentials": target.getConfiguration().setCredentials(property(camelContext, com.microsoft.azure.storage.StorageCredentials.class, value)); return true;
+        case "datalength":
+        case "dataLength": target.getConfiguration().setDataLength(property(camelContext, java.lang.Long.class, value)); return true;
+        case "filedir":
+        case "fileDir": target.getConfiguration().setFileDir(property(camelContext, java.lang.String.class, value)); return true;
+        case "publicforread":
+        case "publicForRead": target.getConfiguration().setPublicForRead(property(camelContext, boolean.class, value)); return true;
+        case "streamreadsize":
+        case "streamReadSize": target.getConfiguration().setStreamReadSize(property(camelContext, int.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "blobmetadata":
+        case "blobMetadata": target.getConfiguration().setBlobMetadata(property(camelContext, java.util.Map.class, value)); return true;
+        case "blobprefix":
+        case "blobPrefix": target.getConfiguration().setBlobPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "closestreamafterwrite":
+        case "closeStreamAfterWrite": target.getConfiguration().setCloseStreamAfterWrite(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.blob.BlobServiceOperations.class, value)); return true;
+        case "streamwritesize":
+        case "streamWriteSize": target.getConfiguration().setStreamWriteSize(property(camelContext, int.class, value)); return true;
+        case "useflatlisting":
+        case "useFlatListing": target.getConfiguration().setUseFlatListing(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

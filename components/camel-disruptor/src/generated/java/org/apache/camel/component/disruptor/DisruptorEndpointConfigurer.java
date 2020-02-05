@@ -12,51 +12,35 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class DisruptorEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "size": ((DisruptorEndpoint) target).setSize(property(camelContext, int.class, value)); return true;
-        case "bridgeErrorHandler": ((DisruptorEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "concurrentConsumers": ((DisruptorEndpoint) target).setConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "multipleConsumers": ((DisruptorEndpoint) target).setMultipleConsumers(property(camelContext, boolean.class, value)); return true;
-        case "waitStrategy": ((DisruptorEndpoint) target).setWaitStrategy(property(camelContext, org.apache.camel.component.disruptor.DisruptorWaitStrategy.class, value)); return true;
-        case "exceptionHandler": ((DisruptorEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((DisruptorEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "blockWhenFull": ((DisruptorEndpoint) target).setBlockWhenFull(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((DisruptorEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "producerType": ((DisruptorEndpoint) target).setProducerType(property(camelContext, org.apache.camel.component.disruptor.DisruptorProducerType.class, value)); return true;
-        case "timeout": ((DisruptorEndpoint) target).setTimeout(property(camelContext, long.class, value)); return true;
-        case "waitForTaskToComplete": ((DisruptorEndpoint) target).setWaitForTaskToComplete(property(camelContext, org.apache.camel.WaitForTaskToComplete.class, value)); return true;
-        case "basicPropertyBinding": ((DisruptorEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((DisruptorEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "size": ((DisruptorEndpoint) target).setSize(property(camelContext, int.class, value)); return true;
-        case "bridgeerrorhandler": ((DisruptorEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "concurrentconsumers": ((DisruptorEndpoint) target).setConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "multipleconsumers": ((DisruptorEndpoint) target).setMultipleConsumers(property(camelContext, boolean.class, value)); return true;
-        case "waitstrategy": ((DisruptorEndpoint) target).setWaitStrategy(property(camelContext, org.apache.camel.component.disruptor.DisruptorWaitStrategy.class, value)); return true;
-        case "exceptionhandler": ((DisruptorEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((DisruptorEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "blockwhenfull": ((DisruptorEndpoint) target).setBlockWhenFull(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((DisruptorEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "producertype": ((DisruptorEndpoint) target).setProducerType(property(camelContext, org.apache.camel.component.disruptor.DisruptorProducerType.class, value)); return true;
-        case "timeout": ((DisruptorEndpoint) target).setTimeout(property(camelContext, long.class, value)); return true;
-        case "waitfortasktocomplete": ((DisruptorEndpoint) target).setWaitForTaskToComplete(property(camelContext, org.apache.camel.WaitForTaskToComplete.class, value)); return true;
-        case "basicpropertybinding": ((DisruptorEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((DisruptorEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        DisruptorEndpoint target = (DisruptorEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "size": target.setSize(property(camelContext, int.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "concurrentconsumers":
+        case "concurrentConsumers": target.setConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "multipleconsumers":
+        case "multipleConsumers": target.setMultipleConsumers(property(camelContext, boolean.class, value)); return true;
+        case "waitstrategy":
+        case "waitStrategy": target.setWaitStrategy(property(camelContext, org.apache.camel.component.disruptor.DisruptorWaitStrategy.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "blockwhenfull":
+        case "blockWhenFull": target.setBlockWhenFull(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "producertype":
+        case "producerType": target.setProducerType(property(camelContext, org.apache.camel.component.disruptor.DisruptorProducerType.class, value)); return true;
+        case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
+        case "waitfortasktocomplete":
+        case "waitForTaskToComplete": target.setWaitForTaskToComplete(property(camelContext, org.apache.camel.WaitForTaskToComplete.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

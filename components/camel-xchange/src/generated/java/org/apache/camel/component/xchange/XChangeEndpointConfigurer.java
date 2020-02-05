@@ -12,37 +12,20 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class XChangeEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "currency": ((XChangeEndpoint) target).getConfiguration().setCurrency(property(camelContext, org.knowm.xchange.currency.Currency.class, value)); return true;
-        case "currencyPair": ((XChangeEndpoint) target).getConfiguration().setCurrencyPair(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazyStartProducer": ((XChangeEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "method": ((XChangeEndpoint) target).getConfiguration().setMethod(property(camelContext, org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod.class, value)); return true;
-        case "service": ((XChangeEndpoint) target).getConfiguration().setService(property(camelContext, org.apache.camel.component.xchange.XChangeConfiguration.XChangeService.class, value)); return true;
-        case "basicPropertyBinding": ((XChangeEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((XChangeEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "currency": ((XChangeEndpoint) target).getConfiguration().setCurrency(property(camelContext, org.knowm.xchange.currency.Currency.class, value)); return true;
-        case "currencypair": ((XChangeEndpoint) target).getConfiguration().setCurrencyPair(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer": ((XChangeEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "method": ((XChangeEndpoint) target).getConfiguration().setMethod(property(camelContext, org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod.class, value)); return true;
-        case "service": ((XChangeEndpoint) target).getConfiguration().setService(property(camelContext, org.apache.camel.component.xchange.XChangeConfiguration.XChangeService.class, value)); return true;
-        case "basicpropertybinding": ((XChangeEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((XChangeEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        XChangeEndpoint target = (XChangeEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "currency": target.getConfiguration().setCurrency(property(camelContext, org.knowm.xchange.currency.Currency.class, value)); return true;
+        case "currencypair":
+        case "currencyPair": target.getConfiguration().setCurrencyPair(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "method": target.getConfiguration().setMethod(property(camelContext, org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod.class, value)); return true;
+        case "service": target.getConfiguration().setService(property(camelContext, org.apache.camel.component.xchange.XChangeConfiguration.XChangeService.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

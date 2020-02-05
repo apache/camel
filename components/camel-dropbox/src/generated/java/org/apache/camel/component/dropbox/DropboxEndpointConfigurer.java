@@ -12,51 +12,35 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class DropboxEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "accessToken": ((DropboxEndpoint) target).getConfiguration().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "client": ((DropboxEndpoint) target).getConfiguration().setClient(property(camelContext, com.dropbox.core.v2.DbxClientV2.class, value)); return true;
-        case "clientIdentifier": ((DropboxEndpoint) target).getConfiguration().setClientIdentifier(property(camelContext, java.lang.String.class, value)); return true;
-        case "localPath": ((DropboxEndpoint) target).getConfiguration().setLocalPath(property(camelContext, java.lang.String.class, value)); return true;
-        case "newRemotePath": ((DropboxEndpoint) target).getConfiguration().setNewRemotePath(property(camelContext, java.lang.String.class, value)); return true;
-        case "query": ((DropboxEndpoint) target).getConfiguration().setQuery(property(camelContext, java.lang.String.class, value)); return true;
-        case "remotePath": ((DropboxEndpoint) target).getConfiguration().setRemotePath(property(camelContext, java.lang.String.class, value)); return true;
-        case "uploadMode": ((DropboxEndpoint) target).getConfiguration().setUploadMode(property(camelContext, org.apache.camel.component.dropbox.util.DropboxUploadMode.class, value)); return true;
-        case "bridgeErrorHandler": ((DropboxEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((DropboxEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((DropboxEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((DropboxEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((DropboxEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((DropboxEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "accesstoken": ((DropboxEndpoint) target).getConfiguration().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "client": ((DropboxEndpoint) target).getConfiguration().setClient(property(camelContext, com.dropbox.core.v2.DbxClientV2.class, value)); return true;
-        case "clientidentifier": ((DropboxEndpoint) target).getConfiguration().setClientIdentifier(property(camelContext, java.lang.String.class, value)); return true;
-        case "localpath": ((DropboxEndpoint) target).getConfiguration().setLocalPath(property(camelContext, java.lang.String.class, value)); return true;
-        case "newremotepath": ((DropboxEndpoint) target).getConfiguration().setNewRemotePath(property(camelContext, java.lang.String.class, value)); return true;
-        case "query": ((DropboxEndpoint) target).getConfiguration().setQuery(property(camelContext, java.lang.String.class, value)); return true;
-        case "remotepath": ((DropboxEndpoint) target).getConfiguration().setRemotePath(property(camelContext, java.lang.String.class, value)); return true;
-        case "uploadmode": ((DropboxEndpoint) target).getConfiguration().setUploadMode(property(camelContext, org.apache.camel.component.dropbox.util.DropboxUploadMode.class, value)); return true;
-        case "bridgeerrorhandler": ((DropboxEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((DropboxEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((DropboxEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((DropboxEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((DropboxEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((DropboxEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        DropboxEndpoint target = (DropboxEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": target.getConfiguration().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "client": target.getConfiguration().setClient(property(camelContext, com.dropbox.core.v2.DbxClientV2.class, value)); return true;
+        case "clientidentifier":
+        case "clientIdentifier": target.getConfiguration().setClientIdentifier(property(camelContext, java.lang.String.class, value)); return true;
+        case "localpath":
+        case "localPath": target.getConfiguration().setLocalPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "newremotepath":
+        case "newRemotePath": target.getConfiguration().setNewRemotePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "query": target.getConfiguration().setQuery(property(camelContext, java.lang.String.class, value)); return true;
+        case "remotepath":
+        case "remotePath": target.getConfiguration().setRemotePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "uploadmode":
+        case "uploadMode": target.getConfiguration().setUploadMode(property(camelContext, org.apache.camel.component.dropbox.util.DropboxUploadMode.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

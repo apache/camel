@@ -12,35 +12,22 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class FlinkComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "dataSet": ((FlinkComponent) target).setDataSet(property(camelContext, org.apache.flink.api.java.DataSet.class, value)); return true;
-        case "dataStream": ((FlinkComponent) target).setDataStream(property(camelContext, org.apache.flink.streaming.api.datastream.DataStream.class, value)); return true;
-        case "dataSetCallback": ((FlinkComponent) target).setDataSetCallback(property(camelContext, org.apache.camel.component.flink.DataSetCallback.class, value)); return true;
-        case "dataStreamCallback": ((FlinkComponent) target).setDataStreamCallback(property(camelContext, org.apache.camel.component.flink.DataStreamCallback.class, value)); return true;
-        case "basicPropertyBinding": ((FlinkComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((FlinkComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "dataset": ((FlinkComponent) target).setDataSet(property(camelContext, org.apache.flink.api.java.DataSet.class, value)); return true;
-        case "datastream": ((FlinkComponent) target).setDataStream(property(camelContext, org.apache.flink.streaming.api.datastream.DataStream.class, value)); return true;
-        case "datasetcallback": ((FlinkComponent) target).setDataSetCallback(property(camelContext, org.apache.camel.component.flink.DataSetCallback.class, value)); return true;
-        case "datastreamcallback": ((FlinkComponent) target).setDataStreamCallback(property(camelContext, org.apache.camel.component.flink.DataStreamCallback.class, value)); return true;
-        case "basicpropertybinding": ((FlinkComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((FlinkComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        FlinkComponent target = (FlinkComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "dataset":
+        case "dataSet": target.setDataSet(property(camelContext, org.apache.flink.api.java.DataSet.class, value)); return true;
+        case "datastream":
+        case "dataStream": target.setDataStream(property(camelContext, org.apache.flink.streaming.api.datastream.DataStream.class, value)); return true;
+        case "datasetcallback":
+        case "dataSetCallback": target.setDataSetCallback(property(camelContext, org.apache.camel.component.flink.DataSetCallback.class, value)); return true;
+        case "datastreamcallback":
+        case "dataStreamCallback": target.setDataStreamCallback(property(camelContext, org.apache.camel.component.flink.DataStreamCallback.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

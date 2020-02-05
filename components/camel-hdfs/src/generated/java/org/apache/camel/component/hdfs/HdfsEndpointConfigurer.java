@@ -12,117 +12,95 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class HdfsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "connectOnStartup": ((HdfsEndpoint) target).getConfig().setConnectOnStartup(property(camelContext, boolean.class, value)); return true;
-        case "fileSystemType": ((HdfsEndpoint) target).getConfig().setFileSystemType(property(camelContext, org.apache.camel.component.hdfs.HdfsFileSystemType.class, value)); return true;
-        case "fileType": ((HdfsEndpoint) target).getConfig().setFileType(property(camelContext, org.apache.camel.component.hdfs.HdfsFileType.class, value)); return true;
-        case "keyType": ((HdfsEndpoint) target).getConfig().setKeyType(property(camelContext, org.apache.camel.component.hdfs.WritableType.class, value)); return true;
-        case "namedNodes": ((HdfsEndpoint) target).getConfig().setNamedNodes(property(camelContext, java.lang.String.class, value)); return true;
-        case "owner": ((HdfsEndpoint) target).getConfig().setOwner(property(camelContext, java.lang.String.class, value)); return true;
-        case "valueType": ((HdfsEndpoint) target).getConfig().setValueType(property(camelContext, org.apache.camel.component.hdfs.WritableType.class, value)); return true;
-        case "bridgeErrorHandler": ((HdfsEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "pattern": ((HdfsEndpoint) target).getConfig().setPattern(property(camelContext, java.lang.String.class, value)); return true;
-        case "sendEmptyMessageWhenIdle": ((HdfsEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "streamDownload": ((HdfsEndpoint) target).getConfig().setStreamDownload(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((HdfsEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((HdfsEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollStrategy": ((HdfsEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "append": ((HdfsEndpoint) target).getConfig().setAppend(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((HdfsEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "overwrite": ((HdfsEndpoint) target).getConfig().setOverwrite(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((HdfsEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "blockSize": ((HdfsEndpoint) target).getConfig().setBlockSize(property(camelContext, long.class, value)); return true;
-        case "bufferSize": ((HdfsEndpoint) target).getConfig().setBufferSize(property(camelContext, int.class, value)); return true;
-        case "checkIdleInterval": ((HdfsEndpoint) target).getConfig().setCheckIdleInterval(property(camelContext, int.class, value)); return true;
-        case "chunkSize": ((HdfsEndpoint) target).getConfig().setChunkSize(property(camelContext, int.class, value)); return true;
-        case "compressionCodec": ((HdfsEndpoint) target).getConfig().setCompressionCodec(property(camelContext, org.apache.camel.component.hdfs.HdfsCompressionCodec.class, value)); return true;
-        case "compressionType": ((HdfsEndpoint) target).getConfig().setCompressionType(property(camelContext, org.apache.hadoop.io.SequenceFile.CompressionType.class, value)); return true;
-        case "openedSuffix": ((HdfsEndpoint) target).getConfig().setOpenedSuffix(property(camelContext, java.lang.String.class, value)); return true;
-        case "readSuffix": ((HdfsEndpoint) target).getConfig().setReadSuffix(property(camelContext, java.lang.String.class, value)); return true;
-        case "replication": ((HdfsEndpoint) target).getConfig().setReplication(property(camelContext, short.class, value)); return true;
-        case "splitStrategy": ((HdfsEndpoint) target).getConfig().setSplitStrategy(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": ((HdfsEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "maxMessagesPerPoll": ((HdfsEndpoint) target).getConfig().setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
-        case "backoffErrorThreshold": ((HdfsEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffIdleThreshold": ((HdfsEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffMultiplier": ((HdfsEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((HdfsEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((HdfsEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialDelay": ((HdfsEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatCount": ((HdfsEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runLoggingLevel": ((HdfsEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledExecutorService": ((HdfsEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((HdfsEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerProperties": ((HdfsEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startScheduler": ((HdfsEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeUnit": ((HdfsEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "useFixedDelay": ((HdfsEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "kerberosConfigFileLocation": ((HdfsEndpoint) target).getConfig().setKerberosConfigFileLocation(property(camelContext, java.lang.String.class, value)); return true;
-        case "kerberosKeytabLocation": ((HdfsEndpoint) target).getConfig().setKerberosKeytabLocation(property(camelContext, java.lang.String.class, value)); return true;
-        case "kerberosUsername": ((HdfsEndpoint) target).getConfig().setKerberosUsername(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "connectonstartup": ((HdfsEndpoint) target).getConfig().setConnectOnStartup(property(camelContext, boolean.class, value)); return true;
-        case "filesystemtype": ((HdfsEndpoint) target).getConfig().setFileSystemType(property(camelContext, org.apache.camel.component.hdfs.HdfsFileSystemType.class, value)); return true;
-        case "filetype": ((HdfsEndpoint) target).getConfig().setFileType(property(camelContext, org.apache.camel.component.hdfs.HdfsFileType.class, value)); return true;
-        case "keytype": ((HdfsEndpoint) target).getConfig().setKeyType(property(camelContext, org.apache.camel.component.hdfs.WritableType.class, value)); return true;
-        case "namednodes": ((HdfsEndpoint) target).getConfig().setNamedNodes(property(camelContext, java.lang.String.class, value)); return true;
-        case "owner": ((HdfsEndpoint) target).getConfig().setOwner(property(camelContext, java.lang.String.class, value)); return true;
-        case "valuetype": ((HdfsEndpoint) target).getConfig().setValueType(property(camelContext, org.apache.camel.component.hdfs.WritableType.class, value)); return true;
-        case "bridgeerrorhandler": ((HdfsEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "pattern": ((HdfsEndpoint) target).getConfig().setPattern(property(camelContext, java.lang.String.class, value)); return true;
-        case "sendemptymessagewhenidle": ((HdfsEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "streamdownload": ((HdfsEndpoint) target).getConfig().setStreamDownload(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((HdfsEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((HdfsEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollstrategy": ((HdfsEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "append": ((HdfsEndpoint) target).getConfig().setAppend(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((HdfsEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "overwrite": ((HdfsEndpoint) target).getConfig().setOverwrite(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((HdfsEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "blocksize": ((HdfsEndpoint) target).getConfig().setBlockSize(property(camelContext, long.class, value)); return true;
-        case "buffersize": ((HdfsEndpoint) target).getConfig().setBufferSize(property(camelContext, int.class, value)); return true;
-        case "checkidleinterval": ((HdfsEndpoint) target).getConfig().setCheckIdleInterval(property(camelContext, int.class, value)); return true;
-        case "chunksize": ((HdfsEndpoint) target).getConfig().setChunkSize(property(camelContext, int.class, value)); return true;
-        case "compressioncodec": ((HdfsEndpoint) target).getConfig().setCompressionCodec(property(camelContext, org.apache.camel.component.hdfs.HdfsCompressionCodec.class, value)); return true;
-        case "compressiontype": ((HdfsEndpoint) target).getConfig().setCompressionType(property(camelContext, org.apache.hadoop.io.SequenceFile.CompressionType.class, value)); return true;
-        case "openedsuffix": ((HdfsEndpoint) target).getConfig().setOpenedSuffix(property(camelContext, java.lang.String.class, value)); return true;
-        case "readsuffix": ((HdfsEndpoint) target).getConfig().setReadSuffix(property(camelContext, java.lang.String.class, value)); return true;
-        case "replication": ((HdfsEndpoint) target).getConfig().setReplication(property(camelContext, short.class, value)); return true;
-        case "splitstrategy": ((HdfsEndpoint) target).getConfig().setSplitStrategy(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": ((HdfsEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "maxmessagesperpoll": ((HdfsEndpoint) target).getConfig().setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
-        case "backofferrorthreshold": ((HdfsEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffidlethreshold": ((HdfsEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffmultiplier": ((HdfsEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((HdfsEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((HdfsEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialdelay": ((HdfsEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatcount": ((HdfsEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runlogginglevel": ((HdfsEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledexecutorservice": ((HdfsEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((HdfsEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerproperties": ((HdfsEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startscheduler": ((HdfsEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeunit": ((HdfsEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "usefixeddelay": ((HdfsEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "kerberosconfigfilelocation": ((HdfsEndpoint) target).getConfig().setKerberosConfigFileLocation(property(camelContext, java.lang.String.class, value)); return true;
-        case "kerberoskeytablocation": ((HdfsEndpoint) target).getConfig().setKerberosKeytabLocation(property(camelContext, java.lang.String.class, value)); return true;
-        case "kerberosusername": ((HdfsEndpoint) target).getConfig().setKerberosUsername(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        HdfsEndpoint target = (HdfsEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "connectonstartup":
+        case "connectOnStartup": target.getConfig().setConnectOnStartup(property(camelContext, boolean.class, value)); return true;
+        case "filesystemtype":
+        case "fileSystemType": target.getConfig().setFileSystemType(property(camelContext, org.apache.camel.component.hdfs.HdfsFileSystemType.class, value)); return true;
+        case "filetype":
+        case "fileType": target.getConfig().setFileType(property(camelContext, org.apache.camel.component.hdfs.HdfsFileType.class, value)); return true;
+        case "keytype":
+        case "keyType": target.getConfig().setKeyType(property(camelContext, org.apache.camel.component.hdfs.WritableType.class, value)); return true;
+        case "namednodes":
+        case "namedNodes": target.getConfig().setNamedNodes(property(camelContext, java.lang.String.class, value)); return true;
+        case "owner": target.getConfig().setOwner(property(camelContext, java.lang.String.class, value)); return true;
+        case "valuetype":
+        case "valueType": target.getConfig().setValueType(property(camelContext, org.apache.camel.component.hdfs.WritableType.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "pattern": target.getConfig().setPattern(property(camelContext, java.lang.String.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "streamdownload":
+        case "streamDownload": target.getConfig().setStreamDownload(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "append": target.getConfig().setAppend(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "overwrite": target.getConfig().setOverwrite(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "blocksize":
+        case "blockSize": target.getConfig().setBlockSize(property(camelContext, long.class, value)); return true;
+        case "buffersize":
+        case "bufferSize": target.getConfig().setBufferSize(property(camelContext, int.class, value)); return true;
+        case "checkidleinterval":
+        case "checkIdleInterval": target.getConfig().setCheckIdleInterval(property(camelContext, int.class, value)); return true;
+        case "chunksize":
+        case "chunkSize": target.getConfig().setChunkSize(property(camelContext, int.class, value)); return true;
+        case "compressioncodec":
+        case "compressionCodec": target.getConfig().setCompressionCodec(property(camelContext, org.apache.camel.component.hdfs.HdfsCompressionCodec.class, value)); return true;
+        case "compressiontype":
+        case "compressionType": target.getConfig().setCompressionType(property(camelContext, org.apache.hadoop.io.SequenceFile.CompressionType.class, value)); return true;
+        case "openedsuffix":
+        case "openedSuffix": target.getConfig().setOpenedSuffix(property(camelContext, java.lang.String.class, value)); return true;
+        case "readsuffix":
+        case "readSuffix": target.getConfig().setReadSuffix(property(camelContext, java.lang.String.class, value)); return true;
+        case "replication": target.getConfig().setReplication(property(camelContext, short.class, value)); return true;
+        case "splitstrategy":
+        case "splitStrategy": target.getConfig().setSplitStrategy(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": target.getConfig().setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffmultiplier":
+        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "repeatcount":
+        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "runlogginglevel":
+        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "schedulerproperties":
+        case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "startscheduler":
+        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "timeunit":
+        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "usefixeddelay":
+        case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "kerberosconfigfilelocation":
+        case "kerberosConfigFileLocation": target.getConfig().setKerberosConfigFileLocation(property(camelContext, java.lang.String.class, value)); return true;
+        case "kerberoskeytablocation":
+        case "kerberosKeytabLocation": target.getConfig().setKerberosKeytabLocation(property(camelContext, java.lang.String.class, value)); return true;
+        case "kerberosusername":
+        case "kerberosUsername": target.getConfig().setKerberosUsername(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

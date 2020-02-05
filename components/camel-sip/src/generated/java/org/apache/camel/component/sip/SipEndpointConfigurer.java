@@ -12,115 +12,99 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class SipEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "cacheConnections": ((SipEndpoint) target).getConfiguration().setCacheConnections(property(camelContext, boolean.class, value)); return true;
-        case "contentSubType": ((SipEndpoint) target).getConfiguration().setContentSubType(property(camelContext, java.lang.String.class, value)); return true;
-        case "contentType": ((SipEndpoint) target).getConfiguration().setContentType(property(camelContext, java.lang.String.class, value)); return true;
-        case "eventHeaderName": ((SipEndpoint) target).getConfiguration().setEventHeaderName(property(camelContext, java.lang.String.class, value)); return true;
-        case "eventId": ((SipEndpoint) target).getConfiguration().setEventId(property(camelContext, java.lang.String.class, value)); return true;
-        case "fromHost": ((SipEndpoint) target).getConfiguration().setFromHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "fromPort": ((SipEndpoint) target).getConfiguration().setFromPort(property(camelContext, int.class, value)); return true;
-        case "fromUser": ((SipEndpoint) target).getConfiguration().setFromUser(property(camelContext, java.lang.String.class, value)); return true;
-        case "msgExpiration": ((SipEndpoint) target).getConfiguration().setMsgExpiration(property(camelContext, int.class, value)); return true;
-        case "receiveTimeoutMillis": ((SipEndpoint) target).getConfiguration().setReceiveTimeoutMillis(property(camelContext, long.class, value)); return true;
-        case "stackName": ((SipEndpoint) target).getConfiguration().setStackName(property(camelContext, java.lang.String.class, value)); return true;
-        case "toHost": ((SipEndpoint) target).getConfiguration().setToHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "toPort": ((SipEndpoint) target).getConfiguration().setToPort(property(camelContext, int.class, value)); return true;
-        case "toUser": ((SipEndpoint) target).getConfiguration().setToUser(property(camelContext, java.lang.String.class, value)); return true;
-        case "transport": ((SipEndpoint) target).getConfiguration().setTransport(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((SipEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "consumer": ((SipEndpoint) target).getConfiguration().setConsumer(property(camelContext, boolean.class, value)); return true;
-        case "presenceAgent": ((SipEndpoint) target).getConfiguration().setPresenceAgent(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((SipEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((SipEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((SipEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "addressFactory": ((SipEndpoint) target).getConfiguration().setAddressFactory(property(camelContext, javax.sip.address.AddressFactory.class, value)); return true;
-        case "basicPropertyBinding": ((SipEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "callIdHeader": ((SipEndpoint) target).getConfiguration().setCallIdHeader(property(camelContext, javax.sip.header.CallIdHeader.class, value)); return true;
-        case "contactHeader": ((SipEndpoint) target).getConfiguration().setContactHeader(property(camelContext, javax.sip.header.ContactHeader.class, value)); return true;
-        case "contentTypeHeader": ((SipEndpoint) target).getConfiguration().setContentTypeHeader(property(camelContext, javax.sip.header.ContentTypeHeader.class, value)); return true;
-        case "eventHeader": ((SipEndpoint) target).getConfiguration().setEventHeader(property(camelContext, javax.sip.header.EventHeader.class, value)); return true;
-        case "expiresHeader": ((SipEndpoint) target).getConfiguration().setExpiresHeader(property(camelContext, javax.sip.header.ExpiresHeader.class, value)); return true;
-        case "extensionHeader": ((SipEndpoint) target).getConfiguration().setExtensionHeader(property(camelContext, javax.sip.header.ExtensionHeader.class, value)); return true;
-        case "fromHeader": ((SipEndpoint) target).getConfiguration().setFromHeader(property(camelContext, javax.sip.header.FromHeader.class, value)); return true;
-        case "headerFactory": ((SipEndpoint) target).getConfiguration().setHeaderFactory(property(camelContext, javax.sip.header.HeaderFactory.class, value)); return true;
-        case "listeningPoint": ((SipEndpoint) target).getConfiguration().setListeningPoint(property(camelContext, javax.sip.ListeningPoint.class, value)); return true;
-        case "maxForwardsHeader": ((SipEndpoint) target).getConfiguration().setMaxForwardsHeader(property(camelContext, javax.sip.header.MaxForwardsHeader.class, value)); return true;
-        case "maxMessageSize": ((SipEndpoint) target).getConfiguration().setMaxMessageSize(property(camelContext, int.class, value)); return true;
-        case "messageFactory": ((SipEndpoint) target).getConfiguration().setMessageFactory(property(camelContext, javax.sip.message.MessageFactory.class, value)); return true;
-        case "sipFactory": ((SipEndpoint) target).getConfiguration().setSipFactory(property(camelContext, javax.sip.SipFactory.class, value)); return true;
-        case "sipStack": ((SipEndpoint) target).getConfiguration().setSipStack(property(camelContext, javax.sip.SipStack.class, value)); return true;
-        case "sipUri": ((SipEndpoint) target).getConfiguration().setSipUri(property(camelContext, javax.sip.address.SipURI.class, value)); return true;
-        case "synchronous": ((SipEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "toHeader": ((SipEndpoint) target).getConfiguration().setToHeader(property(camelContext, javax.sip.header.ToHeader.class, value)); return true;
-        case "viaHeaders": ((SipEndpoint) target).getConfiguration().setViaHeaders(property(camelContext, java.util.List.class, value)); return true;
-        case "implementationDebugLogFile": ((SipEndpoint) target).getConfiguration().setImplementationDebugLogFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "implementationServerLogFile": ((SipEndpoint) target).getConfiguration().setImplementationServerLogFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "implementationTraceLevel": ((SipEndpoint) target).getConfiguration().setImplementationTraceLevel(property(camelContext, java.lang.String.class, value)); return true;
-        case "maxForwards": ((SipEndpoint) target).getConfiguration().setMaxForwards(property(camelContext, int.class, value)); return true;
-        case "useRouterForAllUris": ((SipEndpoint) target).getConfiguration().setUseRouterForAllUris(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "cacheconnections": ((SipEndpoint) target).getConfiguration().setCacheConnections(property(camelContext, boolean.class, value)); return true;
-        case "contentsubtype": ((SipEndpoint) target).getConfiguration().setContentSubType(property(camelContext, java.lang.String.class, value)); return true;
-        case "contenttype": ((SipEndpoint) target).getConfiguration().setContentType(property(camelContext, java.lang.String.class, value)); return true;
-        case "eventheadername": ((SipEndpoint) target).getConfiguration().setEventHeaderName(property(camelContext, java.lang.String.class, value)); return true;
-        case "eventid": ((SipEndpoint) target).getConfiguration().setEventId(property(camelContext, java.lang.String.class, value)); return true;
-        case "fromhost": ((SipEndpoint) target).getConfiguration().setFromHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "fromport": ((SipEndpoint) target).getConfiguration().setFromPort(property(camelContext, int.class, value)); return true;
-        case "fromuser": ((SipEndpoint) target).getConfiguration().setFromUser(property(camelContext, java.lang.String.class, value)); return true;
-        case "msgexpiration": ((SipEndpoint) target).getConfiguration().setMsgExpiration(property(camelContext, int.class, value)); return true;
-        case "receivetimeoutmillis": ((SipEndpoint) target).getConfiguration().setReceiveTimeoutMillis(property(camelContext, long.class, value)); return true;
-        case "stackname": ((SipEndpoint) target).getConfiguration().setStackName(property(camelContext, java.lang.String.class, value)); return true;
-        case "tohost": ((SipEndpoint) target).getConfiguration().setToHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "toport": ((SipEndpoint) target).getConfiguration().setToPort(property(camelContext, int.class, value)); return true;
-        case "touser": ((SipEndpoint) target).getConfiguration().setToUser(property(camelContext, java.lang.String.class, value)); return true;
-        case "transport": ((SipEndpoint) target).getConfiguration().setTransport(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((SipEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "consumer": ((SipEndpoint) target).getConfiguration().setConsumer(property(camelContext, boolean.class, value)); return true;
-        case "presenceagent": ((SipEndpoint) target).getConfiguration().setPresenceAgent(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((SipEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((SipEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((SipEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "addressfactory": ((SipEndpoint) target).getConfiguration().setAddressFactory(property(camelContext, javax.sip.address.AddressFactory.class, value)); return true;
-        case "basicpropertybinding": ((SipEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "callidheader": ((SipEndpoint) target).getConfiguration().setCallIdHeader(property(camelContext, javax.sip.header.CallIdHeader.class, value)); return true;
-        case "contactheader": ((SipEndpoint) target).getConfiguration().setContactHeader(property(camelContext, javax.sip.header.ContactHeader.class, value)); return true;
-        case "contenttypeheader": ((SipEndpoint) target).getConfiguration().setContentTypeHeader(property(camelContext, javax.sip.header.ContentTypeHeader.class, value)); return true;
-        case "eventheader": ((SipEndpoint) target).getConfiguration().setEventHeader(property(camelContext, javax.sip.header.EventHeader.class, value)); return true;
-        case "expiresheader": ((SipEndpoint) target).getConfiguration().setExpiresHeader(property(camelContext, javax.sip.header.ExpiresHeader.class, value)); return true;
-        case "extensionheader": ((SipEndpoint) target).getConfiguration().setExtensionHeader(property(camelContext, javax.sip.header.ExtensionHeader.class, value)); return true;
-        case "fromheader": ((SipEndpoint) target).getConfiguration().setFromHeader(property(camelContext, javax.sip.header.FromHeader.class, value)); return true;
-        case "headerfactory": ((SipEndpoint) target).getConfiguration().setHeaderFactory(property(camelContext, javax.sip.header.HeaderFactory.class, value)); return true;
-        case "listeningpoint": ((SipEndpoint) target).getConfiguration().setListeningPoint(property(camelContext, javax.sip.ListeningPoint.class, value)); return true;
-        case "maxforwardsheader": ((SipEndpoint) target).getConfiguration().setMaxForwardsHeader(property(camelContext, javax.sip.header.MaxForwardsHeader.class, value)); return true;
-        case "maxmessagesize": ((SipEndpoint) target).getConfiguration().setMaxMessageSize(property(camelContext, int.class, value)); return true;
-        case "messagefactory": ((SipEndpoint) target).getConfiguration().setMessageFactory(property(camelContext, javax.sip.message.MessageFactory.class, value)); return true;
-        case "sipfactory": ((SipEndpoint) target).getConfiguration().setSipFactory(property(camelContext, javax.sip.SipFactory.class, value)); return true;
-        case "sipstack": ((SipEndpoint) target).getConfiguration().setSipStack(property(camelContext, javax.sip.SipStack.class, value)); return true;
-        case "sipuri": ((SipEndpoint) target).getConfiguration().setSipUri(property(camelContext, javax.sip.address.SipURI.class, value)); return true;
-        case "synchronous": ((SipEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "toheader": ((SipEndpoint) target).getConfiguration().setToHeader(property(camelContext, javax.sip.header.ToHeader.class, value)); return true;
-        case "viaheaders": ((SipEndpoint) target).getConfiguration().setViaHeaders(property(camelContext, java.util.List.class, value)); return true;
-        case "implementationdebuglogfile": ((SipEndpoint) target).getConfiguration().setImplementationDebugLogFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "implementationserverlogfile": ((SipEndpoint) target).getConfiguration().setImplementationServerLogFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "implementationtracelevel": ((SipEndpoint) target).getConfiguration().setImplementationTraceLevel(property(camelContext, java.lang.String.class, value)); return true;
-        case "maxforwards": ((SipEndpoint) target).getConfiguration().setMaxForwards(property(camelContext, int.class, value)); return true;
-        case "userouterforalluris": ((SipEndpoint) target).getConfiguration().setUseRouterForAllUris(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        SipEndpoint target = (SipEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "cacheconnections":
+        case "cacheConnections": target.getConfiguration().setCacheConnections(property(camelContext, boolean.class, value)); return true;
+        case "contentsubtype":
+        case "contentSubType": target.getConfiguration().setContentSubType(property(camelContext, java.lang.String.class, value)); return true;
+        case "contenttype":
+        case "contentType": target.getConfiguration().setContentType(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventheadername":
+        case "eventHeaderName": target.getConfiguration().setEventHeaderName(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventid":
+        case "eventId": target.getConfiguration().setEventId(property(camelContext, java.lang.String.class, value)); return true;
+        case "fromhost":
+        case "fromHost": target.getConfiguration().setFromHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "fromport":
+        case "fromPort": target.getConfiguration().setFromPort(property(camelContext, int.class, value)); return true;
+        case "fromuser":
+        case "fromUser": target.getConfiguration().setFromUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "msgexpiration":
+        case "msgExpiration": target.getConfiguration().setMsgExpiration(property(camelContext, int.class, value)); return true;
+        case "receivetimeoutmillis":
+        case "receiveTimeoutMillis": target.getConfiguration().setReceiveTimeoutMillis(property(camelContext, long.class, value)); return true;
+        case "stackname":
+        case "stackName": target.getConfiguration().setStackName(property(camelContext, java.lang.String.class, value)); return true;
+        case "tohost":
+        case "toHost": target.getConfiguration().setToHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "toport":
+        case "toPort": target.getConfiguration().setToPort(property(camelContext, int.class, value)); return true;
+        case "touser":
+        case "toUser": target.getConfiguration().setToUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "transport": target.getConfiguration().setTransport(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "consumer": target.getConfiguration().setConsumer(property(camelContext, boolean.class, value)); return true;
+        case "presenceagent":
+        case "presenceAgent": target.getConfiguration().setPresenceAgent(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "addressfactory":
+        case "addressFactory": target.getConfiguration().setAddressFactory(property(camelContext, javax.sip.address.AddressFactory.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "callidheader":
+        case "callIdHeader": target.getConfiguration().setCallIdHeader(property(camelContext, javax.sip.header.CallIdHeader.class, value)); return true;
+        case "contactheader":
+        case "contactHeader": target.getConfiguration().setContactHeader(property(camelContext, javax.sip.header.ContactHeader.class, value)); return true;
+        case "contenttypeheader":
+        case "contentTypeHeader": target.getConfiguration().setContentTypeHeader(property(camelContext, javax.sip.header.ContentTypeHeader.class, value)); return true;
+        case "eventheader":
+        case "eventHeader": target.getConfiguration().setEventHeader(property(camelContext, javax.sip.header.EventHeader.class, value)); return true;
+        case "expiresheader":
+        case "expiresHeader": target.getConfiguration().setExpiresHeader(property(camelContext, javax.sip.header.ExpiresHeader.class, value)); return true;
+        case "extensionheader":
+        case "extensionHeader": target.getConfiguration().setExtensionHeader(property(camelContext, javax.sip.header.ExtensionHeader.class, value)); return true;
+        case "fromheader":
+        case "fromHeader": target.getConfiguration().setFromHeader(property(camelContext, javax.sip.header.FromHeader.class, value)); return true;
+        case "headerfactory":
+        case "headerFactory": target.getConfiguration().setHeaderFactory(property(camelContext, javax.sip.header.HeaderFactory.class, value)); return true;
+        case "listeningpoint":
+        case "listeningPoint": target.getConfiguration().setListeningPoint(property(camelContext, javax.sip.ListeningPoint.class, value)); return true;
+        case "maxforwardsheader":
+        case "maxForwardsHeader": target.getConfiguration().setMaxForwardsHeader(property(camelContext, javax.sip.header.MaxForwardsHeader.class, value)); return true;
+        case "maxmessagesize":
+        case "maxMessageSize": target.getConfiguration().setMaxMessageSize(property(camelContext, int.class, value)); return true;
+        case "messagefactory":
+        case "messageFactory": target.getConfiguration().setMessageFactory(property(camelContext, javax.sip.message.MessageFactory.class, value)); return true;
+        case "sipfactory":
+        case "sipFactory": target.getConfiguration().setSipFactory(property(camelContext, javax.sip.SipFactory.class, value)); return true;
+        case "sipstack":
+        case "sipStack": target.getConfiguration().setSipStack(property(camelContext, javax.sip.SipStack.class, value)); return true;
+        case "sipuri":
+        case "sipUri": target.getConfiguration().setSipUri(property(camelContext, javax.sip.address.SipURI.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "toheader":
+        case "toHeader": target.getConfiguration().setToHeader(property(camelContext, javax.sip.header.ToHeader.class, value)); return true;
+        case "viaheaders":
+        case "viaHeaders": target.getConfiguration().setViaHeaders(property(camelContext, java.util.List.class, value)); return true;
+        case "implementationdebuglogfile":
+        case "implementationDebugLogFile": target.getConfiguration().setImplementationDebugLogFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "implementationserverlogfile":
+        case "implementationServerLogFile": target.getConfiguration().setImplementationServerLogFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "implementationtracelevel":
+        case "implementationTraceLevel": target.getConfiguration().setImplementationTraceLevel(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxforwards":
+        case "maxForwards": target.getConfiguration().setMaxForwards(property(camelContext, int.class, value)); return true;
+        case "userouterforalluris":
+        case "useRouterForAllUris": target.getConfiguration().setUseRouterForAllUris(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

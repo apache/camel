@@ -12,33 +12,19 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class ChatScriptEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "chatUserName": ((ChatScriptEndpoint) target).setChatUserName(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazyStartProducer": ((ChatScriptEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "resetChat": ((ChatScriptEndpoint) target).setResetChat(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((ChatScriptEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((ChatScriptEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "chatusername": ((ChatScriptEndpoint) target).setChatUserName(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer": ((ChatScriptEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "resetchat": ((ChatScriptEndpoint) target).setResetChat(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((ChatScriptEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((ChatScriptEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        ChatScriptEndpoint target = (ChatScriptEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "chatusername":
+        case "chatUserName": target.setChatUserName(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "resetchat":
+        case "resetChat": target.setResetChat(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

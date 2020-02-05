@@ -12,47 +12,32 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class SparkEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "accept": ((SparkEndpoint) target).setAccept(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((SparkEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "disableStreamCache": ((SparkEndpoint) target).getSparkConfiguration().setDisableStreamCache(property(camelContext, boolean.class, value)); return true;
-        case "mapHeaders": ((SparkEndpoint) target).getSparkConfiguration().setMapHeaders(property(camelContext, boolean.class, value)); return true;
-        case "transferException": ((SparkEndpoint) target).getSparkConfiguration().setTransferException(property(camelContext, boolean.class, value)); return true;
-        case "urlDecodeHeaders": ((SparkEndpoint) target).getSparkConfiguration().setUrlDecodeHeaders(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((SparkEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((SparkEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "basicPropertyBinding": ((SparkEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "matchOnUriPrefix": ((SparkEndpoint) target).getSparkConfiguration().setMatchOnUriPrefix(property(camelContext, boolean.class, value)); return true;
-        case "sparkBinding": ((SparkEndpoint) target).setSparkBinding(property(camelContext, org.apache.camel.component.sparkrest.SparkBinding.class, value)); return true;
-        case "synchronous": ((SparkEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "accept": ((SparkEndpoint) target).setAccept(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((SparkEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "disablestreamcache": ((SparkEndpoint) target).getSparkConfiguration().setDisableStreamCache(property(camelContext, boolean.class, value)); return true;
-        case "mapheaders": ((SparkEndpoint) target).getSparkConfiguration().setMapHeaders(property(camelContext, boolean.class, value)); return true;
-        case "transferexception": ((SparkEndpoint) target).getSparkConfiguration().setTransferException(property(camelContext, boolean.class, value)); return true;
-        case "urldecodeheaders": ((SparkEndpoint) target).getSparkConfiguration().setUrlDecodeHeaders(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((SparkEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((SparkEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "basicpropertybinding": ((SparkEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "matchonuriprefix": ((SparkEndpoint) target).getSparkConfiguration().setMatchOnUriPrefix(property(camelContext, boolean.class, value)); return true;
-        case "sparkbinding": ((SparkEndpoint) target).setSparkBinding(property(camelContext, org.apache.camel.component.sparkrest.SparkBinding.class, value)); return true;
-        case "synchronous": ((SparkEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        SparkEndpoint target = (SparkEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accept": target.setAccept(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "disablestreamcache":
+        case "disableStreamCache": target.getSparkConfiguration().setDisableStreamCache(property(camelContext, boolean.class, value)); return true;
+        case "mapheaders":
+        case "mapHeaders": target.getSparkConfiguration().setMapHeaders(property(camelContext, boolean.class, value)); return true;
+        case "transferexception":
+        case "transferException": target.getSparkConfiguration().setTransferException(property(camelContext, boolean.class, value)); return true;
+        case "urldecodeheaders":
+        case "urlDecodeHeaders": target.getSparkConfiguration().setUrlDecodeHeaders(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "matchonuriprefix":
+        case "matchOnUriPrefix": target.getSparkConfiguration().setMatchOnUriPrefix(property(camelContext, boolean.class, value)); return true;
+        case "sparkbinding":
+        case "sparkBinding": target.setSparkBinding(property(camelContext, org.apache.camel.component.sparkrest.SparkBinding.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

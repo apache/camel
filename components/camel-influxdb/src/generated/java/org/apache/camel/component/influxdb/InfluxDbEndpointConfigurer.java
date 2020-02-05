@@ -12,39 +12,22 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class InfluxDbEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "batch": ((InfluxDbEndpoint) target).setBatch(property(camelContext, boolean.class, value)); return true;
-        case "databaseName": ((InfluxDbEndpoint) target).setDatabaseName(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazyStartProducer": ((InfluxDbEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": ((InfluxDbEndpoint) target).setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "query": ((InfluxDbEndpoint) target).setQuery(property(camelContext, java.lang.String.class, value)); return true;
-        case "retentionPolicy": ((InfluxDbEndpoint) target).setRetentionPolicy(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((InfluxDbEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((InfluxDbEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "batch": ((InfluxDbEndpoint) target).setBatch(property(camelContext, boolean.class, value)); return true;
-        case "databasename": ((InfluxDbEndpoint) target).setDatabaseName(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer": ((InfluxDbEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": ((InfluxDbEndpoint) target).setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "query": ((InfluxDbEndpoint) target).setQuery(property(camelContext, java.lang.String.class, value)); return true;
-        case "retentionpolicy": ((InfluxDbEndpoint) target).setRetentionPolicy(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((InfluxDbEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((InfluxDbEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        InfluxDbEndpoint target = (InfluxDbEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "batch": target.setBatch(property(camelContext, boolean.class, value)); return true;
+        case "databasename":
+        case "databaseName": target.setDatabaseName(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "operation": target.setOperation(property(camelContext, java.lang.String.class, value)); return true;
+        case "query": target.setQuery(property(camelContext, java.lang.String.class, value)); return true;
+        case "retentionpolicy":
+        case "retentionPolicy": target.setRetentionPolicy(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

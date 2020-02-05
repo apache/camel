@@ -12,29 +12,16 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class SchedulerComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "concurrentTasks": ((SchedulerComponent) target).setConcurrentTasks(property(camelContext, int.class, value)); return true;
-        case "basicPropertyBinding": ((SchedulerComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((SchedulerComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "concurrenttasks": ((SchedulerComponent) target).setConcurrentTasks(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding": ((SchedulerComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((SchedulerComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        SchedulerComponent target = (SchedulerComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "concurrenttasks":
+        case "concurrentTasks": target.setConcurrentTasks(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

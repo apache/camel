@@ -12,37 +12,21 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class AtomixMessagingComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "configuration": ((AtomixMessagingComponent) target).setConfiguration(property(camelContext, org.apache.camel.component.atomix.client.messaging.AtomixMessagingConfiguration.class, value)); return true;
-        case "atomix": ((AtomixMessagingComponent) target).setAtomix(property(camelContext, io.atomix.AtomixClient.class, value)); return true;
-        case "nodes": ((AtomixMessagingComponent) target).setNodes(property(camelContext, java.util.List.class, value)); return true;
-        case "configurationUri": ((AtomixMessagingComponent) target).setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((AtomixMessagingComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((AtomixMessagingComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((AtomixMessagingComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "configuration": ((AtomixMessagingComponent) target).setConfiguration(property(camelContext, org.apache.camel.component.atomix.client.messaging.AtomixMessagingConfiguration.class, value)); return true;
-        case "atomix": ((AtomixMessagingComponent) target).setAtomix(property(camelContext, io.atomix.AtomixClient.class, value)); return true;
-        case "nodes": ((AtomixMessagingComponent) target).setNodes(property(camelContext, java.util.List.class, value)); return true;
-        case "configurationuri": ((AtomixMessagingComponent) target).setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((AtomixMessagingComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((AtomixMessagingComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((AtomixMessagingComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        AtomixMessagingComponent target = (AtomixMessagingComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.atomix.client.messaging.AtomixMessagingConfiguration.class, value)); return true;
+        case "atomix": target.setAtomix(property(camelContext, io.atomix.AtomixClient.class, value)); return true;
+        case "nodes": target.setNodes(property(camelContext, java.util.List.class, value)); return true;
+        case "configurationuri":
+        case "configurationUri": target.setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

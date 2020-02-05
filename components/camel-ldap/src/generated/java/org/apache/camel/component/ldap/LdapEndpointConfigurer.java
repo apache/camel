@@ -12,37 +12,21 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class LdapEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "base": ((LdapEndpoint) target).setBase(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazyStartProducer": ((LdapEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "pageSize": ((LdapEndpoint) target).setPageSize(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "returnedAttributes": ((LdapEndpoint) target).setReturnedAttributes(property(camelContext, java.lang.String.class, value)); return true;
-        case "scope": ((LdapEndpoint) target).setScope(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((LdapEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((LdapEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "base": ((LdapEndpoint) target).setBase(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer": ((LdapEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "pagesize": ((LdapEndpoint) target).setPageSize(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "returnedattributes": ((LdapEndpoint) target).setReturnedAttributes(property(camelContext, java.lang.String.class, value)); return true;
-        case "scope": ((LdapEndpoint) target).setScope(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((LdapEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((LdapEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        LdapEndpoint target = (LdapEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "base": target.setBase(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "pagesize":
+        case "pageSize": target.setPageSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "returnedattributes":
+        case "returnedAttributes": target.setReturnedAttributes(property(camelContext, java.lang.String.class, value)); return true;
+        case "scope": target.setScope(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

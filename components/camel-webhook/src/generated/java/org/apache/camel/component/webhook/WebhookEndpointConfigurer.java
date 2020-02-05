@@ -12,43 +12,29 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class WebhookEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "webhookAutoRegister": ((WebhookEndpoint) target).getConfiguration().setWebhookAutoRegister(property(camelContext, boolean.class, value)); return true;
-        case "webhookBasePath": ((WebhookEndpoint) target).getConfiguration().setWebhookBasePath(property(camelContext, java.lang.String.class, value)); return true;
-        case "webhookComponentName": ((WebhookEndpoint) target).getConfiguration().setWebhookComponentName(property(camelContext, java.lang.String.class, value)); return true;
-        case "webhookExternalUrl": ((WebhookEndpoint) target).getConfiguration().setWebhookExternalUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "webhookPath": ((WebhookEndpoint) target).getConfiguration().setWebhookPath(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((WebhookEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((WebhookEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((WebhookEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "basicPropertyBinding": ((WebhookEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((WebhookEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "webhookautoregister": ((WebhookEndpoint) target).getConfiguration().setWebhookAutoRegister(property(camelContext, boolean.class, value)); return true;
-        case "webhookbasepath": ((WebhookEndpoint) target).getConfiguration().setWebhookBasePath(property(camelContext, java.lang.String.class, value)); return true;
-        case "webhookcomponentname": ((WebhookEndpoint) target).getConfiguration().setWebhookComponentName(property(camelContext, java.lang.String.class, value)); return true;
-        case "webhookexternalurl": ((WebhookEndpoint) target).getConfiguration().setWebhookExternalUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "webhookpath": ((WebhookEndpoint) target).getConfiguration().setWebhookPath(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((WebhookEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((WebhookEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((WebhookEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "basicpropertybinding": ((WebhookEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((WebhookEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        WebhookEndpoint target = (WebhookEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "webhookautoregister":
+        case "webhookAutoRegister": target.getConfiguration().setWebhookAutoRegister(property(camelContext, boolean.class, value)); return true;
+        case "webhookbasepath":
+        case "webhookBasePath": target.getConfiguration().setWebhookBasePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "webhookcomponentname":
+        case "webhookComponentName": target.getConfiguration().setWebhookComponentName(property(camelContext, java.lang.String.class, value)); return true;
+        case "webhookexternalurl":
+        case "webhookExternalUrl": target.getConfiguration().setWebhookExternalUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "webhookpath":
+        case "webhookPath": target.getConfiguration().setWebhookPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

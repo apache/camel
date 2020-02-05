@@ -12,81 +12,65 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class ElytronEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "allowedRoles": ((ElytronEndpoint) target).setAllowedRoles(property(camelContext, java.lang.String.class, value)); return true;
-        case "useStreaming": ((ElytronEndpoint) target).setUseStreaming(property(camelContext, boolean.class, value)); return true;
-        case "accessLog": ((ElytronEndpoint) target).setAccessLog(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((ElytronEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "httpMethodRestrict": ((ElytronEndpoint) target).setHttpMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
-        case "matchOnUriPrefix": ((ElytronEndpoint) target).setMatchOnUriPrefix(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "muteException": ((ElytronEndpoint) target).setMuteException(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "optionsEnabled": ((ElytronEndpoint) target).setOptionsEnabled(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((ElytronEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((ElytronEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "handlers": ((ElytronEndpoint) target).setHandlers(property(camelContext, java.lang.String.class, value)); return true;
-        case "cookieHandler": ((ElytronEndpoint) target).setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
-        case "keepAlive": ((ElytronEndpoint) target).setKeepAlive(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "lazyStartProducer": ((ElytronEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "options": ((ElytronEndpoint) target).setOptions(property(camelContext, java.util.Map.class, value)); return true;
-        case "preserveHostHeader": ((ElytronEndpoint) target).setPreserveHostHeader(property(camelContext, boolean.class, value)); return true;
-        case "reuseAddresses": ((ElytronEndpoint) target).setReuseAddresses(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "tcpNoDelay": ((ElytronEndpoint) target).setTcpNoDelay(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "throwExceptionOnFailure": ((ElytronEndpoint) target).setThrowExceptionOnFailure(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "transferException": ((ElytronEndpoint) target).setTransferException(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "accessLogReceiver": ((ElytronEndpoint) target).setAccessLogReceiver(property(camelContext, io.undertow.server.handlers.accesslog.AccessLogReceiver.class, value)); return true;
-        case "basicPropertyBinding": ((ElytronEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "headerFilterStrategy": ((ElytronEndpoint) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "synchronous": ((ElytronEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "undertowHttpBinding": ((ElytronEndpoint) target).setUndertowHttpBinding(property(camelContext, org.apache.camel.component.undertow.UndertowHttpBinding.class, value)); return true;
-        case "fireWebSocketChannelEvents": ((ElytronEndpoint) target).setFireWebSocketChannelEvents(property(camelContext, boolean.class, value)); return true;
-        case "sendTimeout": ((ElytronEndpoint) target).setSendTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "sendToAll": ((ElytronEndpoint) target).setSendToAll(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "sslContextParameters": ((ElytronEndpoint) target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "allowedroles": ((ElytronEndpoint) target).setAllowedRoles(property(camelContext, java.lang.String.class, value)); return true;
-        case "usestreaming": ((ElytronEndpoint) target).setUseStreaming(property(camelContext, boolean.class, value)); return true;
-        case "accesslog": ((ElytronEndpoint) target).setAccessLog(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((ElytronEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "httpmethodrestrict": ((ElytronEndpoint) target).setHttpMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
-        case "matchonuriprefix": ((ElytronEndpoint) target).setMatchOnUriPrefix(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "muteexception": ((ElytronEndpoint) target).setMuteException(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "optionsenabled": ((ElytronEndpoint) target).setOptionsEnabled(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((ElytronEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((ElytronEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "handlers": ((ElytronEndpoint) target).setHandlers(property(camelContext, java.lang.String.class, value)); return true;
-        case "cookiehandler": ((ElytronEndpoint) target).setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
-        case "keepalive": ((ElytronEndpoint) target).setKeepAlive(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "lazystartproducer": ((ElytronEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "options": ((ElytronEndpoint) target).setOptions(property(camelContext, java.util.Map.class, value)); return true;
-        case "preservehostheader": ((ElytronEndpoint) target).setPreserveHostHeader(property(camelContext, boolean.class, value)); return true;
-        case "reuseaddresses": ((ElytronEndpoint) target).setReuseAddresses(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "tcpnodelay": ((ElytronEndpoint) target).setTcpNoDelay(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "throwexceptiononfailure": ((ElytronEndpoint) target).setThrowExceptionOnFailure(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "transferexception": ((ElytronEndpoint) target).setTransferException(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "accesslogreceiver": ((ElytronEndpoint) target).setAccessLogReceiver(property(camelContext, io.undertow.server.handlers.accesslog.AccessLogReceiver.class, value)); return true;
-        case "basicpropertybinding": ((ElytronEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "headerfilterstrategy": ((ElytronEndpoint) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "synchronous": ((ElytronEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "undertowhttpbinding": ((ElytronEndpoint) target).setUndertowHttpBinding(property(camelContext, org.apache.camel.component.undertow.UndertowHttpBinding.class, value)); return true;
-        case "firewebsocketchannelevents": ((ElytronEndpoint) target).setFireWebSocketChannelEvents(property(camelContext, boolean.class, value)); return true;
-        case "sendtimeout": ((ElytronEndpoint) target).setSendTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "sendtoall": ((ElytronEndpoint) target).setSendToAll(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "sslcontextparameters": ((ElytronEndpoint) target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        ElytronEndpoint target = (ElytronEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowedroles":
+        case "allowedRoles": target.setAllowedRoles(property(camelContext, java.lang.String.class, value)); return true;
+        case "usestreaming":
+        case "useStreaming": target.setUseStreaming(property(camelContext, boolean.class, value)); return true;
+        case "accesslog":
+        case "accessLog": target.setAccessLog(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "httpmethodrestrict":
+        case "httpMethodRestrict": target.setHttpMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
+        case "matchonuriprefix":
+        case "matchOnUriPrefix": target.setMatchOnUriPrefix(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.setMuteException(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "optionsenabled":
+        case "optionsEnabled": target.setOptionsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "handlers": target.setHandlers(property(camelContext, java.lang.String.class, value)); return true;
+        case "cookiehandler":
+        case "cookieHandler": target.setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
+        case "keepalive":
+        case "keepAlive": target.setKeepAlive(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "options": target.setOptions(property(camelContext, java.util.Map.class, value)); return true;
+        case "preservehostheader":
+        case "preserveHostHeader": target.setPreserveHostHeader(property(camelContext, boolean.class, value)); return true;
+        case "reuseaddresses":
+        case "reuseAddresses": target.setReuseAddresses(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "tcpnodelay":
+        case "tcpNoDelay": target.setTcpNoDelay(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": target.setThrowExceptionOnFailure(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "transferexception":
+        case "transferException": target.setTransferException(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "accesslogreceiver":
+        case "accessLogReceiver": target.setAccessLogReceiver(property(camelContext, io.undertow.server.handlers.accesslog.AccessLogReceiver.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "undertowhttpbinding":
+        case "undertowHttpBinding": target.setUndertowHttpBinding(property(camelContext, org.apache.camel.component.undertow.UndertowHttpBinding.class, value)); return true;
+        case "firewebsocketchannelevents":
+        case "fireWebSocketChannelEvents": target.setFireWebSocketChannelEvents(property(camelContext, boolean.class, value)); return true;
+        case "sendtimeout":
+        case "sendTimeout": target.setSendTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "sendtoall":
+        case "sendToAll": target.setSendToAll(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        default: return false;
         }
     }
 

@@ -12,47 +12,33 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class MsvEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "failOnNullBody": ((MsvEndpoint) target).setFailOnNullBody(property(camelContext, boolean.class, value)); return true;
-        case "failOnNullHeader": ((MsvEndpoint) target).setFailOnNullHeader(property(camelContext, boolean.class, value)); return true;
-        case "headerName": ((MsvEndpoint) target).setHeaderName(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazyStartProducer": ((MsvEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((MsvEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "errorHandler": ((MsvEndpoint) target).setErrorHandler(property(camelContext, org.apache.camel.support.processor.validation.ValidatorErrorHandler.class, value)); return true;
-        case "resourceResolver": ((MsvEndpoint) target).setResourceResolver(property(camelContext, org.w3c.dom.ls.LSResourceResolver.class, value)); return true;
-        case "resourceResolverFactory": ((MsvEndpoint) target).setResourceResolverFactory(property(camelContext, org.apache.camel.component.validator.ValidatorResourceResolverFactory.class, value)); return true;
-        case "schemaFactory": ((MsvEndpoint) target).setSchemaFactory(property(camelContext, javax.xml.validation.SchemaFactory.class, value)); return true;
-        case "schemaLanguage": ((MsvEndpoint) target).setSchemaLanguage(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": ((MsvEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "useSharedSchema": ((MsvEndpoint) target).setUseSharedSchema(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "failonnullbody": ((MsvEndpoint) target).setFailOnNullBody(property(camelContext, boolean.class, value)); return true;
-        case "failonnullheader": ((MsvEndpoint) target).setFailOnNullHeader(property(camelContext, boolean.class, value)); return true;
-        case "headername": ((MsvEndpoint) target).setHeaderName(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer": ((MsvEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((MsvEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "errorhandler": ((MsvEndpoint) target).setErrorHandler(property(camelContext, org.apache.camel.support.processor.validation.ValidatorErrorHandler.class, value)); return true;
-        case "resourceresolver": ((MsvEndpoint) target).setResourceResolver(property(camelContext, org.w3c.dom.ls.LSResourceResolver.class, value)); return true;
-        case "resourceresolverfactory": ((MsvEndpoint) target).setResourceResolverFactory(property(camelContext, org.apache.camel.component.validator.ValidatorResourceResolverFactory.class, value)); return true;
-        case "schemafactory": ((MsvEndpoint) target).setSchemaFactory(property(camelContext, javax.xml.validation.SchemaFactory.class, value)); return true;
-        case "schemalanguage": ((MsvEndpoint) target).setSchemaLanguage(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": ((MsvEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "usesharedschema": ((MsvEndpoint) target).setUseSharedSchema(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        MsvEndpoint target = (MsvEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "failonnullbody":
+        case "failOnNullBody": target.setFailOnNullBody(property(camelContext, boolean.class, value)); return true;
+        case "failonnullheader":
+        case "failOnNullHeader": target.setFailOnNullHeader(property(camelContext, boolean.class, value)); return true;
+        case "headername":
+        case "headerName": target.setHeaderName(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "errorhandler":
+        case "errorHandler": target.setErrorHandler(property(camelContext, org.apache.camel.support.processor.validation.ValidatorErrorHandler.class, value)); return true;
+        case "resourceresolver":
+        case "resourceResolver": target.setResourceResolver(property(camelContext, org.w3c.dom.ls.LSResourceResolver.class, value)); return true;
+        case "resourceresolverfactory":
+        case "resourceResolverFactory": target.setResourceResolverFactory(property(camelContext, org.apache.camel.component.validator.ValidatorResourceResolverFactory.class, value)); return true;
+        case "schemafactory":
+        case "schemaFactory": target.setSchemaFactory(property(camelContext, javax.xml.validation.SchemaFactory.class, value)); return true;
+        case "schemalanguage":
+        case "schemaLanguage": target.setSchemaLanguage(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "usesharedschema":
+        case "useSharedSchema": target.setUseSharedSchema(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

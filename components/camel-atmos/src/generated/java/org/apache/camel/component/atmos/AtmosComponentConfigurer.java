@@ -12,37 +12,23 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class AtmosComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "fullTokenId": ((AtmosComponent) target).setFullTokenId(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretKey": ((AtmosComponent) target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "uri": ((AtmosComponent) target).setUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "sslValidation": ((AtmosComponent) target).setSslValidation(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((AtmosComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((AtmosComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((AtmosComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "fulltokenid": ((AtmosComponent) target).setFullTokenId(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretkey": ((AtmosComponent) target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "uri": ((AtmosComponent) target).setUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "sslvalidation": ((AtmosComponent) target).setSslValidation(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((AtmosComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((AtmosComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((AtmosComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        AtmosComponent target = (AtmosComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "fulltokenid":
+        case "fullTokenId": target.setFullTokenId(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretkey":
+        case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "uri": target.setUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslvalidation":
+        case "sslValidation": target.setSslValidation(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

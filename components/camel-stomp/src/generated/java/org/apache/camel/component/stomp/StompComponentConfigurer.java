@@ -12,43 +12,26 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class StompComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "configuration": ((StompComponent) target).setConfiguration(property(camelContext, org.apache.camel.component.stomp.StompConfiguration.class, value)); return true;
-        case "brokerURL": ((StompComponent) target).setBrokerURL(property(camelContext, java.lang.String.class, value)); return true;
-        case "login": ((StompComponent) target).setLogin(property(camelContext, java.lang.String.class, value)); return true;
-        case "passcode": ((StompComponent) target).setPasscode(property(camelContext, java.lang.String.class, value)); return true;
-        case "host": ((StompComponent) target).setHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "useGlobalSslContextParameters": ((StompComponent) target).setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
-        case "headerFilterStrategy": ((StompComponent) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "basicPropertyBinding": ((StompComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((StompComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((StompComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "configuration": ((StompComponent) target).setConfiguration(property(camelContext, org.apache.camel.component.stomp.StompConfiguration.class, value)); return true;
-        case "brokerurl": ((StompComponent) target).setBrokerURL(property(camelContext, java.lang.String.class, value)); return true;
-        case "login": ((StompComponent) target).setLogin(property(camelContext, java.lang.String.class, value)); return true;
-        case "passcode": ((StompComponent) target).setPasscode(property(camelContext, java.lang.String.class, value)); return true;
-        case "host": ((StompComponent) target).setHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "useglobalsslcontextparameters": ((StompComponent) target).setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
-        case "headerfilterstrategy": ((StompComponent) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "basicpropertybinding": ((StompComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((StompComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((StompComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        StompComponent target = (StompComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.stomp.StompConfiguration.class, value)); return true;
+        case "brokerurl":
+        case "brokerURL": target.setBrokerURL(property(camelContext, java.lang.String.class, value)); return true;
+        case "login": target.setLogin(property(camelContext, java.lang.String.class, value)); return true;
+        case "passcode": target.setPasscode(property(camelContext, java.lang.String.class, value)); return true;
+        case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

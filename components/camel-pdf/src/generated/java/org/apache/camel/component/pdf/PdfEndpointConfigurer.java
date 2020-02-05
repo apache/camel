@@ -12,45 +12,30 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "font": ((PdfEndpoint) target).getPdfConfiguration().setFont(property(camelContext, java.lang.String.class, value)); return true;
-        case "fontSize": ((PdfEndpoint) target).getPdfConfiguration().setFontSize(property(camelContext, float.class, value)); return true;
-        case "lazyStartProducer": ((PdfEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "marginBottom": ((PdfEndpoint) target).getPdfConfiguration().setMarginBottom(property(camelContext, int.class, value)); return true;
-        case "marginLeft": ((PdfEndpoint) target).getPdfConfiguration().setMarginLeft(property(camelContext, int.class, value)); return true;
-        case "marginRight": ((PdfEndpoint) target).getPdfConfiguration().setMarginRight(property(camelContext, int.class, value)); return true;
-        case "marginTop": ((PdfEndpoint) target).getPdfConfiguration().setMarginTop(property(camelContext, int.class, value)); return true;
-        case "pageSize": ((PdfEndpoint) target).getPdfConfiguration().setPageSize(property(camelContext, java.lang.String.class, value)); return true;
-        case "textProcessingFactory": ((PdfEndpoint) target).getPdfConfiguration().setTextProcessingFactory(property(camelContext, org.apache.camel.component.pdf.TextProcessingFactory.class, value)); return true;
-        case "basicPropertyBinding": ((PdfEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((PdfEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "font": ((PdfEndpoint) target).getPdfConfiguration().setFont(property(camelContext, java.lang.String.class, value)); return true;
-        case "fontsize": ((PdfEndpoint) target).getPdfConfiguration().setFontSize(property(camelContext, float.class, value)); return true;
-        case "lazystartproducer": ((PdfEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "marginbottom": ((PdfEndpoint) target).getPdfConfiguration().setMarginBottom(property(camelContext, int.class, value)); return true;
-        case "marginleft": ((PdfEndpoint) target).getPdfConfiguration().setMarginLeft(property(camelContext, int.class, value)); return true;
-        case "marginright": ((PdfEndpoint) target).getPdfConfiguration().setMarginRight(property(camelContext, int.class, value)); return true;
-        case "margintop": ((PdfEndpoint) target).getPdfConfiguration().setMarginTop(property(camelContext, int.class, value)); return true;
-        case "pagesize": ((PdfEndpoint) target).getPdfConfiguration().setPageSize(property(camelContext, java.lang.String.class, value)); return true;
-        case "textprocessingfactory": ((PdfEndpoint) target).getPdfConfiguration().setTextProcessingFactory(property(camelContext, org.apache.camel.component.pdf.TextProcessingFactory.class, value)); return true;
-        case "basicpropertybinding": ((PdfEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((PdfEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        PdfEndpoint target = (PdfEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "font": target.getPdfConfiguration().setFont(property(camelContext, java.lang.String.class, value)); return true;
+        case "fontsize":
+        case "fontSize": target.getPdfConfiguration().setFontSize(property(camelContext, float.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "marginbottom":
+        case "marginBottom": target.getPdfConfiguration().setMarginBottom(property(camelContext, int.class, value)); return true;
+        case "marginleft":
+        case "marginLeft": target.getPdfConfiguration().setMarginLeft(property(camelContext, int.class, value)); return true;
+        case "marginright":
+        case "marginRight": target.getPdfConfiguration().setMarginRight(property(camelContext, int.class, value)); return true;
+        case "margintop":
+        case "marginTop": target.getPdfConfiguration().setMarginTop(property(camelContext, int.class, value)); return true;
+        case "pagesize":
+        case "pageSize": target.getPdfConfiguration().setPageSize(property(camelContext, java.lang.String.class, value)); return true;
+        case "textprocessingfactory":
+        case "textProcessingFactory": target.getPdfConfiguration().setTextProcessingFactory(property(camelContext, org.apache.camel.component.pdf.TextProcessingFactory.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

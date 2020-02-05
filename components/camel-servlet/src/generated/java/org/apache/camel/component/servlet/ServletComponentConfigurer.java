@@ -12,43 +12,30 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class ServletComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "servletName": ((ServletComponent) target).setServletName(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpRegistry": ((ServletComponent) target).setHttpRegistry(property(camelContext, org.apache.camel.component.servlet.HttpRegistry.class, value)); return true;
-        case "attachmentMultipartBinding": ((ServletComponent) target).setAttachmentMultipartBinding(property(camelContext, boolean.class, value)); return true;
-        case "fileNameExtWhitelist": ((ServletComponent) target).setFileNameExtWhitelist(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpBinding": ((ServletComponent) target).setHttpBinding(property(camelContext, org.apache.camel.http.common.HttpBinding.class, value)); return true;
-        case "httpConfiguration": ((ServletComponent) target).setHttpConfiguration(property(camelContext, org.apache.camel.http.common.HttpConfiguration.class, value)); return true;
-        case "allowJavaSerializedObject": ((ServletComponent) target).setAllowJavaSerializedObject(property(camelContext, boolean.class, value)); return true;
-        case "headerFilterStrategy": ((ServletComponent) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "basicPropertyBinding": ((ServletComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((ServletComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "servletname": ((ServletComponent) target).setServletName(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpregistry": ((ServletComponent) target).setHttpRegistry(property(camelContext, org.apache.camel.component.servlet.HttpRegistry.class, value)); return true;
-        case "attachmentmultipartbinding": ((ServletComponent) target).setAttachmentMultipartBinding(property(camelContext, boolean.class, value)); return true;
-        case "filenameextwhitelist": ((ServletComponent) target).setFileNameExtWhitelist(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpbinding": ((ServletComponent) target).setHttpBinding(property(camelContext, org.apache.camel.http.common.HttpBinding.class, value)); return true;
-        case "httpconfiguration": ((ServletComponent) target).setHttpConfiguration(property(camelContext, org.apache.camel.http.common.HttpConfiguration.class, value)); return true;
-        case "allowjavaserializedobject": ((ServletComponent) target).setAllowJavaSerializedObject(property(camelContext, boolean.class, value)); return true;
-        case "headerfilterstrategy": ((ServletComponent) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "basicpropertybinding": ((ServletComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((ServletComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        ServletComponent target = (ServletComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "servletname":
+        case "servletName": target.setServletName(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpregistry":
+        case "httpRegistry": target.setHttpRegistry(property(camelContext, org.apache.camel.component.servlet.HttpRegistry.class, value)); return true;
+        case "attachmentmultipartbinding":
+        case "attachmentMultipartBinding": target.setAttachmentMultipartBinding(property(camelContext, boolean.class, value)); return true;
+        case "filenameextwhitelist":
+        case "fileNameExtWhitelist": target.setFileNameExtWhitelist(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpbinding":
+        case "httpBinding": target.setHttpBinding(property(camelContext, org.apache.camel.http.common.HttpBinding.class, value)); return true;
+        case "httpconfiguration":
+        case "httpConfiguration": target.setHttpConfiguration(property(camelContext, org.apache.camel.http.common.HttpConfiguration.class, value)); return true;
+        case "allowjavaserializedobject":
+        case "allowJavaSerializedObject": target.setAllowJavaSerializedObject(property(camelContext, boolean.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

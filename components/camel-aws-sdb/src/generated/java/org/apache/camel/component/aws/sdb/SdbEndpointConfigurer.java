@@ -12,49 +12,33 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class SdbEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "accessKey": ((SdbEndpoint) target).getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "amazonSDBClient": ((SdbEndpoint) target).getConfiguration().setAmazonSDBClient(property(camelContext, com.amazonaws.services.simpledb.AmazonSimpleDB.class, value)); return true;
-        case "consistentRead": ((SdbEndpoint) target).getConfiguration().setConsistentRead(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((SdbEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "maxNumberOfDomains": ((SdbEndpoint) target).getConfiguration().setMaxNumberOfDomains(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "operation": ((SdbEndpoint) target).getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws.sdb.SdbOperations.class, value)); return true;
-        case "proxyHost": ((SdbEndpoint) target).getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyPort": ((SdbEndpoint) target).getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "proxyProtocol": ((SdbEndpoint) target).getConfiguration().setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
-        case "region": ((SdbEndpoint) target).getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretKey": ((SdbEndpoint) target).getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((SdbEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((SdbEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "accesskey": ((SdbEndpoint) target).getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "amazonsdbclient": ((SdbEndpoint) target).getConfiguration().setAmazonSDBClient(property(camelContext, com.amazonaws.services.simpledb.AmazonSimpleDB.class, value)); return true;
-        case "consistentread": ((SdbEndpoint) target).getConfiguration().setConsistentRead(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((SdbEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "maxnumberofdomains": ((SdbEndpoint) target).getConfiguration().setMaxNumberOfDomains(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "operation": ((SdbEndpoint) target).getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws.sdb.SdbOperations.class, value)); return true;
-        case "proxyhost": ((SdbEndpoint) target).getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyport": ((SdbEndpoint) target).getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "proxyprotocol": ((SdbEndpoint) target).getConfiguration().setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
-        case "region": ((SdbEndpoint) target).getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretkey": ((SdbEndpoint) target).getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((SdbEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((SdbEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        SdbEndpoint target = (SdbEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "amazonsdbclient":
+        case "amazonSDBClient": target.getConfiguration().setAmazonSDBClient(property(camelContext, com.amazonaws.services.simpledb.AmazonSimpleDB.class, value)); return true;
+        case "consistentread":
+        case "consistentRead": target.getConfiguration().setConsistentRead(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxnumberofdomains":
+        case "maxNumberOfDomains": target.getConfiguration().setMaxNumberOfDomains(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws.sdb.SdbOperations.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": target.getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "proxyprotocol":
+        case "proxyProtocol": target.getConfiguration().setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
+        case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretkey":
+        case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

@@ -12,51 +12,35 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class Translate2EndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "accessKey": ((Translate2Endpoint) target).getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "autodetectSourceLanguage": ((Translate2Endpoint) target).getConfiguration().setAutodetectSourceLanguage(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((Translate2Endpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": ((Translate2Endpoint) target).getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.translate.Translate2Operations.class, value)); return true;
-        case "proxyHost": ((Translate2Endpoint) target).getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyPort": ((Translate2Endpoint) target).getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "proxyProtocol": ((Translate2Endpoint) target).getConfiguration().setProxyProtocol(property(camelContext, software.amazon.awssdk.core.Protocol.class, value)); return true;
-        case "region": ((Translate2Endpoint) target).getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretKey": ((Translate2Endpoint) target).getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "sourceLanguage": ((Translate2Endpoint) target).getConfiguration().setSourceLanguage(property(camelContext, java.lang.String.class, value)); return true;
-        case "targetLanguage": ((Translate2Endpoint) target).getConfiguration().setTargetLanguage(property(camelContext, java.lang.String.class, value)); return true;
-        case "translateClient": ((Translate2Endpoint) target).getConfiguration().setTranslateClient(property(camelContext, software.amazon.awssdk.services.translate.TranslateClient.class, value)); return true;
-        case "basicPropertyBinding": ((Translate2Endpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((Translate2Endpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "accesskey": ((Translate2Endpoint) target).getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "autodetectsourcelanguage": ((Translate2Endpoint) target).getConfiguration().setAutodetectSourceLanguage(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((Translate2Endpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": ((Translate2Endpoint) target).getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.translate.Translate2Operations.class, value)); return true;
-        case "proxyhost": ((Translate2Endpoint) target).getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyport": ((Translate2Endpoint) target).getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "proxyprotocol": ((Translate2Endpoint) target).getConfiguration().setProxyProtocol(property(camelContext, software.amazon.awssdk.core.Protocol.class, value)); return true;
-        case "region": ((Translate2Endpoint) target).getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretkey": ((Translate2Endpoint) target).getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "sourcelanguage": ((Translate2Endpoint) target).getConfiguration().setSourceLanguage(property(camelContext, java.lang.String.class, value)); return true;
-        case "targetlanguage": ((Translate2Endpoint) target).getConfiguration().setTargetLanguage(property(camelContext, java.lang.String.class, value)); return true;
-        case "translateclient": ((Translate2Endpoint) target).getConfiguration().setTranslateClient(property(camelContext, software.amazon.awssdk.services.translate.TranslateClient.class, value)); return true;
-        case "basicpropertybinding": ((Translate2Endpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((Translate2Endpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        Translate2Endpoint target = (Translate2Endpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "autodetectsourcelanguage":
+        case "autodetectSourceLanguage": target.getConfiguration().setAutodetectSourceLanguage(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.translate.Translate2Operations.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": target.getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "proxyprotocol":
+        case "proxyProtocol": target.getConfiguration().setProxyProtocol(property(camelContext, software.amazon.awssdk.core.Protocol.class, value)); return true;
+        case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretkey":
+        case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "sourcelanguage":
+        case "sourceLanguage": target.getConfiguration().setSourceLanguage(property(camelContext, java.lang.String.class, value)); return true;
+        case "targetlanguage":
+        case "targetLanguage": target.getConfiguration().setTargetLanguage(property(camelContext, java.lang.String.class, value)); return true;
+        case "translateclient":
+        case "translateClient": target.getConfiguration().setTranslateClient(property(camelContext, software.amazon.awssdk.services.translate.TranslateClient.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

@@ -12,81 +12,61 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class AtomEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "bridgeErrorHandler": ((AtomEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "feedHeader": ((AtomEndpoint) target).setFeedHeader(property(camelContext, boolean.class, value)); return true;
-        case "filter": ((AtomEndpoint) target).setFilter(property(camelContext, boolean.class, value)); return true;
-        case "lastUpdate": ((AtomEndpoint) target).setLastUpdate(property(camelContext, java.util.Date.class, value)); return true;
-        case "password": ((AtomEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "sendEmptyMessageWhenIdle": ((AtomEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "sortEntries": ((AtomEndpoint) target).setSortEntries(property(camelContext, boolean.class, value)); return true;
-        case "splitEntries": ((AtomEndpoint) target).setSplitEntries(property(camelContext, boolean.class, value)); return true;
-        case "throttleEntries": ((AtomEndpoint) target).setThrottleEntries(property(camelContext, boolean.class, value)); return true;
-        case "username": ((AtomEndpoint) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionHandler": ((AtomEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((AtomEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollStrategy": ((AtomEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "basicPropertyBinding": ((AtomEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((AtomEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "backoffErrorThreshold": ((AtomEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffIdleThreshold": ((AtomEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffMultiplier": ((AtomEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((AtomEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((AtomEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialDelay": ((AtomEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatCount": ((AtomEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runLoggingLevel": ((AtomEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledExecutorService": ((AtomEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((AtomEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerProperties": ((AtomEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startScheduler": ((AtomEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeUnit": ((AtomEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "useFixedDelay": ((AtomEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "bridgeerrorhandler": ((AtomEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "feedheader": ((AtomEndpoint) target).setFeedHeader(property(camelContext, boolean.class, value)); return true;
-        case "filter": ((AtomEndpoint) target).setFilter(property(camelContext, boolean.class, value)); return true;
-        case "lastupdate": ((AtomEndpoint) target).setLastUpdate(property(camelContext, java.util.Date.class, value)); return true;
-        case "password": ((AtomEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "sendemptymessagewhenidle": ((AtomEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "sortentries": ((AtomEndpoint) target).setSortEntries(property(camelContext, boolean.class, value)); return true;
-        case "splitentries": ((AtomEndpoint) target).setSplitEntries(property(camelContext, boolean.class, value)); return true;
-        case "throttleentries": ((AtomEndpoint) target).setThrottleEntries(property(camelContext, boolean.class, value)); return true;
-        case "username": ((AtomEndpoint) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionhandler": ((AtomEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((AtomEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollstrategy": ((AtomEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "basicpropertybinding": ((AtomEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((AtomEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "backofferrorthreshold": ((AtomEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffidlethreshold": ((AtomEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffmultiplier": ((AtomEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((AtomEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((AtomEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialdelay": ((AtomEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatcount": ((AtomEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runlogginglevel": ((AtomEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledexecutorservice": ((AtomEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((AtomEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerproperties": ((AtomEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startscheduler": ((AtomEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeunit": ((AtomEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "usefixeddelay": ((AtomEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        AtomEndpoint target = (AtomEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "feedheader":
+        case "feedHeader": target.setFeedHeader(property(camelContext, boolean.class, value)); return true;
+        case "filter": target.setFilter(property(camelContext, boolean.class, value)); return true;
+        case "lastupdate":
+        case "lastUpdate": target.setLastUpdate(property(camelContext, java.util.Date.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "sortentries":
+        case "sortEntries": target.setSortEntries(property(camelContext, boolean.class, value)); return true;
+        case "splitentries":
+        case "splitEntries": target.setSplitEntries(property(camelContext, boolean.class, value)); return true;
+        case "throttleentries":
+        case "throttleEntries": target.setThrottleEntries(property(camelContext, boolean.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffmultiplier":
+        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "repeatcount":
+        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "runlogginglevel":
+        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "schedulerproperties":
+        case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "startscheduler":
+        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "timeunit":
+        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "usefixeddelay":
+        case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

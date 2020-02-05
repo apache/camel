@@ -12,39 +12,23 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class ControlBusEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "action": ((ControlBusEndpoint) target).setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "async": ((ControlBusEndpoint) target).setAsync(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((ControlBusEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "loggingLevel": ((ControlBusEndpoint) target).setLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "restartDelay": ((ControlBusEndpoint) target).setRestartDelay(property(camelContext, int.class, value)); return true;
-        case "routeId": ((ControlBusEndpoint) target).setRouteId(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((ControlBusEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((ControlBusEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "action": ((ControlBusEndpoint) target).setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "async": ((ControlBusEndpoint) target).setAsync(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((ControlBusEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "logginglevel": ((ControlBusEndpoint) target).setLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "restartdelay": ((ControlBusEndpoint) target).setRestartDelay(property(camelContext, int.class, value)); return true;
-        case "routeid": ((ControlBusEndpoint) target).setRouteId(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((ControlBusEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((ControlBusEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        ControlBusEndpoint target = (ControlBusEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": target.setAction(property(camelContext, java.lang.String.class, value)); return true;
+        case "async": target.setAsync(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "logginglevel":
+        case "loggingLevel": target.setLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "restartdelay":
+        case "restartDelay": target.setRestartDelay(property(camelContext, int.class, value)); return true;
+        case "routeid":
+        case "routeId": target.setRouteId(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

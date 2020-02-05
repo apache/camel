@@ -12,45 +12,29 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class EC2EndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "accessKey": ((EC2Endpoint) target).getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "amazonEc2Client": ((EC2Endpoint) target).getConfiguration().setAmazonEc2Client(property(camelContext, com.amazonaws.services.ec2.AmazonEC2.class, value)); return true;
-        case "lazyStartProducer": ((EC2Endpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": ((EC2Endpoint) target).getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws.ec2.EC2Operations.class, value)); return true;
-        case "proxyHost": ((EC2Endpoint) target).getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyPort": ((EC2Endpoint) target).getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "proxyProtocol": ((EC2Endpoint) target).getConfiguration().setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
-        case "region": ((EC2Endpoint) target).getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretKey": ((EC2Endpoint) target).getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((EC2Endpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((EC2Endpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "accesskey": ((EC2Endpoint) target).getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "amazonec2client": ((EC2Endpoint) target).getConfiguration().setAmazonEc2Client(property(camelContext, com.amazonaws.services.ec2.AmazonEC2.class, value)); return true;
-        case "lazystartproducer": ((EC2Endpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": ((EC2Endpoint) target).getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws.ec2.EC2Operations.class, value)); return true;
-        case "proxyhost": ((EC2Endpoint) target).getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyport": ((EC2Endpoint) target).getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "proxyprotocol": ((EC2Endpoint) target).getConfiguration().setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
-        case "region": ((EC2Endpoint) target).getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretkey": ((EC2Endpoint) target).getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((EC2Endpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((EC2Endpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        EC2Endpoint target = (EC2Endpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "amazonec2client":
+        case "amazonEc2Client": target.getConfiguration().setAmazonEc2Client(property(camelContext, com.amazonaws.services.ec2.AmazonEC2.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws.ec2.EC2Operations.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": target.getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "proxyprotocol":
+        case "proxyProtocol": target.getConfiguration().setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
+        case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretkey":
+        case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

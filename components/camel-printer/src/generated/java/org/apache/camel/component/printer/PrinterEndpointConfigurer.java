@@ -12,49 +12,31 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class PrinterEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "copies": ((PrinterEndpoint) target).getConfig().setCopies(property(camelContext, int.class, value)); return true;
-        case "docFlavor": ((PrinterEndpoint) target).getConfig().setDocFlavor(property(camelContext, javax.print.DocFlavor.class, value)); return true;
-        case "flavor": ((PrinterEndpoint) target).getConfig().setFlavor(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazyStartProducer": ((PrinterEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "mediaSize": ((PrinterEndpoint) target).getConfig().setMediaSize(property(camelContext, java.lang.String.class, value)); return true;
-        case "mediaTray": ((PrinterEndpoint) target).getConfig().setMediaTray(property(camelContext, java.lang.String.class, value)); return true;
-        case "mimeType": ((PrinterEndpoint) target).getConfig().setMimeType(property(camelContext, java.lang.String.class, value)); return true;
-        case "orientation": ((PrinterEndpoint) target).getConfig().setOrientation(property(camelContext, java.lang.String.class, value)); return true;
-        case "printerPrefix": ((PrinterEndpoint) target).getConfig().setPrinterPrefix(property(camelContext, java.lang.String.class, value)); return true;
-        case "sendToPrinter": ((PrinterEndpoint) target).getConfig().setSendToPrinter(property(camelContext, boolean.class, value)); return true;
-        case "sides": ((PrinterEndpoint) target).getConfig().setSides(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((PrinterEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((PrinterEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "copies": ((PrinterEndpoint) target).getConfig().setCopies(property(camelContext, int.class, value)); return true;
-        case "docflavor": ((PrinterEndpoint) target).getConfig().setDocFlavor(property(camelContext, javax.print.DocFlavor.class, value)); return true;
-        case "flavor": ((PrinterEndpoint) target).getConfig().setFlavor(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer": ((PrinterEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "mediasize": ((PrinterEndpoint) target).getConfig().setMediaSize(property(camelContext, java.lang.String.class, value)); return true;
-        case "mediatray": ((PrinterEndpoint) target).getConfig().setMediaTray(property(camelContext, java.lang.String.class, value)); return true;
-        case "mimetype": ((PrinterEndpoint) target).getConfig().setMimeType(property(camelContext, java.lang.String.class, value)); return true;
-        case "orientation": ((PrinterEndpoint) target).getConfig().setOrientation(property(camelContext, java.lang.String.class, value)); return true;
-        case "printerprefix": ((PrinterEndpoint) target).getConfig().setPrinterPrefix(property(camelContext, java.lang.String.class, value)); return true;
-        case "sendtoprinter": ((PrinterEndpoint) target).getConfig().setSendToPrinter(property(camelContext, boolean.class, value)); return true;
-        case "sides": ((PrinterEndpoint) target).getConfig().setSides(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((PrinterEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((PrinterEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        PrinterEndpoint target = (PrinterEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "copies": target.getConfig().setCopies(property(camelContext, int.class, value)); return true;
+        case "docflavor":
+        case "docFlavor": target.getConfig().setDocFlavor(property(camelContext, javax.print.DocFlavor.class, value)); return true;
+        case "flavor": target.getConfig().setFlavor(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "mediasize":
+        case "mediaSize": target.getConfig().setMediaSize(property(camelContext, java.lang.String.class, value)); return true;
+        case "mediatray":
+        case "mediaTray": target.getConfig().setMediaTray(property(camelContext, java.lang.String.class, value)); return true;
+        case "mimetype":
+        case "mimeType": target.getConfig().setMimeType(property(camelContext, java.lang.String.class, value)); return true;
+        case "orientation": target.getConfig().setOrientation(property(camelContext, java.lang.String.class, value)); return true;
+        case "printerprefix":
+        case "printerPrefix": target.getConfig().setPrinterPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "sendtoprinter":
+        case "sendToPrinter": target.getConfig().setSendToPrinter(property(camelContext, boolean.class, value)); return true;
+        case "sides": target.getConfig().setSides(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

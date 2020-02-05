@@ -12,79 +12,59 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "connectionTimeout": ((NatsEndpoint) target).getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
-        case "flushConnection": ((NatsEndpoint) target).getConfiguration().setFlushConnection(property(camelContext, boolean.class, value)); return true;
-        case "flushTimeout": ((NatsEndpoint) target).getConfiguration().setFlushTimeout(property(camelContext, int.class, value)); return true;
-        case "maxPingsOut": ((NatsEndpoint) target).getConfiguration().setMaxPingsOut(property(camelContext, int.class, value)); return true;
-        case "maxReconnectAttempts": ((NatsEndpoint) target).getConfiguration().setMaxReconnectAttempts(property(camelContext, int.class, value)); return true;
-        case "noEcho": ((NatsEndpoint) target).getConfiguration().setNoEcho(property(camelContext, boolean.class, value)); return true;
-        case "noRandomizeServers": ((NatsEndpoint) target).getConfiguration().setNoRandomizeServers(property(camelContext, boolean.class, value)); return true;
-        case "pedantic": ((NatsEndpoint) target).getConfiguration().setPedantic(property(camelContext, boolean.class, value)); return true;
-        case "pingInterval": ((NatsEndpoint) target).getConfiguration().setPingInterval(property(camelContext, int.class, value)); return true;
-        case "reconnect": ((NatsEndpoint) target).getConfiguration().setReconnect(property(camelContext, boolean.class, value)); return true;
-        case "reconnectTimeWait": ((NatsEndpoint) target).getConfiguration().setReconnectTimeWait(property(camelContext, int.class, value)); return true;
-        case "requestCleanupInterval": ((NatsEndpoint) target).getConfiguration().setRequestCleanupInterval(property(camelContext, int.class, value)); return true;
-        case "servers": ((NatsEndpoint) target).getConfiguration().setServers(property(camelContext, java.lang.String.class, value)); return true;
-        case "verbose": ((NatsEndpoint) target).getConfiguration().setVerbose(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((NatsEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "maxMessages": ((NatsEndpoint) target).getConfiguration().setMaxMessages(property(camelContext, java.lang.String.class, value)); return true;
-        case "poolSize": ((NatsEndpoint) target).getConfiguration().setPoolSize(property(camelContext, int.class, value)); return true;
-        case "queueName": ((NatsEndpoint) target).getConfiguration().setQueueName(property(camelContext, java.lang.String.class, value)); return true;
-        case "replyToDisabled": ((NatsEndpoint) target).getConfiguration().setReplyToDisabled(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((NatsEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((NatsEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((NatsEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "replySubject": ((NatsEndpoint) target).getConfiguration().setReplySubject(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((NatsEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "connection": ((NatsEndpoint) target).getConfiguration().setConnection(property(camelContext, io.nats.client.Connection.class, value)); return true;
-        case "synchronous": ((NatsEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "secure": ((NatsEndpoint) target).getConfiguration().setSecure(property(camelContext, boolean.class, value)); return true;
-        case "sslContextParameters": ((NatsEndpoint) target).getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "connectiontimeout": ((NatsEndpoint) target).getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
-        case "flushconnection": ((NatsEndpoint) target).getConfiguration().setFlushConnection(property(camelContext, boolean.class, value)); return true;
-        case "flushtimeout": ((NatsEndpoint) target).getConfiguration().setFlushTimeout(property(camelContext, int.class, value)); return true;
-        case "maxpingsout": ((NatsEndpoint) target).getConfiguration().setMaxPingsOut(property(camelContext, int.class, value)); return true;
-        case "maxreconnectattempts": ((NatsEndpoint) target).getConfiguration().setMaxReconnectAttempts(property(camelContext, int.class, value)); return true;
-        case "noecho": ((NatsEndpoint) target).getConfiguration().setNoEcho(property(camelContext, boolean.class, value)); return true;
-        case "norandomizeservers": ((NatsEndpoint) target).getConfiguration().setNoRandomizeServers(property(camelContext, boolean.class, value)); return true;
-        case "pedantic": ((NatsEndpoint) target).getConfiguration().setPedantic(property(camelContext, boolean.class, value)); return true;
-        case "pinginterval": ((NatsEndpoint) target).getConfiguration().setPingInterval(property(camelContext, int.class, value)); return true;
-        case "reconnect": ((NatsEndpoint) target).getConfiguration().setReconnect(property(camelContext, boolean.class, value)); return true;
-        case "reconnecttimewait": ((NatsEndpoint) target).getConfiguration().setReconnectTimeWait(property(camelContext, int.class, value)); return true;
-        case "requestcleanupinterval": ((NatsEndpoint) target).getConfiguration().setRequestCleanupInterval(property(camelContext, int.class, value)); return true;
-        case "servers": ((NatsEndpoint) target).getConfiguration().setServers(property(camelContext, java.lang.String.class, value)); return true;
-        case "verbose": ((NatsEndpoint) target).getConfiguration().setVerbose(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((NatsEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "maxmessages": ((NatsEndpoint) target).getConfiguration().setMaxMessages(property(camelContext, java.lang.String.class, value)); return true;
-        case "poolsize": ((NatsEndpoint) target).getConfiguration().setPoolSize(property(camelContext, int.class, value)); return true;
-        case "queuename": ((NatsEndpoint) target).getConfiguration().setQueueName(property(camelContext, java.lang.String.class, value)); return true;
-        case "replytodisabled": ((NatsEndpoint) target).getConfiguration().setReplyToDisabled(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((NatsEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((NatsEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((NatsEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "replysubject": ((NatsEndpoint) target).getConfiguration().setReplySubject(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((NatsEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "connection": ((NatsEndpoint) target).getConfiguration().setConnection(property(camelContext, io.nats.client.Connection.class, value)); return true;
-        case "synchronous": ((NatsEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "secure": ((NatsEndpoint) target).getConfiguration().setSecure(property(camelContext, boolean.class, value)); return true;
-        case "sslcontextparameters": ((NatsEndpoint) target).getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        NatsEndpoint target = (NatsEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "connectiontimeout":
+        case "connectionTimeout": target.getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
+        case "flushconnection":
+        case "flushConnection": target.getConfiguration().setFlushConnection(property(camelContext, boolean.class, value)); return true;
+        case "flushtimeout":
+        case "flushTimeout": target.getConfiguration().setFlushTimeout(property(camelContext, int.class, value)); return true;
+        case "maxpingsout":
+        case "maxPingsOut": target.getConfiguration().setMaxPingsOut(property(camelContext, int.class, value)); return true;
+        case "maxreconnectattempts":
+        case "maxReconnectAttempts": target.getConfiguration().setMaxReconnectAttempts(property(camelContext, int.class, value)); return true;
+        case "noecho":
+        case "noEcho": target.getConfiguration().setNoEcho(property(camelContext, boolean.class, value)); return true;
+        case "norandomizeservers":
+        case "noRandomizeServers": target.getConfiguration().setNoRandomizeServers(property(camelContext, boolean.class, value)); return true;
+        case "pedantic": target.getConfiguration().setPedantic(property(camelContext, boolean.class, value)); return true;
+        case "pinginterval":
+        case "pingInterval": target.getConfiguration().setPingInterval(property(camelContext, int.class, value)); return true;
+        case "reconnect": target.getConfiguration().setReconnect(property(camelContext, boolean.class, value)); return true;
+        case "reconnecttimewait":
+        case "reconnectTimeWait": target.getConfiguration().setReconnectTimeWait(property(camelContext, int.class, value)); return true;
+        case "requestcleanupinterval":
+        case "requestCleanupInterval": target.getConfiguration().setRequestCleanupInterval(property(camelContext, int.class, value)); return true;
+        case "servers": target.getConfiguration().setServers(property(camelContext, java.lang.String.class, value)); return true;
+        case "verbose": target.getConfiguration().setVerbose(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "maxmessages":
+        case "maxMessages": target.getConfiguration().setMaxMessages(property(camelContext, java.lang.String.class, value)); return true;
+        case "poolsize":
+        case "poolSize": target.getConfiguration().setPoolSize(property(camelContext, int.class, value)); return true;
+        case "queuename":
+        case "queueName": target.getConfiguration().setQueueName(property(camelContext, java.lang.String.class, value)); return true;
+        case "replytodisabled":
+        case "replyToDisabled": target.getConfiguration().setReplyToDisabled(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "replysubject":
+        case "replySubject": target.getConfiguration().setReplySubject(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "connection": target.getConfiguration().setConnection(property(camelContext, io.nats.client.Connection.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "secure": target.getConfiguration().setSecure(property(camelContext, boolean.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        default: return false;
         }
     }
 

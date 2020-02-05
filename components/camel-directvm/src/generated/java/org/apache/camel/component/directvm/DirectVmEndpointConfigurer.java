@@ -12,45 +12,29 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class DirectVmEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "bridgeErrorHandler": ((DirectVmEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((DirectVmEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((DirectVmEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "block": ((DirectVmEndpoint) target).setBlock(property(camelContext, boolean.class, value)); return true;
-        case "failIfNoConsumers": ((DirectVmEndpoint) target).setFailIfNoConsumers(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((DirectVmEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "timeout": ((DirectVmEndpoint) target).setTimeout(property(camelContext, long.class, value)); return true;
-        case "headerFilterStrategy": ((DirectVmEndpoint) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "basicPropertyBinding": ((DirectVmEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "propagateProperties": ((DirectVmEndpoint) target).setPropagateProperties(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((DirectVmEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "bridgeerrorhandler": ((DirectVmEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((DirectVmEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((DirectVmEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "block": ((DirectVmEndpoint) target).setBlock(property(camelContext, boolean.class, value)); return true;
-        case "failifnoconsumers": ((DirectVmEndpoint) target).setFailIfNoConsumers(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((DirectVmEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "timeout": ((DirectVmEndpoint) target).setTimeout(property(camelContext, long.class, value)); return true;
-        case "headerfilterstrategy": ((DirectVmEndpoint) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "basicpropertybinding": ((DirectVmEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "propagateproperties": ((DirectVmEndpoint) target).setPropagateProperties(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((DirectVmEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        DirectVmEndpoint target = (DirectVmEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "block": target.setBlock(property(camelContext, boolean.class, value)); return true;
+        case "failifnoconsumers":
+        case "failIfNoConsumers": target.setFailIfNoConsumers(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "propagateproperties":
+        case "propagateProperties": target.setPropagateProperties(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

@@ -12,55 +12,40 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "alias": ((CoAPEndpoint) target).setAlias(property(camelContext, java.lang.String.class, value)); return true;
-        case "cipherSuites": ((CoAPEndpoint) target).setCipherSuites(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientAuthentication": ((CoAPEndpoint) target).setClientAuthentication(property(camelContext, java.lang.String.class, value)); return true;
-        case "privateKey": ((CoAPEndpoint) target).setPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
-        case "pskStore": ((CoAPEndpoint) target).setPskStore(property(camelContext, org.eclipse.californium.scandium.dtls.pskstore.PskStore.class, value)); return true;
-        case "publicKey": ((CoAPEndpoint) target).setPublicKey(property(camelContext, java.security.PublicKey.class, value)); return true;
-        case "recommendedCipherSuitesOnly": ((CoAPEndpoint) target).setRecommendedCipherSuitesOnly(property(camelContext, boolean.class, value)); return true;
-        case "sslContextParameters": ((CoAPEndpoint) target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "trustedRpkStore": ((CoAPEndpoint) target).setTrustedRpkStore(property(camelContext, org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore.class, value)); return true;
-        case "bridgeErrorHandler": ((CoAPEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "coapMethodRestrict": ((CoAPEndpoint) target).setCoapMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionHandler": ((CoAPEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((CoAPEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((CoAPEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((CoAPEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((CoAPEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "alias": ((CoAPEndpoint) target).setAlias(property(camelContext, java.lang.String.class, value)); return true;
-        case "ciphersuites": ((CoAPEndpoint) target).setCipherSuites(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientauthentication": ((CoAPEndpoint) target).setClientAuthentication(property(camelContext, java.lang.String.class, value)); return true;
-        case "privatekey": ((CoAPEndpoint) target).setPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
-        case "pskstore": ((CoAPEndpoint) target).setPskStore(property(camelContext, org.eclipse.californium.scandium.dtls.pskstore.PskStore.class, value)); return true;
-        case "publickey": ((CoAPEndpoint) target).setPublicKey(property(camelContext, java.security.PublicKey.class, value)); return true;
-        case "recommendedciphersuitesonly": ((CoAPEndpoint) target).setRecommendedCipherSuitesOnly(property(camelContext, boolean.class, value)); return true;
-        case "sslcontextparameters": ((CoAPEndpoint) target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "trustedrpkstore": ((CoAPEndpoint) target).setTrustedRpkStore(property(camelContext, org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore.class, value)); return true;
-        case "bridgeerrorhandler": ((CoAPEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "coapmethodrestrict": ((CoAPEndpoint) target).setCoapMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionhandler": ((CoAPEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((CoAPEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((CoAPEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((CoAPEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((CoAPEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        CoAPEndpoint target = (CoAPEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "alias": target.setAlias(property(camelContext, java.lang.String.class, value)); return true;
+        case "ciphersuites":
+        case "cipherSuites": target.setCipherSuites(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientauthentication":
+        case "clientAuthentication": target.setClientAuthentication(property(camelContext, java.lang.String.class, value)); return true;
+        case "privatekey":
+        case "privateKey": target.setPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
+        case "pskstore":
+        case "pskStore": target.setPskStore(property(camelContext, org.eclipse.californium.scandium.dtls.pskstore.PskStore.class, value)); return true;
+        case "publickey":
+        case "publicKey": target.setPublicKey(property(camelContext, java.security.PublicKey.class, value)); return true;
+        case "recommendedciphersuitesonly":
+        case "recommendedCipherSuitesOnly": target.setRecommendedCipherSuitesOnly(property(camelContext, boolean.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "trustedrpkstore":
+        case "trustedRpkStore": target.setTrustedRpkStore(property(camelContext, org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "coapmethodrestrict":
+        case "coapMethodRestrict": target.setCoapMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

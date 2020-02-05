@@ -12,51 +12,31 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class TimerEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "bridgeErrorHandler": ((TimerEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "delay": ((TimerEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "fixedRate": ((TimerEndpoint) target).setFixedRate(property(camelContext, boolean.class, value)); return true;
-        case "includeMetadata": ((TimerEndpoint) target).setIncludeMetadata(property(camelContext, boolean.class, value)); return true;
-        case "period": ((TimerEndpoint) target).setPeriod(property(camelContext, long.class, value)); return true;
-        case "repeatCount": ((TimerEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "exceptionHandler": ((TimerEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((TimerEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "basicPropertyBinding": ((TimerEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "daemon": ((TimerEndpoint) target).setDaemon(property(camelContext, boolean.class, value)); return true;
-        case "pattern": ((TimerEndpoint) target).setPattern(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": ((TimerEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "time": ((TimerEndpoint) target).setTime(property(camelContext, java.util.Date.class, value)); return true;
-        case "timer": ((TimerEndpoint) target).setTimer(property(camelContext, java.util.Timer.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "bridgeerrorhandler": ((TimerEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "delay": ((TimerEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "fixedrate": ((TimerEndpoint) target).setFixedRate(property(camelContext, boolean.class, value)); return true;
-        case "includemetadata": ((TimerEndpoint) target).setIncludeMetadata(property(camelContext, boolean.class, value)); return true;
-        case "period": ((TimerEndpoint) target).setPeriod(property(camelContext, long.class, value)); return true;
-        case "repeatcount": ((TimerEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "exceptionhandler": ((TimerEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((TimerEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "basicpropertybinding": ((TimerEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "daemon": ((TimerEndpoint) target).setDaemon(property(camelContext, boolean.class, value)); return true;
-        case "pattern": ((TimerEndpoint) target).setPattern(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": ((TimerEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "time": ((TimerEndpoint) target).setTime(property(camelContext, java.util.Date.class, value)); return true;
-        case "timer": ((TimerEndpoint) target).setTimer(property(camelContext, java.util.Timer.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        TimerEndpoint target = (TimerEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "fixedrate":
+        case "fixedRate": target.setFixedRate(property(camelContext, boolean.class, value)); return true;
+        case "includemetadata":
+        case "includeMetadata": target.setIncludeMetadata(property(camelContext, boolean.class, value)); return true;
+        case "period": target.setPeriod(property(camelContext, long.class, value)); return true;
+        case "repeatcount":
+        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "daemon": target.setDaemon(property(camelContext, boolean.class, value)); return true;
+        case "pattern": target.setPattern(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "time": target.setTime(property(camelContext, java.util.Date.class, value)); return true;
+        case "timer": target.setTimer(property(camelContext, java.util.Timer.class, value)); return true;
+        default: return false;
         }
     }
 

@@ -12,71 +12,56 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class JCacheEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "cacheConfiguration": ((JCacheEndpoint) target).getConfiguration().setCacheConfiguration(property(camelContext, javax.cache.configuration.Configuration.class, value)); return true;
-        case "cacheConfigurationProperties": ((JCacheEndpoint) target).getConfiguration().setCacheConfigurationProperties(property(camelContext, java.util.Properties.class, value)); return true;
-        case "cachingProvider": ((JCacheEndpoint) target).getConfiguration().setCachingProvider(property(camelContext, java.lang.String.class, value)); return true;
-        case "configurationUri": ((JCacheEndpoint) target).getConfiguration().setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "managementEnabled": ((JCacheEndpoint) target).getConfiguration().setManagementEnabled(property(camelContext, boolean.class, value)); return true;
-        case "readThrough": ((JCacheEndpoint) target).getConfiguration().setReadThrough(property(camelContext, boolean.class, value)); return true;
-        case "statisticsEnabled": ((JCacheEndpoint) target).getConfiguration().setStatisticsEnabled(property(camelContext, boolean.class, value)); return true;
-        case "storeByValue": ((JCacheEndpoint) target).getConfiguration().setStoreByValue(property(camelContext, boolean.class, value)); return true;
-        case "writeThrough": ((JCacheEndpoint) target).getConfiguration().setWriteThrough(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((JCacheEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "filteredEvents": ((JCacheEndpoint) target).getConfiguration().setFilteredEvents(property(camelContext, java.lang.String.class, value)); return true;
-        case "oldValueRequired": ((JCacheEndpoint) target).getConfiguration().setOldValueRequired(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((JCacheEndpoint) target).getConfiguration().setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "eventFilters": ((JCacheEndpoint) target).getConfiguration().setEventFilters(property(camelContext, java.util.List.class, value)); return true;
-        case "exceptionHandler": ((JCacheEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((JCacheEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "action": ((JCacheEndpoint) target).getConfiguration().setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazyStartProducer": ((JCacheEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((JCacheEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "cacheLoaderFactory": ((JCacheEndpoint) target).getConfiguration().setCacheLoaderFactory(property(camelContext, javax.cache.configuration.Factory.class, value)); return true;
-        case "cacheWriterFactory": ((JCacheEndpoint) target).getConfiguration().setCacheWriterFactory(property(camelContext, javax.cache.configuration.Factory.class, value)); return true;
-        case "createCacheIfNotExists": ((JCacheEndpoint) target).getConfiguration().setCreateCacheIfNotExists(property(camelContext, boolean.class, value)); return true;
-        case "expiryPolicyFactory": ((JCacheEndpoint) target).getConfiguration().setExpiryPolicyFactory(property(camelContext, javax.cache.configuration.Factory.class, value)); return true;
-        case "lookupProviders": ((JCacheEndpoint) target).getConfiguration().setLookupProviders(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "cacheconfiguration": ((JCacheEndpoint) target).getConfiguration().setCacheConfiguration(property(camelContext, javax.cache.configuration.Configuration.class, value)); return true;
-        case "cacheconfigurationproperties": ((JCacheEndpoint) target).getConfiguration().setCacheConfigurationProperties(property(camelContext, java.util.Properties.class, value)); return true;
-        case "cachingprovider": ((JCacheEndpoint) target).getConfiguration().setCachingProvider(property(camelContext, java.lang.String.class, value)); return true;
-        case "configurationuri": ((JCacheEndpoint) target).getConfiguration().setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "managementenabled": ((JCacheEndpoint) target).getConfiguration().setManagementEnabled(property(camelContext, boolean.class, value)); return true;
-        case "readthrough": ((JCacheEndpoint) target).getConfiguration().setReadThrough(property(camelContext, boolean.class, value)); return true;
-        case "statisticsenabled": ((JCacheEndpoint) target).getConfiguration().setStatisticsEnabled(property(camelContext, boolean.class, value)); return true;
-        case "storebyvalue": ((JCacheEndpoint) target).getConfiguration().setStoreByValue(property(camelContext, boolean.class, value)); return true;
-        case "writethrough": ((JCacheEndpoint) target).getConfiguration().setWriteThrough(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((JCacheEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "filteredevents": ((JCacheEndpoint) target).getConfiguration().setFilteredEvents(property(camelContext, java.lang.String.class, value)); return true;
-        case "oldvaluerequired": ((JCacheEndpoint) target).getConfiguration().setOldValueRequired(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((JCacheEndpoint) target).getConfiguration().setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "eventfilters": ((JCacheEndpoint) target).getConfiguration().setEventFilters(property(camelContext, java.util.List.class, value)); return true;
-        case "exceptionhandler": ((JCacheEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((JCacheEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "action": ((JCacheEndpoint) target).getConfiguration().setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer": ((JCacheEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((JCacheEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "cacheloaderfactory": ((JCacheEndpoint) target).getConfiguration().setCacheLoaderFactory(property(camelContext, javax.cache.configuration.Factory.class, value)); return true;
-        case "cachewriterfactory": ((JCacheEndpoint) target).getConfiguration().setCacheWriterFactory(property(camelContext, javax.cache.configuration.Factory.class, value)); return true;
-        case "createcacheifnotexists": ((JCacheEndpoint) target).getConfiguration().setCreateCacheIfNotExists(property(camelContext, boolean.class, value)); return true;
-        case "expirypolicyfactory": ((JCacheEndpoint) target).getConfiguration().setExpiryPolicyFactory(property(camelContext, javax.cache.configuration.Factory.class, value)); return true;
-        case "lookupproviders": ((JCacheEndpoint) target).getConfiguration().setLookupProviders(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        JCacheEndpoint target = (JCacheEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "cacheconfiguration":
+        case "cacheConfiguration": target.getConfiguration().setCacheConfiguration(property(camelContext, javax.cache.configuration.Configuration.class, value)); return true;
+        case "cacheconfigurationproperties":
+        case "cacheConfigurationProperties": target.getConfiguration().setCacheConfigurationProperties(property(camelContext, java.util.Properties.class, value)); return true;
+        case "cachingprovider":
+        case "cachingProvider": target.getConfiguration().setCachingProvider(property(camelContext, java.lang.String.class, value)); return true;
+        case "configurationuri":
+        case "configurationUri": target.getConfiguration().setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "managementenabled":
+        case "managementEnabled": target.getConfiguration().setManagementEnabled(property(camelContext, boolean.class, value)); return true;
+        case "readthrough":
+        case "readThrough": target.getConfiguration().setReadThrough(property(camelContext, boolean.class, value)); return true;
+        case "statisticsenabled":
+        case "statisticsEnabled": target.getConfiguration().setStatisticsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "storebyvalue":
+        case "storeByValue": target.getConfiguration().setStoreByValue(property(camelContext, boolean.class, value)); return true;
+        case "writethrough":
+        case "writeThrough": target.getConfiguration().setWriteThrough(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "filteredevents":
+        case "filteredEvents": target.getConfiguration().setFilteredEvents(property(camelContext, java.lang.String.class, value)); return true;
+        case "oldvaluerequired":
+        case "oldValueRequired": target.getConfiguration().setOldValueRequired(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.getConfiguration().setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "eventfilters":
+        case "eventFilters": target.getConfiguration().setEventFilters(property(camelContext, java.util.List.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "action": target.getConfiguration().setAction(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "cacheloaderfactory":
+        case "cacheLoaderFactory": target.getConfiguration().setCacheLoaderFactory(property(camelContext, javax.cache.configuration.Factory.class, value)); return true;
+        case "cachewriterfactory":
+        case "cacheWriterFactory": target.getConfiguration().setCacheWriterFactory(property(camelContext, javax.cache.configuration.Factory.class, value)); return true;
+        case "createcacheifnotexists":
+        case "createCacheIfNotExists": target.getConfiguration().setCreateCacheIfNotExists(property(camelContext, boolean.class, value)); return true;
+        case "expirypolicyfactory":
+        case "expiryPolicyFactory": target.getConfiguration().setExpiryPolicyFactory(property(camelContext, javax.cache.configuration.Factory.class, value)); return true;
+        case "lookupproviders":
+        case "lookupProviders": target.getConfiguration().setLookupProviders(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

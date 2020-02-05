@@ -12,159 +12,126 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "argumentFile": ((RobotFrameworkEndpoint) target).getConfiguration().setArgumentFile(property(camelContext, java.io.File.class, value)); return true;
-        case "combinedTagStats": ((RobotFrameworkEndpoint) target).getConfiguration().setCombinedTagStats(property(camelContext, java.lang.String.class, value)); return true;
-        case "contentCache": ((RobotFrameworkEndpoint) target).setContentCache(property(camelContext, boolean.class, value)); return true;
-        case "criticalTags": ((RobotFrameworkEndpoint) target).getConfiguration().setCriticalTags(property(camelContext, java.lang.String.class, value)); return true;
-        case "debugFile": ((RobotFrameworkEndpoint) target).getConfiguration().setDebugFile(property(camelContext, java.io.File.class, value)); return true;
-        case "document": ((RobotFrameworkEndpoint) target).getConfiguration().setDocument(property(camelContext, java.lang.String.class, value)); return true;
-        case "dryrun": ((RobotFrameworkEndpoint) target).getConfiguration().setDryrun(property(camelContext, boolean.class, value)); return true;
-        case "excludes": ((RobotFrameworkEndpoint) target).getConfiguration().setExcludes(property(camelContext, java.lang.String.class, value)); return true;
-        case "exitOnFailure": ((RobotFrameworkEndpoint) target).getConfiguration().setExitOnFailure(property(camelContext, boolean.class, value)); return true;
-        case "includes": ((RobotFrameworkEndpoint) target).getConfiguration().setIncludes(property(camelContext, java.lang.String.class, value)); return true;
-        case "listener": ((RobotFrameworkEndpoint) target).getConfiguration().setListener(property(camelContext, java.lang.String.class, value)); return true;
-        case "listeners": ((RobotFrameworkEndpoint) target).getConfiguration().setListeners(property(camelContext, java.lang.String.class, value)); return true;
-        case "log": ((RobotFrameworkEndpoint) target).getConfiguration().setLog(property(camelContext, java.io.File.class, value)); return true;
-        case "logLevel": ((RobotFrameworkEndpoint) target).getConfiguration().setLogLevel(property(camelContext, java.lang.String.class, value)); return true;
-        case "logTitle": ((RobotFrameworkEndpoint) target).getConfiguration().setLogTitle(property(camelContext, java.lang.String.class, value)); return true;
-        case "metadata": ((RobotFrameworkEndpoint) target).getConfiguration().setMetadata(property(camelContext, java.lang.String.class, value)); return true;
-        case "monitorColors": ((RobotFrameworkEndpoint) target).getConfiguration().setMonitorColors(property(camelContext, java.lang.String.class, value)); return true;
-        case "monitorWidth": ((RobotFrameworkEndpoint) target).getConfiguration().setMonitorWidth(property(camelContext, java.lang.String.class, value)); return true;
-        case "name": ((RobotFrameworkEndpoint) target).getConfiguration().setName(property(camelContext, java.lang.String.class, value)); return true;
-        case "nonCriticalTags": ((RobotFrameworkEndpoint) target).getConfiguration().setNonCriticalTags(property(camelContext, java.lang.String.class, value)); return true;
-        case "noStatusReturnCode": ((RobotFrameworkEndpoint) target).getConfiguration().setNoStatusReturnCode(property(camelContext, boolean.class, value)); return true;
-        case "output": ((RobotFrameworkEndpoint) target).getConfiguration().setOutput(property(camelContext, java.io.File.class, value)); return true;
-        case "outputDirectory": ((RobotFrameworkEndpoint) target).getConfiguration().setOutputDirectory(property(camelContext, java.io.File.class, value)); return true;
-        case "randomize": ((RobotFrameworkEndpoint) target).getConfiguration().setRandomize(property(camelContext, java.lang.String.class, value)); return true;
-        case "report": ((RobotFrameworkEndpoint) target).getConfiguration().setReport(property(camelContext, java.io.File.class, value)); return true;
-        case "reportBackground": ((RobotFrameworkEndpoint) target).getConfiguration().setReportBackground(property(camelContext, java.lang.String.class, value)); return true;
-        case "reportTitle": ((RobotFrameworkEndpoint) target).getConfiguration().setReportTitle(property(camelContext, java.lang.String.class, value)); return true;
-        case "runEmptySuite": ((RobotFrameworkEndpoint) target).getConfiguration().setRunEmptySuite(property(camelContext, boolean.class, value)); return true;
-        case "runFailed": ((RobotFrameworkEndpoint) target).getConfiguration().setRunFailed(property(camelContext, java.io.File.class, value)); return true;
-        case "runMode": ((RobotFrameworkEndpoint) target).getConfiguration().setRunMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "skipTeardownOnExit": ((RobotFrameworkEndpoint) target).getConfiguration().setSkipTeardownOnExit(property(camelContext, boolean.class, value)); return true;
-        case "splitOutputs": ((RobotFrameworkEndpoint) target).getConfiguration().setSplitOutputs(property(camelContext, java.lang.String.class, value)); return true;
-        case "suites": ((RobotFrameworkEndpoint) target).getConfiguration().setSuites(property(camelContext, java.lang.String.class, value)); return true;
-        case "suiteStatLevel": ((RobotFrameworkEndpoint) target).getConfiguration().setSuiteStatLevel(property(camelContext, java.lang.String.class, value)); return true;
-        case "summaryTitle": ((RobotFrameworkEndpoint) target).getConfiguration().setSummaryTitle(property(camelContext, java.lang.String.class, value)); return true;
-        case "tagDocs": ((RobotFrameworkEndpoint) target).getConfiguration().setTagDocs(property(camelContext, java.lang.String.class, value)); return true;
-        case "tags": ((RobotFrameworkEndpoint) target).getConfiguration().setTags(property(camelContext, java.lang.String.class, value)); return true;
-        case "tagStatExcludes": ((RobotFrameworkEndpoint) target).getConfiguration().setTagStatExcludes(property(camelContext, java.lang.String.class, value)); return true;
-        case "tagStatIncludes": ((RobotFrameworkEndpoint) target).getConfiguration().setTagStatIncludes(property(camelContext, java.lang.String.class, value)); return true;
-        case "tagStatLinks": ((RobotFrameworkEndpoint) target).getConfiguration().setTagStatLinks(property(camelContext, java.lang.String.class, value)); return true;
-        case "tests": ((RobotFrameworkEndpoint) target).getConfiguration().setTests(property(camelContext, java.lang.String.class, value)); return true;
-        case "timestampOutputs": ((RobotFrameworkEndpoint) target).getConfiguration().setTimestampOutputs(property(camelContext, boolean.class, value)); return true;
-        case "variableFiles": ((RobotFrameworkEndpoint) target).getConfiguration().setVariableFiles(property(camelContext, java.lang.String.class, value)); return true;
-        case "variables": ((RobotFrameworkEndpoint) target).getConfiguration().setVariables(property(camelContext, java.lang.String.class, value)); return true;
-        case "warnOnSkippedFiles": ((RobotFrameworkEndpoint) target).getConfiguration().setWarnOnSkippedFiles(property(camelContext, boolean.class, value)); return true;
-        case "xunitFile": ((RobotFrameworkEndpoint) target).getConfiguration().setXunitFile(property(camelContext, java.io.File.class, value)); return true;
-        case "bridgeErrorHandler": ((RobotFrameworkEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "sendEmptyMessageWhenIdle": ((RobotFrameworkEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((RobotFrameworkEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((RobotFrameworkEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollStrategy": ((RobotFrameworkEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "lazyStartProducer": ((RobotFrameworkEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((RobotFrameworkEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((RobotFrameworkEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "backoffErrorThreshold": ((RobotFrameworkEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffIdleThreshold": ((RobotFrameworkEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffMultiplier": ((RobotFrameworkEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((RobotFrameworkEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((RobotFrameworkEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialDelay": ((RobotFrameworkEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatCount": ((RobotFrameworkEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runLoggingLevel": ((RobotFrameworkEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledExecutorService": ((RobotFrameworkEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((RobotFrameworkEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerProperties": ((RobotFrameworkEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startScheduler": ((RobotFrameworkEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeUnit": ((RobotFrameworkEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "useFixedDelay": ((RobotFrameworkEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "argumentfile": ((RobotFrameworkEndpoint) target).getConfiguration().setArgumentFile(property(camelContext, java.io.File.class, value)); return true;
-        case "combinedtagstats": ((RobotFrameworkEndpoint) target).getConfiguration().setCombinedTagStats(property(camelContext, java.lang.String.class, value)); return true;
-        case "contentcache": ((RobotFrameworkEndpoint) target).setContentCache(property(camelContext, boolean.class, value)); return true;
-        case "criticaltags": ((RobotFrameworkEndpoint) target).getConfiguration().setCriticalTags(property(camelContext, java.lang.String.class, value)); return true;
-        case "debugfile": ((RobotFrameworkEndpoint) target).getConfiguration().setDebugFile(property(camelContext, java.io.File.class, value)); return true;
-        case "document": ((RobotFrameworkEndpoint) target).getConfiguration().setDocument(property(camelContext, java.lang.String.class, value)); return true;
-        case "dryrun": ((RobotFrameworkEndpoint) target).getConfiguration().setDryrun(property(camelContext, boolean.class, value)); return true;
-        case "excludes": ((RobotFrameworkEndpoint) target).getConfiguration().setExcludes(property(camelContext, java.lang.String.class, value)); return true;
-        case "exitonfailure": ((RobotFrameworkEndpoint) target).getConfiguration().setExitOnFailure(property(camelContext, boolean.class, value)); return true;
-        case "includes": ((RobotFrameworkEndpoint) target).getConfiguration().setIncludes(property(camelContext, java.lang.String.class, value)); return true;
-        case "listener": ((RobotFrameworkEndpoint) target).getConfiguration().setListener(property(camelContext, java.lang.String.class, value)); return true;
-        case "listeners": ((RobotFrameworkEndpoint) target).getConfiguration().setListeners(property(camelContext, java.lang.String.class, value)); return true;
-        case "log": ((RobotFrameworkEndpoint) target).getConfiguration().setLog(property(camelContext, java.io.File.class, value)); return true;
-        case "loglevel": ((RobotFrameworkEndpoint) target).getConfiguration().setLogLevel(property(camelContext, java.lang.String.class, value)); return true;
-        case "logtitle": ((RobotFrameworkEndpoint) target).getConfiguration().setLogTitle(property(camelContext, java.lang.String.class, value)); return true;
-        case "metadata": ((RobotFrameworkEndpoint) target).getConfiguration().setMetadata(property(camelContext, java.lang.String.class, value)); return true;
-        case "monitorcolors": ((RobotFrameworkEndpoint) target).getConfiguration().setMonitorColors(property(camelContext, java.lang.String.class, value)); return true;
-        case "monitorwidth": ((RobotFrameworkEndpoint) target).getConfiguration().setMonitorWidth(property(camelContext, java.lang.String.class, value)); return true;
-        case "name": ((RobotFrameworkEndpoint) target).getConfiguration().setName(property(camelContext, java.lang.String.class, value)); return true;
-        case "noncriticaltags": ((RobotFrameworkEndpoint) target).getConfiguration().setNonCriticalTags(property(camelContext, java.lang.String.class, value)); return true;
-        case "nostatusreturncode": ((RobotFrameworkEndpoint) target).getConfiguration().setNoStatusReturnCode(property(camelContext, boolean.class, value)); return true;
-        case "output": ((RobotFrameworkEndpoint) target).getConfiguration().setOutput(property(camelContext, java.io.File.class, value)); return true;
-        case "outputdirectory": ((RobotFrameworkEndpoint) target).getConfiguration().setOutputDirectory(property(camelContext, java.io.File.class, value)); return true;
-        case "randomize": ((RobotFrameworkEndpoint) target).getConfiguration().setRandomize(property(camelContext, java.lang.String.class, value)); return true;
-        case "report": ((RobotFrameworkEndpoint) target).getConfiguration().setReport(property(camelContext, java.io.File.class, value)); return true;
-        case "reportbackground": ((RobotFrameworkEndpoint) target).getConfiguration().setReportBackground(property(camelContext, java.lang.String.class, value)); return true;
-        case "reporttitle": ((RobotFrameworkEndpoint) target).getConfiguration().setReportTitle(property(camelContext, java.lang.String.class, value)); return true;
-        case "runemptysuite": ((RobotFrameworkEndpoint) target).getConfiguration().setRunEmptySuite(property(camelContext, boolean.class, value)); return true;
-        case "runfailed": ((RobotFrameworkEndpoint) target).getConfiguration().setRunFailed(property(camelContext, java.io.File.class, value)); return true;
-        case "runmode": ((RobotFrameworkEndpoint) target).getConfiguration().setRunMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "skipteardownonexit": ((RobotFrameworkEndpoint) target).getConfiguration().setSkipTeardownOnExit(property(camelContext, boolean.class, value)); return true;
-        case "splitoutputs": ((RobotFrameworkEndpoint) target).getConfiguration().setSplitOutputs(property(camelContext, java.lang.String.class, value)); return true;
-        case "suites": ((RobotFrameworkEndpoint) target).getConfiguration().setSuites(property(camelContext, java.lang.String.class, value)); return true;
-        case "suitestatlevel": ((RobotFrameworkEndpoint) target).getConfiguration().setSuiteStatLevel(property(camelContext, java.lang.String.class, value)); return true;
-        case "summarytitle": ((RobotFrameworkEndpoint) target).getConfiguration().setSummaryTitle(property(camelContext, java.lang.String.class, value)); return true;
-        case "tagdocs": ((RobotFrameworkEndpoint) target).getConfiguration().setTagDocs(property(camelContext, java.lang.String.class, value)); return true;
-        case "tags": ((RobotFrameworkEndpoint) target).getConfiguration().setTags(property(camelContext, java.lang.String.class, value)); return true;
-        case "tagstatexcludes": ((RobotFrameworkEndpoint) target).getConfiguration().setTagStatExcludes(property(camelContext, java.lang.String.class, value)); return true;
-        case "tagstatincludes": ((RobotFrameworkEndpoint) target).getConfiguration().setTagStatIncludes(property(camelContext, java.lang.String.class, value)); return true;
-        case "tagstatlinks": ((RobotFrameworkEndpoint) target).getConfiguration().setTagStatLinks(property(camelContext, java.lang.String.class, value)); return true;
-        case "tests": ((RobotFrameworkEndpoint) target).getConfiguration().setTests(property(camelContext, java.lang.String.class, value)); return true;
-        case "timestampoutputs": ((RobotFrameworkEndpoint) target).getConfiguration().setTimestampOutputs(property(camelContext, boolean.class, value)); return true;
-        case "variablefiles": ((RobotFrameworkEndpoint) target).getConfiguration().setVariableFiles(property(camelContext, java.lang.String.class, value)); return true;
-        case "variables": ((RobotFrameworkEndpoint) target).getConfiguration().setVariables(property(camelContext, java.lang.String.class, value)); return true;
-        case "warnonskippedfiles": ((RobotFrameworkEndpoint) target).getConfiguration().setWarnOnSkippedFiles(property(camelContext, boolean.class, value)); return true;
-        case "xunitfile": ((RobotFrameworkEndpoint) target).getConfiguration().setXunitFile(property(camelContext, java.io.File.class, value)); return true;
-        case "bridgeerrorhandler": ((RobotFrameworkEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "sendemptymessagewhenidle": ((RobotFrameworkEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((RobotFrameworkEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((RobotFrameworkEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollstrategy": ((RobotFrameworkEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "lazystartproducer": ((RobotFrameworkEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((RobotFrameworkEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((RobotFrameworkEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "backofferrorthreshold": ((RobotFrameworkEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffidlethreshold": ((RobotFrameworkEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffmultiplier": ((RobotFrameworkEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((RobotFrameworkEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((RobotFrameworkEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialdelay": ((RobotFrameworkEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatcount": ((RobotFrameworkEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runlogginglevel": ((RobotFrameworkEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledexecutorservice": ((RobotFrameworkEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((RobotFrameworkEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerproperties": ((RobotFrameworkEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startscheduler": ((RobotFrameworkEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeunit": ((RobotFrameworkEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "usefixeddelay": ((RobotFrameworkEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        RobotFrameworkEndpoint target = (RobotFrameworkEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "argumentfile":
+        case "argumentFile": target.getConfiguration().setArgumentFile(property(camelContext, java.io.File.class, value)); return true;
+        case "combinedtagstats":
+        case "combinedTagStats": target.getConfiguration().setCombinedTagStats(property(camelContext, java.lang.String.class, value)); return true;
+        case "contentcache":
+        case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
+        case "criticaltags":
+        case "criticalTags": target.getConfiguration().setCriticalTags(property(camelContext, java.lang.String.class, value)); return true;
+        case "debugfile":
+        case "debugFile": target.getConfiguration().setDebugFile(property(camelContext, java.io.File.class, value)); return true;
+        case "document": target.getConfiguration().setDocument(property(camelContext, java.lang.String.class, value)); return true;
+        case "dryrun": target.getConfiguration().setDryrun(property(camelContext, boolean.class, value)); return true;
+        case "excludes": target.getConfiguration().setExcludes(property(camelContext, java.lang.String.class, value)); return true;
+        case "exitonfailure":
+        case "exitOnFailure": target.getConfiguration().setExitOnFailure(property(camelContext, boolean.class, value)); return true;
+        case "includes": target.getConfiguration().setIncludes(property(camelContext, java.lang.String.class, value)); return true;
+        case "listener": target.getConfiguration().setListener(property(camelContext, java.lang.String.class, value)); return true;
+        case "listeners": target.getConfiguration().setListeners(property(camelContext, java.lang.String.class, value)); return true;
+        case "log": target.getConfiguration().setLog(property(camelContext, java.io.File.class, value)); return true;
+        case "loglevel":
+        case "logLevel": target.getConfiguration().setLogLevel(property(camelContext, java.lang.String.class, value)); return true;
+        case "logtitle":
+        case "logTitle": target.getConfiguration().setLogTitle(property(camelContext, java.lang.String.class, value)); return true;
+        case "metadata": target.getConfiguration().setMetadata(property(camelContext, java.lang.String.class, value)); return true;
+        case "monitorcolors":
+        case "monitorColors": target.getConfiguration().setMonitorColors(property(camelContext, java.lang.String.class, value)); return true;
+        case "monitorwidth":
+        case "monitorWidth": target.getConfiguration().setMonitorWidth(property(camelContext, java.lang.String.class, value)); return true;
+        case "name": target.getConfiguration().setName(property(camelContext, java.lang.String.class, value)); return true;
+        case "noncriticaltags":
+        case "nonCriticalTags": target.getConfiguration().setNonCriticalTags(property(camelContext, java.lang.String.class, value)); return true;
+        case "nostatusreturncode":
+        case "noStatusReturnCode": target.getConfiguration().setNoStatusReturnCode(property(camelContext, boolean.class, value)); return true;
+        case "output": target.getConfiguration().setOutput(property(camelContext, java.io.File.class, value)); return true;
+        case "outputdirectory":
+        case "outputDirectory": target.getConfiguration().setOutputDirectory(property(camelContext, java.io.File.class, value)); return true;
+        case "randomize": target.getConfiguration().setRandomize(property(camelContext, java.lang.String.class, value)); return true;
+        case "report": target.getConfiguration().setReport(property(camelContext, java.io.File.class, value)); return true;
+        case "reportbackground":
+        case "reportBackground": target.getConfiguration().setReportBackground(property(camelContext, java.lang.String.class, value)); return true;
+        case "reporttitle":
+        case "reportTitle": target.getConfiguration().setReportTitle(property(camelContext, java.lang.String.class, value)); return true;
+        case "runemptysuite":
+        case "runEmptySuite": target.getConfiguration().setRunEmptySuite(property(camelContext, boolean.class, value)); return true;
+        case "runfailed":
+        case "runFailed": target.getConfiguration().setRunFailed(property(camelContext, java.io.File.class, value)); return true;
+        case "runmode":
+        case "runMode": target.getConfiguration().setRunMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "skipteardownonexit":
+        case "skipTeardownOnExit": target.getConfiguration().setSkipTeardownOnExit(property(camelContext, boolean.class, value)); return true;
+        case "splitoutputs":
+        case "splitOutputs": target.getConfiguration().setSplitOutputs(property(camelContext, java.lang.String.class, value)); return true;
+        case "suites": target.getConfiguration().setSuites(property(camelContext, java.lang.String.class, value)); return true;
+        case "suitestatlevel":
+        case "suiteStatLevel": target.getConfiguration().setSuiteStatLevel(property(camelContext, java.lang.String.class, value)); return true;
+        case "summarytitle":
+        case "summaryTitle": target.getConfiguration().setSummaryTitle(property(camelContext, java.lang.String.class, value)); return true;
+        case "tagdocs":
+        case "tagDocs": target.getConfiguration().setTagDocs(property(camelContext, java.lang.String.class, value)); return true;
+        case "tags": target.getConfiguration().setTags(property(camelContext, java.lang.String.class, value)); return true;
+        case "tagstatexcludes":
+        case "tagStatExcludes": target.getConfiguration().setTagStatExcludes(property(camelContext, java.lang.String.class, value)); return true;
+        case "tagstatincludes":
+        case "tagStatIncludes": target.getConfiguration().setTagStatIncludes(property(camelContext, java.lang.String.class, value)); return true;
+        case "tagstatlinks":
+        case "tagStatLinks": target.getConfiguration().setTagStatLinks(property(camelContext, java.lang.String.class, value)); return true;
+        case "tests": target.getConfiguration().setTests(property(camelContext, java.lang.String.class, value)); return true;
+        case "timestampoutputs":
+        case "timestampOutputs": target.getConfiguration().setTimestampOutputs(property(camelContext, boolean.class, value)); return true;
+        case "variablefiles":
+        case "variableFiles": target.getConfiguration().setVariableFiles(property(camelContext, java.lang.String.class, value)); return true;
+        case "variables": target.getConfiguration().setVariables(property(camelContext, java.lang.String.class, value)); return true;
+        case "warnonskippedfiles":
+        case "warnOnSkippedFiles": target.getConfiguration().setWarnOnSkippedFiles(property(camelContext, boolean.class, value)); return true;
+        case "xunitfile":
+        case "xunitFile": target.getConfiguration().setXunitFile(property(camelContext, java.io.File.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffmultiplier":
+        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "repeatcount":
+        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "runlogginglevel":
+        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "schedulerproperties":
+        case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "startscheduler":
+        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "timeunit":
+        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "usefixeddelay":
+        case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

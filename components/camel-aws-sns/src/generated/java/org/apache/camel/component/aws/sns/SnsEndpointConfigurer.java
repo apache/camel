@@ -12,63 +12,46 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class SnsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "amazonSNSClient": ((SnsEndpoint) target).getConfiguration().setAmazonSNSClient(property(camelContext, com.amazonaws.services.sns.AmazonSNS.class, value)); return true;
-        case "amazonSQSClient": ((SnsEndpoint) target).getConfiguration().setAmazonSQSClient(property(camelContext, com.amazonaws.services.sqs.AmazonSQS.class, value)); return true;
-        case "autoCreateTopic": ((SnsEndpoint) target).getConfiguration().setAutoCreateTopic(property(camelContext, boolean.class, value)); return true;
-        case "headerFilterStrategy": ((SnsEndpoint) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "kmsMasterKeyId": ((SnsEndpoint) target).getConfiguration().setKmsMasterKeyId(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazyStartProducer": ((SnsEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "messageStructure": ((SnsEndpoint) target).getConfiguration().setMessageStructure(property(camelContext, java.lang.String.class, value)); return true;
-        case "policy": ((SnsEndpoint) target).getConfiguration().setPolicy(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyHost": ((SnsEndpoint) target).getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyPort": ((SnsEndpoint) target).getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "proxyProtocol": ((SnsEndpoint) target).getConfiguration().setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
-        case "queueUrl": ((SnsEndpoint) target).getConfiguration().setQueueUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "region": ((SnsEndpoint) target).getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "serverSideEncryptionEnabled": ((SnsEndpoint) target).getConfiguration().setServerSideEncryptionEnabled(property(camelContext, boolean.class, value)); return true;
-        case "subject": ((SnsEndpoint) target).getConfiguration().setSubject(property(camelContext, java.lang.String.class, value)); return true;
-        case "subscribeSNStoSQS": ((SnsEndpoint) target).getConfiguration().setSubscribeSNStoSQS(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((SnsEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((SnsEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "accessKey": ((SnsEndpoint) target).getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretKey": ((SnsEndpoint) target).getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "amazonsnsclient": ((SnsEndpoint) target).getConfiguration().setAmazonSNSClient(property(camelContext, com.amazonaws.services.sns.AmazonSNS.class, value)); return true;
-        case "amazonsqsclient": ((SnsEndpoint) target).getConfiguration().setAmazonSQSClient(property(camelContext, com.amazonaws.services.sqs.AmazonSQS.class, value)); return true;
-        case "autocreatetopic": ((SnsEndpoint) target).getConfiguration().setAutoCreateTopic(property(camelContext, boolean.class, value)); return true;
-        case "headerfilterstrategy": ((SnsEndpoint) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "kmsmasterkeyid": ((SnsEndpoint) target).getConfiguration().setKmsMasterKeyId(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer": ((SnsEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "messagestructure": ((SnsEndpoint) target).getConfiguration().setMessageStructure(property(camelContext, java.lang.String.class, value)); return true;
-        case "policy": ((SnsEndpoint) target).getConfiguration().setPolicy(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyhost": ((SnsEndpoint) target).getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyport": ((SnsEndpoint) target).getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "proxyprotocol": ((SnsEndpoint) target).getConfiguration().setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
-        case "queueurl": ((SnsEndpoint) target).getConfiguration().setQueueUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "region": ((SnsEndpoint) target).getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "serversideencryptionenabled": ((SnsEndpoint) target).getConfiguration().setServerSideEncryptionEnabled(property(camelContext, boolean.class, value)); return true;
-        case "subject": ((SnsEndpoint) target).getConfiguration().setSubject(property(camelContext, java.lang.String.class, value)); return true;
-        case "subscribesnstosqs": ((SnsEndpoint) target).getConfiguration().setSubscribeSNStoSQS(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((SnsEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((SnsEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "accesskey": ((SnsEndpoint) target).getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretkey": ((SnsEndpoint) target).getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        SnsEndpoint target = (SnsEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "amazonsnsclient":
+        case "amazonSNSClient": target.getConfiguration().setAmazonSNSClient(property(camelContext, com.amazonaws.services.sns.AmazonSNS.class, value)); return true;
+        case "amazonsqsclient":
+        case "amazonSQSClient": target.getConfiguration().setAmazonSQSClient(property(camelContext, com.amazonaws.services.sqs.AmazonSQS.class, value)); return true;
+        case "autocreatetopic":
+        case "autoCreateTopic": target.getConfiguration().setAutoCreateTopic(property(camelContext, boolean.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "kmsmasterkeyid":
+        case "kmsMasterKeyId": target.getConfiguration().setKmsMasterKeyId(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "messagestructure":
+        case "messageStructure": target.getConfiguration().setMessageStructure(property(camelContext, java.lang.String.class, value)); return true;
+        case "policy": target.getConfiguration().setPolicy(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": target.getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "proxyprotocol":
+        case "proxyProtocol": target.getConfiguration().setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
+        case "queueurl":
+        case "queueUrl": target.getConfiguration().setQueueUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "serversideencryptionenabled":
+        case "serverSideEncryptionEnabled": target.getConfiguration().setServerSideEncryptionEnabled(property(camelContext, boolean.class, value)); return true;
+        case "subject": target.getConfiguration().setSubject(property(camelContext, java.lang.String.class, value)); return true;
+        case "subscribesnstosqs":
+        case "subscribeSNStoSQS": target.getConfiguration().setSubscribeSNStoSQS(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "accesskey":
+        case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretkey":
+        case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

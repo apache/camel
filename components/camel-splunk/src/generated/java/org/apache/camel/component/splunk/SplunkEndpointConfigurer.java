@@ -12,113 +12,83 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class SplunkEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "app": ((SplunkEndpoint) target).getConfiguration().setApp(property(camelContext, java.lang.String.class, value)); return true;
-        case "connectionTimeout": ((SplunkEndpoint) target).getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
-        case "host": ((SplunkEndpoint) target).getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "owner": ((SplunkEndpoint) target).getConfiguration().setOwner(property(camelContext, java.lang.String.class, value)); return true;
-        case "port": ((SplunkEndpoint) target).getConfiguration().setPort(property(camelContext, int.class, value)); return true;
-        case "scheme": ((SplunkEndpoint) target).getConfiguration().setScheme(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((SplunkEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "count": ((SplunkEndpoint) target).getConfiguration().setCount(property(camelContext, int.class, value)); return true;
-        case "earliestTime": ((SplunkEndpoint) target).getConfiguration().setEarliestTime(property(camelContext, java.lang.String.class, value)); return true;
-        case "initEarliestTime": ((SplunkEndpoint) target).getConfiguration().setInitEarliestTime(property(camelContext, java.lang.String.class, value)); return true;
-        case "latestTime": ((SplunkEndpoint) target).getConfiguration().setLatestTime(property(camelContext, java.lang.String.class, value)); return true;
-        case "savedSearch": ((SplunkEndpoint) target).getConfiguration().setSavedSearch(property(camelContext, java.lang.String.class, value)); return true;
-        case "search": ((SplunkEndpoint) target).getConfiguration().setSearch(property(camelContext, java.lang.String.class, value)); return true;
-        case "sendEmptyMessageWhenIdle": ((SplunkEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "streaming": ((SplunkEndpoint) target).getConfiguration().setStreaming(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((SplunkEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((SplunkEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollStrategy": ((SplunkEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "eventHost": ((SplunkEndpoint) target).getConfiguration().setEventHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "index": ((SplunkEndpoint) target).getConfiguration().setIndex(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazyStartProducer": ((SplunkEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "raw": ((SplunkEndpoint) target).getConfiguration().setRaw(property(camelContext, boolean.class, value)); return true;
-        case "source": ((SplunkEndpoint) target).getConfiguration().setSource(property(camelContext, java.lang.String.class, value)); return true;
-        case "sourceType": ((SplunkEndpoint) target).getConfiguration().setSourceType(property(camelContext, java.lang.String.class, value)); return true;
-        case "tcpReceiverPort": ((SplunkEndpoint) target).getConfiguration().setTcpReceiverPort(property(camelContext, int.class, value)); return true;
-        case "basicPropertyBinding": ((SplunkEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((SplunkEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "backoffErrorThreshold": ((SplunkEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffIdleThreshold": ((SplunkEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffMultiplier": ((SplunkEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((SplunkEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((SplunkEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialDelay": ((SplunkEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatCount": ((SplunkEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runLoggingLevel": ((SplunkEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledExecutorService": ((SplunkEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((SplunkEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerProperties": ((SplunkEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startScheduler": ((SplunkEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeUnit": ((SplunkEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "useFixedDelay": ((SplunkEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "password": ((SplunkEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "sslProtocol": ((SplunkEndpoint) target).getConfiguration().setSslProtocol(property(camelContext, com.splunk.SSLSecurityProtocol.class, value)); return true;
-        case "username": ((SplunkEndpoint) target).getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "useSunHttpsHandler": ((SplunkEndpoint) target).getConfiguration().setUseSunHttpsHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "app": ((SplunkEndpoint) target).getConfiguration().setApp(property(camelContext, java.lang.String.class, value)); return true;
-        case "connectiontimeout": ((SplunkEndpoint) target).getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
-        case "host": ((SplunkEndpoint) target).getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "owner": ((SplunkEndpoint) target).getConfiguration().setOwner(property(camelContext, java.lang.String.class, value)); return true;
-        case "port": ((SplunkEndpoint) target).getConfiguration().setPort(property(camelContext, int.class, value)); return true;
-        case "scheme": ((SplunkEndpoint) target).getConfiguration().setScheme(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((SplunkEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "count": ((SplunkEndpoint) target).getConfiguration().setCount(property(camelContext, int.class, value)); return true;
-        case "earliesttime": ((SplunkEndpoint) target).getConfiguration().setEarliestTime(property(camelContext, java.lang.String.class, value)); return true;
-        case "initearliesttime": ((SplunkEndpoint) target).getConfiguration().setInitEarliestTime(property(camelContext, java.lang.String.class, value)); return true;
-        case "latesttime": ((SplunkEndpoint) target).getConfiguration().setLatestTime(property(camelContext, java.lang.String.class, value)); return true;
-        case "savedsearch": ((SplunkEndpoint) target).getConfiguration().setSavedSearch(property(camelContext, java.lang.String.class, value)); return true;
-        case "search": ((SplunkEndpoint) target).getConfiguration().setSearch(property(camelContext, java.lang.String.class, value)); return true;
-        case "sendemptymessagewhenidle": ((SplunkEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "streaming": ((SplunkEndpoint) target).getConfiguration().setStreaming(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((SplunkEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((SplunkEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollstrategy": ((SplunkEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "eventhost": ((SplunkEndpoint) target).getConfiguration().setEventHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "index": ((SplunkEndpoint) target).getConfiguration().setIndex(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer": ((SplunkEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "raw": ((SplunkEndpoint) target).getConfiguration().setRaw(property(camelContext, boolean.class, value)); return true;
-        case "source": ((SplunkEndpoint) target).getConfiguration().setSource(property(camelContext, java.lang.String.class, value)); return true;
-        case "sourcetype": ((SplunkEndpoint) target).getConfiguration().setSourceType(property(camelContext, java.lang.String.class, value)); return true;
-        case "tcpreceiverport": ((SplunkEndpoint) target).getConfiguration().setTcpReceiverPort(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding": ((SplunkEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((SplunkEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "backofferrorthreshold": ((SplunkEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffidlethreshold": ((SplunkEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffmultiplier": ((SplunkEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((SplunkEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((SplunkEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialdelay": ((SplunkEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatcount": ((SplunkEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runlogginglevel": ((SplunkEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledexecutorservice": ((SplunkEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((SplunkEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerproperties": ((SplunkEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startscheduler": ((SplunkEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeunit": ((SplunkEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "usefixeddelay": ((SplunkEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "password": ((SplunkEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "sslprotocol": ((SplunkEndpoint) target).getConfiguration().setSslProtocol(property(camelContext, com.splunk.SSLSecurityProtocol.class, value)); return true;
-        case "username": ((SplunkEndpoint) target).getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "usesunhttpshandler": ((SplunkEndpoint) target).getConfiguration().setUseSunHttpsHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        SplunkEndpoint target = (SplunkEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "app": target.getConfiguration().setApp(property(camelContext, java.lang.String.class, value)); return true;
+        case "connectiontimeout":
+        case "connectionTimeout": target.getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
+        case "host": target.getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "owner": target.getConfiguration().setOwner(property(camelContext, java.lang.String.class, value)); return true;
+        case "port": target.getConfiguration().setPort(property(camelContext, int.class, value)); return true;
+        case "scheme": target.getConfiguration().setScheme(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "count": target.getConfiguration().setCount(property(camelContext, int.class, value)); return true;
+        case "earliesttime":
+        case "earliestTime": target.getConfiguration().setEarliestTime(property(camelContext, java.lang.String.class, value)); return true;
+        case "initearliesttime":
+        case "initEarliestTime": target.getConfiguration().setInitEarliestTime(property(camelContext, java.lang.String.class, value)); return true;
+        case "latesttime":
+        case "latestTime": target.getConfiguration().setLatestTime(property(camelContext, java.lang.String.class, value)); return true;
+        case "savedsearch":
+        case "savedSearch": target.getConfiguration().setSavedSearch(property(camelContext, java.lang.String.class, value)); return true;
+        case "search": target.getConfiguration().setSearch(property(camelContext, java.lang.String.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "streaming": target.getConfiguration().setStreaming(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "eventhost":
+        case "eventHost": target.getConfiguration().setEventHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "index": target.getConfiguration().setIndex(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "raw": target.getConfiguration().setRaw(property(camelContext, boolean.class, value)); return true;
+        case "source": target.getConfiguration().setSource(property(camelContext, java.lang.String.class, value)); return true;
+        case "sourcetype":
+        case "sourceType": target.getConfiguration().setSourceType(property(camelContext, java.lang.String.class, value)); return true;
+        case "tcpreceiverport":
+        case "tcpReceiverPort": target.getConfiguration().setTcpReceiverPort(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffmultiplier":
+        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "repeatcount":
+        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "runlogginglevel":
+        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "schedulerproperties":
+        case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "startscheduler":
+        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "timeunit":
+        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "usefixeddelay":
+        case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslprotocol":
+        case "sslProtocol": target.getConfiguration().setSslProtocol(property(camelContext, com.splunk.SSLSecurityProtocol.class, value)); return true;
+        case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "usesunhttpshandler":
+        case "useSunHttpsHandler": target.getConfiguration().setUseSunHttpsHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

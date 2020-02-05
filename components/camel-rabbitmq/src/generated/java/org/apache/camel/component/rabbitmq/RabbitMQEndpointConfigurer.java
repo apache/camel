@@ -12,141 +12,114 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "addresses": ((RabbitMQEndpoint) target).setAddresses(property(camelContext, java.lang.String.class, value)); return true;
-        case "autoDelete": ((RabbitMQEndpoint) target).setAutoDelete(property(camelContext, boolean.class, value)); return true;
-        case "automaticRecoveryEnabled": ((RabbitMQEndpoint) target).setAutomaticRecoveryEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "connectionFactory": ((RabbitMQEndpoint) target).setConnectionFactory(property(camelContext, com.rabbitmq.client.ConnectionFactory.class, value)); return true;
-        case "deadLetterExchange": ((RabbitMQEndpoint) target).setDeadLetterExchange(property(camelContext, java.lang.String.class, value)); return true;
-        case "deadLetterExchangeType": ((RabbitMQEndpoint) target).setDeadLetterExchangeType(property(camelContext, java.lang.String.class, value)); return true;
-        case "deadLetterQueue": ((RabbitMQEndpoint) target).setDeadLetterQueue(property(camelContext, java.lang.String.class, value)); return true;
-        case "deadLetterRoutingKey": ((RabbitMQEndpoint) target).setDeadLetterRoutingKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "declare": ((RabbitMQEndpoint) target).setDeclare(property(camelContext, boolean.class, value)); return true;
-        case "durable": ((RabbitMQEndpoint) target).setDurable(property(camelContext, boolean.class, value)); return true;
-        case "exchangeType": ((RabbitMQEndpoint) target).setExchangeType(property(camelContext, java.lang.String.class, value)); return true;
-        case "exclusive": ((RabbitMQEndpoint) target).setExclusive(property(camelContext, boolean.class, value)); return true;
-        case "hostname": ((RabbitMQEndpoint) target).setHostname(property(camelContext, java.lang.String.class, value)); return true;
-        case "passive": ((RabbitMQEndpoint) target).setPassive(property(camelContext, boolean.class, value)); return true;
-        case "portNumber": ((RabbitMQEndpoint) target).setPortNumber(property(camelContext, int.class, value)); return true;
-        case "queue": ((RabbitMQEndpoint) target).setQueue(property(camelContext, java.lang.String.class, value)); return true;
-        case "routingKey": ((RabbitMQEndpoint) target).setRoutingKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "skipExchangeDeclare": ((RabbitMQEndpoint) target).setSkipExchangeDeclare(property(camelContext, boolean.class, value)); return true;
-        case "skipQueueBind": ((RabbitMQEndpoint) target).setSkipQueueBind(property(camelContext, boolean.class, value)); return true;
-        case "skipQueueDeclare": ((RabbitMQEndpoint) target).setSkipQueueDeclare(property(camelContext, boolean.class, value)); return true;
-        case "vhost": ((RabbitMQEndpoint) target).setVhost(property(camelContext, java.lang.String.class, value)); return true;
-        case "autoAck": ((RabbitMQEndpoint) target).setAutoAck(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((RabbitMQEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "concurrentConsumers": ((RabbitMQEndpoint) target).setConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "exclusiveConsumer": ((RabbitMQEndpoint) target).setExclusiveConsumer(property(camelContext, boolean.class, value)); return true;
-        case "prefetchCount": ((RabbitMQEndpoint) target).setPrefetchCount(property(camelContext, int.class, value)); return true;
-        case "prefetchEnabled": ((RabbitMQEndpoint) target).setPrefetchEnabled(property(camelContext, boolean.class, value)); return true;
-        case "prefetchGlobal": ((RabbitMQEndpoint) target).setPrefetchGlobal(property(camelContext, boolean.class, value)); return true;
-        case "prefetchSize": ((RabbitMQEndpoint) target).setPrefetchSize(property(camelContext, int.class, value)); return true;
-        case "exceptionHandler": ((RabbitMQEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((RabbitMQEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "threadPoolSize": ((RabbitMQEndpoint) target).setThreadPoolSize(property(camelContext, int.class, value)); return true;
-        case "allowNullHeaders": ((RabbitMQEndpoint) target).setAllowNullHeaders(property(camelContext, boolean.class, value)); return true;
-        case "bridgeEndpoint": ((RabbitMQEndpoint) target).setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
-        case "channelPoolMaxSize": ((RabbitMQEndpoint) target).setChannelPoolMaxSize(property(camelContext, int.class, value)); return true;
-        case "channelPoolMaxWait": ((RabbitMQEndpoint) target).setChannelPoolMaxWait(property(camelContext, long.class, value)); return true;
-        case "guaranteedDeliveries": ((RabbitMQEndpoint) target).setGuaranteedDeliveries(property(camelContext, boolean.class, value)); return true;
-        case "immediate": ((RabbitMQEndpoint) target).setImmediate(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((RabbitMQEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "mandatory": ((RabbitMQEndpoint) target).setMandatory(property(camelContext, boolean.class, value)); return true;
-        case "publisherAcknowledgements": ((RabbitMQEndpoint) target).setPublisherAcknowledgements(property(camelContext, boolean.class, value)); return true;
-        case "publisherAcknowledgementsTimeout": ((RabbitMQEndpoint) target).setPublisherAcknowledgementsTimeout(property(camelContext, long.class, value)); return true;
-        case "args": ((RabbitMQEndpoint) target).setArgs(property(camelContext, java.util.Map.class, value)); return true;
-        case "basicPropertyBinding": ((RabbitMQEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "clientProperties": ((RabbitMQEndpoint) target).setClientProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "connectionTimeout": ((RabbitMQEndpoint) target).setConnectionTimeout(property(camelContext, int.class, value)); return true;
-        case "networkRecoveryInterval": ((RabbitMQEndpoint) target).setNetworkRecoveryInterval(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "requestedChannelMax": ((RabbitMQEndpoint) target).setRequestedChannelMax(property(camelContext, int.class, value)); return true;
-        case "requestedFrameMax": ((RabbitMQEndpoint) target).setRequestedFrameMax(property(camelContext, int.class, value)); return true;
-        case "requestedHeartbeat": ((RabbitMQEndpoint) target).setRequestedHeartbeat(property(camelContext, int.class, value)); return true;
-        case "requestTimeout": ((RabbitMQEndpoint) target).setRequestTimeout(property(camelContext, long.class, value)); return true;
-        case "requestTimeoutCheckerInterval": ((RabbitMQEndpoint) target).setRequestTimeoutCheckerInterval(property(camelContext, long.class, value)); return true;
-        case "synchronous": ((RabbitMQEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "topologyRecoveryEnabled": ((RabbitMQEndpoint) target).setTopologyRecoveryEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "transferException": ((RabbitMQEndpoint) target).setTransferException(property(camelContext, boolean.class, value)); return true;
-        case "password": ((RabbitMQEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "sslProtocol": ((RabbitMQEndpoint) target).setSslProtocol(property(camelContext, java.lang.String.class, value)); return true;
-        case "trustManager": ((RabbitMQEndpoint) target).setTrustManager(property(camelContext, javax.net.ssl.TrustManager.class, value)); return true;
-        case "username": ((RabbitMQEndpoint) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "addresses": ((RabbitMQEndpoint) target).setAddresses(property(camelContext, java.lang.String.class, value)); return true;
-        case "autodelete": ((RabbitMQEndpoint) target).setAutoDelete(property(camelContext, boolean.class, value)); return true;
-        case "automaticrecoveryenabled": ((RabbitMQEndpoint) target).setAutomaticRecoveryEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "connectionfactory": ((RabbitMQEndpoint) target).setConnectionFactory(property(camelContext, com.rabbitmq.client.ConnectionFactory.class, value)); return true;
-        case "deadletterexchange": ((RabbitMQEndpoint) target).setDeadLetterExchange(property(camelContext, java.lang.String.class, value)); return true;
-        case "deadletterexchangetype": ((RabbitMQEndpoint) target).setDeadLetterExchangeType(property(camelContext, java.lang.String.class, value)); return true;
-        case "deadletterqueue": ((RabbitMQEndpoint) target).setDeadLetterQueue(property(camelContext, java.lang.String.class, value)); return true;
-        case "deadletterroutingkey": ((RabbitMQEndpoint) target).setDeadLetterRoutingKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "declare": ((RabbitMQEndpoint) target).setDeclare(property(camelContext, boolean.class, value)); return true;
-        case "durable": ((RabbitMQEndpoint) target).setDurable(property(camelContext, boolean.class, value)); return true;
-        case "exchangetype": ((RabbitMQEndpoint) target).setExchangeType(property(camelContext, java.lang.String.class, value)); return true;
-        case "exclusive": ((RabbitMQEndpoint) target).setExclusive(property(camelContext, boolean.class, value)); return true;
-        case "hostname": ((RabbitMQEndpoint) target).setHostname(property(camelContext, java.lang.String.class, value)); return true;
-        case "passive": ((RabbitMQEndpoint) target).setPassive(property(camelContext, boolean.class, value)); return true;
-        case "portnumber": ((RabbitMQEndpoint) target).setPortNumber(property(camelContext, int.class, value)); return true;
-        case "queue": ((RabbitMQEndpoint) target).setQueue(property(camelContext, java.lang.String.class, value)); return true;
-        case "routingkey": ((RabbitMQEndpoint) target).setRoutingKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "skipexchangedeclare": ((RabbitMQEndpoint) target).setSkipExchangeDeclare(property(camelContext, boolean.class, value)); return true;
-        case "skipqueuebind": ((RabbitMQEndpoint) target).setSkipQueueBind(property(camelContext, boolean.class, value)); return true;
-        case "skipqueuedeclare": ((RabbitMQEndpoint) target).setSkipQueueDeclare(property(camelContext, boolean.class, value)); return true;
-        case "vhost": ((RabbitMQEndpoint) target).setVhost(property(camelContext, java.lang.String.class, value)); return true;
-        case "autoack": ((RabbitMQEndpoint) target).setAutoAck(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((RabbitMQEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "concurrentconsumers": ((RabbitMQEndpoint) target).setConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "exclusiveconsumer": ((RabbitMQEndpoint) target).setExclusiveConsumer(property(camelContext, boolean.class, value)); return true;
-        case "prefetchcount": ((RabbitMQEndpoint) target).setPrefetchCount(property(camelContext, int.class, value)); return true;
-        case "prefetchenabled": ((RabbitMQEndpoint) target).setPrefetchEnabled(property(camelContext, boolean.class, value)); return true;
-        case "prefetchglobal": ((RabbitMQEndpoint) target).setPrefetchGlobal(property(camelContext, boolean.class, value)); return true;
-        case "prefetchsize": ((RabbitMQEndpoint) target).setPrefetchSize(property(camelContext, int.class, value)); return true;
-        case "exceptionhandler": ((RabbitMQEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((RabbitMQEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "threadpoolsize": ((RabbitMQEndpoint) target).setThreadPoolSize(property(camelContext, int.class, value)); return true;
-        case "allownullheaders": ((RabbitMQEndpoint) target).setAllowNullHeaders(property(camelContext, boolean.class, value)); return true;
-        case "bridgeendpoint": ((RabbitMQEndpoint) target).setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
-        case "channelpoolmaxsize": ((RabbitMQEndpoint) target).setChannelPoolMaxSize(property(camelContext, int.class, value)); return true;
-        case "channelpoolmaxwait": ((RabbitMQEndpoint) target).setChannelPoolMaxWait(property(camelContext, long.class, value)); return true;
-        case "guaranteeddeliveries": ((RabbitMQEndpoint) target).setGuaranteedDeliveries(property(camelContext, boolean.class, value)); return true;
-        case "immediate": ((RabbitMQEndpoint) target).setImmediate(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((RabbitMQEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "mandatory": ((RabbitMQEndpoint) target).setMandatory(property(camelContext, boolean.class, value)); return true;
-        case "publisheracknowledgements": ((RabbitMQEndpoint) target).setPublisherAcknowledgements(property(camelContext, boolean.class, value)); return true;
-        case "publisheracknowledgementstimeout": ((RabbitMQEndpoint) target).setPublisherAcknowledgementsTimeout(property(camelContext, long.class, value)); return true;
-        case "args": ((RabbitMQEndpoint) target).setArgs(property(camelContext, java.util.Map.class, value)); return true;
-        case "basicpropertybinding": ((RabbitMQEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "clientproperties": ((RabbitMQEndpoint) target).setClientProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "connectiontimeout": ((RabbitMQEndpoint) target).setConnectionTimeout(property(camelContext, int.class, value)); return true;
-        case "networkrecoveryinterval": ((RabbitMQEndpoint) target).setNetworkRecoveryInterval(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "requestedchannelmax": ((RabbitMQEndpoint) target).setRequestedChannelMax(property(camelContext, int.class, value)); return true;
-        case "requestedframemax": ((RabbitMQEndpoint) target).setRequestedFrameMax(property(camelContext, int.class, value)); return true;
-        case "requestedheartbeat": ((RabbitMQEndpoint) target).setRequestedHeartbeat(property(camelContext, int.class, value)); return true;
-        case "requesttimeout": ((RabbitMQEndpoint) target).setRequestTimeout(property(camelContext, long.class, value)); return true;
-        case "requesttimeoutcheckerinterval": ((RabbitMQEndpoint) target).setRequestTimeoutCheckerInterval(property(camelContext, long.class, value)); return true;
-        case "synchronous": ((RabbitMQEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "topologyrecoveryenabled": ((RabbitMQEndpoint) target).setTopologyRecoveryEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "transferexception": ((RabbitMQEndpoint) target).setTransferException(property(camelContext, boolean.class, value)); return true;
-        case "password": ((RabbitMQEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "sslprotocol": ((RabbitMQEndpoint) target).setSslProtocol(property(camelContext, java.lang.String.class, value)); return true;
-        case "trustmanager": ((RabbitMQEndpoint) target).setTrustManager(property(camelContext, javax.net.ssl.TrustManager.class, value)); return true;
-        case "username": ((RabbitMQEndpoint) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        RabbitMQEndpoint target = (RabbitMQEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "addresses": target.setAddresses(property(camelContext, java.lang.String.class, value)); return true;
+        case "autodelete":
+        case "autoDelete": target.setAutoDelete(property(camelContext, boolean.class, value)); return true;
+        case "automaticrecoveryenabled":
+        case "automaticRecoveryEnabled": target.setAutomaticRecoveryEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "connectionfactory":
+        case "connectionFactory": target.setConnectionFactory(property(camelContext, com.rabbitmq.client.ConnectionFactory.class, value)); return true;
+        case "deadletterexchange":
+        case "deadLetterExchange": target.setDeadLetterExchange(property(camelContext, java.lang.String.class, value)); return true;
+        case "deadletterexchangetype":
+        case "deadLetterExchangeType": target.setDeadLetterExchangeType(property(camelContext, java.lang.String.class, value)); return true;
+        case "deadletterqueue":
+        case "deadLetterQueue": target.setDeadLetterQueue(property(camelContext, java.lang.String.class, value)); return true;
+        case "deadletterroutingkey":
+        case "deadLetterRoutingKey": target.setDeadLetterRoutingKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "declare": target.setDeclare(property(camelContext, boolean.class, value)); return true;
+        case "durable": target.setDurable(property(camelContext, boolean.class, value)); return true;
+        case "exchangetype":
+        case "exchangeType": target.setExchangeType(property(camelContext, java.lang.String.class, value)); return true;
+        case "exclusive": target.setExclusive(property(camelContext, boolean.class, value)); return true;
+        case "hostname": target.setHostname(property(camelContext, java.lang.String.class, value)); return true;
+        case "passive": target.setPassive(property(camelContext, boolean.class, value)); return true;
+        case "portnumber":
+        case "portNumber": target.setPortNumber(property(camelContext, int.class, value)); return true;
+        case "queue": target.setQueue(property(camelContext, java.lang.String.class, value)); return true;
+        case "routingkey":
+        case "routingKey": target.setRoutingKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "skipexchangedeclare":
+        case "skipExchangeDeclare": target.setSkipExchangeDeclare(property(camelContext, boolean.class, value)); return true;
+        case "skipqueuebind":
+        case "skipQueueBind": target.setSkipQueueBind(property(camelContext, boolean.class, value)); return true;
+        case "skipqueuedeclare":
+        case "skipQueueDeclare": target.setSkipQueueDeclare(property(camelContext, boolean.class, value)); return true;
+        case "vhost": target.setVhost(property(camelContext, java.lang.String.class, value)); return true;
+        case "autoack":
+        case "autoAck": target.setAutoAck(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "concurrentconsumers":
+        case "concurrentConsumers": target.setConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "exclusiveconsumer":
+        case "exclusiveConsumer": target.setExclusiveConsumer(property(camelContext, boolean.class, value)); return true;
+        case "prefetchcount":
+        case "prefetchCount": target.setPrefetchCount(property(camelContext, int.class, value)); return true;
+        case "prefetchenabled":
+        case "prefetchEnabled": target.setPrefetchEnabled(property(camelContext, boolean.class, value)); return true;
+        case "prefetchglobal":
+        case "prefetchGlobal": target.setPrefetchGlobal(property(camelContext, boolean.class, value)); return true;
+        case "prefetchsize":
+        case "prefetchSize": target.setPrefetchSize(property(camelContext, int.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "threadpoolsize":
+        case "threadPoolSize": target.setThreadPoolSize(property(camelContext, int.class, value)); return true;
+        case "allownullheaders":
+        case "allowNullHeaders": target.setAllowNullHeaders(property(camelContext, boolean.class, value)); return true;
+        case "bridgeendpoint":
+        case "bridgeEndpoint": target.setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
+        case "channelpoolmaxsize":
+        case "channelPoolMaxSize": target.setChannelPoolMaxSize(property(camelContext, int.class, value)); return true;
+        case "channelpoolmaxwait":
+        case "channelPoolMaxWait": target.setChannelPoolMaxWait(property(camelContext, long.class, value)); return true;
+        case "guaranteeddeliveries":
+        case "guaranteedDeliveries": target.setGuaranteedDeliveries(property(camelContext, boolean.class, value)); return true;
+        case "immediate": target.setImmediate(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "mandatory": target.setMandatory(property(camelContext, boolean.class, value)); return true;
+        case "publisheracknowledgements":
+        case "publisherAcknowledgements": target.setPublisherAcknowledgements(property(camelContext, boolean.class, value)); return true;
+        case "publisheracknowledgementstimeout":
+        case "publisherAcknowledgementsTimeout": target.setPublisherAcknowledgementsTimeout(property(camelContext, long.class, value)); return true;
+        case "args": target.setArgs(property(camelContext, java.util.Map.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "clientproperties":
+        case "clientProperties": target.setClientProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "connectiontimeout":
+        case "connectionTimeout": target.setConnectionTimeout(property(camelContext, int.class, value)); return true;
+        case "networkrecoveryinterval":
+        case "networkRecoveryInterval": target.setNetworkRecoveryInterval(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "requestedchannelmax":
+        case "requestedChannelMax": target.setRequestedChannelMax(property(camelContext, int.class, value)); return true;
+        case "requestedframemax":
+        case "requestedFrameMax": target.setRequestedFrameMax(property(camelContext, int.class, value)); return true;
+        case "requestedheartbeat":
+        case "requestedHeartbeat": target.setRequestedHeartbeat(property(camelContext, int.class, value)); return true;
+        case "requesttimeout":
+        case "requestTimeout": target.setRequestTimeout(property(camelContext, long.class, value)); return true;
+        case "requesttimeoutcheckerinterval":
+        case "requestTimeoutCheckerInterval": target.setRequestTimeoutCheckerInterval(property(camelContext, long.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "topologyrecoveryenabled":
+        case "topologyRecoveryEnabled": target.setTopologyRecoveryEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "transferexception":
+        case "transferException": target.setTransferException(property(camelContext, boolean.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslprotocol":
+        case "sslProtocol": target.setSslProtocol(property(camelContext, java.lang.String.class, value)); return true;
+        case "trustmanager":
+        case "trustManager": target.setTrustManager(property(camelContext, javax.net.ssl.TrustManager.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

@@ -12,71 +12,50 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class ScpEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "chmod": ((ScpEndpoint) target).getConfiguration().setChmod(property(camelContext, java.lang.String.class, value)); return true;
-        case "disconnect": ((ScpEndpoint) target).setDisconnect(property(camelContext, boolean.class, value)); return true;
-        case "fileName": ((ScpEndpoint) target).setFileName(property(camelContext, java.lang.String.class, value)); return true;
-        case "flatten": ((ScpEndpoint) target).setFlatten(property(camelContext, boolean.class, value)); return true;
-        case "jailStartingDirectory": ((ScpEndpoint) target).setJailStartingDirectory(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((ScpEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "strictHostKeyChecking": ((ScpEndpoint) target).getConfiguration().setStrictHostKeyChecking(property(camelContext, java.lang.String.class, value)); return true;
-        case "allowNullBody": ((ScpEndpoint) target).setAllowNullBody(property(camelContext, boolean.class, value)); return true;
-        case "disconnectOnBatchComplete": ((ScpEndpoint) target).setDisconnectOnBatchComplete(property(camelContext, boolean.class, value)); return true;
-        case "moveExistingFileStrategy": ((ScpEndpoint) target).setMoveExistingFileStrategy(property(camelContext, org.apache.camel.component.file.strategy.FileMoveExistingStrategy.class, value)); return true;
-        case "basicPropertyBinding": ((ScpEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "connectTimeout": ((ScpEndpoint) target).getConfiguration().setConnectTimeout(property(camelContext, int.class, value)); return true;
-        case "soTimeout": ((ScpEndpoint) target).getConfiguration().setSoTimeout(property(camelContext, int.class, value)); return true;
-        case "synchronous": ((ScpEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "timeout": ((ScpEndpoint) target).getConfiguration().setTimeout(property(camelContext, int.class, value)); return true;
-        case "knownHostsFile": ((ScpEndpoint) target).getConfiguration().setKnownHostsFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((ScpEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "preferredAuthentications": ((ScpEndpoint) target).getConfiguration().setPreferredAuthentications(property(camelContext, java.lang.String.class, value)); return true;
-        case "privateKeyBytes": ((ScpEndpoint) target).getConfiguration().setPrivateKeyBytes(property(camelContext, byte[].class, value)); return true;
-        case "privateKeyFile": ((ScpEndpoint) target).getConfiguration().setPrivateKeyFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "privateKeyFilePassphrase": ((ScpEndpoint) target).getConfiguration().setPrivateKeyFilePassphrase(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((ScpEndpoint) target).getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "useUserKnownHostsFile": ((ScpEndpoint) target).getConfiguration().setUseUserKnownHostsFile(property(camelContext, boolean.class, value)); return true;
-        case "ciphers": ((ScpEndpoint) target).getConfiguration().setCiphers(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "chmod": ((ScpEndpoint) target).getConfiguration().setChmod(property(camelContext, java.lang.String.class, value)); return true;
-        case "disconnect": ((ScpEndpoint) target).setDisconnect(property(camelContext, boolean.class, value)); return true;
-        case "filename": ((ScpEndpoint) target).setFileName(property(camelContext, java.lang.String.class, value)); return true;
-        case "flatten": ((ScpEndpoint) target).setFlatten(property(camelContext, boolean.class, value)); return true;
-        case "jailstartingdirectory": ((ScpEndpoint) target).setJailStartingDirectory(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((ScpEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "stricthostkeychecking": ((ScpEndpoint) target).getConfiguration().setStrictHostKeyChecking(property(camelContext, java.lang.String.class, value)); return true;
-        case "allownullbody": ((ScpEndpoint) target).setAllowNullBody(property(camelContext, boolean.class, value)); return true;
-        case "disconnectonbatchcomplete": ((ScpEndpoint) target).setDisconnectOnBatchComplete(property(camelContext, boolean.class, value)); return true;
-        case "moveexistingfilestrategy": ((ScpEndpoint) target).setMoveExistingFileStrategy(property(camelContext, org.apache.camel.component.file.strategy.FileMoveExistingStrategy.class, value)); return true;
-        case "basicpropertybinding": ((ScpEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "connecttimeout": ((ScpEndpoint) target).getConfiguration().setConnectTimeout(property(camelContext, int.class, value)); return true;
-        case "sotimeout": ((ScpEndpoint) target).getConfiguration().setSoTimeout(property(camelContext, int.class, value)); return true;
-        case "synchronous": ((ScpEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "timeout": ((ScpEndpoint) target).getConfiguration().setTimeout(property(camelContext, int.class, value)); return true;
-        case "knownhostsfile": ((ScpEndpoint) target).getConfiguration().setKnownHostsFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((ScpEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "preferredauthentications": ((ScpEndpoint) target).getConfiguration().setPreferredAuthentications(property(camelContext, java.lang.String.class, value)); return true;
-        case "privatekeybytes": ((ScpEndpoint) target).getConfiguration().setPrivateKeyBytes(property(camelContext, byte[].class, value)); return true;
-        case "privatekeyfile": ((ScpEndpoint) target).getConfiguration().setPrivateKeyFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "privatekeyfilepassphrase": ((ScpEndpoint) target).getConfiguration().setPrivateKeyFilePassphrase(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((ScpEndpoint) target).getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "useuserknownhostsfile": ((ScpEndpoint) target).getConfiguration().setUseUserKnownHostsFile(property(camelContext, boolean.class, value)); return true;
-        case "ciphers": ((ScpEndpoint) target).getConfiguration().setCiphers(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        ScpEndpoint target = (ScpEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "chmod": target.getConfiguration().setChmod(property(camelContext, java.lang.String.class, value)); return true;
+        case "disconnect": target.setDisconnect(property(camelContext, boolean.class, value)); return true;
+        case "filename":
+        case "fileName": target.setFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "flatten": target.setFlatten(property(camelContext, boolean.class, value)); return true;
+        case "jailstartingdirectory":
+        case "jailStartingDirectory": target.setJailStartingDirectory(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "stricthostkeychecking":
+        case "strictHostKeyChecking": target.getConfiguration().setStrictHostKeyChecking(property(camelContext, java.lang.String.class, value)); return true;
+        case "allownullbody":
+        case "allowNullBody": target.setAllowNullBody(property(camelContext, boolean.class, value)); return true;
+        case "disconnectonbatchcomplete":
+        case "disconnectOnBatchComplete": target.setDisconnectOnBatchComplete(property(camelContext, boolean.class, value)); return true;
+        case "moveexistingfilestrategy":
+        case "moveExistingFileStrategy": target.setMoveExistingFileStrategy(property(camelContext, org.apache.camel.component.file.strategy.FileMoveExistingStrategy.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "connecttimeout":
+        case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, int.class, value)); return true;
+        case "sotimeout":
+        case "soTimeout": target.getConfiguration().setSoTimeout(property(camelContext, int.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "timeout": target.getConfiguration().setTimeout(property(camelContext, int.class, value)); return true;
+        case "knownhostsfile":
+        case "knownHostsFile": target.getConfiguration().setKnownHostsFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "preferredauthentications":
+        case "preferredAuthentications": target.getConfiguration().setPreferredAuthentications(property(camelContext, java.lang.String.class, value)); return true;
+        case "privatekeybytes":
+        case "privateKeyBytes": target.getConfiguration().setPrivateKeyBytes(property(camelContext, byte[].class, value)); return true;
+        case "privatekeyfile":
+        case "privateKeyFile": target.getConfiguration().setPrivateKeyFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "privatekeyfilepassphrase":
+        case "privateKeyFilePassphrase": target.getConfiguration().setPrivateKeyFilePassphrase(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "useuserknownhostsfile":
+        case "useUserKnownHostsFile": target.getConfiguration().setUseUserKnownHostsFile(property(camelContext, boolean.class, value)); return true;
+        case "ciphers": target.getConfiguration().setCiphers(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

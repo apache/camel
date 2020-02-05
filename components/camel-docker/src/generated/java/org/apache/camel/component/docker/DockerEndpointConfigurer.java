@@ -12,67 +12,46 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class DockerEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "email": ((DockerEndpoint) target).getConfiguration().setEmail(property(camelContext, java.lang.String.class, value)); return true;
-        case "host": ((DockerEndpoint) target).getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "port": ((DockerEndpoint) target).getConfiguration().setPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "requestTimeout": ((DockerEndpoint) target).getConfiguration().setRequestTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "bridgeErrorHandler": ((DockerEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((DockerEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((DockerEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((DockerEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((DockerEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "cmdExecFactory": ((DockerEndpoint) target).getConfiguration().setCmdExecFactory(property(camelContext, java.lang.String.class, value)); return true;
-        case "followRedirectFilter": ((DockerEndpoint) target).getConfiguration().setFollowRedirectFilter(property(camelContext, boolean.class, value)); return true;
-        case "loggingFilter": ((DockerEndpoint) target).getConfiguration().setLoggingFilter(property(camelContext, boolean.class, value)); return true;
-        case "maxPerRouteConnections": ((DockerEndpoint) target).getConfiguration().setMaxPerRouteConnections(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "maxTotalConnections": ((DockerEndpoint) target).getConfiguration().setMaxTotalConnections(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "serverAddress": ((DockerEndpoint) target).getConfiguration().setServerAddress(property(camelContext, java.lang.String.class, value)); return true;
-        case "socket": ((DockerEndpoint) target).getConfiguration().setSocket(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((DockerEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "certPath": ((DockerEndpoint) target).getConfiguration().setCertPath(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((DockerEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "secure": ((DockerEndpoint) target).getConfiguration().setSecure(property(camelContext, boolean.class, value)); return true;
-        case "tlsVerify": ((DockerEndpoint) target).getConfiguration().setTlsVerify(property(camelContext, boolean.class, value)); return true;
-        case "username": ((DockerEndpoint) target).getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "email": ((DockerEndpoint) target).getConfiguration().setEmail(property(camelContext, java.lang.String.class, value)); return true;
-        case "host": ((DockerEndpoint) target).getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "port": ((DockerEndpoint) target).getConfiguration().setPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "requesttimeout": ((DockerEndpoint) target).getConfiguration().setRequestTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "bridgeerrorhandler": ((DockerEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((DockerEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((DockerEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((DockerEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((DockerEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "cmdexecfactory": ((DockerEndpoint) target).getConfiguration().setCmdExecFactory(property(camelContext, java.lang.String.class, value)); return true;
-        case "followredirectfilter": ((DockerEndpoint) target).getConfiguration().setFollowRedirectFilter(property(camelContext, boolean.class, value)); return true;
-        case "loggingfilter": ((DockerEndpoint) target).getConfiguration().setLoggingFilter(property(camelContext, boolean.class, value)); return true;
-        case "maxperrouteconnections": ((DockerEndpoint) target).getConfiguration().setMaxPerRouteConnections(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "maxtotalconnections": ((DockerEndpoint) target).getConfiguration().setMaxTotalConnections(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "serveraddress": ((DockerEndpoint) target).getConfiguration().setServerAddress(property(camelContext, java.lang.String.class, value)); return true;
-        case "socket": ((DockerEndpoint) target).getConfiguration().setSocket(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((DockerEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "certpath": ((DockerEndpoint) target).getConfiguration().setCertPath(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((DockerEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "secure": ((DockerEndpoint) target).getConfiguration().setSecure(property(camelContext, boolean.class, value)); return true;
-        case "tlsverify": ((DockerEndpoint) target).getConfiguration().setTlsVerify(property(camelContext, boolean.class, value)); return true;
-        case "username": ((DockerEndpoint) target).getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        DockerEndpoint target = (DockerEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "email": target.getConfiguration().setEmail(property(camelContext, java.lang.String.class, value)); return true;
+        case "host": target.getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "port": target.getConfiguration().setPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "requesttimeout":
+        case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "cmdexecfactory":
+        case "cmdExecFactory": target.getConfiguration().setCmdExecFactory(property(camelContext, java.lang.String.class, value)); return true;
+        case "followredirectfilter":
+        case "followRedirectFilter": target.getConfiguration().setFollowRedirectFilter(property(camelContext, boolean.class, value)); return true;
+        case "loggingfilter":
+        case "loggingFilter": target.getConfiguration().setLoggingFilter(property(camelContext, boolean.class, value)); return true;
+        case "maxperrouteconnections":
+        case "maxPerRouteConnections": target.getConfiguration().setMaxPerRouteConnections(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maxtotalconnections":
+        case "maxTotalConnections": target.getConfiguration().setMaxTotalConnections(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "serveraddress":
+        case "serverAddress": target.getConfiguration().setServerAddress(property(camelContext, java.lang.String.class, value)); return true;
+        case "socket": target.getConfiguration().setSocket(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "certpath":
+        case "certPath": target.getConfiguration().setCertPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "secure": target.getConfiguration().setSecure(property(camelContext, boolean.class, value)); return true;
+        case "tlsverify":
+        case "tlsVerify": target.getConfiguration().setTlsVerify(property(camelContext, boolean.class, value)); return true;
+        case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

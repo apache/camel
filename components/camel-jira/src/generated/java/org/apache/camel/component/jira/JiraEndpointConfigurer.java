@@ -12,55 +12,37 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "delay": ((JiraEndpoint) target).getConfiguration().setDelay(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "jiraUrl": ((JiraEndpoint) target).getConfiguration().setJiraUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((JiraEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "jql": ((JiraEndpoint) target).setJql(property(camelContext, java.lang.String.class, value)); return true;
-        case "maxResults": ((JiraEndpoint) target).setMaxResults(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "exceptionHandler": ((JiraEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((JiraEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((JiraEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((JiraEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((JiraEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "accessToken": ((JiraEndpoint) target).getConfiguration().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "consumerKey": ((JiraEndpoint) target).getConfiguration().setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((JiraEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "privateKey": ((JiraEndpoint) target).getConfiguration().setPrivateKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((JiraEndpoint) target).getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "verificationCode": ((JiraEndpoint) target).getConfiguration().setVerificationCode(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "delay": ((JiraEndpoint) target).getConfiguration().setDelay(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "jiraurl": ((JiraEndpoint) target).getConfiguration().setJiraUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((JiraEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "jql": ((JiraEndpoint) target).setJql(property(camelContext, java.lang.String.class, value)); return true;
-        case "maxresults": ((JiraEndpoint) target).setMaxResults(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "exceptionhandler": ((JiraEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((JiraEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((JiraEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((JiraEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((JiraEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "accesstoken": ((JiraEndpoint) target).getConfiguration().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "consumerkey": ((JiraEndpoint) target).getConfiguration().setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((JiraEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "privatekey": ((JiraEndpoint) target).getConfiguration().setPrivateKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((JiraEndpoint) target).getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "verificationcode": ((JiraEndpoint) target).getConfiguration().setVerificationCode(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        JiraEndpoint target = (JiraEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "delay": target.getConfiguration().setDelay(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "jiraurl":
+        case "jiraUrl": target.getConfiguration().setJiraUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "jql": target.setJql(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxresults":
+        case "maxResults": target.setMaxResults(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "accesstoken":
+        case "accessToken": target.getConfiguration().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "consumerkey":
+        case "consumerKey": target.getConfiguration().setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "privatekey":
+        case "privateKey": target.getConfiguration().setPrivateKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "verificationcode":
+        case "verificationCode": target.getConfiguration().setVerificationCode(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

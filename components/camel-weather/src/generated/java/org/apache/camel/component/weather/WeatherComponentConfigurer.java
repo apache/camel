@@ -12,33 +12,20 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class WeatherComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "geolocationAccessKey": ((WeatherComponent) target).setGeolocationAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "geolocationRequestHostIP": ((WeatherComponent) target).setGeolocationRequestHostIP(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((WeatherComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((WeatherComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((WeatherComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "geolocationaccesskey": ((WeatherComponent) target).setGeolocationAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "geolocationrequesthostip": ((WeatherComponent) target).setGeolocationRequestHostIP(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((WeatherComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((WeatherComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((WeatherComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        WeatherComponent target = (WeatherComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "geolocationaccesskey":
+        case "geolocationAccessKey": target.setGeolocationAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "geolocationrequesthostip":
+        case "geolocationRequestHostIP": target.setGeolocationRequestHostIP(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

@@ -12,43 +12,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class KafkaComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "configuration": ((KafkaComponent) target).setConfiguration(property(camelContext, org.apache.camel.component.kafka.KafkaConfiguration.class, value)); return true;
-        case "brokers": ((KafkaComponent) target).setBrokers(property(camelContext, java.lang.String.class, value)); return true;
-        case "workerPool": ((KafkaComponent) target).setWorkerPool(property(camelContext, java.util.concurrent.ExecutorService.class, value)); return true;
-        case "useGlobalSslContextParameters": ((KafkaComponent) target).setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
-        case "breakOnFirstError": ((KafkaComponent) target).setBreakOnFirstError(property(camelContext, boolean.class, value)); return true;
-        case "allowManualCommit": ((KafkaComponent) target).setAllowManualCommit(property(camelContext, boolean.class, value)); return true;
-        case "kafkaManualCommitFactory": ((KafkaComponent) target).setKafkaManualCommitFactory(property(camelContext, org.apache.camel.component.kafka.KafkaManualCommitFactory.class, value)); return true;
-        case "basicPropertyBinding": ((KafkaComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((KafkaComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((KafkaComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "configuration": ((KafkaComponent) target).setConfiguration(property(camelContext, org.apache.camel.component.kafka.KafkaConfiguration.class, value)); return true;
-        case "brokers": ((KafkaComponent) target).setBrokers(property(camelContext, java.lang.String.class, value)); return true;
-        case "workerpool": ((KafkaComponent) target).setWorkerPool(property(camelContext, java.util.concurrent.ExecutorService.class, value)); return true;
-        case "useglobalsslcontextparameters": ((KafkaComponent) target).setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
-        case "breakonfirsterror": ((KafkaComponent) target).setBreakOnFirstError(property(camelContext, boolean.class, value)); return true;
-        case "allowmanualcommit": ((KafkaComponent) target).setAllowManualCommit(property(camelContext, boolean.class, value)); return true;
-        case "kafkamanualcommitfactory": ((KafkaComponent) target).setKafkaManualCommitFactory(property(camelContext, org.apache.camel.component.kafka.KafkaManualCommitFactory.class, value)); return true;
-        case "basicpropertybinding": ((KafkaComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((KafkaComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((KafkaComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        KafkaComponent target = (KafkaComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.kafka.KafkaConfiguration.class, value)); return true;
+        case "brokers": target.setBrokers(property(camelContext, java.lang.String.class, value)); return true;
+        case "workerpool":
+        case "workerPool": target.setWorkerPool(property(camelContext, java.util.concurrent.ExecutorService.class, value)); return true;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
+        case "breakonfirsterror":
+        case "breakOnFirstError": target.setBreakOnFirstError(property(camelContext, boolean.class, value)); return true;
+        case "allowmanualcommit":
+        case "allowManualCommit": target.setAllowManualCommit(property(camelContext, boolean.class, value)); return true;
+        case "kafkamanualcommitfactory":
+        case "kafkaManualCommitFactory": target.setKafkaManualCommitFactory(property(camelContext, org.apache.camel.component.kafka.KafkaManualCommitFactory.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 
