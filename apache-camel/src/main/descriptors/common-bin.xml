@@ -38,7 +38,7 @@
         <include>org.apache.camel:camel-core-osgi</include>
         <include>org.apache.camel:camel-core-xml</include>
         <include>org.apache.camel:camel-cloud</include>
-        <include>org.apache.camel:camel-jaxp</include>
+        <include>org.apache.camel:camel-xml-jaxp</include>
         <include>org.apache.camel:camel-main</include>
         <include>org.apache.camel:camel-tooling-model</include>
         <include>org.apache.camel:camel-tooling-util</include>

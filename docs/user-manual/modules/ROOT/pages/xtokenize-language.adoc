@@ -1,6 +1,6 @@
 [[xtokenize-language]]
 = XML Tokenize Language
-:page-source: core/camel-jaxp/src/main/docs/xtokenize-language.adoc
+:page-source: core/camel-xml-jaxp/src/main/docs/xtokenize-language.adoc
 
 *Since Camel 2.14*
 
