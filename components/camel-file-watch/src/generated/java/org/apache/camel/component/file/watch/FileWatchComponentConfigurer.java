@@ -12,37 +12,24 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class FileWatchComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "concurrentConsumers": ((FileWatchComponent) target).setConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "queueSize": ((FileWatchComponent) target).setQueueSize(property(camelContext, int.class, value)); return true;
-        case "pollThreads": ((FileWatchComponent) target).setPollThreads(property(camelContext, int.class, value)); return true;
-        case "fileHasher": ((FileWatchComponent) target).setFileHasher(property(camelContext, io.methvin.watcher.hashing.FileHasher.class, value)); return true;
-        case "useFileHashing": ((FileWatchComponent) target).setUseFileHashing(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((FileWatchComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((FileWatchComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "concurrentconsumers": ((FileWatchComponent) target).setConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "queuesize": ((FileWatchComponent) target).setQueueSize(property(camelContext, int.class, value)); return true;
-        case "pollthreads": ((FileWatchComponent) target).setPollThreads(property(camelContext, int.class, value)); return true;
-        case "filehasher": ((FileWatchComponent) target).setFileHasher(property(camelContext, io.methvin.watcher.hashing.FileHasher.class, value)); return true;
-        case "usefilehashing": ((FileWatchComponent) target).setUseFileHashing(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((FileWatchComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((FileWatchComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        FileWatchComponent target = (FileWatchComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "concurrentconsumers":
+        case "concurrentConsumers": target.setConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "queuesize":
+        case "queueSize": target.setQueueSize(property(camelContext, int.class, value)); return true;
+        case "pollthreads":
+        case "pollThreads": target.setPollThreads(property(camelContext, int.class, value)); return true;
+        case "filehasher":
+        case "fileHasher": target.setFileHasher(property(camelContext, io.methvin.watcher.hashing.FileHasher.class, value)); return true;
+        case "usefilehashing":
+        case "useFileHashing": target.setUseFileHashing(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

@@ -12,67 +12,50 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class ClientEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "dataModuleOptions": ((ClientEndpoint) target).getConnectionOptions().setDataModuleOptions(property(camelContext, org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions.class, value)); return true;
-        case "protocolOptions": ((ClientEndpoint) target).getConnectionOptions().setProtocolOptions(property(camelContext, org.eclipse.neoscada.protocol.iec60870.ProtocolOptions.class, value)); return true;
-        case "bridgeErrorHandler": ((ClientEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((ClientEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((ClientEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((ClientEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((ClientEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((ClientEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "acknowledgeWindow": ((ClientEndpoint) target).getConnectionOptions().setAcknowledgeWindow(property(camelContext, short.class, value)); return true;
-        case "adsuAddressType": ((ClientEndpoint) target).getConnectionOptions().setAdsuAddressType(property(camelContext, org.eclipse.neoscada.protocol.iec60870.ASDUAddressType.class, value)); return true;
-        case "causeOfTransmissionType": ((ClientEndpoint) target).getConnectionOptions().setCauseOfTransmissionType(property(camelContext, org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType.class, value)); return true;
-        case "informationObjectAddressType": ((ClientEndpoint) target).getConnectionOptions().setInformationObjectAddressType(property(camelContext, org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType.class, value)); return true;
-        case "maxUnacknowledged": ((ClientEndpoint) target).getConnectionOptions().setMaxUnacknowledged(property(camelContext, short.class, value)); return true;
-        case "timeout1": ((ClientEndpoint) target).getConnectionOptions().setTimeout1(property(camelContext, int.class, value)); return true;
-        case "timeout2": ((ClientEndpoint) target).getConnectionOptions().setTimeout2(property(camelContext, int.class, value)); return true;
-        case "timeout3": ((ClientEndpoint) target).getConnectionOptions().setTimeout3(property(camelContext, int.class, value)); return true;
-        case "causeSourceAddress": ((ClientEndpoint) target).getConnectionOptions().setCauseSourceAddress(property(camelContext, byte.class, value)); return true;
-        case "connectionTimeout": ((ClientEndpoint) target).getConnectionOptions().setConnectionTimeout(property(camelContext, int.class, value)); return true;
-        case "ignoreBackgroundScan": ((ClientEndpoint) target).getConnectionOptions().setIgnoreBackgroundScan(property(camelContext, boolean.class, value)); return true;
-        case "ignoreDaylightSavingTime": ((ClientEndpoint) target).getConnectionOptions().setIgnoreDaylightSavingTime(property(camelContext, boolean.class, value)); return true;
-        case "timeZone": ((ClientEndpoint) target).getConnectionOptions().setTimeZone(property(camelContext, java.util.TimeZone.class, value)); return true;
-        case "connectionId": ((ClientEndpoint) target).setConnectionId(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "datamoduleoptions": ((ClientEndpoint) target).getConnectionOptions().setDataModuleOptions(property(camelContext, org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions.class, value)); return true;
-        case "protocoloptions": ((ClientEndpoint) target).getConnectionOptions().setProtocolOptions(property(camelContext, org.eclipse.neoscada.protocol.iec60870.ProtocolOptions.class, value)); return true;
-        case "bridgeerrorhandler": ((ClientEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((ClientEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((ClientEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((ClientEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((ClientEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((ClientEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "acknowledgewindow": ((ClientEndpoint) target).getConnectionOptions().setAcknowledgeWindow(property(camelContext, short.class, value)); return true;
-        case "adsuaddresstype": ((ClientEndpoint) target).getConnectionOptions().setAdsuAddressType(property(camelContext, org.eclipse.neoscada.protocol.iec60870.ASDUAddressType.class, value)); return true;
-        case "causeoftransmissiontype": ((ClientEndpoint) target).getConnectionOptions().setCauseOfTransmissionType(property(camelContext, org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType.class, value)); return true;
-        case "informationobjectaddresstype": ((ClientEndpoint) target).getConnectionOptions().setInformationObjectAddressType(property(camelContext, org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType.class, value)); return true;
-        case "maxunacknowledged": ((ClientEndpoint) target).getConnectionOptions().setMaxUnacknowledged(property(camelContext, short.class, value)); return true;
-        case "timeout1": ((ClientEndpoint) target).getConnectionOptions().setTimeout1(property(camelContext, int.class, value)); return true;
-        case "timeout2": ((ClientEndpoint) target).getConnectionOptions().setTimeout2(property(camelContext, int.class, value)); return true;
-        case "timeout3": ((ClientEndpoint) target).getConnectionOptions().setTimeout3(property(camelContext, int.class, value)); return true;
-        case "causesourceaddress": ((ClientEndpoint) target).getConnectionOptions().setCauseSourceAddress(property(camelContext, byte.class, value)); return true;
-        case "connectiontimeout": ((ClientEndpoint) target).getConnectionOptions().setConnectionTimeout(property(camelContext, int.class, value)); return true;
-        case "ignorebackgroundscan": ((ClientEndpoint) target).getConnectionOptions().setIgnoreBackgroundScan(property(camelContext, boolean.class, value)); return true;
-        case "ignoredaylightsavingtime": ((ClientEndpoint) target).getConnectionOptions().setIgnoreDaylightSavingTime(property(camelContext, boolean.class, value)); return true;
-        case "timezone": ((ClientEndpoint) target).getConnectionOptions().setTimeZone(property(camelContext, java.util.TimeZone.class, value)); return true;
-        case "connectionid": ((ClientEndpoint) target).setConnectionId(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        ClientEndpoint target = (ClientEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "datamoduleoptions":
+        case "dataModuleOptions": target.getConnectionOptions().setDataModuleOptions(property(camelContext, org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions.class, value)); return true;
+        case "protocoloptions":
+        case "protocolOptions": target.getConnectionOptions().setProtocolOptions(property(camelContext, org.eclipse.neoscada.protocol.iec60870.ProtocolOptions.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "acknowledgewindow":
+        case "acknowledgeWindow": target.getConnectionOptions().setAcknowledgeWindow(property(camelContext, short.class, value)); return true;
+        case "adsuaddresstype":
+        case "adsuAddressType": target.getConnectionOptions().setAdsuAddressType(property(camelContext, org.eclipse.neoscada.protocol.iec60870.ASDUAddressType.class, value)); return true;
+        case "causeoftransmissiontype":
+        case "causeOfTransmissionType": target.getConnectionOptions().setCauseOfTransmissionType(property(camelContext, org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType.class, value)); return true;
+        case "informationobjectaddresstype":
+        case "informationObjectAddressType": target.getConnectionOptions().setInformationObjectAddressType(property(camelContext, org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType.class, value)); return true;
+        case "maxunacknowledged":
+        case "maxUnacknowledged": target.getConnectionOptions().setMaxUnacknowledged(property(camelContext, short.class, value)); return true;
+        case "timeout1": target.getConnectionOptions().setTimeout1(property(camelContext, int.class, value)); return true;
+        case "timeout2": target.getConnectionOptions().setTimeout2(property(camelContext, int.class, value)); return true;
+        case "timeout3": target.getConnectionOptions().setTimeout3(property(camelContext, int.class, value)); return true;
+        case "causesourceaddress":
+        case "causeSourceAddress": target.getConnectionOptions().setCauseSourceAddress(property(camelContext, byte.class, value)); return true;
+        case "connectiontimeout":
+        case "connectionTimeout": target.getConnectionOptions().setConnectionTimeout(property(camelContext, int.class, value)); return true;
+        case "ignorebackgroundscan":
+        case "ignoreBackgroundScan": target.getConnectionOptions().setIgnoreBackgroundScan(property(camelContext, boolean.class, value)); return true;
+        case "ignoredaylightsavingtime":
+        case "ignoreDaylightSavingTime": target.getConnectionOptions().setIgnoreDaylightSavingTime(property(camelContext, boolean.class, value)); return true;
+        case "timezone":
+        case "timeZone": target.getConnectionOptions().setTimeZone(property(camelContext, java.util.TimeZone.class, value)); return true;
+        case "connectionid":
+        case "connectionId": target.setConnectionId(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

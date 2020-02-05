@@ -12,45 +12,29 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "bridgeErrorHandler": ((PlatformHttpEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "consumes": ((PlatformHttpEndpoint) target).setConsumes(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpMethodRestrict": ((PlatformHttpEndpoint) target).setHttpMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
-        case "produces": ((PlatformHttpEndpoint) target).setProduces(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionHandler": ((PlatformHttpEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((PlatformHttpEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "fileNameExtWhitelist": ((PlatformHttpEndpoint) target).setFileNameExtWhitelist(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((PlatformHttpEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "headerFilterStrategy": ((PlatformHttpEndpoint) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "platformHttpEngine": ((PlatformHttpEndpoint) target).setPlatformHttpEngine(property(camelContext, org.apache.camel.component.platform.http.spi.PlatformHttpEngine.class, value)); return true;
-        case "synchronous": ((PlatformHttpEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "bridgeerrorhandler": ((PlatformHttpEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "consumes": ((PlatformHttpEndpoint) target).setConsumes(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpmethodrestrict": ((PlatformHttpEndpoint) target).setHttpMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
-        case "produces": ((PlatformHttpEndpoint) target).setProduces(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionhandler": ((PlatformHttpEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((PlatformHttpEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "filenameextwhitelist": ((PlatformHttpEndpoint) target).setFileNameExtWhitelist(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((PlatformHttpEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "headerfilterstrategy": ((PlatformHttpEndpoint) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "platformhttpengine": ((PlatformHttpEndpoint) target).setPlatformHttpEngine(property(camelContext, org.apache.camel.component.platform.http.spi.PlatformHttpEngine.class, value)); return true;
-        case "synchronous": ((PlatformHttpEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        PlatformHttpEndpoint target = (PlatformHttpEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "consumes": target.setConsumes(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpmethodrestrict":
+        case "httpMethodRestrict": target.setHttpMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
+        case "produces": target.setProduces(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "filenameextwhitelist":
+        case "fileNameExtWhitelist": target.setFileNameExtWhitelist(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "platformhttpengine":
+        case "platformHttpEngine": target.setPlatformHttpEngine(property(camelContext, org.apache.camel.component.platform.http.spi.PlatformHttpEngine.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

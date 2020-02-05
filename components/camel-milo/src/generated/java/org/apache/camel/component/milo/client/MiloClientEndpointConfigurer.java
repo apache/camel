@@ -12,81 +12,65 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "clientId": ((MiloClientEndpoint) target).getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
-        case "defaultAwaitWrites": ((MiloClientEndpoint) target).setDefaultAwaitWrites(property(camelContext, boolean.class, value)); return true;
-        case "discoveryEndpointSuffix": ((MiloClientEndpoint) target).getConfiguration().setDiscoveryEndpointSuffix(property(camelContext, java.lang.String.class, value)); return true;
-        case "discoveryEndpointUri": ((MiloClientEndpoint) target).getConfiguration().setDiscoveryEndpointUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "method": ((MiloClientEndpoint) target).setMethod(property(camelContext, java.lang.String.class, value)); return true;
-        case "node": ((MiloClientEndpoint) target).setNode(property(camelContext, java.lang.String.class, value)); return true;
-        case "samplingInterval": ((MiloClientEndpoint) target).setSamplingInterval(property(camelContext, java.lang.Double.class, value)); return true;
-        case "bridgeErrorHandler": ((MiloClientEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((MiloClientEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((MiloClientEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((MiloClientEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((MiloClientEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((MiloClientEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "allowedSecurityPolicies": ((MiloClientEndpoint) target).getConfiguration().setAllowedSecurityPolicies(property(camelContext, java.lang.String.class, value)); return true;
-        case "applicationName": ((MiloClientEndpoint) target).getConfiguration().setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
-        case "applicationUri": ((MiloClientEndpoint) target).getConfiguration().setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "channelLifetime": ((MiloClientEndpoint) target).getConfiguration().setChannelLifetime(property(camelContext, java.lang.Long.class, value)); return true;
-        case "keyAlias": ((MiloClientEndpoint) target).getConfiguration().setKeyAlias(property(camelContext, java.lang.String.class, value)); return true;
-        case "keyPassword": ((MiloClientEndpoint) target).getConfiguration().setKeyPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "keyStorePassword": ((MiloClientEndpoint) target).getConfiguration().setKeyStorePassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "keyStoreType": ((MiloClientEndpoint) target).getConfiguration().setKeyStoreType(property(camelContext, java.lang.String.class, value)); return true;
-        case "keyStoreUrl": ((MiloClientEndpoint) target).getConfiguration().setKeyStoreUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "maxPendingPublishRequests": ((MiloClientEndpoint) target).getConfiguration().setMaxPendingPublishRequests(property(camelContext, java.lang.Long.class, value)); return true;
-        case "maxResponseMessageSize": ((MiloClientEndpoint) target).getConfiguration().setMaxResponseMessageSize(property(camelContext, java.lang.Long.class, value)); return true;
-        case "overrideHost": ((MiloClientEndpoint) target).getConfiguration().setOverrideHost(property(camelContext, boolean.class, value)); return true;
-        case "productUri": ((MiloClientEndpoint) target).getConfiguration().setProductUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "requestTimeout": ((MiloClientEndpoint) target).getConfiguration().setRequestTimeout(property(camelContext, java.lang.Long.class, value)); return true;
-        case "sessionName": ((MiloClientEndpoint) target).getConfiguration().setSessionName(property(camelContext, java.lang.String.class, value)); return true;
-        case "sessionTimeout": ((MiloClientEndpoint) target).getConfiguration().setSessionTimeout(property(camelContext, java.lang.Long.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "clientid": ((MiloClientEndpoint) target).getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
-        case "defaultawaitwrites": ((MiloClientEndpoint) target).setDefaultAwaitWrites(property(camelContext, boolean.class, value)); return true;
-        case "discoveryendpointsuffix": ((MiloClientEndpoint) target).getConfiguration().setDiscoveryEndpointSuffix(property(camelContext, java.lang.String.class, value)); return true;
-        case "discoveryendpointuri": ((MiloClientEndpoint) target).getConfiguration().setDiscoveryEndpointUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "method": ((MiloClientEndpoint) target).setMethod(property(camelContext, java.lang.String.class, value)); return true;
-        case "node": ((MiloClientEndpoint) target).setNode(property(camelContext, java.lang.String.class, value)); return true;
-        case "samplinginterval": ((MiloClientEndpoint) target).setSamplingInterval(property(camelContext, java.lang.Double.class, value)); return true;
-        case "bridgeerrorhandler": ((MiloClientEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((MiloClientEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((MiloClientEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((MiloClientEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((MiloClientEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((MiloClientEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "allowedsecuritypolicies": ((MiloClientEndpoint) target).getConfiguration().setAllowedSecurityPolicies(property(camelContext, java.lang.String.class, value)); return true;
-        case "applicationname": ((MiloClientEndpoint) target).getConfiguration().setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
-        case "applicationuri": ((MiloClientEndpoint) target).getConfiguration().setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "channellifetime": ((MiloClientEndpoint) target).getConfiguration().setChannelLifetime(property(camelContext, java.lang.Long.class, value)); return true;
-        case "keyalias": ((MiloClientEndpoint) target).getConfiguration().setKeyAlias(property(camelContext, java.lang.String.class, value)); return true;
-        case "keypassword": ((MiloClientEndpoint) target).getConfiguration().setKeyPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "keystorepassword": ((MiloClientEndpoint) target).getConfiguration().setKeyStorePassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "keystoretype": ((MiloClientEndpoint) target).getConfiguration().setKeyStoreType(property(camelContext, java.lang.String.class, value)); return true;
-        case "keystoreurl": ((MiloClientEndpoint) target).getConfiguration().setKeyStoreUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "maxpendingpublishrequests": ((MiloClientEndpoint) target).getConfiguration().setMaxPendingPublishRequests(property(camelContext, java.lang.Long.class, value)); return true;
-        case "maxresponsemessagesize": ((MiloClientEndpoint) target).getConfiguration().setMaxResponseMessageSize(property(camelContext, java.lang.Long.class, value)); return true;
-        case "overridehost": ((MiloClientEndpoint) target).getConfiguration().setOverrideHost(property(camelContext, boolean.class, value)); return true;
-        case "producturi": ((MiloClientEndpoint) target).getConfiguration().setProductUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "requesttimeout": ((MiloClientEndpoint) target).getConfiguration().setRequestTimeout(property(camelContext, java.lang.Long.class, value)); return true;
-        case "sessionname": ((MiloClientEndpoint) target).getConfiguration().setSessionName(property(camelContext, java.lang.String.class, value)); return true;
-        case "sessiontimeout": ((MiloClientEndpoint) target).getConfiguration().setSessionTimeout(property(camelContext, java.lang.Long.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        MiloClientEndpoint target = (MiloClientEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "clientid":
+        case "clientId": target.getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "defaultawaitwrites":
+        case "defaultAwaitWrites": target.setDefaultAwaitWrites(property(camelContext, boolean.class, value)); return true;
+        case "discoveryendpointsuffix":
+        case "discoveryEndpointSuffix": target.getConfiguration().setDiscoveryEndpointSuffix(property(camelContext, java.lang.String.class, value)); return true;
+        case "discoveryendpointuri":
+        case "discoveryEndpointUri": target.getConfiguration().setDiscoveryEndpointUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "method": target.setMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "node": target.setNode(property(camelContext, java.lang.String.class, value)); return true;
+        case "samplinginterval":
+        case "samplingInterval": target.setSamplingInterval(property(camelContext, java.lang.Double.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "allowedsecuritypolicies":
+        case "allowedSecurityPolicies": target.getConfiguration().setAllowedSecurityPolicies(property(camelContext, java.lang.String.class, value)); return true;
+        case "applicationname":
+        case "applicationName": target.getConfiguration().setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
+        case "applicationuri":
+        case "applicationUri": target.getConfiguration().setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "channellifetime":
+        case "channelLifetime": target.getConfiguration().setChannelLifetime(property(camelContext, java.lang.Long.class, value)); return true;
+        case "keyalias":
+        case "keyAlias": target.getConfiguration().setKeyAlias(property(camelContext, java.lang.String.class, value)); return true;
+        case "keypassword":
+        case "keyPassword": target.getConfiguration().setKeyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystorepassword":
+        case "keyStorePassword": target.getConfiguration().setKeyStorePassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystoretype":
+        case "keyStoreType": target.getConfiguration().setKeyStoreType(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystoreurl":
+        case "keyStoreUrl": target.getConfiguration().setKeyStoreUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxpendingpublishrequests":
+        case "maxPendingPublishRequests": target.getConfiguration().setMaxPendingPublishRequests(property(camelContext, java.lang.Long.class, value)); return true;
+        case "maxresponsemessagesize":
+        case "maxResponseMessageSize": target.getConfiguration().setMaxResponseMessageSize(property(camelContext, java.lang.Long.class, value)); return true;
+        case "overridehost":
+        case "overrideHost": target.getConfiguration().setOverrideHost(property(camelContext, boolean.class, value)); return true;
+        case "producturi":
+        case "productUri": target.getConfiguration().setProductUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "requesttimeout":
+        case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        case "sessionname":
+        case "sessionName": target.getConfiguration().setSessionName(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessiontimeout":
+        case "sessionTimeout": target.getConfiguration().setSessionTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        default: return false;
         }
     }
 
