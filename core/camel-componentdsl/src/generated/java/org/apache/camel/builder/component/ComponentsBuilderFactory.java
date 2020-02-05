@@ -483,6 +483,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2EksComponentBuilderFactory.aws2Eks();
     }
     /**
+     * AWS 2 IAM (camel-aws2-iam)
+     * The aws-iam is used for managing Amazon IAM
+     * 
+     * Category: cloud,management
+     * Since: 3.1
+     * Maven coordinates: org.apache.camel:camel-aws2-iam
+     */
+    static org.apache.camel.builder.component.dsl.Aws2IamComponentBuilderFactory.Aws2IamComponentBuilder aws2Iam() {
+        return org.apache.camel.builder.component.dsl.Aws2IamComponentBuilderFactory.aws2Iam();
+    }
+    /**
      * AWS 2 KMS (camel-aws2-kms)
      * The aws2-kms is used for managing Amazon KMS
      * 
