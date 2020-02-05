@@ -22,6 +22,8 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
@@ -179,7 +181,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         }
 
         if (count > 0) {
-            String names = buffer.toString();
+            String names = Stream.of(buffer.toString().split(" ")).sorted().collect(Collectors.joining(" "));
             String properties = createProperties(project, "languages", names);
             updateResource(camelMetaDir.toPath(), "language.properties", properties);
             log.info("Generated language.properties containing " + count + " Camel " + (count > 1 ? "languages: " : "language: ") + names);

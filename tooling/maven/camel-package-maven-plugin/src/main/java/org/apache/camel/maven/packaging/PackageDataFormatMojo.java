@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.DataFormatModel.DataFormatOptionModel;
@@ -214,7 +215,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         }
 
         if (count > 0) {
-            String names = buffer.toString();
+            String names = Stream.of(buffer.toString().split(" ")).sorted().collect(Collectors.joining(" "));
             String properties = createProperties(project, "dataFormats", names);
             updateResource(camelMetaDir.toPath(), "dataformat.properties", properties);
             log.info("Generated dataformat.properties containing " + count + " Camel " + (count > 1 ? "dataformats: " : "dataformat: ") + names);
