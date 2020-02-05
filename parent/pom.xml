@@ -595,7 +595,7 @@
         <spring-data-redis-bundle-version>2.2.4.RELEASE_1</spring-data-redis-bundle-version>
         <spring-integration-version>5.1.8.RELEASE</spring-integration-version>
         <spring-ldap-version>2.3.2.RELEASE</spring-ldap-version>
-        <spring-ldap-bundle-version>2.3.2.RELEASE_1</spring-ldap-bundle-version>
+        <spring-ldap-bundle-version>2.3.2.RELEASE_2</spring-ldap-bundle-version>
         <spring-version-range>[5,6)</spring-version-range>
         <spring-version>${spring5-version}</spring-version>
         <spring5-version>5.2.3.RELEASE</spring5-version>
