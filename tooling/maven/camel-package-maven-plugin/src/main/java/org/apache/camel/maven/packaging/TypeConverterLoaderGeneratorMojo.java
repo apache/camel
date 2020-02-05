@@ -52,6 +52,8 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
 
     public static final DotName CONVERTER_ANNOTATION = DotName.createSimple("org.apache.camel.Converter");
 
+    @Parameter(defaultValue = "${project.build.outputDirectory}")
+    protected File classesDirectory;
     @Parameter(defaultValue = "${project.basedir}/src/generated/java")
     protected File sourcesOutputDir;
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
@@ -59,6 +61,15 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (classesDirectory == null) {
+            classesDirectory = new File(project.getBuild().getOutputDirectory());
+        }
+        if (sourcesOutputDir == null) {
+            sourcesOutputDir = new File(project.getBasedir(), "src/generated/java");
+        }
+        if (resourcesOutputDir == null) {
+            resourcesOutputDir = new File(project.getBasedir(), "src/generated/resources");
+        }
         if ("pom".equals(project.getPackaging())) {
             return;
         }

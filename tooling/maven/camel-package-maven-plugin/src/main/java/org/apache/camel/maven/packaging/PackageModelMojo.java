@@ -58,6 +58,12 @@ public class PackageModelMojo extends AbstractGeneratorMojo {
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (buildDir == null) {
+            buildDir = new File(project.getBuild().getDirectory());
+        }
+        if (outDir == null) {
+            outDir = new File(project.getBasedir(), "src/generated/resources");
+        }
         File camelMetaDir = new File(outDir, "META-INF/services/org/apache/camel/");
         camelMetaDir.mkdirs();
 

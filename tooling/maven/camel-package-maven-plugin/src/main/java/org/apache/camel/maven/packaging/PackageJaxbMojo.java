@@ -83,6 +83,12 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (index == null) {
+            index = new File(project.getBuild().getDirectory(), "META-INF/jandex.idx");
+        }
+        if (jaxbIndexOutDir == null) {
+            jaxbIndexOutDir = new File(project.getBasedir(), "src/generated/resources");
+        }
         List<String> locations = new ArrayList<>();
         locations.add(project.getBuild().getOutputDirectory());
 

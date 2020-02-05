@@ -112,8 +112,20 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
     protected IndexView indexView;
     protected Map<String, JavaClassSource> sources = new HashMap<>();
 
+    public SchemaGeneratorMojo() {
+    }
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (classesDirectory == null) {
+            classesDirectory = new File(project.getBuild().getOutputDirectory());
+        }
+        if (sourcesOutputDir == null) {
+            sourcesOutputDir = new File(project.getBasedir(), "src/generated/java");
+        }
+        if (resourcesOutputDir == null) {
+            resourcesOutputDir = new File(project.getBasedir(), "src/generated/resources");
+        }
         if (!classesDirectory.isDirectory()) {
             return;
         }

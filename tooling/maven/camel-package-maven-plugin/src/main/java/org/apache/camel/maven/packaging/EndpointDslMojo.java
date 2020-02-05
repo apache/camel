@@ -60,6 +60,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * Generate Endpoint DSL source files for Components.
@@ -91,7 +93,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     /**
      * The base directory
      */
-    @Parameter(defaultValue = "${basedir}")
+    @Parameter(defaultValue = "${project.basedir}")
     protected File baseDir;
 
     /**
@@ -125,6 +127,19 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     protected File sourcesOutputDir;
 
     DynamicClassLoader projectClassLoader;
+
+    @Override
+    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
+        buildDir = new File(project.getBuild().getDirectory());
+        baseDir = project.getBasedir();
+        endpointFactoriesPackageName = "org.apache.camel.builder.endpoint";
+        componentsFactoriesPackageName = "org.apache.camel.builder.endpoint.dsl";
+        generateEndpointBuilderFactory = true;
+        generateEndpointBuilders = true;
+        generateEndpointDsl = Boolean.parseBoolean(project.getProperties().getProperty("camel-generate-endpoint-dsl", "false"));
+        sourcesOutputDir = new File(project.getBasedir(), "src/generated/java");
+        super.execute(project, projectHelper, buildContext);
+    }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
