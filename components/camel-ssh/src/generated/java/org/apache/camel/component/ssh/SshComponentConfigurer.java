@@ -12,57 +12,38 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class SshComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "configuration": ((SshComponent) target).setConfiguration(property(camelContext, org.apache.camel.component.ssh.SshConfiguration.class, value)); return true;
-        case "host": ((SshComponent) target).setHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "port": ((SshComponent) target).setPort(property(camelContext, int.class, value)); return true;
-        case "username": ((SshComponent) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((SshComponent) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "pollCommand": ((SshComponent) target).setPollCommand(property(camelContext, java.lang.String.class, value)); return true;
-        case "keyPairProvider": ((SshComponent) target).setKeyPairProvider(property(camelContext, org.apache.sshd.common.keyprovider.KeyPairProvider.class, value)); return true;
-        case "keyType": ((SshComponent) target).setKeyType(property(camelContext, java.lang.String.class, value)); return true;
-        case "timeout": ((SshComponent) target).setTimeout(property(camelContext, long.class, value)); return true;
-        case "certResource": ((SshComponent) target).setCertResource(property(camelContext, java.lang.String.class, value)); return true;
-        case "certResourcePassword": ((SshComponent) target).setCertResourcePassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "channelType": ((SshComponent) target).setChannelType(property(camelContext, java.lang.String.class, value)); return true;
-        case "shellPrompt": ((SshComponent) target).setShellPrompt(property(camelContext, java.lang.String.class, value)); return true;
-        case "sleepForShellPrompt": ((SshComponent) target).setSleepForShellPrompt(property(camelContext, long.class, value)); return true;
-        case "basicPropertyBinding": ((SshComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((SshComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((SshComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "configuration": ((SshComponent) target).setConfiguration(property(camelContext, org.apache.camel.component.ssh.SshConfiguration.class, value)); return true;
-        case "host": ((SshComponent) target).setHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "port": ((SshComponent) target).setPort(property(camelContext, int.class, value)); return true;
-        case "username": ((SshComponent) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((SshComponent) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "pollcommand": ((SshComponent) target).setPollCommand(property(camelContext, java.lang.String.class, value)); return true;
-        case "keypairprovider": ((SshComponent) target).setKeyPairProvider(property(camelContext, org.apache.sshd.common.keyprovider.KeyPairProvider.class, value)); return true;
-        case "keytype": ((SshComponent) target).setKeyType(property(camelContext, java.lang.String.class, value)); return true;
-        case "timeout": ((SshComponent) target).setTimeout(property(camelContext, long.class, value)); return true;
-        case "certresource": ((SshComponent) target).setCertResource(property(camelContext, java.lang.String.class, value)); return true;
-        case "certresourcepassword": ((SshComponent) target).setCertResourcePassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "channeltype": ((SshComponent) target).setChannelType(property(camelContext, java.lang.String.class, value)); return true;
-        case "shellprompt": ((SshComponent) target).setShellPrompt(property(camelContext, java.lang.String.class, value)); return true;
-        case "sleepforshellprompt": ((SshComponent) target).setSleepForShellPrompt(property(camelContext, long.class, value)); return true;
-        case "basicpropertybinding": ((SshComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((SshComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((SshComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        SshComponent target = (SshComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.ssh.SshConfiguration.class, value)); return true;
+        case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "port": target.setPort(property(camelContext, int.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "pollcommand":
+        case "pollCommand": target.setPollCommand(property(camelContext, java.lang.String.class, value)); return true;
+        case "keypairprovider":
+        case "keyPairProvider": target.setKeyPairProvider(property(camelContext, org.apache.sshd.common.keyprovider.KeyPairProvider.class, value)); return true;
+        case "keytype":
+        case "keyType": target.setKeyType(property(camelContext, java.lang.String.class, value)); return true;
+        case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
+        case "certresource":
+        case "certResource": target.setCertResource(property(camelContext, java.lang.String.class, value)); return true;
+        case "certresourcepassword":
+        case "certResourcePassword": target.setCertResourcePassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "channeltype":
+        case "channelType": target.setChannelType(property(camelContext, java.lang.String.class, value)); return true;
+        case "shellprompt":
+        case "shellPrompt": target.setShellPrompt(property(camelContext, java.lang.String.class, value)); return true;
+        case "sleepforshellprompt":
+        case "sleepForShellPrompt": target.setSleepForShellPrompt(property(camelContext, long.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

@@ -12,53 +12,36 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class CMISEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "pageSize": ((CMISEndpoint) target).getSessionFacade().setPageSize(property(camelContext, int.class, value)); return true;
-        case "readContent": ((CMISEndpoint) target).getSessionFacade().setReadContent(property(camelContext, boolean.class, value)); return true;
-        case "readCount": ((CMISEndpoint) target).getSessionFacade().setReadCount(property(camelContext, int.class, value)); return true;
-        case "repositoryId": ((CMISEndpoint) target).getSessionFacade().setRepositoryId(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((CMISEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "query": ((CMISEndpoint) target).getSessionFacade().setQuery(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionHandler": ((CMISEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((CMISEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((CMISEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "queryMode": ((CMISEndpoint) target).setQueryMode(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((CMISEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "sessionFacadeFactory": ((CMISEndpoint) target).setSessionFacadeFactory(property(camelContext, org.apache.camel.component.cmis.CMISSessionFacadeFactory.class, value)); return true;
-        case "synchronous": ((CMISEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "password": ((CMISEndpoint) target).getSessionFacade().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((CMISEndpoint) target).getSessionFacade().setUsername(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "pagesize": ((CMISEndpoint) target).getSessionFacade().setPageSize(property(camelContext, int.class, value)); return true;
-        case "readcontent": ((CMISEndpoint) target).getSessionFacade().setReadContent(property(camelContext, boolean.class, value)); return true;
-        case "readcount": ((CMISEndpoint) target).getSessionFacade().setReadCount(property(camelContext, int.class, value)); return true;
-        case "repositoryid": ((CMISEndpoint) target).getSessionFacade().setRepositoryId(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((CMISEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "query": ((CMISEndpoint) target).getSessionFacade().setQuery(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionhandler": ((CMISEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((CMISEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((CMISEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "querymode": ((CMISEndpoint) target).setQueryMode(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((CMISEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "sessionfacadefactory": ((CMISEndpoint) target).setSessionFacadeFactory(property(camelContext, org.apache.camel.component.cmis.CMISSessionFacadeFactory.class, value)); return true;
-        case "synchronous": ((CMISEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "password": ((CMISEndpoint) target).getSessionFacade().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((CMISEndpoint) target).getSessionFacade().setUsername(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        CMISEndpoint target = (CMISEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "pagesize":
+        case "pageSize": target.getSessionFacade().setPageSize(property(camelContext, int.class, value)); return true;
+        case "readcontent":
+        case "readContent": target.getSessionFacade().setReadContent(property(camelContext, boolean.class, value)); return true;
+        case "readcount":
+        case "readCount": target.getSessionFacade().setReadCount(property(camelContext, int.class, value)); return true;
+        case "repositoryid":
+        case "repositoryId": target.getSessionFacade().setRepositoryId(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "query": target.getSessionFacade().setQuery(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "querymode":
+        case "queryMode": target.setQueryMode(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "sessionfacadefactory":
+        case "sessionFacadeFactory": target.setSessionFacadeFactory(property(camelContext, org.apache.camel.component.cmis.CMISSessionFacadeFactory.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "password": target.getSessionFacade().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.getSessionFacade().setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

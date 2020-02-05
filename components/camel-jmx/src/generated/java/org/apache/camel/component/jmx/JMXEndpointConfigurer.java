@@ -12,85 +12,65 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class JMXEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "bridgeErrorHandler": ((JMXEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "format": ((JMXEndpoint) target).setFormat(property(camelContext, java.lang.String.class, value)); return true;
-        case "granularityPeriod": ((JMXEndpoint) target).setGranularityPeriod(property(camelContext, long.class, value)); return true;
-        case "monitorType": ((JMXEndpoint) target).setMonitorType(property(camelContext, java.lang.String.class, value)); return true;
-        case "objectDomain": ((JMXEndpoint) target).setObjectDomain(property(camelContext, java.lang.String.class, value)); return true;
-        case "objectName": ((JMXEndpoint) target).setObjectName(property(camelContext, java.lang.String.class, value)); return true;
-        case "observedAttribute": ((JMXEndpoint) target).setObservedAttribute(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionHandler": ((JMXEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((JMXEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "basicPropertyBinding": ((JMXEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "executorService": ((JMXEndpoint) target).setExecutorService(property(camelContext, java.util.concurrent.ExecutorService.class, value)); return true;
-        case "handback": ((JMXEndpoint) target).setHandback(property(camelContext, java.lang.Object.class, value)); return true;
-        case "notificationFilter": ((JMXEndpoint) target).setNotificationFilter(property(camelContext, javax.management.NotificationFilter.class, value)); return true;
-        case "objectProperties": ((JMXEndpoint) target).setObjectProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "reconnectDelay": ((JMXEndpoint) target).setReconnectDelay(property(camelContext, int.class, value)); return true;
-        case "reconnectOnConnectionFailure": ((JMXEndpoint) target).setReconnectOnConnectionFailure(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((JMXEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "testConnectionOnStartup": ((JMXEndpoint) target).setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
-        case "notifyDiffer": ((JMXEndpoint) target).setNotifyDiffer(property(camelContext, boolean.class, value)); return true;
-        case "notifyMatch": ((JMXEndpoint) target).setNotifyMatch(property(camelContext, boolean.class, value)); return true;
-        case "stringToCompare": ((JMXEndpoint) target).setStringToCompare(property(camelContext, java.lang.String.class, value)); return true;
-        case "initThreshold": ((JMXEndpoint) target).setInitThreshold(property(camelContext, int.class, value)); return true;
-        case "modulus": ((JMXEndpoint) target).setModulus(property(camelContext, int.class, value)); return true;
-        case "offset": ((JMXEndpoint) target).setOffset(property(camelContext, int.class, value)); return true;
-        case "differenceMode": ((JMXEndpoint) target).setDifferenceMode(property(camelContext, boolean.class, value)); return true;
-        case "notifyHigh": ((JMXEndpoint) target).setNotifyHigh(property(camelContext, boolean.class, value)); return true;
-        case "notifyLow": ((JMXEndpoint) target).setNotifyLow(property(camelContext, boolean.class, value)); return true;
-        case "thresholdHigh": ((JMXEndpoint) target).setThresholdHigh(property(camelContext, java.lang.Double.class, value)); return true;
-        case "thresholdLow": ((JMXEndpoint) target).setThresholdLow(property(camelContext, java.lang.Double.class, value)); return true;
-        case "password": ((JMXEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "user": ((JMXEndpoint) target).setUser(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "bridgeerrorhandler": ((JMXEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "format": ((JMXEndpoint) target).setFormat(property(camelContext, java.lang.String.class, value)); return true;
-        case "granularityperiod": ((JMXEndpoint) target).setGranularityPeriod(property(camelContext, long.class, value)); return true;
-        case "monitortype": ((JMXEndpoint) target).setMonitorType(property(camelContext, java.lang.String.class, value)); return true;
-        case "objectdomain": ((JMXEndpoint) target).setObjectDomain(property(camelContext, java.lang.String.class, value)); return true;
-        case "objectname": ((JMXEndpoint) target).setObjectName(property(camelContext, java.lang.String.class, value)); return true;
-        case "observedattribute": ((JMXEndpoint) target).setObservedAttribute(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionhandler": ((JMXEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((JMXEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "basicpropertybinding": ((JMXEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "executorservice": ((JMXEndpoint) target).setExecutorService(property(camelContext, java.util.concurrent.ExecutorService.class, value)); return true;
-        case "handback": ((JMXEndpoint) target).setHandback(property(camelContext, java.lang.Object.class, value)); return true;
-        case "notificationfilter": ((JMXEndpoint) target).setNotificationFilter(property(camelContext, javax.management.NotificationFilter.class, value)); return true;
-        case "objectproperties": ((JMXEndpoint) target).setObjectProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "reconnectdelay": ((JMXEndpoint) target).setReconnectDelay(property(camelContext, int.class, value)); return true;
-        case "reconnectonconnectionfailure": ((JMXEndpoint) target).setReconnectOnConnectionFailure(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((JMXEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "testconnectiononstartup": ((JMXEndpoint) target).setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
-        case "notifydiffer": ((JMXEndpoint) target).setNotifyDiffer(property(camelContext, boolean.class, value)); return true;
-        case "notifymatch": ((JMXEndpoint) target).setNotifyMatch(property(camelContext, boolean.class, value)); return true;
-        case "stringtocompare": ((JMXEndpoint) target).setStringToCompare(property(camelContext, java.lang.String.class, value)); return true;
-        case "initthreshold": ((JMXEndpoint) target).setInitThreshold(property(camelContext, int.class, value)); return true;
-        case "modulus": ((JMXEndpoint) target).setModulus(property(camelContext, int.class, value)); return true;
-        case "offset": ((JMXEndpoint) target).setOffset(property(camelContext, int.class, value)); return true;
-        case "differencemode": ((JMXEndpoint) target).setDifferenceMode(property(camelContext, boolean.class, value)); return true;
-        case "notifyhigh": ((JMXEndpoint) target).setNotifyHigh(property(camelContext, boolean.class, value)); return true;
-        case "notifylow": ((JMXEndpoint) target).setNotifyLow(property(camelContext, boolean.class, value)); return true;
-        case "thresholdhigh": ((JMXEndpoint) target).setThresholdHigh(property(camelContext, java.lang.Double.class, value)); return true;
-        case "thresholdlow": ((JMXEndpoint) target).setThresholdLow(property(camelContext, java.lang.Double.class, value)); return true;
-        case "password": ((JMXEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "user": ((JMXEndpoint) target).setUser(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        JMXEndpoint target = (JMXEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "format": target.setFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "granularityperiod":
+        case "granularityPeriod": target.setGranularityPeriod(property(camelContext, long.class, value)); return true;
+        case "monitortype":
+        case "monitorType": target.setMonitorType(property(camelContext, java.lang.String.class, value)); return true;
+        case "objectdomain":
+        case "objectDomain": target.setObjectDomain(property(camelContext, java.lang.String.class, value)); return true;
+        case "objectname":
+        case "objectName": target.setObjectName(property(camelContext, java.lang.String.class, value)); return true;
+        case "observedattribute":
+        case "observedAttribute": target.setObservedAttribute(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "executorservice":
+        case "executorService": target.setExecutorService(property(camelContext, java.util.concurrent.ExecutorService.class, value)); return true;
+        case "handback": target.setHandback(property(camelContext, java.lang.Object.class, value)); return true;
+        case "notificationfilter":
+        case "notificationFilter": target.setNotificationFilter(property(camelContext, javax.management.NotificationFilter.class, value)); return true;
+        case "objectproperties":
+        case "objectProperties": target.setObjectProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "reconnectdelay":
+        case "reconnectDelay": target.setReconnectDelay(property(camelContext, int.class, value)); return true;
+        case "reconnectonconnectionfailure":
+        case "reconnectOnConnectionFailure": target.setReconnectOnConnectionFailure(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "testconnectiononstartup":
+        case "testConnectionOnStartup": target.setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
+        case "notifydiffer":
+        case "notifyDiffer": target.setNotifyDiffer(property(camelContext, boolean.class, value)); return true;
+        case "notifymatch":
+        case "notifyMatch": target.setNotifyMatch(property(camelContext, boolean.class, value)); return true;
+        case "stringtocompare":
+        case "stringToCompare": target.setStringToCompare(property(camelContext, java.lang.String.class, value)); return true;
+        case "initthreshold":
+        case "initThreshold": target.setInitThreshold(property(camelContext, int.class, value)); return true;
+        case "modulus": target.setModulus(property(camelContext, int.class, value)); return true;
+        case "offset": target.setOffset(property(camelContext, int.class, value)); return true;
+        case "differencemode":
+        case "differenceMode": target.setDifferenceMode(property(camelContext, boolean.class, value)); return true;
+        case "notifyhigh":
+        case "notifyHigh": target.setNotifyHigh(property(camelContext, boolean.class, value)); return true;
+        case "notifylow":
+        case "notifyLow": target.setNotifyLow(property(camelContext, boolean.class, value)); return true;
+        case "thresholdhigh":
+        case "thresholdHigh": target.setThresholdHigh(property(camelContext, java.lang.Double.class, value)); return true;
+        case "thresholdlow":
+        case "thresholdLow": target.setThresholdLow(property(camelContext, java.lang.Double.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "user": target.setUser(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

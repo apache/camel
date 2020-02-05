@@ -12,33 +12,18 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class ZendeskComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "configuration": ((ZendeskComponent) target).setConfiguration(property(camelContext, org.apache.camel.component.zendesk.ZendeskConfiguration.class, value)); return true;
-        case "zendesk": ((ZendeskComponent) target).setZendesk(property(camelContext, org.zendesk.client.v2.Zendesk.class, value)); return true;
-        case "basicPropertyBinding": ((ZendeskComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((ZendeskComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((ZendeskComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "configuration": ((ZendeskComponent) target).setConfiguration(property(camelContext, org.apache.camel.component.zendesk.ZendeskConfiguration.class, value)); return true;
-        case "zendesk": ((ZendeskComponent) target).setZendesk(property(camelContext, org.zendesk.client.v2.Zendesk.class, value)); return true;
-        case "basicpropertybinding": ((ZendeskComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((ZendeskComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((ZendeskComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        ZendeskComponent target = (ZendeskComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.zendesk.ZendeskConfiguration.class, value)); return true;
+        case "zendesk": target.setZendesk(property(camelContext, org.zendesk.client.v2.Zendesk.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

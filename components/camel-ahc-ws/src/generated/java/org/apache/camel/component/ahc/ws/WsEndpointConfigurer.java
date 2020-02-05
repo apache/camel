@@ -12,63 +12,48 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class WsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "bridgeEndpoint": ((WsEndpoint) target).setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
-        case "bufferSize": ((WsEndpoint) target).setBufferSize(property(camelContext, int.class, value)); return true;
-        case "headerFilterStrategy": ((WsEndpoint) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "throwExceptionOnFailure": ((WsEndpoint) target).setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
-        case "transferException": ((WsEndpoint) target).setTransferException(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((WsEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "sendMessageOnError": ((WsEndpoint) target).setSendMessageOnError(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((WsEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((WsEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "connectionClose": ((WsEndpoint) target).setConnectionClose(property(camelContext, boolean.class, value)); return true;
-        case "cookieHandler": ((WsEndpoint) target).setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
-        case "lazyStartProducer": ((WsEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "useStreaming": ((WsEndpoint) target).setUseStreaming(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((WsEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "binding": ((WsEndpoint) target).setBinding(property(camelContext, org.apache.camel.component.ahc.AhcBinding.class, value)); return true;
-        case "clientConfig": ((WsEndpoint) target).setClientConfig(property(camelContext, org.asynchttpclient.AsyncHttpClientConfig.class, value)); return true;
-        case "clientConfigOptions": ((WsEndpoint) target).setClientConfigOptions(property(camelContext, java.util.Map.class, value)); return true;
-        case "synchronous": ((WsEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "clientConfigRealmOptions": ((WsEndpoint) target).setClientConfigRealmOptions(property(camelContext, java.util.Map.class, value)); return true;
-        case "sslContextParameters": ((WsEndpoint) target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "bridgeendpoint": ((WsEndpoint) target).setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
-        case "buffersize": ((WsEndpoint) target).setBufferSize(property(camelContext, int.class, value)); return true;
-        case "headerfilterstrategy": ((WsEndpoint) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "throwexceptiononfailure": ((WsEndpoint) target).setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
-        case "transferexception": ((WsEndpoint) target).setTransferException(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((WsEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "sendmessageonerror": ((WsEndpoint) target).setSendMessageOnError(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((WsEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((WsEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "connectionclose": ((WsEndpoint) target).setConnectionClose(property(camelContext, boolean.class, value)); return true;
-        case "cookiehandler": ((WsEndpoint) target).setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
-        case "lazystartproducer": ((WsEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "usestreaming": ((WsEndpoint) target).setUseStreaming(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((WsEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "binding": ((WsEndpoint) target).setBinding(property(camelContext, org.apache.camel.component.ahc.AhcBinding.class, value)); return true;
-        case "clientconfig": ((WsEndpoint) target).setClientConfig(property(camelContext, org.asynchttpclient.AsyncHttpClientConfig.class, value)); return true;
-        case "clientconfigoptions": ((WsEndpoint) target).setClientConfigOptions(property(camelContext, java.util.Map.class, value)); return true;
-        case "synchronous": ((WsEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "clientconfigrealmoptions": ((WsEndpoint) target).setClientConfigRealmOptions(property(camelContext, java.util.Map.class, value)); return true;
-        case "sslcontextparameters": ((WsEndpoint) target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        WsEndpoint target = (WsEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeendpoint":
+        case "bridgeEndpoint": target.setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
+        case "buffersize":
+        case "bufferSize": target.setBufferSize(property(camelContext, int.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": target.setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
+        case "transferexception":
+        case "transferException": target.setTransferException(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "sendmessageonerror":
+        case "sendMessageOnError": target.setSendMessageOnError(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "connectionclose":
+        case "connectionClose": target.setConnectionClose(property(camelContext, boolean.class, value)); return true;
+        case "cookiehandler":
+        case "cookieHandler": target.setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "usestreaming":
+        case "useStreaming": target.setUseStreaming(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "binding": target.setBinding(property(camelContext, org.apache.camel.component.ahc.AhcBinding.class, value)); return true;
+        case "clientconfig":
+        case "clientConfig": target.setClientConfig(property(camelContext, org.asynchttpclient.AsyncHttpClientConfig.class, value)); return true;
+        case "clientconfigoptions":
+        case "clientConfigOptions": target.setClientConfigOptions(property(camelContext, java.util.Map.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "clientconfigrealmoptions":
+        case "clientConfigRealmOptions": target.setClientConfigRealmOptions(property(camelContext, java.util.Map.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        default: return false;
         }
     }
 

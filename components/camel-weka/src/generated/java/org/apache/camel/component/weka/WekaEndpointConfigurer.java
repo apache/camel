@@ -12,47 +12,26 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class WekaEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "lazyStartProducer": ((WekaEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((WekaEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((WekaEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "apply": ((WekaEndpoint) target).getConfiguration().setApply(property(camelContext, java.lang.String.class, value)); return true;
-        case "build": ((WekaEndpoint) target).getConfiguration().setBuild(property(camelContext, java.lang.String.class, value)); return true;
-        case "dsname": ((WekaEndpoint) target).getConfiguration().setDsname(property(camelContext, java.lang.String.class, value)); return true;
-        case "folds": ((WekaEndpoint) target).getConfiguration().setFolds(property(camelContext, int.class, value)); return true;
-        case "loadFrom": ((WekaEndpoint) target).getConfiguration().setLoadFrom(property(camelContext, java.lang.String.class, value)); return true;
-        case "saveTo": ((WekaEndpoint) target).getConfiguration().setSaveTo(property(camelContext, java.lang.String.class, value)); return true;
-        case "seed": ((WekaEndpoint) target).getConfiguration().setSeed(property(camelContext, int.class, value)); return true;
-        case "xval": ((WekaEndpoint) target).getConfiguration().setXval(property(camelContext, boolean.class, value)); return true;
-        case "path": ((WekaEndpoint) target).getConfiguration().setPath(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "lazystartproducer": ((WekaEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((WekaEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((WekaEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "apply": ((WekaEndpoint) target).getConfiguration().setApply(property(camelContext, java.lang.String.class, value)); return true;
-        case "build": ((WekaEndpoint) target).getConfiguration().setBuild(property(camelContext, java.lang.String.class, value)); return true;
-        case "dsname": ((WekaEndpoint) target).getConfiguration().setDsname(property(camelContext, java.lang.String.class, value)); return true;
-        case "folds": ((WekaEndpoint) target).getConfiguration().setFolds(property(camelContext, int.class, value)); return true;
-        case "loadfrom": ((WekaEndpoint) target).getConfiguration().setLoadFrom(property(camelContext, java.lang.String.class, value)); return true;
-        case "saveto": ((WekaEndpoint) target).getConfiguration().setSaveTo(property(camelContext, java.lang.String.class, value)); return true;
-        case "seed": ((WekaEndpoint) target).getConfiguration().setSeed(property(camelContext, int.class, value)); return true;
-        case "xval": ((WekaEndpoint) target).getConfiguration().setXval(property(camelContext, boolean.class, value)); return true;
-        case "path": ((WekaEndpoint) target).getConfiguration().setPath(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        WekaEndpoint target = (WekaEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "apply": target.getConfiguration().setApply(property(camelContext, java.lang.String.class, value)); return true;
+        case "build": target.getConfiguration().setBuild(property(camelContext, java.lang.String.class, value)); return true;
+        case "dsname": target.getConfiguration().setDsname(property(camelContext, java.lang.String.class, value)); return true;
+        case "folds": target.getConfiguration().setFolds(property(camelContext, int.class, value)); return true;
+        case "loadfrom":
+        case "loadFrom": target.getConfiguration().setLoadFrom(property(camelContext, java.lang.String.class, value)); return true;
+        case "saveto":
+        case "saveTo": target.getConfiguration().setSaveTo(property(camelContext, java.lang.String.class, value)); return true;
+        case "seed": target.getConfiguration().setSeed(property(camelContext, int.class, value)); return true;
+        case "xval": target.getConfiguration().setXval(property(camelContext, boolean.class, value)); return true;
+        case "path": target.getConfiguration().setPath(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

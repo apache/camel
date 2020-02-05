@@ -12,37 +12,23 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class JoltEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "contentCache": ((JoltEndpoint) target).setContentCache(property(camelContext, boolean.class, value)); return true;
-        case "inputType": ((JoltEndpoint) target).setInputType(property(camelContext, org.apache.camel.component.jolt.JoltInputOutputType.class, value)); return true;
-        case "lazyStartProducer": ((JoltEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "outputType": ((JoltEndpoint) target).setOutputType(property(camelContext, org.apache.camel.component.jolt.JoltInputOutputType.class, value)); return true;
-        case "transformDsl": ((JoltEndpoint) target).setTransformDsl(property(camelContext, org.apache.camel.component.jolt.JoltTransformType.class, value)); return true;
-        case "basicPropertyBinding": ((JoltEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((JoltEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "contentcache": ((JoltEndpoint) target).setContentCache(property(camelContext, boolean.class, value)); return true;
-        case "inputtype": ((JoltEndpoint) target).setInputType(property(camelContext, org.apache.camel.component.jolt.JoltInputOutputType.class, value)); return true;
-        case "lazystartproducer": ((JoltEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "outputtype": ((JoltEndpoint) target).setOutputType(property(camelContext, org.apache.camel.component.jolt.JoltInputOutputType.class, value)); return true;
-        case "transformdsl": ((JoltEndpoint) target).setTransformDsl(property(camelContext, org.apache.camel.component.jolt.JoltTransformType.class, value)); return true;
-        case "basicpropertybinding": ((JoltEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((JoltEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        JoltEndpoint target = (JoltEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "contentcache":
+        case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
+        case "inputtype":
+        case "inputType": target.setInputType(property(camelContext, org.apache.camel.component.jolt.JoltInputOutputType.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "outputtype":
+        case "outputType": target.setOutputType(property(camelContext, org.apache.camel.component.jolt.JoltInputOutputType.class, value)); return true;
+        case "transformdsl":
+        case "transformDsl": target.setTransformDsl(property(camelContext, org.apache.camel.component.jolt.JoltTransformType.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

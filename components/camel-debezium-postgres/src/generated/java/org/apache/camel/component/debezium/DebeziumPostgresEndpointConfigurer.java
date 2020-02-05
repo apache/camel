@@ -12,155 +12,141 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "additionalProperties": ((DebeziumPostgresEndpoint) target).getConfiguration().setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "bridgeErrorHandler": ((DebeziumPostgresEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "internalKeyConverter": ((DebeziumPostgresEndpoint) target).getConfiguration().setInternalKeyConverter(property(camelContext, java.lang.String.class, value)); return true;
-        case "internalValueConverter": ((DebeziumPostgresEndpoint) target).getConfiguration().setInternalValueConverter(property(camelContext, java.lang.String.class, value)); return true;
-        case "offsetCommitPolicy": ((DebeziumPostgresEndpoint) target).getConfiguration().setOffsetCommitPolicy(property(camelContext, java.lang.String.class, value)); return true;
-        case "offsetCommitTimeoutMs": ((DebeziumPostgresEndpoint) target).getConfiguration().setOffsetCommitTimeoutMs(property(camelContext, long.class, value)); return true;
-        case "offsetFlushIntervalMs": ((DebeziumPostgresEndpoint) target).getConfiguration().setOffsetFlushIntervalMs(property(camelContext, long.class, value)); return true;
-        case "offsetStorage": ((DebeziumPostgresEndpoint) target).getConfiguration().setOffsetStorage(property(camelContext, java.lang.String.class, value)); return true;
-        case "offsetStorageFileName": ((DebeziumPostgresEndpoint) target).getConfiguration().setOffsetStorageFileName(property(camelContext, java.lang.String.class, value)); return true;
-        case "offsetStoragePartitions": ((DebeziumPostgresEndpoint) target).getConfiguration().setOffsetStoragePartitions(property(camelContext, int.class, value)); return true;
-        case "offsetStorageReplicationFactor": ((DebeziumPostgresEndpoint) target).getConfiguration().setOffsetStorageReplicationFactor(property(camelContext, int.class, value)); return true;
-        case "offsetStorageTopic": ((DebeziumPostgresEndpoint) target).getConfiguration().setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionHandler": ((DebeziumPostgresEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((DebeziumPostgresEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "basicPropertyBinding": ((DebeziumPostgresEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((DebeziumPostgresEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "columnBlacklist": ((DebeziumPostgresEndpoint) target).getConfiguration().setColumnBlacklist(property(camelContext, java.lang.String.class, value)); return true;
-        case "databaseDbname": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseDbname(property(camelContext, java.lang.String.class, value)); return true;
-        case "databaseHistoryFileFilename": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseHistoryFileFilename(property(camelContext, java.lang.String.class, value)); return true;
-        case "databaseHostname": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
-        case "databaseInitialStatements": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseInitialStatements(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasePassword": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabasePassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasePort": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabasePort(property(camelContext, int.class, value)); return true;
-        case "databaseServerName": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseServerName(property(camelContext, java.lang.String.class, value)); return true;
-        case "databaseSslcert": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseSslcert(property(camelContext, java.lang.String.class, value)); return true;
-        case "databaseSslfactory": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseSslfactory(property(camelContext, java.lang.String.class, value)); return true;
-        case "databaseSslkey": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseSslkey(property(camelContext, java.lang.String.class, value)); return true;
-        case "databaseSslmode": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseSslmode(property(camelContext, java.lang.String.class, value)); return true;
-        case "databaseSslpassword": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseSslpassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "databaseSslrootcert": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseSslrootcert(property(camelContext, java.lang.String.class, value)); return true;
-        case "databaseTcpkeepalive": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseTcpkeepalive(property(camelContext, boolean.class, value)); return true;
-        case "databaseUser": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseUser(property(camelContext, java.lang.String.class, value)); return true;
-        case "decimalHandlingMode": ((DebeziumPostgresEndpoint) target).getConfiguration().setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "heartbeatIntervalMs": ((DebeziumPostgresEndpoint) target).getConfiguration().setHeartbeatIntervalMs(property(camelContext, int.class, value)); return true;
-        case "heartbeatTopicsPrefix": ((DebeziumPostgresEndpoint) target).getConfiguration().setHeartbeatTopicsPrefix(property(camelContext, java.lang.String.class, value)); return true;
-        case "hstoreHandlingMode": ((DebeziumPostgresEndpoint) target).getConfiguration().setHstoreHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "includeUnknownDatatypes": ((DebeziumPostgresEndpoint) target).getConfiguration().setIncludeUnknownDatatypes(property(camelContext, boolean.class, value)); return true;
-        case "intervalHandlingMode": ((DebeziumPostgresEndpoint) target).getConfiguration().setIntervalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "maxBatchSize": ((DebeziumPostgresEndpoint) target).getConfiguration().setMaxBatchSize(property(camelContext, int.class, value)); return true;
-        case "maxQueueSize": ((DebeziumPostgresEndpoint) target).getConfiguration().setMaxQueueSize(property(camelContext, int.class, value)); return true;
-        case "messageKeyColumns": ((DebeziumPostgresEndpoint) target).getConfiguration().setMessageKeyColumns(property(camelContext, java.lang.String.class, value)); return true;
-        case "pluginName": ((DebeziumPostgresEndpoint) target).getConfiguration().setPluginName(property(camelContext, java.lang.String.class, value)); return true;
-        case "pollIntervalMs": ((DebeziumPostgresEndpoint) target).getConfiguration().setPollIntervalMs(property(camelContext, long.class, value)); return true;
-        case "publicationName": ((DebeziumPostgresEndpoint) target).getConfiguration().setPublicationName(property(camelContext, java.lang.String.class, value)); return true;
-        case "schemaBlacklist": ((DebeziumPostgresEndpoint) target).getConfiguration().setSchemaBlacklist(property(camelContext, java.lang.String.class, value)); return true;
-        case "schemaRefreshMode": ((DebeziumPostgresEndpoint) target).getConfiguration().setSchemaRefreshMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "schemaWhitelist": ((DebeziumPostgresEndpoint) target).getConfiguration().setSchemaWhitelist(property(camelContext, java.lang.String.class, value)); return true;
-        case "slotDropOnStop": ((DebeziumPostgresEndpoint) target).getConfiguration().setSlotDropOnStop(property(camelContext, boolean.class, value)); return true;
-        case "slotMaxRetries": ((DebeziumPostgresEndpoint) target).getConfiguration().setSlotMaxRetries(property(camelContext, int.class, value)); return true;
-        case "slotName": ((DebeziumPostgresEndpoint) target).getConfiguration().setSlotName(property(camelContext, java.lang.String.class, value)); return true;
-        case "slotRetryDelayMs": ((DebeziumPostgresEndpoint) target).getConfiguration().setSlotRetryDelayMs(property(camelContext, long.class, value)); return true;
-        case "slotStreamParams": ((DebeziumPostgresEndpoint) target).getConfiguration().setSlotStreamParams(property(camelContext, java.lang.String.class, value)); return true;
-        case "snapshotCustomClass": ((DebeziumPostgresEndpoint) target).getConfiguration().setSnapshotCustomClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "snapshotDelayMs": ((DebeziumPostgresEndpoint) target).getConfiguration().setSnapshotDelayMs(property(camelContext, long.class, value)); return true;
-        case "snapshotFetchSize": ((DebeziumPostgresEndpoint) target).getConfiguration().setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
-        case "snapshotLockTimeoutMs": ((DebeziumPostgresEndpoint) target).getConfiguration().setSnapshotLockTimeoutMs(property(camelContext, long.class, value)); return true;
-        case "snapshotMode": ((DebeziumPostgresEndpoint) target).getConfiguration().setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "snapshotSelectStatementOverrides": ((DebeziumPostgresEndpoint) target).getConfiguration().setSnapshotSelectStatementOverrides(property(camelContext, java.lang.String.class, value)); return true;
-        case "sourceStructVersion": ((DebeziumPostgresEndpoint) target).getConfiguration().setSourceStructVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "statusUpdateIntervalMs": ((DebeziumPostgresEndpoint) target).getConfiguration().setStatusUpdateIntervalMs(property(camelContext, int.class, value)); return true;
-        case "tableBlacklist": ((DebeziumPostgresEndpoint) target).getConfiguration().setTableBlacklist(property(camelContext, java.lang.String.class, value)); return true;
-        case "tableWhitelist": ((DebeziumPostgresEndpoint) target).getConfiguration().setTableWhitelist(property(camelContext, java.lang.String.class, value)); return true;
-        case "timePrecisionMode": ((DebeziumPostgresEndpoint) target).getConfiguration().setTimePrecisionMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "toastedValuePlaceholder": ((DebeziumPostgresEndpoint) target).getConfiguration().setToastedValuePlaceholder(property(camelContext, java.lang.String.class, value)); return true;
-        case "tombstonesOnDelete": ((DebeziumPostgresEndpoint) target).getConfiguration().setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
-        case "xminFetchIntervalMs": ((DebeziumPostgresEndpoint) target).getConfiguration().setXminFetchIntervalMs(property(camelContext, long.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "additionalproperties": ((DebeziumPostgresEndpoint) target).getConfiguration().setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "bridgeerrorhandler": ((DebeziumPostgresEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "internalkeyconverter": ((DebeziumPostgresEndpoint) target).getConfiguration().setInternalKeyConverter(property(camelContext, java.lang.String.class, value)); return true;
-        case "internalvalueconverter": ((DebeziumPostgresEndpoint) target).getConfiguration().setInternalValueConverter(property(camelContext, java.lang.String.class, value)); return true;
-        case "offsetcommitpolicy": ((DebeziumPostgresEndpoint) target).getConfiguration().setOffsetCommitPolicy(property(camelContext, java.lang.String.class, value)); return true;
-        case "offsetcommittimeoutms": ((DebeziumPostgresEndpoint) target).getConfiguration().setOffsetCommitTimeoutMs(property(camelContext, long.class, value)); return true;
-        case "offsetflushintervalms": ((DebeziumPostgresEndpoint) target).getConfiguration().setOffsetFlushIntervalMs(property(camelContext, long.class, value)); return true;
-        case "offsetstorage": ((DebeziumPostgresEndpoint) target).getConfiguration().setOffsetStorage(property(camelContext, java.lang.String.class, value)); return true;
-        case "offsetstoragefilename": ((DebeziumPostgresEndpoint) target).getConfiguration().setOffsetStorageFileName(property(camelContext, java.lang.String.class, value)); return true;
-        case "offsetstoragepartitions": ((DebeziumPostgresEndpoint) target).getConfiguration().setOffsetStoragePartitions(property(camelContext, int.class, value)); return true;
-        case "offsetstoragereplicationfactor": ((DebeziumPostgresEndpoint) target).getConfiguration().setOffsetStorageReplicationFactor(property(camelContext, int.class, value)); return true;
-        case "offsetstoragetopic": ((DebeziumPostgresEndpoint) target).getConfiguration().setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionhandler": ((DebeziumPostgresEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((DebeziumPostgresEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "basicpropertybinding": ((DebeziumPostgresEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((DebeziumPostgresEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "columnblacklist": ((DebeziumPostgresEndpoint) target).getConfiguration().setColumnBlacklist(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasedbname": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseDbname(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasehistoryfilefilename": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseHistoryFileFilename(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasehostname": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
-        case "databaseinitialstatements": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseInitialStatements(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasepassword": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabasePassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "databaseport": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabasePort(property(camelContext, int.class, value)); return true;
-        case "databaseservername": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseServerName(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasesslcert": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseSslcert(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasesslfactory": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseSslfactory(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasesslkey": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseSslkey(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasesslmode": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseSslmode(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasesslpassword": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseSslpassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasesslrootcert": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseSslrootcert(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasetcpkeepalive": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseTcpkeepalive(property(camelContext, boolean.class, value)); return true;
-        case "databaseuser": ((DebeziumPostgresEndpoint) target).getConfiguration().setDatabaseUser(property(camelContext, java.lang.String.class, value)); return true;
-        case "decimalhandlingmode": ((DebeziumPostgresEndpoint) target).getConfiguration().setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "heartbeatintervalms": ((DebeziumPostgresEndpoint) target).getConfiguration().setHeartbeatIntervalMs(property(camelContext, int.class, value)); return true;
-        case "heartbeattopicsprefix": ((DebeziumPostgresEndpoint) target).getConfiguration().setHeartbeatTopicsPrefix(property(camelContext, java.lang.String.class, value)); return true;
-        case "hstorehandlingmode": ((DebeziumPostgresEndpoint) target).getConfiguration().setHstoreHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "includeunknowndatatypes": ((DebeziumPostgresEndpoint) target).getConfiguration().setIncludeUnknownDatatypes(property(camelContext, boolean.class, value)); return true;
-        case "intervalhandlingmode": ((DebeziumPostgresEndpoint) target).getConfiguration().setIntervalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "maxbatchsize": ((DebeziumPostgresEndpoint) target).getConfiguration().setMaxBatchSize(property(camelContext, int.class, value)); return true;
-        case "maxqueuesize": ((DebeziumPostgresEndpoint) target).getConfiguration().setMaxQueueSize(property(camelContext, int.class, value)); return true;
-        case "messagekeycolumns": ((DebeziumPostgresEndpoint) target).getConfiguration().setMessageKeyColumns(property(camelContext, java.lang.String.class, value)); return true;
-        case "pluginname": ((DebeziumPostgresEndpoint) target).getConfiguration().setPluginName(property(camelContext, java.lang.String.class, value)); return true;
-        case "pollintervalms": ((DebeziumPostgresEndpoint) target).getConfiguration().setPollIntervalMs(property(camelContext, long.class, value)); return true;
-        case "publicationname": ((DebeziumPostgresEndpoint) target).getConfiguration().setPublicationName(property(camelContext, java.lang.String.class, value)); return true;
-        case "schemablacklist": ((DebeziumPostgresEndpoint) target).getConfiguration().setSchemaBlacklist(property(camelContext, java.lang.String.class, value)); return true;
-        case "schemarefreshmode": ((DebeziumPostgresEndpoint) target).getConfiguration().setSchemaRefreshMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "schemawhitelist": ((DebeziumPostgresEndpoint) target).getConfiguration().setSchemaWhitelist(property(camelContext, java.lang.String.class, value)); return true;
-        case "slotdroponstop": ((DebeziumPostgresEndpoint) target).getConfiguration().setSlotDropOnStop(property(camelContext, boolean.class, value)); return true;
-        case "slotmaxretries": ((DebeziumPostgresEndpoint) target).getConfiguration().setSlotMaxRetries(property(camelContext, int.class, value)); return true;
-        case "slotname": ((DebeziumPostgresEndpoint) target).getConfiguration().setSlotName(property(camelContext, java.lang.String.class, value)); return true;
-        case "slotretrydelayms": ((DebeziumPostgresEndpoint) target).getConfiguration().setSlotRetryDelayMs(property(camelContext, long.class, value)); return true;
-        case "slotstreamparams": ((DebeziumPostgresEndpoint) target).getConfiguration().setSlotStreamParams(property(camelContext, java.lang.String.class, value)); return true;
-        case "snapshotcustomclass": ((DebeziumPostgresEndpoint) target).getConfiguration().setSnapshotCustomClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "snapshotdelayms": ((DebeziumPostgresEndpoint) target).getConfiguration().setSnapshotDelayMs(property(camelContext, long.class, value)); return true;
-        case "snapshotfetchsize": ((DebeziumPostgresEndpoint) target).getConfiguration().setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
-        case "snapshotlocktimeoutms": ((DebeziumPostgresEndpoint) target).getConfiguration().setSnapshotLockTimeoutMs(property(camelContext, long.class, value)); return true;
-        case "snapshotmode": ((DebeziumPostgresEndpoint) target).getConfiguration().setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "snapshotselectstatementoverrides": ((DebeziumPostgresEndpoint) target).getConfiguration().setSnapshotSelectStatementOverrides(property(camelContext, java.lang.String.class, value)); return true;
-        case "sourcestructversion": ((DebeziumPostgresEndpoint) target).getConfiguration().setSourceStructVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "statusupdateintervalms": ((DebeziumPostgresEndpoint) target).getConfiguration().setStatusUpdateIntervalMs(property(camelContext, int.class, value)); return true;
-        case "tableblacklist": ((DebeziumPostgresEndpoint) target).getConfiguration().setTableBlacklist(property(camelContext, java.lang.String.class, value)); return true;
-        case "tablewhitelist": ((DebeziumPostgresEndpoint) target).getConfiguration().setTableWhitelist(property(camelContext, java.lang.String.class, value)); return true;
-        case "timeprecisionmode": ((DebeziumPostgresEndpoint) target).getConfiguration().setTimePrecisionMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "toastedvalueplaceholder": ((DebeziumPostgresEndpoint) target).getConfiguration().setToastedValuePlaceholder(property(camelContext, java.lang.String.class, value)); return true;
-        case "tombstonesondelete": ((DebeziumPostgresEndpoint) target).getConfiguration().setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
-        case "xminfetchintervalms": ((DebeziumPostgresEndpoint) target).getConfiguration().setXminFetchIntervalMs(property(camelContext, long.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        DebeziumPostgresEndpoint target = (DebeziumPostgresEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalproperties":
+        case "additionalProperties": target.getConfiguration().setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "internalkeyconverter":
+        case "internalKeyConverter": target.getConfiguration().setInternalKeyConverter(property(camelContext, java.lang.String.class, value)); return true;
+        case "internalvalueconverter":
+        case "internalValueConverter": target.getConfiguration().setInternalValueConverter(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetcommitpolicy":
+        case "offsetCommitPolicy": target.getConfiguration().setOffsetCommitPolicy(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetcommittimeoutms":
+        case "offsetCommitTimeoutMs": target.getConfiguration().setOffsetCommitTimeoutMs(property(camelContext, long.class, value)); return true;
+        case "offsetflushintervalms":
+        case "offsetFlushIntervalMs": target.getConfiguration().setOffsetFlushIntervalMs(property(camelContext, long.class, value)); return true;
+        case "offsetstorage":
+        case "offsetStorage": target.getConfiguration().setOffsetStorage(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetstoragefilename":
+        case "offsetStorageFileName": target.getConfiguration().setOffsetStorageFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetstoragepartitions":
+        case "offsetStoragePartitions": target.getConfiguration().setOffsetStoragePartitions(property(camelContext, int.class, value)); return true;
+        case "offsetstoragereplicationfactor":
+        case "offsetStorageReplicationFactor": target.getConfiguration().setOffsetStorageReplicationFactor(property(camelContext, int.class, value)); return true;
+        case "offsetstoragetopic":
+        case "offsetStorageTopic": target.getConfiguration().setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "columnblacklist":
+        case "columnBlacklist": target.getConfiguration().setColumnBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasedbname":
+        case "databaseDbname": target.getConfiguration().setDatabaseDbname(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasehistoryfilefilename":
+        case "databaseHistoryFileFilename": target.getConfiguration().setDatabaseHistoryFileFilename(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasehostname":
+        case "databaseHostname": target.getConfiguration().setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
+        case "databaseinitialstatements":
+        case "databaseInitialStatements": target.getConfiguration().setDatabaseInitialStatements(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasepassword":
+        case "databasePassword": target.getConfiguration().setDatabasePassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "databaseport":
+        case "databasePort": target.getConfiguration().setDatabasePort(property(camelContext, int.class, value)); return true;
+        case "databaseservername":
+        case "databaseServerName": target.getConfiguration().setDatabaseServerName(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasesslcert":
+        case "databaseSslcert": target.getConfiguration().setDatabaseSslcert(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasesslfactory":
+        case "databaseSslfactory": target.getConfiguration().setDatabaseSslfactory(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasesslkey":
+        case "databaseSslkey": target.getConfiguration().setDatabaseSslkey(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasesslmode":
+        case "databaseSslmode": target.getConfiguration().setDatabaseSslmode(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasesslpassword":
+        case "databaseSslpassword": target.getConfiguration().setDatabaseSslpassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasesslrootcert":
+        case "databaseSslrootcert": target.getConfiguration().setDatabaseSslrootcert(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasetcpkeepalive":
+        case "databaseTcpkeepalive": target.getConfiguration().setDatabaseTcpkeepalive(property(camelContext, boolean.class, value)); return true;
+        case "databaseuser":
+        case "databaseUser": target.getConfiguration().setDatabaseUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "decimalhandlingmode":
+        case "decimalHandlingMode": target.getConfiguration().setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "heartbeatintervalms":
+        case "heartbeatIntervalMs": target.getConfiguration().setHeartbeatIntervalMs(property(camelContext, int.class, value)); return true;
+        case "heartbeattopicsprefix":
+        case "heartbeatTopicsPrefix": target.getConfiguration().setHeartbeatTopicsPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "hstorehandlingmode":
+        case "hstoreHandlingMode": target.getConfiguration().setHstoreHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "includeunknowndatatypes":
+        case "includeUnknownDatatypes": target.getConfiguration().setIncludeUnknownDatatypes(property(camelContext, boolean.class, value)); return true;
+        case "intervalhandlingmode":
+        case "intervalHandlingMode": target.getConfiguration().setIntervalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxbatchsize":
+        case "maxBatchSize": target.getConfiguration().setMaxBatchSize(property(camelContext, int.class, value)); return true;
+        case "maxqueuesize":
+        case "maxQueueSize": target.getConfiguration().setMaxQueueSize(property(camelContext, int.class, value)); return true;
+        case "messagekeycolumns":
+        case "messageKeyColumns": target.getConfiguration().setMessageKeyColumns(property(camelContext, java.lang.String.class, value)); return true;
+        case "pluginname":
+        case "pluginName": target.getConfiguration().setPluginName(property(camelContext, java.lang.String.class, value)); return true;
+        case "pollintervalms":
+        case "pollIntervalMs": target.getConfiguration().setPollIntervalMs(property(camelContext, long.class, value)); return true;
+        case "publicationname":
+        case "publicationName": target.getConfiguration().setPublicationName(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemablacklist":
+        case "schemaBlacklist": target.getConfiguration().setSchemaBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemarefreshmode":
+        case "schemaRefreshMode": target.getConfiguration().setSchemaRefreshMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemawhitelist":
+        case "schemaWhitelist": target.getConfiguration().setSchemaWhitelist(property(camelContext, java.lang.String.class, value)); return true;
+        case "slotdroponstop":
+        case "slotDropOnStop": target.getConfiguration().setSlotDropOnStop(property(camelContext, boolean.class, value)); return true;
+        case "slotmaxretries":
+        case "slotMaxRetries": target.getConfiguration().setSlotMaxRetries(property(camelContext, int.class, value)); return true;
+        case "slotname":
+        case "slotName": target.getConfiguration().setSlotName(property(camelContext, java.lang.String.class, value)); return true;
+        case "slotretrydelayms":
+        case "slotRetryDelayMs": target.getConfiguration().setSlotRetryDelayMs(property(camelContext, long.class, value)); return true;
+        case "slotstreamparams":
+        case "slotStreamParams": target.getConfiguration().setSlotStreamParams(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotcustomclass":
+        case "snapshotCustomClass": target.getConfiguration().setSnapshotCustomClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotdelayms":
+        case "snapshotDelayMs": target.getConfiguration().setSnapshotDelayMs(property(camelContext, long.class, value)); return true;
+        case "snapshotfetchsize":
+        case "snapshotFetchSize": target.getConfiguration().setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
+        case "snapshotlocktimeoutms":
+        case "snapshotLockTimeoutMs": target.getConfiguration().setSnapshotLockTimeoutMs(property(camelContext, long.class, value)); return true;
+        case "snapshotmode":
+        case "snapshotMode": target.getConfiguration().setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotselectstatementoverrides":
+        case "snapshotSelectStatementOverrides": target.getConfiguration().setSnapshotSelectStatementOverrides(property(camelContext, java.lang.String.class, value)); return true;
+        case "sourcestructversion":
+        case "sourceStructVersion": target.getConfiguration().setSourceStructVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "statusupdateintervalms":
+        case "statusUpdateIntervalMs": target.getConfiguration().setStatusUpdateIntervalMs(property(camelContext, int.class, value)); return true;
+        case "tableblacklist":
+        case "tableBlacklist": target.getConfiguration().setTableBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "tablewhitelist":
+        case "tableWhitelist": target.getConfiguration().setTableWhitelist(property(camelContext, java.lang.String.class, value)); return true;
+        case "timeprecisionmode":
+        case "timePrecisionMode": target.getConfiguration().setTimePrecisionMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "toastedvalueplaceholder":
+        case "toastedValuePlaceholder": target.getConfiguration().setToastedValuePlaceholder(property(camelContext, java.lang.String.class, value)); return true;
+        case "tombstonesondelete":
+        case "tombstonesOnDelete": target.getConfiguration().setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
+        case "xminfetchintervalms":
+        case "xminFetchIntervalMs": target.getConfiguration().setXminFetchIntervalMs(property(camelContext, long.class, value)); return true;
+        default: return false;
         }
     }
 

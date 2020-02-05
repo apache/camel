@@ -12,123 +12,101 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class ElsqlEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "allowNamedParameters": ((ElsqlEndpoint) target).setAllowNamedParameters(property(camelContext, boolean.class, value)); return true;
-        case "databaseVendor": ((ElsqlEndpoint) target).setDatabaseVendor(property(camelContext, org.apache.camel.component.elsql.ElSqlDatabaseVendor.class, value)); return true;
-        case "dataSource": ((ElsqlEndpoint) target).setDataSource(property(camelContext, javax.sql.DataSource.class, value)); return true;
-        case "dataSourceRef": ((ElsqlEndpoint) target).setDataSourceRef(property(camelContext, java.lang.String.class, value)); return true;
-        case "outputClass": ((ElsqlEndpoint) target).setOutputClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "outputHeader": ((ElsqlEndpoint) target).setOutputHeader(property(camelContext, java.lang.String.class, value)); return true;
-        case "outputType": ((ElsqlEndpoint) target).setOutputType(property(camelContext, org.apache.camel.component.sql.SqlOutputType.class, value)); return true;
-        case "separator": ((ElsqlEndpoint) target).setSeparator(property(camelContext, char.class, value)); return true;
-        case "breakBatchOnConsumeFail": ((ElsqlEndpoint) target).setBreakBatchOnConsumeFail(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((ElsqlEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "expectedUpdateCount": ((ElsqlEndpoint) target).setExpectedUpdateCount(property(camelContext, int.class, value)); return true;
-        case "maxMessagesPerPoll": ((ElsqlEndpoint) target).setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
-        case "onConsume": ((ElsqlEndpoint) target).setOnConsume(property(camelContext, java.lang.String.class, value)); return true;
-        case "onConsumeBatchComplete": ((ElsqlEndpoint) target).setOnConsumeBatchComplete(property(camelContext, java.lang.String.class, value)); return true;
-        case "onConsumeFailed": ((ElsqlEndpoint) target).setOnConsumeFailed(property(camelContext, java.lang.String.class, value)); return true;
-        case "routeEmptyResultSet": ((ElsqlEndpoint) target).setRouteEmptyResultSet(property(camelContext, boolean.class, value)); return true;
-        case "sendEmptyMessageWhenIdle": ((ElsqlEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "transacted": ((ElsqlEndpoint) target).setTransacted(property(camelContext, boolean.class, value)); return true;
-        case "useIterator": ((ElsqlEndpoint) target).setUseIterator(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((ElsqlEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((ElsqlEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollStrategy": ((ElsqlEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "processingStrategy": ((ElsqlEndpoint) target).setProcessingStrategy(property(camelContext, org.apache.camel.component.sql.SqlProcessingStrategy.class, value)); return true;
-        case "batch": ((ElsqlEndpoint) target).setBatch(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((ElsqlEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "noop": ((ElsqlEndpoint) target).setNoop(property(camelContext, boolean.class, value)); return true;
-        case "useMessageBodyForSql": ((ElsqlEndpoint) target).setUseMessageBodyForSql(property(camelContext, boolean.class, value)); return true;
-        case "alwaysPopulateStatement": ((ElsqlEndpoint) target).setAlwaysPopulateStatement(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((ElsqlEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "elSqlConfig": ((ElsqlEndpoint) target).setElSqlConfig(property(camelContext, com.opengamma.elsql.ElSqlConfig.class, value)); return true;
-        case "parametersCount": ((ElsqlEndpoint) target).setParametersCount(property(camelContext, int.class, value)); return true;
-        case "placeholder": ((ElsqlEndpoint) target).setPlaceholder(property(camelContext, java.lang.String.class, value)); return true;
-        case "prepareStatementStrategy": ((ElsqlEndpoint) target).setPrepareStatementStrategy(property(camelContext, org.apache.camel.component.sql.SqlPrepareStatementStrategy.class, value)); return true;
-        case "synchronous": ((ElsqlEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "templateOptions": ((ElsqlEndpoint) target).setTemplateOptions(property(camelContext, java.util.Map.class, value)); return true;
-        case "usePlaceholder": ((ElsqlEndpoint) target).setUsePlaceholder(property(camelContext, boolean.class, value)); return true;
-        case "backoffErrorThreshold": ((ElsqlEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffIdleThreshold": ((ElsqlEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffMultiplier": ((ElsqlEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((ElsqlEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((ElsqlEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialDelay": ((ElsqlEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatCount": ((ElsqlEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runLoggingLevel": ((ElsqlEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledExecutorService": ((ElsqlEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((ElsqlEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerProperties": ((ElsqlEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startScheduler": ((ElsqlEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeUnit": ((ElsqlEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "useFixedDelay": ((ElsqlEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "allownamedparameters": ((ElsqlEndpoint) target).setAllowNamedParameters(property(camelContext, boolean.class, value)); return true;
-        case "databasevendor": ((ElsqlEndpoint) target).setDatabaseVendor(property(camelContext, org.apache.camel.component.elsql.ElSqlDatabaseVendor.class, value)); return true;
-        case "datasource": ((ElsqlEndpoint) target).setDataSource(property(camelContext, javax.sql.DataSource.class, value)); return true;
-        case "datasourceref": ((ElsqlEndpoint) target).setDataSourceRef(property(camelContext, java.lang.String.class, value)); return true;
-        case "outputclass": ((ElsqlEndpoint) target).setOutputClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "outputheader": ((ElsqlEndpoint) target).setOutputHeader(property(camelContext, java.lang.String.class, value)); return true;
-        case "outputtype": ((ElsqlEndpoint) target).setOutputType(property(camelContext, org.apache.camel.component.sql.SqlOutputType.class, value)); return true;
-        case "separator": ((ElsqlEndpoint) target).setSeparator(property(camelContext, char.class, value)); return true;
-        case "breakbatchonconsumefail": ((ElsqlEndpoint) target).setBreakBatchOnConsumeFail(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((ElsqlEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "expectedupdatecount": ((ElsqlEndpoint) target).setExpectedUpdateCount(property(camelContext, int.class, value)); return true;
-        case "maxmessagesperpoll": ((ElsqlEndpoint) target).setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
-        case "onconsume": ((ElsqlEndpoint) target).setOnConsume(property(camelContext, java.lang.String.class, value)); return true;
-        case "onconsumebatchcomplete": ((ElsqlEndpoint) target).setOnConsumeBatchComplete(property(camelContext, java.lang.String.class, value)); return true;
-        case "onconsumefailed": ((ElsqlEndpoint) target).setOnConsumeFailed(property(camelContext, java.lang.String.class, value)); return true;
-        case "routeemptyresultset": ((ElsqlEndpoint) target).setRouteEmptyResultSet(property(camelContext, boolean.class, value)); return true;
-        case "sendemptymessagewhenidle": ((ElsqlEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "transacted": ((ElsqlEndpoint) target).setTransacted(property(camelContext, boolean.class, value)); return true;
-        case "useiterator": ((ElsqlEndpoint) target).setUseIterator(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((ElsqlEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((ElsqlEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollstrategy": ((ElsqlEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "processingstrategy": ((ElsqlEndpoint) target).setProcessingStrategy(property(camelContext, org.apache.camel.component.sql.SqlProcessingStrategy.class, value)); return true;
-        case "batch": ((ElsqlEndpoint) target).setBatch(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((ElsqlEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "noop": ((ElsqlEndpoint) target).setNoop(property(camelContext, boolean.class, value)); return true;
-        case "usemessagebodyforsql": ((ElsqlEndpoint) target).setUseMessageBodyForSql(property(camelContext, boolean.class, value)); return true;
-        case "alwayspopulatestatement": ((ElsqlEndpoint) target).setAlwaysPopulateStatement(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((ElsqlEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "elsqlconfig": ((ElsqlEndpoint) target).setElSqlConfig(property(camelContext, com.opengamma.elsql.ElSqlConfig.class, value)); return true;
-        case "parameterscount": ((ElsqlEndpoint) target).setParametersCount(property(camelContext, int.class, value)); return true;
-        case "placeholder": ((ElsqlEndpoint) target).setPlaceholder(property(camelContext, java.lang.String.class, value)); return true;
-        case "preparestatementstrategy": ((ElsqlEndpoint) target).setPrepareStatementStrategy(property(camelContext, org.apache.camel.component.sql.SqlPrepareStatementStrategy.class, value)); return true;
-        case "synchronous": ((ElsqlEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "templateoptions": ((ElsqlEndpoint) target).setTemplateOptions(property(camelContext, java.util.Map.class, value)); return true;
-        case "useplaceholder": ((ElsqlEndpoint) target).setUsePlaceholder(property(camelContext, boolean.class, value)); return true;
-        case "backofferrorthreshold": ((ElsqlEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffidlethreshold": ((ElsqlEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffmultiplier": ((ElsqlEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((ElsqlEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((ElsqlEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialdelay": ((ElsqlEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatcount": ((ElsqlEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runlogginglevel": ((ElsqlEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledexecutorservice": ((ElsqlEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((ElsqlEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerproperties": ((ElsqlEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startscheduler": ((ElsqlEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeunit": ((ElsqlEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "usefixeddelay": ((ElsqlEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        ElsqlEndpoint target = (ElsqlEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allownamedparameters":
+        case "allowNamedParameters": target.setAllowNamedParameters(property(camelContext, boolean.class, value)); return true;
+        case "databasevendor":
+        case "databaseVendor": target.setDatabaseVendor(property(camelContext, org.apache.camel.component.elsql.ElSqlDatabaseVendor.class, value)); return true;
+        case "datasource":
+        case "dataSource": target.setDataSource(property(camelContext, javax.sql.DataSource.class, value)); return true;
+        case "datasourceref":
+        case "dataSourceRef": target.setDataSourceRef(property(camelContext, java.lang.String.class, value)); return true;
+        case "outputclass":
+        case "outputClass": target.setOutputClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "outputheader":
+        case "outputHeader": target.setOutputHeader(property(camelContext, java.lang.String.class, value)); return true;
+        case "outputtype":
+        case "outputType": target.setOutputType(property(camelContext, org.apache.camel.component.sql.SqlOutputType.class, value)); return true;
+        case "separator": target.setSeparator(property(camelContext, char.class, value)); return true;
+        case "breakbatchonconsumefail":
+        case "breakBatchOnConsumeFail": target.setBreakBatchOnConsumeFail(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "expectedupdatecount":
+        case "expectedUpdateCount": target.setExpectedUpdateCount(property(camelContext, int.class, value)); return true;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
+        case "onconsume":
+        case "onConsume": target.setOnConsume(property(camelContext, java.lang.String.class, value)); return true;
+        case "onconsumebatchcomplete":
+        case "onConsumeBatchComplete": target.setOnConsumeBatchComplete(property(camelContext, java.lang.String.class, value)); return true;
+        case "onconsumefailed":
+        case "onConsumeFailed": target.setOnConsumeFailed(property(camelContext, java.lang.String.class, value)); return true;
+        case "routeemptyresultset":
+        case "routeEmptyResultSet": target.setRouteEmptyResultSet(property(camelContext, boolean.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "transacted": target.setTransacted(property(camelContext, boolean.class, value)); return true;
+        case "useiterator":
+        case "useIterator": target.setUseIterator(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "processingstrategy":
+        case "processingStrategy": target.setProcessingStrategy(property(camelContext, org.apache.camel.component.sql.SqlProcessingStrategy.class, value)); return true;
+        case "batch": target.setBatch(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "noop": target.setNoop(property(camelContext, boolean.class, value)); return true;
+        case "usemessagebodyforsql":
+        case "useMessageBodyForSql": target.setUseMessageBodyForSql(property(camelContext, boolean.class, value)); return true;
+        case "alwayspopulatestatement":
+        case "alwaysPopulateStatement": target.setAlwaysPopulateStatement(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "elsqlconfig":
+        case "elSqlConfig": target.setElSqlConfig(property(camelContext, com.opengamma.elsql.ElSqlConfig.class, value)); return true;
+        case "parameterscount":
+        case "parametersCount": target.setParametersCount(property(camelContext, int.class, value)); return true;
+        case "placeholder": target.setPlaceholder(property(camelContext, java.lang.String.class, value)); return true;
+        case "preparestatementstrategy":
+        case "prepareStatementStrategy": target.setPrepareStatementStrategy(property(camelContext, org.apache.camel.component.sql.SqlPrepareStatementStrategy.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "templateoptions":
+        case "templateOptions": target.setTemplateOptions(property(camelContext, java.util.Map.class, value)); return true;
+        case "useplaceholder":
+        case "usePlaceholder": target.setUsePlaceholder(property(camelContext, boolean.class, value)); return true;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffmultiplier":
+        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "repeatcount":
+        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "runlogginglevel":
+        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "schedulerproperties":
+        case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "startscheduler":
+        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "timeunit":
+        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "usefixeddelay":
+        case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

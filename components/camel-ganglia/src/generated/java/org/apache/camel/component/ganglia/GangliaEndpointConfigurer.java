@@ -12,53 +12,31 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class GangliaEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "dmax": ((GangliaEndpoint) target).getConfiguration().setDmax(property(camelContext, int.class, value)); return true;
-        case "groupName": ((GangliaEndpoint) target).getConfiguration().setGroupName(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazyStartProducer": ((GangliaEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "metricName": ((GangliaEndpoint) target).getConfiguration().setMetricName(property(camelContext, java.lang.String.class, value)); return true;
-        case "mode": ((GangliaEndpoint) target).getConfiguration().setMode(property(camelContext, info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode.class, value)); return true;
-        case "prefix": ((GangliaEndpoint) target).getConfiguration().setPrefix(property(camelContext, java.lang.String.class, value)); return true;
-        case "slope": ((GangliaEndpoint) target).getConfiguration().setSlope(property(camelContext, info.ganglia.gmetric4j.gmetric.GMetricSlope.class, value)); return true;
-        case "spoofHostname": ((GangliaEndpoint) target).getConfiguration().setSpoofHostname(property(camelContext, java.lang.String.class, value)); return true;
-        case "tmax": ((GangliaEndpoint) target).getConfiguration().setTmax(property(camelContext, int.class, value)); return true;
-        case "ttl": ((GangliaEndpoint) target).getConfiguration().setTtl(property(camelContext, int.class, value)); return true;
-        case "type": ((GangliaEndpoint) target).getConfiguration().setType(property(camelContext, info.ganglia.gmetric4j.gmetric.GMetricType.class, value)); return true;
-        case "units": ((GangliaEndpoint) target).getConfiguration().setUnits(property(camelContext, java.lang.String.class, value)); return true;
-        case "wireFormat31x": ((GangliaEndpoint) target).getConfiguration().setWireFormat31x(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((GangliaEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((GangliaEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "dmax": ((GangliaEndpoint) target).getConfiguration().setDmax(property(camelContext, int.class, value)); return true;
-        case "groupname": ((GangliaEndpoint) target).getConfiguration().setGroupName(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer": ((GangliaEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "metricname": ((GangliaEndpoint) target).getConfiguration().setMetricName(property(camelContext, java.lang.String.class, value)); return true;
-        case "mode": ((GangliaEndpoint) target).getConfiguration().setMode(property(camelContext, info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode.class, value)); return true;
-        case "prefix": ((GangliaEndpoint) target).getConfiguration().setPrefix(property(camelContext, java.lang.String.class, value)); return true;
-        case "slope": ((GangliaEndpoint) target).getConfiguration().setSlope(property(camelContext, info.ganglia.gmetric4j.gmetric.GMetricSlope.class, value)); return true;
-        case "spoofhostname": ((GangliaEndpoint) target).getConfiguration().setSpoofHostname(property(camelContext, java.lang.String.class, value)); return true;
-        case "tmax": ((GangliaEndpoint) target).getConfiguration().setTmax(property(camelContext, int.class, value)); return true;
-        case "ttl": ((GangliaEndpoint) target).getConfiguration().setTtl(property(camelContext, int.class, value)); return true;
-        case "type": ((GangliaEndpoint) target).getConfiguration().setType(property(camelContext, info.ganglia.gmetric4j.gmetric.GMetricType.class, value)); return true;
-        case "units": ((GangliaEndpoint) target).getConfiguration().setUnits(property(camelContext, java.lang.String.class, value)); return true;
-        case "wireformat31x": ((GangliaEndpoint) target).getConfiguration().setWireFormat31x(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((GangliaEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((GangliaEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        GangliaEndpoint target = (GangliaEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "dmax": target.getConfiguration().setDmax(property(camelContext, int.class, value)); return true;
+        case "groupname":
+        case "groupName": target.getConfiguration().setGroupName(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "metricname":
+        case "metricName": target.getConfiguration().setMetricName(property(camelContext, java.lang.String.class, value)); return true;
+        case "mode": target.getConfiguration().setMode(property(camelContext, info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode.class, value)); return true;
+        case "prefix": target.getConfiguration().setPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "slope": target.getConfiguration().setSlope(property(camelContext, info.ganglia.gmetric4j.gmetric.GMetricSlope.class, value)); return true;
+        case "spoofhostname":
+        case "spoofHostname": target.getConfiguration().setSpoofHostname(property(camelContext, java.lang.String.class, value)); return true;
+        case "tmax": target.getConfiguration().setTmax(property(camelContext, int.class, value)); return true;
+        case "ttl": target.getConfiguration().setTtl(property(camelContext, int.class, value)); return true;
+        case "type": target.getConfiguration().setType(property(camelContext, info.ganglia.gmetric4j.gmetric.GMetricType.class, value)); return true;
+        case "units": target.getConfiguration().setUnits(property(camelContext, java.lang.String.class, value)); return true;
+        case "wireformat31x":
+        case "wireFormat31x": target.getConfiguration().setWireFormat31x(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

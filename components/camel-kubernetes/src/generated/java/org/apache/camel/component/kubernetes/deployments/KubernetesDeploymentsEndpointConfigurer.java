@@ -12,83 +12,65 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class KubernetesDeploymentsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "apiVersion": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "dnsDomain": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setDnsDomain(property(camelContext, java.lang.String.class, value)); return true;
-        case "kubernetesClient": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setKubernetesClient(property(camelContext, io.fabric8.kubernetes.client.KubernetesClient.class, value)); return true;
-        case "portName": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setPortName(property(camelContext, java.lang.String.class, value)); return true;
-        case "portProtocol": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setPortProtocol(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((KubernetesDeploymentsEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "labelKey": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setLabelKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "labelValue": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setLabelValue(property(camelContext, java.lang.String.class, value)); return true;
-        case "namespace": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setNamespace(property(camelContext, java.lang.String.class, value)); return true;
-        case "poolSize": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setPoolSize(property(camelContext, int.class, value)); return true;
-        case "resourceName": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setResourceName(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionHandler": ((KubernetesDeploymentsEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((KubernetesDeploymentsEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((KubernetesDeploymentsEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((KubernetesDeploymentsEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "connectionTimeout": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setConnectionTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "synchronous": ((KubernetesDeploymentsEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "caCertData": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setCaCertData(property(camelContext, java.lang.String.class, value)); return true;
-        case "caCertFile": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setCaCertFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientCertData": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setClientCertData(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientCertFile": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setClientCertFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientKeyAlgo": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setClientKeyAlgo(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientKeyData": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setClientKeyData(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientKeyFile": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setClientKeyFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientKeyPassphrase": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setClientKeyPassphrase(property(camelContext, java.lang.String.class, value)); return true;
-        case "oauthToken": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setOauthToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "trustCerts": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setTrustCerts(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "username": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "apiversion": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "dnsdomain": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setDnsDomain(property(camelContext, java.lang.String.class, value)); return true;
-        case "kubernetesclient": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setKubernetesClient(property(camelContext, io.fabric8.kubernetes.client.KubernetesClient.class, value)); return true;
-        case "portname": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setPortName(property(camelContext, java.lang.String.class, value)); return true;
-        case "portprotocol": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setPortProtocol(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((KubernetesDeploymentsEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "labelkey": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setLabelKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "labelvalue": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setLabelValue(property(camelContext, java.lang.String.class, value)); return true;
-        case "namespace": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setNamespace(property(camelContext, java.lang.String.class, value)); return true;
-        case "poolsize": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setPoolSize(property(camelContext, int.class, value)); return true;
-        case "resourcename": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setResourceName(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionhandler": ((KubernetesDeploymentsEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((KubernetesDeploymentsEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((KubernetesDeploymentsEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((KubernetesDeploymentsEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "connectiontimeout": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setConnectionTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "synchronous": ((KubernetesDeploymentsEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "cacertdata": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setCaCertData(property(camelContext, java.lang.String.class, value)); return true;
-        case "cacertfile": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setCaCertFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientcertdata": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setClientCertData(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientcertfile": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setClientCertFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientkeyalgo": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setClientKeyAlgo(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientkeydata": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setClientKeyData(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientkeyfile": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setClientKeyFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientkeypassphrase": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setClientKeyPassphrase(property(camelContext, java.lang.String.class, value)); return true;
-        case "oauthtoken": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setOauthToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "trustcerts": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setTrustCerts(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "username": ((KubernetesDeploymentsEndpoint) target).getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        KubernetesDeploymentsEndpoint target = (KubernetesDeploymentsEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiversion":
+        case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "dnsdomain":
+        case "dnsDomain": target.getConfiguration().setDnsDomain(property(camelContext, java.lang.String.class, value)); return true;
+        case "kubernetesclient":
+        case "kubernetesClient": target.getConfiguration().setKubernetesClient(property(camelContext, io.fabric8.kubernetes.client.KubernetesClient.class, value)); return true;
+        case "portname":
+        case "portName": target.getConfiguration().setPortName(property(camelContext, java.lang.String.class, value)); return true;
+        case "portprotocol":
+        case "portProtocol": target.getConfiguration().setPortProtocol(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "labelkey":
+        case "labelKey": target.getConfiguration().setLabelKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "labelvalue":
+        case "labelValue": target.getConfiguration().setLabelValue(property(camelContext, java.lang.String.class, value)); return true;
+        case "namespace": target.getConfiguration().setNamespace(property(camelContext, java.lang.String.class, value)); return true;
+        case "poolsize":
+        case "poolSize": target.getConfiguration().setPoolSize(property(camelContext, int.class, value)); return true;
+        case "resourcename":
+        case "resourceName": target.getConfiguration().setResourceName(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "connectiontimeout":
+        case "connectionTimeout": target.getConfiguration().setConnectionTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "cacertdata":
+        case "caCertData": target.getConfiguration().setCaCertData(property(camelContext, java.lang.String.class, value)); return true;
+        case "cacertfile":
+        case "caCertFile": target.getConfiguration().setCaCertFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientcertdata":
+        case "clientCertData": target.getConfiguration().setClientCertData(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientcertfile":
+        case "clientCertFile": target.getConfiguration().setClientCertFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientkeyalgo":
+        case "clientKeyAlgo": target.getConfiguration().setClientKeyAlgo(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientkeydata":
+        case "clientKeyData": target.getConfiguration().setClientKeyData(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientkeyfile":
+        case "clientKeyFile": target.getConfiguration().setClientKeyFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientkeypassphrase":
+        case "clientKeyPassphrase": target.getConfiguration().setClientKeyPassphrase(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthtoken":
+        case "oauthToken": target.getConfiguration().setOauthToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "trustcerts":
+        case "trustCerts": target.getConfiguration().setTrustCerts(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

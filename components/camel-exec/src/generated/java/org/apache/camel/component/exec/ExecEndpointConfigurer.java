@@ -12,45 +12,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "args": ((ExecEndpoint) target).setArgs(property(camelContext, java.lang.String.class, value)); return true;
-        case "binding": ((ExecEndpoint) target).setBinding(property(camelContext, org.apache.camel.component.exec.ExecBinding.class, value)); return true;
-        case "commandExecutor": ((ExecEndpoint) target).setCommandExecutor(property(camelContext, org.apache.camel.component.exec.ExecCommandExecutor.class, value)); return true;
-        case "commandLogLevel": ((ExecEndpoint) target).setCommandLogLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "lazyStartProducer": ((ExecEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "outFile": ((ExecEndpoint) target).setOutFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "timeout": ((ExecEndpoint) target).setTimeout(property(camelContext, long.class, value)); return true;
-        case "useStderrOnEmptyStdout": ((ExecEndpoint) target).setUseStderrOnEmptyStdout(property(camelContext, boolean.class, value)); return true;
-        case "workingDir": ((ExecEndpoint) target).setWorkingDir(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((ExecEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((ExecEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "args": ((ExecEndpoint) target).setArgs(property(camelContext, java.lang.String.class, value)); return true;
-        case "binding": ((ExecEndpoint) target).setBinding(property(camelContext, org.apache.camel.component.exec.ExecBinding.class, value)); return true;
-        case "commandexecutor": ((ExecEndpoint) target).setCommandExecutor(property(camelContext, org.apache.camel.component.exec.ExecCommandExecutor.class, value)); return true;
-        case "commandloglevel": ((ExecEndpoint) target).setCommandLogLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "lazystartproducer": ((ExecEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "outfile": ((ExecEndpoint) target).setOutFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "timeout": ((ExecEndpoint) target).setTimeout(property(camelContext, long.class, value)); return true;
-        case "usestderronemptystdout": ((ExecEndpoint) target).setUseStderrOnEmptyStdout(property(camelContext, boolean.class, value)); return true;
-        case "workingdir": ((ExecEndpoint) target).setWorkingDir(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((ExecEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((ExecEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        ExecEndpoint target = (ExecEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "args": target.setArgs(property(camelContext, java.lang.String.class, value)); return true;
+        case "binding": target.setBinding(property(camelContext, org.apache.camel.component.exec.ExecBinding.class, value)); return true;
+        case "commandexecutor":
+        case "commandExecutor": target.setCommandExecutor(property(camelContext, org.apache.camel.component.exec.ExecCommandExecutor.class, value)); return true;
+        case "commandloglevel":
+        case "commandLogLevel": target.setCommandLogLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "outfile":
+        case "outFile": target.setOutFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
+        case "usestderronemptystdout":
+        case "useStderrOnEmptyStdout": target.setUseStderrOnEmptyStdout(property(camelContext, boolean.class, value)); return true;
+        case "workingdir":
+        case "workingDir": target.setWorkingDir(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

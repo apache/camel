@@ -12,47 +12,31 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class DigitalOceanEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "lazyStartProducer": ((DigitalOceanEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "page": ((DigitalOceanEndpoint) target).getConfiguration().setPage(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "perPage": ((DigitalOceanEndpoint) target).getConfiguration().setPerPage(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "resource": ((DigitalOceanEndpoint) target).getConfiguration().setResource(property(camelContext, org.apache.camel.component.digitalocean.constants.DigitalOceanResources.class, value)); return true;
-        case "basicPropertyBinding": ((DigitalOceanEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "digitalOceanClient": ((DigitalOceanEndpoint) target).getConfiguration().setDigitalOceanClient(property(camelContext, com.myjeeva.digitalocean.impl.DigitalOceanClient.class, value)); return true;
-        case "synchronous": ((DigitalOceanEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "httpProxyHost": ((DigitalOceanEndpoint) target).getConfiguration().setHttpProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpProxyPassword": ((DigitalOceanEndpoint) target).getConfiguration().setHttpProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpProxyPort": ((DigitalOceanEndpoint) target).getConfiguration().setHttpProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "httpProxyUser": ((DigitalOceanEndpoint) target).getConfiguration().setHttpProxyUser(property(camelContext, java.lang.String.class, value)); return true;
-        case "oAuthToken": ((DigitalOceanEndpoint) target).getConfiguration().setOAuthToken(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "lazystartproducer": ((DigitalOceanEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "page": ((DigitalOceanEndpoint) target).getConfiguration().setPage(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "perpage": ((DigitalOceanEndpoint) target).getConfiguration().setPerPage(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "resource": ((DigitalOceanEndpoint) target).getConfiguration().setResource(property(camelContext, org.apache.camel.component.digitalocean.constants.DigitalOceanResources.class, value)); return true;
-        case "basicpropertybinding": ((DigitalOceanEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "digitaloceanclient": ((DigitalOceanEndpoint) target).getConfiguration().setDigitalOceanClient(property(camelContext, com.myjeeva.digitalocean.impl.DigitalOceanClient.class, value)); return true;
-        case "synchronous": ((DigitalOceanEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "httpproxyhost": ((DigitalOceanEndpoint) target).getConfiguration().setHttpProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpproxypassword": ((DigitalOceanEndpoint) target).getConfiguration().setHttpProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpproxyport": ((DigitalOceanEndpoint) target).getConfiguration().setHttpProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "httpproxyuser": ((DigitalOceanEndpoint) target).getConfiguration().setHttpProxyUser(property(camelContext, java.lang.String.class, value)); return true;
-        case "oauthtoken": ((DigitalOceanEndpoint) target).getConfiguration().setOAuthToken(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        DigitalOceanEndpoint target = (DigitalOceanEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "page": target.getConfiguration().setPage(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "perpage":
+        case "perPage": target.getConfiguration().setPerPage(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "resource": target.getConfiguration().setResource(property(camelContext, org.apache.camel.component.digitalocean.constants.DigitalOceanResources.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "digitaloceanclient":
+        case "digitalOceanClient": target.getConfiguration().setDigitalOceanClient(property(camelContext, com.myjeeva.digitalocean.impl.DigitalOceanClient.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "httpproxyhost":
+        case "httpProxyHost": target.getConfiguration().setHttpProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpproxypassword":
+        case "httpProxyPassword": target.getConfiguration().setHttpProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpproxyport":
+        case "httpProxyPort": target.getConfiguration().setHttpProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "httpproxyuser":
+        case "httpProxyUser": target.getConfiguration().setHttpProxyUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthtoken":
+        case "oAuthToken": target.getConfiguration().setOAuthToken(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

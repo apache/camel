@@ -12,41 +12,23 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class IOTAEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "depth": ((IOTAEndpoint) target).setDepth(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "lazyStartProducer": ((IOTAEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "minWeightMagnitude": ((IOTAEndpoint) target).setMinWeightMagnitude(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "operation": ((IOTAEndpoint) target).setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "tag": ((IOTAEndpoint) target).setTag(property(camelContext, java.lang.String.class, value)); return true;
-        case "url": ((IOTAEndpoint) target).setUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((IOTAEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((IOTAEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "securityLevel": ((IOTAEndpoint) target).setSecurityLevel(property(camelContext, java.lang.Integer.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "depth": ((IOTAEndpoint) target).setDepth(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "lazystartproducer": ((IOTAEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "minweightmagnitude": ((IOTAEndpoint) target).setMinWeightMagnitude(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "operation": ((IOTAEndpoint) target).setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "tag": ((IOTAEndpoint) target).setTag(property(camelContext, java.lang.String.class, value)); return true;
-        case "url": ((IOTAEndpoint) target).setUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((IOTAEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((IOTAEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "securitylevel": ((IOTAEndpoint) target).setSecurityLevel(property(camelContext, java.lang.Integer.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        IOTAEndpoint target = (IOTAEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "depth": target.setDepth(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "minweightmagnitude":
+        case "minWeightMagnitude": target.setMinWeightMagnitude(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "operation": target.setOperation(property(camelContext, java.lang.String.class, value)); return true;
+        case "tag": target.setTag(property(camelContext, java.lang.String.class, value)); return true;
+        case "url": target.setUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "securitylevel":
+        case "securityLevel": target.setSecurityLevel(property(camelContext, java.lang.Integer.class, value)); return true;
+        default: return false;
         }
     }
 

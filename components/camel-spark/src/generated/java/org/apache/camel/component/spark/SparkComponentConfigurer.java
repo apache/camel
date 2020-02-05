@@ -12,31 +12,17 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class SparkComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "rdd": ((SparkComponent) target).setRdd(property(camelContext, org.apache.spark.api.java.JavaRDDLike.class, value)); return true;
-        case "rddCallback": ((SparkComponent) target).setRddCallback(property(camelContext, org.apache.camel.component.spark.RddCallback.class, value)); return true;
-        case "basicPropertyBinding": ((SparkComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((SparkComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "rdd": ((SparkComponent) target).setRdd(property(camelContext, org.apache.spark.api.java.JavaRDDLike.class, value)); return true;
-        case "rddcallback": ((SparkComponent) target).setRddCallback(property(camelContext, org.apache.camel.component.spark.RddCallback.class, value)); return true;
-        case "basicpropertybinding": ((SparkComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((SparkComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        SparkComponent target = (SparkComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "rdd": target.setRdd(property(camelContext, org.apache.spark.api.java.JavaRDDLike.class, value)); return true;
+        case "rddcallback":
+        case "rddCallback": target.setRddCallback(property(camelContext, org.apache.camel.component.spark.RddCallback.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

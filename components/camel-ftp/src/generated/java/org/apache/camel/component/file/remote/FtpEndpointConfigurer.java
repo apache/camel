@@ -12,243 +12,204 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "binary": ((FtpEndpoint) target).getConfiguration().setBinary(property(camelContext, boolean.class, value)); return true;
-        case "charset": ((FtpEndpoint) target).setCharset(property(camelContext, java.lang.String.class, value)); return true;
-        case "disconnect": ((FtpEndpoint) target).setDisconnect(property(camelContext, boolean.class, value)); return true;
-        case "doneFileName": ((FtpEndpoint) target).setDoneFileName(property(camelContext, java.lang.String.class, value)); return true;
-        case "fileName": ((FtpEndpoint) target).setFileName(property(camelContext, java.lang.String.class, value)); return true;
-        case "passiveMode": ((FtpEndpoint) target).getConfiguration().setPassiveMode(property(camelContext, boolean.class, value)); return true;
-        case "separator": ((FtpEndpoint) target).getConfiguration().setSeparator(property(camelContext, org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator.class, value)); return true;
-        case "transferLoggingIntervalSeconds": ((FtpEndpoint) target).setTransferLoggingIntervalSeconds(property(camelContext, int.class, value)); return true;
-        case "transferLoggingLevel": ((FtpEndpoint) target).setTransferLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "transferLoggingVerbose": ((FtpEndpoint) target).setTransferLoggingVerbose(property(camelContext, boolean.class, value)); return true;
-        case "fastExistsCheck": ((FtpEndpoint) target).setFastExistsCheck(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((FtpEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "delete": ((FtpEndpoint) target).setDelete(property(camelContext, boolean.class, value)); return true;
-        case "moveFailed": ((FtpEndpoint) target).setMoveFailed(property(camelContext, java.lang.String.class, value)); return true;
-        case "noop": ((FtpEndpoint) target).setNoop(property(camelContext, boolean.class, value)); return true;
-        case "preMove": ((FtpEndpoint) target).setPreMove(property(camelContext, java.lang.String.class, value)); return true;
-        case "preSort": ((FtpEndpoint) target).setPreSort(property(camelContext, boolean.class, value)); return true;
-        case "recursive": ((FtpEndpoint) target).setRecursive(property(camelContext, boolean.class, value)); return true;
-        case "resumeDownload": ((FtpEndpoint) target).setResumeDownload(property(camelContext, boolean.class, value)); return true;
-        case "sendEmptyMessageWhenIdle": ((FtpEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "streamDownload": ((FtpEndpoint) target).getConfiguration().setStreamDownload(property(camelContext, boolean.class, value)); return true;
-        case "download": ((FtpEndpoint) target).setDownload(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((FtpEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((FtpEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "handleDirectoryParserAbsoluteResult": ((FtpEndpoint) target).getConfiguration().setHandleDirectoryParserAbsoluteResult(property(camelContext, boolean.class, value)); return true;
-        case "ignoreFileNotFoundOrPermissionError": ((FtpEndpoint) target).getConfiguration().setIgnoreFileNotFoundOrPermissionError(property(camelContext, boolean.class, value)); return true;
-        case "inProgressRepository": ((FtpEndpoint) target).setInProgressRepository(property(camelContext, org.apache.camel.spi.IdempotentRepository.class, value)); return true;
-        case "localWorkDirectory": ((FtpEndpoint) target).setLocalWorkDirectory(property(camelContext, java.lang.String.class, value)); return true;
-        case "onCompletionExceptionHandler": ((FtpEndpoint) target).setOnCompletionExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "pollStrategy": ((FtpEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "processStrategy": ((FtpEndpoint) target).setProcessStrategy(property(camelContext, org.apache.camel.component.file.GenericFileProcessStrategy.class, value)); return true;
-        case "useList": ((FtpEndpoint) target).getConfiguration().setUseList(property(camelContext, boolean.class, value)); return true;
-        case "fileExist": ((FtpEndpoint) target).setFileExist(property(camelContext, org.apache.camel.component.file.GenericFileExist.class, value)); return true;
-        case "flatten": ((FtpEndpoint) target).setFlatten(property(camelContext, boolean.class, value)); return true;
-        case "jailStartingDirectory": ((FtpEndpoint) target).setJailStartingDirectory(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((FtpEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "moveExisting": ((FtpEndpoint) target).setMoveExisting(property(camelContext, java.lang.String.class, value)); return true;
-        case "tempFileName": ((FtpEndpoint) target).setTempFileName(property(camelContext, java.lang.String.class, value)); return true;
-        case "tempPrefix": ((FtpEndpoint) target).setTempPrefix(property(camelContext, java.lang.String.class, value)); return true;
-        case "allowNullBody": ((FtpEndpoint) target).setAllowNullBody(property(camelContext, boolean.class, value)); return true;
-        case "chmod": ((FtpEndpoint) target).getConfiguration().setChmod(property(camelContext, java.lang.String.class, value)); return true;
-        case "disconnectOnBatchComplete": ((FtpEndpoint) target).setDisconnectOnBatchComplete(property(camelContext, boolean.class, value)); return true;
-        case "eagerDeleteTargetFile": ((FtpEndpoint) target).setEagerDeleteTargetFile(property(camelContext, boolean.class, value)); return true;
-        case "keepLastModified": ((FtpEndpoint) target).setKeepLastModified(property(camelContext, boolean.class, value)); return true;
-        case "moveExistingFileStrategy": ((FtpEndpoint) target).setMoveExistingFileStrategy(property(camelContext, org.apache.camel.component.file.strategy.FileMoveExistingStrategy.class, value)); return true;
-        case "sendNoop": ((FtpEndpoint) target).getConfiguration().setSendNoop(property(camelContext, boolean.class, value)); return true;
-        case "activePortRange": ((FtpEndpoint) target).getConfiguration().setActivePortRange(property(camelContext, java.lang.String.class, value)); return true;
-        case "autoCreate": ((FtpEndpoint) target).setAutoCreate(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((FtpEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "bufferSize": ((FtpEndpoint) target).setBufferSize(property(camelContext, int.class, value)); return true;
-        case "connectTimeout": ((FtpEndpoint) target).getConfiguration().setConnectTimeout(property(camelContext, int.class, value)); return true;
-        case "ftpClient": ((FtpEndpoint) target).setFtpClient(property(camelContext, org.apache.commons.net.ftp.FTPClient.class, value)); return true;
-        case "ftpClientConfig": ((FtpEndpoint) target).setFtpClientConfig(property(camelContext, org.apache.commons.net.ftp.FTPClientConfig.class, value)); return true;
-        case "ftpClientConfigParameters": ((FtpEndpoint) target).setFtpClientConfigParameters(property(camelContext, java.util.Map.class, value)); return true;
-        case "ftpClientParameters": ((FtpEndpoint) target).setFtpClientParameters(property(camelContext, java.util.Map.class, value)); return true;
-        case "maximumReconnectAttempts": ((FtpEndpoint) target).setMaximumReconnectAttempts(property(camelContext, int.class, value)); return true;
-        case "reconnectDelay": ((FtpEndpoint) target).setReconnectDelay(property(camelContext, long.class, value)); return true;
-        case "siteCommand": ((FtpEndpoint) target).getConfiguration().setSiteCommand(property(camelContext, java.lang.String.class, value)); return true;
-        case "soTimeout": ((FtpEndpoint) target).getConfiguration().setSoTimeout(property(camelContext, int.class, value)); return true;
-        case "stepwise": ((FtpEndpoint) target).getConfiguration().setStepwise(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((FtpEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "throwExceptionOnConnectFailed": ((FtpEndpoint) target).getConfiguration().setThrowExceptionOnConnectFailed(property(camelContext, boolean.class, value)); return true;
-        case "timeout": ((FtpEndpoint) target).getConfiguration().setTimeout(property(camelContext, int.class, value)); return true;
-        case "antExclude": ((FtpEndpoint) target).setAntExclude(property(camelContext, java.lang.String.class, value)); return true;
-        case "antFilterCaseSensitive": ((FtpEndpoint) target).setAntFilterCaseSensitive(property(camelContext, boolean.class, value)); return true;
-        case "antInclude": ((FtpEndpoint) target).setAntInclude(property(camelContext, java.lang.String.class, value)); return true;
-        case "eagerMaxMessagesPerPoll": ((FtpEndpoint) target).setEagerMaxMessagesPerPoll(property(camelContext, boolean.class, value)); return true;
-        case "exclude": ((FtpEndpoint) target).setExclude(property(camelContext, java.lang.String.class, value)); return true;
-        case "filter": ((FtpEndpoint) target).setFilter(property(camelContext, org.apache.camel.component.file.GenericFileFilter.class, value)); return true;
-        case "filterDirectory": ((FtpEndpoint) target).setFilterDirectory(property(camelContext, java.lang.String.class, value)); return true;
-        case "filterFile": ((FtpEndpoint) target).setFilterFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "idempotent": ((FtpEndpoint) target).setIdempotent(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "idempotentKey": ((FtpEndpoint) target).setIdempotentKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "idempotentRepository": ((FtpEndpoint) target).setIdempotentRepository(property(camelContext, org.apache.camel.spi.IdempotentRepository.class, value)); return true;
-        case "include": ((FtpEndpoint) target).setInclude(property(camelContext, java.lang.String.class, value)); return true;
-        case "maxDepth": ((FtpEndpoint) target).setMaxDepth(property(camelContext, int.class, value)); return true;
-        case "maxMessagesPerPoll": ((FtpEndpoint) target).setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
-        case "minDepth": ((FtpEndpoint) target).setMinDepth(property(camelContext, int.class, value)); return true;
-        case "move": ((FtpEndpoint) target).setMove(property(camelContext, java.lang.String.class, value)); return true;
-        case "exclusiveReadLockStrategy": ((FtpEndpoint) target).setExclusiveReadLockStrategy(property(camelContext, org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy.class, value)); return true;
-        case "readLock": ((FtpEndpoint) target).setReadLock(property(camelContext, java.lang.String.class, value)); return true;
-        case "readLockCheckInterval": ((FtpEndpoint) target).setReadLockCheckInterval(property(camelContext, long.class, value)); return true;
-        case "readLockDeleteOrphanLockFiles": ((FtpEndpoint) target).setReadLockDeleteOrphanLockFiles(property(camelContext, boolean.class, value)); return true;
-        case "readLockLoggingLevel": ((FtpEndpoint) target).setReadLockLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "readLockMarkerFile": ((FtpEndpoint) target).setReadLockMarkerFile(property(camelContext, boolean.class, value)); return true;
-        case "readLockMinAge": ((FtpEndpoint) target).setReadLockMinAge(property(camelContext, long.class, value)); return true;
-        case "readLockMinLength": ((FtpEndpoint) target).setReadLockMinLength(property(camelContext, long.class, value)); return true;
-        case "readLockRemoveOnCommit": ((FtpEndpoint) target).setReadLockRemoveOnCommit(property(camelContext, boolean.class, value)); return true;
-        case "readLockRemoveOnRollback": ((FtpEndpoint) target).setReadLockRemoveOnRollback(property(camelContext, boolean.class, value)); return true;
-        case "readLockTimeout": ((FtpEndpoint) target).setReadLockTimeout(property(camelContext, long.class, value)); return true;
-        case "backoffErrorThreshold": ((FtpEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffIdleThreshold": ((FtpEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffMultiplier": ((FtpEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((FtpEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((FtpEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialDelay": ((FtpEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatCount": ((FtpEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runLoggingLevel": ((FtpEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledExecutorService": ((FtpEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((FtpEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerProperties": ((FtpEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startScheduler": ((FtpEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeUnit": ((FtpEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "useFixedDelay": ((FtpEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "shuffle": ((FtpEndpoint) target).setShuffle(property(camelContext, boolean.class, value)); return true;
-        case "sortBy": ((FtpEndpoint) target).setSortBy(property(camelContext, java.lang.String.class, value)); return true;
-        case "sorter": ((FtpEndpoint) target).setSorter(property(camelContext, java.util.Comparator.class, value)); return true;
-        case "account": ((FtpEndpoint) target).getConfiguration().setAccount(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((FtpEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((FtpEndpoint) target).getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "binary": ((FtpEndpoint) target).getConfiguration().setBinary(property(camelContext, boolean.class, value)); return true;
-        case "charset": ((FtpEndpoint) target).setCharset(property(camelContext, java.lang.String.class, value)); return true;
-        case "disconnect": ((FtpEndpoint) target).setDisconnect(property(camelContext, boolean.class, value)); return true;
-        case "donefilename": ((FtpEndpoint) target).setDoneFileName(property(camelContext, java.lang.String.class, value)); return true;
-        case "filename": ((FtpEndpoint) target).setFileName(property(camelContext, java.lang.String.class, value)); return true;
-        case "passivemode": ((FtpEndpoint) target).getConfiguration().setPassiveMode(property(camelContext, boolean.class, value)); return true;
-        case "separator": ((FtpEndpoint) target).getConfiguration().setSeparator(property(camelContext, org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator.class, value)); return true;
-        case "transferloggingintervalseconds": ((FtpEndpoint) target).setTransferLoggingIntervalSeconds(property(camelContext, int.class, value)); return true;
-        case "transferlogginglevel": ((FtpEndpoint) target).setTransferLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "transferloggingverbose": ((FtpEndpoint) target).setTransferLoggingVerbose(property(camelContext, boolean.class, value)); return true;
-        case "fastexistscheck": ((FtpEndpoint) target).setFastExistsCheck(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((FtpEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "delete": ((FtpEndpoint) target).setDelete(property(camelContext, boolean.class, value)); return true;
-        case "movefailed": ((FtpEndpoint) target).setMoveFailed(property(camelContext, java.lang.String.class, value)); return true;
-        case "noop": ((FtpEndpoint) target).setNoop(property(camelContext, boolean.class, value)); return true;
-        case "premove": ((FtpEndpoint) target).setPreMove(property(camelContext, java.lang.String.class, value)); return true;
-        case "presort": ((FtpEndpoint) target).setPreSort(property(camelContext, boolean.class, value)); return true;
-        case "recursive": ((FtpEndpoint) target).setRecursive(property(camelContext, boolean.class, value)); return true;
-        case "resumedownload": ((FtpEndpoint) target).setResumeDownload(property(camelContext, boolean.class, value)); return true;
-        case "sendemptymessagewhenidle": ((FtpEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "streamdownload": ((FtpEndpoint) target).getConfiguration().setStreamDownload(property(camelContext, boolean.class, value)); return true;
-        case "download": ((FtpEndpoint) target).setDownload(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((FtpEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((FtpEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "handledirectoryparserabsoluteresult": ((FtpEndpoint) target).getConfiguration().setHandleDirectoryParserAbsoluteResult(property(camelContext, boolean.class, value)); return true;
-        case "ignorefilenotfoundorpermissionerror": ((FtpEndpoint) target).getConfiguration().setIgnoreFileNotFoundOrPermissionError(property(camelContext, boolean.class, value)); return true;
-        case "inprogressrepository": ((FtpEndpoint) target).setInProgressRepository(property(camelContext, org.apache.camel.spi.IdempotentRepository.class, value)); return true;
-        case "localworkdirectory": ((FtpEndpoint) target).setLocalWorkDirectory(property(camelContext, java.lang.String.class, value)); return true;
-        case "oncompletionexceptionhandler": ((FtpEndpoint) target).setOnCompletionExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "pollstrategy": ((FtpEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "processstrategy": ((FtpEndpoint) target).setProcessStrategy(property(camelContext, org.apache.camel.component.file.GenericFileProcessStrategy.class, value)); return true;
-        case "uselist": ((FtpEndpoint) target).getConfiguration().setUseList(property(camelContext, boolean.class, value)); return true;
-        case "fileexist": ((FtpEndpoint) target).setFileExist(property(camelContext, org.apache.camel.component.file.GenericFileExist.class, value)); return true;
-        case "flatten": ((FtpEndpoint) target).setFlatten(property(camelContext, boolean.class, value)); return true;
-        case "jailstartingdirectory": ((FtpEndpoint) target).setJailStartingDirectory(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((FtpEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "moveexisting": ((FtpEndpoint) target).setMoveExisting(property(camelContext, java.lang.String.class, value)); return true;
-        case "tempfilename": ((FtpEndpoint) target).setTempFileName(property(camelContext, java.lang.String.class, value)); return true;
-        case "tempprefix": ((FtpEndpoint) target).setTempPrefix(property(camelContext, java.lang.String.class, value)); return true;
-        case "allownullbody": ((FtpEndpoint) target).setAllowNullBody(property(camelContext, boolean.class, value)); return true;
-        case "chmod": ((FtpEndpoint) target).getConfiguration().setChmod(property(camelContext, java.lang.String.class, value)); return true;
-        case "disconnectonbatchcomplete": ((FtpEndpoint) target).setDisconnectOnBatchComplete(property(camelContext, boolean.class, value)); return true;
-        case "eagerdeletetargetfile": ((FtpEndpoint) target).setEagerDeleteTargetFile(property(camelContext, boolean.class, value)); return true;
-        case "keeplastmodified": ((FtpEndpoint) target).setKeepLastModified(property(camelContext, boolean.class, value)); return true;
-        case "moveexistingfilestrategy": ((FtpEndpoint) target).setMoveExistingFileStrategy(property(camelContext, org.apache.camel.component.file.strategy.FileMoveExistingStrategy.class, value)); return true;
-        case "sendnoop": ((FtpEndpoint) target).getConfiguration().setSendNoop(property(camelContext, boolean.class, value)); return true;
-        case "activeportrange": ((FtpEndpoint) target).getConfiguration().setActivePortRange(property(camelContext, java.lang.String.class, value)); return true;
-        case "autocreate": ((FtpEndpoint) target).setAutoCreate(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((FtpEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "buffersize": ((FtpEndpoint) target).setBufferSize(property(camelContext, int.class, value)); return true;
-        case "connecttimeout": ((FtpEndpoint) target).getConfiguration().setConnectTimeout(property(camelContext, int.class, value)); return true;
-        case "ftpclient": ((FtpEndpoint) target).setFtpClient(property(camelContext, org.apache.commons.net.ftp.FTPClient.class, value)); return true;
-        case "ftpclientconfig": ((FtpEndpoint) target).setFtpClientConfig(property(camelContext, org.apache.commons.net.ftp.FTPClientConfig.class, value)); return true;
-        case "ftpclientconfigparameters": ((FtpEndpoint) target).setFtpClientConfigParameters(property(camelContext, java.util.Map.class, value)); return true;
-        case "ftpclientparameters": ((FtpEndpoint) target).setFtpClientParameters(property(camelContext, java.util.Map.class, value)); return true;
-        case "maximumreconnectattempts": ((FtpEndpoint) target).setMaximumReconnectAttempts(property(camelContext, int.class, value)); return true;
-        case "reconnectdelay": ((FtpEndpoint) target).setReconnectDelay(property(camelContext, long.class, value)); return true;
-        case "sitecommand": ((FtpEndpoint) target).getConfiguration().setSiteCommand(property(camelContext, java.lang.String.class, value)); return true;
-        case "sotimeout": ((FtpEndpoint) target).getConfiguration().setSoTimeout(property(camelContext, int.class, value)); return true;
-        case "stepwise": ((FtpEndpoint) target).getConfiguration().setStepwise(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((FtpEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "throwexceptiononconnectfailed": ((FtpEndpoint) target).getConfiguration().setThrowExceptionOnConnectFailed(property(camelContext, boolean.class, value)); return true;
-        case "timeout": ((FtpEndpoint) target).getConfiguration().setTimeout(property(camelContext, int.class, value)); return true;
-        case "antexclude": ((FtpEndpoint) target).setAntExclude(property(camelContext, java.lang.String.class, value)); return true;
-        case "antfiltercasesensitive": ((FtpEndpoint) target).setAntFilterCaseSensitive(property(camelContext, boolean.class, value)); return true;
-        case "antinclude": ((FtpEndpoint) target).setAntInclude(property(camelContext, java.lang.String.class, value)); return true;
-        case "eagermaxmessagesperpoll": ((FtpEndpoint) target).setEagerMaxMessagesPerPoll(property(camelContext, boolean.class, value)); return true;
-        case "exclude": ((FtpEndpoint) target).setExclude(property(camelContext, java.lang.String.class, value)); return true;
-        case "filter": ((FtpEndpoint) target).setFilter(property(camelContext, org.apache.camel.component.file.GenericFileFilter.class, value)); return true;
-        case "filterdirectory": ((FtpEndpoint) target).setFilterDirectory(property(camelContext, java.lang.String.class, value)); return true;
-        case "filterfile": ((FtpEndpoint) target).setFilterFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "idempotent": ((FtpEndpoint) target).setIdempotent(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "idempotentkey": ((FtpEndpoint) target).setIdempotentKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "idempotentrepository": ((FtpEndpoint) target).setIdempotentRepository(property(camelContext, org.apache.camel.spi.IdempotentRepository.class, value)); return true;
-        case "include": ((FtpEndpoint) target).setInclude(property(camelContext, java.lang.String.class, value)); return true;
-        case "maxdepth": ((FtpEndpoint) target).setMaxDepth(property(camelContext, int.class, value)); return true;
-        case "maxmessagesperpoll": ((FtpEndpoint) target).setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
-        case "mindepth": ((FtpEndpoint) target).setMinDepth(property(camelContext, int.class, value)); return true;
-        case "move": ((FtpEndpoint) target).setMove(property(camelContext, java.lang.String.class, value)); return true;
-        case "exclusivereadlockstrategy": ((FtpEndpoint) target).setExclusiveReadLockStrategy(property(camelContext, org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy.class, value)); return true;
-        case "readlock": ((FtpEndpoint) target).setReadLock(property(camelContext, java.lang.String.class, value)); return true;
-        case "readlockcheckinterval": ((FtpEndpoint) target).setReadLockCheckInterval(property(camelContext, long.class, value)); return true;
-        case "readlockdeleteorphanlockfiles": ((FtpEndpoint) target).setReadLockDeleteOrphanLockFiles(property(camelContext, boolean.class, value)); return true;
-        case "readlocklogginglevel": ((FtpEndpoint) target).setReadLockLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "readlockmarkerfile": ((FtpEndpoint) target).setReadLockMarkerFile(property(camelContext, boolean.class, value)); return true;
-        case "readlockminage": ((FtpEndpoint) target).setReadLockMinAge(property(camelContext, long.class, value)); return true;
-        case "readlockminlength": ((FtpEndpoint) target).setReadLockMinLength(property(camelContext, long.class, value)); return true;
-        case "readlockremoveoncommit": ((FtpEndpoint) target).setReadLockRemoveOnCommit(property(camelContext, boolean.class, value)); return true;
-        case "readlockremoveonrollback": ((FtpEndpoint) target).setReadLockRemoveOnRollback(property(camelContext, boolean.class, value)); return true;
-        case "readlocktimeout": ((FtpEndpoint) target).setReadLockTimeout(property(camelContext, long.class, value)); return true;
-        case "backofferrorthreshold": ((FtpEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffidlethreshold": ((FtpEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffmultiplier": ((FtpEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((FtpEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((FtpEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialdelay": ((FtpEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatcount": ((FtpEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runlogginglevel": ((FtpEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledexecutorservice": ((FtpEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((FtpEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerproperties": ((FtpEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startscheduler": ((FtpEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeunit": ((FtpEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "usefixeddelay": ((FtpEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "shuffle": ((FtpEndpoint) target).setShuffle(property(camelContext, boolean.class, value)); return true;
-        case "sortby": ((FtpEndpoint) target).setSortBy(property(camelContext, java.lang.String.class, value)); return true;
-        case "sorter": ((FtpEndpoint) target).setSorter(property(camelContext, java.util.Comparator.class, value)); return true;
-        case "account": ((FtpEndpoint) target).getConfiguration().setAccount(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((FtpEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((FtpEndpoint) target).getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        FtpEndpoint target = (FtpEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "binary": target.getConfiguration().setBinary(property(camelContext, boolean.class, value)); return true;
+        case "charset": target.setCharset(property(camelContext, java.lang.String.class, value)); return true;
+        case "disconnect": target.setDisconnect(property(camelContext, boolean.class, value)); return true;
+        case "donefilename":
+        case "doneFileName": target.setDoneFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "filename":
+        case "fileName": target.setFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "passivemode":
+        case "passiveMode": target.getConfiguration().setPassiveMode(property(camelContext, boolean.class, value)); return true;
+        case "separator": target.getConfiguration().setSeparator(property(camelContext, org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator.class, value)); return true;
+        case "transferloggingintervalseconds":
+        case "transferLoggingIntervalSeconds": target.setTransferLoggingIntervalSeconds(property(camelContext, int.class, value)); return true;
+        case "transferlogginglevel":
+        case "transferLoggingLevel": target.setTransferLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "transferloggingverbose":
+        case "transferLoggingVerbose": target.setTransferLoggingVerbose(property(camelContext, boolean.class, value)); return true;
+        case "fastexistscheck":
+        case "fastExistsCheck": target.setFastExistsCheck(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "delete": target.setDelete(property(camelContext, boolean.class, value)); return true;
+        case "movefailed":
+        case "moveFailed": target.setMoveFailed(property(camelContext, java.lang.String.class, value)); return true;
+        case "noop": target.setNoop(property(camelContext, boolean.class, value)); return true;
+        case "premove":
+        case "preMove": target.setPreMove(property(camelContext, java.lang.String.class, value)); return true;
+        case "presort":
+        case "preSort": target.setPreSort(property(camelContext, boolean.class, value)); return true;
+        case "recursive": target.setRecursive(property(camelContext, boolean.class, value)); return true;
+        case "resumedownload":
+        case "resumeDownload": target.setResumeDownload(property(camelContext, boolean.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "streamdownload":
+        case "streamDownload": target.getConfiguration().setStreamDownload(property(camelContext, boolean.class, value)); return true;
+        case "download": target.setDownload(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "handledirectoryparserabsoluteresult":
+        case "handleDirectoryParserAbsoluteResult": target.getConfiguration().setHandleDirectoryParserAbsoluteResult(property(camelContext, boolean.class, value)); return true;
+        case "ignorefilenotfoundorpermissionerror":
+        case "ignoreFileNotFoundOrPermissionError": target.getConfiguration().setIgnoreFileNotFoundOrPermissionError(property(camelContext, boolean.class, value)); return true;
+        case "inprogressrepository":
+        case "inProgressRepository": target.setInProgressRepository(property(camelContext, org.apache.camel.spi.IdempotentRepository.class, value)); return true;
+        case "localworkdirectory":
+        case "localWorkDirectory": target.setLocalWorkDirectory(property(camelContext, java.lang.String.class, value)); return true;
+        case "oncompletionexceptionhandler":
+        case "onCompletionExceptionHandler": target.setOnCompletionExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "processstrategy":
+        case "processStrategy": target.setProcessStrategy(property(camelContext, org.apache.camel.component.file.GenericFileProcessStrategy.class, value)); return true;
+        case "uselist":
+        case "useList": target.getConfiguration().setUseList(property(camelContext, boolean.class, value)); return true;
+        case "fileexist":
+        case "fileExist": target.setFileExist(property(camelContext, org.apache.camel.component.file.GenericFileExist.class, value)); return true;
+        case "flatten": target.setFlatten(property(camelContext, boolean.class, value)); return true;
+        case "jailstartingdirectory":
+        case "jailStartingDirectory": target.setJailStartingDirectory(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "moveexisting":
+        case "moveExisting": target.setMoveExisting(property(camelContext, java.lang.String.class, value)); return true;
+        case "tempfilename":
+        case "tempFileName": target.setTempFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "tempprefix":
+        case "tempPrefix": target.setTempPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "allownullbody":
+        case "allowNullBody": target.setAllowNullBody(property(camelContext, boolean.class, value)); return true;
+        case "chmod": target.getConfiguration().setChmod(property(camelContext, java.lang.String.class, value)); return true;
+        case "disconnectonbatchcomplete":
+        case "disconnectOnBatchComplete": target.setDisconnectOnBatchComplete(property(camelContext, boolean.class, value)); return true;
+        case "eagerdeletetargetfile":
+        case "eagerDeleteTargetFile": target.setEagerDeleteTargetFile(property(camelContext, boolean.class, value)); return true;
+        case "keeplastmodified":
+        case "keepLastModified": target.setKeepLastModified(property(camelContext, boolean.class, value)); return true;
+        case "moveexistingfilestrategy":
+        case "moveExistingFileStrategy": target.setMoveExistingFileStrategy(property(camelContext, org.apache.camel.component.file.strategy.FileMoveExistingStrategy.class, value)); return true;
+        case "sendnoop":
+        case "sendNoop": target.getConfiguration().setSendNoop(property(camelContext, boolean.class, value)); return true;
+        case "activeportrange":
+        case "activePortRange": target.getConfiguration().setActivePortRange(property(camelContext, java.lang.String.class, value)); return true;
+        case "autocreate":
+        case "autoCreate": target.setAutoCreate(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "buffersize":
+        case "bufferSize": target.setBufferSize(property(camelContext, int.class, value)); return true;
+        case "connecttimeout":
+        case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, int.class, value)); return true;
+        case "ftpclient":
+        case "ftpClient": target.setFtpClient(property(camelContext, org.apache.commons.net.ftp.FTPClient.class, value)); return true;
+        case "ftpclientconfig":
+        case "ftpClientConfig": target.setFtpClientConfig(property(camelContext, org.apache.commons.net.ftp.FTPClientConfig.class, value)); return true;
+        case "ftpclientconfigparameters":
+        case "ftpClientConfigParameters": target.setFtpClientConfigParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "ftpclientparameters":
+        case "ftpClientParameters": target.setFtpClientParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "maximumreconnectattempts":
+        case "maximumReconnectAttempts": target.setMaximumReconnectAttempts(property(camelContext, int.class, value)); return true;
+        case "reconnectdelay":
+        case "reconnectDelay": target.setReconnectDelay(property(camelContext, long.class, value)); return true;
+        case "sitecommand":
+        case "siteCommand": target.getConfiguration().setSiteCommand(property(camelContext, java.lang.String.class, value)); return true;
+        case "sotimeout":
+        case "soTimeout": target.getConfiguration().setSoTimeout(property(camelContext, int.class, value)); return true;
+        case "stepwise": target.getConfiguration().setStepwise(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "throwexceptiononconnectfailed":
+        case "throwExceptionOnConnectFailed": target.getConfiguration().setThrowExceptionOnConnectFailed(property(camelContext, boolean.class, value)); return true;
+        case "timeout": target.getConfiguration().setTimeout(property(camelContext, int.class, value)); return true;
+        case "antexclude":
+        case "antExclude": target.setAntExclude(property(camelContext, java.lang.String.class, value)); return true;
+        case "antfiltercasesensitive":
+        case "antFilterCaseSensitive": target.setAntFilterCaseSensitive(property(camelContext, boolean.class, value)); return true;
+        case "antinclude":
+        case "antInclude": target.setAntInclude(property(camelContext, java.lang.String.class, value)); return true;
+        case "eagermaxmessagesperpoll":
+        case "eagerMaxMessagesPerPoll": target.setEagerMaxMessagesPerPoll(property(camelContext, boolean.class, value)); return true;
+        case "exclude": target.setExclude(property(camelContext, java.lang.String.class, value)); return true;
+        case "filter": target.setFilter(property(camelContext, org.apache.camel.component.file.GenericFileFilter.class, value)); return true;
+        case "filterdirectory":
+        case "filterDirectory": target.setFilterDirectory(property(camelContext, java.lang.String.class, value)); return true;
+        case "filterfile":
+        case "filterFile": target.setFilterFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "idempotent": target.setIdempotent(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "idempotentkey":
+        case "idempotentKey": target.setIdempotentKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "idempotentrepository":
+        case "idempotentRepository": target.setIdempotentRepository(property(camelContext, org.apache.camel.spi.IdempotentRepository.class, value)); return true;
+        case "include": target.setInclude(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxdepth":
+        case "maxDepth": target.setMaxDepth(property(camelContext, int.class, value)); return true;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
+        case "mindepth":
+        case "minDepth": target.setMinDepth(property(camelContext, int.class, value)); return true;
+        case "move": target.setMove(property(camelContext, java.lang.String.class, value)); return true;
+        case "exclusivereadlockstrategy":
+        case "exclusiveReadLockStrategy": target.setExclusiveReadLockStrategy(property(camelContext, org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy.class, value)); return true;
+        case "readlock":
+        case "readLock": target.setReadLock(property(camelContext, java.lang.String.class, value)); return true;
+        case "readlockcheckinterval":
+        case "readLockCheckInterval": target.setReadLockCheckInterval(property(camelContext, long.class, value)); return true;
+        case "readlockdeleteorphanlockfiles":
+        case "readLockDeleteOrphanLockFiles": target.setReadLockDeleteOrphanLockFiles(property(camelContext, boolean.class, value)); return true;
+        case "readlocklogginglevel":
+        case "readLockLoggingLevel": target.setReadLockLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "readlockmarkerfile":
+        case "readLockMarkerFile": target.setReadLockMarkerFile(property(camelContext, boolean.class, value)); return true;
+        case "readlockminage":
+        case "readLockMinAge": target.setReadLockMinAge(property(camelContext, long.class, value)); return true;
+        case "readlockminlength":
+        case "readLockMinLength": target.setReadLockMinLength(property(camelContext, long.class, value)); return true;
+        case "readlockremoveoncommit":
+        case "readLockRemoveOnCommit": target.setReadLockRemoveOnCommit(property(camelContext, boolean.class, value)); return true;
+        case "readlockremoveonrollback":
+        case "readLockRemoveOnRollback": target.setReadLockRemoveOnRollback(property(camelContext, boolean.class, value)); return true;
+        case "readlocktimeout":
+        case "readLockTimeout": target.setReadLockTimeout(property(camelContext, long.class, value)); return true;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffmultiplier":
+        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "repeatcount":
+        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "runlogginglevel":
+        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "schedulerproperties":
+        case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "startscheduler":
+        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "timeunit":
+        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "usefixeddelay":
+        case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "shuffle": target.setShuffle(property(camelContext, boolean.class, value)); return true;
+        case "sortby":
+        case "sortBy": target.setSortBy(property(camelContext, java.lang.String.class, value)); return true;
+        case "sorter": target.setSorter(property(camelContext, java.util.Comparator.class, value)); return true;
+        case "account": target.getConfiguration().setAccount(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

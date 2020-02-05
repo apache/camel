@@ -12,45 +12,31 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class NettyHttpComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "nettyHttpBinding": ((NettyHttpComponent) target).setNettyHttpBinding(property(camelContext, org.apache.camel.component.netty.http.NettyHttpBinding.class, value)); return true;
-        case "configuration": ((NettyHttpComponent) target).setConfiguration(property(camelContext, org.apache.camel.component.netty.http.NettyHttpConfiguration.class, value)); return true;
-        case "headerFilterStrategy": ((NettyHttpComponent) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "securityConfiguration": ((NettyHttpComponent) target).setSecurityConfiguration(property(camelContext, org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration.class, value)); return true;
-        case "useGlobalSslContextParameters": ((NettyHttpComponent) target).setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
-        case "maximumPoolSize": ((NettyHttpComponent) target).setMaximumPoolSize(property(camelContext, int.class, value)); return true;
-        case "executorService": ((NettyHttpComponent) target).setExecutorService(property(camelContext, io.netty.util.concurrent.EventExecutorGroup.class, value)); return true;
-        case "sslContextParameters": ((NettyHttpComponent) target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "basicPropertyBinding": ((NettyHttpComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((NettyHttpComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((NettyHttpComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "nettyhttpbinding": ((NettyHttpComponent) target).setNettyHttpBinding(property(camelContext, org.apache.camel.component.netty.http.NettyHttpBinding.class, value)); return true;
-        case "configuration": ((NettyHttpComponent) target).setConfiguration(property(camelContext, org.apache.camel.component.netty.http.NettyHttpConfiguration.class, value)); return true;
-        case "headerfilterstrategy": ((NettyHttpComponent) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "securityconfiguration": ((NettyHttpComponent) target).setSecurityConfiguration(property(camelContext, org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration.class, value)); return true;
-        case "useglobalsslcontextparameters": ((NettyHttpComponent) target).setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
-        case "maximumpoolsize": ((NettyHttpComponent) target).setMaximumPoolSize(property(camelContext, int.class, value)); return true;
-        case "executorservice": ((NettyHttpComponent) target).setExecutorService(property(camelContext, io.netty.util.concurrent.EventExecutorGroup.class, value)); return true;
-        case "sslcontextparameters": ((NettyHttpComponent) target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "basicpropertybinding": ((NettyHttpComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((NettyHttpComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((NettyHttpComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        NettyHttpComponent target = (NettyHttpComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "nettyhttpbinding":
+        case "nettyHttpBinding": target.setNettyHttpBinding(property(camelContext, org.apache.camel.component.netty.http.NettyHttpBinding.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.netty.http.NettyHttpConfiguration.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "securityconfiguration":
+        case "securityConfiguration": target.setSecurityConfiguration(property(camelContext, org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration.class, value)); return true;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
+        case "maximumpoolsize":
+        case "maximumPoolSize": target.setMaximumPoolSize(property(camelContext, int.class, value)); return true;
+        case "executorservice":
+        case "executorService": target.setExecutorService(property(camelContext, io.netty.util.concurrent.EventExecutorGroup.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

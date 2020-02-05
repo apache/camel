@@ -12,51 +12,31 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class WordpressEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "apiVersion": ((WordpressEndpoint) target).getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "criteria": ((WordpressEndpoint) target).getConfiguration().setCriteria(property(camelContext, java.util.Map.class, value)); return true;
-        case "force": ((WordpressEndpoint) target).getConfiguration().setForce(property(camelContext, boolean.class, value)); return true;
-        case "id": ((WordpressEndpoint) target).getConfiguration().setId(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "password": ((WordpressEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "searchCriteria": ((WordpressEndpoint) target).getConfiguration().setSearchCriteria(property(camelContext, org.apache.camel.component.wordpress.api.model.SearchCriteria.class, value)); return true;
-        case "url": ((WordpressEndpoint) target).getConfiguration().setUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "user": ((WordpressEndpoint) target).getConfiguration().setUser(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((WordpressEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((WordpressEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((WordpressEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((WordpressEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((WordpressEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((WordpressEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "apiversion": ((WordpressEndpoint) target).getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "criteria": ((WordpressEndpoint) target).getConfiguration().setCriteria(property(camelContext, java.util.Map.class, value)); return true;
-        case "force": ((WordpressEndpoint) target).getConfiguration().setForce(property(camelContext, boolean.class, value)); return true;
-        case "id": ((WordpressEndpoint) target).getConfiguration().setId(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "password": ((WordpressEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "searchcriteria": ((WordpressEndpoint) target).getConfiguration().setSearchCriteria(property(camelContext, org.apache.camel.component.wordpress.api.model.SearchCriteria.class, value)); return true;
-        case "url": ((WordpressEndpoint) target).getConfiguration().setUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "user": ((WordpressEndpoint) target).getConfiguration().setUser(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((WordpressEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((WordpressEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((WordpressEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((WordpressEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((WordpressEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((WordpressEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        WordpressEndpoint target = (WordpressEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiversion":
+        case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "criteria": target.getConfiguration().setCriteria(property(camelContext, java.util.Map.class, value)); return true;
+        case "force": target.getConfiguration().setForce(property(camelContext, boolean.class, value)); return true;
+        case "id": target.getConfiguration().setId(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "searchcriteria":
+        case "searchCriteria": target.getConfiguration().setSearchCriteria(property(camelContext, org.apache.camel.component.wordpress.api.model.SearchCriteria.class, value)); return true;
+        case "url": target.getConfiguration().setUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "user": target.getConfiguration().setUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

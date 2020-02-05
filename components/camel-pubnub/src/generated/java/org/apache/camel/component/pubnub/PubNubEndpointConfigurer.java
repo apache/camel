@@ -12,55 +12,37 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class PubNubEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "uuid": ((PubNubEndpoint) target).getConfiguration().setUuid(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((PubNubEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "withPresence": ((PubNubEndpoint) target).getConfiguration().setWithPresence(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((PubNubEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((PubNubEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((PubNubEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": ((PubNubEndpoint) target).getConfiguration().setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((PubNubEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "pubnub": ((PubNubEndpoint) target).setPubnub(property(camelContext, com.pubnub.api.PubNub.class, value)); return true;
-        case "synchronous": ((PubNubEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "authKey": ((PubNubEndpoint) target).getConfiguration().setAuthKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "cipherKey": ((PubNubEndpoint) target).getConfiguration().setCipherKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "publishKey": ((PubNubEndpoint) target).getConfiguration().setPublishKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretKey": ((PubNubEndpoint) target).getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "secure": ((PubNubEndpoint) target).getConfiguration().setSecure(property(camelContext, boolean.class, value)); return true;
-        case "subscribeKey": ((PubNubEndpoint) target).getConfiguration().setSubscribeKey(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "uuid": ((PubNubEndpoint) target).getConfiguration().setUuid(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((PubNubEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "withpresence": ((PubNubEndpoint) target).getConfiguration().setWithPresence(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((PubNubEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((PubNubEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((PubNubEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": ((PubNubEndpoint) target).getConfiguration().setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((PubNubEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "pubnub": ((PubNubEndpoint) target).setPubnub(property(camelContext, com.pubnub.api.PubNub.class, value)); return true;
-        case "synchronous": ((PubNubEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "authkey": ((PubNubEndpoint) target).getConfiguration().setAuthKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "cipherkey": ((PubNubEndpoint) target).getConfiguration().setCipherKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "publishkey": ((PubNubEndpoint) target).getConfiguration().setPublishKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretkey": ((PubNubEndpoint) target).getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "secure": ((PubNubEndpoint) target).getConfiguration().setSecure(property(camelContext, boolean.class, value)); return true;
-        case "subscribekey": ((PubNubEndpoint) target).getConfiguration().setSubscribeKey(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        PubNubEndpoint target = (PubNubEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "uuid": target.getConfiguration().setUuid(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "withpresence":
+        case "withPresence": target.getConfiguration().setWithPresence(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "pubnub": target.setPubnub(property(camelContext, com.pubnub.api.PubNub.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "authkey":
+        case "authKey": target.getConfiguration().setAuthKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "cipherkey":
+        case "cipherKey": target.getConfiguration().setCipherKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "publishkey":
+        case "publishKey": target.getConfiguration().setPublishKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretkey":
+        case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "secure": target.getConfiguration().setSecure(property(camelContext, boolean.class, value)); return true;
+        case "subscribekey":
+        case "subscribeKey": target.getConfiguration().setSubscribeKey(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

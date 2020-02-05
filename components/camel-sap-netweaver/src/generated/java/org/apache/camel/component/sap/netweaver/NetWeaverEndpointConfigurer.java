@@ -12,39 +12,22 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class NetWeaverEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "flatternMap": ((NetWeaverEndpoint) target).setFlatternMap(property(camelContext, boolean.class, value)); return true;
-        case "json": ((NetWeaverEndpoint) target).setJson(property(camelContext, boolean.class, value)); return true;
-        case "jsonAsMap": ((NetWeaverEndpoint) target).setJsonAsMap(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((NetWeaverEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "password": ((NetWeaverEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((NetWeaverEndpoint) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((NetWeaverEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((NetWeaverEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "flatternmap": ((NetWeaverEndpoint) target).setFlatternMap(property(camelContext, boolean.class, value)); return true;
-        case "json": ((NetWeaverEndpoint) target).setJson(property(camelContext, boolean.class, value)); return true;
-        case "jsonasmap": ((NetWeaverEndpoint) target).setJsonAsMap(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((NetWeaverEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "password": ((NetWeaverEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((NetWeaverEndpoint) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((NetWeaverEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((NetWeaverEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        NetWeaverEndpoint target = (NetWeaverEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "flatternmap":
+        case "flatternMap": target.setFlatternMap(property(camelContext, boolean.class, value)); return true;
+        case "json": target.setJson(property(camelContext, boolean.class, value)); return true;
+        case "jsonasmap":
+        case "jsonAsMap": target.setJsonAsMap(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

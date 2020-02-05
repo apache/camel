@@ -12,103 +12,87 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class WebsocketEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "chunked": ((WebsocketEndpoint) target).setChunked(property(camelContext, boolean.class, value)); return true;
-        case "disableStreamCache": ((WebsocketEndpoint) target).setDisableStreamCache(property(camelContext, boolean.class, value)); return true;
-        case "headerFilterStrategy": ((WebsocketEndpoint) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "sendToAll": ((WebsocketEndpoint) target).setSendToAll(property(camelContext, boolean.class, value)); return true;
-        case "transferException": ((WebsocketEndpoint) target).setTransferException(property(camelContext, boolean.class, value)); return true;
-        case "useStreaming": ((WebsocketEndpoint) target).setUseStreaming(property(camelContext, boolean.class, value)); return true;
-        case "httpBinding": ((WebsocketEndpoint) target).setHttpBinding(property(camelContext, org.apache.camel.http.common.HttpBinding.class, value)); return true;
-        case "async": ((WebsocketEndpoint) target).setAsync(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((WebsocketEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "httpMethodRestrict": ((WebsocketEndpoint) target).setHttpMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
-        case "matchOnUriPrefix": ((WebsocketEndpoint) target).setMatchOnUriPrefix(property(camelContext, boolean.class, value)); return true;
-        case "muteException": ((WebsocketEndpoint) target).setMuteException(property(camelContext, boolean.class, value)); return true;
-        case "responseBufferSize": ((WebsocketEndpoint) target).setResponseBufferSize(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "servletName": ((WebsocketEndpoint) target).setServletName(property(camelContext, java.lang.String.class, value)); return true;
-        case "attachmentMultipartBinding": ((WebsocketEndpoint) target).setAttachmentMultipartBinding(property(camelContext, boolean.class, value)); return true;
-        case "eagerCheckContentAvailable": ((WebsocketEndpoint) target).setEagerCheckContentAvailable(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((WebsocketEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((WebsocketEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "fileNameExtWhitelist": ((WebsocketEndpoint) target).setFileNameExtWhitelist(property(camelContext, java.lang.String.class, value)); return true;
-        case "optionsEnabled": ((WebsocketEndpoint) target).setOptionsEnabled(property(camelContext, boolean.class, value)); return true;
-        case "traceEnabled": ((WebsocketEndpoint) target).setTraceEnabled(property(camelContext, boolean.class, value)); return true;
-        case "bridgeEndpoint": ((WebsocketEndpoint) target).setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
-        case "connectionClose": ((WebsocketEndpoint) target).setConnectionClose(property(camelContext, boolean.class, value)); return true;
-        case "copyHeaders": ((WebsocketEndpoint) target).setCopyHeaders(property(camelContext, boolean.class, value)); return true;
-        case "httpMethod": ((WebsocketEndpoint) target).setHttpMethod(property(camelContext, org.apache.camel.http.common.HttpMethods.class, value)); return true;
-        case "ignoreResponseBody": ((WebsocketEndpoint) target).setIgnoreResponseBody(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((WebsocketEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "preserveHostHeader": ((WebsocketEndpoint) target).setPreserveHostHeader(property(camelContext, boolean.class, value)); return true;
-        case "throwExceptionOnFailure": ((WebsocketEndpoint) target).setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
-        case "cookieHandler": ((WebsocketEndpoint) target).setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
-        case "okStatusCodeRange": ((WebsocketEndpoint) target).setOkStatusCodeRange(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((WebsocketEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "mapHttpMessageBody": ((WebsocketEndpoint) target).setMapHttpMessageBody(property(camelContext, boolean.class, value)); return true;
-        case "mapHttpMessageFormUrlEncodedBody": ((WebsocketEndpoint) target).setMapHttpMessageFormUrlEncodedBody(property(camelContext, boolean.class, value)); return true;
-        case "mapHttpMessageHeaders": ((WebsocketEndpoint) target).setMapHttpMessageHeaders(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((WebsocketEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "proxyAuthScheme": ((WebsocketEndpoint) target).setProxyAuthScheme(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyHost": ((WebsocketEndpoint) target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyPort": ((WebsocketEndpoint) target).setProxyPort(property(camelContext, int.class, value)); return true;
-        case "authHost": ((WebsocketEndpoint) target).setAuthHost(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "chunked": ((WebsocketEndpoint) target).setChunked(property(camelContext, boolean.class, value)); return true;
-        case "disablestreamcache": ((WebsocketEndpoint) target).setDisableStreamCache(property(camelContext, boolean.class, value)); return true;
-        case "headerfilterstrategy": ((WebsocketEndpoint) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "sendtoall": ((WebsocketEndpoint) target).setSendToAll(property(camelContext, boolean.class, value)); return true;
-        case "transferexception": ((WebsocketEndpoint) target).setTransferException(property(camelContext, boolean.class, value)); return true;
-        case "usestreaming": ((WebsocketEndpoint) target).setUseStreaming(property(camelContext, boolean.class, value)); return true;
-        case "httpbinding": ((WebsocketEndpoint) target).setHttpBinding(property(camelContext, org.apache.camel.http.common.HttpBinding.class, value)); return true;
-        case "async": ((WebsocketEndpoint) target).setAsync(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((WebsocketEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "httpmethodrestrict": ((WebsocketEndpoint) target).setHttpMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
-        case "matchonuriprefix": ((WebsocketEndpoint) target).setMatchOnUriPrefix(property(camelContext, boolean.class, value)); return true;
-        case "muteexception": ((WebsocketEndpoint) target).setMuteException(property(camelContext, boolean.class, value)); return true;
-        case "responsebuffersize": ((WebsocketEndpoint) target).setResponseBufferSize(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "servletname": ((WebsocketEndpoint) target).setServletName(property(camelContext, java.lang.String.class, value)); return true;
-        case "attachmentmultipartbinding": ((WebsocketEndpoint) target).setAttachmentMultipartBinding(property(camelContext, boolean.class, value)); return true;
-        case "eagercheckcontentavailable": ((WebsocketEndpoint) target).setEagerCheckContentAvailable(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((WebsocketEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((WebsocketEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "filenameextwhitelist": ((WebsocketEndpoint) target).setFileNameExtWhitelist(property(camelContext, java.lang.String.class, value)); return true;
-        case "optionsenabled": ((WebsocketEndpoint) target).setOptionsEnabled(property(camelContext, boolean.class, value)); return true;
-        case "traceenabled": ((WebsocketEndpoint) target).setTraceEnabled(property(camelContext, boolean.class, value)); return true;
-        case "bridgeendpoint": ((WebsocketEndpoint) target).setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
-        case "connectionclose": ((WebsocketEndpoint) target).setConnectionClose(property(camelContext, boolean.class, value)); return true;
-        case "copyheaders": ((WebsocketEndpoint) target).setCopyHeaders(property(camelContext, boolean.class, value)); return true;
-        case "httpmethod": ((WebsocketEndpoint) target).setHttpMethod(property(camelContext, org.apache.camel.http.common.HttpMethods.class, value)); return true;
-        case "ignoreresponsebody": ((WebsocketEndpoint) target).setIgnoreResponseBody(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((WebsocketEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "preservehostheader": ((WebsocketEndpoint) target).setPreserveHostHeader(property(camelContext, boolean.class, value)); return true;
-        case "throwexceptiononfailure": ((WebsocketEndpoint) target).setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
-        case "cookiehandler": ((WebsocketEndpoint) target).setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
-        case "okstatuscoderange": ((WebsocketEndpoint) target).setOkStatusCodeRange(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((WebsocketEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "maphttpmessagebody": ((WebsocketEndpoint) target).setMapHttpMessageBody(property(camelContext, boolean.class, value)); return true;
-        case "maphttpmessageformurlencodedbody": ((WebsocketEndpoint) target).setMapHttpMessageFormUrlEncodedBody(property(camelContext, boolean.class, value)); return true;
-        case "maphttpmessageheaders": ((WebsocketEndpoint) target).setMapHttpMessageHeaders(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((WebsocketEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "proxyauthscheme": ((WebsocketEndpoint) target).setProxyAuthScheme(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyhost": ((WebsocketEndpoint) target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyport": ((WebsocketEndpoint) target).setProxyPort(property(camelContext, int.class, value)); return true;
-        case "authhost": ((WebsocketEndpoint) target).setAuthHost(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        WebsocketEndpoint target = (WebsocketEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "chunked": target.setChunked(property(camelContext, boolean.class, value)); return true;
+        case "disablestreamcache":
+        case "disableStreamCache": target.setDisableStreamCache(property(camelContext, boolean.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "sendtoall":
+        case "sendToAll": target.setSendToAll(property(camelContext, boolean.class, value)); return true;
+        case "transferexception":
+        case "transferException": target.setTransferException(property(camelContext, boolean.class, value)); return true;
+        case "usestreaming":
+        case "useStreaming": target.setUseStreaming(property(camelContext, boolean.class, value)); return true;
+        case "httpbinding":
+        case "httpBinding": target.setHttpBinding(property(camelContext, org.apache.camel.http.common.HttpBinding.class, value)); return true;
+        case "async": target.setAsync(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "httpmethodrestrict":
+        case "httpMethodRestrict": target.setHttpMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
+        case "matchonuriprefix":
+        case "matchOnUriPrefix": target.setMatchOnUriPrefix(property(camelContext, boolean.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
+        case "responsebuffersize":
+        case "responseBufferSize": target.setResponseBufferSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "servletname":
+        case "servletName": target.setServletName(property(camelContext, java.lang.String.class, value)); return true;
+        case "attachmentmultipartbinding":
+        case "attachmentMultipartBinding": target.setAttachmentMultipartBinding(property(camelContext, boolean.class, value)); return true;
+        case "eagercheckcontentavailable":
+        case "eagerCheckContentAvailable": target.setEagerCheckContentAvailable(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "filenameextwhitelist":
+        case "fileNameExtWhitelist": target.setFileNameExtWhitelist(property(camelContext, java.lang.String.class, value)); return true;
+        case "optionsenabled":
+        case "optionsEnabled": target.setOptionsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "traceenabled":
+        case "traceEnabled": target.setTraceEnabled(property(camelContext, boolean.class, value)); return true;
+        case "bridgeendpoint":
+        case "bridgeEndpoint": target.setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
+        case "connectionclose":
+        case "connectionClose": target.setConnectionClose(property(camelContext, boolean.class, value)); return true;
+        case "copyheaders":
+        case "copyHeaders": target.setCopyHeaders(property(camelContext, boolean.class, value)); return true;
+        case "httpmethod":
+        case "httpMethod": target.setHttpMethod(property(camelContext, org.apache.camel.http.common.HttpMethods.class, value)); return true;
+        case "ignoreresponsebody":
+        case "ignoreResponseBody": target.setIgnoreResponseBody(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "preservehostheader":
+        case "preserveHostHeader": target.setPreserveHostHeader(property(camelContext, boolean.class, value)); return true;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": target.setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
+        case "cookiehandler":
+        case "cookieHandler": target.setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
+        case "okstatuscoderange":
+        case "okStatusCodeRange": target.setOkStatusCodeRange(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "maphttpmessagebody":
+        case "mapHttpMessageBody": target.setMapHttpMessageBody(property(camelContext, boolean.class, value)); return true;
+        case "maphttpmessageformurlencodedbody":
+        case "mapHttpMessageFormUrlEncodedBody": target.setMapHttpMessageFormUrlEncodedBody(property(camelContext, boolean.class, value)); return true;
+        case "maphttpmessageheaders":
+        case "mapHttpMessageHeaders": target.setMapHttpMessageHeaders(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "proxyauthscheme":
+        case "proxyAuthScheme": target.setProxyAuthScheme(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": target.setProxyPort(property(camelContext, int.class, value)); return true;
+        case "authhost":
+        case "authHost": target.setAuthHost(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

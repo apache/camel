@@ -12,87 +12,65 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class CassandraEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "cluster": ((CassandraEndpoint) target).setCluster(property(camelContext, com.datastax.driver.core.Cluster.class, value)); return true;
-        case "clusterName": ((CassandraEndpoint) target).setClusterName(property(camelContext, java.lang.String.class, value)); return true;
-        case "consistencyLevel": ((CassandraEndpoint) target).setConsistencyLevel(property(camelContext, com.datastax.driver.core.ConsistencyLevel.class, value)); return true;
-        case "cql": ((CassandraEndpoint) target).setCql(property(camelContext, java.lang.String.class, value)); return true;
-        case "loadBalancingPolicy": ((CassandraEndpoint) target).setLoadBalancingPolicy(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((CassandraEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "prepareStatements": ((CassandraEndpoint) target).setPrepareStatements(property(camelContext, boolean.class, value)); return true;
-        case "resultSetConversionStrategy": ((CassandraEndpoint) target).setResultSetConversionStrategy(property(camelContext, org.apache.camel.component.cassandra.ResultSetConversionStrategy.class, value)); return true;
-        case "session": ((CassandraEndpoint) target).setSession(property(camelContext, com.datastax.driver.core.Session.class, value)); return true;
-        case "username": ((CassandraEndpoint) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((CassandraEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "sendEmptyMessageWhenIdle": ((CassandraEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((CassandraEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((CassandraEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollStrategy": ((CassandraEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "lazyStartProducer": ((CassandraEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((CassandraEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((CassandraEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "backoffErrorThreshold": ((CassandraEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffIdleThreshold": ((CassandraEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffMultiplier": ((CassandraEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((CassandraEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((CassandraEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialDelay": ((CassandraEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatCount": ((CassandraEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runLoggingLevel": ((CassandraEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledExecutorService": ((CassandraEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((CassandraEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerProperties": ((CassandraEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startScheduler": ((CassandraEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeUnit": ((CassandraEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "useFixedDelay": ((CassandraEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "cluster": ((CassandraEndpoint) target).setCluster(property(camelContext, com.datastax.driver.core.Cluster.class, value)); return true;
-        case "clustername": ((CassandraEndpoint) target).setClusterName(property(camelContext, java.lang.String.class, value)); return true;
-        case "consistencylevel": ((CassandraEndpoint) target).setConsistencyLevel(property(camelContext, com.datastax.driver.core.ConsistencyLevel.class, value)); return true;
-        case "cql": ((CassandraEndpoint) target).setCql(property(camelContext, java.lang.String.class, value)); return true;
-        case "loadbalancingpolicy": ((CassandraEndpoint) target).setLoadBalancingPolicy(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((CassandraEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "preparestatements": ((CassandraEndpoint) target).setPrepareStatements(property(camelContext, boolean.class, value)); return true;
-        case "resultsetconversionstrategy": ((CassandraEndpoint) target).setResultSetConversionStrategy(property(camelContext, org.apache.camel.component.cassandra.ResultSetConversionStrategy.class, value)); return true;
-        case "session": ((CassandraEndpoint) target).setSession(property(camelContext, com.datastax.driver.core.Session.class, value)); return true;
-        case "username": ((CassandraEndpoint) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((CassandraEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "sendemptymessagewhenidle": ((CassandraEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((CassandraEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((CassandraEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollstrategy": ((CassandraEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "lazystartproducer": ((CassandraEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((CassandraEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((CassandraEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "backofferrorthreshold": ((CassandraEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffidlethreshold": ((CassandraEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffmultiplier": ((CassandraEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((CassandraEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((CassandraEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialdelay": ((CassandraEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatcount": ((CassandraEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runlogginglevel": ((CassandraEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledexecutorservice": ((CassandraEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((CassandraEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerproperties": ((CassandraEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startscheduler": ((CassandraEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeunit": ((CassandraEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "usefixeddelay": ((CassandraEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        CassandraEndpoint target = (CassandraEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "cluster": target.setCluster(property(camelContext, com.datastax.driver.core.Cluster.class, value)); return true;
+        case "clustername":
+        case "clusterName": target.setClusterName(property(camelContext, java.lang.String.class, value)); return true;
+        case "consistencylevel":
+        case "consistencyLevel": target.setConsistencyLevel(property(camelContext, com.datastax.driver.core.ConsistencyLevel.class, value)); return true;
+        case "cql": target.setCql(property(camelContext, java.lang.String.class, value)); return true;
+        case "loadbalancingpolicy":
+        case "loadBalancingPolicy": target.setLoadBalancingPolicy(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "preparestatements":
+        case "prepareStatements": target.setPrepareStatements(property(camelContext, boolean.class, value)); return true;
+        case "resultsetconversionstrategy":
+        case "resultSetConversionStrategy": target.setResultSetConversionStrategy(property(camelContext, org.apache.camel.component.cassandra.ResultSetConversionStrategy.class, value)); return true;
+        case "session": target.setSession(property(camelContext, com.datastax.driver.core.Session.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffmultiplier":
+        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "repeatcount":
+        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "runlogginglevel":
+        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "schedulerproperties":
+        case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "startscheduler":
+        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "timeunit":
+        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "usefixeddelay":
+        case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

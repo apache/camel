@@ -12,31 +12,16 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class ClassComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "cache": ((ClassComponent) target).setCache(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "scope": ((ClassComponent) target).setScope(property(camelContext, org.apache.camel.BeanScope.class, value)); return true;
-        case "basicPropertyBinding": ((ClassComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((ClassComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "cache": ((ClassComponent) target).setCache(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "scope": ((ClassComponent) target).setScope(property(camelContext, org.apache.camel.BeanScope.class, value)); return true;
-        case "basicpropertybinding": ((ClassComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((ClassComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        ClassComponent target = (ClassComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "cache": target.setCache(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "scope": target.setScope(property(camelContext, org.apache.camel.BeanScope.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

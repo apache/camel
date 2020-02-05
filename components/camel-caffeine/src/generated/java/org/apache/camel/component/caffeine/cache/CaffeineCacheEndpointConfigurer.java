@@ -12,59 +12,42 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class CaffeineCacheEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "action": ((CaffeineCacheEndpoint) target).getConfiguration().setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "cache": ((CaffeineCacheEndpoint) target).getConfiguration().setCache(property(camelContext, com.github.benmanes.caffeine.cache.Cache.class, value)); return true;
-        case "cacheLoader": ((CaffeineCacheEndpoint) target).getConfiguration().setCacheLoader(property(camelContext, com.github.benmanes.caffeine.cache.CacheLoader.class, value)); return true;
-        case "createCacheIfNotExist": ((CaffeineCacheEndpoint) target).getConfiguration().setCreateCacheIfNotExist(property(camelContext, boolean.class, value)); return true;
-        case "evictionType": ((CaffeineCacheEndpoint) target).getConfiguration().setEvictionType(property(camelContext, org.apache.camel.component.caffeine.EvictionType.class, value)); return true;
-        case "expireAfterAccessTime": ((CaffeineCacheEndpoint) target).getConfiguration().setExpireAfterAccessTime(property(camelContext, int.class, value)); return true;
-        case "expireAfterWriteTime": ((CaffeineCacheEndpoint) target).getConfiguration().setExpireAfterWriteTime(property(camelContext, int.class, value)); return true;
-        case "initialCapacity": ((CaffeineCacheEndpoint) target).getConfiguration().setInitialCapacity(property(camelContext, int.class, value)); return true;
-        case "key": ((CaffeineCacheEndpoint) target).getConfiguration().setKey(property(camelContext, java.lang.Object.class, value)); return true;
-        case "lazyStartProducer": ((CaffeineCacheEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "maximumSize": ((CaffeineCacheEndpoint) target).getConfiguration().setMaximumSize(property(camelContext, int.class, value)); return true;
-        case "removalListener": ((CaffeineCacheEndpoint) target).getConfiguration().setRemovalListener(property(camelContext, com.github.benmanes.caffeine.cache.RemovalListener.class, value)); return true;
-        case "statsCounter": ((CaffeineCacheEndpoint) target).getConfiguration().setStatsCounter(property(camelContext, com.github.benmanes.caffeine.cache.stats.StatsCounter.class, value)); return true;
-        case "statsEnabled": ((CaffeineCacheEndpoint) target).getConfiguration().setStatsEnabled(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((CaffeineCacheEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "keyType": ((CaffeineCacheEndpoint) target).getConfiguration().setKeyType(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": ((CaffeineCacheEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "valueType": ((CaffeineCacheEndpoint) target).getConfiguration().setValueType(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "action": ((CaffeineCacheEndpoint) target).getConfiguration().setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "cache": ((CaffeineCacheEndpoint) target).getConfiguration().setCache(property(camelContext, com.github.benmanes.caffeine.cache.Cache.class, value)); return true;
-        case "cacheloader": ((CaffeineCacheEndpoint) target).getConfiguration().setCacheLoader(property(camelContext, com.github.benmanes.caffeine.cache.CacheLoader.class, value)); return true;
-        case "createcacheifnotexist": ((CaffeineCacheEndpoint) target).getConfiguration().setCreateCacheIfNotExist(property(camelContext, boolean.class, value)); return true;
-        case "evictiontype": ((CaffeineCacheEndpoint) target).getConfiguration().setEvictionType(property(camelContext, org.apache.camel.component.caffeine.EvictionType.class, value)); return true;
-        case "expireafteraccesstime": ((CaffeineCacheEndpoint) target).getConfiguration().setExpireAfterAccessTime(property(camelContext, int.class, value)); return true;
-        case "expireafterwritetime": ((CaffeineCacheEndpoint) target).getConfiguration().setExpireAfterWriteTime(property(camelContext, int.class, value)); return true;
-        case "initialcapacity": ((CaffeineCacheEndpoint) target).getConfiguration().setInitialCapacity(property(camelContext, int.class, value)); return true;
-        case "key": ((CaffeineCacheEndpoint) target).getConfiguration().setKey(property(camelContext, java.lang.Object.class, value)); return true;
-        case "lazystartproducer": ((CaffeineCacheEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "maximumsize": ((CaffeineCacheEndpoint) target).getConfiguration().setMaximumSize(property(camelContext, int.class, value)); return true;
-        case "removallistener": ((CaffeineCacheEndpoint) target).getConfiguration().setRemovalListener(property(camelContext, com.github.benmanes.caffeine.cache.RemovalListener.class, value)); return true;
-        case "statscounter": ((CaffeineCacheEndpoint) target).getConfiguration().setStatsCounter(property(camelContext, com.github.benmanes.caffeine.cache.stats.StatsCounter.class, value)); return true;
-        case "statsenabled": ((CaffeineCacheEndpoint) target).getConfiguration().setStatsEnabled(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((CaffeineCacheEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "keytype": ((CaffeineCacheEndpoint) target).getConfiguration().setKeyType(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": ((CaffeineCacheEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "valuetype": ((CaffeineCacheEndpoint) target).getConfiguration().setValueType(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        CaffeineCacheEndpoint target = (CaffeineCacheEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": target.getConfiguration().setAction(property(camelContext, java.lang.String.class, value)); return true;
+        case "cache": target.getConfiguration().setCache(property(camelContext, com.github.benmanes.caffeine.cache.Cache.class, value)); return true;
+        case "cacheloader":
+        case "cacheLoader": target.getConfiguration().setCacheLoader(property(camelContext, com.github.benmanes.caffeine.cache.CacheLoader.class, value)); return true;
+        case "createcacheifnotexist":
+        case "createCacheIfNotExist": target.getConfiguration().setCreateCacheIfNotExist(property(camelContext, boolean.class, value)); return true;
+        case "evictiontype":
+        case "evictionType": target.getConfiguration().setEvictionType(property(camelContext, org.apache.camel.component.caffeine.EvictionType.class, value)); return true;
+        case "expireafteraccesstime":
+        case "expireAfterAccessTime": target.getConfiguration().setExpireAfterAccessTime(property(camelContext, int.class, value)); return true;
+        case "expireafterwritetime":
+        case "expireAfterWriteTime": target.getConfiguration().setExpireAfterWriteTime(property(camelContext, int.class, value)); return true;
+        case "initialcapacity":
+        case "initialCapacity": target.getConfiguration().setInitialCapacity(property(camelContext, int.class, value)); return true;
+        case "key": target.getConfiguration().setKey(property(camelContext, java.lang.Object.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maximumsize":
+        case "maximumSize": target.getConfiguration().setMaximumSize(property(camelContext, int.class, value)); return true;
+        case "removallistener":
+        case "removalListener": target.getConfiguration().setRemovalListener(property(camelContext, com.github.benmanes.caffeine.cache.RemovalListener.class, value)); return true;
+        case "statscounter":
+        case "statsCounter": target.getConfiguration().setStatsCounter(property(camelContext, com.github.benmanes.caffeine.cache.stats.StatsCounter.class, value)); return true;
+        case "statsenabled":
+        case "statsEnabled": target.getConfiguration().setStatsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "keytype":
+        case "keyType": target.getConfiguration().setKeyType(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "valuetype":
+        case "valueType": target.getConfiguration().setValueType(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

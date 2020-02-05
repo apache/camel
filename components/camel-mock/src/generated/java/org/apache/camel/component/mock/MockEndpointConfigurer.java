@@ -12,49 +12,35 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class MockEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "assertPeriod": ((MockEndpoint) target).setAssertPeriod(property(camelContext, long.class, value)); return true;
-        case "expectedCount": ((MockEndpoint) target).setExpectedCount(property(camelContext, int.class, value)); return true;
-        case "failFast": ((MockEndpoint) target).setFailFast(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((MockEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "reportGroup": ((MockEndpoint) target).setReportGroup(property(camelContext, int.class, value)); return true;
-        case "resultMinimumWaitTime": ((MockEndpoint) target).setResultMinimumWaitTime(property(camelContext, long.class, value)); return true;
-        case "resultWaitTime": ((MockEndpoint) target).setResultWaitTime(property(camelContext, long.class, value)); return true;
-        case "retainFirst": ((MockEndpoint) target).setRetainFirst(property(camelContext, int.class, value)); return true;
-        case "retainLast": ((MockEndpoint) target).setRetainLast(property(camelContext, int.class, value)); return true;
-        case "sleepForEmptyTest": ((MockEndpoint) target).setSleepForEmptyTest(property(camelContext, long.class, value)); return true;
-        case "copyOnExchange": ((MockEndpoint) target).setCopyOnExchange(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((MockEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((MockEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "assertperiod": ((MockEndpoint) target).setAssertPeriod(property(camelContext, long.class, value)); return true;
-        case "expectedcount": ((MockEndpoint) target).setExpectedCount(property(camelContext, int.class, value)); return true;
-        case "failfast": ((MockEndpoint) target).setFailFast(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((MockEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "reportgroup": ((MockEndpoint) target).setReportGroup(property(camelContext, int.class, value)); return true;
-        case "resultminimumwaittime": ((MockEndpoint) target).setResultMinimumWaitTime(property(camelContext, long.class, value)); return true;
-        case "resultwaittime": ((MockEndpoint) target).setResultWaitTime(property(camelContext, long.class, value)); return true;
-        case "retainfirst": ((MockEndpoint) target).setRetainFirst(property(camelContext, int.class, value)); return true;
-        case "retainlast": ((MockEndpoint) target).setRetainLast(property(camelContext, int.class, value)); return true;
-        case "sleepforemptytest": ((MockEndpoint) target).setSleepForEmptyTest(property(camelContext, long.class, value)); return true;
-        case "copyonexchange": ((MockEndpoint) target).setCopyOnExchange(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((MockEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((MockEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        MockEndpoint target = (MockEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "assertperiod":
+        case "assertPeriod": target.setAssertPeriod(property(camelContext, long.class, value)); return true;
+        case "expectedcount":
+        case "expectedCount": target.setExpectedCount(property(camelContext, int.class, value)); return true;
+        case "failfast":
+        case "failFast": target.setFailFast(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "reportgroup":
+        case "reportGroup": target.setReportGroup(property(camelContext, int.class, value)); return true;
+        case "resultminimumwaittime":
+        case "resultMinimumWaitTime": target.setResultMinimumWaitTime(property(camelContext, long.class, value)); return true;
+        case "resultwaittime":
+        case "resultWaitTime": target.setResultWaitTime(property(camelContext, long.class, value)); return true;
+        case "retainfirst":
+        case "retainFirst": target.setRetainFirst(property(camelContext, int.class, value)); return true;
+        case "retainlast":
+        case "retainLast": target.setRetainLast(property(camelContext, int.class, value)); return true;
+        case "sleepforemptytest":
+        case "sleepForEmptyTest": target.setSleepForEmptyTest(property(camelContext, long.class, value)); return true;
+        case "copyonexchange":
+        case "copyOnExchange": target.setCopyOnExchange(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

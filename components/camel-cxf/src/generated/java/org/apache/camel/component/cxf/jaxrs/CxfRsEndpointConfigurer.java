@@ -12,87 +12,69 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class CxfRsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "features": ((CxfRsEndpoint) target).setFeatures(property(camelContext, java.util.List.class, value)); return true;
-        case "loggingFeatureEnabled": ((CxfRsEndpoint) target).setLoggingFeatureEnabled(property(camelContext, boolean.class, value)); return true;
-        case "loggingSizeLimit": ((CxfRsEndpoint) target).setLoggingSizeLimit(property(camelContext, int.class, value)); return true;
-        case "modelRef": ((CxfRsEndpoint) target).setModelRef(property(camelContext, java.lang.String.class, value)); return true;
-        case "providers": ((CxfRsEndpoint) target).setProviders(property(camelContext, java.lang.String.class, value)); return true;
-        case "resourceClasses": ((CxfRsEndpoint) target).setResourceClasses(property(camelContext, java.util.List.class, value)); return true;
-        case "schemaLocations": ((CxfRsEndpoint) target).setSchemaLocations(property(camelContext, java.util.List.class, value)); return true;
-        case "skipFaultLogging": ((CxfRsEndpoint) target).setSkipFaultLogging(property(camelContext, boolean.class, value)); return true;
-        case "bindingStyle": ((CxfRsEndpoint) target).setBindingStyle(property(camelContext, org.apache.camel.component.cxf.jaxrs.BindingStyle.class, value)); return true;
-        case "bridgeErrorHandler": ((CxfRsEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "publishedEndpointUrl": ((CxfRsEndpoint) target).setPublishedEndpointUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionHandler": ((CxfRsEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((CxfRsEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "serviceBeans": ((CxfRsEndpoint) target).setServiceBeans(property(camelContext, java.lang.String.class, value)); return true;
-        case "cookieHandler": ((CxfRsEndpoint) target).setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
-        case "hostnameVerifier": ((CxfRsEndpoint) target).setHostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
-        case "lazyStartProducer": ((CxfRsEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "sslContextParameters": ((CxfRsEndpoint) target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "throwExceptionOnFailure": ((CxfRsEndpoint) target).setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
-        case "httpClientAPI": ((CxfRsEndpoint) target).setHttpClientAPI(property(camelContext, boolean.class, value)); return true;
-        case "ignoreDeleteMethodMessageBody": ((CxfRsEndpoint) target).setIgnoreDeleteMethodMessageBody(property(camelContext, boolean.class, value)); return true;
-        case "maxClientCacheSize": ((CxfRsEndpoint) target).setMaxClientCacheSize(property(camelContext, int.class, value)); return true;
-        case "basicPropertyBinding": ((CxfRsEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "binding": ((CxfRsEndpoint) target).setBinding(property(camelContext, org.apache.camel.component.cxf.jaxrs.CxfRsBinding.class, value)); return true;
-        case "bus": ((CxfRsEndpoint) target).setBus(property(camelContext, org.apache.cxf.Bus.class, value)); return true;
-        case "continuationTimeout": ((CxfRsEndpoint) target).setContinuationTimeout(property(camelContext, long.class, value)); return true;
-        case "cxfRsConfigurer": ((CxfRsEndpoint) target).setCxfRsConfigurer(property(camelContext, org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer.class, value)); return true;
-        case "defaultBus": ((CxfRsEndpoint) target).setDefaultBus(property(camelContext, boolean.class, value)); return true;
-        case "headerFilterStrategy": ((CxfRsEndpoint) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "performInvocation": ((CxfRsEndpoint) target).setPerformInvocation(property(camelContext, boolean.class, value)); return true;
-        case "propagateContexts": ((CxfRsEndpoint) target).setPropagateContexts(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((CxfRsEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "features": ((CxfRsEndpoint) target).setFeatures(property(camelContext, java.util.List.class, value)); return true;
-        case "loggingfeatureenabled": ((CxfRsEndpoint) target).setLoggingFeatureEnabled(property(camelContext, boolean.class, value)); return true;
-        case "loggingsizelimit": ((CxfRsEndpoint) target).setLoggingSizeLimit(property(camelContext, int.class, value)); return true;
-        case "modelref": ((CxfRsEndpoint) target).setModelRef(property(camelContext, java.lang.String.class, value)); return true;
-        case "providers": ((CxfRsEndpoint) target).setProviders(property(camelContext, java.lang.String.class, value)); return true;
-        case "resourceclasses": ((CxfRsEndpoint) target).setResourceClasses(property(camelContext, java.util.List.class, value)); return true;
-        case "schemalocations": ((CxfRsEndpoint) target).setSchemaLocations(property(camelContext, java.util.List.class, value)); return true;
-        case "skipfaultlogging": ((CxfRsEndpoint) target).setSkipFaultLogging(property(camelContext, boolean.class, value)); return true;
-        case "bindingstyle": ((CxfRsEndpoint) target).setBindingStyle(property(camelContext, org.apache.camel.component.cxf.jaxrs.BindingStyle.class, value)); return true;
-        case "bridgeerrorhandler": ((CxfRsEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "publishedendpointurl": ((CxfRsEndpoint) target).setPublishedEndpointUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionhandler": ((CxfRsEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((CxfRsEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "servicebeans": ((CxfRsEndpoint) target).setServiceBeans(property(camelContext, java.lang.String.class, value)); return true;
-        case "cookiehandler": ((CxfRsEndpoint) target).setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
-        case "hostnameverifier": ((CxfRsEndpoint) target).setHostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
-        case "lazystartproducer": ((CxfRsEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "sslcontextparameters": ((CxfRsEndpoint) target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "throwexceptiononfailure": ((CxfRsEndpoint) target).setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
-        case "httpclientapi": ((CxfRsEndpoint) target).setHttpClientAPI(property(camelContext, boolean.class, value)); return true;
-        case "ignoredeletemethodmessagebody": ((CxfRsEndpoint) target).setIgnoreDeleteMethodMessageBody(property(camelContext, boolean.class, value)); return true;
-        case "maxclientcachesize": ((CxfRsEndpoint) target).setMaxClientCacheSize(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding": ((CxfRsEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "binding": ((CxfRsEndpoint) target).setBinding(property(camelContext, org.apache.camel.component.cxf.jaxrs.CxfRsBinding.class, value)); return true;
-        case "bus": ((CxfRsEndpoint) target).setBus(property(camelContext, org.apache.cxf.Bus.class, value)); return true;
-        case "continuationtimeout": ((CxfRsEndpoint) target).setContinuationTimeout(property(camelContext, long.class, value)); return true;
-        case "cxfrsconfigurer": ((CxfRsEndpoint) target).setCxfRsConfigurer(property(camelContext, org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer.class, value)); return true;
-        case "defaultbus": ((CxfRsEndpoint) target).setDefaultBus(property(camelContext, boolean.class, value)); return true;
-        case "headerfilterstrategy": ((CxfRsEndpoint) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "performinvocation": ((CxfRsEndpoint) target).setPerformInvocation(property(camelContext, boolean.class, value)); return true;
-        case "propagatecontexts": ((CxfRsEndpoint) target).setPropagateContexts(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((CxfRsEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        CxfRsEndpoint target = (CxfRsEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "features": target.setFeatures(property(camelContext, java.util.List.class, value)); return true;
+        case "loggingfeatureenabled":
+        case "loggingFeatureEnabled": target.setLoggingFeatureEnabled(property(camelContext, boolean.class, value)); return true;
+        case "loggingsizelimit":
+        case "loggingSizeLimit": target.setLoggingSizeLimit(property(camelContext, int.class, value)); return true;
+        case "modelref":
+        case "modelRef": target.setModelRef(property(camelContext, java.lang.String.class, value)); return true;
+        case "providers": target.setProviders(property(camelContext, java.lang.String.class, value)); return true;
+        case "resourceclasses":
+        case "resourceClasses": target.setResourceClasses(property(camelContext, java.util.List.class, value)); return true;
+        case "schemalocations":
+        case "schemaLocations": target.setSchemaLocations(property(camelContext, java.util.List.class, value)); return true;
+        case "skipfaultlogging":
+        case "skipFaultLogging": target.setSkipFaultLogging(property(camelContext, boolean.class, value)); return true;
+        case "bindingstyle":
+        case "bindingStyle": target.setBindingStyle(property(camelContext, org.apache.camel.component.cxf.jaxrs.BindingStyle.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "publishedendpointurl":
+        case "publishedEndpointUrl": target.setPublishedEndpointUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "servicebeans":
+        case "serviceBeans": target.setServiceBeans(property(camelContext, java.lang.String.class, value)); return true;
+        case "cookiehandler":
+        case "cookieHandler": target.setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
+        case "hostnameverifier":
+        case "hostnameVerifier": target.setHostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": target.setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
+        case "httpclientapi":
+        case "httpClientAPI": target.setHttpClientAPI(property(camelContext, boolean.class, value)); return true;
+        case "ignoredeletemethodmessagebody":
+        case "ignoreDeleteMethodMessageBody": target.setIgnoreDeleteMethodMessageBody(property(camelContext, boolean.class, value)); return true;
+        case "maxclientcachesize":
+        case "maxClientCacheSize": target.setMaxClientCacheSize(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "binding": target.setBinding(property(camelContext, org.apache.camel.component.cxf.jaxrs.CxfRsBinding.class, value)); return true;
+        case "bus": target.setBus(property(camelContext, org.apache.cxf.Bus.class, value)); return true;
+        case "continuationtimeout":
+        case "continuationTimeout": target.setContinuationTimeout(property(camelContext, long.class, value)); return true;
+        case "cxfrsconfigurer":
+        case "cxfRsConfigurer": target.setCxfRsConfigurer(property(camelContext, org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer.class, value)); return true;
+        case "defaultbus":
+        case "defaultBus": target.setDefaultBus(property(camelContext, boolean.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "performinvocation":
+        case "performInvocation": target.setPerformInvocation(property(camelContext, boolean.class, value)); return true;
+        case "propagatecontexts":
+        case "propagateContexts": target.setPropagateContexts(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

@@ -12,121 +12,101 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "as2From": ((AS2Endpoint) target).getConfiguration().setAs2From(property(camelContext, java.lang.String.class, value)); return true;
-        case "as2MessageStructure": ((AS2Endpoint) target).getConfiguration().setAs2MessageStructure(property(camelContext, org.apache.camel.component.as2.api.AS2MessageStructure.class, value)); return true;
-        case "as2To": ((AS2Endpoint) target).getConfiguration().setAs2To(property(camelContext, java.lang.String.class, value)); return true;
-        case "as2Version": ((AS2Endpoint) target).getConfiguration().setAs2Version(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientFqdn": ((AS2Endpoint) target).getConfiguration().setClientFqdn(property(camelContext, java.lang.String.class, value)); return true;
-        case "compressionAlgorithm": ((AS2Endpoint) target).getConfiguration().setCompressionAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class, value)); return true;
-        case "decryptingPrivateKey": ((AS2Endpoint) target).getConfiguration().setDecryptingPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
-        case "dispositionNotificationTo": ((AS2Endpoint) target).getConfiguration().setDispositionNotificationTo(property(camelContext, java.lang.String.class, value)); return true;
-        case "ediMessageTransferEncoding": ((AS2Endpoint) target).getConfiguration().setEdiMessageTransferEncoding(property(camelContext, java.lang.String.class, value)); return true;
-        case "ediMessageType": ((AS2Endpoint) target).getConfiguration().setEdiMessageType(property(camelContext, org.apache.http.entity.ContentType.class, value)); return true;
-        case "encryptingAlgorithm": ((AS2Endpoint) target).getConfiguration().setEncryptingAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class, value)); return true;
-        case "encryptingCertificateChain": ((AS2Endpoint) target).getConfiguration().setEncryptingCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
-        case "from": ((AS2Endpoint) target).getConfiguration().setFrom(property(camelContext, java.lang.String.class, value)); return true;
-        case "inBody": ((AS2Endpoint) target).setInBody(property(camelContext, java.lang.String.class, value)); return true;
-        case "mdnMessageTemplate": ((AS2Endpoint) target).getConfiguration().setMdnMessageTemplate(property(camelContext, java.lang.String.class, value)); return true;
-        case "requestUri": ((AS2Endpoint) target).getConfiguration().setRequestUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "server": ((AS2Endpoint) target).getConfiguration().setServer(property(camelContext, java.lang.String.class, value)); return true;
-        case "serverFqdn": ((AS2Endpoint) target).getConfiguration().setServerFqdn(property(camelContext, java.lang.String.class, value)); return true;
-        case "serverPortNumber": ((AS2Endpoint) target).getConfiguration().setServerPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "signedReceiptMicAlgorithms": ((AS2Endpoint) target).getConfiguration().setSignedReceiptMicAlgorithms(property(camelContext, java.lang.String[].class, value)); return true;
-        case "signingAlgorithm": ((AS2Endpoint) target).getConfiguration().setSigningAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class, value)); return true;
-        case "signingCertificateChain": ((AS2Endpoint) target).getConfiguration().setSigningCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
-        case "signingPrivateKey": ((AS2Endpoint) target).getConfiguration().setSigningPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
-        case "subject": ((AS2Endpoint) target).getConfiguration().setSubject(property(camelContext, java.lang.String.class, value)); return true;
-        case "targetHostname": ((AS2Endpoint) target).getConfiguration().setTargetHostname(property(camelContext, java.lang.String.class, value)); return true;
-        case "targetPortNumber": ((AS2Endpoint) target).getConfiguration().setTargetPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "userAgent": ((AS2Endpoint) target).getConfiguration().setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((AS2Endpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "sendEmptyMessageWhenIdle": ((AS2Endpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((AS2Endpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((AS2Endpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollStrategy": ((AS2Endpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "lazyStartProducer": ((AS2Endpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((AS2Endpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((AS2Endpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "backoffErrorThreshold": ((AS2Endpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffIdleThreshold": ((AS2Endpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffMultiplier": ((AS2Endpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((AS2Endpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((AS2Endpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialDelay": ((AS2Endpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatCount": ((AS2Endpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runLoggingLevel": ((AS2Endpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledExecutorService": ((AS2Endpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((AS2Endpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerProperties": ((AS2Endpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startScheduler": ((AS2Endpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeUnit": ((AS2Endpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "useFixedDelay": ((AS2Endpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "as2from": ((AS2Endpoint) target).getConfiguration().setAs2From(property(camelContext, java.lang.String.class, value)); return true;
-        case "as2messagestructure": ((AS2Endpoint) target).getConfiguration().setAs2MessageStructure(property(camelContext, org.apache.camel.component.as2.api.AS2MessageStructure.class, value)); return true;
-        case "as2to": ((AS2Endpoint) target).getConfiguration().setAs2To(property(camelContext, java.lang.String.class, value)); return true;
-        case "as2version": ((AS2Endpoint) target).getConfiguration().setAs2Version(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientfqdn": ((AS2Endpoint) target).getConfiguration().setClientFqdn(property(camelContext, java.lang.String.class, value)); return true;
-        case "compressionalgorithm": ((AS2Endpoint) target).getConfiguration().setCompressionAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class, value)); return true;
-        case "decryptingprivatekey": ((AS2Endpoint) target).getConfiguration().setDecryptingPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
-        case "dispositionnotificationto": ((AS2Endpoint) target).getConfiguration().setDispositionNotificationTo(property(camelContext, java.lang.String.class, value)); return true;
-        case "edimessagetransferencoding": ((AS2Endpoint) target).getConfiguration().setEdiMessageTransferEncoding(property(camelContext, java.lang.String.class, value)); return true;
-        case "edimessagetype": ((AS2Endpoint) target).getConfiguration().setEdiMessageType(property(camelContext, org.apache.http.entity.ContentType.class, value)); return true;
-        case "encryptingalgorithm": ((AS2Endpoint) target).getConfiguration().setEncryptingAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class, value)); return true;
-        case "encryptingcertificatechain": ((AS2Endpoint) target).getConfiguration().setEncryptingCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
-        case "from": ((AS2Endpoint) target).getConfiguration().setFrom(property(camelContext, java.lang.String.class, value)); return true;
-        case "inbody": ((AS2Endpoint) target).setInBody(property(camelContext, java.lang.String.class, value)); return true;
-        case "mdnmessagetemplate": ((AS2Endpoint) target).getConfiguration().setMdnMessageTemplate(property(camelContext, java.lang.String.class, value)); return true;
-        case "requesturi": ((AS2Endpoint) target).getConfiguration().setRequestUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "server": ((AS2Endpoint) target).getConfiguration().setServer(property(camelContext, java.lang.String.class, value)); return true;
-        case "serverfqdn": ((AS2Endpoint) target).getConfiguration().setServerFqdn(property(camelContext, java.lang.String.class, value)); return true;
-        case "serverportnumber": ((AS2Endpoint) target).getConfiguration().setServerPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "signedreceiptmicalgorithms": ((AS2Endpoint) target).getConfiguration().setSignedReceiptMicAlgorithms(property(camelContext, java.lang.String[].class, value)); return true;
-        case "signingalgorithm": ((AS2Endpoint) target).getConfiguration().setSigningAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class, value)); return true;
-        case "signingcertificatechain": ((AS2Endpoint) target).getConfiguration().setSigningCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
-        case "signingprivatekey": ((AS2Endpoint) target).getConfiguration().setSigningPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
-        case "subject": ((AS2Endpoint) target).getConfiguration().setSubject(property(camelContext, java.lang.String.class, value)); return true;
-        case "targethostname": ((AS2Endpoint) target).getConfiguration().setTargetHostname(property(camelContext, java.lang.String.class, value)); return true;
-        case "targetportnumber": ((AS2Endpoint) target).getConfiguration().setTargetPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "useragent": ((AS2Endpoint) target).getConfiguration().setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((AS2Endpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "sendemptymessagewhenidle": ((AS2Endpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((AS2Endpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((AS2Endpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollstrategy": ((AS2Endpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "lazystartproducer": ((AS2Endpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((AS2Endpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((AS2Endpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "backofferrorthreshold": ((AS2Endpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffidlethreshold": ((AS2Endpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffmultiplier": ((AS2Endpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((AS2Endpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((AS2Endpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialdelay": ((AS2Endpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatcount": ((AS2Endpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runlogginglevel": ((AS2Endpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledexecutorservice": ((AS2Endpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((AS2Endpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerproperties": ((AS2Endpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startscheduler": ((AS2Endpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeunit": ((AS2Endpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "usefixeddelay": ((AS2Endpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        AS2Endpoint target = (AS2Endpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "as2from":
+        case "as2From": target.getConfiguration().setAs2From(property(camelContext, java.lang.String.class, value)); return true;
+        case "as2messagestructure":
+        case "as2MessageStructure": target.getConfiguration().setAs2MessageStructure(property(camelContext, org.apache.camel.component.as2.api.AS2MessageStructure.class, value)); return true;
+        case "as2to":
+        case "as2To": target.getConfiguration().setAs2To(property(camelContext, java.lang.String.class, value)); return true;
+        case "as2version":
+        case "as2Version": target.getConfiguration().setAs2Version(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientfqdn":
+        case "clientFqdn": target.getConfiguration().setClientFqdn(property(camelContext, java.lang.String.class, value)); return true;
+        case "compressionalgorithm":
+        case "compressionAlgorithm": target.getConfiguration().setCompressionAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class, value)); return true;
+        case "decryptingprivatekey":
+        case "decryptingPrivateKey": target.getConfiguration().setDecryptingPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
+        case "dispositionnotificationto":
+        case "dispositionNotificationTo": target.getConfiguration().setDispositionNotificationTo(property(camelContext, java.lang.String.class, value)); return true;
+        case "edimessagetransferencoding":
+        case "ediMessageTransferEncoding": target.getConfiguration().setEdiMessageTransferEncoding(property(camelContext, java.lang.String.class, value)); return true;
+        case "edimessagetype":
+        case "ediMessageType": target.getConfiguration().setEdiMessageType(property(camelContext, org.apache.http.entity.ContentType.class, value)); return true;
+        case "encryptingalgorithm":
+        case "encryptingAlgorithm": target.getConfiguration().setEncryptingAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class, value)); return true;
+        case "encryptingcertificatechain":
+        case "encryptingCertificateChain": target.getConfiguration().setEncryptingCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
+        case "from": target.getConfiguration().setFrom(property(camelContext, java.lang.String.class, value)); return true;
+        case "inbody":
+        case "inBody": target.setInBody(property(camelContext, java.lang.String.class, value)); return true;
+        case "mdnmessagetemplate":
+        case "mdnMessageTemplate": target.getConfiguration().setMdnMessageTemplate(property(camelContext, java.lang.String.class, value)); return true;
+        case "requesturi":
+        case "requestUri": target.getConfiguration().setRequestUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "server": target.getConfiguration().setServer(property(camelContext, java.lang.String.class, value)); return true;
+        case "serverfqdn":
+        case "serverFqdn": target.getConfiguration().setServerFqdn(property(camelContext, java.lang.String.class, value)); return true;
+        case "serverportnumber":
+        case "serverPortNumber": target.getConfiguration().setServerPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "signedreceiptmicalgorithms":
+        case "signedReceiptMicAlgorithms": target.getConfiguration().setSignedReceiptMicAlgorithms(property(camelContext, java.lang.String[].class, value)); return true;
+        case "signingalgorithm":
+        case "signingAlgorithm": target.getConfiguration().setSigningAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class, value)); return true;
+        case "signingcertificatechain":
+        case "signingCertificateChain": target.getConfiguration().setSigningCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
+        case "signingprivatekey":
+        case "signingPrivateKey": target.getConfiguration().setSigningPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
+        case "subject": target.getConfiguration().setSubject(property(camelContext, java.lang.String.class, value)); return true;
+        case "targethostname":
+        case "targetHostname": target.getConfiguration().setTargetHostname(property(camelContext, java.lang.String.class, value)); return true;
+        case "targetportnumber":
+        case "targetPortNumber": target.getConfiguration().setTargetPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "useragent":
+        case "userAgent": target.getConfiguration().setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffmultiplier":
+        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "repeatcount":
+        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "runlogginglevel":
+        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "schedulerproperties":
+        case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "startscheduler":
+        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "timeunit":
+        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "usefixeddelay":
+        case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

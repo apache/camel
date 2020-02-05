@@ -12,57 +12,41 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class ElasticsearchEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "connectionTimeout": ((ElasticsearchEndpoint) target).getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
-        case "disconnect": ((ElasticsearchEndpoint) target).getConfiguration().setDisconnect(property(camelContext, boolean.class, value)); return true;
-        case "enableSniffer": ((ElasticsearchEndpoint) target).getConfiguration().setEnableSniffer(property(camelContext, boolean.class, value)); return true;
-        case "enableSSL": ((ElasticsearchEndpoint) target).getConfiguration().setEnableSSL(property(camelContext, boolean.class, value)); return true;
-        case "hostAddresses": ((ElasticsearchEndpoint) target).getConfiguration().setHostAddresses(property(camelContext, java.lang.String.class, value)); return true;
-        case "indexName": ((ElasticsearchEndpoint) target).getConfiguration().setIndexName(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazyStartProducer": ((ElasticsearchEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "maxRetryTimeout": ((ElasticsearchEndpoint) target).getConfiguration().setMaxRetryTimeout(property(camelContext, int.class, value)); return true;
-        case "operation": ((ElasticsearchEndpoint) target).getConfiguration().setOperation(property(camelContext, org.apache.camel.component.elasticsearch.ElasticsearchOperation.class, value)); return true;
-        case "scrollKeepAliveMs": ((ElasticsearchEndpoint) target).getConfiguration().setScrollKeepAliveMs(property(camelContext, int.class, value)); return true;
-        case "sniffAfterFailureDelay": ((ElasticsearchEndpoint) target).getConfiguration().setSniffAfterFailureDelay(property(camelContext, int.class, value)); return true;
-        case "snifferInterval": ((ElasticsearchEndpoint) target).getConfiguration().setSnifferInterval(property(camelContext, int.class, value)); return true;
-        case "socketTimeout": ((ElasticsearchEndpoint) target).getConfiguration().setSocketTimeout(property(camelContext, int.class, value)); return true;
-        case "useScroll": ((ElasticsearchEndpoint) target).getConfiguration().setUseScroll(property(camelContext, boolean.class, value)); return true;
-        case "waitForActiveShards": ((ElasticsearchEndpoint) target).getConfiguration().setWaitForActiveShards(property(camelContext, int.class, value)); return true;
-        case "basicPropertyBinding": ((ElasticsearchEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((ElasticsearchEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "connectiontimeout": ((ElasticsearchEndpoint) target).getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
-        case "disconnect": ((ElasticsearchEndpoint) target).getConfiguration().setDisconnect(property(camelContext, boolean.class, value)); return true;
-        case "enablesniffer": ((ElasticsearchEndpoint) target).getConfiguration().setEnableSniffer(property(camelContext, boolean.class, value)); return true;
-        case "enablessl": ((ElasticsearchEndpoint) target).getConfiguration().setEnableSSL(property(camelContext, boolean.class, value)); return true;
-        case "hostaddresses": ((ElasticsearchEndpoint) target).getConfiguration().setHostAddresses(property(camelContext, java.lang.String.class, value)); return true;
-        case "indexname": ((ElasticsearchEndpoint) target).getConfiguration().setIndexName(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer": ((ElasticsearchEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "maxretrytimeout": ((ElasticsearchEndpoint) target).getConfiguration().setMaxRetryTimeout(property(camelContext, int.class, value)); return true;
-        case "operation": ((ElasticsearchEndpoint) target).getConfiguration().setOperation(property(camelContext, org.apache.camel.component.elasticsearch.ElasticsearchOperation.class, value)); return true;
-        case "scrollkeepalivems": ((ElasticsearchEndpoint) target).getConfiguration().setScrollKeepAliveMs(property(camelContext, int.class, value)); return true;
-        case "sniffafterfailuredelay": ((ElasticsearchEndpoint) target).getConfiguration().setSniffAfterFailureDelay(property(camelContext, int.class, value)); return true;
-        case "snifferinterval": ((ElasticsearchEndpoint) target).getConfiguration().setSnifferInterval(property(camelContext, int.class, value)); return true;
-        case "sockettimeout": ((ElasticsearchEndpoint) target).getConfiguration().setSocketTimeout(property(camelContext, int.class, value)); return true;
-        case "usescroll": ((ElasticsearchEndpoint) target).getConfiguration().setUseScroll(property(camelContext, boolean.class, value)); return true;
-        case "waitforactiveshards": ((ElasticsearchEndpoint) target).getConfiguration().setWaitForActiveShards(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding": ((ElasticsearchEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((ElasticsearchEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        ElasticsearchEndpoint target = (ElasticsearchEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "connectiontimeout":
+        case "connectionTimeout": target.getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
+        case "disconnect": target.getConfiguration().setDisconnect(property(camelContext, boolean.class, value)); return true;
+        case "enablesniffer":
+        case "enableSniffer": target.getConfiguration().setEnableSniffer(property(camelContext, boolean.class, value)); return true;
+        case "enablessl":
+        case "enableSSL": target.getConfiguration().setEnableSSL(property(camelContext, boolean.class, value)); return true;
+        case "hostaddresses":
+        case "hostAddresses": target.getConfiguration().setHostAddresses(property(camelContext, java.lang.String.class, value)); return true;
+        case "indexname":
+        case "indexName": target.getConfiguration().setIndexName(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxretrytimeout":
+        case "maxRetryTimeout": target.getConfiguration().setMaxRetryTimeout(property(camelContext, int.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.elasticsearch.ElasticsearchOperation.class, value)); return true;
+        case "scrollkeepalivems":
+        case "scrollKeepAliveMs": target.getConfiguration().setScrollKeepAliveMs(property(camelContext, int.class, value)); return true;
+        case "sniffafterfailuredelay":
+        case "sniffAfterFailureDelay": target.getConfiguration().setSniffAfterFailureDelay(property(camelContext, int.class, value)); return true;
+        case "snifferinterval":
+        case "snifferInterval": target.getConfiguration().setSnifferInterval(property(camelContext, int.class, value)); return true;
+        case "sockettimeout":
+        case "socketTimeout": target.getConfiguration().setSocketTimeout(property(camelContext, int.class, value)); return true;
+        case "usescroll":
+        case "useScroll": target.getConfiguration().setUseScroll(property(camelContext, boolean.class, value)); return true;
+        case "waitforactiveshards":
+        case "waitForActiveShards": target.getConfiguration().setWaitForActiveShards(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

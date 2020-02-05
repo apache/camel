@@ -12,85 +12,66 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class YammerEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "useJson": ((YammerEndpoint) target).getConfig().setUseJson(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((YammerEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "delay": ((YammerEndpoint) target).getConfig().setDelay(property(camelContext, long.class, value)); return true;
-        case "limit": ((YammerEndpoint) target).getConfig().setLimit(property(camelContext, int.class, value)); return true;
-        case "newerThan": ((YammerEndpoint) target).getConfig().setNewerThan(property(camelContext, long.class, value)); return true;
-        case "olderThan": ((YammerEndpoint) target).getConfig().setOlderThan(property(camelContext, long.class, value)); return true;
-        case "sendEmptyMessageWhenIdle": ((YammerEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "threaded": ((YammerEndpoint) target).getConfig().setThreaded(property(camelContext, java.lang.String.class, value)); return true;
-        case "userId": ((YammerEndpoint) target).getConfig().setUserId(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionHandler": ((YammerEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((YammerEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollStrategy": ((YammerEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "lazyStartProducer": ((YammerEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((YammerEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((YammerEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "backoffErrorThreshold": ((YammerEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffIdleThreshold": ((YammerEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffMultiplier": ((YammerEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "greedy": ((YammerEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialDelay": ((YammerEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatCount": ((YammerEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runLoggingLevel": ((YammerEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledExecutorService": ((YammerEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((YammerEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerProperties": ((YammerEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startScheduler": ((YammerEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeUnit": ((YammerEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "useFixedDelay": ((YammerEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "accessToken": ((YammerEndpoint) target).getConfig().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "consumerKey": ((YammerEndpoint) target).getConfig().setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "consumerSecret": ((YammerEndpoint) target).getConfig().setConsumerSecret(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "usejson": ((YammerEndpoint) target).getConfig().setUseJson(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((YammerEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "delay": ((YammerEndpoint) target).getConfig().setDelay(property(camelContext, long.class, value)); return true;
-        case "limit": ((YammerEndpoint) target).getConfig().setLimit(property(camelContext, int.class, value)); return true;
-        case "newerthan": ((YammerEndpoint) target).getConfig().setNewerThan(property(camelContext, long.class, value)); return true;
-        case "olderthan": ((YammerEndpoint) target).getConfig().setOlderThan(property(camelContext, long.class, value)); return true;
-        case "sendemptymessagewhenidle": ((YammerEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "threaded": ((YammerEndpoint) target).getConfig().setThreaded(property(camelContext, java.lang.String.class, value)); return true;
-        case "userid": ((YammerEndpoint) target).getConfig().setUserId(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionhandler": ((YammerEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((YammerEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollstrategy": ((YammerEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "lazystartproducer": ((YammerEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((YammerEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((YammerEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "backofferrorthreshold": ((YammerEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffidlethreshold": ((YammerEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffmultiplier": ((YammerEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "greedy": ((YammerEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialdelay": ((YammerEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatcount": ((YammerEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runlogginglevel": ((YammerEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledexecutorservice": ((YammerEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((YammerEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerproperties": ((YammerEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startscheduler": ((YammerEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeunit": ((YammerEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "usefixeddelay": ((YammerEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "accesstoken": ((YammerEndpoint) target).getConfig().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "consumerkey": ((YammerEndpoint) target).getConfig().setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "consumersecret": ((YammerEndpoint) target).getConfig().setConsumerSecret(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        YammerEndpoint target = (YammerEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "usejson":
+        case "useJson": target.getConfig().setUseJson(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "delay": target.getConfig().setDelay(property(camelContext, long.class, value)); return true;
+        case "limit": target.getConfig().setLimit(property(camelContext, int.class, value)); return true;
+        case "newerthan":
+        case "newerThan": target.getConfig().setNewerThan(property(camelContext, long.class, value)); return true;
+        case "olderthan":
+        case "olderThan": target.getConfig().setOlderThan(property(camelContext, long.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "threaded": target.getConfig().setThreaded(property(camelContext, java.lang.String.class, value)); return true;
+        case "userid":
+        case "userId": target.getConfig().setUserId(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffmultiplier":
+        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "repeatcount":
+        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "runlogginglevel":
+        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "schedulerproperties":
+        case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "startscheduler":
+        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "timeunit":
+        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "usefixeddelay":
+        case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "accesstoken":
+        case "accessToken": target.getConfig().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "consumerkey":
+        case "consumerKey": target.getConfig().setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "consumersecret":
+        case "consumerSecret": target.getConfig().setConsumerSecret(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

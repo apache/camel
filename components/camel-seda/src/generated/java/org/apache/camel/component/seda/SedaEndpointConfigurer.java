@@ -12,63 +12,46 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class SedaEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "size": ((SedaEndpoint) target).setSize(property(camelContext, int.class, value)); return true;
-        case "bridgeErrorHandler": ((SedaEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "concurrentConsumers": ((SedaEndpoint) target).setConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "exceptionHandler": ((SedaEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((SedaEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "limitConcurrentConsumers": ((SedaEndpoint) target).setLimitConcurrentConsumers(property(camelContext, boolean.class, value)); return true;
-        case "multipleConsumers": ((SedaEndpoint) target).setMultipleConsumers(property(camelContext, boolean.class, value)); return true;
-        case "pollTimeout": ((SedaEndpoint) target).setPollTimeout(property(camelContext, int.class, value)); return true;
-        case "purgeWhenStopping": ((SedaEndpoint) target).setPurgeWhenStopping(property(camelContext, boolean.class, value)); return true;
-        case "blockWhenFull": ((SedaEndpoint) target).setBlockWhenFull(property(camelContext, boolean.class, value)); return true;
-        case "discardIfNoConsumers": ((SedaEndpoint) target).setDiscardIfNoConsumers(property(camelContext, boolean.class, value)); return true;
-        case "discardWhenFull": ((SedaEndpoint) target).setDiscardWhenFull(property(camelContext, boolean.class, value)); return true;
-        case "failIfNoConsumers": ((SedaEndpoint) target).setFailIfNoConsumers(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((SedaEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "offerTimeout": ((SedaEndpoint) target).setOfferTimeout(property(camelContext, long.class, value)); return true;
-        case "timeout": ((SedaEndpoint) target).setTimeout(property(camelContext, long.class, value)); return true;
-        case "waitForTaskToComplete": ((SedaEndpoint) target).setWaitForTaskToComplete(property(camelContext, org.apache.camel.WaitForTaskToComplete.class, value)); return true;
-        case "basicPropertyBinding": ((SedaEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "queue": ((SedaEndpoint) target).setQueue(property(camelContext, java.util.concurrent.BlockingQueue.class, value)); return true;
-        case "synchronous": ((SedaEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "size": ((SedaEndpoint) target).setSize(property(camelContext, int.class, value)); return true;
-        case "bridgeerrorhandler": ((SedaEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "concurrentconsumers": ((SedaEndpoint) target).setConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "exceptionhandler": ((SedaEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((SedaEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "limitconcurrentconsumers": ((SedaEndpoint) target).setLimitConcurrentConsumers(property(camelContext, boolean.class, value)); return true;
-        case "multipleconsumers": ((SedaEndpoint) target).setMultipleConsumers(property(camelContext, boolean.class, value)); return true;
-        case "polltimeout": ((SedaEndpoint) target).setPollTimeout(property(camelContext, int.class, value)); return true;
-        case "purgewhenstopping": ((SedaEndpoint) target).setPurgeWhenStopping(property(camelContext, boolean.class, value)); return true;
-        case "blockwhenfull": ((SedaEndpoint) target).setBlockWhenFull(property(camelContext, boolean.class, value)); return true;
-        case "discardifnoconsumers": ((SedaEndpoint) target).setDiscardIfNoConsumers(property(camelContext, boolean.class, value)); return true;
-        case "discardwhenfull": ((SedaEndpoint) target).setDiscardWhenFull(property(camelContext, boolean.class, value)); return true;
-        case "failifnoconsumers": ((SedaEndpoint) target).setFailIfNoConsumers(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((SedaEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "offertimeout": ((SedaEndpoint) target).setOfferTimeout(property(camelContext, long.class, value)); return true;
-        case "timeout": ((SedaEndpoint) target).setTimeout(property(camelContext, long.class, value)); return true;
-        case "waitfortasktocomplete": ((SedaEndpoint) target).setWaitForTaskToComplete(property(camelContext, org.apache.camel.WaitForTaskToComplete.class, value)); return true;
-        case "basicpropertybinding": ((SedaEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "queue": ((SedaEndpoint) target).setQueue(property(camelContext, java.util.concurrent.BlockingQueue.class, value)); return true;
-        case "synchronous": ((SedaEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        SedaEndpoint target = (SedaEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "size": target.setSize(property(camelContext, int.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "concurrentconsumers":
+        case "concurrentConsumers": target.setConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "limitconcurrentconsumers":
+        case "limitConcurrentConsumers": target.setLimitConcurrentConsumers(property(camelContext, boolean.class, value)); return true;
+        case "multipleconsumers":
+        case "multipleConsumers": target.setMultipleConsumers(property(camelContext, boolean.class, value)); return true;
+        case "polltimeout":
+        case "pollTimeout": target.setPollTimeout(property(camelContext, int.class, value)); return true;
+        case "purgewhenstopping":
+        case "purgeWhenStopping": target.setPurgeWhenStopping(property(camelContext, boolean.class, value)); return true;
+        case "blockwhenfull":
+        case "blockWhenFull": target.setBlockWhenFull(property(camelContext, boolean.class, value)); return true;
+        case "discardifnoconsumers":
+        case "discardIfNoConsumers": target.setDiscardIfNoConsumers(property(camelContext, boolean.class, value)); return true;
+        case "discardwhenfull":
+        case "discardWhenFull": target.setDiscardWhenFull(property(camelContext, boolean.class, value)); return true;
+        case "failifnoconsumers":
+        case "failIfNoConsumers": target.setFailIfNoConsumers(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "offertimeout":
+        case "offerTimeout": target.setOfferTimeout(property(camelContext, long.class, value)); return true;
+        case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
+        case "waitfortasktocomplete":
+        case "waitForTaskToComplete": target.setWaitForTaskToComplete(property(camelContext, org.apache.camel.WaitForTaskToComplete.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "queue": target.setQueue(property(camelContext, java.util.concurrent.BlockingQueue.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

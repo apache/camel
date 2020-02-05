@@ -12,37 +12,24 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class JpaComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "entityManagerFactory": ((JpaComponent) target).setEntityManagerFactory(property(camelContext, javax.persistence.EntityManagerFactory.class, value)); return true;
-        case "transactionManager": ((JpaComponent) target).setTransactionManager(property(camelContext, org.springframework.transaction.PlatformTransactionManager.class, value)); return true;
-        case "joinTransaction": ((JpaComponent) target).setJoinTransaction(property(camelContext, boolean.class, value)); return true;
-        case "sharedEntityManager": ((JpaComponent) target).setSharedEntityManager(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((JpaComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((JpaComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((JpaComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "entitymanagerfactory": ((JpaComponent) target).setEntityManagerFactory(property(camelContext, javax.persistence.EntityManagerFactory.class, value)); return true;
-        case "transactionmanager": ((JpaComponent) target).setTransactionManager(property(camelContext, org.springframework.transaction.PlatformTransactionManager.class, value)); return true;
-        case "jointransaction": ((JpaComponent) target).setJoinTransaction(property(camelContext, boolean.class, value)); return true;
-        case "sharedentitymanager": ((JpaComponent) target).setSharedEntityManager(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((JpaComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((JpaComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((JpaComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        JpaComponent target = (JpaComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "entitymanagerfactory":
+        case "entityManagerFactory": target.setEntityManagerFactory(property(camelContext, javax.persistence.EntityManagerFactory.class, value)); return true;
+        case "transactionmanager":
+        case "transactionManager": target.setTransactionManager(property(camelContext, org.springframework.transaction.PlatformTransactionManager.class, value)); return true;
+        case "jointransaction":
+        case "joinTransaction": target.setJoinTransaction(property(camelContext, boolean.class, value)); return true;
+        case "sharedentitymanager":
+        case "sharedEntityManager": target.setSharedEntityManager(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

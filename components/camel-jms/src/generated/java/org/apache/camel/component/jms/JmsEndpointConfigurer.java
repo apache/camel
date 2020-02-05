@@ -12,209 +12,190 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "clientId": ((JmsEndpoint) target).getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
-        case "connectionFactory": ((JmsEndpoint) target).getConfiguration().setConnectionFactory(property(camelContext, javax.jms.ConnectionFactory.class, value)); return true;
-        case "disableReplyTo": ((JmsEndpoint) target).getConfiguration().setDisableReplyTo(property(camelContext, boolean.class, value)); return true;
-        case "durableSubscriptionName": ((JmsEndpoint) target).getConfiguration().setDurableSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
-        case "jmsMessageType": ((JmsEndpoint) target).getConfiguration().setJmsMessageType(property(camelContext, org.apache.camel.component.jms.JmsMessageType.class, value)); return true;
-        case "testConnectionOnStartup": ((JmsEndpoint) target).getConfiguration().setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
-        case "acknowledgementModeName": ((JmsEndpoint) target).getConfiguration().setAcknowledgementModeName(property(camelContext, java.lang.String.class, value)); return true;
-        case "asyncConsumer": ((JmsEndpoint) target).getConfiguration().setAsyncConsumer(property(camelContext, boolean.class, value)); return true;
-        case "autoStartup": ((JmsEndpoint) target).getConfiguration().setAutoStartup(property(camelContext, boolean.class, value)); return true;
-        case "cacheLevel": ((JmsEndpoint) target).getConfiguration().setCacheLevel(property(camelContext, int.class, value)); return true;
-        case "cacheLevelName": ((JmsEndpoint) target).getConfiguration().setCacheLevelName(property(camelContext, java.lang.String.class, value)); return true;
-        case "concurrentConsumers": ((JmsEndpoint) target).getConfiguration().setConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "maxConcurrentConsumers": ((JmsEndpoint) target).getConfiguration().setMaxConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "replyTo": ((JmsEndpoint) target).getConfiguration().setReplyTo(property(camelContext, java.lang.String.class, value)); return true;
-        case "replyToDeliveryPersistent": ((JmsEndpoint) target).getConfiguration().setReplyToDeliveryPersistent(property(camelContext, boolean.class, value)); return true;
-        case "selector": ((JmsEndpoint) target).getConfiguration().setSelector(property(camelContext, java.lang.String.class, value)); return true;
-        case "subscriptionDurable": ((JmsEndpoint) target).getConfiguration().setSubscriptionDurable(property(camelContext, boolean.class, value)); return true;
-        case "subscriptionName": ((JmsEndpoint) target).getConfiguration().setSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
-        case "subscriptionShared": ((JmsEndpoint) target).getConfiguration().setSubscriptionShared(property(camelContext, boolean.class, value)); return true;
-        case "acceptMessagesWhileStopping": ((JmsEndpoint) target).getConfiguration().setAcceptMessagesWhileStopping(property(camelContext, boolean.class, value)); return true;
-        case "allowReplyManagerQuickStop": ((JmsEndpoint) target).getConfiguration().setAllowReplyManagerQuickStop(property(camelContext, boolean.class, value)); return true;
-        case "consumerType": ((JmsEndpoint) target).getConfiguration().setConsumerType(property(camelContext, org.apache.camel.component.jms.ConsumerType.class, value)); return true;
-        case "defaultTaskExecutorType": ((JmsEndpoint) target).getConfiguration().setDefaultTaskExecutorType(property(camelContext, org.apache.camel.component.jms.DefaultTaskExecutorType.class, value)); return true;
-        case "eagerLoadingOfProperties": ((JmsEndpoint) target).getConfiguration().setEagerLoadingOfProperties(property(camelContext, boolean.class, value)); return true;
-        case "eagerPoisonBody": ((JmsEndpoint) target).getConfiguration().setEagerPoisonBody(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionHandler": ((JmsEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((JmsEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "exposeListenerSession": ((JmsEndpoint) target).getConfiguration().setExposeListenerSession(property(camelContext, boolean.class, value)); return true;
-        case "replyToSameDestinationAllowed": ((JmsEndpoint) target).getConfiguration().setReplyToSameDestinationAllowed(property(camelContext, boolean.class, value)); return true;
-        case "taskExecutor": ((JmsEndpoint) target).getConfiguration().setTaskExecutor(property(camelContext, org.springframework.core.task.TaskExecutor.class, value)); return true;
-        case "deliveryDelay": ((JmsEndpoint) target).getConfiguration().setDeliveryDelay(property(camelContext, long.class, value)); return true;
-        case "deliveryMode": ((JmsEndpoint) target).getConfiguration().setDeliveryMode(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "deliveryPersistent": ((JmsEndpoint) target).getConfiguration().setDeliveryPersistent(property(camelContext, boolean.class, value)); return true;
-        case "explicitQosEnabled": ((JmsEndpoint) target).getConfiguration().setExplicitQosEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "formatDateHeadersToIso8601": ((JmsEndpoint) target).getConfiguration().setFormatDateHeadersToIso8601(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((JmsEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "preserveMessageQos": ((JmsEndpoint) target).getConfiguration().setPreserveMessageQos(property(camelContext, boolean.class, value)); return true;
-        case "priority": ((JmsEndpoint) target).getConfiguration().setPriority(property(camelContext, int.class, value)); return true;
-        case "replyToConcurrentConsumers": ((JmsEndpoint) target).getConfiguration().setReplyToConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "replyToMaxConcurrentConsumers": ((JmsEndpoint) target).getConfiguration().setReplyToMaxConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "replyToOnTimeoutMaxConcurrentConsumers": ((JmsEndpoint) target).getConfiguration().setReplyToOnTimeoutMaxConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "replyToOverride": ((JmsEndpoint) target).getConfiguration().setReplyToOverride(property(camelContext, java.lang.String.class, value)); return true;
-        case "replyToType": ((JmsEndpoint) target).getConfiguration().setReplyToType(property(camelContext, org.apache.camel.component.jms.ReplyToType.class, value)); return true;
-        case "requestTimeout": ((JmsEndpoint) target).getConfiguration().setRequestTimeout(property(camelContext, long.class, value)); return true;
-        case "timeToLive": ((JmsEndpoint) target).getConfiguration().setTimeToLive(property(camelContext, long.class, value)); return true;
-        case "allowAdditionalHeaders": ((JmsEndpoint) target).getConfiguration().setAllowAdditionalHeaders(property(camelContext, java.lang.String.class, value)); return true;
-        case "allowNullBody": ((JmsEndpoint) target).getConfiguration().setAllowNullBody(property(camelContext, boolean.class, value)); return true;
-        case "alwaysCopyMessage": ((JmsEndpoint) target).getConfiguration().setAlwaysCopyMessage(property(camelContext, boolean.class, value)); return true;
-        case "correlationProperty": ((JmsEndpoint) target).getConfiguration().setCorrelationProperty(property(camelContext, java.lang.String.class, value)); return true;
-        case "disableTimeToLive": ((JmsEndpoint) target).getConfiguration().setDisableTimeToLive(property(camelContext, boolean.class, value)); return true;
-        case "forceSendOriginalMessage": ((JmsEndpoint) target).getConfiguration().setForceSendOriginalMessage(property(camelContext, boolean.class, value)); return true;
-        case "includeSentJMSMessageID": ((JmsEndpoint) target).getConfiguration().setIncludeSentJMSMessageID(property(camelContext, boolean.class, value)); return true;
-        case "replyToCacheLevelName": ((JmsEndpoint) target).getConfiguration().setReplyToCacheLevelName(property(camelContext, java.lang.String.class, value)); return true;
-        case "replyToDestinationSelectorName": ((JmsEndpoint) target).getConfiguration().setReplyToDestinationSelectorName(property(camelContext, java.lang.String.class, value)); return true;
-        case "streamMessageTypeEnabled": ((JmsEndpoint) target).getConfiguration().setStreamMessageTypeEnabled(property(camelContext, boolean.class, value)); return true;
-        case "allowSerializedHeaders": ((JmsEndpoint) target).getConfiguration().setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
-        case "asyncStartListener": ((JmsEndpoint) target).getConfiguration().setAsyncStartListener(property(camelContext, boolean.class, value)); return true;
-        case "asyncStopListener": ((JmsEndpoint) target).getConfiguration().setAsyncStopListener(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((JmsEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "destinationResolver": ((JmsEndpoint) target).getConfiguration().setDestinationResolver(property(camelContext, org.springframework.jms.support.destination.DestinationResolver.class, value)); return true;
-        case "errorHandler": ((JmsEndpoint) target).getConfiguration().setErrorHandler(property(camelContext, org.springframework.util.ErrorHandler.class, value)); return true;
-        case "exceptionListener": ((JmsEndpoint) target).getConfiguration().setExceptionListener(property(camelContext, javax.jms.ExceptionListener.class, value)); return true;
-        case "headerFilterStrategy": ((JmsEndpoint) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "idleConsumerLimit": ((JmsEndpoint) target).getConfiguration().setIdleConsumerLimit(property(camelContext, int.class, value)); return true;
-        case "idleTaskExecutionLimit": ((JmsEndpoint) target).getConfiguration().setIdleTaskExecutionLimit(property(camelContext, int.class, value)); return true;
-        case "includeAllJMSXProperties": ((JmsEndpoint) target).getConfiguration().setIncludeAllJMSXProperties(property(camelContext, boolean.class, value)); return true;
-        case "jmsKeyFormatStrategy": ((JmsEndpoint) target).getConfiguration().setJmsKeyFormatStrategy(property(camelContext, org.apache.camel.component.jms.JmsKeyFormatStrategy.class, value)); return true;
-        case "mapJmsMessage": ((JmsEndpoint) target).getConfiguration().setMapJmsMessage(property(camelContext, boolean.class, value)); return true;
-        case "maxMessagesPerTask": ((JmsEndpoint) target).getConfiguration().setMaxMessagesPerTask(property(camelContext, int.class, value)); return true;
-        case "messageConverter": ((JmsEndpoint) target).getConfiguration().setMessageConverter(property(camelContext, org.springframework.jms.support.converter.MessageConverter.class, value)); return true;
-        case "messageCreatedStrategy": ((JmsEndpoint) target).getConfiguration().setMessageCreatedStrategy(property(camelContext, org.apache.camel.component.jms.MessageCreatedStrategy.class, value)); return true;
-        case "messageIdEnabled": ((JmsEndpoint) target).getConfiguration().setMessageIdEnabled(property(camelContext, boolean.class, value)); return true;
-        case "messageListenerContainerFactory": ((JmsEndpoint) target).getConfiguration().setMessageListenerContainerFactory(property(camelContext, org.apache.camel.component.jms.MessageListenerContainerFactory.class, value)); return true;
-        case "messageTimestampEnabled": ((JmsEndpoint) target).getConfiguration().setMessageTimestampEnabled(property(camelContext, boolean.class, value)); return true;
-        case "pubSubNoLocal": ((JmsEndpoint) target).getConfiguration().setPubSubNoLocal(property(camelContext, boolean.class, value)); return true;
-        case "receiveTimeout": ((JmsEndpoint) target).getConfiguration().setReceiveTimeout(property(camelContext, long.class, value)); return true;
-        case "recoveryInterval": ((JmsEndpoint) target).getConfiguration().setRecoveryInterval(property(camelContext, long.class, value)); return true;
-        case "requestTimeoutCheckerInterval": ((JmsEndpoint) target).getConfiguration().setRequestTimeoutCheckerInterval(property(camelContext, long.class, value)); return true;
-        case "synchronous": ((JmsEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "transferException": ((JmsEndpoint) target).getConfiguration().setTransferException(property(camelContext, boolean.class, value)); return true;
-        case "transferExchange": ((JmsEndpoint) target).getConfiguration().setTransferExchange(property(camelContext, boolean.class, value)); return true;
-        case "useMessageIDAsCorrelationID": ((JmsEndpoint) target).getConfiguration().setUseMessageIDAsCorrelationID(property(camelContext, boolean.class, value)); return true;
-        case "waitForProvisionCorrelationToBeUpdatedCounter": ((JmsEndpoint) target).getConfiguration().setWaitForProvisionCorrelationToBeUpdatedCounter(property(camelContext, int.class, value)); return true;
-        case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": ((JmsEndpoint) target).getConfiguration().setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(property(camelContext, long.class, value)); return true;
-        case "errorHandlerLoggingLevel": ((JmsEndpoint) target).getConfiguration().setErrorHandlerLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "errorHandlerLogStackTrace": ((JmsEndpoint) target).getConfiguration().setErrorHandlerLogStackTrace(property(camelContext, boolean.class, value)); return true;
-        case "password": ((JmsEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((JmsEndpoint) target).getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "transacted": ((JmsEndpoint) target).getConfiguration().setTransacted(property(camelContext, boolean.class, value)); return true;
-        case "lazyCreateTransactionManager": ((JmsEndpoint) target).getConfiguration().setLazyCreateTransactionManager(property(camelContext, boolean.class, value)); return true;
-        case "transactionManager": ((JmsEndpoint) target).getConfiguration().setTransactionManager(property(camelContext, org.springframework.transaction.PlatformTransactionManager.class, value)); return true;
-        case "transactionName": ((JmsEndpoint) target).getConfiguration().setTransactionName(property(camelContext, java.lang.String.class, value)); return true;
-        case "transactionTimeout": ((JmsEndpoint) target).getConfiguration().setTransactionTimeout(property(camelContext, int.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "clientid": ((JmsEndpoint) target).getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
-        case "connectionfactory": ((JmsEndpoint) target).getConfiguration().setConnectionFactory(property(camelContext, javax.jms.ConnectionFactory.class, value)); return true;
-        case "disablereplyto": ((JmsEndpoint) target).getConfiguration().setDisableReplyTo(property(camelContext, boolean.class, value)); return true;
-        case "durablesubscriptionname": ((JmsEndpoint) target).getConfiguration().setDurableSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
-        case "jmsmessagetype": ((JmsEndpoint) target).getConfiguration().setJmsMessageType(property(camelContext, org.apache.camel.component.jms.JmsMessageType.class, value)); return true;
-        case "testconnectiononstartup": ((JmsEndpoint) target).getConfiguration().setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
-        case "acknowledgementmodename": ((JmsEndpoint) target).getConfiguration().setAcknowledgementModeName(property(camelContext, java.lang.String.class, value)); return true;
-        case "asyncconsumer": ((JmsEndpoint) target).getConfiguration().setAsyncConsumer(property(camelContext, boolean.class, value)); return true;
-        case "autostartup": ((JmsEndpoint) target).getConfiguration().setAutoStartup(property(camelContext, boolean.class, value)); return true;
-        case "cachelevel": ((JmsEndpoint) target).getConfiguration().setCacheLevel(property(camelContext, int.class, value)); return true;
-        case "cachelevelname": ((JmsEndpoint) target).getConfiguration().setCacheLevelName(property(camelContext, java.lang.String.class, value)); return true;
-        case "concurrentconsumers": ((JmsEndpoint) target).getConfiguration().setConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "maxconcurrentconsumers": ((JmsEndpoint) target).getConfiguration().setMaxConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "replyto": ((JmsEndpoint) target).getConfiguration().setReplyTo(property(camelContext, java.lang.String.class, value)); return true;
-        case "replytodeliverypersistent": ((JmsEndpoint) target).getConfiguration().setReplyToDeliveryPersistent(property(camelContext, boolean.class, value)); return true;
-        case "selector": ((JmsEndpoint) target).getConfiguration().setSelector(property(camelContext, java.lang.String.class, value)); return true;
-        case "subscriptiondurable": ((JmsEndpoint) target).getConfiguration().setSubscriptionDurable(property(camelContext, boolean.class, value)); return true;
-        case "subscriptionname": ((JmsEndpoint) target).getConfiguration().setSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
-        case "subscriptionshared": ((JmsEndpoint) target).getConfiguration().setSubscriptionShared(property(camelContext, boolean.class, value)); return true;
-        case "acceptmessageswhilestopping": ((JmsEndpoint) target).getConfiguration().setAcceptMessagesWhileStopping(property(camelContext, boolean.class, value)); return true;
-        case "allowreplymanagerquickstop": ((JmsEndpoint) target).getConfiguration().setAllowReplyManagerQuickStop(property(camelContext, boolean.class, value)); return true;
-        case "consumertype": ((JmsEndpoint) target).getConfiguration().setConsumerType(property(camelContext, org.apache.camel.component.jms.ConsumerType.class, value)); return true;
-        case "defaulttaskexecutortype": ((JmsEndpoint) target).getConfiguration().setDefaultTaskExecutorType(property(camelContext, org.apache.camel.component.jms.DefaultTaskExecutorType.class, value)); return true;
-        case "eagerloadingofproperties": ((JmsEndpoint) target).getConfiguration().setEagerLoadingOfProperties(property(camelContext, boolean.class, value)); return true;
-        case "eagerpoisonbody": ((JmsEndpoint) target).getConfiguration().setEagerPoisonBody(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionhandler": ((JmsEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((JmsEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "exposelistenersession": ((JmsEndpoint) target).getConfiguration().setExposeListenerSession(property(camelContext, boolean.class, value)); return true;
-        case "replytosamedestinationallowed": ((JmsEndpoint) target).getConfiguration().setReplyToSameDestinationAllowed(property(camelContext, boolean.class, value)); return true;
-        case "taskexecutor": ((JmsEndpoint) target).getConfiguration().setTaskExecutor(property(camelContext, org.springframework.core.task.TaskExecutor.class, value)); return true;
-        case "deliverydelay": ((JmsEndpoint) target).getConfiguration().setDeliveryDelay(property(camelContext, long.class, value)); return true;
-        case "deliverymode": ((JmsEndpoint) target).getConfiguration().setDeliveryMode(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "deliverypersistent": ((JmsEndpoint) target).getConfiguration().setDeliveryPersistent(property(camelContext, boolean.class, value)); return true;
-        case "explicitqosenabled": ((JmsEndpoint) target).getConfiguration().setExplicitQosEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "formatdateheaderstoiso8601": ((JmsEndpoint) target).getConfiguration().setFormatDateHeadersToIso8601(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((JmsEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "preservemessageqos": ((JmsEndpoint) target).getConfiguration().setPreserveMessageQos(property(camelContext, boolean.class, value)); return true;
-        case "priority": ((JmsEndpoint) target).getConfiguration().setPriority(property(camelContext, int.class, value)); return true;
-        case "replytoconcurrentconsumers": ((JmsEndpoint) target).getConfiguration().setReplyToConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "replytomaxconcurrentconsumers": ((JmsEndpoint) target).getConfiguration().setReplyToMaxConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "replytoontimeoutmaxconcurrentconsumers": ((JmsEndpoint) target).getConfiguration().setReplyToOnTimeoutMaxConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "replytooverride": ((JmsEndpoint) target).getConfiguration().setReplyToOverride(property(camelContext, java.lang.String.class, value)); return true;
-        case "replytotype": ((JmsEndpoint) target).getConfiguration().setReplyToType(property(camelContext, org.apache.camel.component.jms.ReplyToType.class, value)); return true;
-        case "requesttimeout": ((JmsEndpoint) target).getConfiguration().setRequestTimeout(property(camelContext, long.class, value)); return true;
-        case "timetolive": ((JmsEndpoint) target).getConfiguration().setTimeToLive(property(camelContext, long.class, value)); return true;
-        case "allowadditionalheaders": ((JmsEndpoint) target).getConfiguration().setAllowAdditionalHeaders(property(camelContext, java.lang.String.class, value)); return true;
-        case "allownullbody": ((JmsEndpoint) target).getConfiguration().setAllowNullBody(property(camelContext, boolean.class, value)); return true;
-        case "alwayscopymessage": ((JmsEndpoint) target).getConfiguration().setAlwaysCopyMessage(property(camelContext, boolean.class, value)); return true;
-        case "correlationproperty": ((JmsEndpoint) target).getConfiguration().setCorrelationProperty(property(camelContext, java.lang.String.class, value)); return true;
-        case "disabletimetolive": ((JmsEndpoint) target).getConfiguration().setDisableTimeToLive(property(camelContext, boolean.class, value)); return true;
-        case "forcesendoriginalmessage": ((JmsEndpoint) target).getConfiguration().setForceSendOriginalMessage(property(camelContext, boolean.class, value)); return true;
-        case "includesentjmsmessageid": ((JmsEndpoint) target).getConfiguration().setIncludeSentJMSMessageID(property(camelContext, boolean.class, value)); return true;
-        case "replytocachelevelname": ((JmsEndpoint) target).getConfiguration().setReplyToCacheLevelName(property(camelContext, java.lang.String.class, value)); return true;
-        case "replytodestinationselectorname": ((JmsEndpoint) target).getConfiguration().setReplyToDestinationSelectorName(property(camelContext, java.lang.String.class, value)); return true;
-        case "streammessagetypeenabled": ((JmsEndpoint) target).getConfiguration().setStreamMessageTypeEnabled(property(camelContext, boolean.class, value)); return true;
-        case "allowserializedheaders": ((JmsEndpoint) target).getConfiguration().setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
-        case "asyncstartlistener": ((JmsEndpoint) target).getConfiguration().setAsyncStartListener(property(camelContext, boolean.class, value)); return true;
-        case "asyncstoplistener": ((JmsEndpoint) target).getConfiguration().setAsyncStopListener(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((JmsEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "destinationresolver": ((JmsEndpoint) target).getConfiguration().setDestinationResolver(property(camelContext, org.springframework.jms.support.destination.DestinationResolver.class, value)); return true;
-        case "errorhandler": ((JmsEndpoint) target).getConfiguration().setErrorHandler(property(camelContext, org.springframework.util.ErrorHandler.class, value)); return true;
-        case "exceptionlistener": ((JmsEndpoint) target).getConfiguration().setExceptionListener(property(camelContext, javax.jms.ExceptionListener.class, value)); return true;
-        case "headerfilterstrategy": ((JmsEndpoint) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "idleconsumerlimit": ((JmsEndpoint) target).getConfiguration().setIdleConsumerLimit(property(camelContext, int.class, value)); return true;
-        case "idletaskexecutionlimit": ((JmsEndpoint) target).getConfiguration().setIdleTaskExecutionLimit(property(camelContext, int.class, value)); return true;
-        case "includealljmsxproperties": ((JmsEndpoint) target).getConfiguration().setIncludeAllJMSXProperties(property(camelContext, boolean.class, value)); return true;
-        case "jmskeyformatstrategy": ((JmsEndpoint) target).getConfiguration().setJmsKeyFormatStrategy(property(camelContext, org.apache.camel.component.jms.JmsKeyFormatStrategy.class, value)); return true;
-        case "mapjmsmessage": ((JmsEndpoint) target).getConfiguration().setMapJmsMessage(property(camelContext, boolean.class, value)); return true;
-        case "maxmessagespertask": ((JmsEndpoint) target).getConfiguration().setMaxMessagesPerTask(property(camelContext, int.class, value)); return true;
-        case "messageconverter": ((JmsEndpoint) target).getConfiguration().setMessageConverter(property(camelContext, org.springframework.jms.support.converter.MessageConverter.class, value)); return true;
-        case "messagecreatedstrategy": ((JmsEndpoint) target).getConfiguration().setMessageCreatedStrategy(property(camelContext, org.apache.camel.component.jms.MessageCreatedStrategy.class, value)); return true;
-        case "messageidenabled": ((JmsEndpoint) target).getConfiguration().setMessageIdEnabled(property(camelContext, boolean.class, value)); return true;
-        case "messagelistenercontainerfactory": ((JmsEndpoint) target).getConfiguration().setMessageListenerContainerFactory(property(camelContext, org.apache.camel.component.jms.MessageListenerContainerFactory.class, value)); return true;
-        case "messagetimestampenabled": ((JmsEndpoint) target).getConfiguration().setMessageTimestampEnabled(property(camelContext, boolean.class, value)); return true;
-        case "pubsubnolocal": ((JmsEndpoint) target).getConfiguration().setPubSubNoLocal(property(camelContext, boolean.class, value)); return true;
-        case "receivetimeout": ((JmsEndpoint) target).getConfiguration().setReceiveTimeout(property(camelContext, long.class, value)); return true;
-        case "recoveryinterval": ((JmsEndpoint) target).getConfiguration().setRecoveryInterval(property(camelContext, long.class, value)); return true;
-        case "requesttimeoutcheckerinterval": ((JmsEndpoint) target).getConfiguration().setRequestTimeoutCheckerInterval(property(camelContext, long.class, value)); return true;
-        case "synchronous": ((JmsEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "transferexception": ((JmsEndpoint) target).getConfiguration().setTransferException(property(camelContext, boolean.class, value)); return true;
-        case "transferexchange": ((JmsEndpoint) target).getConfiguration().setTransferExchange(property(camelContext, boolean.class, value)); return true;
-        case "usemessageidascorrelationid": ((JmsEndpoint) target).getConfiguration().setUseMessageIDAsCorrelationID(property(camelContext, boolean.class, value)); return true;
-        case "waitforprovisioncorrelationtobeupdatedcounter": ((JmsEndpoint) target).getConfiguration().setWaitForProvisionCorrelationToBeUpdatedCounter(property(camelContext, int.class, value)); return true;
-        case "waitforprovisioncorrelationtobeupdatedthreadsleepingtime": ((JmsEndpoint) target).getConfiguration().setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(property(camelContext, long.class, value)); return true;
-        case "errorhandlerlogginglevel": ((JmsEndpoint) target).getConfiguration().setErrorHandlerLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "errorhandlerlogstacktrace": ((JmsEndpoint) target).getConfiguration().setErrorHandlerLogStackTrace(property(camelContext, boolean.class, value)); return true;
-        case "password": ((JmsEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((JmsEndpoint) target).getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "transacted": ((JmsEndpoint) target).getConfiguration().setTransacted(property(camelContext, boolean.class, value)); return true;
-        case "lazycreatetransactionmanager": ((JmsEndpoint) target).getConfiguration().setLazyCreateTransactionManager(property(camelContext, boolean.class, value)); return true;
-        case "transactionmanager": ((JmsEndpoint) target).getConfiguration().setTransactionManager(property(camelContext, org.springframework.transaction.PlatformTransactionManager.class, value)); return true;
-        case "transactionname": ((JmsEndpoint) target).getConfiguration().setTransactionName(property(camelContext, java.lang.String.class, value)); return true;
-        case "transactiontimeout": ((JmsEndpoint) target).getConfiguration().setTransactionTimeout(property(camelContext, int.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        JmsEndpoint target = (JmsEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "clientid":
+        case "clientId": target.getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "connectionfactory":
+        case "connectionFactory": target.getConfiguration().setConnectionFactory(property(camelContext, javax.jms.ConnectionFactory.class, value)); return true;
+        case "disablereplyto":
+        case "disableReplyTo": target.getConfiguration().setDisableReplyTo(property(camelContext, boolean.class, value)); return true;
+        case "durablesubscriptionname":
+        case "durableSubscriptionName": target.getConfiguration().setDurableSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
+        case "jmsmessagetype":
+        case "jmsMessageType": target.getConfiguration().setJmsMessageType(property(camelContext, org.apache.camel.component.jms.JmsMessageType.class, value)); return true;
+        case "testconnectiononstartup":
+        case "testConnectionOnStartup": target.getConfiguration().setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
+        case "acknowledgementmodename":
+        case "acknowledgementModeName": target.getConfiguration().setAcknowledgementModeName(property(camelContext, java.lang.String.class, value)); return true;
+        case "asyncconsumer":
+        case "asyncConsumer": target.getConfiguration().setAsyncConsumer(property(camelContext, boolean.class, value)); return true;
+        case "autostartup":
+        case "autoStartup": target.getConfiguration().setAutoStartup(property(camelContext, boolean.class, value)); return true;
+        case "cachelevel":
+        case "cacheLevel": target.getConfiguration().setCacheLevel(property(camelContext, int.class, value)); return true;
+        case "cachelevelname":
+        case "cacheLevelName": target.getConfiguration().setCacheLevelName(property(camelContext, java.lang.String.class, value)); return true;
+        case "concurrentconsumers":
+        case "concurrentConsumers": target.getConfiguration().setConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "maxconcurrentconsumers":
+        case "maxConcurrentConsumers": target.getConfiguration().setMaxConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "replyto":
+        case "replyTo": target.getConfiguration().setReplyTo(property(camelContext, java.lang.String.class, value)); return true;
+        case "replytodeliverypersistent":
+        case "replyToDeliveryPersistent": target.getConfiguration().setReplyToDeliveryPersistent(property(camelContext, boolean.class, value)); return true;
+        case "selector": target.getConfiguration().setSelector(property(camelContext, java.lang.String.class, value)); return true;
+        case "subscriptiondurable":
+        case "subscriptionDurable": target.getConfiguration().setSubscriptionDurable(property(camelContext, boolean.class, value)); return true;
+        case "subscriptionname":
+        case "subscriptionName": target.getConfiguration().setSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
+        case "subscriptionshared":
+        case "subscriptionShared": target.getConfiguration().setSubscriptionShared(property(camelContext, boolean.class, value)); return true;
+        case "acceptmessageswhilestopping":
+        case "acceptMessagesWhileStopping": target.getConfiguration().setAcceptMessagesWhileStopping(property(camelContext, boolean.class, value)); return true;
+        case "allowreplymanagerquickstop":
+        case "allowReplyManagerQuickStop": target.getConfiguration().setAllowReplyManagerQuickStop(property(camelContext, boolean.class, value)); return true;
+        case "consumertype":
+        case "consumerType": target.getConfiguration().setConsumerType(property(camelContext, org.apache.camel.component.jms.ConsumerType.class, value)); return true;
+        case "defaulttaskexecutortype":
+        case "defaultTaskExecutorType": target.getConfiguration().setDefaultTaskExecutorType(property(camelContext, org.apache.camel.component.jms.DefaultTaskExecutorType.class, value)); return true;
+        case "eagerloadingofproperties":
+        case "eagerLoadingOfProperties": target.getConfiguration().setEagerLoadingOfProperties(property(camelContext, boolean.class, value)); return true;
+        case "eagerpoisonbody":
+        case "eagerPoisonBody": target.getConfiguration().setEagerPoisonBody(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "exposelistenersession":
+        case "exposeListenerSession": target.getConfiguration().setExposeListenerSession(property(camelContext, boolean.class, value)); return true;
+        case "replytosamedestinationallowed":
+        case "replyToSameDestinationAllowed": target.getConfiguration().setReplyToSameDestinationAllowed(property(camelContext, boolean.class, value)); return true;
+        case "taskexecutor":
+        case "taskExecutor": target.getConfiguration().setTaskExecutor(property(camelContext, org.springframework.core.task.TaskExecutor.class, value)); return true;
+        case "deliverydelay":
+        case "deliveryDelay": target.getConfiguration().setDeliveryDelay(property(camelContext, long.class, value)); return true;
+        case "deliverymode":
+        case "deliveryMode": target.getConfiguration().setDeliveryMode(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "deliverypersistent":
+        case "deliveryPersistent": target.getConfiguration().setDeliveryPersistent(property(camelContext, boolean.class, value)); return true;
+        case "explicitqosenabled":
+        case "explicitQosEnabled": target.getConfiguration().setExplicitQosEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "formatdateheaderstoiso8601":
+        case "formatDateHeadersToIso8601": target.getConfiguration().setFormatDateHeadersToIso8601(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "preservemessageqos":
+        case "preserveMessageQos": target.getConfiguration().setPreserveMessageQos(property(camelContext, boolean.class, value)); return true;
+        case "priority": target.getConfiguration().setPriority(property(camelContext, int.class, value)); return true;
+        case "replytoconcurrentconsumers":
+        case "replyToConcurrentConsumers": target.getConfiguration().setReplyToConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "replytomaxconcurrentconsumers":
+        case "replyToMaxConcurrentConsumers": target.getConfiguration().setReplyToMaxConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "replytoontimeoutmaxconcurrentconsumers":
+        case "replyToOnTimeoutMaxConcurrentConsumers": target.getConfiguration().setReplyToOnTimeoutMaxConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "replytooverride":
+        case "replyToOverride": target.getConfiguration().setReplyToOverride(property(camelContext, java.lang.String.class, value)); return true;
+        case "replytotype":
+        case "replyToType": target.getConfiguration().setReplyToType(property(camelContext, org.apache.camel.component.jms.ReplyToType.class, value)); return true;
+        case "requesttimeout":
+        case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, long.class, value)); return true;
+        case "timetolive":
+        case "timeToLive": target.getConfiguration().setTimeToLive(property(camelContext, long.class, value)); return true;
+        case "allowadditionalheaders":
+        case "allowAdditionalHeaders": target.getConfiguration().setAllowAdditionalHeaders(property(camelContext, java.lang.String.class, value)); return true;
+        case "allownullbody":
+        case "allowNullBody": target.getConfiguration().setAllowNullBody(property(camelContext, boolean.class, value)); return true;
+        case "alwayscopymessage":
+        case "alwaysCopyMessage": target.getConfiguration().setAlwaysCopyMessage(property(camelContext, boolean.class, value)); return true;
+        case "correlationproperty":
+        case "correlationProperty": target.getConfiguration().setCorrelationProperty(property(camelContext, java.lang.String.class, value)); return true;
+        case "disabletimetolive":
+        case "disableTimeToLive": target.getConfiguration().setDisableTimeToLive(property(camelContext, boolean.class, value)); return true;
+        case "forcesendoriginalmessage":
+        case "forceSendOriginalMessage": target.getConfiguration().setForceSendOriginalMessage(property(camelContext, boolean.class, value)); return true;
+        case "includesentjmsmessageid":
+        case "includeSentJMSMessageID": target.getConfiguration().setIncludeSentJMSMessageID(property(camelContext, boolean.class, value)); return true;
+        case "replytocachelevelname":
+        case "replyToCacheLevelName": target.getConfiguration().setReplyToCacheLevelName(property(camelContext, java.lang.String.class, value)); return true;
+        case "replytodestinationselectorname":
+        case "replyToDestinationSelectorName": target.getConfiguration().setReplyToDestinationSelectorName(property(camelContext, java.lang.String.class, value)); return true;
+        case "streammessagetypeenabled":
+        case "streamMessageTypeEnabled": target.getConfiguration().setStreamMessageTypeEnabled(property(camelContext, boolean.class, value)); return true;
+        case "allowserializedheaders":
+        case "allowSerializedHeaders": target.getConfiguration().setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
+        case "asyncstartlistener":
+        case "asyncStartListener": target.getConfiguration().setAsyncStartListener(property(camelContext, boolean.class, value)); return true;
+        case "asyncstoplistener":
+        case "asyncStopListener": target.getConfiguration().setAsyncStopListener(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "destinationresolver":
+        case "destinationResolver": target.getConfiguration().setDestinationResolver(property(camelContext, org.springframework.jms.support.destination.DestinationResolver.class, value)); return true;
+        case "errorhandler":
+        case "errorHandler": target.getConfiguration().setErrorHandler(property(camelContext, org.springframework.util.ErrorHandler.class, value)); return true;
+        case "exceptionlistener":
+        case "exceptionListener": target.getConfiguration().setExceptionListener(property(camelContext, javax.jms.ExceptionListener.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "idleconsumerlimit":
+        case "idleConsumerLimit": target.getConfiguration().setIdleConsumerLimit(property(camelContext, int.class, value)); return true;
+        case "idletaskexecutionlimit":
+        case "idleTaskExecutionLimit": target.getConfiguration().setIdleTaskExecutionLimit(property(camelContext, int.class, value)); return true;
+        case "includealljmsxproperties":
+        case "includeAllJMSXProperties": target.getConfiguration().setIncludeAllJMSXProperties(property(camelContext, boolean.class, value)); return true;
+        case "jmskeyformatstrategy":
+        case "jmsKeyFormatStrategy": target.getConfiguration().setJmsKeyFormatStrategy(property(camelContext, org.apache.camel.component.jms.JmsKeyFormatStrategy.class, value)); return true;
+        case "mapjmsmessage":
+        case "mapJmsMessage": target.getConfiguration().setMapJmsMessage(property(camelContext, boolean.class, value)); return true;
+        case "maxmessagespertask":
+        case "maxMessagesPerTask": target.getConfiguration().setMaxMessagesPerTask(property(camelContext, int.class, value)); return true;
+        case "messageconverter":
+        case "messageConverter": target.getConfiguration().setMessageConverter(property(camelContext, org.springframework.jms.support.converter.MessageConverter.class, value)); return true;
+        case "messagecreatedstrategy":
+        case "messageCreatedStrategy": target.getConfiguration().setMessageCreatedStrategy(property(camelContext, org.apache.camel.component.jms.MessageCreatedStrategy.class, value)); return true;
+        case "messageidenabled":
+        case "messageIdEnabled": target.getConfiguration().setMessageIdEnabled(property(camelContext, boolean.class, value)); return true;
+        case "messagelistenercontainerfactory":
+        case "messageListenerContainerFactory": target.getConfiguration().setMessageListenerContainerFactory(property(camelContext, org.apache.camel.component.jms.MessageListenerContainerFactory.class, value)); return true;
+        case "messagetimestampenabled":
+        case "messageTimestampEnabled": target.getConfiguration().setMessageTimestampEnabled(property(camelContext, boolean.class, value)); return true;
+        case "pubsubnolocal":
+        case "pubSubNoLocal": target.getConfiguration().setPubSubNoLocal(property(camelContext, boolean.class, value)); return true;
+        case "receivetimeout":
+        case "receiveTimeout": target.getConfiguration().setReceiveTimeout(property(camelContext, long.class, value)); return true;
+        case "recoveryinterval":
+        case "recoveryInterval": target.getConfiguration().setRecoveryInterval(property(camelContext, long.class, value)); return true;
+        case "requesttimeoutcheckerinterval":
+        case "requestTimeoutCheckerInterval": target.getConfiguration().setRequestTimeoutCheckerInterval(property(camelContext, long.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "transferexception":
+        case "transferException": target.getConfiguration().setTransferException(property(camelContext, boolean.class, value)); return true;
+        case "transferexchange":
+        case "transferExchange": target.getConfiguration().setTransferExchange(property(camelContext, boolean.class, value)); return true;
+        case "usemessageidascorrelationid":
+        case "useMessageIDAsCorrelationID": target.getConfiguration().setUseMessageIDAsCorrelationID(property(camelContext, boolean.class, value)); return true;
+        case "waitforprovisioncorrelationtobeupdatedcounter":
+        case "waitForProvisionCorrelationToBeUpdatedCounter": target.getConfiguration().setWaitForProvisionCorrelationToBeUpdatedCounter(property(camelContext, int.class, value)); return true;
+        case "waitforprovisioncorrelationtobeupdatedthreadsleepingtime":
+        case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": target.getConfiguration().setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(property(camelContext, long.class, value)); return true;
+        case "errorhandlerlogginglevel":
+        case "errorHandlerLoggingLevel": target.getConfiguration().setErrorHandlerLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "errorhandlerlogstacktrace":
+        case "errorHandlerLogStackTrace": target.getConfiguration().setErrorHandlerLogStackTrace(property(camelContext, boolean.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "transacted": target.getConfiguration().setTransacted(property(camelContext, boolean.class, value)); return true;
+        case "lazycreatetransactionmanager":
+        case "lazyCreateTransactionManager": target.getConfiguration().setLazyCreateTransactionManager(property(camelContext, boolean.class, value)); return true;
+        case "transactionmanager":
+        case "transactionManager": target.getConfiguration().setTransactionManager(property(camelContext, org.springframework.transaction.PlatformTransactionManager.class, value)); return true;
+        case "transactionname":
+        case "transactionName": target.getConfiguration().setTransactionName(property(camelContext, java.lang.String.class, value)); return true;
+        case "transactiontimeout":
+        case "transactionTimeout": target.getConfiguration().setTransactionTimeout(property(camelContext, int.class, value)); return true;
+        default: return false;
         }
     }
 

@@ -12,63 +12,47 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "bridgeErrorHandler": ((QuartzEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "cron": ((QuartzEndpoint) target).setCron(property(camelContext, java.lang.String.class, value)); return true;
-        case "deleteJob": ((QuartzEndpoint) target).setDeleteJob(property(camelContext, boolean.class, value)); return true;
-        case "durableJob": ((QuartzEndpoint) target).setDurableJob(property(camelContext, boolean.class, value)); return true;
-        case "pauseJob": ((QuartzEndpoint) target).setPauseJob(property(camelContext, boolean.class, value)); return true;
-        case "recoverableJob": ((QuartzEndpoint) target).setRecoverableJob(property(camelContext, boolean.class, value)); return true;
-        case "stateful": ((QuartzEndpoint) target).setStateful(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((QuartzEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((QuartzEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "basicPropertyBinding": ((QuartzEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "customCalendar": ((QuartzEndpoint) target).setCustomCalendar(property(camelContext, org.quartz.Calendar.class, value)); return true;
-        case "jobParameters": ((QuartzEndpoint) target).setJobParameters(property(camelContext, java.util.Map.class, value)); return true;
-        case "prefixJobNameWithEndpointId": ((QuartzEndpoint) target).setPrefixJobNameWithEndpointId(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((QuartzEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "triggerParameters": ((QuartzEndpoint) target).setTriggerParameters(property(camelContext, java.util.Map.class, value)); return true;
-        case "usingFixedCamelContextName": ((QuartzEndpoint) target).setUsingFixedCamelContextName(property(camelContext, boolean.class, value)); return true;
-        case "autoStartScheduler": ((QuartzEndpoint) target).setAutoStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "fireNow": ((QuartzEndpoint) target).setFireNow(property(camelContext, boolean.class, value)); return true;
-        case "startDelayedSeconds": ((QuartzEndpoint) target).setStartDelayedSeconds(property(camelContext, int.class, value)); return true;
-        case "triggerStartDelay": ((QuartzEndpoint) target).setTriggerStartDelay(property(camelContext, long.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "bridgeerrorhandler": ((QuartzEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "cron": ((QuartzEndpoint) target).setCron(property(camelContext, java.lang.String.class, value)); return true;
-        case "deletejob": ((QuartzEndpoint) target).setDeleteJob(property(camelContext, boolean.class, value)); return true;
-        case "durablejob": ((QuartzEndpoint) target).setDurableJob(property(camelContext, boolean.class, value)); return true;
-        case "pausejob": ((QuartzEndpoint) target).setPauseJob(property(camelContext, boolean.class, value)); return true;
-        case "recoverablejob": ((QuartzEndpoint) target).setRecoverableJob(property(camelContext, boolean.class, value)); return true;
-        case "stateful": ((QuartzEndpoint) target).setStateful(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((QuartzEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((QuartzEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "basicpropertybinding": ((QuartzEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "customcalendar": ((QuartzEndpoint) target).setCustomCalendar(property(camelContext, org.quartz.Calendar.class, value)); return true;
-        case "jobparameters": ((QuartzEndpoint) target).setJobParameters(property(camelContext, java.util.Map.class, value)); return true;
-        case "prefixjobnamewithendpointid": ((QuartzEndpoint) target).setPrefixJobNameWithEndpointId(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((QuartzEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "triggerparameters": ((QuartzEndpoint) target).setTriggerParameters(property(camelContext, java.util.Map.class, value)); return true;
-        case "usingfixedcamelcontextname": ((QuartzEndpoint) target).setUsingFixedCamelContextName(property(camelContext, boolean.class, value)); return true;
-        case "autostartscheduler": ((QuartzEndpoint) target).setAutoStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "firenow": ((QuartzEndpoint) target).setFireNow(property(camelContext, boolean.class, value)); return true;
-        case "startdelayedseconds": ((QuartzEndpoint) target).setStartDelayedSeconds(property(camelContext, int.class, value)); return true;
-        case "triggerstartdelay": ((QuartzEndpoint) target).setTriggerStartDelay(property(camelContext, long.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        QuartzEndpoint target = (QuartzEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "cron": target.setCron(property(camelContext, java.lang.String.class, value)); return true;
+        case "deletejob":
+        case "deleteJob": target.setDeleteJob(property(camelContext, boolean.class, value)); return true;
+        case "durablejob":
+        case "durableJob": target.setDurableJob(property(camelContext, boolean.class, value)); return true;
+        case "pausejob":
+        case "pauseJob": target.setPauseJob(property(camelContext, boolean.class, value)); return true;
+        case "recoverablejob":
+        case "recoverableJob": target.setRecoverableJob(property(camelContext, boolean.class, value)); return true;
+        case "stateful": target.setStateful(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "customcalendar":
+        case "customCalendar": target.setCustomCalendar(property(camelContext, org.quartz.Calendar.class, value)); return true;
+        case "jobparameters":
+        case "jobParameters": target.setJobParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "prefixjobnamewithendpointid":
+        case "prefixJobNameWithEndpointId": target.setPrefixJobNameWithEndpointId(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "triggerparameters":
+        case "triggerParameters": target.setTriggerParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "usingfixedcamelcontextname":
+        case "usingFixedCamelContextName": target.setUsingFixedCamelContextName(property(camelContext, boolean.class, value)); return true;
+        case "autostartscheduler":
+        case "autoStartScheduler": target.setAutoStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "firenow":
+        case "fireNow": target.setFireNow(property(camelContext, boolean.class, value)); return true;
+        case "startdelayedseconds":
+        case "startDelayedSeconds": target.setStartDelayedSeconds(property(camelContext, int.class, value)); return true;
+        case "triggerstartdelay":
+        case "triggerStartDelay": target.setTriggerStartDelay(property(camelContext, long.class, value)); return true;
+        default: return false;
         }
     }
 

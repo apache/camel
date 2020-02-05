@@ -12,59 +12,42 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class HBaseEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "cellMappingStrategyFactory": ((HBaseEndpoint) target).setCellMappingStrategyFactory(property(camelContext, org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory.class, value)); return true;
-        case "filters": ((HBaseEndpoint) target).setFilters(property(camelContext, java.util.List.class, value)); return true;
-        case "mappingStrategyClassName": ((HBaseEndpoint) target).setMappingStrategyClassName(property(camelContext, java.lang.String.class, value)); return true;
-        case "mappingStrategyName": ((HBaseEndpoint) target).setMappingStrategyName(property(camelContext, java.lang.String.class, value)); return true;
-        case "rowMapping": ((HBaseEndpoint) target).setRowMapping(property(camelContext, java.util.Map.class, value)); return true;
-        case "rowModel": ((HBaseEndpoint) target).setRowModel(property(camelContext, org.apache.camel.component.hbase.model.HBaseRow.class, value)); return true;
-        case "userGroupInformation": ((HBaseEndpoint) target).setUserGroupInformation(property(camelContext, org.apache.hadoop.security.UserGroupInformation.class, value)); return true;
-        case "bridgeErrorHandler": ((HBaseEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "maxMessagesPerPoll": ((HBaseEndpoint) target).setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
-        case "operation": ((HBaseEndpoint) target).setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "remove": ((HBaseEndpoint) target).setRemove(property(camelContext, boolean.class, value)); return true;
-        case "removeHandler": ((HBaseEndpoint) target).setRemoveHandler(property(camelContext, org.apache.camel.component.hbase.HBaseRemoveHandler.class, value)); return true;
-        case "exceptionHandler": ((HBaseEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((HBaseEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((HBaseEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "maxResults": ((HBaseEndpoint) target).setMaxResults(property(camelContext, int.class, value)); return true;
-        case "basicPropertyBinding": ((HBaseEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((HBaseEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "cellmappingstrategyfactory": ((HBaseEndpoint) target).setCellMappingStrategyFactory(property(camelContext, org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory.class, value)); return true;
-        case "filters": ((HBaseEndpoint) target).setFilters(property(camelContext, java.util.List.class, value)); return true;
-        case "mappingstrategyclassname": ((HBaseEndpoint) target).setMappingStrategyClassName(property(camelContext, java.lang.String.class, value)); return true;
-        case "mappingstrategyname": ((HBaseEndpoint) target).setMappingStrategyName(property(camelContext, java.lang.String.class, value)); return true;
-        case "rowmapping": ((HBaseEndpoint) target).setRowMapping(property(camelContext, java.util.Map.class, value)); return true;
-        case "rowmodel": ((HBaseEndpoint) target).setRowModel(property(camelContext, org.apache.camel.component.hbase.model.HBaseRow.class, value)); return true;
-        case "usergroupinformation": ((HBaseEndpoint) target).setUserGroupInformation(property(camelContext, org.apache.hadoop.security.UserGroupInformation.class, value)); return true;
-        case "bridgeerrorhandler": ((HBaseEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "maxmessagesperpoll": ((HBaseEndpoint) target).setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
-        case "operation": ((HBaseEndpoint) target).setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "remove": ((HBaseEndpoint) target).setRemove(property(camelContext, boolean.class, value)); return true;
-        case "removehandler": ((HBaseEndpoint) target).setRemoveHandler(property(camelContext, org.apache.camel.component.hbase.HBaseRemoveHandler.class, value)); return true;
-        case "exceptionhandler": ((HBaseEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((HBaseEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((HBaseEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "maxresults": ((HBaseEndpoint) target).setMaxResults(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding": ((HBaseEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((HBaseEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        HBaseEndpoint target = (HBaseEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "cellmappingstrategyfactory":
+        case "cellMappingStrategyFactory": target.setCellMappingStrategyFactory(property(camelContext, org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory.class, value)); return true;
+        case "filters": target.setFilters(property(camelContext, java.util.List.class, value)); return true;
+        case "mappingstrategyclassname":
+        case "mappingStrategyClassName": target.setMappingStrategyClassName(property(camelContext, java.lang.String.class, value)); return true;
+        case "mappingstrategyname":
+        case "mappingStrategyName": target.setMappingStrategyName(property(camelContext, java.lang.String.class, value)); return true;
+        case "rowmapping":
+        case "rowMapping": target.setRowMapping(property(camelContext, java.util.Map.class, value)); return true;
+        case "rowmodel":
+        case "rowModel": target.setRowModel(property(camelContext, org.apache.camel.component.hbase.model.HBaseRow.class, value)); return true;
+        case "usergroupinformation":
+        case "userGroupInformation": target.setUserGroupInformation(property(camelContext, org.apache.hadoop.security.UserGroupInformation.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
+        case "operation": target.setOperation(property(camelContext, java.lang.String.class, value)); return true;
+        case "remove": target.setRemove(property(camelContext, boolean.class, value)); return true;
+        case "removehandler":
+        case "removeHandler": target.setRemoveHandler(property(camelContext, org.apache.camel.component.hbase.HBaseRemoveHandler.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxresults":
+        case "maxResults": target.setMaxResults(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

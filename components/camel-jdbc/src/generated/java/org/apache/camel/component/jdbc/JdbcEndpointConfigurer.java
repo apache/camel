@@ -12,53 +12,37 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "allowNamedParameters": ((JdbcEndpoint) target).setAllowNamedParameters(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((JdbcEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "outputClass": ((JdbcEndpoint) target).setOutputClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "outputType": ((JdbcEndpoint) target).setOutputType(property(camelContext, org.apache.camel.component.jdbc.JdbcOutputType.class, value)); return true;
-        case "parameters": ((JdbcEndpoint) target).setParameters(property(camelContext, java.util.Map.class, value)); return true;
-        case "readSize": ((JdbcEndpoint) target).setReadSize(property(camelContext, int.class, value)); return true;
-        case "resetAutoCommit": ((JdbcEndpoint) target).setResetAutoCommit(property(camelContext, boolean.class, value)); return true;
-        case "transacted": ((JdbcEndpoint) target).setTransacted(property(camelContext, boolean.class, value)); return true;
-        case "useGetBytesForBlob": ((JdbcEndpoint) target).setUseGetBytesForBlob(property(camelContext, boolean.class, value)); return true;
-        case "useHeadersAsParameters": ((JdbcEndpoint) target).setUseHeadersAsParameters(property(camelContext, boolean.class, value)); return true;
-        case "useJDBC4ColumnNameAndLabelSemantics": ((JdbcEndpoint) target).setUseJDBC4ColumnNameAndLabelSemantics(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((JdbcEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "beanRowMapper": ((JdbcEndpoint) target).setBeanRowMapper(property(camelContext, org.apache.camel.component.jdbc.BeanRowMapper.class, value)); return true;
-        case "prepareStatementStrategy": ((JdbcEndpoint) target).setPrepareStatementStrategy(property(camelContext, org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy.class, value)); return true;
-        case "synchronous": ((JdbcEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "allownamedparameters": ((JdbcEndpoint) target).setAllowNamedParameters(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((JdbcEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "outputclass": ((JdbcEndpoint) target).setOutputClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "outputtype": ((JdbcEndpoint) target).setOutputType(property(camelContext, org.apache.camel.component.jdbc.JdbcOutputType.class, value)); return true;
-        case "parameters": ((JdbcEndpoint) target).setParameters(property(camelContext, java.util.Map.class, value)); return true;
-        case "readsize": ((JdbcEndpoint) target).setReadSize(property(camelContext, int.class, value)); return true;
-        case "resetautocommit": ((JdbcEndpoint) target).setResetAutoCommit(property(camelContext, boolean.class, value)); return true;
-        case "transacted": ((JdbcEndpoint) target).setTransacted(property(camelContext, boolean.class, value)); return true;
-        case "usegetbytesforblob": ((JdbcEndpoint) target).setUseGetBytesForBlob(property(camelContext, boolean.class, value)); return true;
-        case "useheadersasparameters": ((JdbcEndpoint) target).setUseHeadersAsParameters(property(camelContext, boolean.class, value)); return true;
-        case "usejdbc4columnnameandlabelsemantics": ((JdbcEndpoint) target).setUseJDBC4ColumnNameAndLabelSemantics(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((JdbcEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "beanrowmapper": ((JdbcEndpoint) target).setBeanRowMapper(property(camelContext, org.apache.camel.component.jdbc.BeanRowMapper.class, value)); return true;
-        case "preparestatementstrategy": ((JdbcEndpoint) target).setPrepareStatementStrategy(property(camelContext, org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy.class, value)); return true;
-        case "synchronous": ((JdbcEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        JdbcEndpoint target = (JdbcEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allownamedparameters":
+        case "allowNamedParameters": target.setAllowNamedParameters(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "outputclass":
+        case "outputClass": target.setOutputClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "outputtype":
+        case "outputType": target.setOutputType(property(camelContext, org.apache.camel.component.jdbc.JdbcOutputType.class, value)); return true;
+        case "parameters": target.setParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "readsize":
+        case "readSize": target.setReadSize(property(camelContext, int.class, value)); return true;
+        case "resetautocommit":
+        case "resetAutoCommit": target.setResetAutoCommit(property(camelContext, boolean.class, value)); return true;
+        case "transacted": target.setTransacted(property(camelContext, boolean.class, value)); return true;
+        case "usegetbytesforblob":
+        case "useGetBytesForBlob": target.setUseGetBytesForBlob(property(camelContext, boolean.class, value)); return true;
+        case "useheadersasparameters":
+        case "useHeadersAsParameters": target.setUseHeadersAsParameters(property(camelContext, boolean.class, value)); return true;
+        case "usejdbc4columnnameandlabelsemantics":
+        case "useJDBC4ColumnNameAndLabelSemantics": target.setUseJDBC4ColumnNameAndLabelSemantics(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "beanrowmapper":
+        case "beanRowMapper": target.setBeanRowMapper(property(camelContext, org.apache.camel.component.jdbc.BeanRowMapper.class, value)); return true;
+        case "preparestatementstrategy":
+        case "prepareStatementStrategy": target.setPrepareStatementStrategy(property(camelContext, org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

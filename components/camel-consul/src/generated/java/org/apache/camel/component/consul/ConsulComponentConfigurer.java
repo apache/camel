@@ -12,45 +12,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class ConsulComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "url": ((ConsulComponent) target).setUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "datacenter": ((ConsulComponent) target).setDatacenter(property(camelContext, java.lang.String.class, value)); return true;
-        case "sslContextParameters": ((ConsulComponent) target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "useGlobalSslContextParameters": ((ConsulComponent) target).setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
-        case "aclToken": ((ConsulComponent) target).setAclToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "userName": ((ConsulComponent) target).setUserName(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((ConsulComponent) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "configuration": ((ConsulComponent) target).setConfiguration(property(camelContext, org.apache.camel.component.consul.ConsulConfiguration.class, value)); return true;
-        case "basicPropertyBinding": ((ConsulComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((ConsulComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((ConsulComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "url": ((ConsulComponent) target).setUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "datacenter": ((ConsulComponent) target).setDatacenter(property(camelContext, java.lang.String.class, value)); return true;
-        case "sslcontextparameters": ((ConsulComponent) target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "useglobalsslcontextparameters": ((ConsulComponent) target).setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
-        case "acltoken": ((ConsulComponent) target).setAclToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((ConsulComponent) target).setUserName(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((ConsulComponent) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "configuration": ((ConsulComponent) target).setConfiguration(property(camelContext, org.apache.camel.component.consul.ConsulConfiguration.class, value)); return true;
-        case "basicpropertybinding": ((ConsulComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((ConsulComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((ConsulComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        ConsulComponent target = (ConsulComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "url": target.setUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "datacenter": target.setDatacenter(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
+        case "acltoken":
+        case "aclToken": target.setAclToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "username":
+        case "userName": target.setUserName(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.consul.ConsulConfiguration.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

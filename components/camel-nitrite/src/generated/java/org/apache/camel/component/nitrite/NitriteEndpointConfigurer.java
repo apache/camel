@@ -12,45 +12,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class NitriteEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "collection": ((NitriteEndpoint) target).setCollection(property(camelContext, java.lang.String.class, value)); return true;
-        case "repositoryClass": ((NitriteEndpoint) target).setRepositoryClass(property(camelContext, java.lang.Class.class, value)); return true;
-        case "repositoryName": ((NitriteEndpoint) target).setRepositoryName(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((NitriteEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((NitriteEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((NitriteEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((NitriteEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((NitriteEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((NitriteEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "password": ((NitriteEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((NitriteEndpoint) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "collection": ((NitriteEndpoint) target).setCollection(property(camelContext, java.lang.String.class, value)); return true;
-        case "repositoryclass": ((NitriteEndpoint) target).setRepositoryClass(property(camelContext, java.lang.Class.class, value)); return true;
-        case "repositoryname": ((NitriteEndpoint) target).setRepositoryName(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((NitriteEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((NitriteEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((NitriteEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((NitriteEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((NitriteEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((NitriteEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "password": ((NitriteEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((NitriteEndpoint) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        NitriteEndpoint target = (NitriteEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "collection": target.setCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "repositoryclass":
+        case "repositoryClass": target.setRepositoryClass(property(camelContext, java.lang.Class.class, value)); return true;
+        case "repositoryname":
+        case "repositoryName": target.setRepositoryName(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

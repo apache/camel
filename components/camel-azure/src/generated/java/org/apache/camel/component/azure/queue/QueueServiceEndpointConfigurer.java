@@ -12,47 +12,31 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class QueueServiceEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "azureQueueClient": ((QueueServiceEndpoint) target).getConfiguration().setAzureQueueClient(property(camelContext, com.microsoft.azure.storage.queue.CloudQueue.class, value)); return true;
-        case "credentials": ((QueueServiceEndpoint) target).getConfiguration().setCredentials(property(camelContext, com.microsoft.azure.storage.StorageCredentials.class, value)); return true;
-        case "bridgeErrorHandler": ((QueueServiceEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((QueueServiceEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((QueueServiceEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((QueueServiceEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "messageTimeToLive": ((QueueServiceEndpoint) target).getConfiguration().setMessageTimeToLive(property(camelContext, int.class, value)); return true;
-        case "messageVisibilityDelay": ((QueueServiceEndpoint) target).getConfiguration().setMessageVisibilityDelay(property(camelContext, int.class, value)); return true;
-        case "operation": ((QueueServiceEndpoint) target).getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.queue.QueueServiceOperations.class, value)); return true;
-        case "queuePrefix": ((QueueServiceEndpoint) target).getConfiguration().setQueuePrefix(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((QueueServiceEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((QueueServiceEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "azurequeueclient": ((QueueServiceEndpoint) target).getConfiguration().setAzureQueueClient(property(camelContext, com.microsoft.azure.storage.queue.CloudQueue.class, value)); return true;
-        case "credentials": ((QueueServiceEndpoint) target).getConfiguration().setCredentials(property(camelContext, com.microsoft.azure.storage.StorageCredentials.class, value)); return true;
-        case "bridgeerrorhandler": ((QueueServiceEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((QueueServiceEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((QueueServiceEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((QueueServiceEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "messagetimetolive": ((QueueServiceEndpoint) target).getConfiguration().setMessageTimeToLive(property(camelContext, int.class, value)); return true;
-        case "messagevisibilitydelay": ((QueueServiceEndpoint) target).getConfiguration().setMessageVisibilityDelay(property(camelContext, int.class, value)); return true;
-        case "operation": ((QueueServiceEndpoint) target).getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.queue.QueueServiceOperations.class, value)); return true;
-        case "queueprefix": ((QueueServiceEndpoint) target).getConfiguration().setQueuePrefix(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((QueueServiceEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((QueueServiceEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        QueueServiceEndpoint target = (QueueServiceEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "azurequeueclient":
+        case "azureQueueClient": target.getConfiguration().setAzureQueueClient(property(camelContext, com.microsoft.azure.storage.queue.CloudQueue.class, value)); return true;
+        case "credentials": target.getConfiguration().setCredentials(property(camelContext, com.microsoft.azure.storage.StorageCredentials.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "messagetimetolive":
+        case "messageTimeToLive": target.getConfiguration().setMessageTimeToLive(property(camelContext, int.class, value)); return true;
+        case "messagevisibilitydelay":
+        case "messageVisibilityDelay": target.getConfiguration().setMessageVisibilityDelay(property(camelContext, int.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.queue.QueueServiceOperations.class, value)); return true;
+        case "queueprefix":
+        case "queuePrefix": target.getConfiguration().setQueuePrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

@@ -12,79 +12,61 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class LogEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "groupActiveOnly": ((LogEndpoint) target).setGroupActiveOnly(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "groupDelay": ((LogEndpoint) target).setGroupDelay(property(camelContext, java.lang.Long.class, value)); return true;
-        case "groupInterval": ((LogEndpoint) target).setGroupInterval(property(camelContext, java.lang.Long.class, value)); return true;
-        case "groupSize": ((LogEndpoint) target).setGroupSize(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "lazyStartProducer": ((LogEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "level": ((LogEndpoint) target).setLevel(property(camelContext, java.lang.String.class, value)); return true;
-        case "logMask": ((LogEndpoint) target).setLogMask(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "marker": ((LogEndpoint) target).setMarker(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((LogEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "exchangeFormatter": ((LogEndpoint) target).setExchangeFormatter(property(camelContext, org.apache.camel.spi.ExchangeFormatter.class, value)); return true;
-        case "synchronous": ((LogEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "maxChars": ((LogEndpoint) target).setMaxChars(property(camelContext, int.class, value)); return true;
-        case "multiline": ((LogEndpoint) target).setMultiline(property(camelContext, boolean.class, value)); return true;
-        case "showAll": ((LogEndpoint) target).setShowAll(property(camelContext, boolean.class, value)); return true;
-        case "showBody": ((LogEndpoint) target).setShowBody(property(camelContext, boolean.class, value)); return true;
-        case "showBodyType": ((LogEndpoint) target).setShowBodyType(property(camelContext, boolean.class, value)); return true;
-        case "showCaughtException": ((LogEndpoint) target).setShowCaughtException(property(camelContext, boolean.class, value)); return true;
-        case "showException": ((LogEndpoint) target).setShowException(property(camelContext, boolean.class, value)); return true;
-        case "showExchangeId": ((LogEndpoint) target).setShowExchangeId(property(camelContext, boolean.class, value)); return true;
-        case "showExchangePattern": ((LogEndpoint) target).setShowExchangePattern(property(camelContext, boolean.class, value)); return true;
-        case "showFiles": ((LogEndpoint) target).setShowFiles(property(camelContext, boolean.class, value)); return true;
-        case "showFuture": ((LogEndpoint) target).setShowFuture(property(camelContext, boolean.class, value)); return true;
-        case "showHeaders": ((LogEndpoint) target).setShowHeaders(property(camelContext, boolean.class, value)); return true;
-        case "showProperties": ((LogEndpoint) target).setShowProperties(property(camelContext, boolean.class, value)); return true;
-        case "showStackTrace": ((LogEndpoint) target).setShowStackTrace(property(camelContext, boolean.class, value)); return true;
-        case "showStreams": ((LogEndpoint) target).setShowStreams(property(camelContext, boolean.class, value)); return true;
-        case "skipBodyLineSeparator": ((LogEndpoint) target).setSkipBodyLineSeparator(property(camelContext, boolean.class, value)); return true;
-        case "style": ((LogEndpoint) target).setStyle(property(camelContext, org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "groupactiveonly": ((LogEndpoint) target).setGroupActiveOnly(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "groupdelay": ((LogEndpoint) target).setGroupDelay(property(camelContext, java.lang.Long.class, value)); return true;
-        case "groupinterval": ((LogEndpoint) target).setGroupInterval(property(camelContext, java.lang.Long.class, value)); return true;
-        case "groupsize": ((LogEndpoint) target).setGroupSize(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "lazystartproducer": ((LogEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "level": ((LogEndpoint) target).setLevel(property(camelContext, java.lang.String.class, value)); return true;
-        case "logmask": ((LogEndpoint) target).setLogMask(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "marker": ((LogEndpoint) target).setMarker(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((LogEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "exchangeformatter": ((LogEndpoint) target).setExchangeFormatter(property(camelContext, org.apache.camel.spi.ExchangeFormatter.class, value)); return true;
-        case "synchronous": ((LogEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "maxchars": ((LogEndpoint) target).setMaxChars(property(camelContext, int.class, value)); return true;
-        case "multiline": ((LogEndpoint) target).setMultiline(property(camelContext, boolean.class, value)); return true;
-        case "showall": ((LogEndpoint) target).setShowAll(property(camelContext, boolean.class, value)); return true;
-        case "showbody": ((LogEndpoint) target).setShowBody(property(camelContext, boolean.class, value)); return true;
-        case "showbodytype": ((LogEndpoint) target).setShowBodyType(property(camelContext, boolean.class, value)); return true;
-        case "showcaughtexception": ((LogEndpoint) target).setShowCaughtException(property(camelContext, boolean.class, value)); return true;
-        case "showexception": ((LogEndpoint) target).setShowException(property(camelContext, boolean.class, value)); return true;
-        case "showexchangeid": ((LogEndpoint) target).setShowExchangeId(property(camelContext, boolean.class, value)); return true;
-        case "showexchangepattern": ((LogEndpoint) target).setShowExchangePattern(property(camelContext, boolean.class, value)); return true;
-        case "showfiles": ((LogEndpoint) target).setShowFiles(property(camelContext, boolean.class, value)); return true;
-        case "showfuture": ((LogEndpoint) target).setShowFuture(property(camelContext, boolean.class, value)); return true;
-        case "showheaders": ((LogEndpoint) target).setShowHeaders(property(camelContext, boolean.class, value)); return true;
-        case "showproperties": ((LogEndpoint) target).setShowProperties(property(camelContext, boolean.class, value)); return true;
-        case "showstacktrace": ((LogEndpoint) target).setShowStackTrace(property(camelContext, boolean.class, value)); return true;
-        case "showstreams": ((LogEndpoint) target).setShowStreams(property(camelContext, boolean.class, value)); return true;
-        case "skipbodylineseparator": ((LogEndpoint) target).setSkipBodyLineSeparator(property(camelContext, boolean.class, value)); return true;
-        case "style": ((LogEndpoint) target).setStyle(property(camelContext, org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        LogEndpoint target = (LogEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "groupactiveonly":
+        case "groupActiveOnly": target.setGroupActiveOnly(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "groupdelay":
+        case "groupDelay": target.setGroupDelay(property(camelContext, java.lang.Long.class, value)); return true;
+        case "groupinterval":
+        case "groupInterval": target.setGroupInterval(property(camelContext, java.lang.Long.class, value)); return true;
+        case "groupsize":
+        case "groupSize": target.setGroupSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "level": target.setLevel(property(camelContext, java.lang.String.class, value)); return true;
+        case "logmask":
+        case "logMask": target.setLogMask(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "marker": target.setMarker(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "exchangeformatter":
+        case "exchangeFormatter": target.setExchangeFormatter(property(camelContext, org.apache.camel.spi.ExchangeFormatter.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "maxchars":
+        case "maxChars": target.setMaxChars(property(camelContext, int.class, value)); return true;
+        case "multiline": target.setMultiline(property(camelContext, boolean.class, value)); return true;
+        case "showall":
+        case "showAll": target.setShowAll(property(camelContext, boolean.class, value)); return true;
+        case "showbody":
+        case "showBody": target.setShowBody(property(camelContext, boolean.class, value)); return true;
+        case "showbodytype":
+        case "showBodyType": target.setShowBodyType(property(camelContext, boolean.class, value)); return true;
+        case "showcaughtexception":
+        case "showCaughtException": target.setShowCaughtException(property(camelContext, boolean.class, value)); return true;
+        case "showexception":
+        case "showException": target.setShowException(property(camelContext, boolean.class, value)); return true;
+        case "showexchangeid":
+        case "showExchangeId": target.setShowExchangeId(property(camelContext, boolean.class, value)); return true;
+        case "showexchangepattern":
+        case "showExchangePattern": target.setShowExchangePattern(property(camelContext, boolean.class, value)); return true;
+        case "showfiles":
+        case "showFiles": target.setShowFiles(property(camelContext, boolean.class, value)); return true;
+        case "showfuture":
+        case "showFuture": target.setShowFuture(property(camelContext, boolean.class, value)); return true;
+        case "showheaders":
+        case "showHeaders": target.setShowHeaders(property(camelContext, boolean.class, value)); return true;
+        case "showproperties":
+        case "showProperties": target.setShowProperties(property(camelContext, boolean.class, value)); return true;
+        case "showstacktrace":
+        case "showStackTrace": target.setShowStackTrace(property(camelContext, boolean.class, value)); return true;
+        case "showstreams":
+        case "showStreams": target.setShowStreams(property(camelContext, boolean.class, value)); return true;
+        case "skipbodylineseparator":
+        case "skipBodyLineSeparator": target.setSkipBodyLineSeparator(property(camelContext, boolean.class, value)); return true;
+        case "style": target.setStyle(property(camelContext, org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class, value)); return true;
+        default: return false;
         }
     }
 

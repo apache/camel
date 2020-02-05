@@ -12,35 +12,20 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class MSK2ComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "configuration": ((MSK2Component) target).setConfiguration(property(camelContext, org.apache.camel.component.aws2.msk.MSK2Configuration.class, value)); return true;
-        case "accessKey": ((MSK2Component) target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretKey": ((MSK2Component) target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "region": ((MSK2Component) target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((MSK2Component) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((MSK2Component) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "configuration": ((MSK2Component) target).setConfiguration(property(camelContext, org.apache.camel.component.aws2.msk.MSK2Configuration.class, value)); return true;
-        case "accesskey": ((MSK2Component) target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretkey": ((MSK2Component) target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "region": ((MSK2Component) target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((MSK2Component) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((MSK2Component) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        MSK2Component target = (MSK2Component) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.msk.MSK2Configuration.class, value)); return true;
+        case "accesskey":
+        case "accessKey": target.setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretkey":
+        case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "region": target.setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

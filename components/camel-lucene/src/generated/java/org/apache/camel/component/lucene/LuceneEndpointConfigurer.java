@@ -12,37 +12,22 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class LuceneEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "analyzer": ((LuceneEndpoint) target).getConfig().setAnalyzer(property(camelContext, org.apache.lucene.analysis.Analyzer.class, value)); return true;
-        case "indexDir": ((LuceneEndpoint) target).getConfig().setIndexDir(property(camelContext, java.io.File.class, value)); return true;
-        case "lazyStartProducer": ((LuceneEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "maxHits": ((LuceneEndpoint) target).getConfig().setMaxHits(property(camelContext, int.class, value)); return true;
-        case "srcDir": ((LuceneEndpoint) target).getConfig().setSrcDir(property(camelContext, java.io.File.class, value)); return true;
-        case "basicPropertyBinding": ((LuceneEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((LuceneEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "analyzer": ((LuceneEndpoint) target).getConfig().setAnalyzer(property(camelContext, org.apache.lucene.analysis.Analyzer.class, value)); return true;
-        case "indexdir": ((LuceneEndpoint) target).getConfig().setIndexDir(property(camelContext, java.io.File.class, value)); return true;
-        case "lazystartproducer": ((LuceneEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "maxhits": ((LuceneEndpoint) target).getConfig().setMaxHits(property(camelContext, int.class, value)); return true;
-        case "srcdir": ((LuceneEndpoint) target).getConfig().setSrcDir(property(camelContext, java.io.File.class, value)); return true;
-        case "basicpropertybinding": ((LuceneEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((LuceneEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        LuceneEndpoint target = (LuceneEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "analyzer": target.getConfig().setAnalyzer(property(camelContext, org.apache.lucene.analysis.Analyzer.class, value)); return true;
+        case "indexdir":
+        case "indexDir": target.getConfig().setIndexDir(property(camelContext, java.io.File.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxhits":
+        case "maxHits": target.getConfig().setMaxHits(property(camelContext, int.class, value)); return true;
+        case "srcdir":
+        case "srcDir": target.getConfig().setSrcDir(property(camelContext, java.io.File.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

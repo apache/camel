@@ -57,35 +57,19 @@ public final class PropertyConfigurerGenerator {
         w.write("public class " + cn + " extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {\n");
         w.write("\n");
         w.write("    @Override\n");
-        w.write("    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {\n");
-        w.write("        if (ignoreCase) {\n");
-        w.write("            return doConfigureIgnoreCase(camelContext, target, name, value);\n");
-        w.write("        } else {\n");
-        w.write("            return doConfigure(camelContext, target, name, value);\n");
-        w.write("        }\n");
-        w.write("    }\n");
-        w.write("\n");
-        w.write("    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {\n");
-        w.write("        switch (name) {\n");
+        w.write("    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {\n");
+        w.write("        " + en + " target = (" + en + ") obj;\n");
+        w.write("        switch (ignoreCase ? name.toLowerCase() : name) {\n");
         for (BaseOptionModel option : options) {
             String getOrSet = option.getName();
             getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
-            String setterLambda = setterLambda(en, getOrSet, option.getJavaType(), option.getConfigurationField());
+            String setterLambda = setterLambda(getOrSet, option.getJavaType(), option.getConfigurationField());
+            if (!option.getName().toLowerCase().equals(option.getName())) {
+                w.write(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
+            }
             w.write(String.format("        case \"%s\": %s; return true;\n", option.getName(), setterLambda));
         }
-        w.write("            default: return false;\n");
-        w.write("        }\n");
-        w.write("    }\n");
-        w.write("\n");
-        w.write("    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {\n");
-        w.write("        switch (name.toLowerCase()) {\n");
-        for (BaseOptionModel option : options) {
-            String getOrSet = option.getName();
-            getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
-            String setterLambda = setterLambda(en, getOrSet, option.getJavaType(), option.getConfigurationField());
-            w.write(String.format("        case \"%s\": %s; return true;\n", option.getName().toLowerCase(), setterLambda));
-        }
-        w.write("            default: return false;\n");
+        w.write("        default: return false;\n");
         w.write("        }\n");
         w.write("    }\n");
         w.write("\n");
@@ -93,7 +77,7 @@ public final class PropertyConfigurerGenerator {
         w.write("\n");
     }
 
-    private static String setterLambda(String en, String getOrSet, String type, String configurationField) {
+    private static String setterLambda(String getOrSet, String type, String configurationField) {
         // type may contain generics so remove those
         if (type.indexOf('<') != -1) {
             type = type.substring(0, type.indexOf('<'));
@@ -107,7 +91,7 @@ public final class PropertyConfigurerGenerator {
 
         // ((LogComponent) target).setGroupSize(property(camelContext,
         // java.lang.Integer.class, value))
-        return String.format("((%s) target).%s(property(camelContext, %s.class, value))", en, getOrSet, type);
+        return String.format("target.%s(property(camelContext, %s.class, value))", getOrSet, type);
     }
 
 }

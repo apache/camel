@@ -12,87 +12,69 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class MyBatisEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "bridgeErrorHandler": ((MyBatisEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "maxMessagesPerPoll": ((MyBatisEndpoint) target).setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
-        case "onConsume": ((MyBatisEndpoint) target).setOnConsume(property(camelContext, java.lang.String.class, value)); return true;
-        case "routeEmptyResultSet": ((MyBatisEndpoint) target).setRouteEmptyResultSet(property(camelContext, boolean.class, value)); return true;
-        case "sendEmptyMessageWhenIdle": ((MyBatisEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "transacted": ((MyBatisEndpoint) target).setTransacted(property(camelContext, boolean.class, value)); return true;
-        case "useIterator": ((MyBatisEndpoint) target).setUseIterator(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((MyBatisEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((MyBatisEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollStrategy": ((MyBatisEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "processingStrategy": ((MyBatisEndpoint) target).setProcessingStrategy(property(camelContext, org.apache.camel.component.mybatis.MyBatisProcessingStrategy.class, value)); return true;
-        case "executorType": ((MyBatisEndpoint) target).setExecutorType(property(camelContext, org.apache.ibatis.session.ExecutorType.class, value)); return true;
-        case "inputHeader": ((MyBatisEndpoint) target).setInputHeader(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazyStartProducer": ((MyBatisEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "outputHeader": ((MyBatisEndpoint) target).setOutputHeader(property(camelContext, java.lang.String.class, value)); return true;
-        case "statementType": ((MyBatisEndpoint) target).setStatementType(property(camelContext, org.apache.camel.component.mybatis.StatementType.class, value)); return true;
-        case "basicPropertyBinding": ((MyBatisEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((MyBatisEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "backoffErrorThreshold": ((MyBatisEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffIdleThreshold": ((MyBatisEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffMultiplier": ((MyBatisEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((MyBatisEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((MyBatisEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialDelay": ((MyBatisEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatCount": ((MyBatisEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runLoggingLevel": ((MyBatisEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledExecutorService": ((MyBatisEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((MyBatisEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerProperties": ((MyBatisEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startScheduler": ((MyBatisEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeUnit": ((MyBatisEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "useFixedDelay": ((MyBatisEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "bridgeerrorhandler": ((MyBatisEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "maxmessagesperpoll": ((MyBatisEndpoint) target).setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
-        case "onconsume": ((MyBatisEndpoint) target).setOnConsume(property(camelContext, java.lang.String.class, value)); return true;
-        case "routeemptyresultset": ((MyBatisEndpoint) target).setRouteEmptyResultSet(property(camelContext, boolean.class, value)); return true;
-        case "sendemptymessagewhenidle": ((MyBatisEndpoint) target).setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "transacted": ((MyBatisEndpoint) target).setTransacted(property(camelContext, boolean.class, value)); return true;
-        case "useiterator": ((MyBatisEndpoint) target).setUseIterator(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((MyBatisEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((MyBatisEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollstrategy": ((MyBatisEndpoint) target).setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "processingstrategy": ((MyBatisEndpoint) target).setProcessingStrategy(property(camelContext, org.apache.camel.component.mybatis.MyBatisProcessingStrategy.class, value)); return true;
-        case "executortype": ((MyBatisEndpoint) target).setExecutorType(property(camelContext, org.apache.ibatis.session.ExecutorType.class, value)); return true;
-        case "inputheader": ((MyBatisEndpoint) target).setInputHeader(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer": ((MyBatisEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "outputheader": ((MyBatisEndpoint) target).setOutputHeader(property(camelContext, java.lang.String.class, value)); return true;
-        case "statementtype": ((MyBatisEndpoint) target).setStatementType(property(camelContext, org.apache.camel.component.mybatis.StatementType.class, value)); return true;
-        case "basicpropertybinding": ((MyBatisEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((MyBatisEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "backofferrorthreshold": ((MyBatisEndpoint) target).setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffidlethreshold": ((MyBatisEndpoint) target).setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffmultiplier": ((MyBatisEndpoint) target).setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": ((MyBatisEndpoint) target).setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": ((MyBatisEndpoint) target).setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialdelay": ((MyBatisEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatcount": ((MyBatisEndpoint) target).setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runlogginglevel": ((MyBatisEndpoint) target).setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledexecutorservice": ((MyBatisEndpoint) target).setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": ((MyBatisEndpoint) target).setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerproperties": ((MyBatisEndpoint) target).setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startscheduler": ((MyBatisEndpoint) target).setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeunit": ((MyBatisEndpoint) target).setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "usefixeddelay": ((MyBatisEndpoint) target).setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        MyBatisEndpoint target = (MyBatisEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
+        case "onconsume":
+        case "onConsume": target.setOnConsume(property(camelContext, java.lang.String.class, value)); return true;
+        case "routeemptyresultset":
+        case "routeEmptyResultSet": target.setRouteEmptyResultSet(property(camelContext, boolean.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "transacted": target.setTransacted(property(camelContext, boolean.class, value)); return true;
+        case "useiterator":
+        case "useIterator": target.setUseIterator(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "processingstrategy":
+        case "processingStrategy": target.setProcessingStrategy(property(camelContext, org.apache.camel.component.mybatis.MyBatisProcessingStrategy.class, value)); return true;
+        case "executortype":
+        case "executorType": target.setExecutorType(property(camelContext, org.apache.ibatis.session.ExecutorType.class, value)); return true;
+        case "inputheader":
+        case "inputHeader": target.setInputHeader(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "outputheader":
+        case "outputHeader": target.setOutputHeader(property(camelContext, java.lang.String.class, value)); return true;
+        case "statementtype":
+        case "statementType": target.setStatementType(property(camelContext, org.apache.camel.component.mybatis.StatementType.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffmultiplier":
+        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "repeatcount":
+        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "runlogginglevel":
+        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "schedulerproperties":
+        case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "startscheduler":
+        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "timeunit":
+        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "usefixeddelay":
+        case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

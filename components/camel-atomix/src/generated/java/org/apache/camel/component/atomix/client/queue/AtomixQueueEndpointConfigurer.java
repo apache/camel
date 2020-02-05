@@ -12,59 +12,42 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class AtomixQueueEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "atomix": ((AtomixQueueEndpoint) target).getConfiguration().setAtomix(property(camelContext, io.atomix.Atomix.class, value)); return true;
-        case "configurationUri": ((AtomixQueueEndpoint) target).getConfiguration().setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "defaultAction": ((AtomixQueueEndpoint) target).getConfiguration().setDefaultAction(property(camelContext, org.apache.camel.component.atomix.client.queue.AtomixQueue.Action.class, value)); return true;
-        case "nodes": ((AtomixQueueEndpoint) target).getConfiguration().setNodes(property(camelContext, java.lang.String.class, value)); return true;
-        case "resultHeader": ((AtomixQueueEndpoint) target).getConfiguration().setResultHeader(property(camelContext, java.lang.String.class, value)); return true;
-        case "transportClassName": ((AtomixQueueEndpoint) target).getConfiguration().setTransportClassName(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((AtomixQueueEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((AtomixQueueEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((AtomixQueueEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((AtomixQueueEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((AtomixQueueEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "defaultResourceConfig": ((AtomixQueueEndpoint) target).getConfiguration().setDefaultResourceConfig(property(camelContext, java.util.Properties.class, value)); return true;
-        case "defaultResourceOptions": ((AtomixQueueEndpoint) target).getConfiguration().setDefaultResourceOptions(property(camelContext, java.util.Properties.class, value)); return true;
-        case "ephemeral": ((AtomixQueueEndpoint) target).getConfiguration().setEphemeral(property(camelContext, boolean.class, value)); return true;
-        case "readConsistency": ((AtomixQueueEndpoint) target).getConfiguration().setReadConsistency(property(camelContext, io.atomix.resource.ReadConsistency.class, value)); return true;
-        case "resourceConfigs": ((AtomixQueueEndpoint) target).getConfiguration().setResourceConfigs(property(camelContext, java.util.Map.class, value)); return true;
-        case "resourceOptions": ((AtomixQueueEndpoint) target).getConfiguration().setResourceOptions(property(camelContext, java.util.Map.class, value)); return true;
-        case "synchronous": ((AtomixQueueEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "atomix": ((AtomixQueueEndpoint) target).getConfiguration().setAtomix(property(camelContext, io.atomix.Atomix.class, value)); return true;
-        case "configurationuri": ((AtomixQueueEndpoint) target).getConfiguration().setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "defaultaction": ((AtomixQueueEndpoint) target).getConfiguration().setDefaultAction(property(camelContext, org.apache.camel.component.atomix.client.queue.AtomixQueue.Action.class, value)); return true;
-        case "nodes": ((AtomixQueueEndpoint) target).getConfiguration().setNodes(property(camelContext, java.lang.String.class, value)); return true;
-        case "resultheader": ((AtomixQueueEndpoint) target).getConfiguration().setResultHeader(property(camelContext, java.lang.String.class, value)); return true;
-        case "transportclassname": ((AtomixQueueEndpoint) target).getConfiguration().setTransportClassName(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((AtomixQueueEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((AtomixQueueEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((AtomixQueueEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((AtomixQueueEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((AtomixQueueEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "defaultresourceconfig": ((AtomixQueueEndpoint) target).getConfiguration().setDefaultResourceConfig(property(camelContext, java.util.Properties.class, value)); return true;
-        case "defaultresourceoptions": ((AtomixQueueEndpoint) target).getConfiguration().setDefaultResourceOptions(property(camelContext, java.util.Properties.class, value)); return true;
-        case "ephemeral": ((AtomixQueueEndpoint) target).getConfiguration().setEphemeral(property(camelContext, boolean.class, value)); return true;
-        case "readconsistency": ((AtomixQueueEndpoint) target).getConfiguration().setReadConsistency(property(camelContext, io.atomix.resource.ReadConsistency.class, value)); return true;
-        case "resourceconfigs": ((AtomixQueueEndpoint) target).getConfiguration().setResourceConfigs(property(camelContext, java.util.Map.class, value)); return true;
-        case "resourceoptions": ((AtomixQueueEndpoint) target).getConfiguration().setResourceOptions(property(camelContext, java.util.Map.class, value)); return true;
-        case "synchronous": ((AtomixQueueEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        AtomixQueueEndpoint target = (AtomixQueueEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "atomix": target.getConfiguration().setAtomix(property(camelContext, io.atomix.Atomix.class, value)); return true;
+        case "configurationuri":
+        case "configurationUri": target.getConfiguration().setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "defaultaction":
+        case "defaultAction": target.getConfiguration().setDefaultAction(property(camelContext, org.apache.camel.component.atomix.client.queue.AtomixQueue.Action.class, value)); return true;
+        case "nodes": target.getConfiguration().setNodes(property(camelContext, java.lang.String.class, value)); return true;
+        case "resultheader":
+        case "resultHeader": target.getConfiguration().setResultHeader(property(camelContext, java.lang.String.class, value)); return true;
+        case "transportclassname":
+        case "transportClassName": target.getConfiguration().setTransportClassName(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "defaultresourceconfig":
+        case "defaultResourceConfig": target.getConfiguration().setDefaultResourceConfig(property(camelContext, java.util.Properties.class, value)); return true;
+        case "defaultresourceoptions":
+        case "defaultResourceOptions": target.getConfiguration().setDefaultResourceOptions(property(camelContext, java.util.Properties.class, value)); return true;
+        case "ephemeral": target.getConfiguration().setEphemeral(property(camelContext, boolean.class, value)); return true;
+        case "readconsistency":
+        case "readConsistency": target.getConfiguration().setReadConsistency(property(camelContext, io.atomix.resource.ReadConsistency.class, value)); return true;
+        case "resourceconfigs":
+        case "resourceConfigs": target.getConfiguration().setResourceConfigs(property(camelContext, java.util.Map.class, value)); return true;
+        case "resourceoptions":
+        case "resourceOptions": target.getConfiguration().setResourceOptions(property(camelContext, java.util.Map.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

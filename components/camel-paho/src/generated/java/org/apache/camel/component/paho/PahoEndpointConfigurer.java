@@ -12,89 +12,70 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class PahoEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "automaticReconnect": ((PahoEndpoint) target).getConfiguration().setAutomaticReconnect(property(camelContext, boolean.class, value)); return true;
-        case "brokerUrl": ((PahoEndpoint) target).getConfiguration().setBrokerUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "cleanSession": ((PahoEndpoint) target).getConfiguration().setCleanSession(property(camelContext, boolean.class, value)); return true;
-        case "clientId": ((PahoEndpoint) target).getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
-        case "connectionTimeout": ((PahoEndpoint) target).getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
-        case "filePersistenceDirectory": ((PahoEndpoint) target).getConfiguration().setFilePersistenceDirectory(property(camelContext, java.lang.String.class, value)); return true;
-        case "keepAliveInterval": ((PahoEndpoint) target).getConfiguration().setKeepAliveInterval(property(camelContext, int.class, value)); return true;
-        case "maxInflight": ((PahoEndpoint) target).getConfiguration().setMaxInflight(property(camelContext, int.class, value)); return true;
-        case "maxReconnectDelay": ((PahoEndpoint) target).getConfiguration().setMaxReconnectDelay(property(camelContext, int.class, value)); return true;
-        case "mqttVersion": ((PahoEndpoint) target).getConfiguration().setMqttVersion(property(camelContext, int.class, value)); return true;
-        case "persistence": ((PahoEndpoint) target).getConfiguration().setPersistence(property(camelContext, org.apache.camel.component.paho.PahoPersistence.class, value)); return true;
-        case "qos": ((PahoEndpoint) target).getConfiguration().setQos(property(camelContext, int.class, value)); return true;
-        case "retained": ((PahoEndpoint) target).getConfiguration().setRetained(property(camelContext, boolean.class, value)); return true;
-        case "serverURIs": ((PahoEndpoint) target).getConfiguration().setServerURIs(property(camelContext, java.lang.String.class, value)); return true;
-        case "willPayload": ((PahoEndpoint) target).getConfiguration().setWillPayload(property(camelContext, java.lang.String.class, value)); return true;
-        case "willQos": ((PahoEndpoint) target).getConfiguration().setWillQos(property(camelContext, int.class, value)); return true;
-        case "willRetained": ((PahoEndpoint) target).getConfiguration().setWillRetained(property(camelContext, boolean.class, value)); return true;
-        case "willTopic": ((PahoEndpoint) target).getConfiguration().setWillTopic(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((PahoEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((PahoEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((PahoEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((PahoEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((PahoEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "client": ((PahoEndpoint) target).setClient(property(camelContext, org.eclipse.paho.client.mqttv3.MqttClient.class, value)); return true;
-        case "customWebSocketHeaders": ((PahoEndpoint) target).getConfiguration().setCustomWebSocketHeaders(property(camelContext, java.util.Properties.class, value)); return true;
-        case "executorServiceTimeout": ((PahoEndpoint) target).getConfiguration().setExecutorServiceTimeout(property(camelContext, int.class, value)); return true;
-        case "synchronous": ((PahoEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "httpsHostnameVerificationEnabled": ((PahoEndpoint) target).getConfiguration().setHttpsHostnameVerificationEnabled(property(camelContext, boolean.class, value)); return true;
-        case "password": ((PahoEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "socketFactory": ((PahoEndpoint) target).getConfiguration().setSocketFactory(property(camelContext, javax.net.SocketFactory.class, value)); return true;
-        case "sslClientProps": ((PahoEndpoint) target).getConfiguration().setSslClientProps(property(camelContext, java.util.Properties.class, value)); return true;
-        case "sslHostnameVerifier": ((PahoEndpoint) target).getConfiguration().setSslHostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
-        case "userName": ((PahoEndpoint) target).getConfiguration().setUserName(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "automaticreconnect": ((PahoEndpoint) target).getConfiguration().setAutomaticReconnect(property(camelContext, boolean.class, value)); return true;
-        case "brokerurl": ((PahoEndpoint) target).getConfiguration().setBrokerUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "cleansession": ((PahoEndpoint) target).getConfiguration().setCleanSession(property(camelContext, boolean.class, value)); return true;
-        case "clientid": ((PahoEndpoint) target).getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
-        case "connectiontimeout": ((PahoEndpoint) target).getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
-        case "filepersistencedirectory": ((PahoEndpoint) target).getConfiguration().setFilePersistenceDirectory(property(camelContext, java.lang.String.class, value)); return true;
-        case "keepaliveinterval": ((PahoEndpoint) target).getConfiguration().setKeepAliveInterval(property(camelContext, int.class, value)); return true;
-        case "maxinflight": ((PahoEndpoint) target).getConfiguration().setMaxInflight(property(camelContext, int.class, value)); return true;
-        case "maxreconnectdelay": ((PahoEndpoint) target).getConfiguration().setMaxReconnectDelay(property(camelContext, int.class, value)); return true;
-        case "mqttversion": ((PahoEndpoint) target).getConfiguration().setMqttVersion(property(camelContext, int.class, value)); return true;
-        case "persistence": ((PahoEndpoint) target).getConfiguration().setPersistence(property(camelContext, org.apache.camel.component.paho.PahoPersistence.class, value)); return true;
-        case "qos": ((PahoEndpoint) target).getConfiguration().setQos(property(camelContext, int.class, value)); return true;
-        case "retained": ((PahoEndpoint) target).getConfiguration().setRetained(property(camelContext, boolean.class, value)); return true;
-        case "serveruris": ((PahoEndpoint) target).getConfiguration().setServerURIs(property(camelContext, java.lang.String.class, value)); return true;
-        case "willpayload": ((PahoEndpoint) target).getConfiguration().setWillPayload(property(camelContext, java.lang.String.class, value)); return true;
-        case "willqos": ((PahoEndpoint) target).getConfiguration().setWillQos(property(camelContext, int.class, value)); return true;
-        case "willretained": ((PahoEndpoint) target).getConfiguration().setWillRetained(property(camelContext, boolean.class, value)); return true;
-        case "willtopic": ((PahoEndpoint) target).getConfiguration().setWillTopic(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((PahoEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((PahoEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((PahoEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((PahoEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((PahoEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "client": ((PahoEndpoint) target).setClient(property(camelContext, org.eclipse.paho.client.mqttv3.MqttClient.class, value)); return true;
-        case "customwebsocketheaders": ((PahoEndpoint) target).getConfiguration().setCustomWebSocketHeaders(property(camelContext, java.util.Properties.class, value)); return true;
-        case "executorservicetimeout": ((PahoEndpoint) target).getConfiguration().setExecutorServiceTimeout(property(camelContext, int.class, value)); return true;
-        case "synchronous": ((PahoEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "httpshostnameverificationenabled": ((PahoEndpoint) target).getConfiguration().setHttpsHostnameVerificationEnabled(property(camelContext, boolean.class, value)); return true;
-        case "password": ((PahoEndpoint) target).getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "socketfactory": ((PahoEndpoint) target).getConfiguration().setSocketFactory(property(camelContext, javax.net.SocketFactory.class, value)); return true;
-        case "sslclientprops": ((PahoEndpoint) target).getConfiguration().setSslClientProps(property(camelContext, java.util.Properties.class, value)); return true;
-        case "sslhostnameverifier": ((PahoEndpoint) target).getConfiguration().setSslHostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
-        case "username": ((PahoEndpoint) target).getConfiguration().setUserName(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        PahoEndpoint target = (PahoEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "automaticreconnect":
+        case "automaticReconnect": target.getConfiguration().setAutomaticReconnect(property(camelContext, boolean.class, value)); return true;
+        case "brokerurl":
+        case "brokerUrl": target.getConfiguration().setBrokerUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "cleansession":
+        case "cleanSession": target.getConfiguration().setCleanSession(property(camelContext, boolean.class, value)); return true;
+        case "clientid":
+        case "clientId": target.getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "connectiontimeout":
+        case "connectionTimeout": target.getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
+        case "filepersistencedirectory":
+        case "filePersistenceDirectory": target.getConfiguration().setFilePersistenceDirectory(property(camelContext, java.lang.String.class, value)); return true;
+        case "keepaliveinterval":
+        case "keepAliveInterval": target.getConfiguration().setKeepAliveInterval(property(camelContext, int.class, value)); return true;
+        case "maxinflight":
+        case "maxInflight": target.getConfiguration().setMaxInflight(property(camelContext, int.class, value)); return true;
+        case "maxreconnectdelay":
+        case "maxReconnectDelay": target.getConfiguration().setMaxReconnectDelay(property(camelContext, int.class, value)); return true;
+        case "mqttversion":
+        case "mqttVersion": target.getConfiguration().setMqttVersion(property(camelContext, int.class, value)); return true;
+        case "persistence": target.getConfiguration().setPersistence(property(camelContext, org.apache.camel.component.paho.PahoPersistence.class, value)); return true;
+        case "qos": target.getConfiguration().setQos(property(camelContext, int.class, value)); return true;
+        case "retained": target.getConfiguration().setRetained(property(camelContext, boolean.class, value)); return true;
+        case "serveruris":
+        case "serverURIs": target.getConfiguration().setServerURIs(property(camelContext, java.lang.String.class, value)); return true;
+        case "willpayload":
+        case "willPayload": target.getConfiguration().setWillPayload(property(camelContext, java.lang.String.class, value)); return true;
+        case "willqos":
+        case "willQos": target.getConfiguration().setWillQos(property(camelContext, int.class, value)); return true;
+        case "willretained":
+        case "willRetained": target.getConfiguration().setWillRetained(property(camelContext, boolean.class, value)); return true;
+        case "willtopic":
+        case "willTopic": target.getConfiguration().setWillTopic(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "client": target.setClient(property(camelContext, org.eclipse.paho.client.mqttv3.MqttClient.class, value)); return true;
+        case "customwebsocketheaders":
+        case "customWebSocketHeaders": target.getConfiguration().setCustomWebSocketHeaders(property(camelContext, java.util.Properties.class, value)); return true;
+        case "executorservicetimeout":
+        case "executorServiceTimeout": target.getConfiguration().setExecutorServiceTimeout(property(camelContext, int.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "httpshostnameverificationenabled":
+        case "httpsHostnameVerificationEnabled": target.getConfiguration().setHttpsHostnameVerificationEnabled(property(camelContext, boolean.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "socketfactory":
+        case "socketFactory": target.getConfiguration().setSocketFactory(property(camelContext, javax.net.SocketFactory.class, value)); return true;
+        case "sslclientprops":
+        case "sslClientProps": target.getConfiguration().setSslClientProps(property(camelContext, java.util.Properties.class, value)); return true;
+        case "sslhostnameverifier":
+        case "sslHostnameVerifier": target.getConfiguration().setSslHostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
+        case "username":
+        case "userName": target.getConfiguration().setUserName(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

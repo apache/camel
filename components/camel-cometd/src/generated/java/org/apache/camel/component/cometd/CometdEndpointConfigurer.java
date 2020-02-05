@@ -12,59 +12,43 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class CometdEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "allowedOrigins": ((CometdEndpoint) target).setAllowedOrigins(property(camelContext, java.lang.String.class, value)); return true;
-        case "baseResource": ((CometdEndpoint) target).setBaseResource(property(camelContext, java.lang.String.class, value)); return true;
-        case "crossOriginFilterOn": ((CometdEndpoint) target).setCrossOriginFilterOn(property(camelContext, boolean.class, value)); return true;
-        case "filterPath": ((CometdEndpoint) target).setFilterPath(property(camelContext, java.lang.String.class, value)); return true;
-        case "interval": ((CometdEndpoint) target).setInterval(property(camelContext, int.class, value)); return true;
-        case "jsonCommented": ((CometdEndpoint) target).setJsonCommented(property(camelContext, boolean.class, value)); return true;
-        case "logLevel": ((CometdEndpoint) target).setLogLevel(property(camelContext, int.class, value)); return true;
-        case "maxInterval": ((CometdEndpoint) target).setMaxInterval(property(camelContext, int.class, value)); return true;
-        case "multiFrameInterval": ((CometdEndpoint) target).setMultiFrameInterval(property(camelContext, int.class, value)); return true;
-        case "timeout": ((CometdEndpoint) target).setTimeout(property(camelContext, int.class, value)); return true;
-        case "bridgeErrorHandler": ((CometdEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "sessionHeadersEnabled": ((CometdEndpoint) target).setSessionHeadersEnabled(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((CometdEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((CometdEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "disconnectLocalSession": ((CometdEndpoint) target).setDisconnectLocalSession(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((CometdEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((CometdEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((CometdEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "allowedorigins": ((CometdEndpoint) target).setAllowedOrigins(property(camelContext, java.lang.String.class, value)); return true;
-        case "baseresource": ((CometdEndpoint) target).setBaseResource(property(camelContext, java.lang.String.class, value)); return true;
-        case "crossoriginfilteron": ((CometdEndpoint) target).setCrossOriginFilterOn(property(camelContext, boolean.class, value)); return true;
-        case "filterpath": ((CometdEndpoint) target).setFilterPath(property(camelContext, java.lang.String.class, value)); return true;
-        case "interval": ((CometdEndpoint) target).setInterval(property(camelContext, int.class, value)); return true;
-        case "jsoncommented": ((CometdEndpoint) target).setJsonCommented(property(camelContext, boolean.class, value)); return true;
-        case "loglevel": ((CometdEndpoint) target).setLogLevel(property(camelContext, int.class, value)); return true;
-        case "maxinterval": ((CometdEndpoint) target).setMaxInterval(property(camelContext, int.class, value)); return true;
-        case "multiframeinterval": ((CometdEndpoint) target).setMultiFrameInterval(property(camelContext, int.class, value)); return true;
-        case "timeout": ((CometdEndpoint) target).setTimeout(property(camelContext, int.class, value)); return true;
-        case "bridgeerrorhandler": ((CometdEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "sessionheadersenabled": ((CometdEndpoint) target).setSessionHeadersEnabled(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((CometdEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((CometdEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "disconnectlocalsession": ((CometdEndpoint) target).setDisconnectLocalSession(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((CometdEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((CometdEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((CometdEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        CometdEndpoint target = (CometdEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowedorigins":
+        case "allowedOrigins": target.setAllowedOrigins(property(camelContext, java.lang.String.class, value)); return true;
+        case "baseresource":
+        case "baseResource": target.setBaseResource(property(camelContext, java.lang.String.class, value)); return true;
+        case "crossoriginfilteron":
+        case "crossOriginFilterOn": target.setCrossOriginFilterOn(property(camelContext, boolean.class, value)); return true;
+        case "filterpath":
+        case "filterPath": target.setFilterPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "interval": target.setInterval(property(camelContext, int.class, value)); return true;
+        case "jsoncommented":
+        case "jsonCommented": target.setJsonCommented(property(camelContext, boolean.class, value)); return true;
+        case "loglevel":
+        case "logLevel": target.setLogLevel(property(camelContext, int.class, value)); return true;
+        case "maxinterval":
+        case "maxInterval": target.setMaxInterval(property(camelContext, int.class, value)); return true;
+        case "multiframeinterval":
+        case "multiFrameInterval": target.setMultiFrameInterval(property(camelContext, int.class, value)); return true;
+        case "timeout": target.setTimeout(property(camelContext, int.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "sessionheadersenabled":
+        case "sessionHeadersEnabled": target.setSessionHeadersEnabled(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "disconnectlocalsession":
+        case "disconnectLocalSession": target.setDisconnectLocalSession(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

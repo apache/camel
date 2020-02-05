@@ -12,31 +12,18 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class BeanstalkComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "connectionSettingsFactory": ((BeanstalkComponent) target).setConnectionSettingsFactory(property(camelContext, org.apache.camel.component.beanstalk.ConnectionSettingsFactory.class, value)); return true;
-        case "basicPropertyBinding": ((BeanstalkComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((BeanstalkComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((BeanstalkComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "connectionsettingsfactory": ((BeanstalkComponent) target).setConnectionSettingsFactory(property(camelContext, org.apache.camel.component.beanstalk.ConnectionSettingsFactory.class, value)); return true;
-        case "basicpropertybinding": ((BeanstalkComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((BeanstalkComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((BeanstalkComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        BeanstalkComponent target = (BeanstalkComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "connectionsettingsfactory":
+        case "connectionSettingsFactory": target.setConnectionSettingsFactory(property(camelContext, org.apache.camel.component.beanstalk.ConnectionSettingsFactory.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

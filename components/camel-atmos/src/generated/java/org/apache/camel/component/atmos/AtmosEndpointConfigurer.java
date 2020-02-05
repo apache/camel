@@ -12,51 +12,35 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class AtmosEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "localPath": ((AtmosEndpoint) target).getConfiguration().setLocalPath(property(camelContext, java.lang.String.class, value)); return true;
-        case "newRemotePath": ((AtmosEndpoint) target).getConfiguration().setNewRemotePath(property(camelContext, java.lang.String.class, value)); return true;
-        case "query": ((AtmosEndpoint) target).getConfiguration().setQuery(property(camelContext, java.lang.String.class, value)); return true;
-        case "remotePath": ((AtmosEndpoint) target).getConfiguration().setRemotePath(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((AtmosEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((AtmosEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((AtmosEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((AtmosEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((AtmosEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((AtmosEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "uri": ((AtmosEndpoint) target).getConfiguration().setUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "fullTokenId": ((AtmosEndpoint) target).getConfiguration().setFullTokenId(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretKey": ((AtmosEndpoint) target).getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "sslValidation": ((AtmosEndpoint) target).getConfiguration().setSslValidation(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "localpath": ((AtmosEndpoint) target).getConfiguration().setLocalPath(property(camelContext, java.lang.String.class, value)); return true;
-        case "newremotepath": ((AtmosEndpoint) target).getConfiguration().setNewRemotePath(property(camelContext, java.lang.String.class, value)); return true;
-        case "query": ((AtmosEndpoint) target).getConfiguration().setQuery(property(camelContext, java.lang.String.class, value)); return true;
-        case "remotepath": ((AtmosEndpoint) target).getConfiguration().setRemotePath(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((AtmosEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((AtmosEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((AtmosEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((AtmosEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((AtmosEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((AtmosEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "uri": ((AtmosEndpoint) target).getConfiguration().setUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "fulltokenid": ((AtmosEndpoint) target).getConfiguration().setFullTokenId(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretkey": ((AtmosEndpoint) target).getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "sslvalidation": ((AtmosEndpoint) target).getConfiguration().setSslValidation(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        AtmosEndpoint target = (AtmosEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "localpath":
+        case "localPath": target.getConfiguration().setLocalPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "newremotepath":
+        case "newRemotePath": target.getConfiguration().setNewRemotePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "query": target.getConfiguration().setQuery(property(camelContext, java.lang.String.class, value)); return true;
+        case "remotepath":
+        case "remotePath": target.getConfiguration().setRemotePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "uri": target.getConfiguration().setUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "fulltokenid":
+        case "fullTokenId": target.getConfiguration().setFullTokenId(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretkey":
+        case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslvalidation":
+        case "sslValidation": target.getConfiguration().setSslValidation(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

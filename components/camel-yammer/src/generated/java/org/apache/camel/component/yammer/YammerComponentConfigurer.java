@@ -12,37 +12,23 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class YammerComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "consumerKey": ((YammerComponent) target).setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "consumerSecret": ((YammerComponent) target).setConsumerSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "accessToken": ((YammerComponent) target).setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "config": ((YammerComponent) target).setConfig(property(camelContext, org.apache.camel.component.yammer.YammerConfiguration.class, value)); return true;
-        case "basicPropertyBinding": ((YammerComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((YammerComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((YammerComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "consumerkey": ((YammerComponent) target).setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "consumersecret": ((YammerComponent) target).setConsumerSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "accesstoken": ((YammerComponent) target).setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "config": ((YammerComponent) target).setConfig(property(camelContext, org.apache.camel.component.yammer.YammerConfiguration.class, value)); return true;
-        case "basicpropertybinding": ((YammerComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((YammerComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((YammerComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        YammerComponent target = (YammerComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "consumerkey":
+        case "consumerKey": target.setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "consumersecret":
+        case "consumerSecret": target.setConsumerSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "accesstoken":
+        case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "config": target.setConfig(property(camelContext, org.apache.camel.component.yammer.YammerConfiguration.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

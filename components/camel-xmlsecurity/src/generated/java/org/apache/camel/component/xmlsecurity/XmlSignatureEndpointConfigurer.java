@@ -12,97 +12,82 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class XmlSignatureEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "baseUri": ((XmlSignatureEndpoint) target).getSignerConfiguration().setBaseUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "clearHeaders": ((XmlSignatureEndpoint) target).getSignerConfiguration().setClearHeaders(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "cryptoContextProperties": ((XmlSignatureEndpoint) target).getSignerConfiguration().setCryptoContextProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "disallowDoctypeDecl": ((XmlSignatureEndpoint) target).getSignerConfiguration().setDisallowDoctypeDecl(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "omitXmlDeclaration": ((XmlSignatureEndpoint) target).getSignerConfiguration().setOmitXmlDeclaration(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "outputXmlEncoding": ((XmlSignatureEndpoint) target).getSignerConfiguration().setOutputXmlEncoding(property(camelContext, java.lang.String.class, value)); return true;
-        case "schemaResourceUri": ((XmlSignatureEndpoint) target).getSignerConfiguration().setSchemaResourceUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazyStartProducer": ((XmlSignatureEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((XmlSignatureEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((XmlSignatureEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "uriDereferencer": ((XmlSignatureEndpoint) target).getSignerConfiguration().setUriDereferencer(property(camelContext, javax.xml.crypto.URIDereferencer.class, value)); return true;
-        case "addKeyInfoReference": ((XmlSignatureEndpoint) target).getSignerConfiguration().setAddKeyInfoReference(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "canonicalizationMethod": ((XmlSignatureEndpoint) target).getSignerConfiguration().setCanonicalizationMethod(property(camelContext, javax.xml.crypto.AlgorithmMethod.class, value)); return true;
-        case "contentObjectId": ((XmlSignatureEndpoint) target).getSignerConfiguration().setContentObjectId(property(camelContext, java.lang.String.class, value)); return true;
-        case "contentReferenceType": ((XmlSignatureEndpoint) target).getSignerConfiguration().setContentReferenceType(property(camelContext, java.lang.String.class, value)); return true;
-        case "contentReferenceUri": ((XmlSignatureEndpoint) target).getSignerConfiguration().setContentReferenceUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "digestAlgorithm": ((XmlSignatureEndpoint) target).getSignerConfiguration().setDigestAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
-        case "keyAccessor": ((XmlSignatureEndpoint) target).getSignerConfiguration().setKeyAccessor(property(camelContext, org.apache.camel.component.xmlsecurity.api.KeyAccessor.class, value)); return true;
-        case "parentLocalName": ((XmlSignatureEndpoint) target).getSignerConfiguration().setParentLocalName(property(camelContext, java.lang.String.class, value)); return true;
-        case "parentNamespace": ((XmlSignatureEndpoint) target).getSignerConfiguration().setParentNamespace(property(camelContext, java.lang.String.class, value)); return true;
-        case "parentXpath": ((XmlSignatureEndpoint) target).getSignerConfiguration().setParentXpath(property(camelContext, javax.xml.crypto.dsig.spec.XPathFilterParameterSpec.class, value)); return true;
-        case "plainText": ((XmlSignatureEndpoint) target).getSignerConfiguration().setPlainText(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "plainTextEncoding": ((XmlSignatureEndpoint) target).getSignerConfiguration().setPlainTextEncoding(property(camelContext, java.lang.String.class, value)); return true;
-        case "prefixForXmlSignatureNamespace": ((XmlSignatureEndpoint) target).getSignerConfiguration().setPrefixForXmlSignatureNamespace(property(camelContext, java.lang.String.class, value)); return true;
-        case "properties": ((XmlSignatureEndpoint) target).getSignerConfiguration().setProperties(property(camelContext, org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties.class, value)); return true;
-        case "signatureAlgorithm": ((XmlSignatureEndpoint) target).getSignerConfiguration().setSignatureAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
-        case "signatureId": ((XmlSignatureEndpoint) target).getSignerConfiguration().setSignatureId(property(camelContext, java.lang.String.class, value)); return true;
-        case "transformMethods": ((XmlSignatureEndpoint) target).getSignerConfiguration().setTransformMethods(property(camelContext, java.util.List.class, value)); return true;
-        case "xpathsToIdAttributes": ((XmlSignatureEndpoint) target).getSignerConfiguration().setXpathsToIdAttributes(property(camelContext, java.util.List.class, value)); return true;
-        case "keySelector": ((XmlSignatureEndpoint) target).getVerifierConfiguration().setKeySelector(property(camelContext, javax.xml.crypto.KeySelector.class, value)); return true;
-        case "outputNodeSearch": ((XmlSignatureEndpoint) target).getVerifierConfiguration().setOutputNodeSearch(property(camelContext, java.lang.String.class, value)); return true;
-        case "outputNodeSearchType": ((XmlSignatureEndpoint) target).getVerifierConfiguration().setOutputNodeSearchType(property(camelContext, java.lang.String.class, value)); return true;
-        case "removeSignatureElements": ((XmlSignatureEndpoint) target).getVerifierConfiguration().setRemoveSignatureElements(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "secureValidation": ((XmlSignatureEndpoint) target).getVerifierConfiguration().setSecureValidation(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "validationFailedHandler": ((XmlSignatureEndpoint) target).getVerifierConfiguration().setValidationFailedHandler(property(camelContext, org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler.class, value)); return true;
-        case "xmlSignature2Message": ((XmlSignatureEndpoint) target).getVerifierConfiguration().setXmlSignature2Message(property(camelContext, org.apache.camel.component.xmlsecurity.api.XmlSignature2Message.class, value)); return true;
-        case "xmlSignatureChecker": ((XmlSignatureEndpoint) target).getVerifierConfiguration().setXmlSignatureChecker(property(camelContext, org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "baseuri": ((XmlSignatureEndpoint) target).getSignerConfiguration().setBaseUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "clearheaders": ((XmlSignatureEndpoint) target).getSignerConfiguration().setClearHeaders(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "cryptocontextproperties": ((XmlSignatureEndpoint) target).getSignerConfiguration().setCryptoContextProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "disallowdoctypedecl": ((XmlSignatureEndpoint) target).getSignerConfiguration().setDisallowDoctypeDecl(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "omitxmldeclaration": ((XmlSignatureEndpoint) target).getSignerConfiguration().setOmitXmlDeclaration(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "outputxmlencoding": ((XmlSignatureEndpoint) target).getSignerConfiguration().setOutputXmlEncoding(property(camelContext, java.lang.String.class, value)); return true;
-        case "schemaresourceuri": ((XmlSignatureEndpoint) target).getSignerConfiguration().setSchemaResourceUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer": ((XmlSignatureEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((XmlSignatureEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((XmlSignatureEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "uridereferencer": ((XmlSignatureEndpoint) target).getSignerConfiguration().setUriDereferencer(property(camelContext, javax.xml.crypto.URIDereferencer.class, value)); return true;
-        case "addkeyinforeference": ((XmlSignatureEndpoint) target).getSignerConfiguration().setAddKeyInfoReference(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "canonicalizationmethod": ((XmlSignatureEndpoint) target).getSignerConfiguration().setCanonicalizationMethod(property(camelContext, javax.xml.crypto.AlgorithmMethod.class, value)); return true;
-        case "contentobjectid": ((XmlSignatureEndpoint) target).getSignerConfiguration().setContentObjectId(property(camelContext, java.lang.String.class, value)); return true;
-        case "contentreferencetype": ((XmlSignatureEndpoint) target).getSignerConfiguration().setContentReferenceType(property(camelContext, java.lang.String.class, value)); return true;
-        case "contentreferenceuri": ((XmlSignatureEndpoint) target).getSignerConfiguration().setContentReferenceUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "digestalgorithm": ((XmlSignatureEndpoint) target).getSignerConfiguration().setDigestAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
-        case "keyaccessor": ((XmlSignatureEndpoint) target).getSignerConfiguration().setKeyAccessor(property(camelContext, org.apache.camel.component.xmlsecurity.api.KeyAccessor.class, value)); return true;
-        case "parentlocalname": ((XmlSignatureEndpoint) target).getSignerConfiguration().setParentLocalName(property(camelContext, java.lang.String.class, value)); return true;
-        case "parentnamespace": ((XmlSignatureEndpoint) target).getSignerConfiguration().setParentNamespace(property(camelContext, java.lang.String.class, value)); return true;
-        case "parentxpath": ((XmlSignatureEndpoint) target).getSignerConfiguration().setParentXpath(property(camelContext, javax.xml.crypto.dsig.spec.XPathFilterParameterSpec.class, value)); return true;
-        case "plaintext": ((XmlSignatureEndpoint) target).getSignerConfiguration().setPlainText(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "plaintextencoding": ((XmlSignatureEndpoint) target).getSignerConfiguration().setPlainTextEncoding(property(camelContext, java.lang.String.class, value)); return true;
-        case "prefixforxmlsignaturenamespace": ((XmlSignatureEndpoint) target).getSignerConfiguration().setPrefixForXmlSignatureNamespace(property(camelContext, java.lang.String.class, value)); return true;
-        case "properties": ((XmlSignatureEndpoint) target).getSignerConfiguration().setProperties(property(camelContext, org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties.class, value)); return true;
-        case "signaturealgorithm": ((XmlSignatureEndpoint) target).getSignerConfiguration().setSignatureAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
-        case "signatureid": ((XmlSignatureEndpoint) target).getSignerConfiguration().setSignatureId(property(camelContext, java.lang.String.class, value)); return true;
-        case "transformmethods": ((XmlSignatureEndpoint) target).getSignerConfiguration().setTransformMethods(property(camelContext, java.util.List.class, value)); return true;
-        case "xpathstoidattributes": ((XmlSignatureEndpoint) target).getSignerConfiguration().setXpathsToIdAttributes(property(camelContext, java.util.List.class, value)); return true;
-        case "keyselector": ((XmlSignatureEndpoint) target).getVerifierConfiguration().setKeySelector(property(camelContext, javax.xml.crypto.KeySelector.class, value)); return true;
-        case "outputnodesearch": ((XmlSignatureEndpoint) target).getVerifierConfiguration().setOutputNodeSearch(property(camelContext, java.lang.String.class, value)); return true;
-        case "outputnodesearchtype": ((XmlSignatureEndpoint) target).getVerifierConfiguration().setOutputNodeSearchType(property(camelContext, java.lang.String.class, value)); return true;
-        case "removesignatureelements": ((XmlSignatureEndpoint) target).getVerifierConfiguration().setRemoveSignatureElements(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "securevalidation": ((XmlSignatureEndpoint) target).getVerifierConfiguration().setSecureValidation(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "validationfailedhandler": ((XmlSignatureEndpoint) target).getVerifierConfiguration().setValidationFailedHandler(property(camelContext, org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler.class, value)); return true;
-        case "xmlsignature2message": ((XmlSignatureEndpoint) target).getVerifierConfiguration().setXmlSignature2Message(property(camelContext, org.apache.camel.component.xmlsecurity.api.XmlSignature2Message.class, value)); return true;
-        case "xmlsignaturechecker": ((XmlSignatureEndpoint) target).getVerifierConfiguration().setXmlSignatureChecker(property(camelContext, org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        XmlSignatureEndpoint target = (XmlSignatureEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "baseuri":
+        case "baseUri": target.getSignerConfiguration().setBaseUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "clearheaders":
+        case "clearHeaders": target.getSignerConfiguration().setClearHeaders(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "cryptocontextproperties":
+        case "cryptoContextProperties": target.getSignerConfiguration().setCryptoContextProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "disallowdoctypedecl":
+        case "disallowDoctypeDecl": target.getSignerConfiguration().setDisallowDoctypeDecl(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "omitxmldeclaration":
+        case "omitXmlDeclaration": target.getSignerConfiguration().setOmitXmlDeclaration(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "outputxmlencoding":
+        case "outputXmlEncoding": target.getSignerConfiguration().setOutputXmlEncoding(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemaresourceuri":
+        case "schemaResourceUri": target.getSignerConfiguration().setSchemaResourceUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "uridereferencer":
+        case "uriDereferencer": target.getSignerConfiguration().setUriDereferencer(property(camelContext, javax.xml.crypto.URIDereferencer.class, value)); return true;
+        case "addkeyinforeference":
+        case "addKeyInfoReference": target.getSignerConfiguration().setAddKeyInfoReference(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "canonicalizationmethod":
+        case "canonicalizationMethod": target.getSignerConfiguration().setCanonicalizationMethod(property(camelContext, javax.xml.crypto.AlgorithmMethod.class, value)); return true;
+        case "contentobjectid":
+        case "contentObjectId": target.getSignerConfiguration().setContentObjectId(property(camelContext, java.lang.String.class, value)); return true;
+        case "contentreferencetype":
+        case "contentReferenceType": target.getSignerConfiguration().setContentReferenceType(property(camelContext, java.lang.String.class, value)); return true;
+        case "contentreferenceuri":
+        case "contentReferenceUri": target.getSignerConfiguration().setContentReferenceUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "digestalgorithm":
+        case "digestAlgorithm": target.getSignerConfiguration().setDigestAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyaccessor":
+        case "keyAccessor": target.getSignerConfiguration().setKeyAccessor(property(camelContext, org.apache.camel.component.xmlsecurity.api.KeyAccessor.class, value)); return true;
+        case "parentlocalname":
+        case "parentLocalName": target.getSignerConfiguration().setParentLocalName(property(camelContext, java.lang.String.class, value)); return true;
+        case "parentnamespace":
+        case "parentNamespace": target.getSignerConfiguration().setParentNamespace(property(camelContext, java.lang.String.class, value)); return true;
+        case "parentxpath":
+        case "parentXpath": target.getSignerConfiguration().setParentXpath(property(camelContext, javax.xml.crypto.dsig.spec.XPathFilterParameterSpec.class, value)); return true;
+        case "plaintext":
+        case "plainText": target.getSignerConfiguration().setPlainText(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "plaintextencoding":
+        case "plainTextEncoding": target.getSignerConfiguration().setPlainTextEncoding(property(camelContext, java.lang.String.class, value)); return true;
+        case "prefixforxmlsignaturenamespace":
+        case "prefixForXmlSignatureNamespace": target.getSignerConfiguration().setPrefixForXmlSignatureNamespace(property(camelContext, java.lang.String.class, value)); return true;
+        case "properties": target.getSignerConfiguration().setProperties(property(camelContext, org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties.class, value)); return true;
+        case "signaturealgorithm":
+        case "signatureAlgorithm": target.getSignerConfiguration().setSignatureAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "signatureid":
+        case "signatureId": target.getSignerConfiguration().setSignatureId(property(camelContext, java.lang.String.class, value)); return true;
+        case "transformmethods":
+        case "transformMethods": target.getSignerConfiguration().setTransformMethods(property(camelContext, java.util.List.class, value)); return true;
+        case "xpathstoidattributes":
+        case "xpathsToIdAttributes": target.getSignerConfiguration().setXpathsToIdAttributes(property(camelContext, java.util.List.class, value)); return true;
+        case "keyselector":
+        case "keySelector": target.getVerifierConfiguration().setKeySelector(property(camelContext, javax.xml.crypto.KeySelector.class, value)); return true;
+        case "outputnodesearch":
+        case "outputNodeSearch": target.getVerifierConfiguration().setOutputNodeSearch(property(camelContext, java.lang.String.class, value)); return true;
+        case "outputnodesearchtype":
+        case "outputNodeSearchType": target.getVerifierConfiguration().setOutputNodeSearchType(property(camelContext, java.lang.String.class, value)); return true;
+        case "removesignatureelements":
+        case "removeSignatureElements": target.getVerifierConfiguration().setRemoveSignatureElements(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "securevalidation":
+        case "secureValidation": target.getVerifierConfiguration().setSecureValidation(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "validationfailedhandler":
+        case "validationFailedHandler": target.getVerifierConfiguration().setValidationFailedHandler(property(camelContext, org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler.class, value)); return true;
+        case "xmlsignature2message":
+        case "xmlSignature2Message": target.getVerifierConfiguration().setXmlSignature2Message(property(camelContext, org.apache.camel.component.xmlsecurity.api.XmlSignature2Message.class, value)); return true;
+        case "xmlsignaturechecker":
+        case "xmlSignatureChecker": target.getVerifierConfiguration().setXmlSignatureChecker(property(camelContext, org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker.class, value)); return true;
+        default: return false;
         }
     }
 

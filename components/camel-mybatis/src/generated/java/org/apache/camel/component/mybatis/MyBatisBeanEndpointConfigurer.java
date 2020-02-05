@@ -12,35 +12,21 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class MyBatisBeanEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "executorType": ((MyBatisBeanEndpoint) target).setExecutorType(property(camelContext, org.apache.ibatis.session.ExecutorType.class, value)); return true;
-        case "inputHeader": ((MyBatisBeanEndpoint) target).setInputHeader(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazyStartProducer": ((MyBatisBeanEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "outputHeader": ((MyBatisBeanEndpoint) target).setOutputHeader(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((MyBatisBeanEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((MyBatisBeanEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "executortype": ((MyBatisBeanEndpoint) target).setExecutorType(property(camelContext, org.apache.ibatis.session.ExecutorType.class, value)); return true;
-        case "inputheader": ((MyBatisBeanEndpoint) target).setInputHeader(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer": ((MyBatisBeanEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "outputheader": ((MyBatisBeanEndpoint) target).setOutputHeader(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((MyBatisBeanEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((MyBatisBeanEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        MyBatisBeanEndpoint target = (MyBatisBeanEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "executortype":
+        case "executorType": target.setExecutorType(property(camelContext, org.apache.ibatis.session.ExecutorType.class, value)); return true;
+        case "inputheader":
+        case "inputHeader": target.setInputHeader(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "outputheader":
+        case "outputHeader": target.setOutputHeader(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

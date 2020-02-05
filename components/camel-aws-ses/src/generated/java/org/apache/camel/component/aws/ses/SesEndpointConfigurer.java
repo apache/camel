@@ -12,51 +12,34 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class SesEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "amazonSESClient": ((SesEndpoint) target).getConfiguration().setAmazonSESClient(property(camelContext, com.amazonaws.services.simpleemail.AmazonSimpleEmailService.class, value)); return true;
-        case "lazyStartProducer": ((SesEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "proxyHost": ((SesEndpoint) target).getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyPort": ((SesEndpoint) target).getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "proxyProtocol": ((SesEndpoint) target).getConfiguration().setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
-        case "region": ((SesEndpoint) target).getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "replyToAddresses": ((SesEndpoint) target).getConfiguration().setReplyToAddresses(property(camelContext, java.util.List.class, value)); return true;
-        case "returnPath": ((SesEndpoint) target).getConfiguration().setReturnPath(property(camelContext, java.lang.String.class, value)); return true;
-        case "subject": ((SesEndpoint) target).getConfiguration().setSubject(property(camelContext, java.lang.String.class, value)); return true;
-        case "to": ((SesEndpoint) target).getConfiguration().setTo(property(camelContext, java.util.List.class, value)); return true;
-        case "basicPropertyBinding": ((SesEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((SesEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "accessKey": ((SesEndpoint) target).getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretKey": ((SesEndpoint) target).getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "amazonsesclient": ((SesEndpoint) target).getConfiguration().setAmazonSESClient(property(camelContext, com.amazonaws.services.simpleemail.AmazonSimpleEmailService.class, value)); return true;
-        case "lazystartproducer": ((SesEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "proxyhost": ((SesEndpoint) target).getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyport": ((SesEndpoint) target).getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "proxyprotocol": ((SesEndpoint) target).getConfiguration().setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
-        case "region": ((SesEndpoint) target).getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "replytoaddresses": ((SesEndpoint) target).getConfiguration().setReplyToAddresses(property(camelContext, java.util.List.class, value)); return true;
-        case "returnpath": ((SesEndpoint) target).getConfiguration().setReturnPath(property(camelContext, java.lang.String.class, value)); return true;
-        case "subject": ((SesEndpoint) target).getConfiguration().setSubject(property(camelContext, java.lang.String.class, value)); return true;
-        case "to": ((SesEndpoint) target).getConfiguration().setTo(property(camelContext, java.util.List.class, value)); return true;
-        case "basicpropertybinding": ((SesEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((SesEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "accesskey": ((SesEndpoint) target).getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretkey": ((SesEndpoint) target).getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        SesEndpoint target = (SesEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "amazonsesclient":
+        case "amazonSESClient": target.getConfiguration().setAmazonSESClient(property(camelContext, com.amazonaws.services.simpleemail.AmazonSimpleEmailService.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": target.getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "proxyprotocol":
+        case "proxyProtocol": target.getConfiguration().setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
+        case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "replytoaddresses":
+        case "replyToAddresses": target.getConfiguration().setReplyToAddresses(property(camelContext, java.util.List.class, value)); return true;
+        case "returnpath":
+        case "returnPath": target.getConfiguration().setReturnPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "subject": target.getConfiguration().setSubject(property(camelContext, java.lang.String.class, value)); return true;
+        case "to": target.getConfiguration().setTo(property(camelContext, java.util.List.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "accesskey":
+        case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretkey":
+        case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

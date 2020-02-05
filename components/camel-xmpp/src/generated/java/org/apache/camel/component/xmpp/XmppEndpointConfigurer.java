@@ -12,65 +12,43 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class XmppEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "login": ((XmppEndpoint) target).setLogin(property(camelContext, boolean.class, value)); return true;
-        case "nickname": ((XmppEndpoint) target).setNickname(property(camelContext, java.lang.String.class, value)); return true;
-        case "pubsub": ((XmppEndpoint) target).setPubsub(property(camelContext, boolean.class, value)); return true;
-        case "room": ((XmppEndpoint) target).setRoom(property(camelContext, java.lang.String.class, value)); return true;
-        case "serviceName": ((XmppEndpoint) target).setServiceName(property(camelContext, java.lang.String.class, value)); return true;
-        case "testConnectionOnStartup": ((XmppEndpoint) target).setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
-        case "createAccount": ((XmppEndpoint) target).setCreateAccount(property(camelContext, boolean.class, value)); return true;
-        case "resource": ((XmppEndpoint) target).setResource(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((XmppEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "connectionPollDelay": ((XmppEndpoint) target).setConnectionPollDelay(property(camelContext, int.class, value)); return true;
-        case "doc": ((XmppEndpoint) target).setDoc(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((XmppEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((XmppEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((XmppEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((XmppEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "connectionConfig": ((XmppEndpoint) target).setConnectionConfig(property(camelContext, org.jivesoftware.smack.ConnectionConfiguration.class, value)); return true;
-        case "synchronous": ((XmppEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "headerFilterStrategy": ((XmppEndpoint) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "password": ((XmppEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "roomPassword": ((XmppEndpoint) target).setRoomPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "user": ((XmppEndpoint) target).setUser(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "login": ((XmppEndpoint) target).setLogin(property(camelContext, boolean.class, value)); return true;
-        case "nickname": ((XmppEndpoint) target).setNickname(property(camelContext, java.lang.String.class, value)); return true;
-        case "pubsub": ((XmppEndpoint) target).setPubsub(property(camelContext, boolean.class, value)); return true;
-        case "room": ((XmppEndpoint) target).setRoom(property(camelContext, java.lang.String.class, value)); return true;
-        case "servicename": ((XmppEndpoint) target).setServiceName(property(camelContext, java.lang.String.class, value)); return true;
-        case "testconnectiononstartup": ((XmppEndpoint) target).setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
-        case "createaccount": ((XmppEndpoint) target).setCreateAccount(property(camelContext, boolean.class, value)); return true;
-        case "resource": ((XmppEndpoint) target).setResource(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((XmppEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "connectionpolldelay": ((XmppEndpoint) target).setConnectionPollDelay(property(camelContext, int.class, value)); return true;
-        case "doc": ((XmppEndpoint) target).setDoc(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((XmppEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((XmppEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((XmppEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((XmppEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "connectionconfig": ((XmppEndpoint) target).setConnectionConfig(property(camelContext, org.jivesoftware.smack.ConnectionConfiguration.class, value)); return true;
-        case "synchronous": ((XmppEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "headerfilterstrategy": ((XmppEndpoint) target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "password": ((XmppEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "roompassword": ((XmppEndpoint) target).setRoomPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "user": ((XmppEndpoint) target).setUser(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        XmppEndpoint target = (XmppEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "login": target.setLogin(property(camelContext, boolean.class, value)); return true;
+        case "nickname": target.setNickname(property(camelContext, java.lang.String.class, value)); return true;
+        case "pubsub": target.setPubsub(property(camelContext, boolean.class, value)); return true;
+        case "room": target.setRoom(property(camelContext, java.lang.String.class, value)); return true;
+        case "servicename":
+        case "serviceName": target.setServiceName(property(camelContext, java.lang.String.class, value)); return true;
+        case "testconnectiononstartup":
+        case "testConnectionOnStartup": target.setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
+        case "createaccount":
+        case "createAccount": target.setCreateAccount(property(camelContext, boolean.class, value)); return true;
+        case "resource": target.setResource(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "connectionpolldelay":
+        case "connectionPollDelay": target.setConnectionPollDelay(property(camelContext, int.class, value)); return true;
+        case "doc": target.setDoc(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "connectionconfig":
+        case "connectionConfig": target.setConnectionConfig(property(camelContext, org.jivesoftware.smack.ConnectionConfiguration.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "roompassword":
+        case "roomPassword": target.setRoomPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "user": target.setUser(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

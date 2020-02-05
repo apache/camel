@@ -12,51 +12,33 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "oauthToken": ((GitHubEndpoint) target).setOauthToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((GitHubEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "repoName": ((GitHubEndpoint) target).setRepoName(property(camelContext, java.lang.String.class, value)); return true;
-        case "repoOwner": ((GitHubEndpoint) target).setRepoOwner(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((GitHubEndpoint) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((GitHubEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((GitHubEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((GitHubEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "encoding": ((GitHubEndpoint) target).setEncoding(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazyStartProducer": ((GitHubEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "state": ((GitHubEndpoint) target).setState(property(camelContext, java.lang.String.class, value)); return true;
-        case "targetUrl": ((GitHubEndpoint) target).setTargetUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((GitHubEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((GitHubEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "oauthtoken": ((GitHubEndpoint) target).setOauthToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": ((GitHubEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "reponame": ((GitHubEndpoint) target).setRepoName(property(camelContext, java.lang.String.class, value)); return true;
-        case "repoowner": ((GitHubEndpoint) target).setRepoOwner(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((GitHubEndpoint) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((GitHubEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((GitHubEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((GitHubEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "encoding": ((GitHubEndpoint) target).setEncoding(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer": ((GitHubEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "state": ((GitHubEndpoint) target).setState(property(camelContext, java.lang.String.class, value)); return true;
-        case "targeturl": ((GitHubEndpoint) target).setTargetUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((GitHubEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((GitHubEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        GitHubEndpoint target = (GitHubEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "oauthtoken":
+        case "oauthToken": target.setOauthToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "reponame":
+        case "repoName": target.setRepoName(property(camelContext, java.lang.String.class, value)); return true;
+        case "repoowner":
+        case "repoOwner": target.setRepoOwner(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "encoding": target.setEncoding(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "state": target.setState(property(camelContext, java.lang.String.class, value)); return true;
+        case "targeturl":
+        case "targetUrl": target.setTargetUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

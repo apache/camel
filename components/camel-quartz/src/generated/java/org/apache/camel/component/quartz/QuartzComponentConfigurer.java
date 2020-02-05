@@ -12,49 +12,34 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class QuartzComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "autoStartScheduler": ((QuartzComponent) target).setAutoStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "startDelayedSeconds": ((QuartzComponent) target).setStartDelayedSeconds(property(camelContext, int.class, value)); return true;
-        case "prefixJobNameWithEndpointId": ((QuartzComponent) target).setPrefixJobNameWithEndpointId(property(camelContext, boolean.class, value)); return true;
-        case "enableJmx": ((QuartzComponent) target).setEnableJmx(property(camelContext, boolean.class, value)); return true;
-        case "propertiesRef": ((QuartzComponent) target).setPropertiesRef(property(camelContext, java.lang.String.class, value)); return true;
-        case "properties": ((QuartzComponent) target).setProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "propertiesFile": ((QuartzComponent) target).setPropertiesFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "prefixInstanceName": ((QuartzComponent) target).setPrefixInstanceName(property(camelContext, boolean.class, value)); return true;
-        case "interruptJobsOnShutdown": ((QuartzComponent) target).setInterruptJobsOnShutdown(property(camelContext, boolean.class, value)); return true;
-        case "schedulerFactory": ((QuartzComponent) target).setSchedulerFactory(property(camelContext, org.quartz.SchedulerFactory.class, value)); return true;
-        case "scheduler": ((QuartzComponent) target).setScheduler(property(camelContext, org.quartz.Scheduler.class, value)); return true;
-        case "basicPropertyBinding": ((QuartzComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((QuartzComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "autostartscheduler": ((QuartzComponent) target).setAutoStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "startdelayedseconds": ((QuartzComponent) target).setStartDelayedSeconds(property(camelContext, int.class, value)); return true;
-        case "prefixjobnamewithendpointid": ((QuartzComponent) target).setPrefixJobNameWithEndpointId(property(camelContext, boolean.class, value)); return true;
-        case "enablejmx": ((QuartzComponent) target).setEnableJmx(property(camelContext, boolean.class, value)); return true;
-        case "propertiesref": ((QuartzComponent) target).setPropertiesRef(property(camelContext, java.lang.String.class, value)); return true;
-        case "properties": ((QuartzComponent) target).setProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "propertiesfile": ((QuartzComponent) target).setPropertiesFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "prefixinstancename": ((QuartzComponent) target).setPrefixInstanceName(property(camelContext, boolean.class, value)); return true;
-        case "interruptjobsonshutdown": ((QuartzComponent) target).setInterruptJobsOnShutdown(property(camelContext, boolean.class, value)); return true;
-        case "schedulerfactory": ((QuartzComponent) target).setSchedulerFactory(property(camelContext, org.quartz.SchedulerFactory.class, value)); return true;
-        case "scheduler": ((QuartzComponent) target).setScheduler(property(camelContext, org.quartz.Scheduler.class, value)); return true;
-        case "basicpropertybinding": ((QuartzComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((QuartzComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        QuartzComponent target = (QuartzComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autostartscheduler":
+        case "autoStartScheduler": target.setAutoStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "startdelayedseconds":
+        case "startDelayedSeconds": target.setStartDelayedSeconds(property(camelContext, int.class, value)); return true;
+        case "prefixjobnamewithendpointid":
+        case "prefixJobNameWithEndpointId": target.setPrefixJobNameWithEndpointId(property(camelContext, boolean.class, value)); return true;
+        case "enablejmx":
+        case "enableJmx": target.setEnableJmx(property(camelContext, boolean.class, value)); return true;
+        case "propertiesref":
+        case "propertiesRef": target.setPropertiesRef(property(camelContext, java.lang.String.class, value)); return true;
+        case "properties": target.setProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "propertiesfile":
+        case "propertiesFile": target.setPropertiesFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "prefixinstancename":
+        case "prefixInstanceName": target.setPrefixInstanceName(property(camelContext, boolean.class, value)); return true;
+        case "interruptjobsonshutdown":
+        case "interruptJobsOnShutdown": target.setInterruptJobsOnShutdown(property(camelContext, boolean.class, value)); return true;
+        case "schedulerfactory":
+        case "schedulerFactory": target.setSchedulerFactory(property(camelContext, org.quartz.SchedulerFactory.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, org.quartz.Scheduler.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

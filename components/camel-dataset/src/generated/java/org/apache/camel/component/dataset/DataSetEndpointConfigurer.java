@@ -12,67 +12,53 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class DataSetEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "dataSetIndex": ((DataSetEndpoint) target).setDataSetIndex(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeErrorHandler": ((DataSetEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "initialDelay": ((DataSetEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "minRate": ((DataSetEndpoint) target).setMinRate(property(camelContext, int.class, value)); return true;
-        case "preloadSize": ((DataSetEndpoint) target).setPreloadSize(property(camelContext, long.class, value)); return true;
-        case "produceDelay": ((DataSetEndpoint) target).setProduceDelay(property(camelContext, long.class, value)); return true;
-        case "exceptionHandler": ((DataSetEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((DataSetEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "assertPeriod": ((DataSetEndpoint) target).setAssertPeriod(property(camelContext, long.class, value)); return true;
-        case "consumeDelay": ((DataSetEndpoint) target).setConsumeDelay(property(camelContext, long.class, value)); return true;
-        case "expectedCount": ((DataSetEndpoint) target).setExpectedCount(property(camelContext, int.class, value)); return true;
-        case "failFast": ((DataSetEndpoint) target).setFailFast(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((DataSetEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "reportGroup": ((DataSetEndpoint) target).setReportGroup(property(camelContext, int.class, value)); return true;
-        case "resultMinimumWaitTime": ((DataSetEndpoint) target).setResultMinimumWaitTime(property(camelContext, long.class, value)); return true;
-        case "resultWaitTime": ((DataSetEndpoint) target).setResultWaitTime(property(camelContext, long.class, value)); return true;
-        case "retainFirst": ((DataSetEndpoint) target).setRetainFirst(property(camelContext, int.class, value)); return true;
-        case "retainLast": ((DataSetEndpoint) target).setRetainLast(property(camelContext, int.class, value)); return true;
-        case "sleepForEmptyTest": ((DataSetEndpoint) target).setSleepForEmptyTest(property(camelContext, long.class, value)); return true;
-        case "copyOnExchange": ((DataSetEndpoint) target).setCopyOnExchange(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((DataSetEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((DataSetEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "datasetindex": ((DataSetEndpoint) target).setDataSetIndex(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler": ((DataSetEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "initialdelay": ((DataSetEndpoint) target).setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "minrate": ((DataSetEndpoint) target).setMinRate(property(camelContext, int.class, value)); return true;
-        case "preloadsize": ((DataSetEndpoint) target).setPreloadSize(property(camelContext, long.class, value)); return true;
-        case "producedelay": ((DataSetEndpoint) target).setProduceDelay(property(camelContext, long.class, value)); return true;
-        case "exceptionhandler": ((DataSetEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((DataSetEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "assertperiod": ((DataSetEndpoint) target).setAssertPeriod(property(camelContext, long.class, value)); return true;
-        case "consumedelay": ((DataSetEndpoint) target).setConsumeDelay(property(camelContext, long.class, value)); return true;
-        case "expectedcount": ((DataSetEndpoint) target).setExpectedCount(property(camelContext, int.class, value)); return true;
-        case "failfast": ((DataSetEndpoint) target).setFailFast(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((DataSetEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "reportgroup": ((DataSetEndpoint) target).setReportGroup(property(camelContext, int.class, value)); return true;
-        case "resultminimumwaittime": ((DataSetEndpoint) target).setResultMinimumWaitTime(property(camelContext, long.class, value)); return true;
-        case "resultwaittime": ((DataSetEndpoint) target).setResultWaitTime(property(camelContext, long.class, value)); return true;
-        case "retainfirst": ((DataSetEndpoint) target).setRetainFirst(property(camelContext, int.class, value)); return true;
-        case "retainlast": ((DataSetEndpoint) target).setRetainLast(property(camelContext, int.class, value)); return true;
-        case "sleepforemptytest": ((DataSetEndpoint) target).setSleepForEmptyTest(property(camelContext, long.class, value)); return true;
-        case "copyonexchange": ((DataSetEndpoint) target).setCopyOnExchange(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((DataSetEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((DataSetEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        DataSetEndpoint target = (DataSetEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "datasetindex":
+        case "dataSetIndex": target.setDataSetIndex(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "minrate":
+        case "minRate": target.setMinRate(property(camelContext, int.class, value)); return true;
+        case "preloadsize":
+        case "preloadSize": target.setPreloadSize(property(camelContext, long.class, value)); return true;
+        case "producedelay":
+        case "produceDelay": target.setProduceDelay(property(camelContext, long.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "assertperiod":
+        case "assertPeriod": target.setAssertPeriod(property(camelContext, long.class, value)); return true;
+        case "consumedelay":
+        case "consumeDelay": target.setConsumeDelay(property(camelContext, long.class, value)); return true;
+        case "expectedcount":
+        case "expectedCount": target.setExpectedCount(property(camelContext, int.class, value)); return true;
+        case "failfast":
+        case "failFast": target.setFailFast(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "reportgroup":
+        case "reportGroup": target.setReportGroup(property(camelContext, int.class, value)); return true;
+        case "resultminimumwaittime":
+        case "resultMinimumWaitTime": target.setResultMinimumWaitTime(property(camelContext, long.class, value)); return true;
+        case "resultwaittime":
+        case "resultWaitTime": target.setResultWaitTime(property(camelContext, long.class, value)); return true;
+        case "retainfirst":
+        case "retainFirst": target.setRetainFirst(property(camelContext, int.class, value)); return true;
+        case "retainlast":
+        case "retainLast": target.setRetainLast(property(camelContext, int.class, value)); return true;
+        case "sleepforemptytest":
+        case "sleepForEmptyTest": target.setSleepForEmptyTest(property(camelContext, long.class, value)); return true;
+        case "copyonexchange":
+        case "copyOnExchange": target.setCopyOnExchange(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

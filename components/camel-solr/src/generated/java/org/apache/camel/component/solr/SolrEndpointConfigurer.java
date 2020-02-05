@@ -12,57 +12,40 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "allowCompression": ((SolrEndpoint) target).setAllowCompression(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "connectionTimeout": ((SolrEndpoint) target).setConnectionTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "defaultMaxConnectionsPerHost": ((SolrEndpoint) target).setDefaultMaxConnectionsPerHost(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "followRedirects": ((SolrEndpoint) target).setFollowRedirects(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "lazyStartProducer": ((SolrEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "maxRetries": ((SolrEndpoint) target).setMaxRetries(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "maxTotalConnections": ((SolrEndpoint) target).setMaxTotalConnections(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "requestHandler": ((SolrEndpoint) target).setRequestHandler(property(camelContext, java.lang.String.class, value)); return true;
-        case "soTimeout": ((SolrEndpoint) target).setSoTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "streamingQueueSize": ((SolrEndpoint) target).setStreamingQueueSize(property(camelContext, int.class, value)); return true;
-        case "streamingThreadCount": ((SolrEndpoint) target).setStreamingThreadCount(property(camelContext, int.class, value)); return true;
-        case "basicPropertyBinding": ((SolrEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((SolrEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "password": ((SolrEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((SolrEndpoint) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "collection": ((SolrEndpoint) target).setCollection(property(camelContext, java.lang.String.class, value)); return true;
-        case "zkHost": ((SolrEndpoint) target).setZkHost(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "allowcompression": ((SolrEndpoint) target).setAllowCompression(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "connectiontimeout": ((SolrEndpoint) target).setConnectionTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "defaultmaxconnectionsperhost": ((SolrEndpoint) target).setDefaultMaxConnectionsPerHost(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "followredirects": ((SolrEndpoint) target).setFollowRedirects(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "lazystartproducer": ((SolrEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "maxretries": ((SolrEndpoint) target).setMaxRetries(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "maxtotalconnections": ((SolrEndpoint) target).setMaxTotalConnections(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "requesthandler": ((SolrEndpoint) target).setRequestHandler(property(camelContext, java.lang.String.class, value)); return true;
-        case "sotimeout": ((SolrEndpoint) target).setSoTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "streamingqueuesize": ((SolrEndpoint) target).setStreamingQueueSize(property(camelContext, int.class, value)); return true;
-        case "streamingthreadcount": ((SolrEndpoint) target).setStreamingThreadCount(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding": ((SolrEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((SolrEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "password": ((SolrEndpoint) target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": ((SolrEndpoint) target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "collection": ((SolrEndpoint) target).setCollection(property(camelContext, java.lang.String.class, value)); return true;
-        case "zkhost": ((SolrEndpoint) target).setZkHost(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        SolrEndpoint target = (SolrEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcompression":
+        case "allowCompression": target.setAllowCompression(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "connectiontimeout":
+        case "connectionTimeout": target.setConnectionTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "defaultmaxconnectionsperhost":
+        case "defaultMaxConnectionsPerHost": target.setDefaultMaxConnectionsPerHost(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "followredirects":
+        case "followRedirects": target.setFollowRedirects(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxretries":
+        case "maxRetries": target.setMaxRetries(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maxtotalconnections":
+        case "maxTotalConnections": target.setMaxTotalConnections(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "requesthandler":
+        case "requestHandler": target.setRequestHandler(property(camelContext, java.lang.String.class, value)); return true;
+        case "sotimeout":
+        case "soTimeout": target.setSoTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "streamingqueuesize":
+        case "streamingQueueSize": target.setStreamingQueueSize(property(camelContext, int.class, value)); return true;
+        case "streamingthreadcount":
+        case "streamingThreadCount": target.setStreamingThreadCount(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "collection": target.setCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "zkhost":
+        case "zkHost": target.setZkHost(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

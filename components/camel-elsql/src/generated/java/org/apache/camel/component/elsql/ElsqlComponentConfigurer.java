@@ -12,37 +12,24 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class ElsqlComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "databaseVendor": ((ElsqlComponent) target).setDatabaseVendor(property(camelContext, org.apache.camel.component.elsql.ElSqlDatabaseVendor.class, value)); return true;
-        case "dataSource": ((ElsqlComponent) target).setDataSource(property(camelContext, javax.sql.DataSource.class, value)); return true;
-        case "elSqlConfig": ((ElsqlComponent) target).setElSqlConfig(property(camelContext, com.opengamma.elsql.ElSqlConfig.class, value)); return true;
-        case "resourceUri": ((ElsqlComponent) target).setResourceUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((ElsqlComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((ElsqlComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((ElsqlComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "databasevendor": ((ElsqlComponent) target).setDatabaseVendor(property(camelContext, org.apache.camel.component.elsql.ElSqlDatabaseVendor.class, value)); return true;
-        case "datasource": ((ElsqlComponent) target).setDataSource(property(camelContext, javax.sql.DataSource.class, value)); return true;
-        case "elsqlconfig": ((ElsqlComponent) target).setElSqlConfig(property(camelContext, com.opengamma.elsql.ElSqlConfig.class, value)); return true;
-        case "resourceuri": ((ElsqlComponent) target).setResourceUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((ElsqlComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((ElsqlComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((ElsqlComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        ElsqlComponent target = (ElsqlComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "databasevendor":
+        case "databaseVendor": target.setDatabaseVendor(property(camelContext, org.apache.camel.component.elsql.ElSqlDatabaseVendor.class, value)); return true;
+        case "datasource":
+        case "dataSource": target.setDataSource(property(camelContext, javax.sql.DataSource.class, value)); return true;
+        case "elsqlconfig":
+        case "elSqlConfig": target.setElSqlConfig(property(camelContext, com.opengamma.elsql.ElSqlConfig.class, value)); return true;
+        case "resourceuri":
+        case "resourceUri": target.setResourceUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

@@ -12,57 +12,38 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class JcloudsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "bridgeErrorHandler": ((JcloudsEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((JcloudsEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((JcloudsEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((JcloudsEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((JcloudsEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((JcloudsEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "blobName": ((JcloudsEndpoint) target).getConfiguration().setBlobName(property(camelContext, java.lang.String.class, value)); return true;
-        case "container": ((JcloudsEndpoint) target).getConfiguration().setContainer(property(camelContext, java.lang.String.class, value)); return true;
-        case "directory": ((JcloudsEndpoint) target).getConfiguration().setDirectory(property(camelContext, java.lang.String.class, value)); return true;
-        case "group": ((JcloudsEndpoint) target).getConfiguration().setGroup(property(camelContext, java.lang.String.class, value)); return true;
-        case "hardwareId": ((JcloudsEndpoint) target).getConfiguration().setHardwareId(property(camelContext, java.lang.String.class, value)); return true;
-        case "imageId": ((JcloudsEndpoint) target).getConfiguration().setImageId(property(camelContext, java.lang.String.class, value)); return true;
-        case "locationId": ((JcloudsEndpoint) target).getConfiguration().setLocationId(property(camelContext, java.lang.String.class, value)); return true;
-        case "nodeId": ((JcloudsEndpoint) target).getConfiguration().setNodeId(property(camelContext, java.lang.String.class, value)); return true;
-        case "nodeState": ((JcloudsEndpoint) target).getConfiguration().setNodeState(property(camelContext, java.lang.String.class, value)); return true;
-        case "operation": ((JcloudsEndpoint) target).getConfiguration().setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "user": ((JcloudsEndpoint) target).getConfiguration().setUser(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "bridgeerrorhandler": ((JcloudsEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((JcloudsEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((JcloudsEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((JcloudsEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((JcloudsEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((JcloudsEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "blobname": ((JcloudsEndpoint) target).getConfiguration().setBlobName(property(camelContext, java.lang.String.class, value)); return true;
-        case "container": ((JcloudsEndpoint) target).getConfiguration().setContainer(property(camelContext, java.lang.String.class, value)); return true;
-        case "directory": ((JcloudsEndpoint) target).getConfiguration().setDirectory(property(camelContext, java.lang.String.class, value)); return true;
-        case "group": ((JcloudsEndpoint) target).getConfiguration().setGroup(property(camelContext, java.lang.String.class, value)); return true;
-        case "hardwareid": ((JcloudsEndpoint) target).getConfiguration().setHardwareId(property(camelContext, java.lang.String.class, value)); return true;
-        case "imageid": ((JcloudsEndpoint) target).getConfiguration().setImageId(property(camelContext, java.lang.String.class, value)); return true;
-        case "locationid": ((JcloudsEndpoint) target).getConfiguration().setLocationId(property(camelContext, java.lang.String.class, value)); return true;
-        case "nodeid": ((JcloudsEndpoint) target).getConfiguration().setNodeId(property(camelContext, java.lang.String.class, value)); return true;
-        case "nodestate": ((JcloudsEndpoint) target).getConfiguration().setNodeState(property(camelContext, java.lang.String.class, value)); return true;
-        case "operation": ((JcloudsEndpoint) target).getConfiguration().setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "user": ((JcloudsEndpoint) target).getConfiguration().setUser(property(camelContext, java.lang.String.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        JcloudsEndpoint target = (JcloudsEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "blobname":
+        case "blobName": target.getConfiguration().setBlobName(property(camelContext, java.lang.String.class, value)); return true;
+        case "container": target.getConfiguration().setContainer(property(camelContext, java.lang.String.class, value)); return true;
+        case "directory": target.getConfiguration().setDirectory(property(camelContext, java.lang.String.class, value)); return true;
+        case "group": target.getConfiguration().setGroup(property(camelContext, java.lang.String.class, value)); return true;
+        case "hardwareid":
+        case "hardwareId": target.getConfiguration().setHardwareId(property(camelContext, java.lang.String.class, value)); return true;
+        case "imageid":
+        case "imageId": target.getConfiguration().setImageId(property(camelContext, java.lang.String.class, value)); return true;
+        case "locationid":
+        case "locationId": target.getConfiguration().setLocationId(property(camelContext, java.lang.String.class, value)); return true;
+        case "nodeid":
+        case "nodeId": target.getConfiguration().setNodeId(property(camelContext, java.lang.String.class, value)); return true;
+        case "nodestate":
+        case "nodeState": target.getConfiguration().setNodeState(property(camelContext, java.lang.String.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, java.lang.String.class, value)); return true;
+        case "user": target.getConfiguration().setUser(property(camelContext, java.lang.String.class, value)); return true;
+        default: return false;
         }
     }
 

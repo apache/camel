@@ -12,81 +12,60 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class MinaEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "disconnect": ((MinaEndpoint) target).getConfiguration().setDisconnect(property(camelContext, boolean.class, value)); return true;
-        case "minaLogger": ((MinaEndpoint) target).getConfiguration().setMinaLogger(property(camelContext, boolean.class, value)); return true;
-        case "sync": ((MinaEndpoint) target).getConfiguration().setSync(property(camelContext, boolean.class, value)); return true;
-        case "timeout": ((MinaEndpoint) target).getConfiguration().setTimeout(property(camelContext, long.class, value)); return true;
-        case "writeTimeout": ((MinaEndpoint) target).getConfiguration().setWriteTimeout(property(camelContext, long.class, value)); return true;
-        case "bridgeErrorHandler": ((MinaEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "clientMode": ((MinaEndpoint) target).getConfiguration().setClientMode(property(camelContext, boolean.class, value)); return true;
-        case "disconnectOnNoReply": ((MinaEndpoint) target).getConfiguration().setDisconnectOnNoReply(property(camelContext, boolean.class, value)); return true;
-        case "exceptionHandler": ((MinaEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((MinaEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "noReplyLogLevel": ((MinaEndpoint) target).getConfiguration().setNoReplyLogLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "lazyStartProducer": ((MinaEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "cachedAddress": ((MinaEndpoint) target).getConfiguration().setCachedAddress(property(camelContext, boolean.class, value)); return true;
-        case "lazySessionCreation": ((MinaEndpoint) target).getConfiguration().setLazySessionCreation(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((MinaEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "maximumPoolSize": ((MinaEndpoint) target).getConfiguration().setMaximumPoolSize(property(camelContext, int.class, value)); return true;
-        case "orderedThreadPoolExecutor": ((MinaEndpoint) target).getConfiguration().setOrderedThreadPoolExecutor(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((MinaEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "transferExchange": ((MinaEndpoint) target).getConfiguration().setTransferExchange(property(camelContext, boolean.class, value)); return true;
-        case "allowDefaultCodec": ((MinaEndpoint) target).getConfiguration().setAllowDefaultCodec(property(camelContext, boolean.class, value)); return true;
-        case "codec": ((MinaEndpoint) target).getConfiguration().setCodec(property(camelContext, org.apache.mina.filter.codec.ProtocolCodecFactory.class, value)); return true;
-        case "decoderMaxLineLength": ((MinaEndpoint) target).getConfiguration().setDecoderMaxLineLength(property(camelContext, int.class, value)); return true;
-        case "encoderMaxLineLength": ((MinaEndpoint) target).getConfiguration().setEncoderMaxLineLength(property(camelContext, int.class, value)); return true;
-        case "encoding": ((MinaEndpoint) target).getConfiguration().setEncoding(property(camelContext, java.lang.String.class, value)); return true;
-        case "filters": ((MinaEndpoint) target).getConfiguration().setFilters(property(camelContext, java.util.List.class, value)); return true;
-        case "textline": ((MinaEndpoint) target).getConfiguration().setTextline(property(camelContext, boolean.class, value)); return true;
-        case "textlineDelimiter": ((MinaEndpoint) target).getConfiguration().setTextlineDelimiter(property(camelContext, org.apache.camel.component.mina.MinaTextLineDelimiter.class, value)); return true;
-        case "autoStartTls": ((MinaEndpoint) target).getConfiguration().setAutoStartTls(property(camelContext, boolean.class, value)); return true;
-        case "sslContextParameters": ((MinaEndpoint) target).getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "disconnect": ((MinaEndpoint) target).getConfiguration().setDisconnect(property(camelContext, boolean.class, value)); return true;
-        case "minalogger": ((MinaEndpoint) target).getConfiguration().setMinaLogger(property(camelContext, boolean.class, value)); return true;
-        case "sync": ((MinaEndpoint) target).getConfiguration().setSync(property(camelContext, boolean.class, value)); return true;
-        case "timeout": ((MinaEndpoint) target).getConfiguration().setTimeout(property(camelContext, long.class, value)); return true;
-        case "writetimeout": ((MinaEndpoint) target).getConfiguration().setWriteTimeout(property(camelContext, long.class, value)); return true;
-        case "bridgeerrorhandler": ((MinaEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "clientmode": ((MinaEndpoint) target).getConfiguration().setClientMode(property(camelContext, boolean.class, value)); return true;
-        case "disconnectonnoreply": ((MinaEndpoint) target).getConfiguration().setDisconnectOnNoReply(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler": ((MinaEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((MinaEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "noreplyloglevel": ((MinaEndpoint) target).getConfiguration().setNoReplyLogLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "lazystartproducer": ((MinaEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "cachedaddress": ((MinaEndpoint) target).getConfiguration().setCachedAddress(property(camelContext, boolean.class, value)); return true;
-        case "lazysessioncreation": ((MinaEndpoint) target).getConfiguration().setLazySessionCreation(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((MinaEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "maximumpoolsize": ((MinaEndpoint) target).getConfiguration().setMaximumPoolSize(property(camelContext, int.class, value)); return true;
-        case "orderedthreadpoolexecutor": ((MinaEndpoint) target).getConfiguration().setOrderedThreadPoolExecutor(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((MinaEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "transferexchange": ((MinaEndpoint) target).getConfiguration().setTransferExchange(property(camelContext, boolean.class, value)); return true;
-        case "allowdefaultcodec": ((MinaEndpoint) target).getConfiguration().setAllowDefaultCodec(property(camelContext, boolean.class, value)); return true;
-        case "codec": ((MinaEndpoint) target).getConfiguration().setCodec(property(camelContext, org.apache.mina.filter.codec.ProtocolCodecFactory.class, value)); return true;
-        case "decodermaxlinelength": ((MinaEndpoint) target).getConfiguration().setDecoderMaxLineLength(property(camelContext, int.class, value)); return true;
-        case "encodermaxlinelength": ((MinaEndpoint) target).getConfiguration().setEncoderMaxLineLength(property(camelContext, int.class, value)); return true;
-        case "encoding": ((MinaEndpoint) target).getConfiguration().setEncoding(property(camelContext, java.lang.String.class, value)); return true;
-        case "filters": ((MinaEndpoint) target).getConfiguration().setFilters(property(camelContext, java.util.List.class, value)); return true;
-        case "textline": ((MinaEndpoint) target).getConfiguration().setTextline(property(camelContext, boolean.class, value)); return true;
-        case "textlinedelimiter": ((MinaEndpoint) target).getConfiguration().setTextlineDelimiter(property(camelContext, org.apache.camel.component.mina.MinaTextLineDelimiter.class, value)); return true;
-        case "autostarttls": ((MinaEndpoint) target).getConfiguration().setAutoStartTls(property(camelContext, boolean.class, value)); return true;
-        case "sslcontextparameters": ((MinaEndpoint) target).getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        MinaEndpoint target = (MinaEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "disconnect": target.getConfiguration().setDisconnect(property(camelContext, boolean.class, value)); return true;
+        case "minalogger":
+        case "minaLogger": target.getConfiguration().setMinaLogger(property(camelContext, boolean.class, value)); return true;
+        case "sync": target.getConfiguration().setSync(property(camelContext, boolean.class, value)); return true;
+        case "timeout": target.getConfiguration().setTimeout(property(camelContext, long.class, value)); return true;
+        case "writetimeout":
+        case "writeTimeout": target.getConfiguration().setWriteTimeout(property(camelContext, long.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "clientmode":
+        case "clientMode": target.getConfiguration().setClientMode(property(camelContext, boolean.class, value)); return true;
+        case "disconnectonnoreply":
+        case "disconnectOnNoReply": target.getConfiguration().setDisconnectOnNoReply(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "noreplyloglevel":
+        case "noReplyLogLevel": target.getConfiguration().setNoReplyLogLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "cachedaddress":
+        case "cachedAddress": target.getConfiguration().setCachedAddress(property(camelContext, boolean.class, value)); return true;
+        case "lazysessioncreation":
+        case "lazySessionCreation": target.getConfiguration().setLazySessionCreation(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "maximumpoolsize":
+        case "maximumPoolSize": target.getConfiguration().setMaximumPoolSize(property(camelContext, int.class, value)); return true;
+        case "orderedthreadpoolexecutor":
+        case "orderedThreadPoolExecutor": target.getConfiguration().setOrderedThreadPoolExecutor(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "transferexchange":
+        case "transferExchange": target.getConfiguration().setTransferExchange(property(camelContext, boolean.class, value)); return true;
+        case "allowdefaultcodec":
+        case "allowDefaultCodec": target.getConfiguration().setAllowDefaultCodec(property(camelContext, boolean.class, value)); return true;
+        case "codec": target.getConfiguration().setCodec(property(camelContext, org.apache.mina.filter.codec.ProtocolCodecFactory.class, value)); return true;
+        case "decodermaxlinelength":
+        case "decoderMaxLineLength": target.getConfiguration().setDecoderMaxLineLength(property(camelContext, int.class, value)); return true;
+        case "encodermaxlinelength":
+        case "encoderMaxLineLength": target.getConfiguration().setEncoderMaxLineLength(property(camelContext, int.class, value)); return true;
+        case "encoding": target.getConfiguration().setEncoding(property(camelContext, java.lang.String.class, value)); return true;
+        case "filters": target.getConfiguration().setFilters(property(camelContext, java.util.List.class, value)); return true;
+        case "textline": target.getConfiguration().setTextline(property(camelContext, boolean.class, value)); return true;
+        case "textlinedelimiter":
+        case "textlineDelimiter": target.getConfiguration().setTextlineDelimiter(property(camelContext, org.apache.camel.component.mina.MinaTextLineDelimiter.class, value)); return true;
+        case "autostarttls":
+        case "autoStartTls": target.getConfiguration().setAutoStartTls(property(camelContext, boolean.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        default: return false;
         }
     }
 

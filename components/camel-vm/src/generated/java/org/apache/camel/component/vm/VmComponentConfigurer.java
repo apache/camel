@@ -12,41 +12,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class VmComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "queueSize": ((VmComponent) target).setQueueSize(property(camelContext, int.class, value)); return true;
-        case "concurrentConsumers": ((VmComponent) target).setConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "defaultQueueFactory": ((VmComponent) target).setDefaultQueueFactory(property(camelContext, org.apache.camel.component.seda.BlockingQueueFactory.class, value)); return true;
-        case "defaultBlockWhenFull": ((VmComponent) target).setDefaultBlockWhenFull(property(camelContext, boolean.class, value)); return true;
-        case "defaultDiscardWhenFull": ((VmComponent) target).setDefaultDiscardWhenFull(property(camelContext, boolean.class, value)); return true;
-        case "defaultOfferTimeout": ((VmComponent) target).setDefaultOfferTimeout(property(camelContext, long.class, value)); return true;
-        case "basicPropertyBinding": ((VmComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((VmComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeErrorHandler": ((VmComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "queuesize": ((VmComponent) target).setQueueSize(property(camelContext, int.class, value)); return true;
-        case "concurrentconsumers": ((VmComponent) target).setConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "defaultqueuefactory": ((VmComponent) target).setDefaultQueueFactory(property(camelContext, org.apache.camel.component.seda.BlockingQueueFactory.class, value)); return true;
-        case "defaultblockwhenfull": ((VmComponent) target).setDefaultBlockWhenFull(property(camelContext, boolean.class, value)); return true;
-        case "defaultdiscardwhenfull": ((VmComponent) target).setDefaultDiscardWhenFull(property(camelContext, boolean.class, value)); return true;
-        case "defaultoffertimeout": ((VmComponent) target).setDefaultOfferTimeout(property(camelContext, long.class, value)); return true;
-        case "basicpropertybinding": ((VmComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((VmComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler": ((VmComponent) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        VmComponent target = (VmComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "queuesize":
+        case "queueSize": target.setQueueSize(property(camelContext, int.class, value)); return true;
+        case "concurrentconsumers":
+        case "concurrentConsumers": target.setConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "defaultqueuefactory":
+        case "defaultQueueFactory": target.setDefaultQueueFactory(property(camelContext, org.apache.camel.component.seda.BlockingQueueFactory.class, value)); return true;
+        case "defaultblockwhenfull":
+        case "defaultBlockWhenFull": target.setDefaultBlockWhenFull(property(camelContext, boolean.class, value)); return true;
+        case "defaultdiscardwhenfull":
+        case "defaultDiscardWhenFull": target.setDefaultDiscardWhenFull(property(camelContext, boolean.class, value)); return true;
+        case "defaultoffertimeout":
+        case "defaultOfferTimeout": target.setDefaultOfferTimeout(property(camelContext, long.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

@@ -12,51 +12,36 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class ThriftEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "compressionType": ((ThriftEndpoint) target).getConfiguration().setCompressionType(property(camelContext, org.apache.camel.component.thrift.ThriftCompressionType.class, value)); return true;
-        case "exchangeProtocol": ((ThriftEndpoint) target).getConfiguration().setExchangeProtocol(property(camelContext, org.apache.camel.component.thrift.ThriftExchangeProtocol.class, value)); return true;
-        case "bridgeErrorHandler": ((ThriftEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "clientTimeout": ((ThriftEndpoint) target).getConfiguration().setClientTimeout(property(camelContext, int.class, value)); return true;
-        case "maxPoolSize": ((ThriftEndpoint) target).getConfiguration().setMaxPoolSize(property(camelContext, int.class, value)); return true;
-        case "poolSize": ((ThriftEndpoint) target).getConfiguration().setPoolSize(property(camelContext, int.class, value)); return true;
-        case "exceptionHandler": ((ThriftEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangePattern": ((ThriftEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazyStartProducer": ((ThriftEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "method": ((ThriftEndpoint) target).getConfiguration().setMethod(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((ThriftEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((ThriftEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "negotiationType": ((ThriftEndpoint) target).getConfiguration().setNegotiationType(property(camelContext, org.apache.camel.component.thrift.ThriftNegotiationType.class, value)); return true;
-        case "sslParameters": ((ThriftEndpoint) target).getConfiguration().setSslParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "compressiontype": ((ThriftEndpoint) target).getConfiguration().setCompressionType(property(camelContext, org.apache.camel.component.thrift.ThriftCompressionType.class, value)); return true;
-        case "exchangeprotocol": ((ThriftEndpoint) target).getConfiguration().setExchangeProtocol(property(camelContext, org.apache.camel.component.thrift.ThriftExchangeProtocol.class, value)); return true;
-        case "bridgeerrorhandler": ((ThriftEndpoint) target).setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "clienttimeout": ((ThriftEndpoint) target).getConfiguration().setClientTimeout(property(camelContext, int.class, value)); return true;
-        case "maxpoolsize": ((ThriftEndpoint) target).getConfiguration().setMaxPoolSize(property(camelContext, int.class, value)); return true;
-        case "poolsize": ((ThriftEndpoint) target).getConfiguration().setPoolSize(property(camelContext, int.class, value)); return true;
-        case "exceptionhandler": ((ThriftEndpoint) target).setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern": ((ThriftEndpoint) target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer": ((ThriftEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "method": ((ThriftEndpoint) target).getConfiguration().setMethod(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((ThriftEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((ThriftEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "negotiationtype": ((ThriftEndpoint) target).getConfiguration().setNegotiationType(property(camelContext, org.apache.camel.component.thrift.ThriftNegotiationType.class, value)); return true;
-        case "sslparameters": ((ThriftEndpoint) target).getConfiguration().setSslParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        ThriftEndpoint target = (ThriftEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "compressiontype":
+        case "compressionType": target.getConfiguration().setCompressionType(property(camelContext, org.apache.camel.component.thrift.ThriftCompressionType.class, value)); return true;
+        case "exchangeprotocol":
+        case "exchangeProtocol": target.getConfiguration().setExchangeProtocol(property(camelContext, org.apache.camel.component.thrift.ThriftExchangeProtocol.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "clienttimeout":
+        case "clientTimeout": target.getConfiguration().setClientTimeout(property(camelContext, int.class, value)); return true;
+        case "maxpoolsize":
+        case "maxPoolSize": target.getConfiguration().setMaxPoolSize(property(camelContext, int.class, value)); return true;
+        case "poolsize":
+        case "poolSize": target.getConfiguration().setPoolSize(property(camelContext, int.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "method": target.getConfiguration().setMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "negotiationtype":
+        case "negotiationType": target.getConfiguration().setNegotiationType(property(camelContext, org.apache.camel.component.thrift.ThriftNegotiationType.class, value)); return true;
+        case "sslparameters":
+        case "sslParameters": target.getConfiguration().setSslParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        default: return false;
         }
     }
 

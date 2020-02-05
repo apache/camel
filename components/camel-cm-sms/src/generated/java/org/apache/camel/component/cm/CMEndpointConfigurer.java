@@ -12,37 +12,23 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class CMEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "defaultFrom": ((CMEndpoint) target).getConfiguration().setDefaultFrom(property(camelContext, java.lang.String.class, value)); return true;
-        case "defaultMaxNumberOfParts": ((CMEndpoint) target).getConfiguration().setDefaultMaxNumberOfParts(property(camelContext, int.class, value)); return true;
-        case "lazyStartProducer": ((CMEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "productToken": ((CMEndpoint) target).getConfiguration().setProductToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "testConnectionOnStartup": ((CMEndpoint) target).getConfiguration().setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
-        case "basicPropertyBinding": ((CMEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((CMEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "defaultfrom": ((CMEndpoint) target).getConfiguration().setDefaultFrom(property(camelContext, java.lang.String.class, value)); return true;
-        case "defaultmaxnumberofparts": ((CMEndpoint) target).getConfiguration().setDefaultMaxNumberOfParts(property(camelContext, int.class, value)); return true;
-        case "lazystartproducer": ((CMEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "producttoken": ((CMEndpoint) target).getConfiguration().setProductToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "testconnectiononstartup": ((CMEndpoint) target).getConfiguration().setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding": ((CMEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": ((CMEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        CMEndpoint target = (CMEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "defaultfrom":
+        case "defaultFrom": target.getConfiguration().setDefaultFrom(property(camelContext, java.lang.String.class, value)); return true;
+        case "defaultmaxnumberofparts":
+        case "defaultMaxNumberOfParts": target.getConfiguration().setDefaultMaxNumberOfParts(property(camelContext, int.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "producttoken":
+        case "productToken": target.getConfiguration().setProductToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "testconnectiononstartup":
+        case "testConnectionOnStartup": target.getConfiguration().setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

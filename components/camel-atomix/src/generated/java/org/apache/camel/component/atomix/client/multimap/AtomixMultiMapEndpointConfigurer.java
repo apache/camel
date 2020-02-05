@@ -12,57 +12,38 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class AtomixMultiMapEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "atomix": ((AtomixMultiMapEndpoint) target).getConfiguration().setAtomix(property(camelContext, io.atomix.Atomix.class, value)); return true;
-        case "configurationUri": ((AtomixMultiMapEndpoint) target).getConfiguration().setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "defaultAction": ((AtomixMultiMapEndpoint) target).getConfiguration().setDefaultAction(property(camelContext, org.apache.camel.component.atomix.client.multimap.AtomixMultiMap.Action.class, value)); return true;
-        case "key": ((AtomixMultiMapEndpoint) target).getConfiguration().setKey(property(camelContext, java.lang.Object.class, value)); return true;
-        case "lazyStartProducer": ((AtomixMultiMapEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "nodes": ((AtomixMultiMapEndpoint) target).getConfiguration().setNodes(property(camelContext, java.lang.String.class, value)); return true;
-        case "resultHeader": ((AtomixMultiMapEndpoint) target).getConfiguration().setResultHeader(property(camelContext, java.lang.String.class, value)); return true;
-        case "transportClassName": ((AtomixMultiMapEndpoint) target).getConfiguration().setTransportClassName(property(camelContext, java.lang.String.class, value)); return true;
-        case "ttl": ((AtomixMultiMapEndpoint) target).getConfiguration().setTtl(property(camelContext, long.class, value)); return true;
-        case "basicPropertyBinding": ((AtomixMultiMapEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "defaultResourceConfig": ((AtomixMultiMapEndpoint) target).getConfiguration().setDefaultResourceConfig(property(camelContext, java.util.Properties.class, value)); return true;
-        case "defaultResourceOptions": ((AtomixMultiMapEndpoint) target).getConfiguration().setDefaultResourceOptions(property(camelContext, java.util.Properties.class, value)); return true;
-        case "ephemeral": ((AtomixMultiMapEndpoint) target).getConfiguration().setEphemeral(property(camelContext, boolean.class, value)); return true;
-        case "readConsistency": ((AtomixMultiMapEndpoint) target).getConfiguration().setReadConsistency(property(camelContext, io.atomix.resource.ReadConsistency.class, value)); return true;
-        case "resourceConfigs": ((AtomixMultiMapEndpoint) target).getConfiguration().setResourceConfigs(property(camelContext, java.util.Map.class, value)); return true;
-        case "resourceOptions": ((AtomixMultiMapEndpoint) target).getConfiguration().setResourceOptions(property(camelContext, java.util.Map.class, value)); return true;
-        case "synchronous": ((AtomixMultiMapEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "atomix": ((AtomixMultiMapEndpoint) target).getConfiguration().setAtomix(property(camelContext, io.atomix.Atomix.class, value)); return true;
-        case "configurationuri": ((AtomixMultiMapEndpoint) target).getConfiguration().setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "defaultaction": ((AtomixMultiMapEndpoint) target).getConfiguration().setDefaultAction(property(camelContext, org.apache.camel.component.atomix.client.multimap.AtomixMultiMap.Action.class, value)); return true;
-        case "key": ((AtomixMultiMapEndpoint) target).getConfiguration().setKey(property(camelContext, java.lang.Object.class, value)); return true;
-        case "lazystartproducer": ((AtomixMultiMapEndpoint) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "nodes": ((AtomixMultiMapEndpoint) target).getConfiguration().setNodes(property(camelContext, java.lang.String.class, value)); return true;
-        case "resultheader": ((AtomixMultiMapEndpoint) target).getConfiguration().setResultHeader(property(camelContext, java.lang.String.class, value)); return true;
-        case "transportclassname": ((AtomixMultiMapEndpoint) target).getConfiguration().setTransportClassName(property(camelContext, java.lang.String.class, value)); return true;
-        case "ttl": ((AtomixMultiMapEndpoint) target).getConfiguration().setTtl(property(camelContext, long.class, value)); return true;
-        case "basicpropertybinding": ((AtomixMultiMapEndpoint) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "defaultresourceconfig": ((AtomixMultiMapEndpoint) target).getConfiguration().setDefaultResourceConfig(property(camelContext, java.util.Properties.class, value)); return true;
-        case "defaultresourceoptions": ((AtomixMultiMapEndpoint) target).getConfiguration().setDefaultResourceOptions(property(camelContext, java.util.Properties.class, value)); return true;
-        case "ephemeral": ((AtomixMultiMapEndpoint) target).getConfiguration().setEphemeral(property(camelContext, boolean.class, value)); return true;
-        case "readconsistency": ((AtomixMultiMapEndpoint) target).getConfiguration().setReadConsistency(property(camelContext, io.atomix.resource.ReadConsistency.class, value)); return true;
-        case "resourceconfigs": ((AtomixMultiMapEndpoint) target).getConfiguration().setResourceConfigs(property(camelContext, java.util.Map.class, value)); return true;
-        case "resourceoptions": ((AtomixMultiMapEndpoint) target).getConfiguration().setResourceOptions(property(camelContext, java.util.Map.class, value)); return true;
-        case "synchronous": ((AtomixMultiMapEndpoint) target).setSynchronous(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        AtomixMultiMapEndpoint target = (AtomixMultiMapEndpoint) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "atomix": target.getConfiguration().setAtomix(property(camelContext, io.atomix.Atomix.class, value)); return true;
+        case "configurationuri":
+        case "configurationUri": target.getConfiguration().setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "defaultaction":
+        case "defaultAction": target.getConfiguration().setDefaultAction(property(camelContext, org.apache.camel.component.atomix.client.multimap.AtomixMultiMap.Action.class, value)); return true;
+        case "key": target.getConfiguration().setKey(property(camelContext, java.lang.Object.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "nodes": target.getConfiguration().setNodes(property(camelContext, java.lang.String.class, value)); return true;
+        case "resultheader":
+        case "resultHeader": target.getConfiguration().setResultHeader(property(camelContext, java.lang.String.class, value)); return true;
+        case "transportclassname":
+        case "transportClassName": target.getConfiguration().setTransportClassName(property(camelContext, java.lang.String.class, value)); return true;
+        case "ttl": target.getConfiguration().setTtl(property(camelContext, long.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "defaultresourceconfig":
+        case "defaultResourceConfig": target.getConfiguration().setDefaultResourceConfig(property(camelContext, java.util.Properties.class, value)); return true;
+        case "defaultresourceoptions":
+        case "defaultResourceOptions": target.getConfiguration().setDefaultResourceOptions(property(camelContext, java.util.Properties.class, value)); return true;
+        case "ephemeral": target.getConfiguration().setEphemeral(property(camelContext, boolean.class, value)); return true;
+        case "readconsistency":
+        case "readConsistency": target.getConfiguration().setReadConsistency(property(camelContext, io.atomix.resource.ReadConsistency.class, value)); return true;
+        case "resourceconfigs":
+        case "resourceConfigs": target.getConfiguration().setResourceConfigs(property(camelContext, java.util.Map.class, value)); return true;
+        case "resourceoptions":
+        case "resourceOptions": target.getConfiguration().setResourceOptions(property(camelContext, java.util.Map.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 

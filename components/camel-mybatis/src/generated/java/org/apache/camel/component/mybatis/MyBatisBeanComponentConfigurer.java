@@ -12,31 +12,18 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 public class MyBatisBeanComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
     @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (ignoreCase) {
-            return doConfigureIgnoreCase(camelContext, target, name, value);
-        } else {
-            return doConfigure(camelContext, target, name, value);
-        }
-    }
-
-    private static boolean doConfigure(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name) {
-        case "sqlSessionFactory": ((MyBatisBeanComponent) target).setSqlSessionFactory(property(camelContext, org.apache.ibatis.session.SqlSessionFactory.class, value)); return true;
-        case "configurationUri": ((MyBatisBeanComponent) target).setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicPropertyBinding": ((MyBatisBeanComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazyStartProducer": ((MyBatisBeanComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-            default: return false;
-        }
-    }
-
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object target, String name, Object value) {
-        switch (name.toLowerCase()) {
-        case "sqlsessionfactory": ((MyBatisBeanComponent) target).setSqlSessionFactory(property(camelContext, org.apache.ibatis.session.SqlSessionFactory.class, value)); return true;
-        case "configurationuri": ((MyBatisBeanComponent) target).setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding": ((MyBatisBeanComponent) target).setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer": ((MyBatisBeanComponent) target).setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-            default: return false;
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        MyBatisBeanComponent target = (MyBatisBeanComponent) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "sqlsessionfactory":
+        case "sqlSessionFactory": target.setSqlSessionFactory(property(camelContext, org.apache.ibatis.session.SqlSessionFactory.class, value)); return true;
+        case "configurationuri":
+        case "configurationUri": target.setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        default: return false;
         }
     }
 
