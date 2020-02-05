@@ -24,6 +24,10 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.runtimecatalog.ConfigurationPropertiesValidationResult;
+import org.apache.camel.runtimecatalog.EndpointValidationResult;
+import org.apache.camel.runtimecatalog.LanguageValidationResult;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;

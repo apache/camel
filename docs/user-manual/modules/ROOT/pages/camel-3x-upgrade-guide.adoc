@@ -134,6 +134,16 @@ And in XML DSL:
 </camelContext>
 ----
 
+=== Component Extension Verifier
+
+When using component verifier (`org.apache.camel.component.extension.ComponentVerifierExtension`) then you
+would know need to add `camel-core-catalog` to the classpath to make this useable. If the JAR is missing,
+there will be an exception stating that `RuntimeCamelCatalog` is not found and that this JAR should be added.
+
+=== ManagedRuntimeCatalog
+
+The `ManagedRuntimeCatalog` JMX MBean is removed and no longer available.
+
 === API changes
 
 ==== log changed to private static LOG

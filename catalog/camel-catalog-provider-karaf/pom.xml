@@ -34,10 +34,6 @@
     <properties>
         <firstVersion>2.18.1</firstVersion>
         <label>tooling</label>
-
-        <camel.osgi.export.pkg>
-            org.apache.camel.catalog.karaf
-        </camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

@@ -62,7 +62,6 @@ import org.apache.camel.management.mbean.ManagedInflightRepository;
 import org.apache.camel.management.mbean.ManagedProducerCache;
 import org.apache.camel.management.mbean.ManagedRestRegistry;
 import org.apache.camel.management.mbean.ManagedRoute;
-import org.apache.camel.management.mbean.ManagedRuntimeCamelCatalog;
 import org.apache.camel.management.mbean.ManagedRuntimeEndpointRegistry;
 import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedStreamCachingStrategy;
@@ -82,7 +81,6 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
-import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.ConsumerCache;
@@ -562,8 +560,6 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             answer = new ManagedTransformerRegistry(context, (TransformerRegistry)service);
         } else if (service instanceof ValidatorRegistry) {
             answer = new ManagedValidatorRegistry(context, (ValidatorRegistry)service);
-        } else if (service instanceof RuntimeCamelCatalog) {
-            answer = new ManagedRuntimeCamelCatalog(context, (RuntimeCamelCatalog) service);
         } else if (service instanceof CamelClusterService) {
             answer = getManagementObjectStrategy().getManagedObjectForClusterService(context, (CamelClusterService)service);
         } else if (service != null) {

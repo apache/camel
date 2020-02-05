@@ -77,6 +77,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
+import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
@@ -247,6 +248,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private volatile BeanProcessorFactory beanProcessorFactory;
     private volatile XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader;
     private volatile ModelToXMLDumper modelToXMLDumper;
+    private volatile RuntimeCamelCatalog runtimeCamelCatalog;
     private volatile ClassResolver classResolver;
     private volatile PackageScanClassResolver packageScanClassResolver;
     private volatile PackageScanResourceResolver packageScanResourceResolver;
@@ -4162,6 +4164,23 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     @Override
+    public RuntimeCamelCatalog getRuntimeCamelCatalog() {
+        if (runtimeCamelCatalog == null) {
+            synchronized (lock) {
+                if (runtimeCamelCatalog == null) {
+                    setRuntimeCamelCatalog(createRuntimeCamelCatalog());
+                }
+            }
+        }
+        return runtimeCamelCatalog;
+    }
+
+    @Override
+    public void setRuntimeCamelCatalog(RuntimeCamelCatalog runtimeCamelCatalog) {
+        this.runtimeCamelCatalog = runtimeCamelCatalog;
+    }
+
+    @Override
     public ReactiveExecutor getReactiveExecutor() {
         if (reactiveExecutor == null) {
             synchronized (lock) {
@@ -4323,6 +4342,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     protected abstract XMLRoutesDefinitionLoader createXMLRoutesDefinitionLoader();
 
     protected abstract ModelToXMLDumper createModelToXMLDumper();
+
+    protected abstract RuntimeCamelCatalog createRuntimeCamelCatalog();
 
     protected abstract Tracer createTracer();
 

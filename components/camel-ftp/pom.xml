@@ -33,7 +33,7 @@
 
     <properties>
         <camel.osgi.import.before.defaults>
-            com.jcraft.jsch.*;version="[0.1.40,0.2)"
+            com.jcraft.jsch.*;version="[0.1.5,0.2)"
         </camel.osgi.import.before.defaults>
     </properties>
 

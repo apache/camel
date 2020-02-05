@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.runtimecatalog.impl;
+package org.apache.camel.catalog;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
@@ -32,30 +33,23 @@ import org.apache.camel.tooling.model.OtherModel;
 /**
  * Default {@link RuntimeCamelCatalog}.
  */
+@Deprecated
 public class DefaultRuntimeCamelCatalog extends AbstractCamelCatalog implements RuntimeCamelCatalog {
 
+    private CamelContext camelContext;
     // cache of operation -> result
     private final Map<String, Object> cache = new HashMap<>();
-    private boolean caching;
+    private boolean caching = true;
 
-    /**
-     * Creates the {@link RuntimeCamelCatalog} without caching enabled.
-     *
-     * @param camelContext  the camel context
-     */
-    public DefaultRuntimeCamelCatalog(CamelContext camelContext) {
-        this(camelContext, false);
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
     }
 
-    /**
-     * Creates the {@link RuntimeCamelCatalog}
-     *
-     * @param camelContext  the camel context
-     * @param caching  whether to use cache
-     */
-    public DefaultRuntimeCamelCatalog(CamelContext camelContext, boolean caching) {
-        this.caching = caching;
-        setJSonSchemaResolver(new CamelContextJSonSchemaResolver(camelContext));
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+        this.setJSonSchemaResolver(new CamelContextJSonSchemaResolver(camelContext));
     }
 
     @Override

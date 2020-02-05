@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.ComponentAware;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.runtimecatalog.EndpointValidationResult;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
@@ -124,7 +125,7 @@ public class DefaultComponentVerifierExtension implements ComponentVerifierExten
         }
 
         // Grab the runtime catalog to check parameters
-        RuntimeCamelCatalog catalog = camelContext.getExtension(RuntimeCamelCatalog.class);
+        RuntimeCamelCatalog catalog = camelContext.adapt(ExtendedCamelContext.class).getRuntimeCamelCatalog();
 
         // Convert from Map<String, Object> to  Map<String, String> as required
         // by the Camel Catalog

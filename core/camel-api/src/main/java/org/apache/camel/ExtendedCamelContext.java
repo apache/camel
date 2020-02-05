@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
@@ -413,5 +414,15 @@ public interface ExtendedCamelContext extends CamelContext {
      * Gets the {@link ModelToXMLDumper} to be used.
      */
     ModelToXMLDumper getModelToXMLDumper();
+
+    /**
+     * Gets the {@link RuntimeCamelCatalog} if available on the classpath.
+     */
+    RuntimeCamelCatalog getRuntimeCamelCatalog();
+
+    /**
+     * Sets the {@link RuntimeCamelCatalog} to use.
+     */
+    void setRuntimeCamelCatalog(RuntimeCamelCatalog runtimeCamelCatalog);
 
 }

@@ -45,7 +45,6 @@ import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
-import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TransformerRegistry;
@@ -87,7 +86,6 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
         super(false);
 
         setDefaultExtension(HealthCheckRegistry.class, this::createHealthCheckRegistry);
-        setDefaultExtension(RuntimeCamelCatalog.class, this::createRuntimeCamelCatalog);
 
         if (init) {
             init();
@@ -266,12 +264,9 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
 
     protected abstract HealthCheckRegistry createHealthCheckRegistry();
 
-    protected abstract RuntimeCamelCatalog createRuntimeCamelCatalog();
-
     @Override
     protected void doStartStandardServices() {
         super.doStartStandardServices();
-        getExtension(RuntimeCamelCatalog.class);
     }
 
     @Override

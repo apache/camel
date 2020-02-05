@@ -18,7 +18,7 @@ package org.apache.camel.catalog.lucene;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.catalog.EndpointValidationResult;
+import org.apache.camel.runtimecatalog.EndpointValidationResult;
 import org.junit.Before;
 import org.junit.Test;
 

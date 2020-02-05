@@ -50,7 +50,7 @@ public class MultipleLifecycleStrategyTest extends TestSupport {
         context.stop();
 
         List<String> expectedEvents = Arrays.asList("onContextStart",
-            "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd",
+            "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd",
             "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd",
             "onComponentAdd", "onEndpointAdd", "onComponentRemove", "onContextStop");
         
