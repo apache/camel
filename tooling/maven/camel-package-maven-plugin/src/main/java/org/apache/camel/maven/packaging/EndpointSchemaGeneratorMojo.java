@@ -1162,6 +1162,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         JavaClassSource source;
         try {
             source = javaClassSource(classElement.getName());
+            if (source == null) {
+                return "";
+            }
         } catch (Exception e) {
             return "";
         }
