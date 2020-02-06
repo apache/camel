@@ -38,13 +38,13 @@ import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
 /**
  * A Producer which sends messages to the AWS CloudWatch Service
  */
-public class CwProducer extends DefaultProducer {
+public class Cw2Producer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CwProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Cw2Producer.class);
 
     private transient String cwProducerToString;
 
-    public CwProducer(Endpoint endpoint) {
+    public Cw2Producer(Endpoint endpoint) {
         super(endpoint);
     }
 
@@ -147,7 +147,7 @@ public class CwProducer extends DefaultProducer {
     }
 
     @Override
-    public CwEndpoint getEndpoint() {
-        return (CwEndpoint)super.getEndpoint();
+    public Cw2Endpoint getEndpoint() {
+        return (Cw2Endpoint)super.getEndpoint();
     }
 }

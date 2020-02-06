@@ -20,7 +20,7 @@ import java.time.Instant;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.component.aws2.cw.Cw2Component;
-import org.apache.camel.component.aws2.cw.CwEndpoint;
+import org.apache.camel.component.aws2.cw.Cw2Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import software.amazon.awssdk.core.Protocol;
@@ -37,7 +37,7 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
         CloudWatchClient cloudWatchClient = new CloudWatchClientMock();
         context.getRegistry().bind("amazonCwClient", cloudWatchClient);
         Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
-        CwEndpoint endpoint = (CwEndpoint)component
+        Cw2Endpoint endpoint = (Cw2Endpoint)component
             .createEndpoint("aws2-cw://camel.apache.org/test?amazonCwClient=#amazonCwClient&name=testMetric&value=2&unit=Count&timestamp=#now");
 
         assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
@@ -70,7 +70,7 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
         Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
-        CwEndpoint endpoint = (CwEndpoint)component.createEndpoint("aws2-cw://camel.apache.org/test");
+        Cw2Endpoint endpoint = (Cw2Endpoint)component.createEndpoint("aws2-cw://camel.apache.org/test");
 
         assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
@@ -83,7 +83,7 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Region.US_WEST_1.toString());
-        CwEndpoint endpoint = (CwEndpoint)component.createEndpoint("aws2-cw://camel.apache.org/test?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        Cw2Endpoint endpoint = (Cw2Endpoint)component.createEndpoint("aws2-cw://camel.apache.org/test?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
 
         assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
@@ -97,7 +97,7 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Region.US_WEST_1.id());
-        CwEndpoint endpoint = (CwEndpoint)component
+        Cw2Endpoint endpoint = (Cw2Endpoint)component
             .createEndpoint("aws2-cw://camel.apache.org/test?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000");
 
         assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
