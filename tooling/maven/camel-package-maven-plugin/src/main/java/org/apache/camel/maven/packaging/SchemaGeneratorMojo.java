@@ -81,25 +81,23 @@ import org.jboss.jandex.IndexView;
 public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     public static final DotName XML_ROOT_ELEMENT = DotName.createSimple(XmlRootElement.class.getName());
+    public static final DotName XML_TYPE = DotName.createSimple(XmlType.class.getName());
 
     // special when using expression/predicates in the model
     private static final String ONE_OF_TYPE_NAME = "org.apache.camel.model.ExpressionSubElementDefinition";
-    private static final String[] ONE_OF_LANGUAGES = new String[] {"org.apache.camel.model.language.ExpressionDefinition",
-            "org.apache.camel.model.language.NamespaceAwareExpression"};
-    // special for inputs (these classes have sub classes, so we use this to
-    // find all classes)
-    private static final String[] ONE_OF_INPUTS = new String[] {"org.apache.camel.model.ProcessorDefinition", "org.apache.camel.model.rest.VerbDefinition"};
+    private static final String[] ONE_OF_LANGUAGES = new String[]{"org.apache.camel.model.language.ExpressionDefinition",
+        "org.apache.camel.model.language.NamespaceAwareExpression"};
+    // special for inputs (these classes have sub classes, so we use this to find all classes)
+    private static final String[] ONE_OF_INPUTS = new String[]{"org.apache.camel.model.ProcessorDefinition", "org.apache.camel.model.rest.VerbDefinition"};
     // special for outputs (these classes have sub classes, so we use this to
     // find all classes - and not in particular if they support outputs or not)
-    private static final String[] ONE_OF_OUTPUTS = new String[] {"org.apache.camel.model.ProcessorDefinition", "org.apache.camel.model.NoOutputDefinition",
-            "org.apache.camel.model.OutputDefinition", "org.apache.camel.model.OutputExpressionNode",
-            "org.apache.camel.model.NoOutputExpressionNode", "org.apache.camel.model.SendDefinition",
-            "org.apache.camel.model.InterceptDefinition", "org.apache.camel.model.WhenDefinition",
-            "org.apache.camel.model.ToDynamicDefinition"};
-    // special for verbs (these classes have sub classes, so we use this to find
-    // all classes)
-    private static final String[] ONE_OF_VERBS = new String[] {"org.apache.camel.model.rest.VerbDefinition"};
-    public static final DotName XML_TYPE = DotName.createSimple(XmlType.class.getName());
+    private static final String[] ONE_OF_OUTPUTS = new String[]{"org.apache.camel.model.ProcessorDefinition", "org.apache.camel.model.NoOutputDefinition",
+        "org.apache.camel.model.OutputDefinition", "org.apache.camel.model.OutputExpressionNode",
+        "org.apache.camel.model.NoOutputExpressionNode", "org.apache.camel.model.SendDefinition",
+        "org.apache.camel.model.InterceptDefinition", "org.apache.camel.model.WhenDefinition",
+        "org.apache.camel.model.ToDynamicDefinition"};
+    // special for verbs (these classes have sub classes, so we use this to find all classes)
+    private static final String[] ONE_OF_VERBS = new String[]{"org.apache.camel.model.rest.VerbDefinition"};
 
     @Parameter(defaultValue = "${project.build.outputDirectory}")
     protected File classesDirectory;
@@ -108,9 +106,9 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File resourcesOutputDir;
 
-    protected ClassLoader projectClassLoader;
-    protected IndexView indexView;
-    protected Map<String, JavaClassSource> sources = new HashMap<>();
+    private ClassLoader projectClassLoader;
+    private IndexView indexView;
+    private final Map<String, JavaClassSource> sources = new HashMap<>();
 
     public SchemaGeneratorMojo() {
     }
@@ -1057,16 +1055,16 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     private boolean hasOutput(EipModel model) {
         switch (model.getName()) {
-            // if we are route/rest then we accept output
-            case "route":
-            case "rest":
-                return true;
-            // special for transacted/policy which should not have output
-            case "policy":
-            case "transacted":
-                return false;
-            default:
-                return model.getOptions().stream().anyMatch(option -> "outputs".equals(option.getName()));
+        // if we are route/rest then we accept output
+        case "route":
+        case "rest":
+            return true;
+        // special for transacted/policy which should not have output
+        case "policy":
+        case "transacted":
+            return false;
+        default:
+            return model.getOptions().stream().anyMatch(option -> "outputs".equals(option.getName()));
         }
     }
 

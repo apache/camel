@@ -16,23 +16,14 @@
  */
 package org.apache.camel.maven.packaging;
 
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 import org.jboss.forge.roaster.Roaster;
-import org.jboss.forge.roaster.model.JavaDocCapable;
 import org.jboss.forge.roaster.model.JavaType;
-import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class JavadocTest {
 
+    // CHECKSTYLE:OFF
     public static final String SOURCE_CLASS_1 =
             "    /**\n" +
             "     * Path to the template.\n" +
@@ -110,6 +101,7 @@ public class JavadocTest {
     public static final String JAVADOC_4 =
             "Messaging with AMQP protocol using Apache QPid Client.\n\nThis class extends JmsEndpoint " +
             "because it uses Apache Qpid JMS-compatible client for\nperforming the AMQP connectivity.";
+    // CHECKSTYLE:ON
 
     @Test
     public void testJavadoc1() {

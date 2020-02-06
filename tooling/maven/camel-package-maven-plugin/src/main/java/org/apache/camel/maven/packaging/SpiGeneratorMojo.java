@@ -53,6 +53,10 @@ import org.jboss.jandex.Indexer;
 @Mojo(name = "generate-spi", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class SpiGeneratorMojo extends AbstractGeneratorMojo {
 
+    public static final DotName SERVICE_FACTORY = DotName.createSimple(ServiceFactory.class.getName());
+    public static final DotName SUB_SERVICE_FACTORY = DotName.createSimple(SubServiceFactory.class.getName());
+    public static final DotName CONSTANT_PROVIDER = DotName.createSimple(ConstantProvider.class.getName());
+
     @Parameter(defaultValue = "${project.build.outputDirectory}")
     protected File classesDirectory;
     @Parameter(defaultValue = "${project.basedir}/src/generated/java")
@@ -60,11 +64,7 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File resourcesOutputDir;
 
-    protected ClassLoader projectClassLoader;
-
-    public static final DotName SERVICE_FACTORY = DotName.createSimple(ServiceFactory.class.getName());
-    public static final DotName SUB_SERVICE_FACTORY = DotName.createSimple(SubServiceFactory.class.getName());
-    public static final DotName CONSTANT_PROVIDER = DotName.createSimple(ConstantProvider.class.getName());
+    private ClassLoader projectClassLoader;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -143,12 +143,10 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
                     if (ServiceFactory.JDK_SERVICE.equals(sfa.value().asString())) {
                         updateResource(resourcesOutputDir.toPath(),
                                 "META-INF/services/" + pval.replace('.', '/'),
-                                "# " + GENERATED_MSG + NL +
-                                "class=" + className + NL);
+                                "# " + GENERATED_MSG + NL + "class=" + className + NL);
                     } else {
                         StringBuilder sb = new StringBuilder();
-                        sb.append("# " + GENERATED_MSG + NL +
-                                  "class=").append(className).append(NL);
+                        sb.append("# " + GENERATED_MSG + NL + "class=").append(className).append(NL);
                         for (AnnotationInstance ai : annotation.target().asClass().classAnnotations()) {
                             AnnotationInstance ssf = index.getClassByName(ai.name()).classAnnotation(SUB_SERVICE_FACTORY);
                             if (ssf != null) {

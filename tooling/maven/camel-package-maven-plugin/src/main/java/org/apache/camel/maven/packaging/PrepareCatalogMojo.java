@@ -200,11 +200,11 @@ public class PrepareCatalogMojo extends AbstractMojo {
      * Maven ProjectHelper.
      */
     @Component
-    private MavenProjectHelper projectHelper;
+    protected MavenProjectHelper projectHelper;
 
-    Collection<Path> allJsonFiles;
-    Collection<Path> allPropertiesFiles;
-    Map<Path, BaseModel<?>> allModels;
+    private Collection<Path> allJsonFiles;
+    private Collection<Path> allPropertiesFiles;
+    private Map<Path, BaseModel<?>> allModels;
 
     /**
      * Execute goal.

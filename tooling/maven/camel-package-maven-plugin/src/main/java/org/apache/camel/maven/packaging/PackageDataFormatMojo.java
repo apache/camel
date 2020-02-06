@@ -279,7 +279,9 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                 case "bindy-kvp":
                     option.setDefaultValue("KeyValue");
                     break;
+                default:
                 }
+
             }
             if ("library".equals(option.getName()) && "json".equals(model.getModelName())) {
                 switch (name) {
@@ -298,6 +300,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                 case "json-xstream":
                     option.setDefaultValue("XStream");
                     break;
+                default:
                 }
             }
             model.addOption(option);
@@ -479,8 +482,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
     }
 
     public static String generateMetaInfConfigurer(String fqn) {
-        return "# " + GENERATED_MSG + NL +
-               "class=" + fqn + NL;
+        return "# " + GENERATED_MSG + NL + "class=" + fqn + NL;
     }
 
 }
