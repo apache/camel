@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.CatalogHelper;
+import org.apache.camel.catalog.impl.CatalogHelper;
 import org.apache.camel.catalog.RuntimeProvider;
 
 /**
