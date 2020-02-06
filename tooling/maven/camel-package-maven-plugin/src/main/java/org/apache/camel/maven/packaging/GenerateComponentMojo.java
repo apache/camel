@@ -23,43 +23,25 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
- * Used by Apache Camel project itself - do NOT use as end user.
+ * To be used by 3rd party Camel component developers to generate metadata.
  */
-@Mojo(name = "generate", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+@Mojo(name = "generate-component", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
         defaultPhase = LifecyclePhase.PROCESS_CLASSES)
-public class GenerateMojo extends AbstractGenerateMojo {
+public class GenerateComponentMojo extends AbstractGenerateMojo {
 
     protected void doExecute() throws MojoFailureException, MojoExecutionException {
         // jandex
         invoke(PackageJandexMojo.class);
-        // generate-schema
-        invoke(SchemaGeneratorMojo.class);
         // generate-type-converter-loader
         invoke(TypeConverterLoaderGeneratorMojo.class);
         // generate-spi
         invoke(SpiGeneratorMojo.class);
-        // generate-jaxb-list
-        invoke(PackageJaxbMojo.class);
-        // generate-eips-list
-        invoke(PackageModelMojo.class);
         // generate-endpoint-schema
         invoke(EndpointSchemaGeneratorMojo.class);
         // prepare-components
         invoke(PrepareComponentMojo.class);
-        // prepare-main
-        invoke(PrepareCamelMainMojo.class);
-        // generate-xml-parser
-        invoke(ModelXmlParserGeneratorMojo.class);
-        // generate-legal
-        invoke(PackageLegalMojo.class);
         // validate-components
         invoke(ValidateComponentMojo.class);
-        // generate-endpoint-dsl
-        invoke(EndpointDslMojo.class);
-        // generate-component-dsl
-        invoke(ComponentDslMojo.class);
-        // update-readme
-        invoke(UpdateReadmeMojo.class);
     }
 
 }
