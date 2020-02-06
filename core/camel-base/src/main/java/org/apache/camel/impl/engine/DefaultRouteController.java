@@ -23,11 +23,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.meta.Experimental;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.support.service.ServiceSupport;
 
-@Experimental
 public class DefaultRouteController extends ServiceSupport implements RouteController  {
     private AbstractCamelContext camelContext;
 
