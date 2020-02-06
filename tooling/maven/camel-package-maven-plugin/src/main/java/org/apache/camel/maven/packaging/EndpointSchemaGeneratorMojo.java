@@ -1333,17 +1333,18 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     private String doLoadJavaSource(String className) {
-        // skip default
-        if (className.startsWith("org.apache.camel.support.")) {
-            return null;
-        }
-
         try {
             Path file = getSourceRoots().stream()
                     .map(d -> d.resolve(className.replace('.', '/') + ".java"))
                     .filter(Files::isRegularFile)
                     .findFirst()
                     .orElse(null);
+
+            // skip default from camel project itself as 3rd party cannot load source from core/camel-core
+            if (file == null && className.startsWith("org.apache.camel.support.")) {
+                return null;
+            }
+
             if (file == null) {
                 throw new FileNotFoundException("Unable to find source for " + className);
             }
