@@ -143,6 +143,6 @@ public class JmsBridge extends CamelSpringTestSupport {
             throw new RuntimeException("Failed to start broker", e);
         }
 
-        return new ClassPathXmlApplicationContext("org/apache/activemq/camel/jmsBridge.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/jmsBridge.xml");
     }
 }

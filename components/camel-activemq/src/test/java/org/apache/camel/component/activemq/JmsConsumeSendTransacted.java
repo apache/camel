@@ -95,6 +95,6 @@ public class JmsConsumeSendTransacted extends CamelSpringTestSupport {
             throw new RuntimeException("Failed to start broker", e);
         }
 
-        return new ClassPathXmlApplicationContext("org/apache/activemq/camel/jmsConsumeSendTransacted.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/jmsConsumeSendTransacted.xml");
     }
 }
