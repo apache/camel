@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 318 in 256 JAR artifacts (1 deprecated)
+Number of Components: 319 in 257 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -45,6 +45,8 @@ Number of Components: 318 in 256 JAR artifacts (1 deprecated)
 | xref:atomix-value-component.adoc[Atomix Value] (camel-atomix) | 2.20 | The atomix-value component is used to access Atomix's distributed value.
 
 | xref:avro-component.adoc[Avro] (camel-avro) | 2.10 | Working with Apache Avro for data serialization.
+
+| xref:aws2-cw-component.adoc[AWS 2 CloudWatch] (camel-aws2-cw) | 3.1 | The aws-cw component is used for sending metrics to an Amazon CloudWatch.
 
 | xref:aws2-ecs-component.adoc[AWS 2 ECS] (camel-aws2-ecs) | 3.1 | The aws2-ecs is used for managing Amazon ECS
 
