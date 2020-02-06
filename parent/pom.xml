@@ -544,7 +544,7 @@
         <reflections-bundle-version>0.9.11_1</reflections-bundle-version>
         <regexp-bundle-version>1.4_1</regexp-bundle-version>
         <rescu-version>2.0.2</rescu-version>
-        <resilience4j-version>1.2.0</resilience4j-version>
+        <resilience4j-version>1.3.0</resilience4j-version>
         <rest-assured-version>4.2.0</rest-assured-version>
         <revapi-java-version>0.20.0</revapi-java-version>
         <revapi-maven-plugin-version>0.11.2</revapi-maven-plugin-version>
