@@ -24,7 +24,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 
 @Component("aws2-cw")
@@ -36,9 +35,9 @@ public class CwComponent extends DefaultComponent {
     private String secretKey;
     @Metadata
     private String region;
-    @Metadata(label = "advanced")    
+    @Metadata(label = "advanced")
     private CwConfiguration configuration;
-    
+
     public CwComponent() {
         this(null);
     }
@@ -58,7 +57,8 @@ public class CwComponent extends DefaultComponent {
         configuration.setNamespace(remaining);
 
         CwEndpoint endpoint = new CwEndpoint(uri, this, configuration);
-        // set component level options before overriding from endpoint parameters
+        // set component level options before overriding from endpoint
+        // parameters
         endpoint.getConfiguration().setAccessKey(accessKey);
         endpoint.getConfiguration().setSecretKey(secretKey);
         endpoint.getConfiguration().setRegion(region);
@@ -115,7 +115,7 @@ public class CwComponent extends DefaultComponent {
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
     private void checkAndSetRegistryClient(CwConfiguration configuration) {
         Set<CloudWatchClient> clients = getCamelContext().getRegistry().findByType(CloudWatchClient.class);
         if (clients.size() == 1) {

@@ -26,7 +26,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
@@ -66,7 +65,7 @@ public class CwEndpoint extends DefaultEndpoint {
 
         cloudWatchClient = configuration.getAmazonCwClient() != null ? configuration.getAmazonCwClient() : createCloudWatchClient();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonCwClient())) {

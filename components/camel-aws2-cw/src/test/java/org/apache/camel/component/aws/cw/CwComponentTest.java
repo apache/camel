@@ -17,27 +17,16 @@
 package org.apache.camel.component.aws.cw;
 
 import java.time.Instant;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
-import software.amazon.awssdk.services.cloudwatch.model.Dimension;
-import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
-import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataRequest;
-import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataResponse;
 import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
 
 public class CwComponentTest extends CamelTestSupport {
@@ -49,14 +38,14 @@ public class CwComponentTest extends CamelTestSupport {
 
     @BindToRegistry("amazonCwClient")
     private CloudWatchClient cloudWatchClient = new CloudWatchClientMock();
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint mock;
 
     @Test
     public void sendMetricFromHeaderValues() throws Exception {
-    	mock.expectedMessageCount(1);
-    	Exchange exchange = template.request("direct:start", new Processor() {
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(CwConstants.METRIC_NAMESPACE, "camel.apache.org/overriden");
                 exchange.getIn().setHeader(CwConstants.METRIC_NAME, "OverridenMetric");
@@ -74,8 +63,7 @@ public class CwComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .to("aws2-cw://camel.apache.org/test?amazonCwClient=#amazonCwClient&name=testMetric&unit=BYTES&timestamp=#now").to("mock:result");
+                from("direct:start").to("aws2-cw://camel.apache.org/test?amazonCwClient=#amazonCwClient&name=testMetric&unit=BYTES&timestamp=#now").to("mock:result");
             }
         };
     }

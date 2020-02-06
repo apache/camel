@@ -53,9 +53,7 @@ public class CwComponentIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .to("aws2-cw://http://camel.apache.org/aws-cw?accessKey=XXX&secretKey=XXX")
-                        .to("mock:result");
+                from("direct:start").to("aws2-cw://http://camel.apache.org/aws-cw?accessKey=XXX&secretKey=XXX").to("mock:result");
             }
         };
     }
