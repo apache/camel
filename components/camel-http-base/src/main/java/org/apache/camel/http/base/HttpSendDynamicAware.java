@@ -24,7 +24,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
-import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
+import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;

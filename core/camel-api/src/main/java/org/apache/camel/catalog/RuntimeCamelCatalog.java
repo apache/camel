@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.runtimecatalog;
+package org.apache.camel.catalog;
 
 import java.net.URISyntaxException;
 import java.util.Map;
@@ -29,6 +29,16 @@ import org.apache.camel.spi.SendDynamicAware;
  * {@link ComponentVerifierExtension} or {@link SendDynamicAware}.
  */
 public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
+
+    /**
+     * Returns the component information as JSon format.
+     * <p/>
+     * This API is needed by {@link ComponentVerifierExtension}.
+     *
+     * @param name the component name
+     * @return component details in JSon
+     */
+    String componentJSonSchema(String name);
 
     /**
      * Parses the endpoint uri and constructs a key/value properties of each option.

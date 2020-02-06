@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.catalog;
+package org.apache.camel.catalog.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -36,10 +36,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.apache.camel.runtimecatalog.ConfigurationPropertiesValidationResult;
-import org.apache.camel.runtimecatalog.EndpointValidationResult;
-import org.apache.camel.runtimecatalog.JSonSchemaResolver;
-import org.apache.camel.runtimecatalog.LanguageValidationResult;
+import org.apache.camel.catalog.ConfigurationPropertiesValidationResult;
+import org.apache.camel.catalog.EndpointValidationResult;
+import org.apache.camel.catalog.JSonSchemaResolver;
+import org.apache.camel.catalog.LanguageValidationResult;
+import org.apache.camel.catalog.SuggestionStrategy;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;

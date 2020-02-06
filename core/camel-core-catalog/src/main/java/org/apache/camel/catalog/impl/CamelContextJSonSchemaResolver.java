@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.catalog;
+package org.apache.camel.catalog.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CatalogCamelContext;
-import org.apache.camel.runtimecatalog.JSonSchemaResolver;
+import org.apache.camel.catalog.JSonSchemaResolver;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.IOHelper;
 

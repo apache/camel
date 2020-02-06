@@ -26,12 +26,13 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.ComponentAware;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.catalog.EndpointValidationResult;
+import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
-import org.apache.camel.runtimecatalog.EndpointValidationResult;
-import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.PropertiesHelper;
+
 
 import static org.apache.camel.util.StreamUtils.stream;
 

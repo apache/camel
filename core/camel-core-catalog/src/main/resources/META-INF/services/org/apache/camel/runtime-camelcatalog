@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.catalog.DefaultRuntimeCamelCatalog
+class=org.apache.camel.catalog.impl.DefaultRuntimeCamelCatalog

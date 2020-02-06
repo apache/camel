@@ -14,85 +14,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.runtimecatalog;
+package org.apache.camel.catalog;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
- * Details result of validating endpoint uri.
+ * Details result of validating configuration properties (eg application.properties for camel-main).
  */
-public class EndpointValidationResult extends PropertiesValidationResult implements Serializable {
+public class ConfigurationPropertiesValidationResult extends PropertiesValidationResult implements Serializable {
 
-    private final String uri;
+    private String fileName;
+    private String text;
+    private int lineNumber;
+    private boolean accepted;
 
-    private Set<String> lenient;
-    private Set<String> notConsumerOnly;
-    private Set<String> notProducerOnly;
-
-    public EndpointValidationResult() {
-        this(null);
+    public ConfigurationPropertiesValidationResult() {
     }
 
-    public EndpointValidationResult(String uri) {
-        this.uri = uri;
+    public String getFileName() {
+        return fileName;
     }
 
-    public String getUri() {
-        return uri;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
-    public boolean isSuccess() {
-        boolean ok = super.isSuccess();
-        if (ok) {
-            ok = notConsumerOnly == null && notProducerOnly == null;
-        }
-        return ok;
+    public String getText() {
+        return text;
     }
 
-    public void addLenient(String name) {
-        if (lenient == null) {
-            lenient = new LinkedHashSet<>();
-        }
-        if (!lenient.contains(name)) {
-            lenient.add(name);
-        }
+    public void setText(String text) {
+        this.text = text;
     }
 
-    public void addNotConsumerOnly(String name) {
-        if (notConsumerOnly == null) {
-            notConsumerOnly = new LinkedHashSet<>();
-        }
-        if (!notConsumerOnly.contains(name)) {
-            notConsumerOnly.add(name);
-            errors++;
-        }
+    public int getLineNumber() {
+        return lineNumber;
     }
 
-    public void addNotProducerOnly(String name) {
-        if (notProducerOnly == null) {
-            notProducerOnly = new LinkedHashSet<>();
-        }
-        if (!notProducerOnly.contains(name)) {
-            notProducerOnly.add(name);
-            errors++;
-        }
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
     }
 
-    public Set<String> getNotConsumerOnly() {
-        return notConsumerOnly;
+    public boolean isAccepted() {
+        return accepted;
     }
 
-    public Set<String> getNotProducerOnly() {
-        return notProducerOnly;
-    }
-
-    public Set<String> getLenient() {
-        return lenient;
+    public void setAccepted(boolean accepted) {
+        this.accepted = accepted;
     }
 
     /**
@@ -122,11 +93,7 @@ public class EndpointValidationResult extends PropertiesValidationResult impleme
         }
 
         if (includeWarnings) {
-            if (incapable != null) {
-                return "\tIncapable of parsing uri: " + incapable;
-            } else if (syntaxError != null) {
-                return "\tSyntax error: " + syntaxError;
-            } else if (unknownComponent != null) {
+            if (unknownComponent != null) {
                 return "\tUnknown component: " + unknownComponent;
             }
         }
@@ -150,16 +117,6 @@ public class EndpointValidationResult extends PropertiesValidationResult impleme
                 } else {
                     options.put(name, "Unknown option");
                 }
-            }
-        }
-        if (notConsumerOnly != null) {
-            for (String name : notConsumerOnly) {
-                options.put(name, "Option not applicable in consumer only mode");
-            }
-        }
-        if (notProducerOnly != null) {
-            for (String name : notProducerOnly) {
-                options.put(name, "Option not applicable in producer only mode");
             }
         }
         if (required != null) {
@@ -235,6 +192,26 @@ public class EndpointValidationResult extends PropertiesValidationResult impleme
                 }
             }
         }
+        if (invalidMap != null) {
+            for (Map.Entry<String, String> entry : invalidMap.entrySet()) {
+                boolean empty = isEmpty(entry.getValue());
+                if (empty) {
+                    options.put(entry.getKey(), "Empty map key/value pair");
+                } else {
+                    options.put(entry.getKey(), "Invalid map key/value: " + entry.getValue());
+                }
+            }
+        }
+        if (invalidArray != null) {
+            for (Map.Entry<String, String> entry : invalidArray.entrySet()) {
+                boolean empty = isEmpty(entry.getValue());
+                if (empty) {
+                    options.put(entry.getKey(), "Empty array index/value pair");
+                } else {
+                    options.put(entry.getKey(), "Invalid array index/value: " + entry.getValue());
+                }
+            }
+        }
 
         // build a table with the error summary nicely formatted
         // lets use 24 as min length
@@ -247,21 +224,29 @@ public class EndpointValidationResult extends PropertiesValidationResult impleme
         // build the human error summary
         StringBuilder sb = new StringBuilder();
         if (includeHeader) {
-            sb.append("Endpoint validator error\n");
+            sb.append("Configuration properties error\n");
             sb.append("---------------------------------------------------------------------------------------------------------------------------------------\n");
             sb.append("\n");
         }
-        if (uri != null) {
-            sb.append("\t").append(uri).append("\n");
+        if (text != null) {
+            sb.append("\t").append(text).append("\n");
         } else {
             sb.append("\n");
         }
         for (Map.Entry<String, String> option : options.entrySet()) {
-            String out = String.format(format, option.getKey(), option.getValue());
+            String out = String.format(format, shortKey(option.getKey()), option.getValue());
             sb.append("\n\t").append(out);
         }
 
         return sb.toString();
+    }
+
+    private static String shortKey(String key) {
+        if (key.indexOf('.') > 0) {
+            return key.substring(key.lastIndexOf('.') + 1);
+        } else {
+            return key;
+        }
     }
 
 }

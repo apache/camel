@@ -19,8 +19,8 @@ package org.apache.camel.catalog;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.catalog.impl.DefaultRuntimeCamelCatalog;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
