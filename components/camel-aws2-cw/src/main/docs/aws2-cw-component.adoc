@@ -1,7 +1,4 @@
-[[aws-cw-component]]
-= AWS CloudWatch Component
-
-*Since Camel 2.11*
+= AWS 2 CloudWatch Component
 
 // HEADER START
 *Only producer is supported*
@@ -22,7 +19,7 @@ https://aws.amazon.com/cloudwatch/[Amazon CloudWatch].
 
 [source,java]
 ----------------------------
-aws-cw://namespace[?options]
+aws2-cw://namespace[?options]
 ----------------------------
 
 The metrics will be created if they don't already exists. +
@@ -33,7 +30,7 @@ The metrics will be created if they don't already exists. +
 
 
 // component options: START
-The AWS CloudWatch component supports 6 options, which are listed below.
+The AWS 2 CloudWatch component supports 6 options, which are listed below.
 
 
 
@@ -53,10 +50,10 @@ The AWS CloudWatch component supports 6 options, which are listed below.
 
 
 // endpoint options: START
-The AWS CloudWatch endpoint is configured using URI syntax:
+The AWS 2 CloudWatch endpoint is configured using URI syntax:
 
 ----
-aws-cw:namespace
+aws2-cw:namespace
 ----
 
 with the following path and query parameters:
@@ -77,14 +74,14 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *amazonCwClient* (producer) | To use the AmazonCloudWatch as the client |  | AmazonCloudWatch
+| *amazonCwClient* (producer) | To use the AmazonCloudWatch as the client |  | CloudWatchClient
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *name* (producer) | The metric name |  | String
 | *proxyHost* (producer) | To define a proxy host when instantiating the CW client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the CW client |  | Integer
 | *proxyProtocol* (producer) | To define a proxy protocol when instantiating the CW client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *region* (producer) | The region in which CW client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
-| *timestamp* (producer) | The metric timestamp |  | Date
+| *timestamp* (producer) | The metric timestamp |  | Instant
 | *unit* (producer) | The metric unit |  | String
 | *value* (producer) | The metric value |  | Double
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
@@ -94,52 +91,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-aws-cw-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 19 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.aws-cw.access-key* | Amazon AWS Access Key |  | String
-| *camel.component.aws-cw.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.aws-cw.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.aws-cw.configuration.access-key* | Amazon AWS Access Key |  | String
-| *camel.component.aws-cw.configuration.amazon-cw-client* | To use the AmazonCloudWatch as the client |  | AmazonCloudWatch
-| *camel.component.aws-cw.configuration.name* | The metric name |  | String
-| *camel.component.aws-cw.configuration.namespace* | The metric namespace |  | String
-| *camel.component.aws-cw.configuration.proxy-host* | To define a proxy host when instantiating the CW client |  | String
-| *camel.component.aws-cw.configuration.proxy-port* | To define a proxy port when instantiating the CW client |  | Integer
-| *camel.component.aws-cw.configuration.proxy-protocol* | To define a proxy protocol when instantiating the CW client |  | Protocol
-| *camel.component.aws-cw.configuration.region* | The region in which CW client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
-| *camel.component.aws-cw.configuration.secret-key* | Amazon AWS Secret Key |  | String
-| *camel.component.aws-cw.configuration.timestamp* | The metric timestamp |  | Date
-| *camel.component.aws-cw.configuration.unit* | The metric unit |  | String
-| *camel.component.aws-cw.configuration.value* | The metric value |  | Double
-| *camel.component.aws-cw.enabled* | Whether to enable auto configuration of the aws-cw component. This is enabled by default. |  | Boolean
-| *camel.component.aws-cw.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-| *camel.component.aws-cw.region* | The region in which CW client needs to work |  | String
-| *camel.component.aws-cw.secret-key* | Amazon AWS Secret Key |  | String
-|===
 // spring-boot-auto-configure options: END
-
-
-
 
 Required CW component options
 
@@ -172,38 +124,24 @@ the https://aws.amazon.com/cloudwatch/[Amazon's CloudWatch].
 |`CamelAwsCwMetricDimensions` |`Map<String, String>` |A map of dimension names and dimension values.
 |=======================================================================
 
-=== Advanced AmazonCloudWatch configuration
+=== Advanced CloudWatchClient configuration
 
-If you need more control over the `AmazonCloudWatch` instance
+If you need more control over the `CloudWatchClient` instance
 configuration you can create your own instance and refer to it from the
 URI:
 
 [source,java]
 -------------------------------------------------
 from("direct:start")
-.to("aws-cw://namespace?amazonCwClient=#client");
+.to("aws2-cw://namespace?amazonCwClient=#client");
 -------------------------------------------------
 
-The `#client` refers to a `AmazonCloudWatch` in the
+The `#client` refers to a `CloudWatchClient` in the
 Registry.
 
-For example if your Camel Application is running behind a firewall:
+== Automatic detection of CloudWatchClient client in registry
 
-[source,java]
-------------------------------------------------------------------------------------------
-AWSCredentials awsCredentials = new BasicAWSCredentials("myAccessKey", "mySecretKey");
-ClientConfiguration clientConfiguration = new ClientConfiguration();
-clientConfiguration.setProxyHost("http://myProxyHost");
-clientConfiguration.setProxyPort(8080);
-
-AmazonCloudWatch client = new AmazonCloudWatchClient(awsCredentials, clientConfiguration);
-
-registry.bind("client", client);
-------------------------------------------------------------------------------------------
-
-== Automatic detection of AmazonCloudWatch client in registry
-
-The component is capable of detecting the presence of an AmazonCloudWatch bean into the registry.
+The component is capable of detecting the presence of an CloudWatchClient bean into the registry.
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
 This may be really useful for smarter configuration of the endpoint.
 
@@ -217,10 +155,9 @@ Maven users will need to add the following dependency to their pom.xml.
 ---------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-aws-cw</artifactId>
+    <artifactId>camel-aws2-cw</artifactId>
     <version>${camel-version}</version>
 </dependency>
 ---------------------------------------
 
 where `${camel-version`} must be replaced by the actual version of Camel.
-
