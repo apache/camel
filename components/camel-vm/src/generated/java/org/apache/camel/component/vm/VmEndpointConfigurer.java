@@ -11,13 +11,6 @@ import org.apache.camel.component.seda.SedaEndpointConfigurer;
 @SuppressWarnings("unchecked")
 public class VmEndpointConfigurer extends SedaEndpointConfigurer implements GeneratedPropertyConfigurer {
 
-    @Override
-    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
-        VmEndpoint target = (VmEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        default: return super.configure(camelContext, obj, name, value, ignoreCase);
-        }
-    }
 
 }
 

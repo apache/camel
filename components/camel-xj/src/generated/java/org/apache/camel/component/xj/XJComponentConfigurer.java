@@ -11,13 +11,6 @@ import org.apache.camel.component.xslt.saxon.XsltSaxonComponentConfigurer;
 @SuppressWarnings("unchecked")
 public class XJComponentConfigurer extends XsltSaxonComponentConfigurer implements GeneratedPropertyConfigurer {
 
-    @Override
-    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
-        XJComponent target = (XJComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        default: return super.configure(camelContext, obj, name, value, ignoreCase);
-        }
-    }
 
 }
 

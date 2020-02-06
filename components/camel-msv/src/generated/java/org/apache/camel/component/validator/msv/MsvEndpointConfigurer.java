@@ -11,13 +11,6 @@ import org.apache.camel.component.validator.ValidatorEndpointConfigurer;
 @SuppressWarnings("unchecked")
 public class MsvEndpointConfigurer extends ValidatorEndpointConfigurer implements GeneratedPropertyConfigurer {
 
-    @Override
-    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
-        MsvEndpoint target = (MsvEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        default: return super.configure(camelContext, obj, name, value, ignoreCase);
-        }
-    }
 
 }
 

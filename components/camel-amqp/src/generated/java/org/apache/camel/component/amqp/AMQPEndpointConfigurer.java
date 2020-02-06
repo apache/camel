@@ -11,15 +11,6 @@ import org.apache.camel.component.jms.JmsEndpointConfigurer;
 @SuppressWarnings("unchecked")
 public class AMQPEndpointConfigurer extends JmsEndpointConfigurer implements GeneratedPropertyConfigurer {
 
-    @Override
-    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
-        AMQPEndpoint target = (AMQPEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        default: return super.configure(camelContext, obj, name, value, ignoreCase);
-        }
-    }
 
 }
 
