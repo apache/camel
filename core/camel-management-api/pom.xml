@@ -35,11 +35,10 @@
 
     <dependencies>
 
-        <!-- camel annotaions -->
+        <!-- camel annotations -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>spi-annotations</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
