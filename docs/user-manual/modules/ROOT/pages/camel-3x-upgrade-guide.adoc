@@ -144,6 +144,20 @@ there will be an exception stating that `RuntimeCamelCatalog` is not found and t
 
 The `ManagedRuntimeCatalog` JMX MBean is removed and no longer available.
 
+=== Spring Boot JMX
+
+The `camel-management` dependency of `camel-spring-boot` was removed as Spring Boot 2.2+ disables JMX by default.
+
+To continue using JMX with Camel Spring Boot add the following dependency:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-management</artifactId>
+</dependency>
+----
+
 === API changes
 
 ==== log changed to private static LOG
@@ -276,16 +290,8 @@ Some unused methods have been removed from `CamelContext` which were not part of
 * getPollingConsumerServicePool
 * setPollingConsumerServicePool
 
-== Spring Boot JMX
+==== @Experimental
 
-The `camel-management` dependency of `camel-spring-boot` was removed as Spring Boot 2.2+ disables JMX by default.
-
-To continue using JMX with Camel Spring Boot add the following dependency:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel</groupId>
-  <artifactId>camel-management</artifactId>
-</dependency>
-----
+The `@Experimental` annotation is moved from `meta-annotations` JAR to `camel-api`
+and moved from package `org.apache.camel.meta` to `org.apache.camel`.
+And the meta-annotations has been removed.

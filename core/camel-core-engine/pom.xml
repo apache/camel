@@ -48,13 +48,6 @@
 
     <dependencies>
 
-        <!-- camel annotations -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>meta-annotations</artifactId>
-            <optional>true</optional>
-        </dependency>
-
         <!-- required dependencies by camel-core -->
         <dependency>
             <groupId>org.apache.camel</groupId>
