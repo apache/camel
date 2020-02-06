@@ -320,7 +320,7 @@ The default FHIR version has been changed to R4. Therefore if DSTU3 is desired i
 
 === Kafka
 
-The `camel-kafka` component has removed the options `bridgeEndpoint` and `circularEndpointDetection` as this is no longer needed as the component is acting as briding would work on Camel 2.x. In other words `camel-kafka` will send messages to the topic from the endpoint uri. To override this use the `KafkaConstants.OVERRIDE_TOPIC` header with the new topic. See more details in the `camel-kafka` component documentation.
+The `camel-kafka` component has removed the options `bridgeEndpoint` and `circularTopicDetection` as this is no longer needed as the component is acting as briding would work on Camel 2.x. In other words `camel-kafka` will send messages to the topic from the endpoint uri. To override this use the `KafkaConstants.OVERRIDE_TOPIC` header with the new topic. See more details in the `camel-kafka` component documentation.
 
 === Telegram
 
