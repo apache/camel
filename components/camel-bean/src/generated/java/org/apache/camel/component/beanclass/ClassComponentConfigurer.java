@@ -11,13 +11,6 @@ import org.apache.camel.component.bean.BeanComponentConfigurer;
 @SuppressWarnings("unchecked")
 public class ClassComponentConfigurer extends BeanComponentConfigurer implements GeneratedPropertyConfigurer {
 
-    @Override
-    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
-        ClassComponent target = (ClassComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        default: return super.configure(camelContext, obj, name, value, ignoreCase);
-        }
-    }
 
 }
 

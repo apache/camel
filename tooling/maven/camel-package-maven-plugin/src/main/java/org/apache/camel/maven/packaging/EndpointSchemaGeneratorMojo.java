@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -75,14 +76,12 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Javadoc;
-import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.SimpleType;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.jboss.forge.roaster.model.JavaDoc;
 import org.jboss.forge.roaster.model.JavaDocCapable;
 import org.jboss.forge.roaster.model.impl.TypeImpl;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
-import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationTarget;
@@ -200,7 +199,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         // endpoint options
-        findClassProperties(componentModel, classElement, "", uriEndpoint.excludeProperties(), parentData, null, null);
+        findClassProperties(componentModel, classElement, new HashSet<>(), "", parentData, null, null);
 
         // enhance and generate
         enhanceComponentModel(componentModel, parentData, uriEndpoint.excludeProperties());
@@ -699,10 +698,15 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     protected void findClassProperties(ComponentModel componentModel, Class<?> classElement,
-                                       String prefix, String excludeProperties,
+                                       Set<String> excludes, String prefix,
                                        ComponentModel parentData, String nestedTypeName, String nestedFieldName) {
         final Class<?> orgClassElement = classElement;
+        excludes = new HashSet<>(excludes);
         while (true) {
+            final UriEndpoint uriEndpoint = classElement.getAnnotation(UriEndpoint.class);
+            if (uriEndpoint != null) {
+                Collections.addAll(excludes, uriEndpoint.excludeProperties().split(","));
+            }
             for (Field fieldElement : classElement.getDeclaredFields()) {
 
                 Metadata metadata = fieldElement.getAnnotation(Metadata.class);
@@ -722,7 +726,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     String name = prefix + (Strings.isNullOrEmpty(path.name()) ? fieldName : path.name());
 
                     // should we exclude the name?
-                    if (excludeProperty(excludeProperties, name)) {
+                    if (excludes.contains(name)) {
                         continue;
                     }
 
@@ -807,7 +811,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     String name = prefix + (Strings.isNullOrEmpty(param.name()) ? fieldName : param.name());
 
                     // should we exclude the name?
-                    if (excludeProperty(excludeProperties, name)) {
+                    if (excludes.contains(name)) {
                         continue;
                     }
 
@@ -846,7 +850,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                         }
                         nestedTypeName = fieldTypeName;
                         nestedFieldName = fieldElement.getName();
-                        findClassProperties(componentModel, fieldTypeElement, nestedPrefix, excludeProperties, null, nestedTypeName, nestedFieldName);
+                        findClassProperties(componentModel, fieldTypeElement, excludes, nestedPrefix, null, nestedTypeName, nestedFieldName);
                         nestedTypeName = null;
                         nestedFieldName = null;
                     } else {

@@ -11,13 +11,6 @@ import org.apache.camel.component.vm.VmComponentConfigurer;
 @SuppressWarnings("unchecked")
 public class StubComponentConfigurer extends VmComponentConfigurer implements GeneratedPropertyConfigurer {
 
-    @Override
-    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
-        StubComponent target = (StubComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        default: return super.configure(camelContext, obj, name, value, ignoreCase);
-        }
-    }
 
 }
 

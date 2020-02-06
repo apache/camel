@@ -43,26 +43,30 @@ public final class PropertyConfigurerGenerator {
         w.write("@SuppressWarnings(\"unchecked\")\n");
         w.write("public class " + cn + " extends " + psn + " implements GeneratedPropertyConfigurer {\n");
         w.write("\n");
-        w.write("    @Override\n");
-        w.write("    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {\n");
-        w.write("        " + en + " target = (" + en + ") obj;\n");
-        w.write("        switch (ignoreCase ? name.toLowerCase() : name) {\n");
-        for (BaseOptionModel option : options) {
-            String getOrSet = option.getName();
-            getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
-            String setterLambda = setterLambda(getOrSet, option.getJavaType(), option.getConfigurationField());
-            if (!option.getName().toLowerCase().equals(option.getName())) {
-                w.write(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
+        if (!options.isEmpty() || !hasSuper) {
+            w.write("    @Override\n");
+            w.write("    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {\n");
+            if (!options.isEmpty()) {
+                w.write("        " + en + " target = (" + en + ") obj;\n");
+                w.write("        switch (ignoreCase ? name.toLowerCase() : name) {\n");
+                for (BaseOptionModel option : options) {
+                    String getOrSet = option.getName();
+                    getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
+                    String setterLambda = setterLambda(getOrSet, option.getJavaType(), option.getConfigurationField());
+                    if (!option.getName().toLowerCase().equals(option.getName())) {
+                        w.write(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
+                    }
+                    w.write(String.format("        case \"%s\": %s; return true;\n", option.getName(), setterLambda));
+                }
+                if (hasSuper) {
+                    w.write("        default: return super.configure(camelContext, obj, name, value, ignoreCase);\n");
+                } else {
+                    w.write("        default: return false;\n");
+                }
+                w.write("        }\n");
             }
-            w.write(String.format("        case \"%s\": %s; return true;\n", option.getName(), setterLambda));
+            w.write("    }\n");
         }
-        if (hasSuper) {
-            w.write("        default: return super.configure(camelContext, obj, name, value, ignoreCase);\n");
-        } else {
-            w.write("        default: return false;\n");
-        }
-        w.write("        }\n");
-        w.write("    }\n");
         w.write("\n");
         w.write("}\n");
         w.write("\n");
