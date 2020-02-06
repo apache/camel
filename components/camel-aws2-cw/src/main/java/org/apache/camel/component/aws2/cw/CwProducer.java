@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.cw;
+package org.apache.camel.component.aws2.cw;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -77,12 +77,12 @@ public class CwProducer extends DefaultProducer {
     }
 
     private void setDimension(MetricDatum.Builder metricDatum, Exchange exchange) {
-        String name = exchange.getIn().getHeader(CwConstants.METRIC_DIMENSION_NAME, String.class);
-        String value = exchange.getIn().getHeader(CwConstants.METRIC_DIMENSION_VALUE, String.class);
+        String name = exchange.getIn().getHeader(Cw2Constants.METRIC_DIMENSION_NAME, String.class);
+        String value = exchange.getIn().getHeader(Cw2Constants.METRIC_DIMENSION_VALUE, String.class);
         if (name != null && value != null) {
             metricDatum.dimensions(Dimension.builder().name(name).value(value).build());
         } else {
-            Map<String, String> dimensions = exchange.getIn().getHeader(CwConstants.METRIC_DIMENSIONS, Map.class);
+            Map<String, String> dimensions = exchange.getIn().getHeader(Cw2Constants.METRIC_DIMENSIONS, Map.class);
             if (dimensions != null) {
                 Collection<Dimension> dimensionCollection = new ArrayList<>();
                 for (Map.Entry<String, String> dimensionEntry : dimensions.entrySet()) {
@@ -95,7 +95,7 @@ public class CwProducer extends DefaultProducer {
     }
 
     private Instant determineTimestamp(Exchange exchange) {
-        Instant timestamp = exchange.getIn().getHeader(CwConstants.METRIC_TIMESTAMP, Instant.class);
+        Instant timestamp = exchange.getIn().getHeader(Cw2Constants.METRIC_TIMESTAMP, Instant.class);
         if (timestamp == null) {
             timestamp = getConfiguration().getTimestamp();
         }
@@ -103,7 +103,7 @@ public class CwProducer extends DefaultProducer {
     }
 
     private String determineNameSpace(Exchange exchange) {
-        String namespace = exchange.getIn().getHeader(CwConstants.METRIC_NAMESPACE, String.class);
+        String namespace = exchange.getIn().getHeader(Cw2Constants.METRIC_NAMESPACE, String.class);
         if (namespace == null) {
             namespace = getConfiguration().getNamespace();
         }
@@ -111,7 +111,7 @@ public class CwProducer extends DefaultProducer {
     }
 
     private String determineName(Exchange exchange) {
-        String name = exchange.getIn().getHeader(CwConstants.METRIC_NAME, String.class);
+        String name = exchange.getIn().getHeader(Cw2Constants.METRIC_NAME, String.class);
         if (name == null) {
             name = getConfiguration().getName();
         }
@@ -119,7 +119,7 @@ public class CwProducer extends DefaultProducer {
     }
 
     private Double determineValue(Exchange exchange) {
-        Double value = exchange.getIn().getHeader(CwConstants.METRIC_VALUE, Double.class);
+        Double value = exchange.getIn().getHeader(Cw2Constants.METRIC_VALUE, Double.class);
         if (value == null) {
             value = getConfiguration().getValue();
         }
@@ -127,14 +127,14 @@ public class CwProducer extends DefaultProducer {
     }
 
     private StandardUnit determineUnit(Exchange exchange) {
-        String unit = exchange.getIn().getHeader(CwConstants.METRIC_UNIT, String.class);
+        String unit = exchange.getIn().getHeader(Cw2Constants.METRIC_UNIT, String.class);
         if (unit == null) {
             unit = getConfiguration().getUnit();
         }
         return unit != null ? StandardUnit.fromValue(unit) : StandardUnit.COUNT;
     }
 
-    protected CwConfiguration getConfiguration() {
+    protected Cw2Configuration getConfiguration() {
         return getEndpoint().getConfiguration();
     }
 

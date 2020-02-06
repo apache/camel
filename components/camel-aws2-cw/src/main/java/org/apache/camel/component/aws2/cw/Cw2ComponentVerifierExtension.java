@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.cw;
+package org.apache.camel.component.aws2.cw;
 
 import java.util.Map;
 
@@ -29,13 +29,13 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClientBuilder;
 
-public class CwComponentVerifierExtension extends DefaultComponentVerifierExtension {
+public class Cw2ComponentVerifierExtension extends DefaultComponentVerifierExtension {
 
-    public CwComponentVerifierExtension() {
+    public Cw2ComponentVerifierExtension() {
         this("aws2-cw");
     }
 
-    public CwComponentVerifierExtension(String scheme) {
+    public Cw2ComponentVerifierExtension(String scheme) {
         super(scheme);
     }
 
@@ -65,7 +65,7 @@ public class CwComponentVerifierExtension extends DefaultComponentVerifierExtens
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.CONNECTIVITY);
 
         try {
-            CwConfiguration configuration = setProperties(new CwConfiguration(), parameters);
+            Cw2Configuration configuration = setProperties(new Cw2Configuration(), parameters);
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             CloudWatchClientBuilder clientBuilder = CloudWatchClient.builder();
             CloudWatchClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred)).region(Region.of(configuration.getRegion())).build();

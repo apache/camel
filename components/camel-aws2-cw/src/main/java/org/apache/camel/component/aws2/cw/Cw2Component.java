@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.cw;
+package org.apache.camel.component.aws2.cw;
 
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +27,7 @@ import org.apache.camel.support.DefaultComponent;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 
 @Component("aws2-cw")
-public class CwComponent extends DefaultComponent {
+public class Cw2Component extends DefaultComponent {
 
     @Metadata
     private String accessKey;
@@ -36,15 +36,15 @@ public class CwComponent extends DefaultComponent {
     @Metadata
     private String region;
     @Metadata(label = "advanced")
-    private CwConfiguration configuration;
+    private Cw2Configuration configuration;
 
-    public CwComponent() {
+    public Cw2Component() {
         this(null);
     }
 
-    public CwComponent(CamelContext context) {
+    public Cw2Component(CamelContext context) {
         super(context);
-        registerExtension(new CwComponentVerifierExtension());
+        registerExtension(new Cw2ComponentVerifierExtension());
     }
 
     @Override
@@ -53,7 +53,7 @@ public class CwComponent extends DefaultComponent {
             throw new IllegalArgumentException("Metric namespace must be specified.");
         }
 
-        CwConfiguration configuration = this.configuration != null ? this.configuration.copy() : new CwConfiguration();
+        Cw2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Cw2Configuration();
         configuration.setNamespace(remaining);
 
         CwEndpoint endpoint = new CwEndpoint(uri, this, configuration);
@@ -72,14 +72,14 @@ public class CwComponent extends DefaultComponent {
         return endpoint;
     }
 
-    public CwConfiguration getConfiguration() {
+    public Cw2Configuration getConfiguration() {
         return configuration;
     }
 
     /**
      * The AWS CW default configuration
      */
-    public void setConfiguration(CwConfiguration configuration) {
+    public void setConfiguration(Cw2Configuration configuration) {
         this.configuration = configuration;
     }
 
@@ -116,7 +116,7 @@ public class CwComponent extends DefaultComponent {
         this.region = region;
     }
 
-    private void checkAndSetRegistryClient(CwConfiguration configuration) {
+    private void checkAndSetRegistryClient(Cw2Configuration configuration) {
         Set<CloudWatchClient> clients = getCamelContext().getRegistry().findByType(CloudWatchClient.class);
         if (clients.size() == 1) {
             configuration.setAmazonCwClient(clients.stream().findFirst().get());

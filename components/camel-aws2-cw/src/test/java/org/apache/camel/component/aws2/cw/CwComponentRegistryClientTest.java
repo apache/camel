@@ -14,11 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.cw;
+package org.apache.camel.component.aws2.cw;
 
 import java.time.Instant;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.component.aws2.cw.Cw2Component;
+import org.apache.camel.component.aws2.cw.CwEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
@@ -32,7 +34,7 @@ public class CwComponentRegistryClientTest extends CamelTestSupport {
     public void createEndpointWithAllOptions() throws Exception {
         CloudWatchClient cloudWatchClient = new CloudWatchClientMock();
         context.getRegistry().bind("amazonCwClient", cloudWatchClient);
-        CwComponent component = context.getComponent("aws2-cw", CwComponent.class);
+        Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
         CwEndpoint endpoint = (CwEndpoint)component.createEndpoint("aws2-cw://camel.apache.org/test?name=testMetric&value=2&unit=Count&timestamp=#now");
 
         assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
@@ -44,7 +46,7 @@ public class CwComponentRegistryClientTest extends CamelTestSupport {
 
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalS3ClientMisconfiguration() throws Exception {
-        CwComponent component = context.getComponent("aws2-cw", CwComponent.class);
+        Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
         CwEndpoint endpoint = (CwEndpoint)component.createEndpoint("aws2-cw://camel.apache.org/test");
     }
 }

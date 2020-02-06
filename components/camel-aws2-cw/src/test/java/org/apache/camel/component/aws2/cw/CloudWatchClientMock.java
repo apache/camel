@@ -14,18 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.cw;
+package org.apache.camel.component.aws2.cw;
 
-/**
- * Constants used in Camel AWS CW module
- */
-public interface CwConstants {
-    String METRIC_NAMESPACE = "CamelAwsCwMetricNamespace";
-    String METRIC_NAME = "CamelAwsCwMetricName";
-    String METRIC_VALUE = "CamelAwsCwMetricValue";
-    String METRIC_UNIT = "CamelAwsCwMetricUnit";
-    String METRIC_TIMESTAMP = "CamelAwsCwMetricTimestamp";
-    String METRIC_DIMENSIONS = "CamelAwsCwMetricDimensions";
-    String METRIC_DIMENSION_NAME = "CamelAwsCwMetricDimensionName";
-    String METRIC_DIMENSION_VALUE = "CamelAwsCwMetricDimensionValue";
+import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
+import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataRequest;
+import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataResponse;
+
+public class CloudWatchClientMock implements CloudWatchClient {
+
+    @Override
+    public String serviceName() {
+        return null;
+    }
+
+    @Override
+    public void close() {
+    }
+
+    @Override
+    public PutMetricDataResponse putMetricData(PutMetricDataRequest request) {
+        PutMetricDataResponse.Builder builder = PutMetricDataResponse.builder();
+        return builder.build();
+    }
+
 }
