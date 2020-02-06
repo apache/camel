@@ -461,6 +461,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AwsTranslateComponentBuilderFactory.awsTranslate();
     }
     /**
+     * AWS 2 CloudWatch (camel-aws2-cw)
+     * The aws-cw component is used for sending metrics to an Amazon CloudWatch.
+     * 
+     * Category: cloud,monitoring
+     * Since: 3.1
+     * Maven coordinates: org.apache.camel:camel-aws2-cw
+     */
+    static org.apache.camel.builder.component.dsl.Aws2CwComponentBuilderFactory.Aws2CwComponentBuilder aws2Cw() {
+        return org.apache.camel.builder.component.dsl.Aws2CwComponentBuilderFactory.aws2Cw();
+    }
+    /**
      * AWS 2 ECS (camel-aws2-ecs)
      * The aws2-ecs is used for managing Amazon ECS
      * 
