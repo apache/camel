@@ -16,22 +16,23 @@
  */
 package org.apache.camel.component.google.pubsub;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.google.api.client.util.Strings;
-import com.google.api.services.pubsub.model.PublishRequest;
-import com.google.api.services.pubsub.model.PublishResponse;
-import com.google.api.services.pubsub.model.PubsubMessage;
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
+import com.google.cloud.pubsub.v1.Publisher;
+import com.google.protobuf.ByteString;
+import com.google.pubsub.v1.PubsubMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Generic PubSub Producer
@@ -92,50 +93,31 @@ public class GooglePubsubProducer extends DefaultProducer {
 
     private void sendMessages(List<Exchange> exchanges) throws Exception {
 
-        GooglePubsubEndpoint endpoint = (GooglePubsubEndpoint)getEndpoint();
+        GooglePubsubEndpoint endpoint = (GooglePubsubEndpoint) getEndpoint();
         String topicName = String.format("projects/%s/topics/%s", endpoint.getProjectId(), endpoint.getDestinationName());
+        List<ApiFuture<String>> messageIdFutures = new ArrayList<>();
+        try {
+            Publisher publisher = endpoint.getPublisher(topicName);
 
-        List<PubsubMessage> messages = new ArrayList<>();
+            for (Exchange exchange : exchanges) {
+                Map<String, String> attributes = exchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES, Map.class);
 
-        for (Exchange exchange : exchanges) {
-            PubsubMessage message = new PubsubMessage();
+                ByteString data = ByteString.copyFromUtf8(exchange.getIn().getBody(String.class));
+                PubsubMessage message = PubsubMessage.newBuilder().putAllAttributes(attributes).setData(data).build();
 
-            Object body = exchange.getIn().getBody();
-
-            if (body instanceof String) {
-                message.encodeData(((String)body).getBytes(StandardCharsets.UTF_8));
-            } else if (body instanceof byte[]) {
-                message.encodeData((byte[])body);
-            } else {
-                message.encodeData(serialize(body));
+                ApiFuture<String> messageIdFuture = publisher.publish(message);
+                messageIdFutures.add(messageIdFuture);
             }
+        } finally {
+            List<String> messageIds = ApiFutures.allAsList(messageIdFutures).get();
 
-            Object attributes = exchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES);
-
-            if (attributes != null && attributes instanceof Map && ((Map)attributes).size() > 0) {
-                message.setAttributes((Map)attributes);
+            if (!messageIds.isEmpty()) {
+                int i = 0;
+                for (Exchange entry : exchanges) {
+                    entry.getIn().setHeader(GooglePubsubConstants.MESSAGE_ID, messageIds.get(i));
+                    i++;
+                }
             }
-
-            messages.add(message);
         }
-
-        PublishRequest publishRequest = new PublishRequest().setMessages(messages);
-
-        PublishResponse response = endpoint.getPubsub().projects().topics().publish(topicName, publishRequest).execute();
-
-        List<String> sentMessageIds = response.getMessageIds();
-
-        int i = 0;
-        for (Exchange entry : exchanges) {
-            entry.getIn().setHeader(GooglePubsubConstants.MESSAGE_ID, sentMessageIds.get(i));
-            i++;
-        }
-    }
-
-    public static byte[] serialize(Object obj) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ObjectOutputStream os = new ObjectOutputStream(out);
-        os.writeObject(obj);
-        return out.toByteArray();
     }
 }

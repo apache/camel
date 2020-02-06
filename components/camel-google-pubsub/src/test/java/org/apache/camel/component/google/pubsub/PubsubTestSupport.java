@@ -16,16 +16,16 @@
  */
 package org.apache.camel.component.google.pubsub;
 
-import java.io.InputStream;
-import java.util.Properties;
-
-import com.google.api.client.googleapis.json.GoogleJsonResponseException;
-import com.google.api.services.pubsub.Pubsub;
-import com.google.api.services.pubsub.model.Subscription;
-import com.google.api.services.pubsub.model.Topic;
-import org.apache.camel.BindToRegistry;
+import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
+import com.google.cloud.pubsub.v1.TopicAdminClient;
+import com.google.pubsub.v1.ProjectSubscriptionName;
+import com.google.pubsub.v1.ProjectTopicName;
+import com.google.pubsub.v1.PushConfig;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+
+import java.io.InputStream;
+import java.util.Properties;
 
 public class PubsubTestSupport extends CamelTestSupport {
 
@@ -57,18 +57,10 @@ public class PubsubTestSupport extends CamelTestSupport {
 
     protected void addPubsubComponent(CamelContext context) {
 
-        GooglePubsubConnectionFactory cf = new GooglePubsubConnectionFactory().setServiceAccount(SERVICE_ACCOUNT).setServiceAccountKey(SERVICE_KEY).setServiceURL(SERVICE_URL);
-
         GooglePubsubComponent component = new GooglePubsubComponent();
-        component.setConnectionFactory(cf);
 
         context.addComponent("google-pubsub", component);
         context.getPropertiesComponent().setLocation("ref:prop");
-    }
-
-    @BindToRegistry("prop")
-    public Properties loadRegProperties() throws Exception {
-        return loadProperties();
     }
 
     @Override
@@ -82,37 +74,19 @@ public class PubsubTestSupport extends CamelTestSupport {
         createTopicSubscriptionPair(topicName, subscriptionName, 10);
     }
 
-    public static void createTopicSubscriptionPair(String topicName, String subscriptionName, int ackDealineSeconds) throws Exception {
+    public static void createTopicSubscriptionPair(String topicName, String subscriptionName, int ackDeadlineSeconds) throws Exception {
 
-        Pubsub pubsub = new GooglePubsubConnectionFactory().setServiceAccount(SERVICE_ACCOUNT).setServiceAccountKey(SERVICE_KEY).setServiceURL(SERVICE_URL).getDefaultClient();
-
-        String topicFullName = String.format("projects/%s/topics/%s", PubsubTestSupport.PROJECT_ID, topicName);
-
-        String subscriptionFullName = String.format("projects/%s/subscriptions/%s", PubsubTestSupport.PROJECT_ID, subscriptionName);
+        ProjectTopicName projectTopicName = ProjectTopicName.of(PubsubTestSupport.PROJECT_ID, topicName);
+        ProjectSubscriptionName projectSubscriptionName = ProjectSubscriptionName.of(PubsubTestSupport.PROJECT_ID, subscriptionName);
 
         try {
-            pubsub.projects().topics().create(topicFullName, new Topic()).execute();
-        } catch (Exception e) {
-            handleAlreadyExistsException(e);
+            TopicAdminClient.create().createTopic(projectTopicName);
+        } catch (Exception ignore) {
         }
 
         try {
-            Subscription subscription = new Subscription().setTopic(topicFullName).setAckDeadlineSeconds(ackDealineSeconds);
-
-            pubsub.projects().subscriptions().create(subscriptionFullName, subscription).execute();
-        } catch (Exception e) {
-            handleAlreadyExistsException(e);
+            SubscriptionAdminClient.create().createSubscription(projectSubscriptionName, projectTopicName, PushConfig.getDefaultInstance(), ackDeadlineSeconds);
+        } catch (Exception ignore) {
         }
-    }
-
-    private static void handleAlreadyExistsException(Exception e) throws Exception {
-        if (e instanceof GoogleJsonResponseException) {
-            GoogleJsonResponseException exc = (GoogleJsonResponseException)e;
-            // 409 indicates that the resource is available already
-            if (409 == exc.getStatusCode()) {
-                return;
-            }
-        }
-        throw e;
     }
 }

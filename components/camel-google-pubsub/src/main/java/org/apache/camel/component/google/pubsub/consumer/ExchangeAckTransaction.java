@@ -16,64 +16,27 @@
  */
 package org.apache.camel.component.google.pubsub.consumer;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.cloud.pubsub.v1.AckReplyConsumer;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.google.pubsub.GooglePubsubConstants;
-import org.apache.camel.component.google.pubsub.GooglePubsubEndpoint;
 import org.apache.camel.spi.Synchronization;
 
-public class ExchangeAckTransaction extends PubsubAcknowledgement implements Synchronization {
+public class ExchangeAckTransaction implements Synchronization {
 
-    public ExchangeAckTransaction(GooglePubsubEndpoint endpoint) {
-        super(endpoint);
+    private final AckReplyConsumer ackReplyConsumer;
+
+    public ExchangeAckTransaction(AckReplyConsumer ackReplyConsumer) {
+        this.ackReplyConsumer = ackReplyConsumer;
     }
 
     @Override
     public void onComplete(Exchange exchange) {
-        acknowledge(getAckIdList(exchange));
+        ackReplyConsumer.ack();
     }
 
     @Override
     public void onFailure(Exchange exchange) {
-
-        Integer deadline = 0;
-        Object configuredDeadline = exchange.getIn().getHeader(GooglePubsubConstants.ACK_DEADLINE);
-
-        if (configuredDeadline != null && Integer.class.isInstance(configuredDeadline)) {
-            deadline = (Integer)configuredDeadline;
-        }
-
-        if (configuredDeadline != null && String.class.isInstance(configuredDeadline)) {
-            try {
-                deadline = Integer.valueOf((String)configuredDeadline);
-            } catch (Exception e) {
-                log.warn("Unable to parse ACK Deadline header value", e);
-            }
-        }
-
-        if (deadline != 0) {
-            log.trace(" Exchange {} : Ack deadline : {}", exchange.getExchangeId(), deadline);
-        }
-
-        resetAckDeadline(getAckIdList(exchange), deadline);
-    }
-
-    private List<String> getAckIdList(Exchange exchange) {
-        List<String> ackList = new ArrayList<>();
-
-        if (null != exchange.getProperty(Exchange.GROUPED_EXCHANGE)) {
-            for (Exchange ex : (List<Exchange>)exchange.getProperty(Exchange.GROUPED_EXCHANGE)) {
-                String ackId = (String)ex.getIn().getHeader(GooglePubsubConstants.ACK_ID);
-                if (null != ackId) {
-                    ackList.add(ackId);
-                }
-            }
-        } else {
-            ackList.add((String)exchange.getIn().getHeader(GooglePubsubConstants.ACK_ID));
-        }
-
-        return ackList;
+        ackReplyConsumer.nack();
     }
 }
+
+

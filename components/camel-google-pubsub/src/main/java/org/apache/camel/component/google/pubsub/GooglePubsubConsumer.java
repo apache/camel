@@ -16,24 +16,17 @@
  */
 package org.apache.camel.component.google.pubsub;
 
-import java.net.SocketTimeoutException;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-
-import com.google.api.client.repackaged.com.google.common.base.Strings;
-import com.google.api.services.pubsub.Pubsub;
-import com.google.api.services.pubsub.model.PubsubMessage;
-import com.google.api.services.pubsub.model.PullRequest;
-import com.google.api.services.pubsub.model.PullResponse;
-import com.google.api.services.pubsub.model.ReceivedMessage;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
+import com.google.cloud.pubsub.v1.MessageReceiver;
+import com.google.cloud.pubsub.v1.Subscriber;
+import com.google.common.base.Strings;
+import com.google.pubsub.v1.ProjectSubscriptionName;
 import org.apache.camel.Processor;
-import org.apache.camel.component.google.pubsub.consumer.ExchangeAckTransaction;
-import org.apache.camel.spi.Synchronization;
+import org.apache.camel.component.google.pubsub.consumer.CamelMessageReceiver;
 import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ExecutorService;
 
 class GooglePubsubConsumer extends DefaultConsumer {
 
@@ -41,18 +34,12 @@ class GooglePubsubConsumer extends DefaultConsumer {
 
     private final GooglePubsubEndpoint endpoint;
     private final Processor processor;
-    private final Synchronization ackStrategy;
-
     private ExecutorService executor;
-    private Pubsub pubsub;
 
     GooglePubsubConsumer(GooglePubsubEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.processor = processor;
-        this.ackStrategy = new ExchangeAckTransaction(this.endpoint);
-
-        pubsub = endpoint.getConnectionFactory().getMultiThreadClient(this.endpoint.getConcurrentConsumers());
 
         String loggerId = endpoint.getLoggerId();
 
@@ -69,7 +56,7 @@ class GooglePubsubConsumer extends DefaultConsumer {
         localLog.info("Starting Google PubSub consumer for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
         executor = endpoint.createExecutor();
         for (int i = 0; i < endpoint.getConcurrentConsumers(); i++) {
-            executor.submit(new PubsubPoller(i + ""));
+            executor.submit(new SubscriberWrapper());
         }
     }
 
@@ -88,77 +75,29 @@ class GooglePubsubConsumer extends DefaultConsumer {
         executor = null;
     }
 
-    private class PubsubPoller implements Runnable {
-
-        private final String subscriptionFullName;
-        private final String threadId;
-
-        PubsubPoller(String id) {
-            this.subscriptionFullName = String.format("projects/%s/subscriptions/%s", GooglePubsubConsumer.this.endpoint.getProjectId(),
-                                                      GooglePubsubConsumer.this.endpoint.getDestinationName());
-            this.threadId = GooglePubsubConsumer.this.endpoint.getDestinationName() + "-" + "Thread " + id;
-        }
+    private class SubscriberWrapper implements Runnable {
 
         @Override
         public void run() {
+            String subscriptionName = ProjectSubscriptionName.format(endpoint.getProjectId(), endpoint.getDestinationName());
+
             if (localLog.isDebugEnabled()) {
-                localLog.debug("Subscribing {} to {}", threadId, subscriptionFullName);
+                localLog.debug("Subscribing to {}", subscriptionName);
             }
 
             while (isRunAllowed() && !isSuspendingOrSuspended()) {
+
+                MessageReceiver messageReceiver = new CamelMessageReceiver(endpoint, processor);
+
+                Subscriber subscriber = Subscriber.newBuilder(subscriptionName, messageReceiver)
+                        .setParallelPullCount(1).build();
                 try {
-                    PullRequest pullRequest = new PullRequest().setMaxMessages(endpoint.getMaxMessagesPerPoll());
-                    PullResponse pullResponse;
-                    try {
-                        if (localLog.isTraceEnabled()) {
-                            localLog.trace("Polling : {}", threadId);
-                        }
-                        pullResponse = GooglePubsubConsumer.this.pubsub.projects().subscriptions().pull(subscriptionFullName, pullRequest).execute();
-                    } catch (SocketTimeoutException ste) {
-                        if (localLog.isTraceEnabled()) {
-                            localLog.trace("Socket timeout : {}", threadId);
-                        }
-                        continue;
-                    }
-
-                    if (pullResponse.getReceivedMessages() == null) {
-                        continue;
-                    }
-
-                    List<ReceivedMessage> receivedMessages = pullResponse.getReceivedMessages();
-
-                    for (ReceivedMessage receivedMessage : receivedMessages) {
-                        PubsubMessage pubsubMessage = receivedMessage.getMessage();
-
-                        byte[] body = pubsubMessage.decodeData();
-
-                        if (localLog.isTraceEnabled()) {
-                            localLog.trace("Received message ID : {}", pubsubMessage.getMessageId());
-                        }
-
-                        Exchange exchange = endpoint.createExchange();
-                        exchange.getIn().setBody(body);
-
-                        exchange.getIn().setHeader(GooglePubsubConstants.ACK_ID, receivedMessage.getAckId());
-                        exchange.getIn().setHeader(GooglePubsubConstants.MESSAGE_ID, pubsubMessage.getMessageId());
-                        exchange.getIn().setHeader(GooglePubsubConstants.PUBLISH_TIME, pubsubMessage.getPublishTime());
-
-                        if (null != receivedMessage.getMessage().getAttributes()) {
-                            exchange.getIn().setHeader(GooglePubsubConstants.ATTRIBUTES, receivedMessage.getMessage().getAttributes());
-                        }
-
-                        if (endpoint.getAckMode() != GooglePubsubConstants.AckMode.NONE) {
-                            exchange.adapt(ExtendedExchange.class).addOnCompletion(GooglePubsubConsumer.this.ackStrategy);
-                        }
-
-                        try {
-                            processor.process(exchange);
-                        } catch (Throwable e) {
-                            exchange.setException(e);
-                        }
-                    }
+                    subscriber.startAsync().awaitRunning();
+                    subscriber.awaitTerminated();
                 } catch (Exception e) {
                     localLog.error("Failure getting messages from PubSub", e);
+                } finally {
+                    subscriber.stopAsync();
                 }
             }
         }

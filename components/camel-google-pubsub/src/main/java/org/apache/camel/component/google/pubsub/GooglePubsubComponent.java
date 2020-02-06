@@ -28,8 +28,6 @@ import org.apache.camel.support.DefaultComponent;
 @Component("google-pubsub")
 public class GooglePubsubComponent extends DefaultComponent {
 
-    private GooglePubsubConnectionFactory connectionFactory;
-
     public GooglePubsubComponent() {
     }
 
@@ -50,20 +48,5 @@ public class GooglePubsubComponent extends DefaultComponent {
 
         return pubsubEndpoint;
     }
-
-    /**
-     * Sets the connection factory to use: provides the ability to explicitly
-     * manage connection credentials: - the path to the key file - the Service
-     * Account Key / Email pair
-     */
-    public GooglePubsubConnectionFactory getConnectionFactory() {
-        if (connectionFactory == null) {
-            connectionFactory = new GooglePubsubConnectionFactory();
-        }
-        return connectionFactory;
-    }
-
-    public void setConnectionFactory(GooglePubsubConnectionFactory connectionFactory) {
-        this.connectionFactory = connectionFactory;
-    }
 }
+

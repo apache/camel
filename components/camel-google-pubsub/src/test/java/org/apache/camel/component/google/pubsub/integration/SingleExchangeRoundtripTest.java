@@ -109,7 +109,6 @@ public class SingleExchangeRoundtripTest extends PubsubTestSupport {
         Exchange receivedExchange = receivedExchanges.get(0);
 
         assertNotNull("PUBSUB Message ID Property", receivedExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID));
-        assertNotNull("PUBSUB Ack ID Property", receivedExchange.getIn().getHeader(GooglePubsubConstants.ACK_ID));
         assertNotNull("PUBSUB Published Time", receivedExchange.getIn().getHeader(GooglePubsubConstants.PUBLISH_TIME));
 
         assertEquals("PUBSUB Header Attribute", attributeValue, ((Map)receivedExchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES)).get(attributeKey));

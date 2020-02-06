@@ -19,16 +19,12 @@ package org.apache.camel.component.google.pubsub;
 public final class GooglePubsubConstants {
 
     public static final String MESSAGE_ID = "CamelGooglePubsub.MessageId";
-    public static final String ACK_ID = "CamelGooglePubsub.MsgAckId";
     public static final String PUBLISH_TIME = "CamelGooglePubsub.PublishTime";
     public static final String ATTRIBUTES = "CamelGooglePubsub.Attributes";
-    public static final String ACK_DEADLINE = "CamelGooglePubsub.AckDeadline";
 
     public enum AckMode {
         AUTO, NONE
     }
 
-    private GooglePubsubConstants() {
-        // not called
-    }
 }
+
