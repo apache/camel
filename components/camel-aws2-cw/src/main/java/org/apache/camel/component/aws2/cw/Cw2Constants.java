@@ -17,7 +17,7 @@
 package org.apache.camel.component.aws2.cw;
 
 /**
- * Constants used in Camel AWS CW module
+ * Constants used in Camel AWS CloudWatch module SDK v2
  */
 public interface Cw2Constants {
     String METRIC_NAMESPACE = "CamelAwsCwMetricNamespace";

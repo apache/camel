@@ -35,16 +35,16 @@ import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClientBuilder;
 
 /**
- * The aws-cw component is used for sending metrics to an Amazon CloudWatch.
+ * The aws2-cw component is used for sending metrics to an Amazon CloudWatch.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-cw", title = "AWS 2 CloudWatch", syntax = "aws2-cw:namespace", producerOnly = true, label = "cloud,monitoring")
-public class CwEndpoint extends DefaultEndpoint {
+public class Cw2Endpoint extends DefaultEndpoint {
 
     @UriParam
     private Cw2Configuration configuration;
     private CloudWatchClient cloudWatchClient;
 
-    public CwEndpoint(String uri, Component component, Cw2Configuration configuration) {
+    public Cw2Endpoint(String uri, Component component, Cw2Configuration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
@@ -56,7 +56,7 @@ public class CwEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new CwProducer(this);
+        return new Cw2Producer(this);
     }
 
     @Override

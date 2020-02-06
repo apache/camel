@@ -20,7 +20,7 @@ import java.time.Instant;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.component.aws2.cw.Cw2Component;
-import org.apache.camel.component.aws2.cw.CwEndpoint;
+import org.apache.camel.component.aws2.cw.Cw2Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
@@ -35,7 +35,7 @@ public class CwComponentRegistryClientTest extends CamelTestSupport {
         CloudWatchClient cloudWatchClient = new CloudWatchClientMock();
         context.getRegistry().bind("amazonCwClient", cloudWatchClient);
         Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
-        CwEndpoint endpoint = (CwEndpoint)component.createEndpoint("aws2-cw://camel.apache.org/test?name=testMetric&value=2&unit=Count&timestamp=#now");
+        Cw2Endpoint endpoint = (Cw2Endpoint)component.createEndpoint("aws2-cw://camel.apache.org/test?name=testMetric&value=2&unit=Count&timestamp=#now");
 
         assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
         assertEquals("testMetric", endpoint.getConfiguration().getName());
@@ -47,6 +47,6 @@ public class CwComponentRegistryClientTest extends CamelTestSupport {
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalS3ClientMisconfiguration() throws Exception {
         Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
-        CwEndpoint endpoint = (CwEndpoint)component.createEndpoint("aws2-cw://camel.apache.org/test");
+        Cw2Endpoint endpoint = (Cw2Endpoint)component.createEndpoint("aws2-cw://camel.apache.org/test");
     }
 }

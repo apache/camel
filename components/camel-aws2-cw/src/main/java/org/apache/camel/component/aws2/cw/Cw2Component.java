@@ -26,6 +26,9 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 
+/**
+ * For working with Amazon CloudWatch SDK v2.
+ */
 @Component("aws2-cw")
 public class Cw2Component extends DefaultComponent {
 
@@ -56,7 +59,7 @@ public class Cw2Component extends DefaultComponent {
         Cw2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Cw2Configuration();
         configuration.setNamespace(remaining);
 
-        CwEndpoint endpoint = new CwEndpoint(uri, this, configuration);
+        Cw2Endpoint endpoint = new Cw2Endpoint(uri, this, configuration);
         // set component level options before overriding from endpoint
         // parameters
         endpoint.getConfiguration().setAccessKey(accessKey);
