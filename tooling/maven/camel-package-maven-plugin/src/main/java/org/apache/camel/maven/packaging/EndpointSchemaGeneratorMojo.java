@@ -207,7 +207,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         // if the component has known class name
         if (!"@@@JAVATYPE@@@".equals(componentModel.getJavaType())) {
-            generateComponentConfigurer(uriEndpoint, scheme, schemes, componentModel);
+            generateComponentConfigurer(uriEndpoint, scheme, schemes, componentModel, parentData);
         }
 
         String json = JsonMapper.createParameterJsonSchema(componentModel);
@@ -220,7 +220,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         String file = packageName.replace('.', '/') + "/" + fileName;
         updateResource(resourcesOutputDir.toPath(), file, json);
 
-        generateEndpointConfigurer(classElement, uriEndpoint, scheme, schemes, componentModel);
+        generateEndpointConfigurer(classElement, uriEndpoint, scheme, schemes, componentModel, parentData);
     }
 
     protected void updateResource(Path dir, String file, String data) {
@@ -256,10 +256,12 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             Set<String> componentOptionNames = componentModel.getComponentOptions().stream().map(BaseOptionModel::getName).collect(Collectors.toSet());
             Set<String> endpointOptionNames = componentModel.getEndpointOptions().stream().map(BaseOptionModel::getName).collect(Collectors.toSet());
             Collections.addAll(endpointOptionNames, excludeProperties.split(","));
-            parentData.getComponentOptions().removeIf(option -> componentOptionNames.contains(option.getName()));
-            parentData.getEndpointOptions().removeIf(option -> endpointOptionNames.contains(option.getName()));
-            componentModel.getComponentOptions().addAll(parentData.getComponentOptions());
-            componentModel.getEndpointOptions().addAll(parentData.getEndpointOptions());
+            parentData.getComponentOptions().stream()
+                    .filter(option -> !componentOptionNames.contains(option.getName()))
+                    .forEach(option -> componentModel.getComponentOptions().add(option));
+            parentData.getEndpointOptions().stream()
+                    .filter(option -> !endpointOptionNames.contains(option.getName()))
+                    .forEach(option -> componentModel.getEndpointOptions().add(option));
         }
 
     }
@@ -309,55 +311,93 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         return sb.toString();
     }
 
-    private void generateComponentConfigurer(UriEndpoint uriEndpoint, String scheme, String[] schemes, ComponentModel componentModel) {
-        Class<?> parent;
-        if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
-            // special for activemq and amqp scheme which should reuse jms
-            parent = loadClass("org.apache.camel.component.jms.JmsComponentConfigurer");
-        } else {
-            parent = loadClass("org.apache.camel.spi.GeneratedPropertyConfigurer");
+    private void generateComponentConfigurer(UriEndpoint uriEndpoint, String scheme, String[] schemes, ComponentModel componentModel, ComponentModel parentData) {
+        if (!uriEndpoint.generateConfigurer()) {
+            return;
         }
+        // only generate this once for the first scheme
+        if (schemes != null && !schemes[0].equals(scheme)) {
+            return;
+        }
+        String pfqn;
+        boolean hasSuper;
+        if (parentData != null
+                && loadClass(componentModel.getJavaType()).getSuperclass() == loadClass(parentData.getJavaType())) {
+            // special for activemq and amqp scheme which should reuse jms
+            pfqn = parentData.getJavaType() + "Configurer";
+            hasSuper = true;
+        } else {
+            pfqn = "org.apache.camel.support.component.PropertyConfigurerSupport";
+            hasSuper = false;
+            parentData = null;
+        }
+        String psn = pfqn.substring(pfqn.lastIndexOf('.') + 1);
         String fqComponentClassName = componentModel.getJavaType();
         String componentClassName = fqComponentClassName.substring(fqComponentClassName.lastIndexOf('.') + 1);
         String className = componentClassName + "Configurer";
         String packageName = fqComponentClassName.substring(0, fqComponentClassName.lastIndexOf('.'));
         String fqClassName = packageName + "." + className;
 
-        if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
-            generateExtendConfigurer(parent, packageName, className, fqClassName, componentModel.getScheme() + "-component");
-        } else if (uriEndpoint.generateConfigurer() && !componentModel.getComponentOptions().isEmpty()) {
-            // only generate this once for the first scheme
-            if (schemes == null || schemes[0].equals(scheme)) {
-                generatePropertyConfigurer(parent, packageName, className, fqClassName, componentClassName, componentModel.getScheme() + "-component",
-                        componentModel.getComponentOptions());
-            }
+        List<ComponentOptionModel> options;
+        if (parentData != null) {
+            Set<String> parentOptionsNames = parentData.getComponentOptions().stream()
+                    .map(ComponentOptionModel::getName).collect(Collectors.toSet());
+            options = componentModel.getComponentOptions().stream().filter(o -> !parentOptionsNames.contains(o.getName()))
+                    .collect(Collectors.toList());
+        } else {
+            options = componentModel.getComponentOptions();
         }
+        generatePropertyConfigurer(packageName, className, fqClassName, componentClassName,
+                pfqn, psn,
+                componentModel.getScheme() + "-component", hasSuper,
+                options);
     }
 
     private void generateEndpointConfigurer(Class<?> classElement, UriEndpoint uriEndpoint, String scheme, String[] schemes,
-                                            ComponentModel componentModel) {
-        Class<?> parent;
-        if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
-            // special for activemq and amqp scheme which should reuse jms
-            parent = loadClass("org.apache.camel.component.jms.JmsEndpointConfigurer");
-        } else {
-            parent = loadClass("org.apache.camel.spi.GeneratedPropertyConfigurer");
+                                            ComponentModel componentModel, ComponentModel parentData) {
+        if (!uriEndpoint.generateConfigurer()) {
+            return;
         }
+        // only generate this once for the first scheme
+        if (schemes != null && !schemes[0].equals(scheme)) {
+            return;
+        }
+        String pfqn;
+        boolean hasSuper;
+        if (parentData != null) {
+            try {
+                pfqn = classElement.getSuperclass().getName() + "Configurer";
+                loadClass(pfqn);
+                hasSuper = true;
+            } catch (NoClassDefFoundError e) {
+                pfqn = "org.apache.camel.support.component.PropertyConfigurerSupport";
+                hasSuper = false;
+                parentData = null;
+            }
+        } else {
+            pfqn = "org.apache.camel.support.component.PropertyConfigurerSupport";
+            hasSuper = false;
+        }
+        String psn = pfqn.substring(pfqn.lastIndexOf('.') + 1);
         String fqEndpointClassName = classElement.getName();
-        String packageName = fqEndpointClassName.substring(0, fqEndpointClassName.lastIndexOf('.'));
-        String endpointClassName = classElement.getSimpleName();
+        String endpointClassName = fqEndpointClassName.substring(fqEndpointClassName.lastIndexOf('.') + 1);
         String className = endpointClassName + "Configurer";
+        String packageName = fqEndpointClassName.substring(0, fqEndpointClassName.lastIndexOf('.'));
         String fqClassName = packageName + "." + className;
 
-        if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
-            generateExtendConfigurer(parent, packageName, className, fqClassName, componentModel.getScheme() + "-endpoint");
-        } else if (uriEndpoint.generateConfigurer() && !componentModel.getComponentOptions().isEmpty()) {
-            // only generate this once for the first scheme
-            if (schemes == null || schemes[0].equals(scheme)) {
-                generatePropertyConfigurer(parent, packageName, className, fqClassName, endpointClassName, componentModel.getScheme() + "-endpoint",
-                        componentModel.getEndpointParameterOptions());
-            }
+        List<EndpointOptionModel> options;
+        if (parentData != null) {
+            Set<String> parentOptionsNames = parentData.getEndpointParameterOptions().stream()
+                    .map(EndpointOptionModel::getName).collect(Collectors.toSet());
+            options = componentModel.getEndpointParameterOptions().stream().filter(o -> !parentOptionsNames.contains(o.getName()))
+                    .collect(Collectors.toList());
+        } else {
+            options = componentModel.getEndpointParameterOptions();
         }
+        generatePropertyConfigurer(packageName, className, fqClassName, endpointClassName,
+                pfqn, psn,
+                componentModel.getScheme() + "-endpoint", hasSuper,
+                options);
     }
 
     protected ComponentModel findComponentProperties(UriEndpoint uriEndpoint, Class<?> endpointClassElement, String title, String scheme,
@@ -922,24 +962,12 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         return "groovy.lang.MetaClass".equals(method.getReturnType().getName());
     }
 
-    protected void generateExtendConfigurer(Class<?> parent, String pn, String cn, String fqn, String scheme) {
-
-        String pfqn = parent.getName();
-        String psn = pfqn.substring(pfqn.lastIndexOf('.') + 1);
-        try (Writer w = new StringWriter()) {
-            PropertyConfigurerGenerator.generateExtendConfigurer(pn, cn, pfqn, psn, w);
-            updateResource(sourcesOutputDir.toPath(), fqn.replace('.', '/') + ".java", w.toString());
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to generate source code file: " + fqn + ": " + e.getMessage(), e);
-        }
-        generateMetaInfConfigurer(scheme, fqn);
-    }
-
-    protected void generatePropertyConfigurer(Class<?> parent, String pn, String cn, String fqn, String en, String scheme,
+    protected void generatePropertyConfigurer(String pn, String cn, String fqn, String en,
+                                              String pfqn, String psn, String scheme, boolean hasSuper,
                                               Collection<? extends BaseOptionModel> options) {
 
         try (Writer w = new StringWriter()) {
-            PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, options, w);
+            PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn, hasSuper, options, w);
             updateResource(sourcesOutputDir.toPath(), fqn.replace('.', '/') + ".java", w.toString());
         } catch (Exception e) {
             throw new RuntimeException("Unable to generate source code file: " + fqn + ": " + e.getMessage(), e);

@@ -16,16 +16,27 @@
  */
 package org.apache.camel.component.cron;
 
+import java.util.Map;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
 public class SpringCronEndpoint extends ScheduledPollEndpoint {
 
     public SpringCronEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
+    }
+
+    @Override
+    public void configureProperties(Map<String, Object> options) {
+        PropertyBindingSupport.build().withPlaceholder(false).withNesting(false)
+                .withDeepNesting(false).withReference(false)
+                .bind(getCamelContext(), this, options);
+        configureScheduledPollConsumerProperties(options);
     }
 
     @Override

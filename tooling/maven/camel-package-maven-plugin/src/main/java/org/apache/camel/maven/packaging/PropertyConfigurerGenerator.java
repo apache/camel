@@ -27,34 +27,21 @@ public final class PropertyConfigurerGenerator {
     private PropertyConfigurerGenerator() {
     }
 
-    public static void generateExtendConfigurer(String pn, String cn, String pfqn, String psn, Writer w) throws IOException {
-        w.write("/* " + AbstractGeneratorMojo.GENERATED_MSG + " */\n");
-        w.write("package " + pn + ";\n");
-        w.write("\n");
-        w.write("import " + pfqn + ";\n");
-        w.write("\n");
-        w.write("/**\n");
-        w.write(" * " + AbstractGeneratorMojo.GENERATED_MSG + "\n");
-        w.write(" */\n");
-        w.write("public class " + cn + " extends " + psn + " {\n");
-        w.write("\n");
-        w.write("}\n");
-        w.write("\n");
-    }
-
-    public static void generatePropertyConfigurer(String pn, String cn, String en, Collection<? extends BaseOptionModel> options, Writer w) throws IOException {
+    public static void generatePropertyConfigurer(String pn, String cn, String en,
+                                                  String pfqn, String psn, boolean hasSuper,
+                                                  Collection<? extends BaseOptionModel> options, Writer w) throws IOException {
         w.write("/* " + AbstractGeneratorMojo.GENERATED_MSG + " */\n");
         w.write("package " + pn + ";\n");
         w.write("\n");
         w.write("import org.apache.camel.CamelContext;\n");
         w.write("import org.apache.camel.spi.GeneratedPropertyConfigurer;\n");
-        w.write("import org.apache.camel.support.component.PropertyConfigurerSupport;\n");
+        w.write("import "  + pfqn + ";\n");
         w.write("\n");
         w.write("/**\n");
         w.write(" * " + AbstractGeneratorMojo.GENERATED_MSG + "\n");
         w.write(" */\n");
         w.write("@SuppressWarnings(\"unchecked\")\n");
-        w.write("public class " + cn + " extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {\n");
+        w.write("public class " + cn + " extends " + psn + " implements GeneratedPropertyConfigurer {\n");
         w.write("\n");
         w.write("    @Override\n");
         w.write("    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {\n");
@@ -69,7 +56,11 @@ public final class PropertyConfigurerGenerator {
             }
             w.write(String.format("        case \"%s\": %s; return true;\n", option.getName(), setterLambda));
         }
-        w.write("        default: return false;\n");
+        if (hasSuper) {
+            w.write("        default: return super.configure(camelContext, obj, name, value, ignoreCase);\n");
+        } else {
+            w.write("        default: return false;\n");
+        }
         w.write("        }\n");
         w.write("    }\n");
         w.write("\n");
