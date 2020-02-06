@@ -238,6 +238,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-aws2-cw</artifactId>
+			<scope>provided</scope>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-ecs</artifactId>
 			<scope>provided</scope>
 			<version>${project.version}</version>
