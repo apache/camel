@@ -17,8 +17,8 @@
 package org.apache.camel.reactive.vertx;
 
 import io.vertx.core.Vertx;
+import org.apache.camel.Experimental;
 import org.apache.camel.StaticService;
-import org.apache.camel.meta.Experimental;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;

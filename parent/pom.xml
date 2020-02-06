@@ -2626,11 +2626,6 @@
                 <artifactId>spi-annotations</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>meta-annotations</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
             <!-- testing jars -->
             <dependency>
