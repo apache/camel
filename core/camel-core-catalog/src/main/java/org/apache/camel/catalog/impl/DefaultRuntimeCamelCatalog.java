@@ -32,7 +32,6 @@ import org.apache.camel.tooling.model.OtherModel;
 /**
  * Default {@link RuntimeCamelCatalog}.
  */
-@Deprecated
 public class DefaultRuntimeCamelCatalog extends AbstractCamelCatalog implements RuntimeCamelCatalog {
 
     private CamelContext camelContext;
