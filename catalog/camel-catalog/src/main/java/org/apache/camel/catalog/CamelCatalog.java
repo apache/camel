@@ -21,11 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.camel.runtimecatalog.ConfigurationPropertiesValidationResult;
-import org.apache.camel.runtimecatalog.EndpointValidationResult;
-import org.apache.camel.runtimecatalog.JSonSchemaResolver;
-import org.apache.camel.runtimecatalog.LanguageValidationResult;
-
 /**
  * Catalog of components, data formats, models (EIPs), languages, and more from this Apache Camel release.
  */

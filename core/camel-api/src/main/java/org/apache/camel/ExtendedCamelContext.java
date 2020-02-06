@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
+import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;

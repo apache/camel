@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.apache.camel.runtimecatalog.JSonSchemaResolver;
+import org.apache.camel.catalog.impl.CatalogHelper;
 
 /**
  * {@link JSonSchemaResolver} used by {@link CamelCatalog} that is able to load all the resources that the complete camel-catalog JAR provides.

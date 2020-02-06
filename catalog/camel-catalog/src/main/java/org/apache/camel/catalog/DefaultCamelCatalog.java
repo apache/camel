@@ -41,7 +41,8 @@ import java.util.stream.Stream;
 
 import org.w3c.dom.Document;
 
-import org.apache.camel.runtimecatalog.JSonSchemaResolver;
+import org.apache.camel.catalog.impl.AbstractCamelCatalog;
+import org.apache.camel.catalog.impl.CatalogHelper;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;

@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.catalog.impl.CatalogHelper;
+
 public class DefaultRuntimeProvider implements RuntimeProvider {
 
     private static final String COMPONENT_DIR = "org/apache/camel/catalog/components";

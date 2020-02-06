@@ -20,13 +20,13 @@ import java.io.IOException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
+import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.FactoryFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Factory to create the {@link org.apache.camel.runtimecatalog.RuntimeCamelCatalog} implementation to be used.
+ * Factory to create the {@link org.apache.camel.catalog.RuntimeCamelCatalog} implementation to be used.
  *
  * @see RuntimeCamelCatalog
  */
