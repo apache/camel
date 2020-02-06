@@ -141,15 +141,13 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         Map<File, Supplier<String>> files;
 
         try {
-            files = Files.find(buildDir.toPath(), Integer.MAX_VALUE,
-                        (p, a) -> a.isRegularFile() && p.toFile().getName().endsWith(PackageHelper.JSON_SUFIX))
+            files = Files.find(buildDir.toPath(), Integer.MAX_VALUE, (p, a) -> a.isRegularFile() && p.toFile().getName().endsWith(PackageHelper.JSON_SUFIX))
                     .collect(Collectors.toMap(Path::toFile, s -> cache(() -> loadJson(s.toFile()))));
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
 
         executeComponent(files);
-
     }
 
     private void executeComponent(Map<File, Supplier<String>> jsonFiles) throws MojoExecutionException, MojoFailureException {
@@ -174,7 +172,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
             Map<String, List<ComponentModel>> grModels = allModels.stream().collect(Collectors.groupingBy(ComponentModel::getJavaType));
             for (String componentClass : grModels.keySet()) {
                 List<ComponentModel> compModels = grModels.get(componentClass);
-                for(ComponentModel model: compModels) {
+                for (ComponentModel model : compModels) {
                     // if more than one, we have a component class with multiple components aliases
                     createComponentDsl(model);
                 }

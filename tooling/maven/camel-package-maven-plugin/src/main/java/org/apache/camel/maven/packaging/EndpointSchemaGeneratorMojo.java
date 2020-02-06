@@ -493,13 +493,13 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             // We order the methods according to the source code to keep compatibility
             // with the old apt processing tool, however, we could get rid of that
             JavaClassSource source = javaClassSource(classElement.getName());
-            List<MethodSource<JavaClassSource>> methodSources = source != null ?
-                    source.getMethods().stream()
+            List<MethodSource<JavaClassSource>> methodSources = source != null
+                    ? source.getMethods().stream()
                     .filter(method -> method.isPublic()
                             && method.getName().startsWith("set")
                             && method.getParameters().size() == 1
-                            && method.getReturnType().getName().equals("void")).collect(Collectors.toList()) :
-                    Collections.EMPTY_LIST;
+                            && method.getReturnType().getName().equals("void")).collect(Collectors.toList())
+                    : Collections.EMPTY_LIST;
 
             List<Method> methods = Stream.of(classElement.getDeclaredMethods()).filter(method -> {
                 Metadata metadata = method.getAnnotation(Metadata.class);

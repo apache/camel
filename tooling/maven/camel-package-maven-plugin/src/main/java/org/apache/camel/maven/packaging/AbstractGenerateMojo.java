@@ -74,7 +74,7 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
             mojo.setPluginContext(getPluginContext());
             ((AbstractGeneratorMojo) mojo).execute(project, projectHelper, buildContext);
 
-        } catch (MojoExecutionException|MojoFailureException e) {
+        } catch (MojoExecutionException | MojoFailureException e) {
             throw e;
         } catch (Exception e) {
             throw new MojoFailureException("Unable to create mojo", e);

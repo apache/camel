@@ -66,7 +66,7 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
      * 'target/classes/META-INF/jandex.idx'
      */
     @Parameter(defaultValue = "${project.build.directory}/META-INF/jandex.idx")
-    private File index;
+    protected File index;
 
     /**
      * The output directory for generated components file
