@@ -37,7 +37,7 @@ public class CwComponentVerifierExtensionTest extends CamelTestSupport {
 
     @Test
     public void testParameters() throws Exception {
-        Component component = context().getComponent("aws-cw");
+        Component component = context().getComponent("aws2-cw");
 
         ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
@@ -54,7 +54,7 @@ public class CwComponentVerifierExtensionTest extends CamelTestSupport {
 
     @Test
     public void testConnectivity() throws Exception {
-        Component component = context().getComponent("aws-cw");
+        Component component = context().getComponent("aws2-cw");
         ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
