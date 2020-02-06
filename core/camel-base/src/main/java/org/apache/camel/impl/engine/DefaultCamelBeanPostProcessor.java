@@ -378,17 +378,17 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         }
         if (bean == null) {
             // no bean so then create an instance from its type
-            bean = camelContext.getInjector().newInstance(clazz);
+            bean = getOrLookupCamelContext().getInjector().newInstance(clazz);
         }
         if (beanPostProcess) {
             try {
-                camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessBeforeInitialization(bean, beanName);
-                camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessAfterInitialization(bean, beanName);
+                getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessBeforeInitialization(bean, beanName);
+                getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessAfterInitialization(bean, beanName);
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
-        camelContext.getRegistry().bind(name, bean);
+        getOrLookupCamelContext().getRegistry().bind(name, bean);
     }
 
     private void bindToRegistry(Field field, String name, Object bean, String beanName, boolean beanPostProcess) {
@@ -399,13 +399,13 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         if (value != null) {
             if (beanPostProcess) {
                 try {
-                    camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessBeforeInitialization(value, beanName);
-                    camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessAfterInitialization(value, beanName);
+                    getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessBeforeInitialization(value, beanName);
+                    getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessAfterInitialization(value, beanName);
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }
             }
-            camelContext.getRegistry().bind(name, value);
+            getOrLookupCamelContext().getRegistry().bind(name, value);
         }
     }
 
@@ -429,13 +429,13 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         if (value != null) {
             if (beanPostProcess) {
                 try {
-                    camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessBeforeInitialization(value, beanName);
-                    camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessAfterInitialization(value, beanName);
+                    getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessBeforeInitialization(value, beanName);
+                    getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessAfterInitialization(value, beanName);
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }
             }
-            camelContext.getRegistry().bind(name, value);
+            getOrLookupCamelContext().getRegistry().bind(name, value);
         }
     }
 
@@ -449,11 +449,11 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         for (int i = 0; i < method.getParameterCount(); i++) {
             Class<?> type = method.getParameterTypes()[i];
             if (type.isAssignableFrom(CamelContext.class)) {
-                parameters[i] = camelContext;
+                parameters[i] = getOrLookupCamelContext();
             } else if (type.isAssignableFrom(Registry.class)) {
-                parameters[i] = camelContext.getRegistry();
+                parameters[i] = getOrLookupCamelContext().getRegistry();
             } else if (type.isAssignableFrom(TypeConverter.class)) {
-                parameters[i] = camelContext.getTypeConverter();
+                parameters[i] = getOrLookupCamelContext().getTypeConverter();
             } else {
                 // we also support @BeanInject and @PropertyInject annotations
                 Annotation[] anns = method.getParameterAnnotations()[i];
@@ -470,8 +470,8 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                         // need to force property lookup by having key enclosed in tokens
                         key = PropertiesComponent.PREFIX_TOKEN + key + PropertiesComponent.SUFFIX_TOKEN;
                         try {
-                            Object value = camelContext.resolvePropertyPlaceholders(key);
-                            parameters[i] = camelContext.getTypeConverter().convertTo(type, value);
+                            Object value = getOrLookupCamelContext().resolvePropertyPlaceholders(key);
+                            parameters[i] = getOrLookupCamelContext().getTypeConverter().convertTo(type, value);
                         } catch (Exception e) {
                             throw RuntimeCamelException.wrapRuntimeCamelException(e);
                         }
@@ -481,7 +481,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                         Object value;
                         if (isEmpty(key)) {
                             // empty key so lookup anonymously by type
-                            Set<?> instances = camelContext.getRegistry().findByType(type);
+                            Set<?> instances = getOrLookupCamelContext().getRegistry().findByType(type);
                             if (instances.size() == 0) {
                                 throw new NoSuchBeanException(null, key);
                             } else if (instances.size() == 1) {
@@ -492,16 +492,16 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                                     + " exists in the Camel registry. Specify the bean name on @BeanInject to bind to a single bean, at the method: " + method);
                             }
                         } else {
-                            value = camelContext.getRegistry().lookupByName(key);
+                            value = getOrLookupCamelContext().getRegistry().lookupByName(key);
                             if (value == null) {
                                 throw new NoSuchBeanException(key);
                             }
-                            parameters[i] = camelContext.getTypeConverter().convertTo(type, value);
+                            parameters[i] = getOrLookupCamelContext().getTypeConverter().convertTo(type, value);
                         }
                     }
                 } else {
                     // okay attempt to default to singleton instances from the registry
-                    Set<?> instances = camelContext.getRegistry().findByType(type);
+                    Set<?> instances = getOrLookupCamelContext().getRegistry().findByType(type);
                     if (instances.size() == 1) {
                         parameters[i] = instances.iterator().next();
                     } else if (instances.size() > 1) {
