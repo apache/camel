@@ -304,6 +304,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-aws2-cw</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-aws2-ecs</artifactId>
       <version>${project.version}</version>
     </dependency>
