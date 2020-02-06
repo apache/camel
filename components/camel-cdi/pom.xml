@@ -105,14 +105,17 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-xml</artifactId>
-            <version>${project.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xml-jaxb</artifactId>
             <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-osgi</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
@@ -158,11 +161,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-ref</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-xml-jaxb</artifactId>
             <scope>test</scope>
         </dependency>
 
