@@ -462,7 +462,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 CloudWatch (camel-aws2-cw)
-     * The aws-cw component is used for sending metrics to an Amazon CloudWatch.
+     * The aws2-cw component is used for sending metrics to an Amazon
+     * CloudWatch.
      * 
      * Category: cloud,monitoring
      * Since: 3.1

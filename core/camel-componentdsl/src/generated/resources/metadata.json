@@ -367,7 +367,7 @@
     "extendsScheme": "",
     "syntax": "aws2-cw:namespace",
     "title": "AWS 2 CloudWatch",
-    "description": "The aws-cw component is used for sending metrics to an Amazon CloudWatch.",
+    "description": "The aws2-cw component is used for sending metrics to an Amazon CloudWatch.",
     "label": "cloud,monitoring",
     "deprecated": false,
     "deprecationNote": "cloud,monitoring",
