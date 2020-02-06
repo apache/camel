@@ -30,7 +30,6 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.services.cloudwatch.model.Dimension;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataRequest;
@@ -44,7 +43,7 @@ public class CwProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(CwProducer.class);
 
     private transient String cwProducerToString;
-    
+
     public CwProducer(Endpoint endpoint) {
         super(endpoint);
     }
@@ -54,7 +53,7 @@ public class CwProducer extends DefaultProducer {
         List<MetricDatum> metricData = getMetricData(exchange);
 
         PutMetricDataRequest.Builder builder = PutMetricDataRequest.builder();
-                builder.metricData(metricData).namespace(determineNameSpace(exchange));
+        builder.metricData(metricData).namespace(determineNameSpace(exchange));
 
         PutMetricDataRequest request = builder.build();
         LOG.info("Sending request [{}] from exchange [{}]...", request, exchange);
@@ -64,18 +63,15 @@ public class CwProducer extends DefaultProducer {
     private List<MetricDatum> getMetricData(Exchange exchange) {
         Object body = exchange.getIn().getBody();
         if (body instanceof List) {
-            return CastUtils.cast((List<?>) body);
+            return CastUtils.cast((List<?>)body);
         }
 
         if (body instanceof MetricDatum) {
-            return Arrays.asList((MetricDatum) body);
+            return Arrays.asList((MetricDatum)body);
         }
 
-        MetricDatum.Builder metricDatum = MetricDatum.builder()
-                .metricName(determineName(exchange))
-                .value(determineValue(exchange))
-                .unit(determineUnit(exchange))
-                .timestamp(determineTimestamp(exchange));
+        MetricDatum.Builder metricDatum = MetricDatum.builder().metricName(determineName(exchange)).value(determineValue(exchange)).unit(determineUnit(exchange))
+            .timestamp(determineTimestamp(exchange));
         setDimension(metricDatum, exchange);
         return Arrays.asList(metricDatum.build());
     }
@@ -152,6 +148,6 @@ public class CwProducer extends DefaultProducer {
 
     @Override
     public CwEndpoint getEndpoint() {
-        return (CwEndpoint) super.getEndpoint();
+        return (CwEndpoint)super.getEndpoint();
     }
 }

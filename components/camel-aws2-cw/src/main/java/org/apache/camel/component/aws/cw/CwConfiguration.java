@@ -17,21 +17,20 @@
 package org.apache.camel.component.aws.cw;
 
 import java.time.Instant;
-import java.util.Date;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 
 @UriParams
 public class CwConfiguration implements Cloneable {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String namespace;
     @UriParam
     private CloudWatchClient amazonCwClient;
@@ -143,7 +142,7 @@ public class CwConfiguration implements Cloneable {
     public void setAmazonCwClient(CloudWatchClient amazonCwClient) {
         this.amazonCwClient = amazonCwClient;
     }
-    
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
@@ -182,8 +181,9 @@ public class CwConfiguration implements Cloneable {
     }
 
     /**
-     * The region in which CW client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
-     * You'll need to use the name Regions.EU_WEST_1.name()
+     * The region in which CW client needs to work. When using this parameter,
+     * the configuration will expect the capitalized name of the region (for
+     * example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name()
      */
     public void setRegion(String region) {
         this.region = region;
