@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.cw;
+package org.apache.camel.component.aws2.cw;
 
 import java.time.Instant;
 
@@ -27,7 +27,7 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 
 @UriParams
-public class CwConfiguration implements Cloneable {
+public class Cw2Configuration implements Cloneable {
 
     @UriPath
     @Metadata(required = true)
@@ -193,9 +193,9 @@ public class CwConfiguration implements Cloneable {
     //
     // *************************************************
 
-    public CwConfiguration copy() {
+    public Cw2Configuration copy() {
         try {
-            return (CwConfiguration)super.clone();
+            return (Cw2Configuration)super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

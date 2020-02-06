@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.cw;
+package org.apache.camel.component.aws2.cw;
 
 import java.net.URI;
 
@@ -41,10 +41,10 @@ import software.amazon.awssdk.services.cloudwatch.CloudWatchClientBuilder;
 public class CwEndpoint extends DefaultEndpoint {
 
     @UriParam
-    private CwConfiguration configuration;
+    private Cw2Configuration configuration;
     private CloudWatchClient cloudWatchClient;
 
-    public CwEndpoint(String uri, Component component, CwConfiguration configuration) {
+    public CwEndpoint(String uri, Component component, Cw2Configuration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
@@ -76,11 +76,11 @@ public class CwEndpoint extends DefaultEndpoint {
         super.doStop();
     }
 
-    public CwConfiguration getConfiguration() {
+    public Cw2Configuration getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(CwConfiguration configuration) {
+    public void setConfiguration(Cw2Configuration configuration) {
         this.configuration = configuration;
     }
 

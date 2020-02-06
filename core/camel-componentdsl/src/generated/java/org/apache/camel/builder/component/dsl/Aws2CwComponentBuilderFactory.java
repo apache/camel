@@ -20,7 +20,7 @@ import javax.annotation.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.aws.cw.CwComponent;
+import org.apache.camel.component.aws2.cw.Cw2Component;
 
 /**
  * The aws-cw component is used for sending metrics to an Amazon CloudWatch.
@@ -45,17 +45,18 @@ public interface Aws2CwComponentBuilderFactory {
     /**
      * Builder for the AWS 2 CloudWatch component.
      */
-    interface Aws2CwComponentBuilder extends ComponentBuilder<CwComponent> {
+    interface Aws2CwComponentBuilder extends ComponentBuilder<Cw2Component> {
         /**
          * The AWS CW default configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.cw.CwConfiguration</code> type.
+         * <code>org.apache.camel.component.aws2.cw.Cw2Configuration</code>
+         * type.
          * 
          * Group: advanced
          */
         default Aws2CwComponentBuilder configuration(
-                org.apache.camel.component.aws.cw.CwConfiguration configuration) {
+                org.apache.camel.component.aws2.cw.Cw2Configuration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -131,12 +132,12 @@ public interface Aws2CwComponentBuilderFactory {
 
     class Aws2CwComponentBuilderImpl
             extends
-                AbstractComponentBuilder<CwComponent>
+                AbstractComponentBuilder<Cw2Component>
             implements
                 Aws2CwComponentBuilder {
         @Override
-        protected CwComponent buildConcreteComponent() {
-            return new CwComponent();
+        protected Cw2Component buildConcreteComponent() {
+            return new Cw2Component();
         }
         @Override
         protected boolean setPropertyOnComponent(
@@ -144,12 +145,12 @@ public interface Aws2CwComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((CwComponent) component).setConfiguration((org.apache.camel.component.aws.cw.CwConfiguration) value); return true;
-            case "accessKey": ((CwComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": ((CwComponent) component).setSecretKey((java.lang.String) value); return true;
-            case "region": ((CwComponent) component).setRegion((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((CwComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((CwComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "configuration": ((Cw2Component) component).setConfiguration((org.apache.camel.component.aws2.cw.Cw2Configuration) value); return true;
+            case "accessKey": ((Cw2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": ((Cw2Component) component).setSecretKey((java.lang.String) value); return true;
+            case "region": ((Cw2Component) component).setRegion((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((Cw2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "lazyStartProducer": ((Cw2Component) component).setLazyStartProducer((boolean) value); return true;
             default: return false;
             }
         }

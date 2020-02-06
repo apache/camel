@@ -14,44 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.cw;
+package org.apache.camel.component.aws2.cw.integration;
 
-import java.time.Instant;
-
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.aws2.cw.Cw2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
-import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
-import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
 
-public class CwComponentTest extends CamelTestSupport {
-
-    @BindToRegistry("now")
-    private static final Instant NOW = Instant.now();
-
-    private static final Instant LATER = Instant.ofEpochMilli(NOW.getNano() + 1);
-
-    @BindToRegistry("amazonCwClient")
-    private CloudWatchClient cloudWatchClient = new CloudWatchClientMock();
+@Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
+public class CwComponentIntegrationTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
 
     @Test
-    public void sendMetricFromHeaderValues() throws Exception {
+    public void sendInOnly() throws Exception {
         mock.expectedMessageCount(1);
-        Exchange exchange = template.request("direct:start", new Processor() {
+
+        template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(CwConstants.METRIC_NAMESPACE, "camel.apache.org/overriden");
-                exchange.getIn().setHeader(CwConstants.METRIC_NAME, "OverridenMetric");
-                exchange.getIn().setHeader(CwConstants.METRIC_VALUE, Double.valueOf(3));
-                exchange.getIn().setHeader(CwConstants.METRIC_UNIT, StandardUnit.BYTES.toString());
-                exchange.getIn().setHeader(CwConstants.METRIC_TIMESTAMP, LATER);
+                exchange.getIn().setHeader(Cw2Constants.METRIC_NAME, "ExchangesCompleted");
+                exchange.getIn().setHeader(Cw2Constants.METRIC_VALUE, "2.0");
+                exchange.getIn().setHeader(Cw2Constants.METRIC_UNIT, "Count");
             }
         });
 
@@ -63,7 +53,7 @@ public class CwComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("aws2-cw://camel.apache.org/test?amazonCwClient=#amazonCwClient&name=testMetric&unit=BYTES&timestamp=#now").to("mock:result");
+                from("direct:start").to("aws2-cw://http://camel.apache.org/aws-cw?accessKey=XXX&secretKey=XXX").to("mock:result");
             }
         };
     }
