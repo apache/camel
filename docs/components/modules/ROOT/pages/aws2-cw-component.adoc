@@ -1,5 +1,8 @@
+[[aws2-cw-component]]
 = AWS 2 CloudWatch Component
 :page-source: components/camel-aws2-cw/src/main/docs/aws2-cw-component.adoc
+
+*Since Camel 3.1*
 
 // HEADER START
 *Only producer is supported*
