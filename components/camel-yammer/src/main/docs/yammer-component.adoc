@@ -8,18 +8,16 @@
 // HEADER END
 
 The Yammer component allows you to interact with the
-https://www.yammer.com[Yammer] enterprise social network. Consuming
-messages and users is supported as well as creating
-new messages.
+https://www.yammer.com[Yammer] enterprise social network.
+Consuming messages and users is supported as well as creating new messages.
 
-Yammer uses OAuth 2 for all client application authentication. In order
-to use camel-yammer with your account, you'll need to create a new
-application within Yammer and grant the application access to your
-account. Finally, generate your access token. More details are at
+Yammer uses OAuth 2 for all client application authentication.
+In order to use camel-yammer with your account, you'll need to create a new application within Yammer and grant the application access to your account.
+Finally, generate your access token.
+More details are at
 https://developer.yammer.com/authentication/.
 
-Maven users will need to add the following dependency to their pom.xml
-for this component:
+Maven users will need to add the following dependency to their pom.xml for this component:
 
 [source,xml]
 ----
@@ -39,16 +37,13 @@ yammer:[function]?[options]
 
 == Component options
 
-The Yammer component can be configured with the Yammer account settings
-which are mandatory to configure before using.
+The Yammer component can be configured with the Yammer account settings which are mandatory to configure before using.
 
 
 
 
 // component options: START
 The Yammer component supports 7 options, which are listed below.
-
-
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -83,16 +78,13 @@ with the following path and query parameters:
 
 === Path Parameters (1 parameters):
 
-
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *function* | *Required* The function to use. The value can be one of: MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT, PRIVATE, RECEIVED, USERS, CURRENT |  | YammerFunctionType
 |===
 
-
 === Query Parameters (31 parameters):
-
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -145,10 +137,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 </dependency>
 ----
 
-
 The component supports 20 options, which are listed below.
-
-
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -180,8 +169,7 @@ The component supports 20 options, which are listed below.
 
 == Consuming messages
 
-The Yammer component provides several endpoints for consuming
-messages:
+The Yammer component provides several endpoints for consuming messages:
 
 [width="100%",cols="2l,3",options="header",]
 |=======================================================================
@@ -208,13 +196,12 @@ and topics that the user is following.
 |All messages received by the user
 |=======================================================================
 
-
 === Message format
 
 All messages by default are converted to a POJO model provided in the
-`org.apache.camel.component.yammer.model` package. The original message
-coming from yammer is in JSON. For all message consuming and producing
-endpoints, a `Messages` object is returned. Take for example a route like:
+`org.apache.camel.component.yammer.model` package.
+The original message coming from yammer is in JSON. For all message consuming and producing endpoints, a `Messages` object is returned.
+Take for example a route like:
 
 [source,java]
 ----
@@ -301,8 +288,8 @@ and lets say the yammer server returns:
 ----
 
 Camel will marshal that into a `Messages` object containing 2 `Message`
-objects. As shown below there is a rich object model that makes it easy
-to get any information you need:
+objects.
+As shown below there is a rich object model that makes it easy to get any information you need:
 
 [source,java]
 ----
@@ -314,23 +301,20 @@ assertEquals("Testing yammer API...", messages.getMessages().get(0).getBody().ge
 assertEquals("(Principal Software Engineer) has #joined the redhat.com network. Take a moment to welcome Jonathan.", messages.getMessages().get(1).getBody().getPlain());
 ----
 
-That said, marshaling this data into POJOs is not free so if you need
-you can switch back to using pure JSON by adding the `useJson=false`
+That said, marshaling this data into POJOs is not free so if you need you can switch back to using pure JSON by adding the `useJson=false`
 option to your URI.
 
 == Creating messages
 
-To create a new message in the account of the current user, you can use
-the following URI:
+To create a new message in the account of the current user, you can use the following URI:
 
 [source]
 ----
 yammer:messages?[options]
 ----
 
-The current Camel message body is what will be used to set the text of
-the Yammer message. The response body will include the new message
-formatted the same way as when you consume messages (i.e. as a `Messages`
+The current Camel message body is what will be used to set the text of the Yammer message.
+The response body will include the new message formatted the same way as when you consume messages (i.e. as a `Messages`
 object by default).
 
 Take this route for instance:
@@ -349,10 +333,8 @@ By sending to the `direct:start` endpoint a `"Hi from Camel!"` message body:
 template.sendBody("direct:start", "Hi from Camel!");
 ----
 
-a new message will be created in the current user's account on the
-server and also this new message will be returned to Camel and converted
-into a `Messages` object. Like when consuming messages you can interrogate
-the `Messages` object:
+a new message will be created in the current user's account on the server and also this new message will be returned to Camel and converted into a `Messages` object.
+Like when consuming messages you can interrogate the `Messages` object:
 
 [source,java]
 ----
@@ -363,11 +345,9 @@ assertEquals(1, messages.getMessages().size());
 assertEquals("Hi from Camel!", messages.getMessages().get(0).getBody().getPlain());
 ----
 
-
 == Retrieving users
 
-The Yammer component provides several endpoints for retrieving
-users:
+The Yammer component provides several endpoints for retrieving users:
 
 [width="100%",cols="2l,3",options="header",]
 |=====================================================
@@ -378,20 +358,14 @@ users:
 |View data about the current user.
 |=====================================================
 
-
 == Using an enricher
 
-It is helpful sometimes (or maybe always in the case of users
-to use an enricher pattern rather than a route
-initiated with one of the polling consumers in camel-yammer. This is
-because the consumers will fire repeatedly, however often you set the
-delay for. If you just want to look up a user's data, or grab a message
-at a point in time, it is better to call that consumer once and then get
-one with your route.
+It is helpful sometimes (or maybe always in the case of users to use an enricher pattern rather than a route initiated with one of the polling consumers in camel-yammer.
+This is because the consumers will fire repeatedly, however often you set the delay for.
+If you just want to look up a user's data, or grab a message at a point in time, it is better to call that consumer once and then get one with your route.
 
-Lets say you have a route that at some point needs to go out and fetch
-user data for the current user. Rather than polling for this user over
-and over again, use the `pollEnrich` DSL method:
+Lets say you have a route that at some point needs to go out and fetch user data for the current user.
+Rather than polling for this user over and over again, use the `pollEnrich` DSL method:
 
 [source,java]
 ----
@@ -400,6 +374,5 @@ from("direct:start")
     .to("mock:result");
 ----
 
-This will go out and fetch the current user's `User` object and set it as
-the Camel message body.
+This will go out and fetch the current user's `User` object and set it as the Camel message body.
 
