@@ -118,13 +118,13 @@ public interface MllpComponentBuilderFactory {
          * Set the default character set to use for byte to/from String
          * conversions.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>java.nio.charset.Charset</code> type.
          * 
          * Default: ISO-8859-1
          * Group: advanced
          */
         default MllpComponentBuilder defaultCharset(
-                java.lang.String defaultCharset) {
+                java.nio.charset.Charset defaultCharset) {
             doSetProperty("defaultCharset", defaultCharset);
             return this;
         }
@@ -175,7 +175,7 @@ public interface MllpComponentBuilderFactory {
             case "bridgeErrorHandler": ((MllpComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((MllpComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((MllpComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "defaultCharset": ((MllpComponent) component).setDefaultCharset((java.lang.String) value); return true;
+            case "defaultCharset": ((MllpComponent) component).setDefaultCharset((java.nio.charset.Charset) value); return true;
             case "logPhi": ((MllpComponent) component).setLogPhi((java.lang.Boolean) value); return true;
             case "logPhiMaxBytes": ((MllpComponent) component).setLogPhiMaxBytes((java.lang.Integer) value); return true;
             default: return false;
