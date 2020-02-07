@@ -19,17 +19,13 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         case "namespaceUri": target.setNamespaceUri(property(camelContext, java.lang.String.class, value)); return true;
         case "applicationname":
         case "applicationName": target.setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
+        case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "applicationuri":
         case "applicationUri": target.setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
         case "producturi":
         case "productUri": target.setProductUri(property(camelContext, java.lang.String.class, value)); return true;
         case "bindport":
         case "bindPort": target.setBindPort(property(camelContext, int.class, value)); return true;
-        case "strictendpointurlsenabled":
-        case "strictEndpointUrlsEnabled": target.setStrictEndpointUrlsEnabled(property(camelContext, boolean.class, value)); return true;
-        case "servername":
-        case "serverName": target.setServerName(property(camelContext, java.lang.String.class, value)); return true;
-        case "hostname": target.setHostname(property(camelContext, java.lang.String.class, value)); return true;
         case "securitypolicies":
         case "securityPolicies": target.setSecurityPolicies(property(camelContext, java.util.Set.class, value)); return true;
         case "securitypoliciesbyid":
@@ -47,7 +43,7 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         case "servercertificate":
         case "serverCertificate": target.setServerCertificate(property(camelContext, org.apache.camel.component.milo.KeyStoreLoader.Result.class, value)); return true;
         case "certificatemanager":
-        case "certificateManager": target.setCertificateManager(property(camelContext, org.eclipse.milo.opcua.stack.core.application.CertificateManager.class, value)); return true;
+        case "certificateManager": target.setCertificateManager(property(camelContext, org.eclipse.milo.opcua.stack.core.security.CertificateManager.class, value)); return true;
         case "certificatevalidator":
         case "certificateValidator": target.setCertificateValidator(property(camelContext, java.util.function.Supplier.class, value)); return true;
         case "defaultcertificatevalidator":

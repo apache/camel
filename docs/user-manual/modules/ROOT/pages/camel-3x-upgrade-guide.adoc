@@ -41,6 +41,27 @@ The `camel-irc` component has changed its endpoint syntax and removed option #ro
 irc:nick@host[:port]?[options]
 ----
 
+=== camel-milo
+
+The `camel-milo` client component has changed its endpoint syntax from `milo-client:tcp` to `milo-client:opc.tcp`.
+For example before
+
+[source,text]
+----
+milo-client:tcp://foo:bar@localhost:1234
+----
+
+Should be changed to
+----
+milo-client:opc.tcp://foo:bar@localhost:1234
+----
+
+The `camel-milo` server component requires Java 9 at runtime. 
+Property `strictEndpointUrlsEnabled` is no longer supported.
+Properties`hostName` and `serverName` are replaced by `path`.
+To successfully use certificates for secured communication, JCE Jurisdiction Policy File Default
+has to be *Unlimited* (which is by default since Java 9+).
+
 === camel-nats
 
 The `camel-nats` component has changed its endpoint syntax from `nats:servers` to `nats:topic`.

@@ -18,29 +18,34 @@ package org.apache.camel.component.milo.call;
 
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.LinkedList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.milo.AbstractMiloServerTest;
-import org.apache.camel.component.milo.call.MockCall.Call1;
+import org.apache.camel.component.milo.NodeIds;
 import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
 import org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig;
 import org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfigBuilder;
-import org.eclipse.milo.opcua.sdk.server.identity.AnonymousIdentityValidator;
-import org.eclipse.milo.opcua.sdk.server.nodes.UaMethodNode;
-import org.eclipse.milo.opcua.stack.core.application.DefaultCertificateManager;
-import org.eclipse.milo.opcua.stack.core.application.InsecureCertificateValidator;
+import org.eclipse.milo.opcua.sdk.server.util.HostnameUtil;
+import org.eclipse.milo.opcua.stack.core.security.DefaultCertificateManager;
+import org.eclipse.milo.opcua.stack.core.security.InsecureCertificateValidator;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
-import org.junit.After;
+import org.eclipse.milo.opcua.stack.core.transport.TransportProfile;
+import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
+import org.eclipse.milo.opcua.stack.core.types.enumerated.MessageSecurityMode;
+import org.eclipse.milo.opcua.stack.core.types.structured.UserTokenPolicy;
+import org.eclipse.milo.opcua.stack.server.EndpointConfiguration;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.apache.camel.component.milo.NodeIds.nodeValue;
+import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS;
 
 /**
  * Unit tests for calling from the client side
@@ -49,53 +54,17 @@ public class CallClientTest extends AbstractMiloServerTest {
 
     private static final String DIRECT_START_1 = "direct:start1";
 
-    private static final String MILO_CLIENT_BASE_C1 = "milo-client:tcp://localhost:@@port@@";
+    private static final String MILO_CLIENT_BASE_C1 = "milo-client:opc.tcp://localhost:@@port@@";
 
-    private static final String MILO_CLIENT_ITEM_C1_1 = MILO_CLIENT_BASE_C1 + "?node=" + nodeValue(MockNamespace.URI, MockNamespace.FOLDER_ID) + "&method="
-                                                        + nodeValue(MockNamespace.URI, "id1") + "&overrideHost=true";
-
-    @Produce(DIRECT_START_1)
-    protected ProducerTemplate producer1;
+    private static final String MILO_CLIENT_ITEM_C1_1 = MILO_CLIENT_BASE_C1 + "?node=" + NodeIds.nodeValue(MockCamelNamespace.URI, MockCamelNamespace.FOLDER_ID)
+                                                        + "&method=" + nodeValue(MockCamelNamespace.URI, MockCamelNamespace.CALL_ID) + "&overrideHost=true";
 
     private OpcUaServer server;
+    private MockCamelNamespace namespace;
+    private MockCallMethod callMethod;
 
-    private Call1 call1;
-
-    @Override
-    protected boolean isAddServer() {
-        return false;
-    }
-
-    @Before
-    public void start() throws Exception {
-        final OpcUaServerConfigBuilder config = new OpcUaServerConfigBuilder();
-        config.setBindAddresses(Arrays.asList("localhost"));
-        config.setBindPort(getServerPort());
-        config.setIdentityValidator(AnonymousIdentityValidator.INSTANCE);
-        config.setUserTokenPolicies(Arrays.asList(OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS));
-        config.setSecurityPolicies(EnumSet.of(SecurityPolicy.None));
-        config.setCertificateManager(new DefaultCertificateManager());
-        config.setCertificateValidator(new InsecureCertificateValidator());
-
-        this.server = new OpcUaServer(config.build());
-
-        this.call1 = new MockCall.Call1();
-
-        this.server.getNamespaceManager().registerAndAdd(MockNamespace.URI, index -> {
-
-            final List<UaMethodNode> methods = new LinkedList<>();
-            methods.add(MockCall.fromNode(index, this.server.getNodeMap(), "id1", "name1", this.call1));
-
-            return new MockNamespace(index, this.server, methods);
-        });
-
-        this.server.startup().get();
-    }
-
-    @After
-    public void stop() {
-        this.server.shutdown();
-    }
+    @Produce(DIRECT_START_1)
+    private ProducerTemplate producer1;
 
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
@@ -107,6 +76,84 @@ public class CallClientTest extends AbstractMiloServerTest {
         };
     }
 
+    @Override
+    protected boolean isAddServer() {
+        return false;
+    }
+
+    @Before
+    public void start() throws Exception {
+        final OpcUaServerConfigBuilder cfg = OpcUaServerConfig.builder();
+
+        cfg.setCertificateManager(new DefaultCertificateManager());
+        cfg.setEndpoints(createEndpointConfigurations(Arrays.asList(OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS), EnumSet.of(SecurityPolicy.None)));
+        cfg.setApplicationName(LocalizedText.english("Apache Camel Milo Server"));
+        cfg.setApplicationUri("urn:mock:namespace");
+        cfg.setProductUri("urn:org:apache:camel:milo");
+        cfg.setCertificateManager(new DefaultCertificateManager());
+        cfg.setCertificateValidator(new InsecureCertificateValidator());
+
+        this.server = new OpcUaServer(cfg.build());
+
+        this.namespace = new MockCamelNamespace(this.server, node -> callMethod = new MockCallMethod(node));
+        this.namespace.startup();
+        this.server.startup().get();
+    }
+
+    private Set<EndpointConfiguration> createEndpointConfigurations(List<UserTokenPolicy> userTokenPolicies, Set<SecurityPolicy> securityPolicies) {
+        Set<EndpointConfiguration> endpointConfigurations = new LinkedHashSet<>();
+
+        String bindAddress = "0.0.0.0";
+        Set<String> hostnames = new LinkedHashSet<>();
+        hostnames.add(HostnameUtil.getHostname());
+        hostnames.addAll(HostnameUtil.getHostnames(bindAddress));
+
+        UserTokenPolicy[] tokenPolicies = new UserTokenPolicy[] {USER_TOKEN_POLICY_ANONYMOUS};
+
+        for (String hostname : hostnames) {
+            EndpointConfiguration.Builder builder = EndpointConfiguration.newBuilder()
+                    .setBindAddress(bindAddress)
+                    .setHostname(hostname)
+                    .setCertificate(() -> null)
+                    .addTokenPolicies(tokenPolicies);
+
+
+            if (securityPolicies == null || securityPolicies.contains(SecurityPolicy.None)) {
+                EndpointConfiguration.Builder noSecurityBuilder = builder.copy()
+                        .setSecurityPolicy(SecurityPolicy.None)
+                        .setSecurityMode(MessageSecurityMode.None);
+
+                endpointConfigurations.add(buildTcpEndpoint(noSecurityBuilder));
+            }
+            /*
+             * It's good practice to provide a discovery-specific endpoint with no security.
+             * It's required practice if all regular endpoints have security configured.
+             *
+             * Usage of the  "/discovery" suffix is defined by OPC UA Part 6:
+             *
+             * Each OPC UA Server Application implements the Discovery Service Set. If the OPC UA Server requires a
+             * different address for this Endpoint it shall create the address by appending the path "/discovery" to
+             * its base address.
+             */
+
+            EndpointConfiguration.Builder discoveryBuilder = builder.copy()
+                    .setPath("/discovery")
+                    .setSecurityPolicy(SecurityPolicy.None)
+                    .setSecurityMode(MessageSecurityMode.None);
+
+            endpointConfigurations.add(buildTcpEndpoint(discoveryBuilder));
+        }
+
+        return endpointConfigurations;
+    }
+
+    private EndpointConfiguration buildTcpEndpoint(EndpointConfiguration.Builder base) {
+        return base.copy()
+                .setTransportProfile(TransportProfile.TCP_UASC_UABINARY)
+                .setBindPort(getServerPort())
+                .build();
+    }
+
     @Test
     public void testCall1() throws Exception {
         // call
@@ -115,8 +162,8 @@ public class CallClientTest extends AbstractMiloServerTest {
         doCall(this.producer1, "bar");
 
         // assert
-
-        Assert.assertArrayEquals(new Object[] {"foo", "bar"}, this.call1.calls.toArray());
+        Assert.assertNotNull(this.callMethod);
+        Assert.assertArrayEquals(new Object[] {"out-foo", "out-bar"}, this.callMethod.getCalls().toArray());
     }
 
     private static void doCall(final ProducerTemplate producerTemplate, final Object input) {

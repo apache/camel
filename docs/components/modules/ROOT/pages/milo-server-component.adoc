@@ -31,7 +31,7 @@ Value write requests from OPC UA Client will trigger messages which are sent int
 
 
 // component options: START
-The OPC UA Server component supports 22 options, which are listed below.
+The OPC UA Server component supports 20 options, which are listed below.
 
 
 
@@ -40,12 +40,10 @@ The OPC UA Server component supports 22 options, which are listed below.
 | Name | Description | Default | Type
 | *namespaceUri* (common) | The URI of the namespace, defaults to urn:org:apache:camel |  | String
 | *applicationName* (common) | The application name |  | String
+| *path* (common) | The path to be appended to the end of the endpoint url. (doesn't need to start with '/') |  | String
 | *applicationUri* (common) | The application URI |  | String
 | *productUri* (common) | The product URI |  | String
 | *bindPort* (common) | The TCP port the server binds to |  | int
-| *strictEndpointUrlsEnabled* (common) | Set whether strict endpoint URLs are enforced | false | boolean
-| *serverName* (common) | Server name |  | String
-| *hostname* (common) | Server hostname |  | String
 | *securityPolicies* (common) | Security policies |  | Set
 | *securityPoliciesById* (common) | Security policies by URI or name |  | Collection
 | *userAuthenticationCredentials* (common) | Set user password combinations in the form of user1:pwd1,user2:pwd2 Usernames and passwords will be URL decoded |  | String
