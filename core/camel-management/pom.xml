@@ -37,15 +37,7 @@
 
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>spi-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-engine</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
