@@ -35,7 +35,7 @@ import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.ec2.Ec2ClientBuilder;
 
 /**
- * The aws-ec2 is used for managing Amazon EC2 instances.
+ * The aws2-ec2 is used for managing Amazon EC2 instances.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ec2", title = "AWS 2 EC2", syntax = "aws2-ec2:label", producerOnly = true, label = "cloud,management")
 public class AWS2EC2Endpoint extends ScheduledPollEndpoint {

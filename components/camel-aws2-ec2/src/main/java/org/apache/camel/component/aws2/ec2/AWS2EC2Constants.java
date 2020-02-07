@@ -17,7 +17,7 @@
 package org.apache.camel.component.aws2.ec2;
 
 /**
- * Constants used in Camel AWS EC2 module
+ * Constants used in Camel AWS EC2 module SDK v2
  */
 public interface AWS2EC2Constants {
 
